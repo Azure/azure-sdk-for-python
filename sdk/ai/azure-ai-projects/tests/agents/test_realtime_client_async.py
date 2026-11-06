@@ -15,13 +15,18 @@ live service or a recorded transport.
 import json
 import inspect
 import logging
+from contextlib import asynccontextmanager
+from copy import deepcopy
+from typing import Any, Mapping, get_args, get_type_hints
 from unittest.mock import AsyncMock, MagicMock, patch
 from urllib.parse import parse_qs, urlparse
 
 import pytest
 from azure.core.credentials import AccessToken
 
+from azure.ai.projects import models
 from azure.ai.projects.aio._realtime import AsyncBetaRealtime, AsyncBetaRealtimeConnectionManager, _USER_AGENT
+from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection, ServerEvent
 from azure.ai.projects._version import VERSION
 from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
@@ -87,6 +92,25 @@ def _patch_client_session(fake_ws_connection):
     return patch("aiohttp.ClientSession", return_value=fake_session), fake_session
 
 
+@asynccontextmanager
+async def _helper_connection():
+    sent = []
+    transport = _make_fake_ws()
+    transport.send_str = AsyncMock(side_effect=lambda payload: sent.append(json.loads(payload)))
+    patcher, _ = _patch_client_session(transport)
+    with patcher:
+        async with _make_manager() as connection:
+            yield connection, sent
+
+
+async def test_public_server_event_union_covers_generated_events_and_shared_error():
+    expected_models = set(models.RealtimeServerEvent.__mapping__.values()) | {models.RealtimeServerEventError}
+
+    assert set(get_args(ServerEvent)) == expected_models | {Mapping[str, Any]}
+    assert get_type_hints(AsyncBetaRealtimeConnection.recv)["return"] == ServerEvent
+    assert get_args(get_type_hints(AsyncBetaRealtimeConnection.__aiter__)["return"]) == (ServerEvent,)
+
+
 class TestAsyncRealtimeConnectionManagerEnter:
     """Unit tests for ``AsyncBetaRealtimeConnectionManager.enter()``: URL/header construction and errors."""
 
@@ -140,7 +164,7 @@ class TestAsyncRealtimeConnectionManagerEnter:
         # Regression test: structured_inputs used to be serialized into a custom
         # "x-ms-voice-structured-inputs" header, but the generated request builder
         # (build_beta_voice_agents_realtime_connect_voice_agent_request) defines this as the
-        # "structured_input" query parameter -- the service never actually read the header.
+        # "structured_inputs" query parameter -- the service never actually read the header.
         fake_ws = _make_fake_ws()
         patcher, fake_session = _patch_client_session(fake_ws)
         with patcher:
@@ -149,7 +173,8 @@ class TestAsyncRealtimeConnectionManagerEnter:
             await manager.__aexit__()
 
         _args, kwargs = fake_session.ws_connect.call_args
-        assert json.loads(kwargs["params"]["structured_input"]) == {"greeting_name": "Alex"}
+        assert json.loads(kwargs["params"]["structured_inputs"]) == {"greeting_name": "Alex"}
+        assert "structured_input" not in kwargs["params"]
         assert "x-ms-voice-structured-inputs" not in kwargs["headers"]
 
     async def test_enter_caller_user_agent_overrides_default_case_insensitive(self):
@@ -170,17 +195,13 @@ class TestAsyncRealtimeConnectionManagerEnter:
         assert headers["user-agent"] == "custom-user-agent"
 
     async def test_enter_source_retains_client_identification_wiring(self):
-        # Regression guard for the SDK client-identification fix (ported from azure-ai-voicelive
-        # PR #48848) surviving a future TypeSpec regeneration. `aio/_realtime.py` is a hand-written
-        # file that is NOT `_patch.py`-named, so it isn't covered by the code generator's own
-        # "never touch _patch.py" guarantee -- nothing in the TypeSpec emitter is aware this file
-        # exists. The tests above already fail on a *behavioral* regression (wrong header/query
-        # value), but they exercise the code through mocks and could, in principle, still pass
-        # against a rewritten implementation that happens to produce the same observable values by
-        # a different (less safe) path. This inspects the actual source of `enter()` so a partial
-        # revert -- one that drops the case-insensitive guard, say, while keeping the header value
-        # correct for the common case -- is caught directly, independent of the tests above.
-        source = inspect.getsource(AsyncBetaRealtimeConnectionManager.enter)
+        # SDK identification belongs to the authenticated transport shared by Live and Realtime.
+        source = "\n".join(
+            inspect.getsource(cls.__dict__[method])
+            for cls in AsyncBetaRealtimeConnectionManager.__mro__
+            for method in ("enter", "_get_query")
+            if method in cls.__dict__
+        )
         assert "_USER_AGENT" in source
         assert "_has_header_case_insensitive" in source
         assert "x-ms-client-sdk" in source
@@ -239,6 +260,125 @@ class TestAsyncRealtimeConnectionManagerEnter:
 class TestAsyncRealtimeConnectionRecv:
     """Unit tests for ``AsyncBetaRealtimeConnection.recv()``: event dispatch and non-text frames."""
 
+    @pytest.mark.parametrize(
+        "event_type,event_model",
+        list(models.RealtimeServerEvent.__mapping__.items()),
+        ids=list(models.RealtimeServerEvent.__mapping__),
+    )
+    async def test_every_generated_realtime_server_event_is_dispatched(self, event_type, event_model):
+        import aiohttp
+
+        payload = {
+            "type": event_type,
+            "event_id": "event-dispatch",
+            "output_index": 0,
+            "content_index": 0,
+            "future_field": {"enabled": False, "count": 0},
+        }
+        if event_type == "response.audio_timestamp.delta":
+            payload["timestamp_type"] = "word"
+        expected = dict(payload)
+        transport = _make_fake_ws()
+        transport.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps(payload)))
+        patcher, _ = _patch_client_session(transport)
+        with patcher:
+            async with _make_manager() as connection:
+                event = await connection.recv()
+
+        assert type(event) is event_model
+        assert event.type == event_type
+        assert event.as_dict() == expected
+
+    async def test_recv_dispatches_shared_error_not_registered_on_generated_base(self):
+        import aiohttp
+
+        payload = {
+            "type": "error",
+            "event_id": "event-error",
+            "error": {
+                "type": "invalid_request_error",
+                "code": "invalid_command",
+                "message": "offline error",
+                "event_id": "event-request",
+                "future_field": False,
+            },
+            "future_field": {"enabled": False, "count": 0},
+        }
+        transport = _make_fake_ws()
+        transport.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps(payload)))
+        patcher, _ = _patch_client_session(transport)
+        with patcher:
+            async with _make_manager() as connection:
+                event = await connection.recv()
+
+        assert type(event) is models.RealtimeServerEventError
+        assert event.error.message == "offline error"
+        assert event.as_dict() == payload
+
+    @pytest.mark.parametrize(
+        "event_type", ["session.handoff.started", "session.handoff.completed", "session.handoff.aborted"]
+    )
+    async def test_recv_dispatches_handoff_events(self, event_type):
+        import aiohttp
+
+        from azure.ai.projects import models
+
+        payload = {
+            "type": event_type,
+            "event_id": "event-test",
+            "handoff_id": "handoff-test",
+            "edge_id": "edge-test",
+            "from_node_id": "$entrypoint",
+            "to_node_id": "node-test",
+            "from_model": "source-model-test",
+            "to_model": "target-model-test",
+            "tool_call_id": "call-test",
+            "node_generation": 0,
+        }
+        if event_type == "session.handoff.aborted":
+            payload["reason"] = "user_interruption"
+        transport = _make_fake_ws()
+        transport.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps(payload)))
+        patcher, _ = _patch_client_session(transport)
+        with patcher:
+            manager = _make_manager()
+            connection = await manager.enter()
+            try:
+                event = await connection.recv()
+            finally:
+                await manager.__aexit__()
+        assert isinstance(event, models.RealtimeServerEvent.__mapping__[event_type])
+        assert event.as_dict() == payload
+
+    @pytest.mark.parametrize(
+        "event_type,fields",
+        [
+            ("input_collection.status", {"channel": "dtmf", "status": "completed", "value": "0012"}),
+            ("response.system_tool_arguments.delta", {"delta": '{"secret":'}),
+            ("response.system_tool_arguments.done", {"name": "collect_dtmf", "arguments": '{"secret":false}'}),
+        ],
+    )
+    async def test_recv_dispatches_system_tool_events(self, event_type, fields):
+        import aiohttp
+
+        from azure.ai.projects import models
+
+        payload = {"type": event_type, "event_id": "event-test", "call_id": "call-test", **fields}
+        if event_type.startswith("response."):
+            payload.update(response_id="response-test", item_id="item-test", output_index=0)
+        transport = _make_fake_ws()
+        transport.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps(payload)))
+        patcher, _ = _patch_client_session(transport)
+        with patcher:
+            manager = _make_manager()
+            connection = await manager.enter()
+            try:
+                event = await connection.recv()
+            finally:
+                await manager.__aexit__()
+        assert isinstance(event, models.RealtimeServerEvent.__mapping__[event_type])
+        assert event.as_dict() == payload
+
     async def test_recv_dispatches_known_event_type(self):
         import aiohttp
 
@@ -282,10 +422,9 @@ class TestAsyncRealtimeConnectionRecv:
     async def test_recv_unknown_event_type_returns_dict(self):
         import aiohttp
 
+        payload = {"type": "some.new.event", "foo": "bar", "future_field": {"enabled": False, "count": 0}}
         fake_ws = _make_fake_ws()
-        fake_ws.receive = AsyncMock(
-            return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps({"type": "some.new.event", "foo": "bar"}))
-        )
+        fake_ws.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps(payload)))
         patcher, _ = _patch_client_session(fake_ws)
         with patcher:
             manager = _make_manager()
@@ -293,7 +432,7 @@ class TestAsyncRealtimeConnectionRecv:
             try:
                 event = await conn.recv()
                 assert isinstance(event, dict)
-                assert event["foo"] == "bar"
+                assert event == payload
             finally:
                 await manager.__aexit__()
 
@@ -427,6 +566,175 @@ class TestAsyncRealtimeConnectionSend:
                 assert json.loads(sent_raw) == {"type": "response.cancel"}
             finally:
                 await manager.__aexit__()
+
+
+@pytest.mark.parametrize("event_id", [None, "event-helper"], ids=["default-event-id", "explicit-event-id"])
+class TestAsyncRealtimeHelperSerialization:
+    """Exercise the actual resource helper, SDK encoder, and socket send together."""
+
+    @pytest.mark.parametrize("typed", [False, True], ids=["mapping", "generated-model"])
+    async def test_session_update_preserves_sparse_settings(self, typed, event_id):
+        settings = {
+            "instructions": "",
+            "temperature": 0.0,
+            "parallel_tool_calls": False,
+            "tools": [],
+            "output_modalities": ["text"],
+        }
+        if typed:
+            session = models.VoiceAgentSessionUpdateConfig(**settings)
+            expected_settings = {"type": "realtime", **settings}
+        else:
+            settings["future_settings"] = {"enabled": False, "count": 0}
+            session = settings
+            expected_settings = deepcopy(settings)
+        original = deepcopy(session)
+        kwargs = {"event_id": event_id} if event_id is not None else {}
+        expected = {"type": "session.update", "session": expected_settings, **kwargs}
+
+        async with _helper_connection() as (connection, sent):
+            assert await connection.session.update(session=session, **kwargs) is None
+
+        assert sent == [expected]
+        assert session == original
+
+    @pytest.mark.parametrize(
+        "helper,arguments,expected",
+        [
+            pytest.param(
+                "session.avatar_connect",
+                {"client_sdp": "v=0\r\ns=offline\r\n"},
+                {"type": "session.avatar.connect", "client_sdp": "v=0\r\ns=offline\r\n"},
+                id="avatar-connect",
+            ),
+            pytest.param(
+                "input_audio_buffer.append",
+                {"audio": b"\x00\x01\xfe\xff"},
+                {"type": "input_audio_buffer.append", "audio": "AAH+/w=="},
+                id="append-bytes",
+            ),
+            pytest.param(
+                "input_audio_buffer.append",
+                {"audio": bytearray(b"\x00\x01\xfe\xff")},
+                {"type": "input_audio_buffer.append", "audio": "AAH+/w=="},
+                id="append-bytearray",
+            ),
+            pytest.param(
+                "input_audio_buffer.append",
+                {"audio": "AAH+/w=="},
+                {"type": "input_audio_buffer.append", "audio": "AAH+/w=="},
+                id="append-base64",
+            ),
+            pytest.param(
+                "input_audio_buffer.append",
+                {"audio": b""},
+                {"type": "input_audio_buffer.append", "audio": ""},
+                id="append-empty-bytes",
+            ),
+            pytest.param("input_audio_buffer.commit", {}, {"type": "input_audio_buffer.commit"}, id="commit-input"),
+            pytest.param("input_audio_buffer.clear", {}, {"type": "input_audio_buffer.clear"}, id="clear-input"),
+            pytest.param("output_audio_buffer.clear", {}, {"type": "output_audio_buffer.clear"}, id="clear-output"),
+            pytest.param(
+                "conversation.item.delete",
+                {"item_id": "item-test"},
+                {"type": "conversation.item.delete", "item_id": "item-test"},
+                id="delete-item",
+            ),
+            pytest.param(
+                "conversation.item.retrieve",
+                {"item_id": "item-test"},
+                {"type": "conversation.item.retrieve", "item_id": "item-test"},
+                id="retrieve-item",
+            ),
+            pytest.param(
+                "conversation.item.truncate",
+                {"item_id": "item-test", "content_index": 0, "audio_end_ms": 0},
+                {"type": "conversation.item.truncate", "item_id": "item-test", "content_index": 0, "audio_end_ms": 0},
+                id="truncate-at-zero",
+            ),
+            pytest.param(
+                "conversation.item.truncate",
+                {"item_id": "item-test", "content_index": 1, "audio_end_ms": 240},
+                {"type": "conversation.item.truncate", "item_id": "item-test", "content_index": 1, "audio_end_ms": 240},
+                id="truncate-at-offset",
+            ),
+            pytest.param("response.create", {}, {"type": "response.create"}, id="create-default-response"),
+            pytest.param("response.create", {"response": None}, {"type": "response.create"}, id="create-none-response"),
+            pytest.param(
+                "response.create",
+                {"response": {}},
+                {"type": "response.create", "response": {}},
+                id="create-empty-response",
+            ),
+            pytest.param("response.cancel", {}, {"type": "response.cancel"}, id="cancel-current-response"),
+            pytest.param(
+                "response.cancel",
+                {"response_id": "response-test"},
+                {"type": "response.cancel", "response_id": "response-test"},
+                id="cancel-specific-response",
+            ),
+        ],
+    )
+    async def test_resource_helpers_send_exact_wire_payload(self, helper, arguments, expected, event_id):
+        original = deepcopy(arguments)
+        kwargs = {"event_id": event_id} if event_id is not None else {}
+
+        async with _helper_connection() as (connection, sent):
+            resource = connection
+            for name in helper.split("."):
+                resource = getattr(resource, name)
+            assert await resource(**arguments, **kwargs) is None
+
+        assert sent == [{**expected, **kwargs}]
+        assert arguments == original
+
+    @pytest.mark.parametrize("typed", [False, True], ids=["mapping", "generated-model"])
+    @pytest.mark.parametrize("previous_item_id", [None, "", "previous-test"])
+    async def test_conversation_item_create_preserves_tool_output(self, typed, previous_item_id, event_id):
+        item_payload = {
+            "type": "function_call_output",
+            "call_id": "canonical-call-test",
+            "output": '{"available":false,"count":0}',
+        }
+        if typed:
+            item = models.RealtimeConversationItemFunctionCallOutput(
+                call_id="canonical-call-test", output='{"available":false,"count":0}'
+            )
+        else:
+            item_payload["future_field"] = {"enabled": False, "count": 0}
+            item = deepcopy(item_payload)
+        original = deepcopy(item)
+        kwargs = {"event_id": event_id} if event_id is not None else {}
+        if previous_item_id is not None:
+            kwargs["previous_item_id"] = previous_item_id
+
+        async with _helper_connection() as (connection, sent):
+            assert await connection.conversation.item.create(item=item, **kwargs) is None
+
+        assert sent == [{"type": "conversation.item.create", "item": item_payload, **kwargs}]
+        assert item == original
+
+    @pytest.mark.parametrize("typed", [False, True], ids=["mapping", "generated-model"])
+    async def test_response_create_preserves_per_response_overrides(self, typed, event_id):
+        response_payload = {
+            "instructions": "",
+            "parallel_tool_calls": False,
+            "input": [],
+            "output_modalities": ["text"],
+        }
+        if typed:
+            response = models.VoiceAgentResponseCreateParams(**response_payload)
+        else:
+            response_payload["future_settings"] = {"enabled": False, "count": 0}
+            response = deepcopy(response_payload)
+        original = deepcopy(response)
+        kwargs = {"event_id": event_id} if event_id is not None else {}
+
+        async with _helper_connection() as (connection, sent):
+            assert await connection.response.create(response=response, **kwargs) is None
+
+        assert sent == [{"type": "response.create", "response": response_payload, **kwargs}]
+        assert response == original
 
 
 async def test_realtime_logging_emits_metadata_without_sensitive_content(caplog):

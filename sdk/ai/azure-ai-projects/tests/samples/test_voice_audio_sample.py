@@ -14,7 +14,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from azure.ai.projects import models
 from azure.ai.projects.models import VoiceResponse
+from test_realtime_samples import realtime_output_event
 
 
 @pytest.fixture
@@ -22,6 +24,7 @@ def sample(monkeypatch):
     pyaudio = ModuleType("pyaudio")
     setattr(pyaudio, "PyAudio", MagicMock())
     monkeypatch.setitem(sys.modules, "pyaudio", pyaudio)
+    monkeypatch.setattr("dotenv.load_dotenv", lambda: False)
     path = Path(__file__).parents[2] / "samples" / "agents" / "voice"
     return runpy.run_path(str(path / "sample_voice_agent_realtime_audio_conversation_async.py"))
 
@@ -95,6 +98,86 @@ def test_output_audio_counts_received_payload_not_playback_estimate(sample) -> N
 
     assert processor.output_bytes_received == len(first) + len(second)
     assert processor.seconds == (len(first) + len(second)) / 48000
+
+
+@pytest.mark.asyncio
+async def test_audio_conversation_handles_output_events_and_barge_in_without_hardware(
+    sample, monkeypatch, realtime_output_event, capsys
+) -> None:
+    client = MagicMock()
+    connection = MagicMock()
+    connection.response.cancel = AsyncMock()
+    manager = client.beta.voice_agents.realtime.connect.return_value
+    manager.__aenter__.return_value = connection
+    manager.__aexit__.return_value = False
+    processor = sample["_AudioProcessor"](connection)
+    processor.start_playback = MagicMock()
+    processor.start_capture = MagicMock()
+    processor.queue_audio = MagicMock(wraps=processor.queue_audio)
+    processor.skip_pending_audio = MagicMock(wraps=processor.skip_pending_audio)
+    processor.stop_capture = AsyncMock(wraps=processor.stop_capture)
+    processor.shutdown = MagicMock(wraps=processor.shutdown)
+    run_conversation = sample["_run_audio_conversation"]
+    monkeypatch.setitem(run_conversation.__globals__, "_AudioProcessor", MagicMock(return_value=processor))
+    audio = [b"\x01\x00" * 4, b"\x02\x00" * 6]
+    connection.__aiter__.return_value = [
+        models.RealtimeServerEventSessionCreated(
+            {
+                "event_id": "session-created",
+                "session": {"id": "session-offline"},
+                "conversation_id": "conversation-offline",
+            }
+        ),
+        models.RealtimeServerEventResponseCreated(
+            {"event_id": "response-created", "response": {"id": "audio-response", "status": "in_progress"}}
+        ),
+        realtime_output_event("audio.delta", "audio-response", delta=audio[0]),
+        realtime_output_event("audio_transcript.delta", "audio-response", delta="Spoken "),
+        realtime_output_event("audio.delta", "audio-response", delta=audio[1]),
+        realtime_output_event("audio_transcript.delta", "audio-response", delta="reply."),
+        models.RealtimeServerEventInputAudioBufferSpeechStarted(
+            {"event_id": "barge-in", "audio_start_ms": 0, "item_id": "user-interruption"}
+        ),
+        realtime_output_event("audio.done", "audio-response"),
+        realtime_output_event("audio_transcript.done", "audio-response", transcript="Spoken reply."),
+        models.RealtimeServerEventResponseDone(
+            {
+                "event_id": "response-cancelled",
+                "response": {"id": "audio-response", "status": "cancelled", "output": []},
+            }
+        ),
+        models.RealtimeServerEventInputAudioBufferSpeechStarted(
+            {"event_id": "next-turn", "audio_start_ms": 0, "item_id": "user-next"}
+        ),
+        models.RealtimeServerEventResponseCreated(
+            {"event_id": "text-created", "response": {"id": "text-response", "status": "in_progress"}}
+        ),
+        realtime_output_event("text.delta", "text-response", delta="Text-only "),
+        realtime_output_event("text.delta", "text-response", delta="reply."),
+        realtime_output_event("text.done", "text-response", text="Text-only reply."),
+        models.RealtimeServerEventResponseDone(
+            {"event_id": "text-completed", "response": {"id": "text-response", "status": "completed", "output": []}}
+        ),
+    ]
+
+    conversation_id = await run_conversation(client, "agent-offline")
+
+    assert conversation_id == "conversation-offline"
+    client.beta.voice_agents.realtime.connect.assert_called_once_with(agent_name="agent-offline")
+    client.beta.voice_agents.live.connect.assert_not_called()
+    connection.response.cancel.assert_awaited_once_with()
+    processor.start_playback.assert_called_once_with()
+    processor.start_capture.assert_called_once_with()
+    assert [submitted.args[0] for submitted in processor.queue_audio.call_args_list] == audio
+    assert processor.output_bytes_received == sum(len(chunk) for chunk in audio)
+    assert processor.skip_pending_audio.call_count == 2
+    processor.stop_capture.assert_awaited_once_with()
+    processor.shutdown.assert_called_once_with()
+    processor._audio.terminate.assert_called_once_with()
+    manager.__aexit__.assert_awaited_once()
+    output = capsys.readouterr().out
+    assert output.count("Agent: Spoken reply.\n") == 1
+    assert output.count("Agent: Text-only reply.\n") == 1
 
 
 def test_conversation_delete_snippet_accepts_no_content_result(capsys) -> None:

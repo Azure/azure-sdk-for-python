@@ -1,7 +1,7 @@
 ```py
 namespace azure.ai.projects
 
-    class azure.ai.projects.AIProjectClient(AIProjectClientGenerated): implements ContextManager 
+    class azure.ai.projects.AIProjectClient(AIProjectClientGenerated): implements ContextManager
         agents: AgentsOperations
         beta: BetaOperations
         connections: ConnectionsOperations
@@ -12,13 +12,13 @@ namespace azure.ai.projects
         toolboxes: ToolboxesOperations
 
         def __init__(
-                self, 
-                endpoint: str, 
-                credential: TokenCredential, 
-                *, 
-                allow_preview: bool = False, 
-                api_version: str = ..., 
-                polling_interval: Optional[int] = ..., 
+                self,
+                endpoint: str,
+                credential: TokenCredential,
+                *,
+                allow_preview: bool = False,
+                api_version: str = ...,
+                polling_interval: Optional[int] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -26,24 +26,24 @@ namespace azure.ai.projects
 
         @distributed_trace
         def get_openai_client(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
+                self,
+                *,
+                agent_name: Optional[str] = ...,
                 **kwargs: Any
             ) -> OpenAI: ...
 
         def send_request(
-                self, 
-                request: HttpRequest, 
-                *, 
-                stream: bool = False, 
+                self,
+                request: HttpRequest,
+                *,
+                stream: bool = False,
                 **kwargs: Any
             ) -> HttpResponse: ...
 
 
 namespace azure.ai.projects.aio
 
-    class azure.ai.projects.aio.AIProjectClient(AIProjectClientGenerated): implements AsyncContextManager 
+    class azure.ai.projects.aio.AIProjectClient(AIProjectClientGenerated): implements AsyncContextManager
         agents: AgentsOperations
         beta: BetaOperations
         connections: ConnectionsOperations
@@ -54,13 +54,13 @@ namespace azure.ai.projects.aio
         toolboxes: ToolboxesOperations
 
         def __init__(
-                self, 
-                endpoint: str, 
-                credential: AsyncTokenCredential, 
-                *, 
-                allow_preview: bool = False, 
-                api_version: str = ..., 
-                polling_interval: Optional[int] = ..., 
+                self,
+                endpoint: str,
+                credential: AsyncTokenCredential,
+                *,
+                allow_preview: bool = False,
+                api_version: str = ...,
+                polling_interval: Optional[int] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -68,17 +68,17 @@ namespace azure.ai.projects.aio
 
         @distributed_trace
         def get_openai_client(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
+                self,
+                *,
+                agent_name: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncOpenAI: ...
 
         def send_request(
-                self, 
-                request: HttpRequest, 
-                *, 
-                stream: bool = False, 
+                self,
+                request: HttpRequest,
+                *,
+                stream: bool = False,
                 **kwargs: Any
             ) -> Awaitable[AsyncHttpResponse]: ...
 
@@ -88,594 +88,656 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.AgentsOperations(GeneratedAgentsOperations):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def begin_create_optimization_job(
-                self, 
-                job: AgentOptimizationJob, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: AgentOptimizationJob,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncAgentOptimizationLROPoller: ...
 
         @overload
         async def begin_create_optimization_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: JSON,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncAgentOptimizationLROPoller: ...
 
         @overload
         async def begin_create_optimization_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncAgentOptimizationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_optimization_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> AgentOptimizationJob: ...
 
         @overload
         async def create_session(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_session_id: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                version_indicator: VersionIndicator, 
+                self,
+                agent_name: str,
+                *,
+                agent_session_id: Optional[str] = ...,
+                content_type: str = "application/json",
+                version_indicator: VersionIndicator,
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
         @overload
         async def create_session(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
         @overload
         async def create_session(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
         @overload
         async def create_version(
-                self, 
-                agent_name: str, 
-                *, 
-                blueprint_reference: Optional[AgentBlueprintReference] = ..., 
-                content_type: str = "application/json", 
-                definition: AgentDefinition, 
-                description: Optional[str] = ..., 
-                draft: Optional[bool] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                blueprint_reference: Optional[AgentBlueprintReference] = ...,
+                content_type: str = "application/json",
+                definition: AgentDefinition,
+                description: Optional[str] = ...,
+                draft: Optional[bool] = ...,
+                metadata: Optional[dict[str, str]] = ...,
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         async def create_version(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         async def create_version(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @distributed_trace_async
         async def create_version_from_code(
-                self, 
-                agent_name: str, 
-                *, 
-                code: IO[bytes], 
-                code_zip_sha256: Optional[str] = ..., 
-                definition: HostedAgentDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                code: IO[bytes],
+                code_zip_sha256: Optional[str] = ...,
+                definition: HostedAgentDefinition,
+                description: Optional[str] = ...,
+                metadata: Optional[dict[str, str]] = ...,
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         async def create_version_from_manifest(
-                self, 
-                agent_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                manifest_id: str, 
-                metadata: Optional[dict[str, str]] = ..., 
-                parameter_values: dict[str, Any], 
+                self,
+                agent_name: str,
+                *,
+                content_type: str = "application/json",
+                description: Optional[str] = ...,
+                manifest_id: str,
+                metadata: Optional[dict[str, str]] = ...,
+                parameter_values: dict[str, Any],
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         async def create_version_from_manifest(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         async def create_version_from_manifest(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                agent_name: str, 
-                *, 
-                force: Optional[bool] = ..., 
+                self,
+                agent_name: str,
+                *,
+                force: Optional[bool] = ...,
                 **kwargs: Any
             ) -> DeleteAgentResponse: ...
 
         @distributed_trace_async
         async def delete_optimization_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_session(
-                self, 
-                agent_name: str, 
-                session_id: str, 
+                self,
+                agent_name: str,
+                session_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                path: str, 
-                recursive: Optional[bool] = ..., 
+                self,
+                agent_name: str,
+                session_id: str,
+                *,
+                path: str,
+                recursive: Optional[bool] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_version(
-                self, 
-                agent_name: str, 
-                agent_version: str, 
-                *, 
-                force: Optional[bool] = ..., 
+                self,
+                agent_name: str,
+                agent_version: str,
+                *,
+                force: Optional[bool] = ...,
                 **kwargs: Any
             ) -> DeleteAgentVersionResponse: ...
 
         @distributed_trace_async
         async def disable(
-                self, 
-                agent_name: str, 
+                self,
+                agent_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def download_code(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_version: Optional[str] = ..., 
+                self,
+                agent_name: str,
+                *,
+                agent_version: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def download_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                path: str, 
+                self,
+                agent_name: str,
+                session_id: str,
+                *,
+                path: str,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def enable(
-                self, 
-                agent_name: str, 
+                self,
+                agent_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @overload
         async def estimate_optimization_job(
-                self, 
-                inputs: AgentOptimizationEstimateInputs, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                inputs: AgentOptimizationEstimateInputs,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentOptimizationEstimateResult: ...
 
         @overload
         async def estimate_optimization_job(
-                self, 
-                inputs: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                inputs: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentOptimizationEstimateResult: ...
 
         @overload
         async def estimate_optimization_job(
-                self, 
-                inputs: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                inputs: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentOptimizationEstimateResult: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                agent_name: str, 
+                self,
+                agent_name: str,
                 **kwargs: Any
             ) -> AgentDetails: ...
 
         @overload
         async def get_microsoft365_package(
-                self, 
-                agent_name: str, 
-                *, 
-                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
-                agent_display_name: Optional[str] = ..., 
-                app_version: Optional[str] = ..., 
-                bot_service_arm_id: Optional[str] = ..., 
-                can_respond_without_mention: Optional[bool] = ..., 
-                color_icon_base64: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                developer_name: Optional[str] = ..., 
-                developer_website_url: Optional[str] = ..., 
-                full_description: Optional[str] = ..., 
-                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
-                outline_icon_base64: Optional[str] = ..., 
-                privacy_url: Optional[str] = ..., 
-                publish_as_autopilot: Optional[bool] = ..., 
-                publish_scope: Union[str, Microsoft365PublishScope], 
-                short_description: Optional[str] = ..., 
-                terms_of_use_url: Optional[str] = ..., 
+                self,
+                agent_name: str,
+                *,
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ...,
+                agent_display_name: Optional[str] = ...,
+                app_version: Optional[str] = ...,
+                bot_service_arm_id: Optional[str] = ...,
+                can_respond_without_mention: Optional[bool] = ...,
+                color_icon_base64: Optional[str] = ...,
+                content_type: str = "application/json",
+                developer_name: Optional[str] = ...,
+                developer_website_url: Optional[str] = ...,
+                full_description: Optional[str] = ...,
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ...,
+                outline_icon_base64: Optional[str] = ...,
+                privacy_url: Optional[str] = ...,
+                publish_as_autopilot: Optional[bool] = ...,
+                publish_scope: Union[str, Microsoft365PublishScope],
+                short_description: Optional[str] = ...,
+                terms_of_use_url: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @overload
         async def get_microsoft365_package(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @overload
         async def get_microsoft365_package(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def get_microsoft365_publish_defaults(
-                self, 
-                agent_name: str, 
-                *, 
-                publish_as_digital_worker: Optional[bool] = ..., 
+                self,
+                agent_name: str,
+                *,
+                publish_as_digital_worker: Optional[bool] = ...,
                 **kwargs: Any
             ) -> Microsoft365PublishDefaults: ...
 
         @distributed_trace_async
         async def get_optimization_candidate(
-                self, 
-                job_id: str, 
-                candidate_id: str, 
+                self,
+                job_id: str,
+                candidate_id: str,
                 **kwargs: Any
             ) -> AgentOptimizationCandidate: ...
 
         @distributed_trace_async
         async def get_optimization_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> AgentOptimizationJob: ...
 
         @distributed_trace_async
         async def get_session(
-                self, 
-                agent_name: str, 
-                session_id: str, 
+                self,
+                agent_name: str,
+                session_id: str,
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
         @distributed_trace_async
         async def get_session_log_stream(
-                self, 
-                agent_name: str, 
-                agent_version: str, 
-                session_id: str, 
+                self,
+                agent_name: str,
+                agent_version: str,
+                session_id: str,
                 **kwargs: Any
             ) -> SessionLogEvent: ...
 
         @distributed_trace_async
         async def get_version(
-                self, 
-                agent_name: str, 
-                agent_version: str, 
+                self,
+                agent_name: str,
+                agent_version: str,
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                kind: Optional[Union[str, AgentKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                kind: Optional[Union[str, AgentKind]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentDetails]: ...
 
         @distributed_trace
         def list_optimization_candidates(
-                self, 
-                job_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                expand: Optional[List[Union[str, AgentOptimizationCandidateExpand]]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                job_id: str,
+                *,
+                before: Optional[str] = ...,
+                expand: Optional[List[Union[str, AgentOptimizationCandidateExpand]]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentOptimizationCandidate]: ...
 
         @distributed_trace
         def list_optimization_jobs(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, JobStatus]] = ..., 
+                self,
+                *,
+                agent_name: Optional[str] = ...,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                status: Optional[Union[str, JobStatus]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentOptimizationJob]: ...
 
         @distributed_trace
         def list_session_files(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                path: Optional[str] = ..., 
+                self,
+                agent_name: str,
+                session_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                path: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[SessionDirectoryEntry]: ...
 
         @distributed_trace
         def list_sessions(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentSessionResource]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                include_drafts: Optional[bool] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                include_drafts: Optional[bool] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentVersionDetails]: ...
 
         @distributed_trace_async
         async def promote_optimization_candidate(
-                self, 
-                job_id: str, 
-                candidate_id: str, 
+                self,
+                job_id: str,
+                candidate_id: str,
                 **kwargs: Any
             ) -> AgentOptimizationCandidate: ...
 
         @overload
         async def publish_to_microsoft365(
-                self, 
-                agent_name: str, 
-                *, 
-                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
-                agent_display_name: Optional[str] = ..., 
-                app_version: Optional[str] = ..., 
-                bot_service_arm_id: Optional[str] = ..., 
-                can_respond_without_mention: Optional[bool] = ..., 
-                color_icon_base64: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                developer_name: Optional[str] = ..., 
-                developer_website_url: Optional[str] = ..., 
-                full_description: Optional[str] = ..., 
-                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
-                outline_icon_base64: Optional[str] = ..., 
-                privacy_url: Optional[str] = ..., 
-                publish_as_autopilot: Optional[bool] = ..., 
-                publish_scope: Union[str, Microsoft365PublishScope], 
-                short_description: Optional[str] = ..., 
-                terms_of_use_url: Optional[str] = ..., 
+                self,
+                agent_name: str,
+                *,
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ...,
+                agent_display_name: Optional[str] = ...,
+                app_version: Optional[str] = ...,
+                bot_service_arm_id: Optional[str] = ...,
+                can_respond_without_mention: Optional[bool] = ...,
+                color_icon_base64: Optional[str] = ...,
+                content_type: str = "application/json",
+                developer_name: Optional[str] = ...,
+                developer_website_url: Optional[str] = ...,
+                full_description: Optional[str] = ...,
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ...,
+                outline_icon_base64: Optional[str] = ...,
+                privacy_url: Optional[str] = ...,
+                publish_as_autopilot: Optional[bool] = ...,
+                publish_scope: Union[str, Microsoft365PublishScope],
+                short_description: Optional[str] = ...,
+                terms_of_use_url: Optional[str] = ...,
                 **kwargs: Any
             ) -> Microsoft365PublishResult: ...
 
         @overload
         async def publish_to_microsoft365(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Microsoft365PublishResult: ...
 
         @overload
         async def publish_to_microsoft365(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Microsoft365PublishResult: ...
 
         @distributed_trace_async
         async def stop_session(
-                self, 
-                agent_name: str, 
-                session_id: str, 
+                self,
+                agent_name: str,
+                session_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @overload
         async def update_details(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_card: Optional[AgentCard] = ..., 
-                agent_endpoint: Optional[AgentEndpointConfig] = ..., 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                agent_name: str,
+                *,
+                agent_card: Optional[AgentCard] = ...,
+                agent_endpoint: Optional[AgentEndpointConfig] = ...,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentDetails: ...
 
         @overload
         async def update_details(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentDetails: ...
 
         @overload
         async def update_details(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentDetails: ...
 
         @overload
         async def upload_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                content: bytes, 
-                *, 
-                content_type: str = "application/octet-stream", 
-                path: str, 
+                self,
+                agent_name: str,
+                session_id: str,
+                content: bytes,
+                *,
+                content_type: str = "application/octet-stream",
+                path: str,
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
         @overload
         async def upload_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                content: IO[bytes], 
-                *, 
-                content_type: str = "application/octet-stream", 
-                path: str, 
+                self,
+                agent_name: str,
+                session_id: str,
+                content: IO[bytes],
+                *,
+                content_type: str = "application/octet-stream",
+                path: str,
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
 
-    class azure.ai.projects.aio.operations.AsyncBetaRealtime:
+    class azure.ai.projects.aio.operations.AsyncBetaLive:
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
         def connect(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                api_version: Optional[str] = ..., 
-                connection_url: Optional[str] = ..., 
-                credential_scopes: Optional[List[str]] = ..., 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
+                self,
+                *,
+                agent_name: str,
+                agent_version: Optional[str] = ...,
+                api_version: Optional[str] = ...,
+                connection_url: Optional[str] = ...,
+                credential_scopes: Optional[list[str]] = ...,
+                extra_headers: Optional[Mapping[str, str]] = ...,
+                extra_query: Optional[Mapping[str, str]] = ...,
+                store: Optional[bool] = ...,
+                structured_inputs: Optional[Mapping[str, Any]] = ...,
                 **kwargs: Any
-            ) -> AsyncBetaRealtimeConnectionManager: ...
+            ) -> AsyncBetaLiveConnectionManager: ...
 
 
-    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnection: implements AsyncContextManager 
+    class azure.ai.projects.aio.operations.AsyncBetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClientEvent]): implements AsyncContextManager
         property closed: bool    # Read-only
 
-        def __aiter__(self) -> AsyncIterator[ServerEvent]: ...
+        def __aiter__(self) -> AsyncIterator[LiveServerEvent]: ...
 
         def __init__(
-                self, 
-                connection: ClientWebSocketResponse, 
+                self,
+                connection: ClientWebSocketResponse,
                 session: ClientSession
             ) -> None: ...
 
         def __repr__(self) -> str: ...
 
         async def close(
-                self, 
-                *, 
-                code: int = 1000, 
+                self,
+                *,
+                code: int = 1000,
+                reason: str = ""
+            ) -> None: ...
+
+        async def recv(self) -> LiveServerEvent: ...
+
+        async def send(self, event: LiveClientEvent) -> None: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncBetaLiveConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaLiveConnection]): implements AsyncContextManager
+
+        def __init__(
+                self,
+                *,
+                agent_version: Optional[str] = ...,
+                store: Optional[bool] = ...,
+                **kwargs: Any
+            ) -> None: ...
+
+        async def enter(self) -> AsyncBetaLiveConnection: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncBetaRealtime:
+
+        def __init__(
+                self,
+                *args: Any,
+                **kwargs: Any
+            ) -> None: ...
+
+        def connect(
+                self,
+                *,
+                agent_name: str,
+                agent_session_id: Optional[str] = ...,
+                api_version: Optional[str] = ...,
+                connection_url: Optional[str] = ...,
+                credential_scopes: Optional[List[str]] = ...,
+                extra_headers: Optional[Mapping[str, str]] = ...,
+                extra_query: Optional[Mapping[str, str]] = ...,
+                structured_inputs: Optional[Mapping[str, Any]] = ...,
+                transport: Optional[Union[str, VoiceAgentTransport]] = ...,
+                **kwargs: Any
+            ) -> AsyncBetaRealtimeConnectionManager: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnection(_BaseWebSocketConnection[ServerEvent, ClientEvent]): implements AsyncContextManager
+        property closed: bool    # Read-only
+
+        def __aiter__(self) -> AsyncIterator[ServerEvent]: ...
+
+        def __init__(
+                self,
+                connection: ClientWebSocketResponse,
+                session: ClientSession
+            ) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+        async def close(
+                self,
+                *,
+                code: int = 1000,
                 reason: str = ""
             ) -> None: ...
 
@@ -684,22 +746,22 @@ namespace azure.ai.projects.aio.operations
         async def send(self, event: ClientEvent) -> None: ...
 
 
-    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnectionManager: implements AsyncContextManager 
+    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaRealtimeConnection]): implements AsyncContextManager
 
         def __init__(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                api_version: str, 
-                connection_url: Optional[str] = ..., 
-                credential: AsyncTokenCredential, 
-                credential_scopes: List[str], 
-                endpoint: str, 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
+                self,
+                *,
+                agent_name: str,
+                agent_session_id: Optional[str] = ...,
+                api_version: str,
+                connection_url: Optional[str] = ...,
+                credential: AsyncTokenCredential,
+                credential_scopes: List[str],
+                endpoint: str,
+                extra_headers: Optional[Mapping[str, str]] = ...,
+                extra_query: Optional[Mapping[str, str]] = ...,
+                structured_inputs: Optional[Mapping[str, Any]] = ...,
+                transport: Optional[Union[str, VoiceAgentTransport]] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -709,217 +771,217 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: AgentInsightRunCreate, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                monitor_id: str,
+                run: AgentInsightRunCreate,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
         @overload
         async def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                monitor_id: str,
+                run: JSON,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
         @overload
         async def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                monitor_id: str,
+                run: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
         @distributed_trace_async
         async def cancel_run(
-                self, 
-                monitor_id: str, 
-                run_id: str, 
+                self,
+                monitor_id: str,
+                run_id: str,
                 **kwargs: Any
             ) -> AgentInsightRun: ...
 
         @overload
         async def create(
-                self, 
-                monitor: AgentInsightMonitorCreate, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                monitor: AgentInsightMonitorCreate,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         async def create(
-                self, 
-                monitor: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                monitor: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         async def create(
-                self, 
-                monitor: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                monitor: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                monitor_id: str, 
+                self,
+                monitor_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                monitor_id: str, 
+                self,
+                monitor_id: str,
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @distributed_trace_async
         async def get_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                *, 
-                include_details: Optional[bool] = ..., 
+                self,
+                monitor_id: str,
+                insight_id: str,
+                *,
+                include_details: Optional[bool] = ...,
                 **kwargs: Any
             ) -> AgentInsight: ...
 
         @distributed_trace_async
         async def get_run(
-                self, 
-                monitor_id: str, 
-                run_id: str, 
+                self,
+                monitor_id: str,
+                run_id: str,
                 **kwargs: Any
             ) -> AgentInsightRun: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                agent_name: Optional[str] = ...,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentInsightMonitorListItem]: ...
 
         @distributed_trace
         def list_insights(
-                self, 
-                monitor_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                category: Optional[str] = ..., 
-                include_details: Optional[bool] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                severity: Optional[Union[str, AgentInsightSeverity]] = ..., 
-                status: Optional[Union[str, AgentInsightStatus]] = ..., 
+                self,
+                monitor_id: str,
+                *,
+                before: Optional[str] = ...,
+                category: Optional[str] = ...,
+                include_details: Optional[bool] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                severity: Optional[Union[str, AgentInsightSeverity]] = ...,
+                status: Optional[Union[str, AgentInsightStatus]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentInsight]: ...
 
         @distributed_trace
         def list_runs(
-                self, 
-                monitor_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, JobStatus]] = ..., 
-                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ..., 
+                self,
+                monitor_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                status: Optional[Union[str, JobStatus]] = ...,
+                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentInsightRun]: ...
 
         @distributed_trace_async
         async def reset(
-                self, 
-                monitor_id: str, 
+                self,
+                monitor_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @overload
         async def update(
-                self, 
-                monitor_id: str, 
-                monitor: AgentInsightMonitorUpdate, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                monitor: AgentInsightMonitorUpdate,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         async def update(
-                self, 
-                monitor_id: str, 
-                monitor: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                monitor: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         async def update(
-                self, 
-                monitor_id: str, 
-                monitor: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                monitor: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         async def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: AgentInsightUpdate, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                insight_id: str,
+                update: AgentInsightUpdate,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsight: ...
 
         @overload
         async def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                insight_id: str,
+                update: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsight: ...
 
         @overload
         async def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                insight_id: str,
+                update: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsight: ...
 
@@ -927,15 +989,15 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace_async
         async def create_from_prompt(
-                self, 
-                body: GenerateAgentRequest, 
+                self,
+                body: GenerateAgentRequest,
                 **kwargs: Any
             ) -> AgentDetails: ...
 
@@ -943,91 +1005,91 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def create(
-                self, 
-                name: str, 
-                taxonomy: EvaluationTaxonomy, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: EvaluationTaxonomy,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @overload
         async def create(
-                self, 
-                name: str, 
-                taxonomy: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @overload
         async def create(
-                self, 
-                name: str, 
-                taxonomy: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                input_name: Optional[str] = ..., 
-                input_type: Optional[str] = ..., 
+                self,
+                *,
+                input_name: Optional[str] = ...,
+                input_type: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[EvaluationTaxonomy]: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                taxonomy: EvaluationTaxonomy, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: EvaluationTaxonomy,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                taxonomy: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                taxonomy: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
@@ -1035,56 +1097,56 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaInsightsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def generate(
-                self, 
-                insight: Insight, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                insight: Insight,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Insight: ...
 
         @overload
         async def generate(
-                self, 
-                insight: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                insight: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Insight: ...
 
         @overload
         async def generate(
-                self, 
-                insight: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                insight: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Insight: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                insight_id: str, 
-                *, 
-                include_coordinates: Optional[bool] = ..., 
+                self,
+                insight_id: str,
+                *,
+                include_coordinates: Optional[bool] = ...,
                 **kwargs: Any
             ) -> Insight: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                eval_id: Optional[str] = ..., 
-                include_coordinates: Optional[bool] = ..., 
-                run_id: Optional[str] = ..., 
-                type: Optional[Union[str, InsightType]] = ..., 
+                self,
+                *,
+                agent_name: Optional[str] = ...,
+                eval_id: Optional[str] = ...,
+                include_coordinates: Optional[bool] = ...,
+                run_id: Optional[str] = ...,
+                type: Optional[Union[str, InsightType]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[Insight]: ...
 
@@ -1092,312 +1154,312 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def begin_update_memories(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                items: Optional[Union[str, ResponseInputParam]] = ..., 
-                previous_update_id: Optional[str] = ..., 
-                scope: str, 
-                update_delay: Optional[int] = ..., 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                items: Optional[Union[str, ResponseInputParam]] = ...,
+                previous_update_id: Optional[str] = ...,
+                scope: str,
+                update_delay: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncUpdateMemoriesLROPoller: ...
 
         @overload
         async def begin_update_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AsyncUpdateMemoriesLROPoller: ...
 
         @overload
         async def begin_update_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AsyncUpdateMemoriesLROPoller: ...
 
         @overload
         async def create(
-                self, 
-                *, 
-                content_type: str = "application/json", 
-                definition: MemoryStoreDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                name: str, 
+                self,
+                *,
+                content_type: str = "application/json",
+                definition: MemoryStoreDefinition,
+                description: Optional[str] = ...,
+                metadata: Optional[dict[str, str]] = ...,
+                name: str,
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         async def create(
-                self, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         async def create(
-                self, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         async def create_memory(
-                self, 
-                name: str, 
-                *, 
-                content: str, 
-                content_type: str = "application/json", 
-                kind: Union[str, MemoryItemKind], 
-                scope: str, 
+                self,
+                name: str,
+                *,
+                content: str,
+                content_type: str = "application/json",
+                kind: Union[str, MemoryItemKind],
+                scope: str,
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @overload
         async def create_memory(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @overload
         async def create_memory(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> DeleteMemoryStoreResult: ...
 
         @distributed_trace_async
         async def delete_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
+                self,
+                name: str,
+                memory_id: str,
                 **kwargs: Any
             ) -> DeleteMemoryResult: ...
 
         @overload
         async def delete_scope(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                scope: str, 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                scope: str,
                 **kwargs: Any
             ) -> MemoryStoreDeleteScopeResult: ...
 
         @overload
         async def delete_scope(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDeleteScopeResult: ...
 
         @overload
         async def delete_scope(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDeleteScopeResult: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @distributed_trace_async
         async def get_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
+                self,
+                name: str,
+                memory_id: str,
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[MemoryStoreDetails]: ...
 
         @overload
         def list_memories(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                scope: str, 
+                self,
+                name: str,
+                *,
+                before: Optional[str] = ...,
+                content_type: str = "application/json",
+                kind: Optional[Union[str, MemoryItemKind]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                scope: str,
                 **kwargs: Any
             ) -> AsyncItemPaged[MemoryItem]: ...
 
         @overload
         def list_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                before: Optional[str] = ...,
+                content_type: str = "application/json",
+                kind: Optional[Union[str, MemoryItemKind]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[MemoryItem]: ...
 
         @overload
         def list_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                before: Optional[str] = ...,
+                content_type: str = "application/json",
+                kind: Optional[Union[str, MemoryItemKind]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[MemoryItem]: ...
 
         @overload
         async def search_memories(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                items: Optional[Union[str, ResponseInputParam]] = ..., 
-                options: Optional[MemorySearchOptions] = ..., 
-                previous_search_id: Optional[str] = ..., 
-                scope: str, 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                items: Optional[Union[str, ResponseInputParam]] = ...,
+                options: Optional[MemorySearchOptions] = ...,
+                previous_search_id: Optional[str] = ...,
+                scope: str,
                 **kwargs: Any
             ) -> MemoryStoreSearchResult: ...
 
         @overload
         async def search_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreSearchResult: ...
 
         @overload
         async def search_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreSearchResult: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                description: Optional[str] = ...,
+                metadata: Optional[dict[str, str]] = ...,
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         async def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                *, 
-                content: str, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                memory_id: str,
+                *,
+                content: str,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @overload
         async def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                memory_id: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @overload
         async def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                memory_id: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
@@ -1405,91 +1467,91 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaModelsOperations(BetaModelsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def create(
-                self, 
-                *, 
-                base_model: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                polling_interval: float = 2.0, 
-                polling_timeout: float = 300.0, 
-                source: Union[str, PathLike[str]], 
-                tags: Optional[dict[str, str]] = ..., 
-                version: str, 
-                wait_for_commit: Literal[True] = True, 
-                weight_type: Optional[str] = ..., 
+                self,
+                *,
+                base_model: Optional[str] = ...,
+                description: Optional[str] = ...,
+                name: str,
+                polling_interval: float = 2.0,
+                polling_timeout: float = 300.0,
+                source: Union[str, PathLike[str]],
+                tags: Optional[dict[str, str]] = ...,
+                version: str,
+                wait_for_commit: Literal[True] = True,
+                weight_type: Optional[str] = ...,
                 **kwargs: Any
             ) -> ModelVersion: ...
 
         @overload
         async def create(
-                self, 
-                *, 
-                base_model: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                polling_interval: float = 2.0, 
-                polling_timeout: float = 300.0, 
-                source: Union[str, PathLike[str]], 
-                tags: Optional[dict[str, str]] = ..., 
-                version: str, 
-                wait_for_commit: Literal[False], 
-                weight_type: Optional[str] = ..., 
+                self,
+                *,
+                base_model: Optional[str] = ...,
+                description: Optional[str] = ...,
+                name: str,
+                polling_interval: float = 2.0,
+                polling_timeout: float = 300.0,
+                source: Union[str, PathLike[str]],
+                tags: Optional[dict[str, str]] = ...,
+                version: str,
+                wait_for_commit: Literal[False],
+                weight_type: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> ModelVersion: ...
 
         @overload
         async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: ModelCredentialRequest, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                credential_request: ModelCredentialRequest,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DatasetCredential: ...
 
         @overload
         async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                credential_request: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DatasetCredential: ...
 
         @overload
         async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                credential_request: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DatasetCredential: ...
 
@@ -1498,107 +1560,107 @@ namespace azure.ai.projects.aio.operations
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> AsyncItemPaged[ModelVersion]: ...
 
         @overload
         async def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: ModelVersion, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                model_version: ModelVersion,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> CreateAsyncResponse: ...
 
         @overload
         async def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                model_version: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> CreateAsyncResponse: ...
 
         @overload
         async def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                model_version: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> CreateAsyncResponse: ...
 
         @overload
         async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: ModelPendingUploadRequest, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: ModelPendingUploadRequest,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ModelPendingUploadResponse: ...
 
         @overload
         async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ModelPendingUploadResponse: ...
 
         @overload
         async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ModelPendingUploadResponse: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: UpdateModelVersionRequest, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                model_version_update: UpdateModelVersionRequest,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> ModelVersion: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                model_version_update: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> ModelVersion: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                model_version_update: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> ModelVersion: ...
 
@@ -1617,8 +1679,8 @@ namespace azure.ai.projects.aio.operations
         voice_agents: BetaVoiceAgentsOperations
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1626,42 +1688,42 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaRedTeamsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def create(
-                self, 
-                red_team: RedTeam, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                red_team: RedTeam,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> RedTeam: ...
 
         @overload
         async def create(
-                self, 
-                red_team: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                red_team: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> RedTeam: ...
 
         @overload
         async def create(
-                self, 
-                red_team: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                red_team: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> RedTeam: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> RedTeam: ...
 
@@ -1672,122 +1734,122 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaRoutinesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def create_or_update(
-                self, 
-                routine_name: str, 
-                *, 
-                action: Optional[RoutineAction] = ..., 
-                authorization: Optional[RoutineAuthorization] = ..., 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                enabled: Optional[bool] = ..., 
-                triggers: Optional[dict[str, RoutineTrigger]] = ..., 
+                self,
+                routine_name: str,
+                *,
+                action: Optional[RoutineAction] = ...,
+                authorization: Optional[RoutineAuthorization] = ...,
+                content_type: str = "application/json",
+                description: Optional[str] = ...,
+                enabled: Optional[bool] = ...,
+                triggers: Optional[dict[str, RoutineTrigger]] = ...,
                 **kwargs: Any
             ) -> Routine: ...
 
         @overload
         async def create_or_update(
-                self, 
-                routine_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                routine_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Routine: ...
 
         @overload
         async def create_or_update(
-                self, 
-                routine_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                routine_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Routine: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                routine_name: str, 
+                self,
+                routine_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def disable(
-                self, 
-                routine_name: str, 
+                self,
+                routine_name: str,
                 **kwargs: Any
             ) -> Routine: ...
 
         @overload
         async def dispatch(
-                self, 
-                routine_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                payload: Optional[RoutineDispatchPayload] = ..., 
+                self,
+                routine_name: str,
+                *,
+                content_type: str = "application/json",
+                payload: Optional[RoutineDispatchPayload] = ...,
                 **kwargs: Any
             ) -> DispatchRoutineResult: ...
 
         @overload
         async def dispatch(
-                self, 
-                routine_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                routine_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DispatchRoutineResult: ...
 
         @overload
         async def dispatch(
-                self, 
-                routine_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                routine_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DispatchRoutineResult: ...
 
         @distributed_trace_async
         async def enable(
-                self, 
-                routine_name: str, 
+                self,
+                routine_name: str,
                 **kwargs: Any
             ) -> Routine: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                routine_name: str, 
+                self,
+                routine_name: str,
                 **kwargs: Any
             ) -> Routine: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                after: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                after: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[Routine]: ...
 
         @distributed_trace
         def list_runs(
-                self, 
-                routine_name: str, 
-                *, 
-                after: Optional[str] = ..., 
-                filter: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                routine_name: str,
+                *,
+                after: Optional[str] = ...,
+                filter: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[RoutineRun]: ...
 
@@ -1795,79 +1857,79 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaSchedulesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: Schedule, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                schedule_id: str,
+                schedule: Schedule,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Schedule: ...
 
         @overload
         async def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                schedule_id: str,
+                schedule: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Schedule: ...
 
         @overload
         async def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                schedule_id: str,
+                schedule: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Schedule: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                schedule_id: str, 
+                self,
+                schedule_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                schedule_id: str, 
+                self,
+                schedule_id: str,
                 **kwargs: Any
             ) -> Schedule: ...
 
         @distributed_trace_async
         async def get_run(
-                self, 
-                schedule_id: str, 
-                run_id: str, 
+                self,
+                schedule_id: str,
+                run_id: str,
                 **kwargs: Any
             ) -> ScheduleRun: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                type: Optional[Union[str, ScheduleTaskType]] = ..., 
+                self,
+                *,
+                enabled: Optional[bool] = ...,
+                type: Optional[Union[str, ScheduleTaskType]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[Schedule]: ...
 
         @distributed_trace
         def list_runs(
-                self, 
-                schedule_id: str, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                type: Optional[Union[str, ScheduleTaskType]] = ..., 
+                self,
+                schedule_id: str,
+                *,
+                enabled: Optional[bool] = ...,
+                type: Optional[Union[str, ScheduleTaskType]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ScheduleRun]: ...
 
@@ -1875,151 +1937,151 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaSkillsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def create(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default: Optional[bool] = ..., 
-                inline_content: Optional[SkillInlineContent] = ..., 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                default: Optional[bool] = ...,
+                inline_content: Optional[SkillInlineContent] = ...,
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @overload
         async def create(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @overload
         async def create(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @overload
         async def create_from_files(
-                self, 
-                name: str, 
-                content: CreateSkillVersionFromFilesBody, 
+                self,
+                name: str,
+                content: CreateSkillVersionFromFilesBody,
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @overload
         async def create_from_files(
-                self, 
-                name: str, 
-                content: JSON, 
+                self,
+                name: str,
+                content: JSON,
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> DeleteSkillResult: ...
 
         @distributed_trace_async
         async def delete_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> DeleteSkillVersionResult: ...
 
         @distributed_trace_async
         async def download(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def download_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> SkillDetails: ...
 
         @distributed_trace_async
         async def get_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[SkillDetails]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[SkillVersion]: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default_version: str, 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                default_version: str,
                 **kwargs: Any
             ) -> SkillDetails: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> SkillDetails: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> SkillDetails: ...
 
@@ -2027,142 +2089,142 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaVoiceAgentsConversationsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def download_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def download_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def download_generated_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> VoiceConversation: ...
 
         @distributed_trace_async
         async def get_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> VoiceRecording: ...
 
         @distributed_trace_async
         async def get_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> VoiceAudioItem: ...
 
         @distributed_trace_async
         async def get_generated_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> VoiceGeneratedAudioItem: ...
 
         @distributed_trace_async
         async def get_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> RealtimeConversationItem: ...
 
         @distributed_trace_async
         async def get_response(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                response_id: str,
                 **kwargs: Any
             ) -> VoiceResponse: ...
 
         @distributed_trace
         def list(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[VoiceConversation]: ...
 
         @distributed_trace
         def list_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[RealtimeConversationItem]: ...
 
         @distributed_trace
         def list_response_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                response_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[RealtimeConversationItem]: ...
 
         @distributed_trace
         def list_responses(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[VoiceResponse]: ...
 
@@ -2170,103 +2232,104 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def download_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def download_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> VoiceAgentLiveConversation: ...
 
         @distributed_trace_async
         async def get_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> VoiceRecording: ...
 
         @distributed_trace_async
         async def get_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> VoiceAudioItem: ...
 
         @distributed_trace_async
         async def get_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> VoiceAgentLiveConversationItem: ...
 
         @distributed_trace
         def list(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[VoiceAgentLiveConversation]: ...
 
         @distributed_trace
         def list_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[VoiceAgentLiveConversationItem]: ...
 
 
     class azure.ai.projects.aio.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         conversations: BetaVoiceAgentsConversationsOperations
+        live: AsyncBetaLive
         live_conversations: BetaVoiceAgentsLiveConversationsOperations
         realtime: AsyncBetaRealtime
         telephony: BetaVoiceAgentsTelephonyOperations
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -2274,288 +2337,288 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace_async
         async def cancel_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
-                *, 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                call_job_id: str,
+                *,
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @overload
         async def create_binding(
-                self, 
-                agent_name: str, 
-                binding: TelephonyBinding, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                binding: TelephonyBinding,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         async def create_binding(
-                self, 
-                agent_name: str, 
-                binding: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                binding: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         async def create_binding(
-                self, 
-                agent_name: str, 
-                binding: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                binding: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         async def create_call_job(
-                self, 
-                agent_name: str, 
-                job: TelephonyCallJobCreate, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
+                self,
+                agent_name: str,
+                job: TelephonyCallJobCreate,
+                *,
+                content_type: str = "application/json",
+                idempotency_key: str,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @overload
         async def create_call_job(
-                self, 
-                agent_name: str, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
+                self,
+                agent_name: str,
+                job: JSON,
+                *,
+                content_type: str = "application/json",
+                idempotency_key: str,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @overload
         async def create_call_job(
-                self, 
-                agent_name: str, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
+                self,
+                agent_name: str,
+                job: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                idempotency_key: str,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @distributed_trace_async
         async def delete_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                *, 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                binding_id: str,
+                *,
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
+                self,
+                agent_name: str,
+                call_job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def end_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
+                self,
+                agent_name: str,
+                call_id: str,
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @distributed_trace_async
         async def get_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
+                self,
+                agent_name: str,
+                binding_id: str,
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @distributed_trace_async
         async def get_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
+                self,
+                agent_name: str,
+                call_id: str,
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @distributed_trace_async
         async def get_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
+                self,
+                agent_name: str,
+                call_job_id: str,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @distributed_trace_async
         async def get_transfer_targets(
-                self, 
-                agent_name: str, 
+                self,
+                agent_name: str,
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
         @distributed_trace
         def list_bindings(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                provider: Optional[Union[str, TelephonyProvider]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                provider: Optional[Union[str, TelephonyProvider]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[TelephonyBindingListItem]: ...
 
         @distributed_trace
         def list_call_jobs(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                campaign_name: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, TelephonyCallJobStatus]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                campaign_name: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                status: Optional[Union[str, TelephonyCallJobStatus]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[TelephonyCallJob]: ...
 
         @distributed_trace
         def list_calls(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                provider: Optional[Union[str, TelephonyProvider]] = ..., 
-                started_after_time: Optional[datetime] = ..., 
-                started_before_time: Optional[datetime] = ..., 
-                status: Optional[Union[str, TelephonyCallStatus]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                provider: Optional[Union[str, TelephonyProvider]] = ...,
+                started_after_time: Optional[datetime] = ...,
+                started_before_time: Optional[datetime] = ...,
+                status: Optional[Union[str, TelephonyCallStatus]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[TelephonyCallSummary]: ...
 
         @overload
         async def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                transfer_targets: List[TelephonyTransferTarget], 
+                self,
+                agent_name: str,
+                *,
+                content_type: str = "application/json",
+                etag: str,
+                match_condition: MatchConditions,
+                transfer_targets: List[TelephonyTransferTarget],
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
         @overload
         async def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
         @overload
         async def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
         @overload
         async def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                *, 
-                content_type: str = "application/json", 
-                target: str, 
+                self,
+                agent_name: str,
+                call_id: str,
+                *,
+                content_type: str = "application/json",
+                target: str,
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @overload
         async def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                call_id: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @overload
         async def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                call_id: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @overload
         async def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: UpdateTelephonyBindingRequest, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                binding_id: str,
+                body: UpdateTelephonyBindingRequest,
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         async def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                binding_id: str,
+                body: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         async def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                binding_id: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
@@ -2563,35 +2626,35 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.ConnectionsOperations(ConnectionsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
-                *, 
-                include_credentials: Optional[bool] = False, 
+                self,
+                name: str,
+                *,
+                include_credentials: Optional[bool] = False,
                 **kwargs: Any
             ) -> Connection: ...
 
         @distributed_trace_async
         async def get_default(
-                self, 
-                connection_type: Union[str, ConnectionType], 
-                *, 
-                include_credentials: Optional[bool] = False, 
+                self,
+                connection_type: Union[str, ConnectionType],
+                *,
+                include_credentials: Optional[bool] = False,
                 **kwargs: Any
             ) -> Connection: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                connection_type: Optional[Union[str, ConnectionType]] = ..., 
-                default_connection: Optional[bool] = ..., 
+                self,
+                *,
+                connection_type: Optional[Union[str, ConnectionType]] = ...,
+                default_connection: Optional[bool] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[Connection]: ...
 
@@ -2599,116 +2662,116 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.DatasetsOperations(_DatasetsOperationsWithGeneration):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def begin_create_generation_job(
-                self, 
-                job: DataGenerationJobInputs, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: DataGenerationJobInputs,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncDatasetGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: JSON,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncDatasetGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncDatasetGenerationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> DataGenerationJob: ...
 
         @overload
         async def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                dataset_version: DatasetVersion, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                dataset_version: DatasetVersion,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> DatasetVersion: ...
 
         @overload
         async def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                dataset_version: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                dataset_version: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> DatasetVersion: ...
 
         @overload
         async def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                dataset_version: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                dataset_version: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> DatasetVersion: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> DatasetVersion: ...
 
         @distributed_trace_async
         async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> DatasetCredential: ...
 
         @distributed_trace_async
         async def get_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> DataGenerationJob: ...
 
@@ -2717,74 +2780,74 @@ namespace azure.ai.projects.aio.operations
 
         @distributed_trace
         def list_generation_jobs(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[DataGenerationJob]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> AsyncItemPaged[DatasetVersion]: ...
 
         @overload
         async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: PendingUploadRequest, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: PendingUploadRequest,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> PendingUploadResponse: ...
 
         @overload
         async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> PendingUploadResponse: ...
 
         @overload
         async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> PendingUploadResponse: ...
 
         @distributed_trace_async
         async def upload_file(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                file_path: str, 
-                name: str, 
-                version: str, 
+                self,
+                *,
+                connection_name: Optional[str] = ...,
+                file_path: str,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> FileDatasetVersion: ...
 
         @distributed_trace_async
         async def upload_folder(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                file_pattern: Optional[Pattern] = ..., 
-                folder: str, 
-                name: str, 
-                version: str, 
+                self,
+                *,
+                connection_name: Optional[str] = ...,
+                file_pattern: Optional[Pattern] = ...,
+                folder: str,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> FolderDatasetVersion: ...
 
@@ -2792,25 +2855,25 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.DeploymentsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> Deployment: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                deployment_type: Optional[Union[str, DeploymentType]] = ..., 
-                model_name: Optional[str] = ..., 
-                model_publisher: Optional[str] = ..., 
+                self,
+                *,
+                deployment_type: Optional[Union[str, DeploymentType]] = ...,
+                model_name: Optional[str] = ...,
+                model_publisher: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[Deployment]: ...
 
@@ -2818,62 +2881,62 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def create_or_update(
-                self, 
-                id: str, 
-                evaluation_rule: EvaluationRule, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                id: str,
+                evaluation_rule: EvaluationRule,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationRule: ...
 
         @overload
         async def create_or_update(
-                self, 
-                id: str, 
-                evaluation_rule: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                id: str,
+                evaluation_rule: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationRule: ...
 
         @overload
         async def create_or_update(
-                self, 
-                id: str, 
-                evaluation_rule: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                id: str,
+                evaluation_rule: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationRule: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                id: str, 
+                self,
+                id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                id: str, 
+                self,
+                id: str,
                 **kwargs: Any
             ) -> EvaluationRule: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                action_type: Optional[Union[str, EvaluationRuleActionType]] = ..., 
-                agent_name: Optional[str] = ..., 
-                enabled: Optional[bool] = ..., 
+                self,
+                *,
+                action_type: Optional[Union[str, EvaluationRuleActionType]] = ...,
+                agent_name: Optional[str] = ...,
+                enabled: Optional[bool] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[EvaluationRule]: ...
 
@@ -2881,167 +2944,167 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.EvaluatorsOperations(EvaluatorsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def begin_create_generation_job(
-                self, 
-                job: EvaluatorGenerationInputs, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: EvaluatorGenerationInputs,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncEvaluatorGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: JSON,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncEvaluatorGenerationLROPoller: ...
 
         @overload
         async def begin_create_generation_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AsyncEvaluatorGenerationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> EvaluatorGenerationJob: ...
 
         @overload
         async def create_version(
-                self, 
-                name: str, 
-                evaluator_version: EvaluatorVersion, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                evaluator_version: EvaluatorVersion,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @overload
         async def create_version(
-                self, 
-                name: str, 
-                evaluator_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                evaluator_version: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @overload
         async def create_version(
-                self, 
-                name: str, 
-                evaluator_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                evaluator_version: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @distributed_trace_async
         async def delete_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> EvaluatorGenerationJob: ...
 
         @distributed_trace_async
         async def get_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                limit: Optional[int] = ..., 
-                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
+                self,
+                *,
+                limit: Optional[int] = ...,
+                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[EvaluatorVersion]: ...
 
         @distributed_trace
         def list_generation_jobs(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[EvaluatorGenerationJob]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
-                *, 
-                limit: Optional[int] = ..., 
-                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
+                self,
+                name: str,
+                *,
+                limit: Optional[int] = ...,
+                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[EvaluatorVersion]: ...
 
         @overload
         async def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: EvaluatorVersion, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                evaluator_version: EvaluatorVersion,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @overload
         async def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                evaluator_version: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @overload
         async def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                evaluator_version: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
@@ -3049,57 +3112,57 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.IndexesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                index: Index, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                index: Index,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> Index: ...
 
         @overload
         async def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                index: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                index: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> Index: ...
 
         @overload
         async def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                index: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                index: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> Index: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> Index: ...
 
@@ -3108,8 +3171,8 @@ namespace azure.ai.projects.aio.operations
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> AsyncItemPaged[Index]: ...
 
@@ -3125,131 +3188,131 @@ namespace azure.ai.projects.aio.operations
     class azure.ai.projects.aio.operations.ToolboxesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         async def create_version(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                policies: Optional[ToolboxPolicies] = ..., 
-                skills: Optional[List[ToolboxSkill]] = ..., 
-                tools: List[ToolboxTool], 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                description: Optional[str] = ...,
+                metadata: Optional[dict[str, str]] = ...,
+                policies: Optional[ToolboxPolicies] = ...,
+                skills: Optional[List[ToolboxSkill]] = ...,
+                tools: List[ToolboxTool],
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
         @overload
         async def create_version(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
         @overload
         async def create_version(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
         @distributed_trace_async
         async def delete(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def delete_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace_async
         async def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> ToolboxObject: ...
 
         @distributed_trace_async
         async def get_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
         @distributed_trace_async
         async def invoke_latest_toolbox_mcp(
-                self, 
-                name: str, 
-                request: dict[str, Any], 
+                self,
+                name: str,
+                request: dict[str, Any],
                 **kwargs: Any
             ) -> Any: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ToolboxObject]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ToolboxVersionObject]: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default_version: str, 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                default_version: str,
                 **kwargs: Any
             ) -> ToolboxObject: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ToolboxObject: ...
 
         @overload
         async def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ToolboxObject: ...
 
@@ -3265,11 +3328,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_card_path: Optional[str] = ..., 
-                base_url: Optional[str] = ..., 
-                project_connection_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_card_path: Optional[str] = ...,
+                base_url: Optional[str] = ...,
+                project_connection_id: Optional[str] = ...,
                 send_credentials_for_agent_card: Optional[bool] = ...
             ) -> None: ...
 
@@ -3289,14 +3352,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_card_path: Optional[str] = ..., 
-                base_url: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: Optional[str] = ..., 
-                send_credentials_for_agent_card: Optional[bool] = ..., 
+                self,
+                *,
+                agent_card_path: Optional[str] = ...,
+                base_url: Optional[str] = ...,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                project_connection_id: Optional[str] = ...,
+                send_credentials_for_agent_card: Optional[bool] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -3321,12 +3384,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                a2a_version: Union[str, A2AProtocolVersion], 
-                agent_card_path: Optional[str] = ..., 
-                base_url: Optional[str] = ..., 
-                project_connection_id: Optional[str] = ..., 
+                self,
+                *,
+                a2a_version: Union[str, A2AProtocolVersion],
+                agent_card_path: Optional[str] = ...,
+                base_url: Optional[str] = ...,
+                project_connection_id: Optional[str] = ...,
                 send_credentials_for_agent_card: Optional[bool] = ...
             ) -> None: ...
 
@@ -3347,15 +3410,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                a2a_version: Union[str, A2AProtocolVersion], 
-                agent_card_path: Optional[str] = ..., 
-                base_url: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: Optional[str] = ..., 
-                send_credentials_for_agent_card: Optional[bool] = ..., 
+                self,
+                *,
+                a2a_version: Union[str, A2AProtocolVersion],
+                agent_card_path: Optional[str] = ...,
+                base_url: Optional[str] = ...,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                project_connection_id: Optional[str] = ...,
+                send_credentials_for_agent_card: Optional[bool] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -3373,13 +3436,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                filter: Optional[str] = ..., 
-                index_asset_id: Optional[str] = ..., 
-                index_name: Optional[str] = ..., 
-                project_connection_id: Optional[str] = ..., 
-                query_type: Optional[Union[str, AzureAISearchQueryType]] = ..., 
+                self,
+                *,
+                filter: Optional[str] = ...,
+                index_asset_id: Optional[str] = ...,
+                index_name: Optional[str] = ...,
+                project_connection_id: Optional[str] = ...,
+                query_type: Optional[Union[str, AzureAISearchQueryType]] = ...,
                 top_k: Optional[int] = ...
             ) -> None: ...
 
@@ -3414,8 +3477,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 enable_m365_public_endpoint: Optional[bool] = ...
             ) -> None: ...
 
@@ -3428,8 +3491,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -3448,10 +3511,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                skills: list[AgentCardSkill], 
+                self,
+                *,
+                description: Optional[str] = ...,
+                skills: list[AgentCardSkill],
                 version: str
             ) -> None: ...
 
@@ -3468,12 +3531,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                examples: Optional[list[str]] = ..., 
-                id: str, 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                examples: Optional[list[str]] = ...,
+                id: str,
+                name: str,
                 tags: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -3488,9 +3551,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_name: str, 
+                self,
+                *,
+                agent_name: str,
                 model_configuration: Optional[InsightModelConfiguration] = ...
             ) -> None: ...
 
@@ -3504,8 +3567,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 cluster_insight: ClusterInsightResult
             ) -> None: ...
 
@@ -3521,10 +3584,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_version: Optional[str] = ..., 
+                self,
+                *,
+                agent_name: str,
+                agent_version: Optional[str] = ...,
                 description: Optional[str] = ...
             ) -> None: ...
 
@@ -3538,9 +3601,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                kind: str, 
+                self,
+                *,
+                kind: str,
                 rai_config: Optional[RaiConfig] = ...
             ) -> None: ...
 
@@ -3565,14 +3628,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_card: Optional[AgentCard] = ..., 
-                agent_endpoint: Optional[AgentEndpointConfig] = ..., 
-                digital_worker_type: Optional[Union[str, DigitalWorkerType]] = ..., 
-                id: str, 
-                name: str, 
-                object: Literal[AgentObjectType.AGENT], 
+                self,
+                *,
+                agent_card: Optional[AgentCard] = ...,
+                agent_endpoint: Optional[AgentEndpointConfig] = ...,
+                digital_worker_type: Optional[Union[str, DigitalWorkerType]] = ...,
+                id: str,
+                name: str,
+                object: Literal[AgentObjectType.AGENT],
                 versions: AgentObjectVersions
             ) -> None: ...
 
@@ -3585,8 +3648,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -3609,10 +3672,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]] = ..., 
-                protocol_configuration: Optional[ProtocolConfiguration] = ..., 
+                self,
+                *,
+                authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]] = ...,
+                protocol_configuration: Optional[ProtocolConfiguration] = ...,
                 version_selector: Optional[VersionSelector] = ...
             ) -> None: ...
 
@@ -3639,10 +3702,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_version: Optional[str] = ..., 
+                self,
+                *,
+                agent_name: str,
+                agent_version: Optional[str] = ...,
                 description: Optional[str] = ...
             ) -> None: ...
 
@@ -3655,8 +3718,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -3671,10 +3734,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_id: str, 
-                principal_id: str, 
+                self,
+                *,
+                client_id: str,
+                principal_id: str,
                 status: Optional[Union[str, AgentIdentityStatus]] = ...
             ) -> None: ...
 
@@ -3710,10 +3773,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                highlighted_traces: list[AgentInsightHighlightedTrace], 
-                linked_traces: list[AgentInsightLinkedTrace], 
+                self,
+                *,
+                highlighted_traces: list[AgentInsightHighlightedTrace],
+                linked_traces: list[AgentInsightLinkedTrace],
                 recommended_actions: AgentInsightRecommendedAction
             ) -> None: ...
 
@@ -3727,8 +3790,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 amount: float
             ) -> None: ...
 
@@ -3745,11 +3808,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                duration_ms: timedelta, 
-                summary: str, 
-                timestamp: datetime, 
+                self,
+                *,
+                duration_ms: timedelta,
+                summary: str,
+                timestamp: datetime,
                 total_tokens: Optional[int] = ...
             ) -> None: ...
 
@@ -3783,11 +3846,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_name: str, 
-                enabled: Optional[bool] = ..., 
-                model_deployment_name: str, 
+                self,
+                *,
+                agent_name: str,
+                enabled: Optional[bool] = ...,
+                model_deployment_name: str,
                 run_interval_hours: Optional[float] = ...
             ) -> None: ...
 
@@ -3815,11 +3878,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                model_deployment_name: Optional[str] = ..., 
-                overview_override: Optional[AgentInsightsOverviewOverride] = ..., 
+                self,
+                *,
+                enabled: Optional[bool] = ...,
+                model_deployment_name: Optional[str] = ...,
+                overview_override: Optional[AgentInsightsOverviewOverride] = ...,
                 run_interval_hours: Optional[float] = ...
             ) -> None: ...
 
@@ -3844,10 +3907,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                changes: Optional[list[AgentInsightProposedFixChange]] = ..., 
-                kind: Union[str, AgentInsightProposedFixKind], 
+                self,
+                *,
+                changes: Optional[list[AgentInsightProposedFixChange]] = ...,
+                kind: Union[str, AgentInsightProposedFixKind],
                 text: str
             ) -> None: ...
 
@@ -3866,14 +3929,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                diff: Optional[str] = ..., 
-                language: Optional[str] = ..., 
-                new_value: Optional[Any] = ..., 
-                old_value: Optional[Any] = ..., 
-                path: Optional[str] = ..., 
-                surface: Optional[Union[str, AgentInsightPromptSurface]] = ..., 
+                self,
+                *,
+                diff: Optional[str] = ...,
+                language: Optional[str] = ...,
+                new_value: Optional[Any] = ...,
+                old_value: Optional[Any] = ...,
+                path: Optional[str] = ...,
+                surface: Optional[Union[str, AgentInsightPromptSurface]] = ...,
                 target: Optional[str] = ...
             ) -> None: ...
 
@@ -3892,8 +3955,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 proposed_fix: AgentInsightProposedFix
             ) -> None: ...
 
@@ -3920,8 +3983,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 inputs: Optional[AgentInsightRunCreate] = ...
             ) -> None: ...
 
@@ -3934,8 +3997,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 lookback_hours: Optional[float] = ...
             ) -> None: ...
 
@@ -3947,18 +4010,18 @@ namespace azure.ai.projects.models
         property details: Mapping[str, Any]    # Read-only
 
         def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
+                self,
+                client: Any,
+                initial_response: Any,
+                deserialization_callback: Any,
                 polling_method: Any
             ) -> None: ...
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[AgentInsightRunResult], 
-                continuation_token: str, 
+                cls,
+                polling_method: PollingMethod[AgentInsightRunResult],
+                continuation_token: str,
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
@@ -3975,13 +4038,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                insights_created: int, 
-                insights_reopened: int, 
-                insights_updated: int, 
-                token_usage: AgentInsightTokenUsage, 
-                traces_analyzed: int, 
+                self,
+                *,
+                insights_created: int,
+                insights_reopened: int,
+                insights_updated: int,
+                token_usage: AgentInsightTokenUsage,
+                traces_analyzed: int,
                 traces_in_window: int
             ) -> None: ...
 
@@ -4014,11 +4077,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: str, 
-                details: Optional[dict[str, Any]] = ..., 
-                message: str, 
+                self,
+                *,
+                code: str,
+                details: Optional[dict[str, Any]] = ...,
+                message: str,
                 occurred_at: datetime
             ) -> None: ...
 
@@ -4034,11 +4097,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                cached_tokens: Optional[int] = ..., 
-                input_tokens: int, 
-                output_tokens: int, 
+                self,
+                *,
+                cached_tokens: Optional[int] = ...,
+                input_tokens: int,
+                output_tokens: int,
                 total_tokens: int
             ) -> None: ...
 
@@ -4051,8 +4114,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 status: Optional[Union[str, AgentInsightStatus]] = ...
             ) -> None: ...
 
@@ -4067,10 +4130,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                source: Union[str, AgentInsightOverviewSource], 
+                self,
+                *,
+                content: str,
+                source: Union[str, AgentInsightOverviewSource],
                 updated_at: datetime
             ) -> None: ...
 
@@ -4083,8 +4146,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 content: str
             ) -> None: ...
 
@@ -4113,8 +4176,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 latest: AgentVersionDetails
             ) -> None: ...
 
@@ -4128,8 +4191,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 mutations: Optional[list[AgentOptimizationMutation]] = ...
             ) -> None: ...
 
@@ -4145,11 +4208,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                current_model: Optional[str] = ..., 
-                skills: Optional[list[AgentOptimizationSkill]] = ..., 
-                system_prompt: Optional[str] = ..., 
+                self,
+                *,
+                current_model: Optional[str] = ...,
+                skills: Optional[list[AgentOptimizationSkill]] = ...,
+                system_prompt: Optional[str] = ...,
                 tools: Optional[list[ChatCompletionTool]] = ...
             ) -> None: ...
 
@@ -4171,17 +4234,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_version: Optional[str] = ..., 
-                candidate_id: str, 
-                evaluation: Optional[AgentOptimizationCandidateEvaluation] = ..., 
-                job_id: str, 
-                name: str, 
-                output: Optional[AgentOptimizationCandidateOutput] = ..., 
-                promotion: Optional[AgentOptimizationCandidatePromotionInfo] = ..., 
-                rationale: Optional[str] = ..., 
-                started_at: datetime, 
+                self,
+                *,
+                agent_version: Optional[str] = ...,
+                candidate_id: str,
+                evaluation: Optional[AgentOptimizationCandidateEvaluation] = ...,
+                job_id: str,
+                name: str,
+                output: Optional[AgentOptimizationCandidateOutput] = ...,
+                promotion: Optional[AgentOptimizationCandidatePromotionInfo] = ...,
+                rationale: Optional[str] = ...,
+                started_at: datetime,
                 status: Union[str, AgentOptimizationCandidateStatus]
             ) -> None: ...
 
@@ -4199,13 +4262,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                avg_latency_ms: Optional[timedelta] = ..., 
-                avg_tokens: Optional[float] = ..., 
-                completed_at: Optional[datetime] = ..., 
-                eval_id: Optional[str] = ..., 
-                eval_run_id: Optional[str] = ..., 
+                self,
+                *,
+                avg_latency_ms: Optional[timedelta] = ...,
+                avg_tokens: Optional[float] = ...,
+                completed_at: Optional[datetime] = ...,
+                eval_id: Optional[str] = ...,
+                eval_run_id: Optional[str] = ...,
                 score: Optional[float] = ...
             ) -> None: ...
 
@@ -4222,8 +4285,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -4237,9 +4300,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                promoted_agent: AgentReference, 
+                self,
+                *,
+                promoted_agent: AgentReference,
                 promoted_at: datetime
             ) -> None: ...
 
@@ -4252,8 +4315,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 max_candidates: Optional[int] = ...
             ) -> None: ...
 
@@ -4278,12 +4341,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_optimization_space: AgentOptimizationSpace, 
-                baseline_agent_configuration: Optional[AgentOptimizationBaselineAgentConfiguration] = ..., 
-                candidate_search_configuration: AgentOptimizationCandidateSearchConfiguration, 
-                evaluation_configuration: AgentOptimizationEvaluationConfiguration, 
+                self,
+                *,
+                agent_optimization_space: AgentOptimizationSpace,
+                baseline_agent_configuration: Optional[AgentOptimizationBaselineAgentConfiguration] = ...,
+                candidate_search_configuration: AgentOptimizationCandidateSearchConfiguration,
+                evaluation_configuration: AgentOptimizationEvaluationConfiguration,
                 goal: Optional[Union[str, AgentOptimizationGoal]] = ...
             ) -> None: ...
 
@@ -4296,8 +4359,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -4318,11 +4381,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                by_stage: Optional[AgentOptimizationStageEstimate] = ..., 
-                currency: str, 
-                total: Optional[AgentOptimizationEstimateBand] = ..., 
+                self,
+                *,
+                by_stage: Optional[AgentOptimizationStageEstimate] = ...,
+                currency: str,
+                total: Optional[AgentOptimizationEstimateBand] = ...,
                 unpriced_stages: Optional[list[Union[str, AgentOptimizationStage]]] = ...
             ) -> None: ...
 
@@ -4342,10 +4405,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                ceiling: float, 
-                low: float, 
+                self,
+                *,
+                ceiling: float,
+                low: float,
                 typical: float
             ) -> None: ...
 
@@ -4360,10 +4423,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                optimization_configuration: AgentOptimizationConfiguration, 
-                optimization_model_configuration: AgentOptimizationModelConfiguration, 
+                self,
+                *,
+                optimization_configuration: AgentOptimizationConfiguration,
+                optimization_model_configuration: AgentOptimizationModelConfiguration,
                 target_configuration: Optional[AgentOptimizationTargetConfiguration] = ...
             ) -> None: ...
 
@@ -4378,10 +4441,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_counts: Optional[AgentOptimizationStageEstimate] = ..., 
-                cost: Optional[AgentOptimizationCostEstimate] = ..., 
+                self,
+                *,
+                call_counts: Optional[AgentOptimizationStageEstimate] = ...,
+                cost: Optional[AgentOptimizationCostEstimate] = ...,
                 prices_as_of: Optional[datetime] = ...
             ) -> None: ...
 
@@ -4398,12 +4461,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                evaluation_model: EvaluationModelConfiguration, 
-                evaluators: list[AgentOptimizationEvaluator], 
-                max_concurrent_agent_runs: Optional[int] = ..., 
-                training_set: AgentOptimizationEvaluationSet, 
+                self,
+                *,
+                evaluation_model: EvaluationModelConfiguration,
+                evaluators: list[AgentOptimizationEvaluator],
+                max_concurrent_agent_runs: Optional[int] = ...,
+                training_set: AgentOptimizationEvaluationSet,
                 validation_set: Optional[AgentOptimizationEvaluationSet] = ...
             ) -> None: ...
 
@@ -4416,8 +4479,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -4437,10 +4500,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                initialization_parameters: Optional[dict[str, Any]] = ..., 
-                name: str, 
+                self,
+                *,
+                initialization_parameters: Optional[dict[str, Any]] = ...,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -4455,9 +4518,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -4475,8 +4538,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 value: Optional[str] = ...
             ) -> None: ...
 
@@ -4500,11 +4563,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                display_name: Optional[str] = ..., 
-                optimization_configuration: AgentOptimizationConfigurationBase, 
-                optimization_model_configuration: AgentOptimizationModelConfiguration, 
+                self,
+                *,
+                display_name: Optional[str] = ...,
+                optimization_configuration: AgentOptimizationConfigurationBase,
+                optimization_model_configuration: AgentOptimizationModelConfiguration,
                 target_configuration: Optional[AgentOptimizationTargetConfiguration] = ...
             ) -> None: ...
 
@@ -4520,11 +4583,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                avg_latency_ms: timedelta, 
-                call_count: int, 
-                model: Optional[str] = ..., 
+                self,
+                *,
+                avg_latency_ms: timedelta,
+                call_count: int,
+                model: Optional[str] = ...,
                 stage: Union[str, AgentOptimizationStage]
             ) -> None: ...
 
@@ -4540,11 +4603,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                candidate_summary: Optional[AgentOptimizationResultCandidateSummary] = ..., 
-                latency_metrics: list[AgentOptimizationJobLatency], 
-                termination_reason: Optional[Union[str, AgentOptimizationTerminationReason]] = ..., 
+                self,
+                *,
+                candidate_summary: Optional[AgentOptimizationResultCandidateSummary] = ...,
+                latency_metrics: list[AgentOptimizationJobLatency],
+                termination_reason: Optional[Union[str, AgentOptimizationTerminationReason]] = ...,
                 token_usage: list[AgentOptimizationJobTokenUsage]
             ) -> None: ...
 
@@ -4563,14 +4626,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                cached_tokens: Optional[int] = ..., 
-                input_tokens: Optional[int] = ..., 
-                model: Optional[str] = ..., 
-                output_tokens: Optional[int] = ..., 
-                reasoning_tokens: Optional[int] = ..., 
-                stage: Union[str, AgentOptimizationStage], 
+                self,
+                *,
+                cached_tokens: Optional[int] = ...,
+                input_tokens: Optional[int] = ...,
+                model: Optional[str] = ...,
+                output_tokens: Optional[int] = ...,
+                reasoning_tokens: Optional[int] = ...,
+                stage: Union[str, AgentOptimizationStage],
                 total_tokens: Optional[int] = ...
             ) -> None: ...
 
@@ -4582,18 +4645,18 @@ namespace azure.ai.projects.models
         property details: Mapping[str, Any]    # Read-only
 
         def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
+                self,
+                client: Any,
+                initial_response: Any,
+                deserialization_callback: Any,
                 polling_method: Any
             ) -> None: ...
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[AgentOptimizationJobResult], 
-                continuation_token: str, 
+                cls,
+                polling_method: PollingMethod[AgentOptimizationJobResult],
+                continuation_token: str,
                 **kwargs: Any
             ) -> AgentOptimizationLROPoller: ...
 
@@ -4605,8 +4668,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 model: str
             ) -> None: ...
 
@@ -4620,8 +4683,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 value: Optional[str] = ...
             ) -> None: ...
 
@@ -4634,8 +4697,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -4649,8 +4712,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 mutations: Optional[list[AgentOptimizationMutation]] = ...
             ) -> None: ...
 
@@ -4668,13 +4731,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                baseline_id: Optional[str] = ..., 
-                baseline_score: Optional[float] = ..., 
-                best_id: Optional[str] = ..., 
-                best_score: Optional[float] = ..., 
-                completed_candidate_count: int, 
+                self,
+                *,
+                baseline_id: Optional[str] = ...,
+                baseline_score: Optional[float] = ...,
+                best_id: Optional[str] = ...,
+                best_score: Optional[float] = ...,
+                completed_candidate_count: int,
                 latest_promoted_candidate: Optional[AgentOptimizationCandidatePromotionInfo] = ...
             ) -> None: ...
 
@@ -4689,10 +4752,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                body: Optional[str] = ..., 
-                description: str, 
+                self,
+                *,
+                body: Optional[str] = ...,
+                description: str,
                 name: str
             ) -> None: ...
 
@@ -4706,8 +4769,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 value: Optional[list[AgentOptimizationSkill]] = ...
             ) -> None: ...
 
@@ -4721,9 +4784,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                model_search_space: Optional[list[str]] = ..., 
+                self,
+                *,
+                model_search_space: Optional[list[str]] = ...,
                 target_attributes: Optional[list[Union[str, TargetAttribute]]] = ...
             ) -> None: ...
 
@@ -4744,10 +4807,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent: Optional[AgentOptimizationEstimateBand] = ..., 
-                evaluation: Optional[AgentOptimizationEstimateBand] = ..., 
+                self,
+                *,
+                agent: Optional[AgentOptimizationEstimateBand] = ...,
+                evaluation: Optional[AgentOptimizationEstimateBand] = ...,
                 optimization: Optional[AgentOptimizationEstimateBand] = ...
             ) -> None: ...
 
@@ -4760,8 +4823,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -4776,9 +4839,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: str
             ) -> None: ...
 
@@ -4792,8 +4855,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 source: AgentOptimizationTargetCompletionDataSource
             ) -> None: ...
 
@@ -4807,8 +4870,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 test_cases: list[AgentOptimizationTargetCompletionTestCase]
             ) -> None: ...
 
@@ -4822,9 +4885,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                ground_truth: Optional[str] = ..., 
+                self,
+                *,
+                ground_truth: Optional[str] = ...,
                 query: str
             ) -> None: ...
 
@@ -4837,8 +4900,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -4862,8 +4925,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 value: Optional[list[ChatCompletionTool]] = ...
             ) -> None: ...
 
@@ -4876,8 +4939,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -4892,9 +4955,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: str
             ) -> None: ...
 
@@ -4909,9 +4972,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                default_simulation_configuration: Optional[UserConversationSimulationConfiguration] = ..., 
+                self,
+                *,
+                default_simulation_configuration: Optional[UserConversationSimulationConfiguration] = ...,
                 source: AgentOptimizationUserConversationSimulationDataSource
             ) -> None: ...
 
@@ -4925,8 +4988,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 test_cases: list[UserConversationSimulationTestCase]
             ) -> None: ...
 
@@ -4941,9 +5004,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -4962,10 +5025,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_session_id: str, 
-                status: Union[str, AgentSessionStatus], 
+                self,
+                *,
+                agent_session_id: str,
+                status: Union[str, AgentSessionStatus],
                 version_indicator: VersionIndicator
             ) -> None: ...
 
@@ -5001,9 +5064,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                risk_categories: list[Union[str, RiskCategory]], 
+                self,
+                *,
+                risk_categories: list[Union[str, RiskCategory]],
                 target: EvaluationTarget
             ) -> None: ...
 
@@ -5029,17 +5092,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_at: datetime, 
-                definition: AgentDefinition, 
-                description: Optional[str] = ..., 
-                draft: Optional[bool] = ..., 
-                id: str, 
-                metadata: dict[str, str], 
-                name: str, 
-                object: Literal[AgentObjectType.AGENT_VERSION], 
-                status: Optional[Union[str, AgentVersionStatus]] = ..., 
+                self,
+                *,
+                created_at: datetime,
+                definition: AgentDefinition,
+                description: Optional[str] = ...,
+                draft: Optional[bool] = ...,
+                id: str,
+                metadata: dict[str, str],
+                name: str,
+                object: Literal[AgentObjectType.AGENT_VERSION],
+                status: Optional[Union[str, AgentVersionStatus]] = ...,
                 version: str
             ) -> None: ...
 
@@ -5070,8 +5133,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -5088,11 +5151,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                choice: ChoiceValueResource, 
-                confidence: float, 
-                name: str, 
+                self,
+                *,
+                choice: ChoiceValueResource,
+                confidence: float,
+                name: str,
                 probabilities: list[ChoiceProbabilityResource]
             ) -> None: ...
 
@@ -5107,9 +5170,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 probability: float
             ) -> None: ...
 
@@ -5123,8 +5186,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 name: str
             ) -> None: ...
 
@@ -5141,11 +5204,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                confidence: float, 
-                name: str, 
-                probabilities: list[ScoreProbabilityResource], 
+                self,
+                *,
+                confidence: float,
+                name: str,
+                probabilities: list[ScoreProbabilityResource],
                 score: float
             ) -> None: ...
 
@@ -5172,15 +5235,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                additional_info: Optional[dict[str, Any]] = ..., 
-                code: str, 
-                debug_info: Optional[dict[str, Any]] = ..., 
-                details: Optional[list[ApiError]] = ..., 
-                message: str, 
-                misalignment: Optional[MisalignmentErrorDetailsResource] = ..., 
-                param: Optional[str] = ..., 
+                self,
+                *,
+                additional_info: Optional[dict[str, Any]] = ...,
+                code: str,
+                debug_info: Optional[dict[str, Any]] = ...,
+                details: Optional[list[ApiError]] = ...,
+                message: str,
+                misalignment: Optional[MisalignmentErrorDetailsResource] = ...,
+                param: Optional[str] = ...,
                 type: Optional[str] = ...
             ) -> None: ...
 
@@ -5193,8 +5256,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 error: ApiError
             ) -> None: ...
 
@@ -5219,8 +5282,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...
             ) -> None: ...
 
@@ -5237,11 +5300,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                city: Optional[str] = ..., 
-                country: Optional[str] = ..., 
-                region: Optional[str] = ..., 
+                self,
+                *,
+                city: Optional[str] = ...,
+                country: Optional[str] = ...,
+                region: Optional[str] = ...,
                 timezone: Optional[str] = ...
             ) -> None: ...
 
@@ -5255,9 +5318,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                category: Union[str, FoundryModelArtifactProfileCategory], 
+                self,
+                *,
+                category: Union[str, FoundryModelArtifactProfileCategory],
                 signals: Optional[list[Union[str, FoundryModelArtifactProfileSignal]]] = ...
             ) -> None: ...
 
@@ -5269,18 +5332,18 @@ namespace azure.ai.projects.models
         property details: Mapping[str, Any]    # Read-only
 
         def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
+                self,
+                client: Any,
+                initial_response: Any,
+                deserialization_callback: Any,
                 polling_method: Any
             ) -> None: ...
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[AgentInsightRunResult], 
-                continuation_token: str, 
+                cls,
+                polling_method: AsyncPollingMethod[AgentInsightRunResult],
+                continuation_token: str,
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
@@ -5291,18 +5354,18 @@ namespace azure.ai.projects.models
         property details: Mapping[str, Any]    # Read-only
 
         def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
+                self,
+                client: Any,
+                initial_response: Any,
+                deserialization_callback: Any,
                 polling_method: Any
             ) -> None: ...
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[AgentOptimizationJobResult], 
-                continuation_token: str, 
+                cls,
+                polling_method: AsyncPollingMethod[AgentOptimizationJobResult],
+                continuation_token: str,
                 **kwargs: Any
             ) -> AsyncAgentOptimizationLROPoller: ...
 
@@ -5313,18 +5376,18 @@ namespace azure.ai.projects.models
         property details: Mapping[str, Any]    # Read-only
 
         def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
+                self,
+                client: Any,
+                initial_response: Any,
+                deserialization_callback: Any,
                 polling_method: Any
             ) -> None: ...
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[DataGenerationJobResult], 
-                continuation_token: str, 
+                cls,
+                polling_method: AsyncPollingMethod[DataGenerationJobResult],
+                continuation_token: str,
                 **kwargs: Any
             ) -> AsyncDatasetGenerationLROPoller: ...
 
@@ -5333,18 +5396,18 @@ namespace azure.ai.projects.models
         property details: Mapping[str, Any]    # Read-only
 
         def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
+                self,
+                client: Any,
+                initial_response: Any,
+                deserialization_callback: Any,
                 polling_method: Any
             ) -> None: ...
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[EvaluatorVersion], 
-                continuation_token: str, 
+                cls,
+                polling_method: AsyncPollingMethod[EvaluatorVersion],
+                continuation_token: str,
                 **kwargs: Any
             ) -> AsyncEvaluatorGenerationLROPoller: ...
 
@@ -5355,9 +5418,9 @@ namespace azure.ai.projects.models
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[MemoryStoreUpdateCompletedResult], 
-                continuation_token: str, 
+                cls,
+                polling_method: AsyncPollingMethod[MemoryStoreUpdateCompletedResult],
+                continuation_token: str,
                 **kwargs: Any
             ) -> AsyncUpdateMemoriesLROPoller: ...
 
@@ -5369,9 +5432,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                expires_at: Optional[datetime] = ..., 
+                self,
+                *,
+                expires_at: Optional[datetime] = ...,
                 scheduled_at: datetime
             ) -> None: ...
 
@@ -5418,10 +5481,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_ids: Optional[list[str]] = ..., 
-                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ..., 
+                self,
+                *,
+                file_ids: Optional[list[str]] = ...,
+                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ...,
                 network_policy: Optional[ContainerNetworkPolicyParam] = ...
             ) -> None: ...
 
@@ -5438,11 +5501,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
-                tool_descriptions: Optional[list[ToolDescription]] = ..., 
-                tools: Optional[list[Tool]] = ..., 
+                self,
+                *,
+                name: str,
+                tool_descriptions: Optional[list[ToolDescription]] = ...,
+                tools: Optional[list[Tool]] = ...,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -5475,9 +5538,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                model: Optional[str] = ..., 
+                self,
+                *,
+                model: Optional[str] = ...,
                 sampling_params: Optional[ModelSamplingParams] = ...
             ) -> None: ...
 
@@ -5511,12 +5574,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                description: Optional[str] = ..., 
-                field_mapping: Optional[FieldMapping] = ..., 
-                index_name: str, 
+                self,
+                *,
+                connection_name: str,
+                description: Optional[str] = ...,
+                field_mapping: Optional[FieldMapping] = ...,
+                index_name: str,
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
@@ -5541,11 +5604,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                azure_ai_search: AzureAISearchToolResource, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                azure_ai_search: AzureAISearchToolResource,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -5558,8 +5621,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 indexes: list[AISearchIndexResource]
             ) -> None: ...
 
@@ -5576,11 +5639,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                azure_ai_search: AzureAISearchToolResource, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                azure_ai_search: AzureAISearchToolResource,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -5594,8 +5657,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 storage_queue: AzureFunctionStorageQueue
             ) -> None: ...
 
@@ -5610,10 +5673,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                function: AzureFunctionDefinitionFunction, 
-                input_binding: AzureFunctionBinding, 
+                self,
+                *,
+                function: AzureFunctionDefinitionFunction,
+                input_binding: AzureFunctionBinding,
                 output_binding: AzureFunctionBinding
             ) -> None: ...
 
@@ -5628,10 +5691,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
                 parameters: dict[str, Any]
             ) -> None: ...
 
@@ -5645,9 +5708,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                queue_name: str, 
+                self,
+                *,
+                queue_name: str,
                 queue_service_endpoint: str
             ) -> None: ...
 
@@ -5662,9 +5725,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                azure_function: AzureFunctionDefinition, 
+                self,
+                *,
+                azure_function: AzureFunctionDefinition,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -5678,8 +5741,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 model_deployment_name: str
             ) -> None: ...
 
@@ -5692,8 +5755,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -5711,13 +5774,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                count: Optional[int] = ..., 
-                freshness: Optional[str] = ..., 
-                instance_name: str, 
-                market: Optional[str] = ..., 
-                project_connection_id: str, 
+                self,
+                *,
+                count: Optional[int] = ...,
+                freshness: Optional[str] = ...,
+                instance_name: str,
+                market: Optional[str] = ...,
+                project_connection_id: str,
                 set_lang: Optional[str] = ...
             ) -> None: ...
 
@@ -5731,8 +5794,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 bing_custom_search_preview: BingCustomSearchToolParameters
             ) -> None: ...
 
@@ -5745,8 +5808,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 search_configurations: list[BingCustomSearchConfiguration]
             ) -> None: ...
 
@@ -5763,12 +5826,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                count: Optional[int] = ..., 
-                freshness: Optional[str] = ..., 
-                market: Optional[str] = ..., 
-                project_connection_id: str, 
+                self,
+                *,
+                count: Optional[int] = ...,
+                freshness: Optional[str] = ...,
+                market: Optional[str] = ...,
+                project_connection_id: str,
                 set_lang: Optional[str] = ...
             ) -> None: ...
 
@@ -5781,8 +5844,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 search_configurations: list[BingGroundingSearchConfiguration]
             ) -> None: ...
 
@@ -5799,11 +5862,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                bing_grounding: BingGroundingSearchToolParameters, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                bing_grounding: BingGroundingSearchToolParameters,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -5818,10 +5881,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                blob_uri: str, 
-                credential: BlobReferenceSasCredential, 
+                self,
+                *,
+                blob_uri: str,
+                credential: BlobReferenceSasCredential,
                 storage_account_arm_id: str
             ) -> None: ...
 
@@ -5834,8 +5897,8 @@ namespace azure.ai.projects.models
         type: Literal["SAS"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -5876,8 +5939,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 browser_automation_preview: BrowserAutomationToolParameters
             ) -> None: ...
 
@@ -5894,11 +5957,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                browser_automation_preview: BrowserAutomationToolParameters, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                browser_automation_preview: BrowserAutomationToolParameters,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -5912,8 +5975,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 browser_automation: BrowserAutomationToolParameters
             ) -> None: ...
 
@@ -5926,8 +5989,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 project_connection_id: str
             ) -> None: ...
 
@@ -5940,8 +6003,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 connection: BrowserAutomationToolConnectionParameters
             ) -> None: ...
 
@@ -5958,11 +6021,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                browser_automation: BrowserAutomationToolParameters, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                browser_automation: BrowserAutomationToolParameters,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -5984,11 +6047,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                outputs: StructuredOutputDefinition, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                outputs: StructuredOutputDefinition,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -6003,10 +6066,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                size: int, 
-                x: int, 
+                self,
+                *,
+                size: int,
+                x: int,
                 y: int
             ) -> None: ...
 
@@ -6020,8 +6083,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 function: FunctionObject
             ) -> None: ...
 
@@ -6038,11 +6101,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                memory_id: str, 
-                scope: str, 
+                self,
+                *,
+                content: str,
+                memory_id: str,
+                scope: str,
                 updated_at: datetime
             ) -> None: ...
 
@@ -6056,9 +6119,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                probability: float, 
+                self,
+                *,
+                probability: float,
                 value: ChoiceValueResource
             ) -> None: ...
 
@@ -6073,10 +6136,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                clusters: list[InsightCluster], 
-                coordinates: Optional[dict[str, ChartCoordinate]] = ..., 
+                self,
+                *,
+                clusters: list[InsightCluster],
+                coordinates: Optional[dict[str, ChartCoordinate]] = ...,
                 summary: InsightSummary
             ) -> None: ...
 
@@ -6091,10 +6154,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                input_token_usage: int, 
-                output_token_usage: int, 
+                self,
+                *,
+                input_token_usage: int,
+                output_token_usage: int,
                 total_token_usage: int
             ) -> None: ...
 
@@ -6114,14 +6177,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                blob_uri: Optional[str] = ..., 
-                code_text: Optional[str] = ..., 
-                data_schema: Optional[dict[str, Any]] = ..., 
-                entry_point: Optional[str] = ..., 
-                image_tag: Optional[str] = ..., 
-                init_parameters: Optional[dict[str, Any]] = ..., 
+                self,
+                *,
+                blob_uri: Optional[str] = ...,
+                code_text: Optional[str] = ...,
+                data_schema: Optional[dict[str, Any]] = ...,
+                entry_point: Optional[str] = ...,
+                image_tag: Optional[str] = ...,
+                init_parameters: Optional[dict[str, Any]] = ...,
                 metrics: Optional[dict[str, EvaluatorMetric]] = ...
             ) -> None: ...
 
@@ -6137,10 +6200,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                dependency_resolution: Union[str, CodeDependencyResolution], 
-                entry_point: list[str], 
+                self,
+                *,
+                dependency_resolution: Union[str, CodeDependencyResolution],
+                entry_point: list[str],
                 runtime: str
             ) -> None: ...
 
@@ -6163,12 +6226,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ...,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -6186,12 +6249,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ...,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -6206,10 +6269,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                key: str, 
-                type: Literal["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin"], 
+                self,
+                *,
+                key: str,
+                type: Literal["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin"],
                 value: Union[str, float, bool, list[Union[str, float]]]
             ) -> None: ...
 
@@ -6223,9 +6286,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                filters: list[Union[ComparisonFilter, CompoundFilter]], 
+                self,
+                *,
+                filters: list[Union[ComparisonFilter, CompoundFilter]],
                 type: Literal["and", "or"]
             ) -> None: ...
 
@@ -6259,10 +6322,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                display_height: int, 
-                display_width: int, 
+                self,
+                *,
+                display_height: int,
+                display_width: int,
                 environment: Union[str, ComputerEnvironment]
             ) -> None: ...
 
@@ -6304,11 +6367,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_ids: Optional[list[str]] = ..., 
-                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ..., 
-                network_policy: Optional[ContainerNetworkPolicyParam] = ..., 
+                self,
+                *,
+                file_ids: Optional[list[str]] = ...,
+                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ...,
+                network_policy: Optional[ContainerNetworkPolicyParam] = ...,
                 skills: Optional[list[ContainerSkill]] = ...
             ) -> None: ...
 
@@ -6322,9 +6385,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                image: str, 
+                self,
+                *,
+                image: str,
                 registry_connection_id: Optional[str] = ...
             ) -> None: ...
 
@@ -6346,9 +6409,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_domains: list[str], 
+                self,
+                *,
+                allowed_domains: list[str],
                 domain_secrets: Optional[list[ContainerNetworkPolicyDomainSecretParam]] = ...
             ) -> None: ...
 
@@ -6373,10 +6436,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                domain: str, 
-                name: str, 
+                self,
+                *,
+                domain: str,
+                name: str,
                 value: str
             ) -> None: ...
 
@@ -6389,8 +6452,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -6408,8 +6471,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -6430,10 +6493,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                eval_id: str, 
-                max_hourly_runs: Optional[int] = ..., 
+                self,
+                *,
+                eval_id: str,
+                max_hourly_runs: Optional[int] = ...,
                 sampling_rate: Optional[float] = ...
             ) -> None: ...
 
@@ -6456,14 +6519,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                container_name: str, 
-                database_name: str, 
-                description: Optional[str] = ..., 
-                embedding_configuration: EmbeddingConfiguration, 
-                field_mapping: FieldMapping, 
+                self,
+                *,
+                connection_name: str,
+                container_name: str,
+                database_name: str,
+                description: Optional[str] = ...,
+                embedding_configuration: EmbeddingConfiguration,
+                field_mapping: FieldMapping,
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
@@ -6477,9 +6540,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                location: Optional[str] = ..., 
+                self,
+                *,
+                location: Optional[str] = ...,
                 operation_result: Optional[str] = ...
             ) -> None: ...
 
@@ -6493,9 +6556,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                default: Optional[bool] = ..., 
+                self,
+                *,
+                default: Optional[bool] = ...,
                 files: list[FileType]
             ) -> None: ...
 
@@ -6508,8 +6571,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -6540,11 +6603,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                end_time: Optional[datetime] = ..., 
-                expression: str, 
-                start_time: Optional[datetime] = ..., 
+                self,
+                *,
+                end_time: Optional[datetime] = ...,
+                expression: str,
+                start_time: Optional[datetime] = ...,
                 time_zone: Optional[str] = ...
             ) -> None: ...
 
@@ -6557,8 +6620,8 @@ namespace azure.ai.projects.models
         type: Union[str, CredentialType]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -6570,9 +6633,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                definition: str, 
+                self,
+                *,
+                definition: str,
                 syntax: Union[str, GrammarSyntax1]
             ) -> None: ...
 
@@ -6588,10 +6651,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_name: Optional[str] = ..., 
-                parameters: dict[str, Any], 
+                self,
+                *,
+                event_name: Optional[str] = ...,
+                parameters: dict[str, Any],
                 provider: str
             ) -> None: ...
 
@@ -6620,13 +6683,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                async_property: Optional[bool] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                description: Optional[str] = ..., 
-                format: Optional[CustomToolParamFormat] = ..., 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                async_property: Optional[bool] = ...,
+                defer_loading: Optional[bool] = ...,
+                description: Optional[str] = ...,
+                format: Optional[CustomToolParamFormat] = ...,
                 name: str
             ) -> None: ...
 
@@ -6639,8 +6702,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -6659,8 +6722,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 hours: list[int]
             ) -> None: ...
 
@@ -6682,11 +6745,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                generation_configuration: DataGenerationJobConfiguration, 
-                name: str, 
-                scenario: str, 
+                self,
+                *,
+                generation_configuration: DataGenerationJobConfiguration,
+                name: str,
+                scenario: str,
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -6701,10 +6764,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                model_options: Optional[DataGenerationModelOptions] = ..., 
-                train_split: Optional[float] = ..., 
+                self,
+                *,
+                model_options: Optional[DataGenerationModelOptions] = ...,
+                train_split: Optional[float] = ...,
                 type: str
             ) -> None: ...
 
@@ -6720,11 +6783,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                generation_configuration: DataGenerationJobConfiguration, 
-                name: str, 
-                scenario: str, 
+                self,
+                *,
+                generation_configuration: DataGenerationJobConfiguration,
+                name: str,
+                scenario: str,
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -6737,8 +6800,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -6763,10 +6826,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                generated_samples: int, 
-                outputs: Optional[list[DataGenerationJobOutput]] = ..., 
+                self,
+                *,
+                generated_samples: int,
+                outputs: Optional[list[DataGenerationJobOutput]] = ...,
                 token_usage: Optional[DataGenerationTokenUsage] = ...
             ) -> None: ...
 
@@ -6786,9 +6849,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 type: str
             ) -> None: ...
 
@@ -6815,8 +6878,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 model: str
             ) -> None: ...
 
@@ -6835,8 +6898,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 blob_reference: BlobReference
             ) -> None: ...
 
@@ -6867,10 +6930,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -6882,18 +6945,18 @@ namespace azure.ai.projects.models
         property details: Mapping[str, Any]    # Read-only
 
         def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
+                self,
+                client: Any,
+                initial_response: Any,
+                deserialization_callback: Any,
                 polling_method: Any
             ) -> None: ...
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[DataGenerationJobResult], 
-                continuation_token: str, 
+                cls,
+                polling_method: PollingMethod[DataGenerationJobResult],
+                continuation_token: str,
                 **kwargs: Any
             ) -> DatasetGenerationLROPoller: ...
 
@@ -6904,9 +6967,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -6932,12 +6995,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                data_uri: str, 
-                description: Optional[str] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
+                self,
+                *,
+                connection_name: Optional[str] = ...,
+                data_uri: str,
+                description: Optional[str] = ...,
+                tags: Optional[dict[str, str]] = ...,
                 type: str
             ) -> None: ...
 
@@ -6962,10 +7025,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                answers: list[AnswerResource], 
-                model: str, 
+                self,
+                *,
+                answers: list[AnswerResource],
+                model: str,
                 usage: ResponseUsageResource
             ) -> None: ...
 
@@ -6980,10 +7043,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                deleted: bool, 
-                name: str, 
+                self,
+                *,
+                deleted: bool,
+                name: str,
                 object: Literal[AgentObjectType.AGENT_DELETED]
             ) -> None: ...
 
@@ -6999,11 +7062,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                deleted: bool, 
-                name: str, 
-                object: Literal[AgentObjectType.AGENT_VERSION_DELETED], 
+                self,
+                *,
+                deleted: bool,
+                name: str,
+                object: Literal[AgentObjectType.AGENT_VERSION_DELETED],
                 version: str
             ) -> None: ...
 
@@ -7018,10 +7081,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                deleted: bool, 
-                memory_id: str, 
+                self,
+                *,
+                deleted: bool,
+                memory_id: str,
                 object: Literal[MemoryStoreObjectType.MEMORY_DELETED]
             ) -> None: ...
 
@@ -7036,10 +7099,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                deleted: bool, 
-                name: str, 
+                self,
+                *,
+                deleted: bool,
+                name: str,
                 object: Literal[MemoryStoreObjectType.MEMORY_STORE_DELETED]
             ) -> None: ...
 
@@ -7054,10 +7117,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                deleted: bool, 
-                id: str, 
+                self,
+                *,
+                deleted: bool,
+                id: str,
                 name: str
             ) -> None: ...
 
@@ -7073,11 +7136,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                deleted: bool, 
-                id: str, 
-                name: str, 
+                self,
+                *,
+                deleted: bool,
+                id: str,
+                name: str,
                 version: str
             ) -> None: ...
 
@@ -7091,8 +7154,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -7116,11 +7179,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                always_applicable: Optional[bool] = ..., 
-                description: str, 
-                id: str, 
+                self,
+                *,
+                always_applicable: Optional[bool] = ...,
+                description: str,
+                id: str,
                 weight: int
             ) -> None: ...
 
@@ -7135,10 +7198,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action_correlation_id: Optional[str] = ..., 
-                dispatch_id: Optional[str] = ..., 
+                self,
+                *,
+                action_correlation_id: Optional[str] = ...,
+                dispatch_id: Optional[str] = ...,
                 task_id: Optional[str] = ...
             ) -> None: ...
 
@@ -7152,9 +7215,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                embedding_field: str, 
+                self,
+                *,
+                embedding_field: str,
                 model_deployment_name: str
             ) -> None: ...
 
@@ -7174,11 +7237,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                data_schema: Optional[dict[str, Any]] = ..., 
-                init_parameters: Optional[dict[str, Any]] = ..., 
+                self,
+                *,
+                connection_name: str,
+                data_schema: Optional[dict[str, Any]] = ...,
+                init_parameters: Optional[dict[str, Any]] = ...,
                 metrics: Optional[dict[str, EvaluatorMetric]] = ...
             ) -> None: ...
 
@@ -7224,11 +7287,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
-                passed: bool, 
-                score: float, 
+                self,
+                *,
+                name: str,
+                passed: bool,
+                score: float,
                 type: str
             ) -> None: ...
 
@@ -7245,12 +7308,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta_estimate: float, 
-                p_value: float, 
-                treatment_effect: Union[str, TreatmentEffectType], 
-                treatment_run_id: str, 
+                self,
+                *,
+                delta_estimate: float,
+                p_value: float,
+                treatment_effect: Union[str, TreatmentEffectType],
+                treatment_run_id: str,
                 treatment_run_summary: EvalRunResultSummary
             ) -> None: ...
 
@@ -7267,12 +7330,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                baseline_run_summary: EvalRunResultSummary, 
-                compare_items: list[EvalRunResultCompareItem], 
-                evaluator: str, 
-                metric: str, 
+                self,
+                *,
+                baseline_run_summary: EvalRunResultSummary,
+                compare_items: list[EvalRunResultCompareItem],
+                evaluator: str,
+                metric: str,
                 testing_criteria: str
             ) -> None: ...
 
@@ -7288,11 +7351,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                average: float, 
-                run_id: str, 
-                sample_count: int, 
+                self,
+                *,
+                average: float,
+                run_id: str,
+                sample_count: int,
                 standard_deviation: float
             ) -> None: ...
 
@@ -7307,9 +7370,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 temperature: Optional[float] = ...
             ) -> None: ...
 
@@ -7325,10 +7388,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                baseline_run_id: str, 
-                eval_id: str, 
+                self,
+                *,
+                baseline_run_id: str,
+                eval_id: str,
                 treatment_run_ids: list[str]
             ) -> None: ...
 
@@ -7343,9 +7406,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                comparisons: list[EvalRunResultComparison], 
+                self,
+                *,
+                comparisons: list[EvalRunResultComparison],
                 method: str
             ) -> None: ...
 
@@ -7368,11 +7431,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                generation_configuration: DataGenerationJobConfiguration, 
-                name: str, 
-                output_configuration: Optional[EvaluationDataGenerationJobOutputConfiguration] = ..., 
+                self,
+                *,
+                generation_configuration: DataGenerationJobConfiguration,
+                name: str,
+                output_configuration: Optional[EvaluationDataGenerationJobOutputConfiguration] = ...,
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -7389,11 +7452,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                generation_configuration: DataGenerationJobConfiguration, 
-                name: str, 
-                output_configuration: Optional[EvaluationDataGenerationJobOutputConfiguration] = ..., 
+                self,
+                *,
+                generation_configuration: DataGenerationJobConfiguration,
+                name: str,
+                output_configuration: Optional[EvaluationDataGenerationJobOutputConfiguration] = ...,
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -7409,11 +7472,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                tags: Optional[dict[str, str]] = ...,
                 write_mode: Optional[Union[str, DataGenerationJobOutputWriteMode]] = ...
             ) -> None: ...
 
@@ -7433,10 +7496,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                model: str, 
-                sampling_params: Optional[ModelSamplingParams] = ..., 
+                self,
+                *,
+                model: str,
+                sampling_params: Optional[ModelSamplingParams] = ...,
                 voice_model: Optional[EvaluationVoiceModelConfiguration] = ...
             ) -> None: ...
 
@@ -7453,11 +7516,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                correlation_info: dict[str, Any], 
-                evaluation_result: EvalResult, 
-                features: dict[str, Any], 
+                self,
+                *,
+                correlation_info: dict[str, Any],
+                evaluation_result: EvalResult,
+                features: dict[str, Any],
                 id: str
             ) -> None: ...
 
@@ -7477,13 +7540,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: EvaluationRuleAction, 
-                description: Optional[str] = ..., 
-                display_name: Optional[str] = ..., 
-                enabled: bool, 
-                event_type: Union[str, EvaluationRuleEventType], 
+                self,
+                *,
+                action: EvaluationRuleAction,
+                description: Optional[str] = ...,
+                display_name: Optional[str] = ...,
+                enabled: bool,
+                event_type: Union[str, EvaluationRuleEventType],
                 filter: Optional[EvaluationRuleFilter] = ...
             ) -> None: ...
 
@@ -7496,8 +7559,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -7520,8 +7583,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 agent_name: str
             ) -> None: ...
 
@@ -7537,10 +7600,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                eval_id: str, 
-                model_configuration: Optional[InsightModelConfiguration] = ..., 
+                self,
+                *,
+                eval_id: str,
+                model_configuration: Optional[InsightModelConfiguration] = ...,
                 run_ids: list[str]
             ) -> None: ...
 
@@ -7554,8 +7617,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 cluster_insight: ClusterInsightResult
             ) -> None: ...
 
@@ -7571,10 +7634,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                configuration: Optional[dict[str, str]] = ..., 
-                eval_id: str, 
+                self,
+                *,
+                configuration: Optional[dict[str, str]] = ...,
+                eval_id: str,
                 eval_run: dict[str, Any]
             ) -> None: ...
 
@@ -7587,8 +7650,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -7608,12 +7671,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                properties: Optional[dict[str, str]] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
-                taxonomy_categories: Optional[list[TaxonomyCategory]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                properties: Optional[dict[str, str]] = ...,
+                tags: Optional[dict[str, str]] = ...,
+                taxonomy_categories: Optional[list[TaxonomyCategory]] = ...,
                 taxonomy_input: EvaluationTaxonomyInput
             ) -> None: ...
 
@@ -7626,8 +7689,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -7645,8 +7708,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -7665,8 +7728,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 blob_uri: str
             ) -> None: ...
 
@@ -7682,11 +7745,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                data_schema: Optional[dict[str, Any]] = ..., 
-                init_parameters: Optional[dict[str, Any]] = ..., 
-                metrics: Optional[dict[str, EvaluatorMetric]] = ..., 
+                self,
+                *,
+                data_schema: Optional[dict[str, Any]] = ...,
+                init_parameters: Optional[dict[str, Any]] = ...,
+                metrics: Optional[dict[str, EvaluatorMetric]] = ...,
                 type: str
             ) -> None: ...
 
@@ -7710,9 +7773,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                dataset: VersionedDatasetReference, 
+                self,
+                *,
+                dataset: VersionedDatasetReference,
                 kinds: list[str]
             ) -> None: ...
 
@@ -7729,12 +7792,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                evaluator_description: Optional[str] = ..., 
-                evaluator_display_name: Optional[str] = ..., 
-                evaluator_name: str, 
-                model: str, 
+                self,
+                *,
+                evaluator_description: Optional[str] = ...,
+                evaluator_display_name: Optional[str] = ...,
+                evaluator_name: str,
+                model: str,
                 sources: list[EvaluatorGenerationJobSource]
             ) -> None: ...
 
@@ -7759,12 +7822,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                evaluator_description: Optional[str] = ..., 
-                evaluator_display_name: Optional[str] = ..., 
-                evaluator_name: str, 
-                model: str, 
+                self,
+                *,
+                evaluator_description: Optional[str] = ...,
+                evaluator_display_name: Optional[str] = ...,
+                evaluator_name: str,
+                model: str,
                 sources: list[EvaluatorGenerationJobSource]
             ) -> None: ...
 
@@ -7777,8 +7840,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -7797,18 +7860,18 @@ namespace azure.ai.projects.models
         property details: Mapping[str, Any]    # Read-only
 
         def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
+                self,
+                client: Any,
+                initial_response: Any,
+                deserialization_callback: Any,
                 polling_method: Any
             ) -> None: ...
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[EvaluatorVersion], 
-                continuation_token: str, 
+                cls,
+                polling_method: PollingMethod[EvaluatorVersion],
+                continuation_token: str,
                 **kwargs: Any
             ) -> EvaluatorGenerationLROPoller: ...
 
@@ -7820,10 +7883,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                input_tokens: int, 
-                output_tokens: int, 
+                self,
+                *,
+                input_tokens: int,
+                output_tokens: int,
                 total_tokens: int
             ) -> None: ...
 
@@ -7841,13 +7904,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                desirable_direction: Optional[Union[str, EvaluatorMetricDirection]] = ..., 
-                is_primary: Optional[bool] = ..., 
-                max_value: Optional[float] = ..., 
-                min_value: Optional[float] = ..., 
-                threshold: Optional[float] = ..., 
+                self,
+                *,
+                desirable_direction: Optional[Union[str, EvaluatorMetricDirection]] = ...,
+                is_primary: Optional[bool] = ...,
+                max_value: Optional[float] = ...,
+                min_value: Optional[float] = ...,
+                threshold: Optional[float] = ...,
                 type: Optional[Union[str, EvaluatorMetricType]] = ...
             ) -> None: ...
 
@@ -7893,15 +7956,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                categories: list[Union[str, EvaluatorCategory]], 
-                definition: EvaluatorDefinition, 
-                description: Optional[str] = ..., 
-                display_name: Optional[str] = ..., 
-                evaluator_type: Union[str, EvaluatorType], 
-                metadata: Optional[dict[str, str]] = ..., 
-                supported_evaluation_levels: Optional[list[Union[str, EvaluationLevel]]] = ..., 
+                self,
+                *,
+                categories: list[Union[str, EvaluatorCategory]],
+                definition: EvaluatorDefinition,
+                description: Optional[str] = ...,
+                display_name: Optional[str] = ...,
+                evaluator_type: Union[str, EvaluatorType],
+                metadata: Optional[dict[str, str]] = ...,
+                supported_evaluation_levels: Optional[list[Union[str, EvaluationLevel]]] = ...,
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
@@ -7916,9 +7979,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                otel_agent_id: Optional[str] = ..., 
+                self,
+                *,
+                otel_agent_id: Optional[str] = ...,
                 rai_config: Optional[RaiConfig] = ...
             ) -> None: ...
 
@@ -7931,8 +7994,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 project_connections: Optional[list[ToolProjectConnection]] = ...
             ) -> None: ...
 
@@ -7949,11 +8012,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                project_connection_id: str, 
-                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
-                server_label: Optional[str] = ..., 
+                self,
+                *,
+                project_connection_id: str,
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ...,
+                server_label: Optional[str] = ...,
                 server_url: Optional[str] = ...
             ) -> None: ...
 
@@ -7973,14 +8036,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: str, 
-                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
-                server_label: Optional[str] = ..., 
-                server_url: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                project_connection_id: str,
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ...,
+                server_label: Optional[str] = ...,
+                server_url: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -7998,13 +8061,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_fields: list[str], 
-                filepath_field: Optional[str] = ..., 
-                metadata_fields: Optional[list[str]] = ..., 
-                title_field: Optional[str] = ..., 
-                url_field: Optional[str] = ..., 
+                self,
+                *,
+                content_fields: list[str],
+                filepath_field: Optional[str] = ...,
+                metadata_fields: Optional[list[str]] = ...,
+                title_field: Optional[str] = ...,
+                url_field: Optional[str] = ...,
                 vector_fields: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -8031,9 +8094,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 id: str
             ) -> None: ...
 
@@ -8054,11 +8117,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                data_uri: str, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: Optional[str] = ...,
+                data_uri: str,
+                description: Optional[str] = ...,
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
@@ -8078,14 +8141,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                filters: Optional[Filters] = ..., 
-                max_num_results: Optional[int] = ..., 
-                name: Optional[str] = ..., 
-                ranking_options: Optional[RankingOptions] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                filters: Optional[Filters] = ...,
+                max_num_results: Optional[int] = ...,
+                name: Optional[str] = ...,
+                ranking_options: Optional[RankingOptions] = ...,
+                tool_configs: Optional[dict[str, ToolConfig]] = ...,
                 vector_store_ids: list[str]
             ) -> None: ...
 
@@ -8105,14 +8168,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                filters: Optional[Filters] = ..., 
-                max_num_results: Optional[int] = ..., 
-                name: Optional[str] = ..., 
-                ranking_options: Optional[RankingOptions] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                filters: Optional[Filters] = ...,
+                max_num_results: Optional[int] = ...,
+                name: Optional[str] = ...,
+                ranking_options: Optional[RankingOptions] = ...,
+                tool_configs: Optional[dict[str, ToolConfig]] = ...,
                 vector_store_ids: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -8127,9 +8190,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                interval: timedelta, 
+                self,
+                *,
+                interval: timedelta,
                 max_attempts: Optional[int] = ...
             ) -> None: ...
 
@@ -8144,9 +8207,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_version: str, 
+                self,
+                *,
+                agent_version: str,
                 traffic_percentage: int
             ) -> None: ...
 
@@ -8167,11 +8230,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                data_uri: str, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: Optional[str] = ...,
+                data_uri: str,
+                description: Optional[str] = ...,
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
@@ -8204,9 +8267,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: Optional[Union[str, FoundryModelWarningCode]] = ..., 
+                self,
+                *,
+                code: Optional[Union[str, FoundryModelWarningCode]] = ...,
                 message: Optional[str] = ...
             ) -> None: ...
 
@@ -8233,11 +8296,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
-                parameters: Optional[FunctionParameters] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
+                parameters: Optional[FunctionParameters] = ...,
                 strict: Optional[bool] = ...
             ) -> None: ...
 
@@ -8258,12 +8321,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                description: Optional[str] = ..., 
-                environment: Optional[FunctionShellToolParamEnvironment] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                description: Optional[str] = ...,
+                environment: Optional[FunctionShellToolParamEnvironment] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -8276,8 +8339,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -8291,8 +8354,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 container_id: str
             ) -> None: ...
 
@@ -8306,8 +8369,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 skills: Optional[list[LocalSkillParam]] = ...
             ) -> None: ...
 
@@ -8334,15 +8397,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                async_property: Optional[bool] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                output_schema: Optional[dict[str, Any]] = ..., 
-                parameters: dict[str, Any], 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                async_property: Optional[bool] = ...,
+                defer_loading: Optional[bool] = ...,
+                description: Optional[str] = ...,
+                name: str,
+                output_schema: Optional[dict[str, Any]] = ...,
+                parameters: dict[str, Any],
                 strict: bool
             ) -> None: ...
 
@@ -8363,15 +8426,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                async_property: Optional[bool] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                output_schema: Optional[dict[str, Any]] = ..., 
-                parameters: Optional[EmptyModelParam] = ..., 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                async_property: Optional[bool] = ...,
+                defer_loading: Optional[bool] = ...,
+                description: Optional[str] = ...,
+                name: str,
+                output_schema: Optional[dict[str, Any]] = ...,
+                parameters: Optional[EmptyModelParam] = ...,
                 strict: Optional[bool] = ...
             ) -> None: ...
 
@@ -8392,16 +8455,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                draft: Optional[bool] = ..., 
-                goal: Optional[str] = ..., 
-                kind: Literal[AgentKind.VOICE], 
-                model: Optional[str] = ..., 
-                model_type: Optional[Union[str, VoiceModelType]] = ..., 
-                name: str, 
-                tools: Optional[list[VoiceAgentTool]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                draft: Optional[bool] = ...,
+                goal: Optional[str] = ...,
+                kind: Literal[AgentKind.VOICE],
+                model: Optional[str] = ...,
+                model_type: Optional[Union[str, VoiceModelType]] = ...,
+                name: str,
+                tools: Optional[list[VoiceAgentTool]] = ...,
                 use_case: Optional[str] = ...
             ) -> None: ...
 
@@ -8437,9 +8500,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
+                self,
+                *,
+                enabled: Optional[bool] = ...,
                 name: Union[str, GitHubCopilotBuiltInTool]
             ) -> None: ...
 
@@ -8452,8 +8515,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 enabled: Optional[bool] = ...
             ) -> None: ...
 
@@ -8468,9 +8531,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                configs: Optional[list[GitHubCopilotToolsetConfig]] = ..., 
+                self,
+                *,
+                configs: Optional[list[GitHubCopilotToolsetConfig]] = ...,
                 default_config: Optional[GitHubCopilotToolsetDefaultConfig] = ...
             ) -> None: ...
 
@@ -8492,11 +8555,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_id: str, 
-                issue_event: Union[str, GitHubIssueEvent], 
-                owner: str, 
+                self,
+                *,
+                connection_id: str,
+                issue_event: Union[str, GitHubIssueEvent],
+                owner: str,
                 repository: str
             ) -> None: ...
 
@@ -8517,10 +8580,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                header_name: str, 
-                secret_id: str, 
+                self,
+                *,
+                header_name: str,
+                secret_id: str,
                 secret_key: str
             ) -> None: ...
 
@@ -8543,17 +8606,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code_configuration: Optional[CodeConfiguration] = ..., 
-                container_configuration: Optional[ContainerConfiguration] = ..., 
-                cpu: str, 
-                enable_memory_snapshot: Optional[bool] = ..., 
-                environment_variables: Optional[dict[str, str]] = ..., 
-                memory: str, 
-                protocol_versions: Optional[list[ProtocolVersionRecord]] = ..., 
-                rai_config: Optional[RaiConfig] = ..., 
-                session_configuration: Optional[SessionConfiguration] = ..., 
+                self,
+                *,
+                code_configuration: Optional[CodeConfiguration] = ...,
+                container_configuration: Optional[ContainerConfiguration] = ...,
+                cpu: str,
+                enable_memory_snapshot: Optional[bool] = ...,
+                environment_variables: Optional[dict[str, str]] = ...,
+                memory: str,
+                protocol_versions: Optional[list[ProtocolVersionRecord]] = ...,
+                rai_config: Optional[RaiConfig] = ...,
+                session_configuration: Optional[SessionConfiguration] = ...,
                 telemetry_config: Optional[TelemetryConfig] = ...
             ) -> None: ...
 
@@ -8577,8 +8640,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 template_id: str
             ) -> None: ...
 
@@ -8592,9 +8655,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                embedding_weight: float, 
+                self,
+                *,
+                embedding_weight: float,
                 text_weight: float
             ) -> None: ...
 
@@ -8627,21 +8690,21 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: Optional[Union[str, ImageGenAction]] = ..., 
-                background: Optional[Literal[transparent, opaque, auto]] = ..., 
-                description: Optional[str] = ..., 
-                input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
-                input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
-                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], Literal[gpt-image-2], Literal[gpt-image-2-2026-04-21], Literal[gpt-image-5-sunburst], Literal[gpt-image-5-sunburst-2026-09-08], Literal[gpt-image-5-flare], Literal[gpt-image-5-flare-2026-09-08], str]] = ..., 
-                moderation: Optional[Literal[auto, low]] = ..., 
-                name: Optional[str] = ..., 
-                output_compression: Optional[int] = ..., 
-                output_format: Optional[Literal[png, webp, jpeg]] = ..., 
-                partial_images: Optional[int] = ..., 
-                quality: Optional[Literal[low, medium, high, xhigh, max, auto]] = ..., 
-                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ..., 
+                self,
+                *,
+                action: Optional[Union[str, ImageGenAction]] = ...,
+                background: Optional[Literal[transparent, opaque, auto]] = ...,
+                description: Optional[str] = ...,
+                input_fidelity: Optional[Union[str, InputFidelity]] = ...,
+                input_image_mask: Optional[ImageGenToolInputImageMask] = ...,
+                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], Literal[gpt-image-2], Literal[gpt-image-2-2026-04-21], Literal[gpt-image-5-sunburst], Literal[gpt-image-5-sunburst-2026-09-08], Literal[gpt-image-5-flare], Literal[gpt-image-5-flare-2026-09-08], str]] = ...,
+                moderation: Optional[Literal[auto, low]] = ...,
+                name: Optional[str] = ...,
+                output_compression: Optional[int] = ...,
+                output_format: Optional[Literal[png, webp, jpeg]] = ...,
+                partial_images: Optional[int] = ...,
+                quality: Optional[Literal[low, medium, high, xhigh, max, auto]] = ...,
+                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -8655,9 +8718,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_id: Optional[str] = ..., 
+                self,
+                *,
+                file_id: Optional[str] = ...,
                 image_url: Optional[str] = ...
             ) -> None: ...
 
@@ -8671,8 +8734,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 expires_at: Optional[datetime] = ...
             ) -> None: ...
 
@@ -8690,10 +8753,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                tags: Optional[dict[str, str]] = ...,
                 type: str
             ) -> None: ...
 
@@ -8715,10 +8778,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                name: str, 
+                self,
+                *,
+                description: str,
+                name: str,
                 source: InlineSkillSourceParam
             ) -> None: ...
 
@@ -8733,8 +8796,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 data: str
             ) -> None: ...
 
@@ -8763,22 +8826,22 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_output: Optional[VoiceAgentVoiceConfig] = ..., 
-                display_description: str, 
-                handoff_conditions: Optional[list[VoiceAgentHandoffCondition]] = ..., 
-                id: str, 
-                inherit_base_instructions: Optional[bool] = ..., 
-                instructions: Optional[str] = ..., 
-                interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
-                max_response_output_tokens: Optional[VoiceAgentHandoffMaxOutputTokens] = ..., 
-                model: Optional[str] = ..., 
-                parallel_tool_calls: Optional[bool] = ..., 
-                reasoning_effort: Optional[Union[str, VoiceAgentHandoffReasoningEffort]] = ..., 
-                temperature: Optional[float] = ..., 
-                tool_choice: Optional[VoiceAgentToolChoice] = ..., 
-                tools: Optional[list[VoiceAgentTool]] = ..., 
+                self,
+                *,
+                audio_output: Optional[VoiceAgentVoiceConfig] = ...,
+                display_description: str,
+                handoff_conditions: Optional[list[VoiceAgentHandoffCondition]] = ...,
+                id: str,
+                inherit_base_instructions: Optional[bool] = ...,
+                instructions: Optional[str] = ...,
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ...,
+                max_response_output_tokens: Optional[VoiceAgentHandoffMaxOutputTokens] = ...,
+                model: Optional[str] = ...,
+                parallel_tool_calls: Optional[bool] = ...,
+                reasoning_effort: Optional[Union[str, VoiceAgentHandoffReasoningEffort]] = ...,
+                temperature: Optional[float] = ...,
+                tool_choice: Optional[VoiceAgentToolChoice] = ...,
+                tools: Optional[list[VoiceAgentTool]] = ...,
                 voice_adaptation: Optional[VoiceAgentHandoffVoiceAdaptation] = ...
             ) -> None: ...
 
@@ -8797,9 +8860,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                cache_write_tokens: int, 
+                self,
+                *,
+                cache_write_tokens: int,
                 cached_tokens: int
             ) -> None: ...
 
@@ -8817,9 +8880,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                display_name: str, 
+                self,
+                *,
+                display_name: str,
                 request: InsightRequest
             ) -> None: ...
 
@@ -8839,15 +8902,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                id: str, 
-                label: str, 
-                samples: Optional[list[InsightSample]] = ..., 
-                sub_clusters: Optional[list[InsightCluster]] = ..., 
-                suggestion: str, 
-                suggestion_title: str, 
+                self,
+                *,
+                description: str,
+                id: str,
+                label: str,
+                samples: Optional[list[InsightSample]] = ...,
+                sub_clusters: Optional[list[InsightCluster]] = ...,
+                suggestion: str,
+                suggestion_title: str,
                 weight: int
             ) -> None: ...
 
@@ -8860,8 +8923,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 model_deployment_name: str
             ) -> None: ...
 
@@ -8874,8 +8937,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -8888,8 +8951,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -8905,11 +8968,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                correlation_info: dict[str, Any], 
-                features: dict[str, Any], 
-                id: str, 
+                self,
+                *,
+                correlation_info: dict[str, Any],
+                features: dict[str, Any],
+                id: str,
                 type: str
             ) -> None: ...
 
@@ -8924,9 +8987,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                configuration: Optional[dict[str, str]] = ..., 
+                self,
+                *,
+                configuration: Optional[dict[str, str]] = ...,
                 insight: Insight
             ) -> None: ...
 
@@ -8943,12 +9006,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                method: str, 
-                sample_count: int, 
-                unique_cluster_count: int, 
-                unique_subcluster_count: int, 
+                self,
+                *,
+                method: str,
+                sample_count: int,
+                unique_cluster_count: int,
+                unique_subcluster_count: int,
                 usage: ClusterTokenUsage
             ) -> None: ...
 
@@ -8968,9 +9031,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                completed_at: Optional[datetime] = ..., 
+                self,
+                *,
+                completed_at: Optional[datetime] = ...,
                 created_at: datetime
             ) -> None: ...
 
@@ -8990,8 +9053,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 input: Any
             ) -> None: ...
 
@@ -9008,11 +9071,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_endpoint_id: Optional[str] = ..., 
-                agent_name: Optional[str] = ..., 
-                input: Optional[Any] = ..., 
+                self,
+                *,
+                agent_endpoint_id: Optional[str] = ...,
+                agent_name: Optional[str] = ...,
+                input: Optional[Any] = ...,
                 session_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9026,8 +9089,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 input: Any
             ) -> None: ...
 
@@ -9044,11 +9107,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_endpoint_id: Optional[str] = ..., 
-                agent_name: Optional[str] = ..., 
-                conversation: Optional[str] = ..., 
+                self,
+                *,
+                agent_endpoint_id: Optional[str] = ...,
+                agent_name: Optional[str] = ...,
+                conversation: Optional[str] = ...,
                 input: Optional[Any] = ...
             ) -> None: ...
 
@@ -9070,9 +9133,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                response_event: Optional[str] = ..., 
+                self,
+                *,
+                response_event: Optional[str] = ...,
                 type: str
             ) -> None: ...
 
@@ -9087,9 +9150,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                mode: Optional[Union[str, LiveToolChoiceValueEnum]] = ..., 
+                self,
+                *,
+                mode: Optional[Union[str, LiveToolChoiceValueEnum]] = ...,
                 tools: list[Union[LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam]]
             ) -> None: ...
 
@@ -9101,8 +9164,8 @@ namespace azure.ai.projects.models
         type: Literal["apply_patch"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -9112,8 +9175,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -9132,8 +9195,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 data_channel: LiveDataChannelConfigParam
             ) -> None: ...
 
@@ -9146,8 +9209,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -9163,10 +9226,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                delegation_id: str, 
+                self,
+                *,
+                content: str,
+                delegation_id: str,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9180,8 +9243,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 event_id: str
             ) -> None: ...
 
@@ -9196,9 +9259,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                event_id: Optional[str] = ...,
                 item: LiveDecisionInputItemParam
             ) -> None: ...
 
@@ -9213,9 +9276,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                event_id: Optional[str] = ...,
                 item_id: str
             ) -> None: ...
 
@@ -9230,9 +9293,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: str, 
+                self,
+                *,
+                audio: str,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9246,8 +9309,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9261,8 +9324,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9278,10 +9341,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                delegation_id: str, 
+                self,
+                *,
+                content: str,
+                delegation_id: str,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9296,9 +9359,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: str, 
+                self,
+                *,
+                audio: str,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9312,8 +9375,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9328,9 +9391,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                event_id: Optional[str] = ...,
                 item: dict[str, Any]
             ) -> None: ...
 
@@ -9344,8 +9407,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9360,9 +9423,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                event_id: Optional[str] = ...,
                 session: LiveSessionUpdateParams
             ) -> None: ...
 
@@ -9378,10 +9441,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                delegation_id: str, 
+                self,
+                *,
+                content: str,
+                delegation_id: str,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9411,8 +9474,8 @@ namespace azure.ai.projects.models
         type: Literal["code_interpreter"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -9421,8 +9484,8 @@ namespace azure.ai.projects.models
         type: Literal["computer"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -9438,8 +9501,8 @@ namespace azure.ai.projects.models
         type: Literal["disabled"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -9450,8 +9513,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 container_id: str
             ) -> None: ...
 
@@ -9464,8 +9527,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 usage_ratio: float
             ) -> None: ...
 
@@ -9477,8 +9540,8 @@ namespace azure.ai.projects.models
         type: Literal["custom"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -9488,8 +9551,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 id: str
             ) -> None: ...
 
@@ -9503,9 +9566,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_client_events: Optional[Union[Literal[all], list[str]]] = ..., 
+                self,
+                *,
+                allowed_client_events: Optional[Union[Literal[all], list[str]]] = ...,
                 allowed_server_events: Optional[Union[Literal[all], list[LiveAllowedServerEventParam]]] = ...
             ) -> None: ...
 
@@ -9519,9 +9582,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 value: Union[str, bool]
             ) -> None: ...
 
@@ -9537,10 +9600,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                choices: list[LiveDecisionChoiceParam], 
-                instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]], 
+                self,
+                *,
+                choices: list[LiveDecisionChoiceParam],
+                instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]],
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -9554,8 +9617,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 decision: DecisionResponse
             ) -> None: ...
 
@@ -9572,11 +9635,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]], 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
                 status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -9595,13 +9658,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                input: str, 
-                name: str, 
-                namespace: Optional[str] = ..., 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                input: str,
+                name: str,
+                namespace: Optional[str] = ...,
                 status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -9618,11 +9681,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]], 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
                 status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -9641,13 +9704,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                name: str, 
-                namespace: Optional[str] = ..., 
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: str,
+                namespace: Optional[str] = ...,
                 status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -9662,9 +9725,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                detail: Optional[Union[str, LiveDetailEnum]] = ..., 
+                self,
+                *,
+                detail: Optional[Union[str, LiveDetailEnum]] = ...,
                 image_url: str
             ) -> None: ...
 
@@ -9677,8 +9740,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -9710,8 +9773,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 data: Union[LiveDecisionJsonObject, list[LiveDecisionJsonObject]]
             ) -> None: ...
 
@@ -9725,8 +9788,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -9744,9 +9807,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]], 
+                self,
+                *,
+                instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]],
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -9759,8 +9822,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -9779,8 +9842,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 questions: list[LiveDecisionQuestion]
             ) -> None: ...
 
@@ -9794,9 +9857,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 label: str
             ) -> None: ...
 
@@ -9812,10 +9875,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]], 
-                levels: list[LiveDecisionScoreLevelParam], 
+                self,
+                *,
+                instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]],
+                levels: list[LiveDecisionScoreLevelParam],
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -9832,11 +9895,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: str, 
-                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]], 
+                self,
+                *,
+                call_id: str,
+                id: str,
+                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
                 status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -9855,13 +9918,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: str, 
-                input: str, 
-                name: str, 
-                namespace: Optional[str] = ..., 
+                self,
+                *,
+                call_id: str,
+                id: str,
+                input: str,
+                name: str,
+                namespace: Optional[str] = ...,
                 status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -9878,11 +9941,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: str, 
-                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]], 
+                self,
+                *,
+                call_id: str,
+                id: str,
+                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
                 status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -9901,13 +9964,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                name: str, 
-                namespace: Optional[str] = ..., 
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: str,
+                name: str,
+                namespace: Optional[str] = ...,
                 status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -9920,8 +9983,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -9954,9 +10017,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                decisions: LiveDecisionQuestionsInputParam, 
+                self,
+                *,
+                decisions: LiveDecisionQuestionsInputParam,
                 event_type: Literal["delta", "delta"]
             ) -> None: ...
 
@@ -9971,9 +10034,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                acknowledgement_delay_ms: Optional[int] = ..., 
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...,
                 decisions: Optional[LiveDecisionsSettingsUpdateParam] = ...
             ) -> None: ...
 
@@ -9987,9 +10050,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                model: str, 
+                self,
+                *,
+                model: str,
                 questions: list[LiveDecisionQuestion]
             ) -> None: ...
 
@@ -10003,9 +10066,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                model: Optional[str] = ..., 
+                self,
+                *,
+                model: Optional[str] = ...,
                 questions: Optional[list[LiveDecisionQuestion]] = ...
             ) -> None: ...
 
@@ -10019,9 +10082,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                effort: Optional[Union[str, LiveReasoningEffort]] = ..., 
+                self,
+                *,
+                effort: Optional[Union[str, LiveReasoningEffort]] = ...,
                 summary: Optional[Union[str, LiveReasoningSummary]] = ...
             ) -> None: ...
 
@@ -10034,8 +10097,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 verbosity: Optional[Union[str, LiveTextVerbosity]] = ...
             ) -> None: ...
 
@@ -10054,8 +10117,8 @@ namespace azure.ai.projects.models
         type: Literal["file_search"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -10072,8 +10135,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 name: str
             ) -> None: ...
 
@@ -10090,11 +10153,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
-                parameters: Optional[dict[str, Any]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
+                parameters: Optional[dict[str, Any]] = ...,
                 strict: Optional[bool] = ...
             ) -> None: ...
 
@@ -10111,11 +10174,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_ids: Optional[list[str]] = ..., 
-                memory_limit: Optional[Union[str, LiveContainerMemoryLimit]] = ..., 
-                network_policy: Optional[Union[LiveContainerNetworkPolicyDisabledParam, LiveHostedShellNetworkPolicyAllowlistParam]] = ..., 
+                self,
+                *,
+                file_ids: Optional[list[str]] = ...,
+                memory_limit: Optional[Union[str, LiveContainerMemoryLimit]] = ...,
+                network_policy: Optional[Union[LiveContainerNetworkPolicyDisabledParam, LiveHostedShellNetworkPolicyAllowlistParam]] = ...,
                 skills: Optional[list[Union[LiveSkillReferenceParam, LiveInlineSkillParam]]] = ...
             ) -> None: ...
 
@@ -10129,8 +10192,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 allowed_domains: list[str]
             ) -> None: ...
 
@@ -10144,8 +10207,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 environment: Optional[Union[LiveHostedShellContainerAutoParam, LiveContainerReferenceParam, LiveLocalEnvironmentParam]] = ...
             ) -> None: ...
 
@@ -10157,8 +10220,8 @@ namespace azure.ai.projects.models
         type: Literal["image_generation"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -10172,11 +10235,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[Union[LiveInitialTextContentPartParam, LiveInitialOutputTextContentPartParam]], 
-                id: Optional[str] = ..., 
-                status: Optional[Union[str, LiveInitialMessageStatus]] = ..., 
+                self,
+                *,
+                content: list[Union[LiveInitialTextContentPartParam, LiveInitialOutputTextContentPartParam]],
+                id: Optional[str] = ...,
+                status: Optional[Union[str, LiveInitialMessageStatus]] = ...,
                 type: Optional[Literal[message]] = ...
             ) -> None: ...
 
@@ -10193,11 +10256,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[LiveInitialInputTextContentPartParam], 
-                id: Optional[str] = ..., 
-                status: Optional[Union[str, LiveInitialMessageStatus]] = ..., 
+                self,
+                *,
+                content: list[LiveInitialInputTextContentPartParam],
+                id: Optional[str] = ...,
+                status: Optional[Union[str, LiveInitialMessageStatus]] = ...,
                 type: Optional[Literal[message]] = ...
             ) -> None: ...
 
@@ -10211,9 +10274,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                text: str, 
+                self,
+                *,
+                text: str,
                 type: Optional[Literal[input_text]] = ...
             ) -> None: ...
 
@@ -10226,8 +10289,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 role: str
             ) -> None: ...
 
@@ -10252,8 +10315,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -10266,8 +10329,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 voice: Optional[Union[str, Literal[alloy], Literal[ash], Literal[ballad], Literal[beacon], Literal[bossa], Literal[brise], Literal[cedar], Literal[cinder], Literal[coral], Literal[delta], Literal[echo], Literal[flitz], Literal[gleam], Literal[harema], Literal[juni], Literal[marin], Literal[meridian], Literal[nira], Literal[noeul], Literal[nuri], Literal[quartz], Literal[ripple], Literal[sage], Literal[shida], Literal[shimmer], Literal[sillage], Literal[stone], Literal[tempo], Literal[verse], Literal[vesper], Literal[willow], LiveCustomVoiceParam]] = ...
             ) -> None: ...
 
@@ -10281,9 +10344,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                format: Optional[LiveAudioFormat] = ..., 
+                self,
+                *,
+                format: Optional[LiveAudioFormat] = ...,
                 output: Optional[LiveInitialSessionAudioOutputParam] = ...
             ) -> None: ...
 
@@ -10297,9 +10360,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                text: str, 
+                self,
+                *,
+                text: str,
                 type: Optional[Literal[text]] = ...
             ) -> None: ...
 
@@ -10316,11 +10379,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[LiveInitialInputTextContentPartParam], 
-                id: Optional[str] = ..., 
-                status: Optional[Union[str, LiveInitialMessageStatus]] = ..., 
+                self,
+                *,
+                content: list[LiveInitialInputTextContentPartParam],
+                id: Optional[str] = ...,
+                status: Optional[Union[str, LiveInitialMessageStatus]] = ...,
                 type: Optional[Literal[message]] = ...
             ) -> None: ...
 
@@ -10336,10 +10399,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                name: str, 
+                self,
+                *,
+                description: str,
+                name: str,
                 source: LiveInlineSkillSourceParam
             ) -> None: ...
 
@@ -10354,8 +10417,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 data: str
             ) -> None: ...
 
@@ -10369,8 +10432,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 audio: str
             ) -> None: ...
 
@@ -10387,12 +10450,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                code: str, 
-                message: str, 
-                param: Optional[str] = ..., 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                code: str,
+                message: str,
+                param: Optional[str] = ...,
                 type: str
             ) -> None: ...
 
@@ -10406,8 +10469,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 skills: Optional[list[LiveLocalSkillParam]] = ...
             ) -> None: ...
 
@@ -10422,10 +10485,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                name: str, 
+                self,
+                *,
+                description: str,
+                name: str,
                 path: str
             ) -> None: ...
 
@@ -10440,9 +10503,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                name: Optional[str] = ...,
                 server_label: str
             ) -> None: ...
 
@@ -10454,8 +10517,8 @@ namespace azure.ai.projects.models
         type: Literal["mcp"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -10464,8 +10527,8 @@ namespace azure.ai.projects.models
         type: Literal["namespace"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -10478,10 +10541,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta: str, 
-                end_ms: Optional[int] = ..., 
+                self,
+                *,
+                delta: str,
+                end_ms: Optional[int] = ...,
                 start_ms: Optional[int] = ...
             ) -> None: ...
 
@@ -10493,8 +10556,8 @@ namespace azure.ai.projects.models
         type: Literal["programmatic_tool_calling"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -10527,16 +10590,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                instructions: Optional[str] = ..., 
-                max_output_tokens: Optional[int] = ..., 
-                model: str, 
-                parallel_tool_calls: Optional[bool] = ..., 
-                reasoning: Optional[LiveDelegationReasoningInputParam] = ..., 
-                service_tier: Optional[Union[str, LiveResponsesServiceTier]] = ..., 
-                text: Optional[LiveDelegationTextInputParam] = ..., 
-                tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam]] = ..., 
+                self,
+                *,
+                instructions: Optional[str] = ...,
+                max_output_tokens: Optional[int] = ...,
+                model: str,
+                parallel_tool_calls: Optional[bool] = ...,
+                reasoning: Optional[LiveDelegationReasoningInputParam] = ...,
+                service_tier: Optional[Union[str, LiveResponsesServiceTier]] = ...,
+                text: Optional[LiveDelegationTextInputParam] = ...,
+                tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam]] = ...,
                 tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam, LiveFileSearchToolInputParam, LiveCodeInterpreterToolInputParam, LiveHostedShellToolInputParam, LiveImageGenerationToolInputParam, LiveMCPToolInputParam, LiveCustomToolInputParam, LiveNamespaceToolInputParam, LiveToolSearchToolInputParam, LiveProgrammaticToolInputParam, LiveComputerToolInputParam, LiveApplyPatchToolInputParam]]] = ...
             ) -> None: ...
 
@@ -10557,16 +10620,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                instructions: Optional[str] = ..., 
-                max_output_tokens: Optional[int] = ..., 
-                model: Optional[str] = ..., 
-                parallel_tool_calls: Optional[bool] = ..., 
-                reasoning: Optional[LiveDelegationReasoningInputParam] = ..., 
-                service_tier: Optional[Union[str, LiveResponsesServiceTier]] = ..., 
-                text: Optional[LiveDelegationTextInputParam] = ..., 
-                tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam]] = ..., 
+                self,
+                *,
+                instructions: Optional[str] = ...,
+                max_output_tokens: Optional[int] = ...,
+                model: Optional[str] = ...,
+                parallel_tool_calls: Optional[bool] = ...,
+                reasoning: Optional[LiveDelegationReasoningInputParam] = ...,
+                service_tier: Optional[Union[str, LiveResponsesServiceTier]] = ...,
+                text: Optional[LiveDelegationTextInputParam] = ...,
+                tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam]] = ...,
                 tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam, LiveFileSearchToolInputParam, LiveCodeInterpreterToolInputParam, LiveHostedShellToolInputParam, LiveImageGenerationToolInputParam, LiveMCPToolInputParam, LiveCustomToolInputParam, LiveNamespaceToolInputParam, LiveToolSearchToolInputParam, LiveProgrammaticToolInputParam, LiveComputerToolInputParam, LiveApplyPatchToolInputParam]]] = ...
             ) -> None: ...
 
@@ -10581,9 +10644,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                acknowledgement_delay_ms: Optional[int] = ..., 
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...,
                 responses: Optional[LiveResponsesDelegationSettingsUpdateInputParam] = ...
             ) -> None: ...
 
@@ -10605,8 +10668,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -10623,11 +10686,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                end_ms: int, 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                end_ms: int,
+                event_id: str,
                 start_ms: int
             ) -> None: ...
 
@@ -10646,13 +10709,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delegation_id: str, 
-                event: LiveDecisionCompleted, 
-                event_id: str, 
-                source_event_id: str, 
-                source_event_type: Literal["delta", "delta"], 
+                self,
+                *,
+                delegation_id: str,
+                event: LiveDecisionCompleted,
+                event_id: str,
+                source_event_id: str,
+                source_event_type: Literal["delta", "delta"],
                 trigger_id: str
             ) -> None: ...
 
@@ -10668,10 +10731,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                event_id: str,
                 item: LiveDecisionStoredInputItemParam
             ) -> None: ...
 
@@ -10687,10 +10750,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                event_id: str,
                 item_id: str
             ) -> None: ...
 
@@ -10707,11 +10770,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                delegation: VoiceAgentLiveDelegationItem, 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                delegation: VoiceAgentLiveDelegationItem,
+                event_id: str,
                 offset_ms: int
             ) -> None: ...
 
@@ -10727,10 +10790,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                error: LiveLiveError, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                error: LiveLiveError,
                 event_id: str
             ) -> None: ...
 
@@ -10747,11 +10810,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                code: str, 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                code: str,
+                event_id: str,
                 message: str
             ) -> None: ...
 
@@ -10766,9 +10829,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
                 event_id: str
             ) -> None: ...
 
@@ -10783,9 +10846,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
                 event_id: str
             ) -> None: ...
 
@@ -10803,12 +10866,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                delta: str, 
-                end_ms: int, 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                delta: str,
+                end_ms: int,
+                event_id: str,
                 start_ms: int
             ) -> None: ...
 
@@ -10825,11 +10888,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                end_ms: int, 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                end_ms: int,
+                event_id: str,
                 start_ms: int
             ) -> None: ...
 
@@ -10844,9 +10907,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
                 event_id: str
             ) -> None: ...
 
@@ -10861,9 +10924,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
                 event_id: str
             ) -> None: ...
 
@@ -10881,12 +10944,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                delta: str, 
-                end_ms: int, 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                delta: str,
+                end_ms: int,
+                event_id: str,
                 start_ms: int
             ) -> None: ...
 
@@ -10903,11 +10966,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                delegation_id: Optional[str] = ..., 
-                event: dict[str, Any], 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                delegation_id: Optional[str] = ...,
+                event: dict[str, Any],
                 event_id: str
             ) -> None: ...
 
@@ -10925,12 +10988,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                event_id: str, 
-                reason: Literal["close_requested", "expired", "content", "remote_hangup", "connection_lost"], 
-                session: VoiceAgentLiveSessionResource, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                event_id: str,
+                reason: Literal["close_requested", "expired", "content", "remote_hangup", "connection_lost"],
+                session: VoiceAgentLiveSessionResource,
                 usage: LiveSessionUsage
             ) -> None: ...
 
@@ -10947,11 +11010,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                conversation_id: Optional[str] = ..., 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                conversation_id: Optional[str] = ...,
+                event_id: str,
                 session: VoiceAgentLiveSessionResource
             ) -> None: ...
 
@@ -10967,10 +11030,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                event_id: str,
                 session: VoiceAgentLiveSessionResource
             ) -> None: ...
 
@@ -10987,11 +11050,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                context_window: Optional[LiveContextWindowUsage] = ..., 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                context_window: Optional[LiveContextWindowUsage] = ...,
+                event_id: str,
                 usage: LiveSessionUsage
             ) -> None: ...
 
@@ -11008,11 +11071,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                end_ms: int, 
-                event_id: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                end_ms: int,
+                event_id: str,
                 start_ms: int
             ) -> None: ...
 
@@ -11027,9 +11090,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 session_id: str
             ) -> None: ...
 
@@ -11044,9 +11107,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event: str, 
+                self,
+                *,
+                event: str,
                 event_id: str
             ) -> None: ...
 
@@ -11062,10 +11125,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_event_id: Optional[str] = ..., 
-                event: str, 
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                event: str,
                 event_id: str
             ) -> None: ...
 
@@ -11081,10 +11144,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                error: LiveTransportCallError, 
-                event_id: str, 
+                self,
+                *,
+                error: LiveTransportCallError,
+                event_id: str,
                 session_id: str
             ) -> None: ...
 
@@ -11099,9 +11162,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 session_id: str
             ) -> None: ...
 
@@ -11145,8 +11208,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 rate: int
             ) -> None: ...
 
@@ -11160,8 +11223,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 rate: Literal[16000, 24000]
             ) -> None: ...
 
@@ -11175,8 +11238,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 rate: int
             ) -> None: ...
 
@@ -11196,15 +11259,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[LiveInitialSessionAudioParam] = ..., 
-                client: Optional[LiveClientConfigParam] = ..., 
-                delegation: Optional[LiveSessionCreateParamsDelegation] = ..., 
-                input: Optional[list[LiveInitialItem]] = ..., 
-                instructions: Optional[str] = ..., 
-                model: Union[str, ModelIdsLive], 
-                store: Optional[bool] = ..., 
+                self,
+                *,
+                audio: Optional[LiveInitialSessionAudioParam] = ...,
+                client: Optional[LiveClientConfigParam] = ...,
+                delegation: Optional[LiveSessionCreateParamsDelegation] = ...,
+                input: Optional[list[LiveInitialItem]] = ...,
+                instructions: Optional[str] = ...,
+                model: Union[str, ModelIdsLive],
+                store: Optional[bool] = ...,
                 triggers: Optional[list[LiveDecisionTriggerInputParam]] = ...
             ) -> None: ...
 
@@ -11217,8 +11280,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -11232,8 +11295,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 acknowledgement_delay_ms: Optional[int] = ...
             ) -> None: ...
 
@@ -11248,9 +11311,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                acknowledgement_delay_ms: Optional[int] = ..., 
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...,
                 decisions: LiveDecisionsSettingsInputParam
             ) -> None: ...
 
@@ -11265,9 +11328,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                acknowledgement_delay_ms: Optional[int] = ..., 
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...,
                 responses: LiveResponsesDelegationSettingsInputParam
             ) -> None: ...
 
@@ -11288,9 +11351,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                event_id: Optional[str] = ...,
                 session: LiveSessionCreateParams
             ) -> None: ...
 
@@ -11304,9 +11367,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delegation: Optional[LiveSessionUpdateParamsDelegation] = ..., 
+                self,
+                *,
+                delegation: Optional[LiveSessionUpdateParamsDelegation] = ...,
                 triggers: Optional[list[LiveDecisionTriggerInputParam]] = ...
             ) -> None: ...
 
@@ -11319,8 +11382,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -11334,8 +11397,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 acknowledgement_delay_ms: Optional[int] = ...
             ) -> None: ...
 
@@ -11354,8 +11417,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 seconds: float
             ) -> None: ...
 
@@ -11370,9 +11433,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                skill_id: str, 
+                self,
+                *,
+                skill_id: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -11384,8 +11447,8 @@ namespace azure.ai.projects.models
         type: Literal["apply_patch"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11394,8 +11457,8 @@ namespace azure.ai.projects.models
         type: Literal["code_interpreter"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11404,8 +11467,8 @@ namespace azure.ai.projects.models
         type: Literal["computer"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11416,8 +11479,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 name: str
             ) -> None: ...
 
@@ -11429,8 +11492,8 @@ namespace azure.ai.projects.models
         type: Literal["file_search"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11439,8 +11502,8 @@ namespace azure.ai.projects.models
         type: Literal["shell"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11449,8 +11512,8 @@ namespace azure.ai.projects.models
         type: Literal["image_generation"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11459,8 +11522,8 @@ namespace azure.ai.projects.models
         type: Literal["programmatic_tool_calling"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11469,8 +11532,8 @@ namespace azure.ai.projects.models
         type: Literal["web_search"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11479,8 +11542,8 @@ namespace azure.ai.projects.models
         type: Literal["web_search_preview"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11507,8 +11570,8 @@ namespace azure.ai.projects.models
         type: Literal["tool_search"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11521,10 +11584,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: str, 
-                message: str, 
+                self,
+                *,
+                code: str,
+                message: str,
                 param: Optional[str] = ...
             ) -> None: ...
 
@@ -11536,8 +11599,8 @@ namespace azure.ai.projects.models
         type: Literal["web_search"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -11550,10 +11613,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -11568,10 +11631,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                name: str, 
+                self,
+                *,
+                description: str,
+                name: str,
                 path: str
             ) -> None: ...
 
@@ -11586,10 +11649,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                bytes: list[int], 
-                logprob: float, 
+                self,
+                *,
+                bytes: list[int],
+                logprob: float,
                 token: str
             ) -> None: ...
 
@@ -11605,11 +11668,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                alpha: Optional[int] = ..., 
-                dropout: Optional[float] = ..., 
-                rank: Optional[int] = ..., 
+                self,
+                *,
+                alpha: Optional[int] = ...,
+                dropout: Optional[float] = ...,
+                rank: Optional[int] = ...,
                 target_modules: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -11625,11 +11688,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                annotations: Optional[MCPListToolsToolAnnotations] = ..., 
-                description: Optional[str] = ..., 
-                input_schema: MCPListToolsToolInputSchema, 
+                self,
+                *,
+                annotations: Optional[MCPListToolsToolAnnotations] = ...,
+                description: Optional[str] = ...,
+                input_schema: MCPListToolsToolInputSchema,
                 name: str
             ) -> None: ...
 
@@ -11661,20 +11724,20 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
-                authorization: Optional[str] = ..., 
-                connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                headers: Optional[dict[str, str]] = ..., 
-                project_connection_id: Optional[str] = ..., 
-                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
-                server_description: Optional[str] = ..., 
-                server_label: str, 
-                server_url: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ...,
+                authorization: Optional[str] = ...,
+                connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ...,
+                defer_loading: Optional[bool] = ...,
+                headers: Optional[dict[str, str]] = ...,
+                project_connection_id: Optional[str] = ...,
+                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ...,
+                server_description: Optional[str] = ...,
+                server_label: str,
+                server_url: Optional[str] = ...,
+                tool_configs: Optional[dict[str, ToolConfig]] = ...,
                 tunnel_id: Optional[str] = ...
             ) -> None: ...
 
@@ -11688,9 +11751,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                read_only: Optional[bool] = ..., 
+                self,
+                *,
+                read_only: Optional[bool] = ...,
                 tool_names: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -11704,9 +11767,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                always: Optional[MCPToolFilter] = ..., 
+                self,
+                *,
+                always: Optional[MCPToolFilter] = ...,
                 never: Optional[MCPToolFilter] = ...
             ) -> None: ...
 
@@ -11734,22 +11797,22 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
-                authorization: Optional[str] = ..., 
-                connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                description: Optional[str] = ..., 
-                headers: Optional[dict[str, str]] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: Optional[str] = ..., 
-                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
-                server_description: Optional[str] = ..., 
-                server_label: str, 
-                server_url: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ...,
+                authorization: Optional[str] = ...,
+                connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ...,
+                defer_loading: Optional[bool] = ...,
+                description: Optional[str] = ...,
+                headers: Optional[dict[str, str]] = ...,
+                name: Optional[str] = ...,
+                project_connection_id: Optional[str] = ...,
+                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ...,
+                server_description: Optional[str] = ...,
+                server_label: str,
+                server_url: Optional[str] = ...,
+                tool_configs: Optional[dict[str, ToolConfig]] = ...,
                 tunnel_id: Optional[str] = ...
             ) -> None: ...
 
@@ -11763,8 +11826,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 blueprint_id: str
             ) -> None: ...
 
@@ -11783,10 +11846,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                tags: Optional[dict[str, str]] = ...,
                 vector_store_id: str
             ) -> None: ...
 
@@ -11806,12 +11869,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                kind: str, 
-                memory_id: str, 
-                scope: str, 
+                self,
+                *,
+                content: str,
+                kind: str,
+                memory_id: str,
+                scope: str,
                 updated_at: datetime
             ) -> None: ...
 
@@ -11831,9 +11894,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                kind: Union[str, MemoryOperationKind], 
+                self,
+                *,
+                kind: Union[str, MemoryOperationKind],
                 memory_item: MemoryItem
             ) -> None: ...
 
@@ -11852,8 +11915,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 memory_item: MemoryItem
             ) -> None: ...
 
@@ -11866,8 +11929,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 max_memories: Optional[int] = ...
             ) -> None: ...
 
@@ -11884,11 +11947,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                memory_store_name: str, 
-                scope: str, 
-                search_options: Optional[MemorySearchOptions] = ..., 
+                self,
+                *,
+                memory_store_name: str,
+                scope: str,
+                search_options: Optional[MemorySearchOptions] = ...,
                 update_delay: Optional[int] = ...
             ) -> None: ...
 
@@ -11904,10 +11967,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                chat_model: str, 
-                embedding_model: str, 
+                self,
+                *,
+                chat_model: str,
+                embedding_model: str,
                 options: Optional[MemoryStoreDefaultOptions] = ...
             ) -> None: ...
 
@@ -11924,12 +11987,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                chat_summary_enabled: bool, 
-                default_ttl_seconds: Optional[timedelta] = ..., 
-                procedural_memory_enabled: Optional[bool] = ..., 
-                user_profile_details: Optional[str] = ..., 
+                self,
+                *,
+                chat_summary_enabled: bool,
+                default_ttl_seconds: Optional[timedelta] = ...,
+                procedural_memory_enabled: Optional[bool] = ...,
+                user_profile_details: Optional[str] = ...,
                 user_profile_enabled: bool
             ) -> None: ...
 
@@ -11942,8 +12005,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 kind: str
             ) -> None: ...
 
@@ -11959,11 +12022,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                deleted: bool, 
-                name: str, 
-                object: Literal[MemoryStoreObjectType.MEMORY_STORE_SCOPE_DELETED], 
+                self,
+                *,
+                deleted: bool,
+                name: str,
+                object: Literal[MemoryStoreObjectType.MEMORY_STORE_SCOPE_DELETED],
                 scope: str
             ) -> None: ...
 
@@ -11983,15 +12046,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_at: datetime, 
-                definition: MemoryStoreDefinition, 
-                description: Optional[str] = ..., 
-                id: str, 
-                metadata: Optional[dict[str, str]] = ..., 
-                name: str, 
-                object: Literal[MemoryStoreObjectType.MEMORY_STORE], 
+                self,
+                *,
+                created_at: datetime,
+                definition: MemoryStoreDefinition,
+                description: Optional[str] = ...,
+                id: str,
+                metadata: Optional[dict[str, str]] = ...,
+                name: str,
+                object: Literal[MemoryStoreObjectType.MEMORY_STORE],
                 updated_at: datetime
             ) -> None: ...
 
@@ -12020,13 +12083,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                embedding_tokens: int, 
-                input_tokens: int, 
-                input_tokens_details: ResponseUsageInputTokensDetails, 
-                output_tokens: int, 
-                output_tokens_details: ResponseUsageOutputTokensDetails, 
+                self,
+                *,
+                embedding_tokens: int,
+                input_tokens: int,
+                input_tokens_details: ResponseUsageInputTokensDetails,
+                output_tokens: int,
+                output_tokens_details: ResponseUsageOutputTokensDetails,
                 total_tokens: int
             ) -> None: ...
 
@@ -12041,10 +12104,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                memories: list[MemorySearchItem], 
-                search_id: str, 
+                self,
+                *,
+                memories: list[MemorySearchItem],
+                search_id: str,
                 usage: MemoryStoreOperationUsage
             ) -> None: ...
 
@@ -12058,9 +12121,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                memory_operations: list[MemoryOperation], 
+                self,
+                *,
+                memory_operations: list[MemoryOperation],
                 usage: MemoryStoreOperationUsage
             ) -> None: ...
 
@@ -12077,12 +12140,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                error: Optional[ApiError] = ..., 
-                result: Optional[MemoryStoreUpdateCompletedResult] = ..., 
-                status: Union[str, MemoryStoreUpdateStatus], 
-                superseded_by: Optional[str] = ..., 
+                self,
+                *,
+                error: Optional[ApiError] = ...,
+                result: Optional[MemoryStoreUpdateCompletedResult] = ...,
+                status: Union[str, MemoryStoreUpdateStatus],
+                superseded_by: Optional[str] = ...,
                 update_id: str
             ) -> None: ...
 
@@ -12107,9 +12170,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                resource_app_id: str, 
+                self,
+                *,
+                resource_app_id: str,
                 scopes: list[str]
             ) -> None: ...
 
@@ -12136,22 +12199,22 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_display_name: Optional[str] = ..., 
-                agent_name: Optional[str] = ..., 
-                app_publish_scope: Optional[Union[str, Microsoft365PublishScope]] = ..., 
-                app_registration_client_id: Optional[str] = ..., 
-                app_version: Optional[str] = ..., 
-                bot_service_arm_id: Optional[str] = ..., 
-                developer_name: Optional[str] = ..., 
-                developer_website_url: Optional[str] = ..., 
-                full_description: Optional[str] = ..., 
-                privacy_url: Optional[str] = ..., 
-                recommended_next_app_version: Optional[str] = ..., 
-                short_description: Optional[str] = ..., 
-                teams_app_id: Optional[str] = ..., 
-                terms_of_use_url: Optional[str] = ..., 
+                self,
+                *,
+                agent_display_name: Optional[str] = ...,
+                agent_name: Optional[str] = ...,
+                app_publish_scope: Optional[Union[str, Microsoft365PublishScope]] = ...,
+                app_registration_client_id: Optional[str] = ...,
+                app_version: Optional[str] = ...,
+                bot_service_arm_id: Optional[str] = ...,
+                developer_name: Optional[str] = ...,
+                developer_website_url: Optional[str] = ...,
+                full_description: Optional[str] = ...,
+                privacy_url: Optional[str] = ...,
+                recommended_next_app_version: Optional[str] = ...,
+                short_description: Optional[str] = ...,
+                teams_app_id: Optional[str] = ...,
+                terms_of_use_url: Optional[str] = ...,
                 title_id: Optional[str] = ...
             ) -> None: ...
 
@@ -12165,9 +12228,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                teams_app_id: Optional[str] = ..., 
+                self,
+                *,
+                teams_app_id: Optional[str] = ...,
                 title_id: Optional[str] = ...
             ) -> None: ...
 
@@ -12205,9 +12268,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
+                self,
+                *,
+                enabled: Optional[bool] = ...,
                 name: Union[str, MicrosoftCopilotBuiltInTool]
             ) -> None: ...
 
@@ -12220,8 +12283,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 enabled: Optional[bool] = ...
             ) -> None: ...
 
@@ -12236,9 +12299,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                configs: Optional[list[MicrosoftCopilotToolsetConfig]] = ..., 
+                self,
+                *,
+                configs: Optional[list[MicrosoftCopilotToolsetConfig]] = ...,
                 default_config: Optional[MicrosoftCopilotToolsetDefaultConfig] = ...
             ) -> None: ...
 
@@ -12252,8 +12315,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 fabric_dataagent_preview: FabricDataAgentToolParameters
             ) -> None: ...
 
@@ -12269,11 +12332,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                detailed_explanation: Optional[str] = ..., 
-                error_type: Optional[Union[str, MisalignmentErrorType]] = ..., 
-                review_target: Optional[str] = ..., 
+                self,
+                *,
+                detailed_explanation: Optional[str] = ...,
+                error_type: Optional[Union[str, MisalignmentErrorType]] = ...,
+                review_target: Optional[str] = ...,
                 steer: Optional[MisalignmentSteer] = ...
             ) -> None: ...
 
@@ -12293,8 +12356,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 message: str
             ) -> None: ...
 
@@ -12307,8 +12370,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 blob_uri: str
             ) -> None: ...
 
@@ -12342,12 +12405,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                capacity: int, 
-                family: str, 
-                name: str, 
-                size: str, 
+                self,
+                *,
+                capacity: int,
+                family: str,
+                name: str,
+                size: str,
                 tier: str
             ) -> None: ...
 
@@ -12366,10 +12429,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                pending_upload_id: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: Optional[str] = ...,
+                pending_upload_id: Optional[str] = ...,
                 pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]
             ) -> None: ...
 
@@ -12385,11 +12448,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                blob_reference: BlobReference, 
-                pending_upload_id: str, 
-                pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE], 
+                self,
+                *,
+                blob_reference: BlobReference,
+                pending_upload_id: str,
+                pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE],
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -12412,11 +12475,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                max_completion_tokens: Optional[int] = ..., 
-                seed: Optional[int] = ..., 
-                temperature: Optional[float] = ..., 
+                self,
+                *,
+                max_completion_tokens: Optional[int] = ...,
+                seed: Optional[int] = ...,
+                temperature: Optional[float] = ...,
                 top_p: Optional[float] = ...
             ) -> None: ...
 
@@ -12430,9 +12493,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                job_id: Optional[str] = ..., 
+                self,
+                *,
+                job_id: Optional[str] = ...,
                 source_type: Optional[Union[str, FoundryModelSourceType]] = ...
             ) -> None: ...
 
@@ -12456,14 +12519,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                base_model: Optional[str] = ..., 
-                blob_uri: str, 
-                description: Optional[str] = ..., 
-                lora_config: Optional[LoraConfig] = ..., 
-                source: Optional[ModelSourceData] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
+                self,
+                *,
+                base_model: Optional[str] = ...,
+                blob_uri: str,
+                description: Optional[str] = ...,
+                lora_config: Optional[LoraConfig] = ...,
+                source: Optional[ModelSourceData] = ...,
+                tags: Optional[dict[str, str]] = ...,
                 weight_type: Optional[Union[str, FoundryModelWeightType]] = ...
             ) -> None: ...
 
@@ -12477,8 +12540,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 days_of_month: list[int]
             ) -> None: ...
 
@@ -12494,10 +12557,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                name: str, 
+                self,
+                *,
+                description: str,
+                name: str,
                 tools: list[Union[FunctionToolParam, CustomToolParam]]
             ) -> None: ...
 
@@ -12522,9 +12585,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                time_zone: Optional[str] = ..., 
+                self,
+                *,
+                time_zone: Optional[str] = ...,
                 trigger_at: datetime
             ) -> None: ...
 
@@ -12547,8 +12610,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -12572,12 +12635,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auth: OpenApiAuthDetails, 
-                default_params: Optional[list[str]] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                auth: OpenApiAuthDetails,
+                default_params: Optional[list[str]] = ...,
+                description: Optional[str] = ...,
+                name: str,
                 spec: dict[str, Any]
             ) -> None: ...
 
@@ -12592,10 +12655,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
                 parameters: dict[str, Any]
             ) -> None: ...
 
@@ -12609,8 +12672,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 security_scheme: OpenApiManagedSecurityScheme
             ) -> None: ...
 
@@ -12623,8 +12686,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 audience: str
             ) -> None: ...
 
@@ -12638,8 +12701,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 security_scheme: OpenApiProjectConnectionSecurityScheme
             ) -> None: ...
 
@@ -12652,8 +12715,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 project_connection_id: str
             ) -> None: ...
 
@@ -12668,9 +12731,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                openapi: OpenApiFunctionDefinition, 
+                self,
+                *,
+                openapi: OpenApiFunctionDefinition,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -12687,11 +12750,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                openapi: OpenApiFunctionDefinition, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                openapi: OpenApiFunctionDefinition,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -12712,8 +12775,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -12734,11 +12797,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auth: Optional[TelemetryEndpointAuth] = ..., 
-                data: list[Union[str, TelemetryDataKind]], 
-                endpoint: str, 
+                self,
+                *,
+                auth: Optional[TelemetryEndpointAuth] = ...,
+                data: list[Union[str, TelemetryDataKind]],
+                endpoint: str,
                 protocol: Union[str, TelemetryTransportProtocol]
             ) -> None: ...
 
@@ -12751,8 +12814,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 reasoning_tokens: int
             ) -> None: ...
 
@@ -12772,10 +12835,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                pending_upload_id: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: Optional[str] = ...,
+                pending_upload_id: Optional[str] = ...,
                 pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE]
             ) -> None: ...
 
@@ -12791,11 +12854,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                blob_reference: BlobReference, 
-                pending_upload_id: str, 
-                pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE], 
+                self,
+                *,
+                blob_reference: BlobReference,
+                pending_upload_id: str,
+                pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE],
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -12815,8 +12878,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 expires_at: Optional[datetime] = ...
             ) -> None: ...
 
@@ -12830,8 +12893,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 value: str
             ) -> None: ...
 
@@ -12844,8 +12907,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 output: Optional[VoiceAgentAudioOutputConfig] = ...
             ) -> None: ...
 
@@ -12862,11 +12925,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                memory_id: str, 
-                scope: str, 
+                self,
+                *,
+                content: str,
+                memory_id: str,
+                scope: str,
                 updated_at: datetime
             ) -> None: ...
 
@@ -12901,19 +12964,19 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                harness: Optional[AgentHarness] = ..., 
-                instructions: Optional[str] = ..., 
-                model: str, 
-                rai_config: Optional[RaiConfig] = ..., 
-                reasoning: Optional[Reasoning] = ..., 
-                skills: Optional[list[SkillReference]] = ..., 
-                structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ..., 
-                temperature: Optional[float] = ..., 
-                text: Optional[PromptAgentDefinitionTextOptions] = ..., 
-                tool_choice: Optional[Union[str, ToolChoiceParam]] = ..., 
-                tools: Optional[list[Tool]] = ..., 
+                self,
+                *,
+                harness: Optional[AgentHarness] = ...,
+                instructions: Optional[str] = ...,
+                model: str,
+                rai_config: Optional[RaiConfig] = ...,
+                reasoning: Optional[Reasoning] = ...,
+                skills: Optional[list[SkillReference]] = ...,
+                structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ...,
+                temperature: Optional[float] = ...,
+                text: Optional[PromptAgentDefinitionTextOptions] = ...,
+                tool_choice: Optional[Union[str, ToolChoiceParam]] = ...,
+                tools: Optional[list[Tool]] = ...,
                 top_p: Optional[float] = ...
             ) -> None: ...
 
@@ -12926,8 +12989,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 format: Optional[TextResponseFormat] = ...
             ) -> None: ...
 
@@ -12944,11 +13007,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                data_schema: Optional[dict[str, Any]] = ..., 
-                init_parameters: Optional[dict[str, Any]] = ..., 
-                metrics: Optional[dict[str, EvaluatorMetric]] = ..., 
+                self,
+                *,
+                data_schema: Optional[dict[str, Any]] = ...,
+                init_parameters: Optional[dict[str, Any]] = ...,
+                metrics: Optional[dict[str, EvaluatorMetric]] = ...,
                 prompt_text: str
             ) -> None: ...
 
@@ -12963,9 +13026,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 prompt: str
             ) -> None: ...
 
@@ -12980,9 +13043,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 prompt: str
             ) -> None: ...
 
@@ -12996,8 +13059,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 context: Optional[list[OptimizationContext]] = ...
             ) -> None: ...
 
@@ -13015,13 +13078,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                a2a: Optional[A2AProtocolConfiguration] = ..., 
-                activity: Optional[ActivityProtocolConfiguration] = ..., 
-                invocations: Optional[InvocationsProtocolConfiguration] = ..., 
-                invocations_ws: Optional[InvocationsWsProtocolConfiguration] = ..., 
-                mcp: Optional[McpProtocolConfiguration] = ..., 
+                self,
+                *,
+                a2a: Optional[A2AProtocolConfiguration] = ...,
+                activity: Optional[ActivityProtocolConfiguration] = ...,
+                invocations: Optional[InvocationsProtocolConfiguration] = ...,
+                invocations_ws: Optional[InvocationsWsProtocolConfiguration] = ...,
+                mcp: Optional[McpProtocolConfiguration] = ...,
                 responses: Optional[ResponsesProtocolConfiguration] = ...
             ) -> None: ...
 
@@ -13035,9 +13098,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                protocol: Union[str, AgentEndpointProtocol], 
+                self,
+                *,
+                protocol: Union[str, AgentEndpointProtocol],
                 version: str
             ) -> None: ...
 
@@ -13059,9 +13122,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                invocations_moderation: Optional[RaiInvocationModeration] = ..., 
+                self,
+                *,
+                invocations_moderation: Optional[RaiInvocationModeration] = ...,
                 rai_policy_name: str
             ) -> None: ...
 
@@ -13090,13 +13153,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                input_content_type: Optional[Union[str, RaiInvocationContentType]] = ..., 
-                input_paths: Optional[list[str]] = ..., 
-                output_content_type: Optional[Union[str, RaiInvocationContentType]] = ..., 
-                output_paths: Optional[list[str]] = ..., 
-                response_mode: Union[str, RaiInvocationMode], 
+                self,
+                *,
+                input_content_type: Optional[Union[str, RaiInvocationContentType]] = ...,
+                input_paths: Optional[list[str]] = ...,
+                output_content_type: Optional[Union[str, RaiInvocationContentType]] = ...,
+                output_paths: Optional[list[str]] = ...,
+                response_mode: Union[str, RaiInvocationMode],
                 stream_selectors: Optional[list[RaiSseTextSelector]] = ...
             ) -> None: ...
 
@@ -13110,9 +13173,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_type: str, 
+                self,
+                *,
+                event_type: str,
                 text_field: Optional[str] = ...
             ) -> None: ...
 
@@ -13132,10 +13195,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                hybrid_search: Optional[HybridSearchOptions] = ..., 
-                ranker: Optional[Union[str, RankerVersionType]] = ..., 
+                self,
+                *,
+                hybrid_search: Optional[HybridSearchOptions] = ...,
+                ranker: Optional[Union[str, RankerVersionType]] = ...,
                 score_threshold: Optional[float] = ...
             ) -> None: ...
 
@@ -13148,8 +13211,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -13163,8 +13226,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 rate: Optional[Literal[24000]] = ...
             ) -> None: ...
 
@@ -13203,8 +13266,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -13220,10 +13283,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
-                item: RealtimeConversationItem, 
+                self,
+                *,
+                event_id: Optional[str] = ...,
+                item: RealtimeConversationItem,
                 previous_item_id: Optional[str] = ...
             ) -> None: ...
 
@@ -13238,9 +13301,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                event_id: Optional[str] = ...,
                 item_id: str
             ) -> None: ...
 
@@ -13255,9 +13318,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                event_id: Optional[str] = ...,
                 item_id: str
             ) -> None: ...
 
@@ -13274,11 +13337,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_end_ms: int, 
-                content_index: int, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                audio_end_ms: int,
+                content_index: int,
+                event_id: Optional[str] = ...,
                 item_id: str
             ) -> None: ...
 
@@ -13293,9 +13356,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: str, 
+                self,
+                *,
+                audio: str,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -13309,8 +13372,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -13324,8 +13387,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -13339,8 +13402,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -13355,9 +13418,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                event_id: Optional[str] = ...,
                 response_id: Optional[str] = ...
             ) -> None: ...
 
@@ -13372,9 +13435,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
+                self,
+                *,
+                event_id: Optional[str] = ...,
                 response: Optional[VoiceAgentResponseCreateParams] = ...
             ) -> None: ...
 
@@ -13403,8 +13466,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -13425,13 +13488,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                call_id: Optional[str] = ..., 
-                id: Optional[str] = ..., 
-                name: str, 
-                object: Optional[Literal[item]] = ..., 
+                self,
+                *,
+                arguments: str,
+                call_id: Optional[str] = ...,
+                id: Optional[str] = ...,
+                name: str,
+                object: Optional[Literal[item]] = ...,
                 status: Optional[Literal[completed, incomplete, in_progress]] = ...
             ) -> None: ...
 
@@ -13452,13 +13515,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                object: Optional[Literal[item]] = ..., 
-                output: str, 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: Optional[str] = ...,
+                object: Optional[Literal[item]] = ...,
+                output: str,
                 status: Optional[Literal[completed, incomplete, in_progress]] = ...
             ) -> None: ...
 
@@ -13472,8 +13535,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 role: str
             ) -> None: ...
 
@@ -13493,12 +13556,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[RealtimeConversationItemMessageAssistantContent], 
-                id: Optional[str] = ..., 
-                object: Optional[Literal[item]] = ..., 
-                status: Optional[Literal[completed, incomplete, in_progress]] = ..., 
+                self,
+                *,
+                content: list[RealtimeConversationItemMessageAssistantContent],
+                id: Optional[str] = ...,
+                object: Optional[Literal[item]] = ...,
+                status: Optional[Literal[completed, incomplete, in_progress]] = ...,
                 type: Literal[RealtimeConversationItemType.MESSAGE]
             ) -> None: ...
 
@@ -13514,11 +13577,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[str] = ..., 
-                text: Optional[str] = ..., 
-                transcript: Optional[str] = ..., 
+                self,
+                *,
+                audio: Optional[str] = ...,
+                text: Optional[str] = ...,
+                transcript: Optional[str] = ...,
                 type: Optional[Literal[output_text, output_audio]] = ...
             ) -> None: ...
 
@@ -13538,12 +13601,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[RealtimeConversationItemMessageSystemContent], 
-                id: Optional[str] = ..., 
-                object: Optional[Literal[item]] = ..., 
-                status: Optional[Literal[completed, incomplete, in_progress]] = ..., 
+                self,
+                *,
+                content: list[RealtimeConversationItemMessageSystemContent],
+                id: Optional[str] = ...,
+                object: Optional[Literal[item]] = ...,
+                status: Optional[Literal[completed, incomplete, in_progress]] = ...,
                 type: Literal[RealtimeConversationItemType.MESSAGE]
             ) -> None: ...
 
@@ -13557,9 +13620,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                text: Optional[str] = ..., 
+                self,
+                *,
+                text: Optional[str] = ...,
                 type: Optional[Literal[input_text]] = ...
             ) -> None: ...
 
@@ -13585,12 +13648,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[RealtimeConversationItemMessageUserContent], 
-                id: Optional[str] = ..., 
-                object: Optional[Literal[item]] = ..., 
-                status: Optional[Literal[completed, incomplete, in_progress]] = ..., 
+                self,
+                *,
+                content: list[RealtimeConversationItemMessageUserContent],
+                id: Optional[str] = ...,
+                object: Optional[Literal[item]] = ...,
+                status: Optional[Literal[completed, incomplete, in_progress]] = ...,
                 type: Literal[RealtimeConversationItemType.MESSAGE]
             ) -> None: ...
 
@@ -13608,13 +13671,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[str] = ..., 
-                detail: Optional[Literal[auto, low, high]] = ..., 
-                image_url: Optional[str] = ..., 
-                text: Optional[str] = ..., 
-                transcript: Optional[str] = ..., 
+                self,
+                *,
+                audio: Optional[str] = ...,
+                detail: Optional[Literal[auto, low, high]] = ...,
+                image_url: Optional[str] = ...,
+                text: Optional[str] = ...,
+                transcript: Optional[str] = ...,
                 type: Optional[Literal[input_text, input_audio, input_image]] = ...
             ) -> None: ...
 
@@ -13641,11 +13704,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                parameters: Optional[RealtimeFunctionToolParameters] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                parameters: Optional[RealtimeFunctionToolParameters] = ...,
                 type: Optional[Literal[function]] = ...
             ) -> None: ...
 
@@ -13667,11 +13730,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                id: str, 
-                name: str, 
+                self,
+                *,
+                arguments: str,
+                id: str,
+                name: str,
                 server_label: str
             ) -> None: ...
 
@@ -13690,11 +13753,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                approval_request_id: str, 
-                approve: bool, 
-                id: str, 
+                self,
+                *,
+                approval_request_id: str,
+                approve: bool,
+                id: str,
                 reason: Optional[str] = ...
             ) -> None: ...
 
@@ -13707,8 +13770,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -13723,9 +13786,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: int, 
+                self,
+                *,
+                code: int,
                 message: str
             ) -> None: ...
 
@@ -13743,10 +13806,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: Optional[str] = ..., 
-                server_label: str, 
+                self,
+                *,
+                id: Optional[str] = ...,
+                server_label: str,
                 tools: list[MCPListToolsTool]
             ) -> None: ...
 
@@ -13761,9 +13824,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: int, 
+                self,
+                *,
+                code: int,
                 message: str
             ) -> None: ...
 
@@ -13785,14 +13848,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                approval_request_id: Optional[str] = ..., 
-                arguments: str, 
-                error: Optional[RealtimeMCPError] = ..., 
-                id: str, 
-                name: str, 
-                output: Optional[str] = ..., 
+                self,
+                *,
+                approval_request_id: Optional[str] = ...,
+                arguments: str,
+                error: Optional[RealtimeMCPError] = ...,
+                id: str,
+                name: str,
+                output: Optional[str] = ...,
                 server_label: str
             ) -> None: ...
 
@@ -13806,8 +13869,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 message: str
             ) -> None: ...
 
@@ -13826,8 +13889,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 effort: Optional[Union[str, RealtimeReasoningEffort]] = ...
             ) -> None: ...
 
@@ -13850,9 +13913,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: str, 
+                self,
+                *,
+                audio: str,
                 transcript: Optional[str] = ...
             ) -> None: ...
 
@@ -13870,12 +13933,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: str,
                 status: Optional[Literal[completed, incomplete]] = ...
             ) -> None: ...
 
@@ -13892,11 +13955,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: str, 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: str,
                 status: Optional[Literal[completed, incomplete]] = ...
             ) -> None: ...
 
@@ -13911,9 +13974,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                detail: Optional[Literal[low, high, auto]] = ..., 
+                self,
+                *,
+                detail: Optional[Literal[low, high, auto]] = ...,
                 image_url: str
             ) -> None: ...
 
@@ -13926,8 +13989,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 role: str
             ) -> None: ...
 
@@ -13944,10 +14007,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[RealtimeResponseInputMessageAssistantContent], 
-                id: Optional[str] = ..., 
+                self,
+                *,
+                content: list[RealtimeResponseInputMessageAssistantContent],
+                id: Optional[str] = ...,
                 status: Optional[Literal[completed, incomplete]] = ...
             ) -> None: ...
 
@@ -13961,8 +14024,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -13979,10 +14042,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[RealtimeResponseInputText], 
-                id: Optional[str] = ..., 
+                self,
+                *,
+                content: list[RealtimeResponseInputText],
+                id: Optional[str] = ...,
                 status: Optional[Literal[completed, incomplete]] = ...
             ) -> None: ...
 
@@ -13999,10 +14062,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[RealtimeResponseInputText], 
-                id: Optional[str] = ..., 
+                self,
+                *,
+                content: list[RealtimeResponseInputText],
+                id: Optional[str] = ...,
                 status: Optional[Literal[completed, incomplete]] = ...
             ) -> None: ...
 
@@ -14026,10 +14089,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[Union[RealtimeResponseInputText, RealtimeResponseInputAudio, RealtimeResponseInputImage]], 
-                id: Optional[str] = ..., 
+                self,
+                *,
+                content: list[Union[RealtimeResponseInputText, RealtimeResponseInputAudio, RealtimeResponseInputImage]],
+                id: Optional[str] = ...,
                 status: Optional[Literal[completed, incomplete]] = ...
             ) -> None: ...
 
@@ -14043,8 +14106,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -14058,8 +14121,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 id: str
             ) -> None: ...
 
@@ -14074,10 +14137,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                error: Optional[RealtimeResponseStatusDetailsError] = ..., 
-                reason: Optional[Literal[turn_detected, client_cancelled, max_output_tokens, content_filter]] = ..., 
+                self,
+                *,
+                error: Optional[RealtimeResponseStatusDetailsError] = ...,
+                reason: Optional[Literal[turn_detected, client_cancelled, max_output_tokens, content_filter]] = ...,
                 type: Optional[Literal[completed, cancelled, failed, incomplete]] = ...
             ) -> None: ...
 
@@ -14092,10 +14155,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: Optional[str] = ..., 
-                message: Optional[str] = ..., 
+                self,
+                *,
+                code: Optional[str] = ...,
+                message: Optional[str] = ...,
                 type: Optional[str] = ...
             ) -> None: ...
 
@@ -14112,12 +14175,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                input_token_details: Optional[RealtimeResponseUsageInputTokenDetails] = ..., 
-                input_tokens: Optional[int] = ..., 
-                output_token_details: Optional[RealtimeResponseUsageOutputTokenDetails] = ..., 
-                output_tokens: Optional[int] = ..., 
+                self,
+                *,
+                input_token_details: Optional[RealtimeResponseUsageInputTokenDetails] = ...,
+                input_tokens: Optional[int] = ...,
+                output_token_details: Optional[RealtimeResponseUsageOutputTokenDetails] = ...,
+                output_tokens: Optional[int] = ...,
                 total_tokens: Optional[int] = ...
             ) -> None: ...
 
@@ -14134,12 +14197,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_tokens: Optional[int] = ..., 
-                cached_tokens: Optional[int] = ..., 
-                cached_tokens_details: Optional[RealtimeResponseUsageInputTokenDetailsCachedTokensDetails] = ..., 
-                image_tokens: Optional[int] = ..., 
+                self,
+                *,
+                audio_tokens: Optional[int] = ...,
+                cached_tokens: Optional[int] = ...,
+                cached_tokens_details: Optional[RealtimeResponseUsageInputTokenDetailsCachedTokensDetails] = ...,
+                image_tokens: Optional[int] = ...,
                 text_tokens: Optional[int] = ...
             ) -> None: ...
 
@@ -14154,10 +14217,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_tokens: Optional[int] = ..., 
-                image_tokens: Optional[int] = ..., 
+                self,
+                *,
+                audio_tokens: Optional[int] = ...,
+                image_tokens: Optional[int] = ...,
                 text_tokens: Optional[int] = ...
             ) -> None: ...
 
@@ -14171,9 +14234,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_tokens: Optional[int] = ..., 
+                self,
+                *,
+                audio_tokens: Optional[int] = ...,
                 text_tokens: Optional[int] = ...
             ) -> None: ...
 
@@ -14186,8 +14249,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -14203,10 +14266,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item: RealtimeConversationItem, 
+                self,
+                *,
+                event_id: str,
+                item: RealtimeConversationItem,
                 previous_item_id: Optional[str] = ...
             ) -> None: ...
 
@@ -14222,10 +14285,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item: RealtimeConversationItem, 
+                self,
+                *,
+                event_id: str,
+                item: RealtimeConversationItem,
                 previous_item_id: Optional[str] = ...
             ) -> None: ...
 
@@ -14240,9 +14303,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 item_id: str
             ) -> None: ...
 
@@ -14258,10 +14321,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item: RealtimeConversationItem, 
+                self,
+                *,
+                event_id: str,
+                item: RealtimeConversationItem,
                 previous_item_id: Optional[str] = ...
             ) -> None: ...
 
@@ -14282,15 +14345,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                languages: Optional[list[TranscriptionLanguage]] = ..., 
-                logprobs: Optional[list[LogProbProperties]] = ..., 
-                phrases: Optional[list[VoiceAgentTranscriptionPhrase]] = ..., 
-                transcript: str, 
+                self,
+                *,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                languages: Optional[list[TranscriptionLanguage]] = ...,
+                logprobs: Optional[list[LogProbProperties]] = ...,
+                phrases: Optional[list[VoiceAgentTranscriptionPhrase]] = ...,
+                transcript: str,
                 usage: Union[TranscriptTextUsageTokens, TranscriptTextUsageDuration]
             ) -> None: ...
 
@@ -14308,12 +14371,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: Optional[int] = ..., 
-                delta: Optional[str] = ..., 
-                event_id: str, 
-                item_id: str, 
+                self,
+                *,
+                content_index: Optional[int] = ...,
+                delta: Optional[str] = ...,
+                event_id: str,
+                item_id: str,
                 logprobs: Optional[list[LogProbProperties]] = ...
             ) -> None: ...
 
@@ -14330,11 +14393,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                error: RealtimeServerEventConversationItemInputAudioTranscriptionFailedError, 
-                event_id: str, 
+                self,
+                *,
+                content_index: int,
+                error: RealtimeServerEventConversationItemInputAudioTranscriptionFailedError,
+                event_id: str,
                 item_id: str
             ) -> None: ...
 
@@ -14350,11 +14413,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: Optional[str] = ..., 
-                message: Optional[str] = ..., 
-                param: Optional[str] = ..., 
+                self,
+                *,
+                code: Optional[str] = ...,
+                message: Optional[str] = ...,
+                param: Optional[str] = ...,
                 type: Optional[str] = ...
             ) -> None: ...
 
@@ -14375,15 +14438,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                end: float, 
-                event_id: str, 
-                id: str, 
-                item_id: str, 
-                speaker: str, 
-                start: float, 
+                self,
+                *,
+                content_index: int,
+                end: float,
+                event_id: str,
+                id: str,
+                item_id: str,
+                speaker: str,
+                start: float,
                 text: str
             ) -> None: ...
 
@@ -14398,9 +14461,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 item: RealtimeConversationItem
             ) -> None: ...
 
@@ -14418,12 +14481,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_end_ms: int, 
-                content_index: int, 
-                event_id: str, 
-                item: Optional[RealtimeConversationItem] = ..., 
+                self,
+                *,
+                audio_end_ms: int,
+                content_index: int,
+                event_id: str,
+                item: Optional[RealtimeConversationItem] = ...,
                 item_id: str
             ) -> None: ...
 
@@ -14438,9 +14501,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                error: RealtimeServerEventErrorError, 
+                self,
+                *,
+                error: RealtimeServerEventErrorError,
                 event_id: str
             ) -> None: ...
 
@@ -14457,12 +14520,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: Optional[str] = ..., 
-                event_id: Optional[str] = ..., 
-                message: str, 
-                param: Optional[str] = ..., 
+                self,
+                *,
+                code: Optional[str] = ...,
+                event_id: Optional[str] = ...,
+                message: str,
+                param: Optional[str] = ...,
                 type: str
             ) -> None: ...
 
@@ -14476,8 +14539,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 event_id: str
             ) -> None: ...
 
@@ -14493,10 +14556,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item_id: str, 
+                self,
+                *,
+                event_id: str,
+                item_id: str,
                 previous_item_id: Optional[str] = ...
             ) -> None: ...
 
@@ -14512,10 +14575,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_start_ms: int, 
-                event_id: str, 
+                self,
+                *,
+                audio_start_ms: int,
+                event_id: str,
                 item_id: str
             ) -> None: ...
 
@@ -14531,10 +14594,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_end_ms: int, 
-                event_id: str, 
+                self,
+                *,
+                audio_end_ms: int,
+                event_id: str,
                 item_id: str
             ) -> None: ...
 
@@ -14551,11 +14614,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_end_ms: int, 
-                audio_start_ms: int, 
-                event_id: str, 
+                self,
+                *,
+                audio_end_ms: int,
+                audio_start_ms: int,
+                event_id: str,
                 item_id: str
             ) -> None: ...
 
@@ -14570,9 +14633,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 item_id: str
             ) -> None: ...
 
@@ -14587,9 +14650,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 item_id: str
             ) -> None: ...
 
@@ -14604,9 +14667,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 item_id: str
             ) -> None: ...
 
@@ -14621,9 +14684,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 response_id: str
             ) -> None: ...
 
@@ -14638,9 +14701,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 rate_limits: list[RealtimeServerEventRateLimitsUpdatedRateLimits]
             ) -> None: ...
 
@@ -14656,11 +14719,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                limit: Optional[int] = ..., 
-                name: Optional[Literal[requests, tokens]] = ..., 
-                remaining: Optional[int] = ..., 
+                self,
+                *,
+                limit: Optional[int] = ...,
+                name: Optional[Literal[requests, tokens]] = ...,
+                remaining: Optional[int] = ...,
                 reset_seconds: Optional[float] = ...
             ) -> None: ...
 
@@ -14679,13 +14742,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                delta: bytes, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                delta: bytes,
+                event_id: str,
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -14703,12 +14766,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -14727,13 +14790,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                delta: str, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                delta: str,
+                event_id: str,
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -14752,13 +14815,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
-                response_id: str, 
+                self,
+                *,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                output_index: int,
+                response_id: str,
                 transcript: str
             ) -> None: ...
 
@@ -14777,13 +14840,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
-                part: RealtimeServerEventResponseContentPartAddedPart, 
+                self,
+                *,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                output_index: int,
+                part: RealtimeServerEventResponseContentPartAddedPart,
                 response_id: str
             ) -> None: ...
 
@@ -14799,11 +14862,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[str] = ..., 
-                text: Optional[str] = ..., 
-                transcript: Optional[str] = ..., 
+                self,
+                *,
+                audio: Optional[str] = ...,
+                text: Optional[str] = ...,
+                transcript: Optional[str] = ...,
                 type: Optional[Literal[audio, text]] = ...
             ) -> None: ...
 
@@ -14822,13 +14885,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
-                part: RealtimeServerEventResponseContentPartDonePart, 
+                self,
+                *,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                output_index: int,
+                part: RealtimeServerEventResponseContentPartDonePart,
                 response_id: str
             ) -> None: ...
 
@@ -14845,12 +14908,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[str] = ..., 
-                format: Optional[RealtimeAudioFormats] = ..., 
-                text: Optional[str] = ..., 
-                transcript: Optional[str] = ..., 
+                self,
+                *,
+                audio: Optional[str] = ...,
+                format: Optional[RealtimeAudioFormats] = ...,
+                text: Optional[str] = ...,
+                transcript: Optional[str] = ...,
                 type: Optional[Literal[audio, text]] = ...
             ) -> None: ...
 
@@ -14865,9 +14928,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 response: VoiceAgentRealtimeResponse
             ) -> None: ...
 
@@ -14882,9 +14945,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 response: VoiceAgentRealtimeResponse
             ) -> None: ...
 
@@ -14903,13 +14966,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                delta: str, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                call_id: str,
+                delta: str,
+                event_id: str,
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -14929,14 +14992,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                call_id: str, 
-                event_id: str, 
-                item_id: str, 
-                name: str, 
-                output_index: int, 
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                event_id: str,
+                item_id: str,
+                name: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -14955,13 +15018,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta: str, 
-                event_id: str, 
-                item_id: str, 
-                obfuscation: Optional[str] = ..., 
-                output_index: int, 
+                self,
+                *,
+                delta: str,
+                event_id: str,
+                item_id: str,
+                obfuscation: Optional[str] = ...,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -14979,12 +15042,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                arguments: str,
+                event_id: str,
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -15000,10 +15063,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item_id: str, 
+                self,
+                *,
+                event_id: str,
+                item_id: str,
                 output_index: int
             ) -> None: ...
 
@@ -15019,10 +15082,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item_id: str, 
+                self,
+                *,
+                event_id: str,
+                item_id: str,
                 output_index: int
             ) -> None: ...
 
@@ -15038,10 +15101,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item_id: str, 
+                self,
+                *,
+                event_id: str,
+                item_id: str,
                 output_index: int
             ) -> None: ...
 
@@ -15058,11 +15121,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item: RealtimeConversationItem, 
-                output_index: int, 
+                self,
+                *,
+                event_id: str,
+                item: RealtimeConversationItem,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -15079,11 +15142,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item: RealtimeConversationItem, 
-                output_index: int, 
+                self,
+                *,
+                event_id: str,
+                item: RealtimeConversationItem,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -15102,13 +15165,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                delta: str, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                delta: str,
+                event_id: str,
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -15127,13 +15190,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
-                response_id: str, 
+                self,
+                *,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                output_index: int,
+                response_id: str,
                 text: str
             ) -> None: ...
 
@@ -15149,10 +15212,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                conversation_id: Optional[str] = ..., 
-                event_id: str, 
+                self,
+                *,
+                conversation_id: Optional[str] = ...,
+                event_id: str,
                 session: VoiceAgentSessionResponse
             ) -> None: ...
 
@@ -15167,9 +15230,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 session: VoiceAgentSessionResponse
             ) -> None: ...
 
@@ -15257,12 +15320,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                context: Optional[Literal[auto, current_turn, all_turns]] = ..., 
-                effort: Optional[Union[str, ReasoningEffort]] = ..., 
-                generate_summary: Optional[Literal[auto, concise, detailed]] = ..., 
-                mode: Optional[Union[str, ReasoningModeEnum]] = ..., 
+                self,
+                *,
+                context: Optional[Literal[auto, current_turn, all_turns]] = ...,
+                effort: Optional[Union[str, ReasoningEffort]] = ...,
+                generate_summary: Optional[Literal[auto, concise, detailed]] = ...,
+                mode: Optional[Union[str, ReasoningModeEnum]] = ...,
                 summary: Optional[Literal[auto, concise, detailed]] = ...
             ) -> None: ...
 
@@ -15290,8 +15353,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -15309,12 +15372,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                end_time: Optional[datetime] = ..., 
-                interval: int, 
-                schedule: RecurrenceSchedule, 
-                start_time: Optional[datetime] = ..., 
+                self,
+                *,
+                end_time: Optional[datetime] = ...,
+                interval: int,
+                schedule: RecurrenceSchedule,
+                start_time: Optional[datetime] = ...,
                 time_zone: Optional[str] = ...
             ) -> None: ...
 
@@ -15344,16 +15407,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                application_scenario: Optional[str] = ..., 
-                attack_strategies: Optional[list[Union[str, AttackStrategy]]] = ..., 
-                display_name: Optional[str] = ..., 
-                num_turns: Optional[int] = ..., 
-                properties: Optional[dict[str, str]] = ..., 
-                risk_categories: Optional[list[Union[str, RiskCategory]]] = ..., 
-                simulation_only: Optional[bool] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
+                self,
+                *,
+                application_scenario: Optional[str] = ...,
+                attack_strategies: Optional[list[Union[str, AttackStrategy]]] = ...,
+                display_name: Optional[str] = ...,
+                num_turns: Optional[int] = ...,
+                properties: Optional[dict[str, str]] = ...,
+                risk_categories: Optional[list[Union[str, RiskCategory]]] = ...,
+                simulation_only: Optional[bool] = ...,
+                tags: Optional[dict[str, str]] = ...,
                 target: RedTeamTargetConfig
             ) -> None: ...
 
@@ -15372,8 +15435,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -15396,11 +15459,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                generation_configuration: DataGenerationJobConfiguration, 
-                name: str, 
-                output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputConfiguration] = ..., 
+                self,
+                *,
+                generation_configuration: DataGenerationJobConfiguration,
+                name: str,
+                output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputConfiguration] = ...,
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -15417,11 +15480,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                generation_configuration: DataGenerationJobConfiguration, 
-                name: str, 
-                output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputConfiguration] = ..., 
+                self,
+                *,
+                generation_configuration: DataGenerationJobConfiguration,
+                name: str,
+                output_configuration: Optional[ReinforcementFineTuningDataGenerationJobOutputConfiguration] = ...,
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -15436,10 +15499,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                merge_file_id: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                merge_file_id: Optional[str] = ...,
+                name: str,
                 write_mode: Optional[Union[str, DataGenerationJobOutputWriteMode]] = ...
             ) -> None: ...
 
@@ -15455,10 +15518,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -15479,9 +15542,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                cache_write_tokens: int, 
+                self,
+                *,
+                cache_write_tokens: int,
                 cached_tokens: int
             ) -> None: ...
 
@@ -15494,8 +15557,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 reasoning_tokens: int
             ) -> None: ...
 
@@ -15512,12 +15575,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                input_tokens: int, 
-                input_tokens_details: InputTokensDetailsResource, 
-                output_tokens: int, 
-                output_tokens_details: OutputTokensDetailsResource, 
+                self,
+                *,
+                input_tokens: int,
+                input_tokens_details: InputTokensDetailsResource,
+                output_tokens: int,
+                output_tokens_details: OutputTokensDetailsResource,
                 total_tokens: int
             ) -> None: ...
 
@@ -15552,14 +15615,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: Optional[RoutineAction] = ..., 
-                created_at: Optional[datetime] = ..., 
-                description: Optional[str] = ..., 
-                enabled: bool, 
-                name: Optional[str] = ..., 
-                triggers: Optional[dict[str, RoutineTrigger]] = ..., 
+                self,
+                *,
+                action: Optional[RoutineAction] = ...,
+                created_at: Optional[datetime] = ...,
+                description: Optional[str] = ...,
+                enabled: bool,
+                name: Optional[str] = ...,
+                triggers: Optional[dict[str, RoutineTrigger]] = ...,
                 updated_at: Optional[datetime] = ...
             ) -> None: ...
 
@@ -15572,8 +15635,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -15599,8 +15662,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 identity: Optional[Union[str, RoutineDispatchIdentity]] = ...
             ) -> None: ...
 
@@ -15618,8 +15681,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -15659,29 +15722,29 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action_correlation_id: Optional[str] = ..., 
-                action_type: Optional[Union[str, RoutineActionType]] = ..., 
-                agent_endpoint_id: Optional[str] = ..., 
-                agent_id: Optional[str] = ..., 
-                attempt_source: Optional[Union[str, RoutineAttemptSource]] = ..., 
-                conversation_id: Optional[str] = ..., 
-                dispatch_id: Optional[str] = ..., 
-                ended_at: Optional[datetime] = ..., 
-                error_message: Optional[str] = ..., 
-                error_status_code: Optional[int] = ..., 
-                error_type: Optional[str] = ..., 
-                phase: Optional[Union[str, RoutineRunPhase]] = ..., 
-                response_id: Optional[str] = ..., 
-                scheduled_fire_at: Optional[datetime] = ..., 
-                session_id: Optional[str] = ..., 
-                started_at: Optional[datetime] = ..., 
-                status: Optional[RoutineRunStatus] = ..., 
-                task_id: Optional[str] = ..., 
-                trigger_event_payload: Optional[dict[str, Any]] = ..., 
-                trigger_name: Optional[str] = ..., 
-                trigger_type: Optional[Union[str, RoutineTriggerType]] = ..., 
+                self,
+                *,
+                action_correlation_id: Optional[str] = ...,
+                action_type: Optional[Union[str, RoutineActionType]] = ...,
+                agent_endpoint_id: Optional[str] = ...,
+                agent_id: Optional[str] = ...,
+                attempt_source: Optional[Union[str, RoutineAttemptSource]] = ...,
+                conversation_id: Optional[str] = ...,
+                dispatch_id: Optional[str] = ...,
+                ended_at: Optional[datetime] = ...,
+                error_message: Optional[str] = ...,
+                error_status_code: Optional[int] = ...,
+                error_type: Optional[str] = ...,
+                phase: Optional[Union[str, RoutineRunPhase]] = ...,
+                response_id: Optional[str] = ...,
+                scheduled_fire_at: Optional[datetime] = ...,
+                session_id: Optional[str] = ...,
+                started_at: Optional[datetime] = ...,
+                status: Optional[RoutineRunStatus] = ...,
+                task_id: Optional[str] = ...,
+                trigger_event_payload: Optional[dict[str, Any]] = ...,
+                trigger_name: Optional[str] = ...,
+                trigger_type: Optional[Union[str, RoutineTriggerType]] = ...,
                 triggered_at: Optional[datetime] = ...
             ) -> None: ...
 
@@ -15701,8 +15764,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -15727,12 +15790,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                data_schema: Optional[dict[str, Any]] = ..., 
-                dimensions: list[Dimension], 
-                init_parameters: Optional[dict[str, Any]] = ..., 
-                metrics: Optional[dict[str, EvaluatorMetric]] = ..., 
+                self,
+                *,
+                data_schema: Optional[dict[str, Any]] = ...,
+                dimensions: list[Dimension],
+                init_parameters: Optional[dict[str, Any]] = ...,
+                metrics: Optional[dict[str, EvaluatorMetric]] = ...,
                 pass_threshold: Optional[float] = ...
             ) -> None: ...
 
@@ -15749,12 +15812,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: Union[str, RubricGenerationInputQualityWarningCode], 
-                message: str, 
-                severity: Union[str, RubricGenerationInputQualityWarningSeverity], 
-                source: Union[str, RubricGenerationInputQualityWarningSource], 
+                self,
+                *,
+                code: Union[str, RubricGenerationInputQualityWarningCode],
+                message: str,
+                severity: Union[str, RubricGenerationInputQualityWarningSeverity],
+                source: Union[str, RubricGenerationInputQualityWarningSource],
                 source_index: Optional[int] = ...
             ) -> None: ...
 
@@ -15813,14 +15876,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                display_name: Optional[str] = ..., 
-                enabled: bool, 
-                properties: Optional[dict[str, str]] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
-                task: ScheduleTask, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                display_name: Optional[str] = ...,
+                enabled: bool,
+                properties: Optional[dict[str, str]] = ...,
+                tags: Optional[dict[str, str]] = ...,
+                task: ScheduleTask,
                 trigger: Trigger
             ) -> None: ...
 
@@ -15843,9 +15906,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                cron_expression: str, 
+                self,
+                *,
+                cron_expression: str,
                 time_zone: str
             ) -> None: ...
 
@@ -15863,9 +15926,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                schedule_id: str, 
+                self,
+                *,
+                schedule_id: str,
                 trigger_time: Optional[datetime] = ...
             ) -> None: ...
 
@@ -15879,9 +15942,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                configuration: Optional[dict[str, str]] = ..., 
+                self,
+                *,
+                configuration: Optional[dict[str, str]] = ...,
                 type: str
             ) -> None: ...
 
@@ -15901,10 +15964,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                label: str, 
-                probability: float, 
+                self,
+                *,
+                label: str,
+                probability: float,
                 value: int
             ) -> None: ...
 
@@ -15928,8 +15991,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 idle_timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -15945,11 +16008,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                is_directory: bool, 
-                modified_time: datetime, 
-                name: str, 
+                self,
+                *,
+                is_directory: bool,
+                modified_time: datetime,
+                name: str,
                 size: int
             ) -> None: ...
 
@@ -15963,9 +16026,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                bytes_written: int, 
+                self,
+                *,
+                bytes_written: int,
                 path: str
             ) -> None: ...
 
@@ -15979,9 +16042,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                data: str, 
+                self,
+                *,
+                data: str,
                 event: Union[str, SessionLogEventType]
             ) -> None: ...
 
@@ -15998,8 +16061,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 project_connections: Optional[list[ToolProjectConnection]] = ...
             ) -> None: ...
 
@@ -16013,8 +16076,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 sharepoint_grounding_preview: SharepointGroundingToolParameters
             ) -> None: ...
 
@@ -16032,12 +16095,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                description: Optional[str] = ..., 
-                environment: ToolboxShellEnvironment, 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                description: Optional[str] = ...,
+                environment: ToolboxShellEnvironment,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -16054,11 +16117,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                max_samples: int, 
-                model_options: Optional[DataGenerationModelOptions] = ..., 
-                question_types: Optional[list[Union[str, SimpleQnAFineTuningQuestionType]]] = ..., 
+                self,
+                *,
+                max_samples: int,
+                model_options: Optional[DataGenerationModelOptions] = ...,
+                question_types: Optional[list[Union[str, SimpleQnAFineTuningQuestionType]]] = ...,
                 train_split: Optional[float] = ...
             ) -> None: ...
 
@@ -16079,10 +16142,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                max_samples: int, 
-                model_options: Optional[DataGenerationModelOptions] = ..., 
+                self,
+                *,
+                max_samples: int,
+                model_options: Optional[DataGenerationModelOptions] = ...,
                 train_split: Optional[float] = ...
             ) -> None: ...
 
@@ -16096,8 +16159,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 value: str
             ) -> None: ...
 
@@ -16116,11 +16179,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_calling_numbers: Optional[list[str]] = ..., 
-                connection_name: str, 
-                label: Optional[str] = ..., 
+                self,
+                *,
+                allowed_calling_numbers: Optional[list[str]] = ...,
+                connection_name: str,
+                label: Optional[str] = ...,
                 phone_number: Optional[str] = ...
             ) -> None: ...
 
@@ -16140,13 +16203,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_calling_numbers: Optional[list[str]] = ..., 
-                connection_name: str, 
-                id: str, 
-                incoming_call_url: str, 
-                label: Optional[str] = ..., 
+                self,
+                *,
+                allowed_calling_numbers: Optional[list[str]] = ...,
+                connection_name: str,
+                id: str,
+                incoming_call_url: str,
+                label: Optional[str] = ...,
                 phone_number: Optional[str] = ...
             ) -> None: ...
 
@@ -16164,13 +16227,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_at: datetime, 
-                default_version: str, 
-                description: str, 
-                id: str, 
-                latest_version: str, 
+                self,
+                *,
+                created_at: datetime,
+                default_version: str,
+                description: str,
+                id: str,
+                latest_version: str,
                 name: str
             ) -> None: ...
 
@@ -16188,13 +16251,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_tools: Optional[list[str]] = ..., 
-                compatibility: Optional[str] = ..., 
-                description: str, 
-                instructions: str, 
-                license: Optional[str] = ..., 
+                self,
+                *,
+                allowed_tools: Optional[list[str]] = ...,
+                compatibility: Optional[str] = ...,
+                description: str,
+                instructions: str,
+                license: Optional[str] = ...,
                 metadata: Optional[dict[str, str]] = ...
             ) -> None: ...
 
@@ -16208,9 +16271,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -16225,9 +16288,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                skill_id: str, 
+                self,
+                *,
+                skill_id: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -16245,13 +16308,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_at: datetime, 
-                description: str, 
-                id: str, 
-                name: str, 
-                skill_id: str, 
+                self,
+                *,
+                created_at: datetime,
+                description: str,
+                id: str,
+                name: str,
+                skill_id: str,
                 version: str
             ) -> None: ...
 
@@ -16295,8 +16358,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 prompt: str
             ) -> None: ...
 
@@ -16312,11 +16375,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                default_value: Optional[Any] = ..., 
-                description: Optional[str] = ..., 
-                required: Optional[bool] = ..., 
+                self,
+                *,
+                default_value: Optional[Any] = ...,
+                description: Optional[str] = ...,
+                required: Optional[bool] = ...,
                 schema: Optional[dict[str, Any]] = ...
             ) -> None: ...
 
@@ -16332,11 +16395,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                name: str, 
-                schema: dict[str, Any], 
+                self,
+                *,
+                description: str,
+                name: str,
+                schema: dict[str, Any],
                 strict: bool
             ) -> None: ...
 
@@ -16359,11 +16422,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                generation_configuration: DataGenerationJobConfiguration, 
-                name: str, 
-                output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputConfiguration] = ..., 
+                self,
+                *,
+                generation_configuration: DataGenerationJobConfiguration,
+                name: str,
+                output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputConfiguration] = ...,
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -16380,11 +16443,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                generation_configuration: DataGenerationJobConfiguration, 
-                name: str, 
-                output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputConfiguration] = ..., 
+                self,
+                *,
+                generation_configuration: DataGenerationJobConfiguration,
+                name: str,
+                output_configuration: Optional[SupervisedFineTuningDataGenerationJobOutputConfiguration] = ...,
                 sources: list[DataGenerationJobSource]
             ) -> None: ...
 
@@ -16399,10 +16462,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                merge_file_id: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                merge_file_id: Optional[str] = ...,
+                name: str,
                 write_mode: Optional[Union[str, DataGenerationJobOutputWriteMode]] = ...
             ) -> None: ...
 
@@ -16434,13 +16497,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                id: str, 
-                name: str, 
-                properties: Optional[dict[str, str]] = ..., 
-                risk_category: Union[str, RiskCategory], 
+                self,
+                *,
+                description: Optional[str] = ...,
+                id: str,
+                name: str,
+                properties: Optional[dict[str, str]] = ...,
+                risk_category: Union[str, RiskCategory],
                 sub_categories: list[TaxonomySubCategory]
             ) -> None: ...
 
@@ -16457,12 +16520,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                enabled: bool, 
-                id: str, 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                enabled: bool,
+                id: str,
+                name: str,
                 properties: Optional[dict[str, str]] = ...
             ) -> None: ...
 
@@ -16476,8 +16539,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 value: str
             ) -> None: ...
 
@@ -16496,11 +16559,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                label: Optional[str] = ..., 
-                phone_number: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: str,
+                label: Optional[str] = ...,
+                phone_number: Optional[str] = ...,
                 resource_account_object_id: str
             ) -> None: ...
 
@@ -16520,13 +16583,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                id: str, 
-                incoming_call_url: str, 
-                label: Optional[str] = ..., 
-                phone_number: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: str,
+                id: str,
+                incoming_call_url: str,
+                label: Optional[str] = ...,
+                phone_number: Optional[str] = ...,
                 resource_account_object_id: str
             ) -> None: ...
 
@@ -16539,8 +16602,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 endpoints: list[TelemetryEndpoint]
             ) -> None: ...
 
@@ -16561,10 +16624,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auth: Optional[TelemetryEndpointAuth] = ..., 
-                data: list[Union[str, TelemetryDataKind]], 
+                self,
+                *,
+                auth: Optional[TelemetryEndpointAuth] = ...,
+                data: list[Union[str, TelemetryDataKind]],
                 kind: str
             ) -> None: ...
 
@@ -16577,8 +16640,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -16605,9 +16668,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                type: str, 
+                self,
+                *,
+                type: str,
                 value: str
             ) -> None: ...
 
@@ -16630,10 +16693,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                label: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: str,
+                label: Optional[str] = ...,
                 provider: str
             ) -> None: ...
 
@@ -16651,12 +16714,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                id: str, 
-                incoming_call_url: str, 
-                label: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: str,
+                id: str,
+                incoming_call_url: str,
+                label: Optional[str] = ...,
                 provider: str
             ) -> None: ...
 
@@ -16724,14 +16787,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                destination: TelephonyAddress, 
-                purpose: Optional[str] = ..., 
-                retry_policy: TelephonyOutboundRetryPolicy, 
-                schedule: Optional[TelephonyCallJobSchedule] = ..., 
-                source: TelephonyAddress, 
+                self,
+                *,
+                connection_name: str,
+                destination: TelephonyAddress,
+                purpose: Optional[str] = ...,
+                retry_policy: TelephonyOutboundRetryPolicy,
+                schedule: Optional[TelephonyCallJobSchedule] = ...,
+                source: TelephonyAddress,
                 structured_inputs: Optional[dict[str, Any]] = ...
             ) -> None: ...
 
@@ -16747,11 +16810,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                mode: str, 
-                requested_at: datetime, 
-                requested_by: str, 
+                self,
+                *,
+                mode: str,
+                requested_at: datetime,
+                requested_by: str,
                 revision: int
             ) -> None: ...
 
@@ -16770,14 +16833,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                destination: TelephonyAddress, 
-                purpose: Optional[str] = ..., 
-                retry_policy: Optional[TelephonyOutboundRetryPolicy] = ..., 
-                schedule: Optional[TelephonyCallJobSchedule] = ..., 
-                source: TelephonyAddress, 
+                self,
+                *,
+                connection_name: str,
+                destination: TelephonyAddress,
+                purpose: Optional[str] = ...,
+                retry_policy: Optional[TelephonyOutboundRetryPolicy] = ...,
+                schedule: Optional[TelephonyCallJobSchedule] = ...,
+                source: TelephonyAddress,
                 structured_inputs: Optional[dict[str, Any]] = ...
             ) -> None: ...
 
@@ -16791,9 +16854,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                expires_at: Optional[datetime] = ..., 
+                self,
+                *,
+                expires_at: Optional[datetime] = ...,
                 not_before: Optional[datetime] = ...
             ) -> None: ...
 
@@ -16856,18 +16919,18 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: Union[str, TelephonyCallLifecycleEventName], 
-                observed_at: datetime, 
-                occurred_at: Optional[datetime] = ..., 
-                outcome: Union[str, TelephonyCallLifecycleEventOutcome], 
-                provider_event_id: Optional[str] = ..., 
-                provider_sequence: Optional[int] = ..., 
-                provider_status_code: Optional[int] = ..., 
-                provider_sub_code: Optional[int] = ..., 
-                reason: Optional[Union[str, TelephonyCallLifecycleEventReason]] = ..., 
-                source: Union[str, TelephonyCallLifecycleEventSource], 
+                self,
+                *,
+                name: Union[str, TelephonyCallLifecycleEventName],
+                observed_at: datetime,
+                occurred_at: Optional[datetime] = ...,
+                outcome: Union[str, TelephonyCallLifecycleEventOutcome],
+                provider_event_id: Optional[str] = ...,
+                provider_sequence: Optional[int] = ...,
+                provider_status_code: Optional[int] = ...,
+                provider_sub_code: Optional[int] = ...,
+                reason: Optional[Union[str, TelephonyCallLifecycleEventReason]] = ...,
+                source: Union[str, TelephonyCallLifecycleEventSource],
                 timestamp_source: Union[str, TelephonyCallTimestampSource]
             ) -> None: ...
 
@@ -16978,28 +17041,28 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_session_ready_at: Optional[datetime] = ..., 
-                answered_at: Optional[datetime] = ..., 
-                caller_number: Optional[str] = ..., 
-                duration_ms: Optional[timedelta] = ..., 
-                end_reason: Optional[Union[str, TelephonyCallEndReason]] = ..., 
-                ended_at: Optional[datetime] = ..., 
-                events: list[TelephonyCallLifecycleEvent], 
-                events_truncated: bool, 
-                id: str, 
-                media_connected_at: Optional[datetime] = ..., 
-                phase: Union[str, TelephonyCallPhase], 
-                provider: Union[str, TelephonyProvider], 
-                provider_call_id: Optional[str] = ..., 
-                provider_message: Optional[str] = ..., 
-                provider_number: Optional[str] = ..., 
-                provider_status_code: Optional[int] = ..., 
-                provider_sub_code: Optional[int] = ..., 
-                started_at: datetime, 
-                status: Union[str, TelephonyCallStatus], 
-                timing: TelephonyCallTiming, 
+                self,
+                *,
+                agent_session_ready_at: Optional[datetime] = ...,
+                answered_at: Optional[datetime] = ...,
+                caller_number: Optional[str] = ...,
+                duration_ms: Optional[timedelta] = ...,
+                end_reason: Optional[Union[str, TelephonyCallEndReason]] = ...,
+                ended_at: Optional[datetime] = ...,
+                events: list[TelephonyCallLifecycleEvent],
+                events_truncated: bool,
+                id: str,
+                media_connected_at: Optional[datetime] = ...,
+                phase: Union[str, TelephonyCallPhase],
+                provider: Union[str, TelephonyProvider],
+                provider_call_id: Optional[str] = ...,
+                provider_message: Optional[str] = ...,
+                provider_number: Optional[str] = ...,
+                provider_status_code: Optional[int] = ...,
+                provider_sub_code: Optional[int] = ...,
+                started_at: datetime,
+                status: Union[str, TelephonyCallStatus],
+                timing: TelephonyCallTiming,
                 trace: Optional[TelephonyCallTrace] = ...
             ) -> None: ...
 
@@ -17034,24 +17097,24 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_session_ready_at: Optional[datetime] = ..., 
-                answered_at: Optional[datetime] = ..., 
-                caller_number: Optional[str] = ..., 
-                duration_ms: Optional[timedelta] = ..., 
-                end_reason: Optional[Union[str, TelephonyCallEndReason]] = ..., 
-                ended_at: Optional[datetime] = ..., 
-                id: str, 
-                media_connected_at: Optional[datetime] = ..., 
-                phase: Union[str, TelephonyCallPhase], 
-                provider: Union[str, TelephonyProvider], 
-                provider_call_id: Optional[str] = ..., 
-                provider_message: Optional[str] = ..., 
-                provider_number: Optional[str] = ..., 
-                provider_status_code: Optional[int] = ..., 
-                provider_sub_code: Optional[int] = ..., 
-                started_at: datetime, 
+                self,
+                *,
+                agent_session_ready_at: Optional[datetime] = ...,
+                answered_at: Optional[datetime] = ...,
+                caller_number: Optional[str] = ...,
+                duration_ms: Optional[timedelta] = ...,
+                end_reason: Optional[Union[str, TelephonyCallEndReason]] = ...,
+                ended_at: Optional[datetime] = ...,
+                id: str,
+                media_connected_at: Optional[datetime] = ...,
+                phase: Union[str, TelephonyCallPhase],
+                provider: Union[str, TelephonyProvider],
+                provider_call_id: Optional[str] = ...,
+                provider_message: Optional[str] = ...,
+                provider_number: Optional[str] = ...,
+                provider_status_code: Optional[int] = ...,
+                provider_sub_code: Optional[int] = ...,
+                started_at: datetime,
                 status: Union[str, TelephonyCallStatus]
             ) -> None: ...
 
@@ -17081,19 +17144,19 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                admitted_at: Optional[datetime] = ..., 
-                agent_session_ready_at: Optional[datetime] = ..., 
-                answer_requested_at: Optional[datetime] = ..., 
-                answered_at: Optional[datetime] = ..., 
-                duration_basis: Optional[Union[str, TelephonyCallDurationBasis]] = ..., 
-                ended_at: Optional[datetime] = ..., 
-                first_agent_audio_at: Optional[datetime] = ..., 
-                first_caller_audio_at: Optional[datetime] = ..., 
-                media_connected_at: Optional[datetime] = ..., 
-                received_at: Optional[datetime] = ..., 
-                timestamp_source: Union[str, TelephonyCallTimestampSource], 
+                self,
+                *,
+                admitted_at: Optional[datetime] = ...,
+                agent_session_ready_at: Optional[datetime] = ...,
+                answer_requested_at: Optional[datetime] = ...,
+                answered_at: Optional[datetime] = ...,
+                duration_basis: Optional[Union[str, TelephonyCallDurationBasis]] = ...,
+                ended_at: Optional[datetime] = ...,
+                first_agent_audio_at: Optional[datetime] = ...,
+                first_caller_audio_at: Optional[datetime] = ...,
+                media_connected_at: Optional[datetime] = ...,
+                received_at: Optional[datetime] = ...,
+                timestamp_source: Union[str, TelephonyCallTimestampSource],
                 validated_at: Optional[datetime] = ...
             ) -> None: ...
 
@@ -17110,12 +17173,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                conversation_id: Optional[str] = ..., 
-                mode: Optional[Union[str, TelephonyCallTraceMode]] = ..., 
-                root_span_id: Optional[str] = ..., 
-                status: Union[str, TelephonyCallTraceStatus], 
+                self,
+                *,
+                conversation_id: Optional[str] = ...,
+                mode: Optional[Union[str, TelephonyCallTraceMode]] = ...,
+                root_span_id: Optional[str] = ...,
+                status: Union[str, TelephonyCallTraceStatus],
                 trace_id: Optional[str] = ...
             ) -> None: ...
 
@@ -17157,13 +17220,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                recipient_dataset: Optional[DatasetReference] = ..., 
-                recipients: Optional[list[TelephonyRecipient]] = ..., 
-                retry_policy: Optional[TelephonyOutboundRetryPolicy] = ..., 
-                schedule: Optional[TelephonyCampaignSchedule] = ..., 
+                self,
+                *,
+                connection_name: str,
+                recipient_dataset: Optional[DatasetReference] = ...,
+                recipients: Optional[list[TelephonyRecipient]] = ...,
+                retry_policy: Optional[TelephonyOutboundRetryPolicy] = ...,
+                schedule: Optional[TelephonyCampaignSchedule] = ...,
                 source: TelephonyAddress
             ) -> None: ...
 
@@ -17197,14 +17260,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                active: int, 
-                cancelled: int, 
-                completed: int, 
-                expired: int, 
-                failed: int, 
-                pending: int, 
+                self,
+                *,
+                active: int,
+                cancelled: int,
+                completed: int,
+                expired: int,
+                failed: int,
+                pending: int,
                 total_recipients: Optional[int] = ...
             ) -> None: ...
 
@@ -17218,9 +17281,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                expires_at: Optional[datetime] = ..., 
+                self,
+                *,
+                expires_at: Optional[datetime] = ...,
                 type: str
             ) -> None: ...
 
@@ -17250,9 +17313,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                error: ApiError, 
+                self,
+                *,
+                error: ApiError,
                 row_number: int
             ) -> None: ...
 
@@ -17266,9 +17329,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                max_attempts: Optional[int] = ..., 
+                self,
+                *,
+                max_attempts: Optional[int] = ...,
                 type: str
             ) -> None: ...
 
@@ -17293,10 +17356,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                destination: TelephonyAddress, 
-                scheduled_at: Optional[datetime] = ..., 
+                self,
+                *,
+                destination: TelephonyAddress,
+                scheduled_at: Optional[datetime] = ...,
                 structured_inputs: Optional[dict[str, Any]] = ...
             ) -> None: ...
 
@@ -17311,10 +17374,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                destination: TelephonyAddress, 
+                self,
+                *,
+                description: str,
+                destination: TelephonyAddress,
                 name: str
             ) -> None: ...
 
@@ -17327,8 +17390,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 transfer_targets: list[TelephonyTransferTarget]
             ) -> None: ...
 
@@ -17350,8 +17413,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -17384,11 +17447,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
-                schema: dict[str, Any], 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
+                schema: dict[str, Any],
                 strict: Optional[bool] = ...
             ) -> None: ...
 
@@ -17412,8 +17475,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 at: Optional[datetime] = ...
             ) -> None: ...
 
@@ -17426,8 +17489,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -17442,9 +17505,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                mode: Literal["auto", "required"], 
+                self,
+                *,
+                mode: Literal["auto", "required"],
                 tools: list[dict[str, Any]]
             ) -> None: ...
 
@@ -17498,8 +17561,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 name: str
             ) -> None: ...
 
@@ -17523,8 +17586,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 name: str
             ) -> None: ...
 
@@ -17549,9 +17612,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                name: Optional[str] = ...,
                 server_label: str
             ) -> None: ...
 
@@ -17570,8 +17633,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -17623,9 +17686,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                additional_search_text: Optional[str] = ..., 
+                self,
+                *,
+                additional_search_text: Optional[str] = ...,
                 pin: Optional[bool] = ...
             ) -> None: ...
 
@@ -17639,9 +17702,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -17659,8 +17722,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 project_connection_id: str
             ) -> None: ...
 
@@ -17681,10 +17744,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                execution: Optional[Union[str, ToolSearchExecutionType]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                execution: Optional[Union[str, ToolSearchExecutionType]] = ...,
                 parameters: Optional[EmptyModelParam] = ...
             ) -> None: ...
 
@@ -17700,10 +17763,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -17757,10 +17820,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                max_samples: int, 
-                model_options: Optional[DataGenerationModelOptions] = ..., 
+                self,
+                *,
+                max_samples: int,
+                model_options: Optional[DataGenerationModelOptions] = ...,
                 train_split: Optional[float] = ...
             ) -> None: ...
 
@@ -17777,12 +17840,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                default_version: str, 
-                id: str, 
-                name: str, 
-                updated_at: datetime, 
+                self,
+                *,
+                default_version: str,
+                id: str,
+                name: str,
+                updated_at: datetime,
                 versions: ToolboxVersions
             ) -> None: ...
 
@@ -17795,8 +17858,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 rai_config: Optional[RaiConfig] = ...
             ) -> None: ...
 
@@ -17812,10 +17875,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -17832,11 +17895,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_ids: Optional[list[str]] = ..., 
-                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ..., 
-                network_policy: Optional[ToolboxShellNetworkPolicy] = ..., 
+                self,
+                *,
+                file_ids: Optional[list[str]] = ...,
+                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ...,
+                network_policy: Optional[ToolboxShellNetworkPolicy] = ...,
                 skills: Optional[list[ContainerSkill]] = ...
             ) -> None: ...
 
@@ -17850,8 +17913,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 container_id: str
             ) -> None: ...
 
@@ -17864,8 +17927,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -17878,8 +17941,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -17902,8 +17965,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -17918,9 +17981,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -17936,11 +17999,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                tool_configs: Optional[dict[str, ToolConfig]] = ...,
                 type: str
             ) -> None: ...
 
@@ -17981,16 +18044,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_at: datetime, 
-                description: Optional[str] = ..., 
-                id: str, 
-                metadata: dict[str, str], 
-                name: str, 
-                policies: Optional[ToolboxPolicies] = ..., 
-                skills: Optional[list[ToolboxSkill]] = ..., 
-                tools: list[ToolboxTool], 
+                self,
+                *,
+                created_at: datetime,
+                description: Optional[str] = ...,
+                id: str,
+                metadata: dict[str, str],
+                name: str,
+                policies: Optional[ToolboxPolicies] = ...,
+                skills: Optional[list[ToolboxSkill]] = ...,
+                tools: list[ToolboxTool],
                 version: str
             ) -> None: ...
 
@@ -18003,8 +18066,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 latest: ToolboxVersionObject
             ) -> None: ...
 
@@ -18021,11 +18084,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                max_samples: Optional[int] = ..., 
-                model_options: Optional[DataGenerationModelOptions] = ..., 
-                redact_private_content: Optional[bool] = ..., 
+                self,
+                *,
+                max_samples: Optional[int] = ...,
+                model_options: Optional[DataGenerationModelOptions] = ...,
+                redact_private_content: Optional[bool] = ...,
                 train_split: Optional[float] = ...
             ) -> None: ...
 
@@ -18045,14 +18108,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_id: Optional[str] = ..., 
-                agent_name: Optional[str] = ..., 
-                agent_version: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                end_time: Optional[datetime] = ..., 
-                start_time: datetime, 
+                self,
+                *,
+                agent_id: Optional[str] = ...,
+                agent_name: Optional[str] = ...,
+                agent_version: Optional[str] = ...,
+                description: Optional[str] = ...,
+                end_time: Optional[datetime] = ...,
+                start_time: datetime,
                 trace_ids: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -18071,13 +18134,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_id: Optional[str] = ..., 
-                agent_name: Optional[str] = ..., 
-                agent_version: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                end_time: Optional[datetime] = ..., 
+                self,
+                *,
+                agent_id: Optional[str] = ...,
+                agent_name: Optional[str] = ...,
+                agent_version: Optional[str] = ...,
+                description: Optional[str] = ...,
+                end_time: Optional[datetime] = ...,
                 start_time: datetime
             ) -> None: ...
 
@@ -18102,8 +18165,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 seconds: timedelta
             ) -> None: ...
 
@@ -18120,11 +18183,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                input_token_details: Optional[TranscriptTextUsageTokensInputTokenDetails] = ..., 
-                input_tokens: int, 
-                output_tokens: int, 
+                self,
+                *,
+                input_token_details: Optional[TranscriptTextUsageTokensInputTokenDetails] = ...,
+                input_tokens: int,
+                output_tokens: int,
                 total_tokens: int
             ) -> None: ...
 
@@ -18138,9 +18201,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_tokens: Optional[int] = ..., 
+                self,
+                *,
+                audio_tokens: Optional[int] = ...,
                 text_tokens: Optional[int] = ...
             ) -> None: ...
 
@@ -18153,8 +18216,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 code: str
             ) -> None: ...
 
@@ -18175,8 +18238,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -18200,10 +18263,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                label: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: str,
+                label: Optional[str] = ...,
                 phone_number: str
             ) -> None: ...
 
@@ -18222,12 +18285,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                id: str, 
-                incoming_call_url: str, 
-                label: Optional[str] = ..., 
+                self,
+                *,
+                connection_name: str,
+                id: str,
+                incoming_call_url: str,
+                label: Optional[str] = ...,
                 phone_number: str
             ) -> None: ...
 
@@ -18241,9 +18304,9 @@ namespace azure.ai.projects.models
 
         @classmethod
         def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[MemoryStoreUpdateCompletedResult], 
-                continuation_token: str, 
+                cls,
+                polling_method: PollingMethod[MemoryStoreUpdateCompletedResult],
+                continuation_token: str,
                 **kwargs: Any
             ) -> UpdateMemoriesLROPoller: ...
 
@@ -18254,9 +18317,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
@@ -18272,11 +18335,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_calling_numbers: Optional[list[str]] = ..., 
-                connection_name: Optional[str] = ..., 
-                label: Optional[str] = ..., 
+                self,
+                *,
+                allowed_calling_numbers: Optional[list[str]] = ...,
+                connection_name: Optional[str] = ...,
+                label: Optional[str] = ...,
                 phone_number: Optional[str] = ...
             ) -> None: ...
 
@@ -18289,8 +18352,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 default_version: str
             ) -> None: ...
 
@@ -18312,9 +18375,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                effects: Optional[list[Union[str, UserConversationSimulationAudioEffect]]] = ..., 
+                self,
+                *,
+                effects: Optional[list[Union[str, UserConversationSimulationAudioEffect]]] = ...,
                 volume_percentage: Optional[int] = ...
             ) -> None: ...
 
@@ -18331,12 +18394,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_effects: Optional[UserConversationSimulationAudioEffectsConfiguration] = ..., 
-                conversation_repetitions: Optional[int] = ..., 
-                desired_num_turns: Optional[int] = ..., 
-                max_num_turns: Optional[int] = ..., 
+                self,
+                *,
+                audio_effects: Optional[UserConversationSimulationAudioEffectsConfiguration] = ...,
+                conversation_repetitions: Optional[int] = ...,
+                desired_num_turns: Optional[int] = ...,
+                max_num_turns: Optional[int] = ...,
                 user_behavior: Optional[UserConversationSimulationUserBehaviorConfiguration] = ...
             ) -> None: ...
 
@@ -18359,8 +18422,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -18376,11 +18439,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                simulation_configuration: Optional[UserConversationSimulationConfiguration] = ..., 
-                test_case_category: Optional[str] = ..., 
-                test_case_description: Optional[str] = ..., 
+                self,
+                *,
+                simulation_configuration: Optional[UserConversationSimulationConfiguration] = ...,
+                test_case_category: Optional[str] = ...,
+                test_case_description: Optional[str] = ...,
                 test_case_id: Optional[str] = ...
             ) -> None: ...
 
@@ -18393,8 +18456,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 interruption: Optional[UserConversationSimulationInterruptionConfiguration] = ...
             ) -> None: ...
 
@@ -18411,11 +18474,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                memory_id: str, 
-                scope: str, 
+                self,
+                *,
+                content: str,
+                memory_id: str,
+                scope: str,
                 updated_at: datetime
             ) -> None: ...
 
@@ -18428,8 +18491,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -18447,8 +18510,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 agent_version: str
             ) -> None: ...
 
@@ -18462,9 +18525,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_version: str, 
+                self,
+                *,
+                agent_version: str,
                 type: str
             ) -> None: ...
 
@@ -18477,8 +18540,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 version_selection_rules: list[VersionSelectionRule]
             ) -> None: ...
 
@@ -18496,9 +18559,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: str
             ) -> None: ...
 
@@ -18512,9 +18575,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                model_name: Optional[str] = ..., 
+                self,
+                *,
+                model_name: Optional[str] = ...,
                 outputs: Optional[list[Union[str, VoiceAgentAnimationOutputType]]] = ...
             ) -> None: ...
 
@@ -18533,9 +18596,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                input: Optional[VoiceAgentAudioInputConfig] = ..., 
+                self,
+                *,
+                input: Optional[VoiceAgentAudioInputConfig] = ...,
                 output: Optional[VoiceAgentAudioOutputConfig] = ...
             ) -> None: ...
 
@@ -18552,12 +18615,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                echo_cancellation: Optional[VoiceAgentEchoCancellation] = ..., 
-                format: Optional[RealtimeAudioFormats] = ..., 
-                noise_reduction: Optional[VoiceAgentNoiseReduction] = ..., 
-                transcription: Optional[VoiceAgentInputTranscription] = ..., 
+                self,
+                *,
+                echo_cancellation: Optional[VoiceAgentEchoCancellation] = ...,
+                format: Optional[RealtimeAudioFormats] = ...,
+                noise_reduction: Optional[VoiceAgentNoiseReduction] = ...,
+                transcription: Optional[VoiceAgentInputTranscription] = ...,
                 turn_detection: Optional[VoiceAgentTurnDetectionConfig] = ...
             ) -> None: ...
 
@@ -18584,22 +18647,22 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                custom_lexicon_url: Optional[str] = ..., 
-                custom_text_normalization_url: Optional[str] = ..., 
-                custom_voice_endpoint_id: Optional[str] = ..., 
-                format: Optional[RealtimeAudioFormats] = ..., 
-                output_audio_timestamp_types: Optional[list[Union[str, VoiceAgentAudioTimestampType]]] = ..., 
-                personal_voice_model: Optional[str] = ..., 
-                pitch: Optional[str] = ..., 
-                prefer_locales: Optional[list[str]] = ..., 
-                speed: Optional[float] = ..., 
-                style: Optional[str] = ..., 
-                voice: Optional[str] = ..., 
-                voice_locale: Optional[str] = ..., 
-                voice_temperature: Optional[float] = ..., 
-                voice_type: Optional[Union[str, VoiceType]] = ..., 
+                self,
+                *,
+                custom_lexicon_url: Optional[str] = ...,
+                custom_text_normalization_url: Optional[str] = ...,
+                custom_voice_endpoint_id: Optional[str] = ...,
+                format: Optional[RealtimeAudioFormats] = ...,
+                output_audio_timestamp_types: Optional[list[Union[str, VoiceAgentAudioTimestampType]]] = ...,
+                personal_voice_model: Optional[str] = ...,
+                pitch: Optional[str] = ...,
+                prefer_locales: Optional[list[str]] = ...,
+                speed: Optional[float] = ...,
+                style: Optional[str] = ...,
+                voice: Optional[str] = ...,
+                voice_locale: Optional[str] = ...,
+                voice_temperature: Optional[float] = ...,
+                voice_type: Optional[Union[str, VoiceType]] = ...,
                 volume: Optional[str] = ...
             ) -> None: ...
 
@@ -18624,16 +18687,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                character: str, 
-                customized: Optional[bool] = ..., 
-                model: Optional[str] = ..., 
-                output_audit_audio: Optional[bool] = ..., 
-                output_protocol: Optional[Union[str, VoiceAgentAvatarOutputProtocol]] = ..., 
-                scene: Optional[VoiceAgentAvatarScene] = ..., 
-                style: Optional[str] = ..., 
-                type: Union[str, VoiceAgentAvatarType], 
+                self,
+                *,
+                character: str,
+                customized: Optional[bool] = ...,
+                model: Optional[str] = ...,
+                output_audit_audio: Optional[bool] = ...,
+                output_protocol: Optional[Union[str, VoiceAgentAvatarOutputProtocol]] = ...,
+                scene: Optional[VoiceAgentAvatarScene] = ...,
+                style: Optional[str] = ...,
+                type: Union[str, VoiceAgentAvatarType],
                 video: Optional[VoiceAgentAvatarVideoParams] = ...
             ) -> None: ...
 
@@ -18648,10 +18711,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                credential: Optional[str] = ..., 
-                urls: list[str], 
+                self,
+                *,
+                credential: Optional[str] = ...,
+                urls: list[str],
                 username: Optional[str] = ...
             ) -> None: ...
 
@@ -18675,14 +18738,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                amplitude: Optional[float] = ..., 
-                position_x: Optional[float] = ..., 
-                position_y: Optional[float] = ..., 
-                rotation_x: Optional[float] = ..., 
-                rotation_y: Optional[float] = ..., 
-                rotation_z: Optional[float] = ..., 
+                self,
+                *,
+                amplitude: Optional[float] = ...,
+                position_x: Optional[float] = ...,
+                position_y: Optional[float] = ...,
+                rotation_x: Optional[float] = ...,
+                rotation_y: Optional[float] = ...,
+                rotation_z: Optional[float] = ...,
                 zoom: Optional[float] = ...
             ) -> None: ...
 
@@ -18701,9 +18764,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                color: Optional[str] = ..., 
+                self,
+                *,
+                color: Optional[str] = ...,
                 image_url: Optional[str] = ...
             ) -> None: ...
 
@@ -18717,9 +18780,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                bottom_right: list[int], 
+                self,
+                *,
+                bottom_right: list[int],
                 top_left: list[int]
             ) -> None: ...
 
@@ -18736,12 +18799,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                background: Optional[VoiceAgentAvatarVideoBackground] = ..., 
-                bitrate: Optional[int] = ..., 
-                crop: Optional[VoiceAgentAvatarVideoCrop] = ..., 
-                gop_size: Optional[int] = ..., 
+                self,
+                *,
+                background: Optional[VoiceAgentAvatarVideoBackground] = ...,
+                bitrate: Optional[int] = ...,
+                crop: Optional[VoiceAgentAvatarVideoCrop] = ...,
+                gop_size: Optional[int] = ...,
                 resolution: Optional[VoiceAgentAvatarVideoResolution] = ...
             ) -> None: ...
 
@@ -18755,9 +18818,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                height: int, 
+                self,
+                *,
+                height: int,
                 width: int
             ) -> None: ...
 
@@ -18780,17 +18843,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auto_truncate: Optional[bool] = ..., 
-                create_response: Optional[bool] = ..., 
-                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ..., 
-                idle_timeout_ms: Optional[timedelta] = ..., 
-                interrupt_response: Optional[bool] = ..., 
-                prefix_padding_ms: Optional[timedelta] = ..., 
-                remove_filler_words: Optional[bool] = ..., 
-                silence_duration_ms: Optional[timedelta] = ..., 
-                speech_duration_ms: Optional[timedelta] = ..., 
+                self,
+                *,
+                auto_truncate: Optional[bool] = ...,
+                create_response: Optional[bool] = ...,
+                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ...,
+                idle_timeout_ms: Optional[timedelta] = ...,
+                interrupt_response: Optional[bool] = ...,
+                prefix_padding_ms: Optional[timedelta] = ...,
+                remove_filler_words: Optional[bool] = ...,
+                silence_duration_ms: Optional[timedelta] = ...,
+                speech_duration_ms: Optional[timedelta] = ...,
                 threshold: Optional[float] = ...
             ) -> None: ...
 
@@ -18814,18 +18877,18 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auto_truncate: Optional[bool] = ..., 
-                create_response: Optional[bool] = ..., 
-                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ..., 
-                idle_timeout_ms: Optional[timedelta] = ..., 
-                interrupt_response: Optional[bool] = ..., 
-                languages: Optional[list[str]] = ..., 
-                prefix_padding_ms: Optional[timedelta] = ..., 
-                remove_filler_words: Optional[bool] = ..., 
-                silence_duration_ms: Optional[timedelta] = ..., 
-                speech_duration_ms: Optional[timedelta] = ..., 
+                self,
+                *,
+                auto_truncate: Optional[bool] = ...,
+                create_response: Optional[bool] = ...,
+                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ...,
+                idle_timeout_ms: Optional[timedelta] = ...,
+                interrupt_response: Optional[bool] = ...,
+                languages: Optional[list[str]] = ...,
+                prefix_padding_ms: Optional[timedelta] = ...,
+                remove_filler_words: Optional[bool] = ...,
+                silence_duration_ms: Optional[timedelta] = ...,
+                speech_duration_ms: Optional[timedelta] = ...,
                 threshold: Optional[float] = ...
             ) -> None: ...
 
@@ -18849,18 +18912,18 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auto_truncate: Optional[bool] = ..., 
-                create_response: Optional[bool] = ..., 
-                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ..., 
-                idle_timeout_ms: Optional[timedelta] = ..., 
-                interrupt_response: Optional[bool] = ..., 
-                languages: Optional[list[str]] = ..., 
-                prefix_padding_ms: Optional[timedelta] = ..., 
-                remove_filler_words: Optional[bool] = ..., 
-                silence_duration_ms: Optional[timedelta] = ..., 
-                speech_duration_ms: Optional[timedelta] = ..., 
+                self,
+                *,
+                auto_truncate: Optional[bool] = ...,
+                create_response: Optional[bool] = ...,
+                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ...,
+                idle_timeout_ms: Optional[timedelta] = ...,
+                interrupt_response: Optional[bool] = ...,
+                languages: Optional[list[str]] = ...,
+                prefix_padding_ms: Optional[timedelta] = ...,
+                remove_filler_words: Optional[bool] = ...,
+                silence_duration_ms: Optional[timedelta] = ...,
+                speech_duration_ms: Optional[timedelta] = ...,
                 threshold: Optional[float] = ...
             ) -> None: ...
 
@@ -18878,12 +18941,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                instructions: Optional[str] = ..., 
-                rai_config: Optional[RaiConfig] = ..., 
-                store: Optional[bool] = ..., 
-                structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ..., 
+                self,
+                *,
+                instructions: Optional[str] = ...,
+                rai_config: Optional[RaiConfig] = ...,
+                store: Optional[bool] = ...,
+                structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ...,
                 sub_protocol: str
             ) -> None: ...
 
@@ -18899,10 +18962,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
-                sdp_offer: str, 
+                self,
+                *,
+                event_id: Optional[str] = ...,
+                sdp_offer: str,
                 session: Optional[VoiceAgentSessionUpdateConfig] = ...
             ) -> None: ...
 
@@ -18917,9 +18980,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                client_sdp: str, 
+                self,
+                *,
+                client_sdp: str,
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -18934,10 +18997,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: Optional[str] = ..., 
-                session: VoiceAgentSessionUpdate, 
+                self,
+                *,
+                event_id: Optional[str] = ...,
+                session: VoiceAgentSessionUpdate,
                 type: Literal[RealtimeClientEventType.SESSION_UPDATE]
             ) -> None: ...
 
@@ -18959,12 +19022,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                completion_mode: VoiceAgentDtmfCompletionMode, 
-                first_digit_timeout_seconds: Optional[int] = ..., 
-                output_variable_name: Optional[str] = ..., 
-                secret: bool, 
+                self,
+                *,
+                completion_mode: VoiceAgentDtmfCompletionMode,
+                first_digit_timeout_seconds: Optional[int] = ...,
+                output_variable_name: Optional[str] = ...,
+                secret: bool,
                 timeout_seconds: Optional[int] = ...
             ) -> None: ...
 
@@ -18980,9 +19043,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -18998,11 +19061,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                from_phone_number: str, 
-                output_variable_name: Optional[str] = ..., 
-                secret: bool, 
+                self,
+                *,
+                from_phone_number: str,
+                output_variable_name: Optional[str] = ...,
+                secret: bool,
                 timeout_seconds: Optional[int] = ...
             ) -> None: ...
 
@@ -19018,9 +19081,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -19035,10 +19098,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                output_variable_name: Optional[str] = ..., 
-                secret: bool, 
+                self,
+                *,
+                output_variable_name: Optional[str] = ...,
+                secret: bool,
                 timeout_seconds: Optional[int] = ...
             ) -> None: ...
 
@@ -19076,27 +19139,27 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[VoiceAgentAudioConfig] = ..., 
-                avatar: Optional[VoiceAgentAvatarConfig] = ..., 
-                conversation_engine: Optional[VoiceConversationEngine] = ..., 
-                greeting: Optional[VoiceAgentGreetingConfig] = ..., 
-                include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ..., 
-                instructions: Optional[str] = ..., 
-                interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
-                max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ..., 
-                model: Optional[str] = ..., 
-                model_type: Optional[Union[str, VoiceModelType]] = ..., 
-                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
-                parallel_tool_calls: Optional[bool] = ..., 
-                post_call: Optional[VoiceAgentPostCallConfig] = ..., 
-                rai_config: Optional[RaiConfig] = ..., 
-                soundscape: Optional[VoiceAgentSoundscapeConfig] = ..., 
-                store: Optional[bool] = ..., 
-                structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ..., 
-                subagent_config: Optional[VoiceAgentSubagentConfig] = ..., 
-                tool_choice: Optional[VoiceAgentToolChoice] = ..., 
+                self,
+                *,
+                audio: Optional[VoiceAgentAudioConfig] = ...,
+                avatar: Optional[VoiceAgentAvatarConfig] = ...,
+                conversation_engine: Optional[VoiceConversationEngine] = ...,
+                greeting: Optional[VoiceAgentGreetingConfig] = ...,
+                include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ...,
+                instructions: Optional[str] = ...,
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ...,
+                max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ...,
+                model: Optional[str] = ...,
+                model_type: Optional[Union[str, VoiceModelType]] = ...,
+                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ...,
+                parallel_tool_calls: Optional[bool] = ...,
+                post_call: Optional[VoiceAgentPostCallConfig] = ...,
+                rai_config: Optional[RaiConfig] = ...,
+                soundscape: Optional[VoiceAgentSoundscapeConfig] = ...,
+                store: Optional[bool] = ...,
+                structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ...,
+                subagent_config: Optional[VoiceAgentSubagentConfig] = ...,
+                tool_choice: Optional[VoiceAgentToolChoice] = ...,
                 tools: Optional[list[VoiceAgentTool]] = ...
             ) -> None: ...
 
@@ -19110,8 +19173,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 subagents: list[VoiceAgentSubagent]
             ) -> None: ...
 
@@ -19127,9 +19190,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -19144,9 +19207,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                inter_digit_timeout_seconds: Optional[int] = ..., 
+                self,
+                *,
+                inter_digit_timeout_seconds: Optional[int] = ...,
                 length: Optional[int] = ...
             ) -> None: ...
 
@@ -19160,8 +19223,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 inter_digit_timeout_seconds: Optional[int] = ...
             ) -> None: ...
 
@@ -19181,9 +19244,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                inter_digit_timeout_seconds: Optional[int] = ..., 
+                self,
+                *,
+                inter_digit_timeout_seconds: Optional[int] = ...,
                 terminator: Union[str, VoiceAgentDtmfTerminator]
             ) -> None: ...
 
@@ -19198,9 +19261,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                channels: Optional[int] = ..., 
+                self,
+                *,
+                channels: Optional[int] = ...,
                 reference_source: Optional[Union[str, VoiceAgentEchoCancellationReferenceSource]] = ...
             ) -> None: ...
 
@@ -19221,9 +19284,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -19238,10 +19301,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                model: Union[str, VoiceAgentEndOfUtteranceDetectionModel], 
-                threshold_level: Optional[Union[str, VoiceAgentEndOfUtteranceThresholdLevel]] = ..., 
+                self,
+                *,
+                model: Union[str, VoiceAgentEndOfUtteranceDetectionModel],
+                threshold_level: Optional[Union[str, VoiceAgentEndOfUtteranceThresholdLevel]] = ...,
                 timeout_ms: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -19269,8 +19332,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 connection_name: str
             ) -> None: ...
 
@@ -19286,10 +19349,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
                 parameters: Optional[RealtimeFunctionToolParameters] = ...
             ) -> None: ...
 
@@ -19302,8 +19365,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -19332,14 +19395,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                cancel_on_interruption: Optional[bool] = ..., 
-                condition: str, 
-                delay_ms: Optional[timedelta] = ..., 
-                id: str, 
-                target: str, 
-                target_response: Optional[Union[str, VoiceAgentHandoffTargetResponse]] = ..., 
+                self,
+                *,
+                cancel_on_interruption: Optional[bool] = ...,
+                condition: str,
+                delay_ms: Optional[timedelta] = ...,
+                id: str,
+                target: str,
+                target_response: Optional[Union[str, VoiceAgentHandoffTargetResponse]] = ...,
                 transfer_message: Optional[str] = ...
             ) -> None: ...
 
@@ -19358,14 +19421,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                cancel_on_interruption: Optional[bool] = ..., 
-                delay_ms: Optional[timedelta] = ..., 
-                id: str, 
-                source: str, 
-                target: str, 
-                target_response: Optional[Union[str, VoiceAgentHandoffTargetResponse]] = ..., 
+                self,
+                *,
+                cancel_on_interruption: Optional[bool] = ...,
+                delay_ms: Optional[timedelta] = ...,
+                id: str,
+                source: str,
+                target: str,
+                target_response: Optional[Union[str, VoiceAgentHandoffTargetResponse]] = ...,
                 transfer_message: Optional[str] = ...
             ) -> None: ...
 
@@ -19380,10 +19443,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                display_description: str, 
-                id: str, 
+                self,
+                *,
+                display_description: str,
+                id: str,
                 implicit: Optional[bool] = ...
             ) -> None: ...
 
@@ -19402,9 +19465,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                max_attempts: Optional[int] = ..., 
+                self,
+                *,
+                max_attempts: Optional[int] = ...,
                 max_transfers: Optional[int] = ...
             ) -> None: ...
 
@@ -19434,16 +19497,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                active_node_id: str, 
-                attempt_count: int, 
-                available_edge_ids: list[str], 
-                edges: list[VoiceAgentHandoffEdgeState], 
-                node_generation: int, 
-                nodes: list[VoiceAgentHandoffNodeState], 
-                pipeline_family: Union[str, VoiceAgentHandoffPipelineFamily], 
-                transfer_count: int, 
+                self,
+                *,
+                active_node_id: str,
+                attempt_count: int,
+                available_edge_ids: list[str],
+                edges: list[VoiceAgentHandoffEdgeState],
+                node_generation: int,
+                nodes: list[VoiceAgentHandoffNodeState],
+                pipeline_family: Union[str, VoiceAgentHandoffPipelineFamily],
+                transfer_count: int,
                 transfer_tool: VoiceAgentFunctionTool
             ) -> None: ...
 
@@ -19460,8 +19523,8 @@ namespace azure.ai.projects.models
         type: Literal["auto"]
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -19473,9 +19536,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                handoff_policy: Optional[VoiceAgentHandoffPolicy] = ..., 
+                self,
+                *,
+                handoff_policy: Optional[VoiceAgentHandoffPolicy] = ...,
                 subagents: list[InlineVoiceSubagent]
             ) -> None: ...
 
@@ -19521,16 +19584,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                custom_speech: Optional[dict[str, str]] = ..., 
-                delay: Optional[Literal[minimal, low, medium, high, xhigh]] = ..., 
-                keywords: Optional[list[str]] = ..., 
-                language: Optional[str] = ..., 
-                languages: Optional[list[str]] = ..., 
-                model: Union[str, VoiceAgentInputTranscriptionModel], 
-                phrase_list: Optional[list[str]] = ..., 
-                profanity_filter: Optional[Union[str, VoiceAgentProfanityFilterMode]] = ..., 
+                self,
+                *,
+                custom_speech: Optional[dict[str, str]] = ...,
+                delay: Optional[Literal[minimal, low, medium, high, xhigh]] = ...,
+                keywords: Optional[list[str]] = ...,
+                language: Optional[str] = ...,
+                languages: Optional[list[str]] = ...,
+                model: Union[str, VoiceAgentInputTranscriptionModel],
+                phrase_list: Optional[list[str]] = ...,
+                profanity_filter: Optional[Union[str, VoiceAgentProfanityFilterMode]] = ...,
                 prompt: Optional[str] = ...
             ) -> None: ...
 
@@ -19558,10 +19621,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                latency_threshold_ms: Optional[timedelta] = ..., 
-                triggers: Optional[list[Union[str, VoiceAgentInterimResponseTrigger]]] = ..., 
+                self,
+                *,
+                latency_threshold_ms: Optional[timedelta] = ...,
+                triggers: Optional[list[Union[str, VoiceAgentInterimResponseTrigger]]] = ...,
                 type: str
             ) -> None: ...
 
@@ -19585,9 +19648,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                language: str, 
+                self,
+                *,
+                language: str,
                 reason: str
             ) -> None: ...
 
@@ -19603,9 +19666,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -19619,8 +19682,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 acknowledgement_delay_ms: Optional[int] = ...
             ) -> None: ...
 
@@ -19639,12 +19702,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                commentary: Optional[str] = ..., 
-                created_at: datetime, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                commentary: Optional[str] = ...,
+                created_at: datetime,
+                id: str,
+                response_id: Optional[str] = ...,
                 thinking: Optional[str] = ...
             ) -> None: ...
 
@@ -19664,14 +19727,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                completed_at: Optional[datetime] = ..., 
-                created_at: datetime, 
-                id: str, 
-                last_error: Optional[ApiError] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                status: Union[str, VoiceConversationStatus], 
+                self,
+                *,
+                completed_at: Optional[datetime] = ...,
+                created_at: datetime,
+                id: str,
+                last_error: Optional[ApiError] = ...,
+                metadata: Optional[dict[str, str]] = ...,
+                status: Union[str, VoiceConversationStatus],
                 usage: Optional[LiveSessionUsage] = ...
             ) -> None: ...
 
@@ -19685,9 +19748,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: str, 
+                self,
+                *,
+                id: str,
                 type: str
             ) -> None: ...
 
@@ -19716,16 +19779,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[LiveInitialSessionAudioParam] = ..., 
-                delegation: Optional[VoiceAgentLiveDelegation] = ..., 
-                greeting: Optional[VoiceAgentTemplateGreetingConfig] = ..., 
-                instructions: Optional[str] = ..., 
-                model: str, 
-                model_type: Literal[VoiceModelType.SELF_DEPLOYED], 
-                rai_config: Optional[RaiConfig] = ..., 
-                store: Optional[bool] = ..., 
+                self,
+                *,
+                audio: Optional[LiveInitialSessionAudioParam] = ...,
+                delegation: Optional[VoiceAgentLiveDelegation] = ...,
+                greeting: Optional[VoiceAgentTemplateGreetingConfig] = ...,
+                instructions: Optional[str] = ...,
+                model: str,
+                model_type: Literal[VoiceModelType.SELF_DEPLOYED],
+                rai_config: Optional[RaiConfig] = ...,
+                store: Optional[bool] = ...,
                 structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ...
             ) -> None: ...
 
@@ -19738,8 +19801,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -19756,11 +19819,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_at: datetime, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                created_at: datetime,
+                id: str,
+                response_id: Optional[str] = ...,
                 target: str
             ) -> None: ...
 
@@ -19776,10 +19839,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                id: str,
+                response_id: Optional[str] = ...,
                 target: Union[str, VoiceAgentLiveDelegationTarget]
             ) -> None: ...
 
@@ -19793,9 +19856,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                commentary: Optional[str] = ..., 
+                self,
+                *,
+                commentary: Optional[str] = ...,
                 thinking: Optional[str] = ...
             ) -> None: ...
 
@@ -19839,17 +19902,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_version: str, 
-                backend_conversation_id: Optional[str] = ..., 
-                created_at: datetime, 
-                delegation_context: Optional[str] = ..., 
-                id: str, 
-                offset_ms: timedelta, 
-                output: list[VoiceAgentLiveDelegationResultItem], 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_name: str,
+                agent_version: str,
+                backend_conversation_id: Optional[str] = ...,
+                created_at: datetime,
+                delegation_context: Optional[str] = ...,
+                id: str,
+                offset_ms: timedelta,
+                output: list[VoiceAgentLiveDelegationResultItem],
+                response_id: Optional[str] = ...,
                 status: Union[str, VoiceAgentLiveDelegationStatus]
             ) -> None: ...
 
@@ -19865,10 +19928,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[VoiceAudioItem] = ..., 
-                id: str, 
+                self,
+                *,
+                audio: Optional[VoiceAudioItem] = ...,
+                id: str,
                 transcription: Optional[str] = ...
             ) -> None: ...
 
@@ -19883,9 +19946,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_name: str, 
+                self,
+                *,
+                agent_name: str,
                 agent_version: Optional[str] = ...
             ) -> None: ...
 
@@ -19901,10 +19964,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[VoiceAudioItem] = ..., 
-                id: str, 
+                self,
+                *,
+                audio: Optional[VoiceAudioItem] = ...,
+                id: str,
                 transcription: Optional[str] = ...
             ) -> None: ...
 
@@ -19919,9 +19982,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                acknowledgement_delay_ms: Optional[int] = ..., 
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...,
                 responses: LiveResponsesDelegationSettingsInputParam
             ) -> None: ...
 
@@ -19939,11 +20002,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_at: datetime, 
-                id: str, 
-                output: Optional[str] = ..., 
+                self,
+                *,
+                created_at: datetime,
+                id: str,
+                output: Optional[str] = ...,
                 response_id: Optional[str] = ...
             ) -> None: ...
 
@@ -19966,17 +20029,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[LiveInitialSessionAudioParam] = ..., 
-                client: Optional[LiveClientConfigParam] = ..., 
-                delegation: Optional[VoiceAgentLiveDelegation] = ..., 
-                expires_at: int, 
-                id: str, 
-                input: Optional[list[LiveInitialItem]] = ..., 
-                instructions: Optional[str] = ..., 
-                model: Union[str, ModelIdsLive], 
-                store: Optional[bool] = ..., 
+                self,
+                *,
+                audio: Optional[LiveInitialSessionAudioParam] = ...,
+                client: Optional[LiveClientConfigParam] = ...,
+                delegation: Optional[VoiceAgentLiveDelegation] = ...,
+                expires_at: int,
+                id: str,
+                input: Optional[list[LiveInitialItem]] = ...,
+                instructions: Optional[str] = ...,
+                model: Union[str, ModelIdsLive],
+                store: Optional[bool] = ...,
                 triggers: Optional[list[LiveDecisionTriggerInputParam]] = ...
             ) -> None: ...
 
@@ -19991,9 +20054,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                prompt: str, 
+                self,
+                *,
+                prompt: str,
                 tool_choice: Optional[VoiceAgentToolChoice] = ...
             ) -> None: ...
 
@@ -20011,12 +20074,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                instructions: Optional[str] = ..., 
-                latency_threshold_ms: Optional[timedelta] = ..., 
-                max_completion_tokens: Optional[int] = ..., 
-                model: Optional[str] = ..., 
+                self,
+                *,
+                instructions: Optional[str] = ...,
+                latency_threshold_ms: Optional[timedelta] = ...,
+                max_completion_tokens: Optional[int] = ...,
+                model: Optional[str] = ...,
                 triggers: Optional[list[Union[str, VoiceAgentInterimResponseTrigger]]] = ...
             ) -> None: ...
 
@@ -20041,19 +20104,19 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
-                authorization: Optional[str] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                headers: Optional[dict[str, str]] = ..., 
-                project_connection_id: Optional[str] = ..., 
-                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
-                response_scheduling: Optional[Union[str, VoiceAgentToolResponseScheduling]] = ..., 
-                server_description: Optional[str] = ..., 
-                server_label: str, 
-                server_url: Optional[str] = ..., 
+                self,
+                *,
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...,
+                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ...,
+                authorization: Optional[str] = ...,
+                defer_loading: Optional[bool] = ...,
+                headers: Optional[dict[str, str]] = ...,
+                project_connection_id: Optional[str] = ...,
+                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ...,
+                response_scheduling: Optional[Union[str, VoiceAgentToolResponseScheduling]] = ...,
+                server_description: Optional[str] = ...,
+                server_label: str,
+                server_url: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -20066,8 +20129,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: Union[str, VoiceAgentNoiseReductionType]
             ) -> None: ...
 
@@ -20089,9 +20152,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                destinations: list[VoiceAgentPostCallDestination], 
+                self,
+                *,
+                destinations: list[VoiceAgentPostCallDestination],
                 include: Optional[list[Union[str, VoiceAgentPostCallIncludeOption]]] = ...
             ) -> None: ...
 
@@ -20104,8 +20167,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -20143,18 +20206,18 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[VoiceResponseAudio] = ..., 
-                conversation_id: Optional[str] = ..., 
-                id: Optional[str] = ..., 
-                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                object: Optional[Literal[response]] = ..., 
-                output: Optional[list[RealtimeConversationItem]] = ..., 
-                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
-                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
-                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
+                self,
+                *,
+                audio: Optional[VoiceResponseAudio] = ...,
+                conversation_id: Optional[str] = ...,
+                id: Optional[str] = ...,
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ...,
+                metadata: Optional[Metadata] = ...,
+                object: Optional[Literal[response]] = ...,
+                output: Optional[list[RealtimeConversationItem]] = ...,
+                output_modalities: Optional[list[Literal[text, audio]]] = ...,
+                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ...,
+                status_details: Optional[RealtimeResponseStatusDetails] = ...,
                 usage: Optional[RealtimeResponseUsage] = ...
             ) -> None: ...
 
@@ -20179,20 +20242,20 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[PickPropertiesVoiceAgentAudioConfig] = ..., 
-                conversation: Optional[Union[Literal[auto], Literal[none], str]] = ..., 
-                input: Optional[list[RealtimeResponseInputItem]] = ..., 
-                instructions: Optional[str] = ..., 
-                interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
-                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
-                parallel_tool_calls: Optional[bool] = ..., 
-                pre_generated_assistant_message: Optional[RealtimeConversationItem] = ..., 
-                reasoning: Optional[RealtimeReasoning] = ..., 
-                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceFunction, ToolChoiceMCP]] = ..., 
+                self,
+                *,
+                audio: Optional[PickPropertiesVoiceAgentAudioConfig] = ...,
+                conversation: Optional[Union[Literal[auto], Literal[none], str]] = ...,
+                input: Optional[list[RealtimeResponseInputItem]] = ...,
+                instructions: Optional[str] = ...,
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ...,
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ...,
+                metadata: Optional[Metadata] = ...,
+                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ...,
+                parallel_tool_calls: Optional[bool] = ...,
+                pre_generated_assistant_message: Optional[RealtimeConversationItem] = ...,
+                reasoning: Optional[RealtimeReasoning] = ...,
+                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceFunction, ToolChoiceMCP]] = ...,
                 tools: Optional[list[Union[RealtimeFunctionTool, MCPTool]]] = ...
             ) -> None: ...
 
@@ -20206,8 +20269,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 name: str
             ) -> None: ...
 
@@ -20222,10 +20285,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: Optional[str] = ..., 
-                message: str, 
+                self,
+                *,
+                code: Optional[str] = ...,
+                message: str,
                 type: Union[str, VoiceAgentRtcCallErrorType]
             ) -> None: ...
 
@@ -20247,11 +20310,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auto_truncate: Optional[bool] = ..., 
-                create_response: Optional[bool] = ..., 
-                eagerness: Optional[Literal[low, medium, high, auto]] = ..., 
+                self,
+                *,
+                auto_truncate: Optional[bool] = ...,
+                create_response: Optional[bool] = ...,
+                eagerness: Optional[Literal[low, medium, high, auto]] = ...,
                 interrupt_response: Optional[bool] = ...
             ) -> None: ...
 
@@ -20267,9 +20330,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -20285,9 +20348,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -20308,15 +20371,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                channel: Optional[Union[str, VoiceAgentInputCollectionChannel]] = ..., 
-                collection_id: Optional[str] = ..., 
-                event_id: Optional[str] = ..., 
-                output_ref: Optional[str] = ..., 
-                request_id: Optional[str] = ..., 
-                status: Union[str, VoiceAgentInputCollectionStatus], 
+                self,
+                *,
+                call_id: str,
+                channel: Optional[Union[str, VoiceAgentInputCollectionChannel]] = ...,
+                collection_id: Optional[str] = ...,
+                event_id: Optional[str] = ...,
+                output_ref: Optional[str] = ...,
+                request_id: Optional[str] = ...,
+                status: Union[str, VoiceAgentInputCollectionStatus],
                 value: Optional[str] = ...
             ) -> None: ...
 
@@ -20336,14 +20399,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                event_id: str, 
-                frame_index: int, 
-                frames: list[list[float]], 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                event_id: str,
+                frame_index: int,
+                frames: list[list[float]],
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -20360,11 +20423,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                event_id: str,
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -20384,14 +20447,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_offset_ms: timedelta, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
-                response_id: str, 
+                self,
+                *,
+                audio_offset_ms: timedelta,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                output_index: int,
+                response_id: str,
                 viseme_id: int
             ) -> None: ...
 
@@ -20409,12 +20472,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -20436,16 +20499,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio_duration_ms: timedelta, 
-                audio_offset_ms: timedelta, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
-                response_id: str, 
-                text: str, 
+                self,
+                *,
+                audio_duration_ms: timedelta,
+                audio_offset_ms: timedelta,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                output_index: int,
+                response_id: str,
+                text: str,
                 timestamp_type: Literal[VoiceAgentAudioTimestampType.WORD]
             ) -> None: ...
 
@@ -20463,12 +20526,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                event_id: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                event_id: str,
+                item_id: str,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -20485,11 +20548,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                codec: str, 
-                delta: str, 
-                event_id: str, 
+                self,
+                *,
+                codec: str,
+                delta: str,
+                event_id: str,
                 output_index: int
             ) -> None: ...
 
@@ -20506,11 +20569,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                error: VoiceAgentRtcCallErrorDetails, 
-                event_id: Optional[str] = ..., 
-                operation: Optional[str] = ..., 
+                self,
+                *,
+                error: VoiceAgentRtcCallErrorDetails,
+                event_id: Optional[str] = ...,
+                operation: Optional[str] = ...,
                 rtc_call_id: Optional[str] = ...
             ) -> None: ...
 
@@ -20526,10 +20589,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                rtc_call_id: str, 
+                self,
+                *,
+                event_id: str,
+                rtc_call_id: str,
                 sdp_answer: str
             ) -> None: ...
 
@@ -20544,9 +20607,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 server_sdp: str
             ) -> None: ...
 
@@ -20561,9 +20624,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 turn_id: Optional[str] = ...
             ) -> None: ...
 
@@ -20578,9 +20641,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 turn_id: Optional[str] = ...
             ) -> None: ...
 
@@ -20604,18 +20667,18 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                edge_id: str, 
-                error: Optional[RealtimeServerEventErrorError] = ..., 
-                event_id: str, 
-                from_model: str, 
-                from_node_id: str, 
-                handoff_id: str, 
-                node_generation: int, 
-                reason: Union[str, VoiceAgentHandoffAbortReason], 
-                to_model: str, 
-                to_node_id: str, 
+                self,
+                *,
+                edge_id: str,
+                error: Optional[RealtimeServerEventErrorError] = ...,
+                event_id: str,
+                from_model: str,
+                from_node_id: str,
+                handoff_id: str,
+                node_generation: int,
+                reason: Union[str, VoiceAgentHandoffAbortReason],
+                to_model: str,
+                to_node_id: str,
                 tool_call_id: str
             ) -> None: ...
 
@@ -20639,18 +20702,18 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                duration_ms: timedelta, 
-                edge_id: str, 
-                event_id: str, 
-                from_model: str, 
-                from_node_id: str, 
-                handoff_id: str, 
-                node_generation: int, 
-                prepare_duration_ms: timedelta, 
-                to_model: str, 
-                to_node_id: str, 
+                self,
+                *,
+                duration_ms: timedelta,
+                edge_id: str,
+                event_id: str,
+                from_model: str,
+                from_node_id: str,
+                handoff_id: str,
+                node_generation: int,
+                prepare_duration_ms: timedelta,
+                to_model: str,
+                to_node_id: str,
                 tool_call_id: str
             ) -> None: ...
 
@@ -20672,16 +20735,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                edge_id: str, 
-                event_id: str, 
-                from_model: str, 
-                from_node_id: str, 
-                handoff_id: str, 
-                node_generation: int, 
-                to_model: str, 
-                to_node_id: str, 
+                self,
+                *,
+                edge_id: str,
+                event_id: str,
+                from_model: str,
+                from_node_id: str,
+                handoff_id: str,
+                node_generation: int,
+                to_model: str,
+                to_node_id: str,
                 tool_call_id: str
             ) -> None: ...
 
@@ -20699,12 +20762,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                consultation_id: str, 
-                event_id: str, 
-                reason: Union[str, VoiceAgentSubagentAbortReason], 
+                self,
+                *,
+                call_id: str,
+                consultation_id: str,
+                event_id: str,
+                reason: Union[str, VoiceAgentSubagentAbortReason],
                 subagent_name: str
             ) -> None: ...
 
@@ -20721,11 +20784,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                consultation_id: str, 
-                event_id: str, 
+                self,
+                *,
+                call_id: str,
+                consultation_id: str,
+                event_id: str,
                 subagent_name: str
             ) -> None: ...
 
@@ -20742,11 +20805,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                consultation_id: str, 
-                event_id: str, 
+                self,
+                *,
+                call_id: str,
+                consultation_id: str,
+                event_id: str,
                 subagent_name: str
             ) -> None: ...
 
@@ -20766,14 +20829,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                delta: str, 
-                event_id: str, 
-                item_id: str, 
-                obfuscation: Optional[str] = ..., 
-                output_index: int, 
+                self,
+                *,
+                call_id: str,
+                delta: str,
+                event_id: str,
+                item_id: str,
+                obfuscation: Optional[str] = ...,
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -20793,14 +20856,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                call_id: str, 
-                event_id: str, 
-                item_id: str, 
-                name: Union[str, VoiceAgentSystemToolName], 
-                output_index: int, 
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                event_id: str,
+                item_id: str,
+                name: Union[str, VoiceAgentSystemToolName],
+                output_index: int,
                 response_id: str
             ) -> None: ...
 
@@ -20840,9 +20903,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                event_id: str, 
+                self,
+                *,
+                event_id: str,
                 warning: VoiceAgentServerEventWarningDetails
             ) -> None: ...
 
@@ -20857,10 +20920,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: Optional[str] = ..., 
-                message: str, 
+                self,
+                *,
+                code: Optional[str] = ...,
+                message: str,
                 param: Optional[str] = ...
             ) -> None: ...
 
@@ -20882,16 +20945,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auto_truncate: Optional[bool] = ..., 
-                create_response: Optional[bool] = ..., 
-                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ..., 
-                idle_timeout_ms: Optional[int] = ..., 
-                interrupt_response: Optional[bool] = ..., 
-                prefix_padding_ms: Optional[int] = ..., 
-                silence_duration_ms: Optional[int] = ..., 
-                speech_duration_ms: Optional[timedelta] = ..., 
+                self,
+                *,
+                auto_truncate: Optional[bool] = ...,
+                create_response: Optional[bool] = ...,
+                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ...,
+                idle_timeout_ms: Optional[int] = ...,
+                interrupt_response: Optional[bool] = ...,
+                prefix_padding_ms: Optional[int] = ...,
+                silence_duration_ms: Optional[int] = ...,
+                speech_duration_ms: Optional[timedelta] = ...,
                 threshold: Optional[float] = ...
             ) -> None: ...
 
@@ -20913,17 +20976,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                character: str, 
-                customized: Optional[bool] = ..., 
-                ice_servers: Optional[list[VoiceAgentAvatarIceServer]] = ..., 
-                model: Optional[str] = ..., 
-                output_audit_audio: Optional[bool] = ..., 
-                output_protocol: Optional[Union[str, VoiceAgentAvatarOutputProtocol]] = ..., 
-                scene: Optional[VoiceAgentAvatarScene] = ..., 
-                style: Optional[str] = ..., 
-                type: Union[str, VoiceAgentAvatarType], 
+                self,
+                *,
+                character: str,
+                customized: Optional[bool] = ...,
+                ice_servers: Optional[list[VoiceAgentAvatarIceServer]] = ...,
+                model: Optional[str] = ...,
+                output_audit_audio: Optional[bool] = ...,
+                output_protocol: Optional[Union[str, VoiceAgentAvatarOutputProtocol]] = ...,
+                scene: Optional[VoiceAgentAvatarScene] = ...,
+                style: Optional[str] = ...,
+                type: Union[str, VoiceAgentAvatarType],
                 video: Optional[VoiceAgentAvatarVideoParams] = ...
             ) -> None: ...
 
@@ -20962,26 +21025,26 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                animation: Optional[VoiceAgentAnimationConfig] = ..., 
-                audio: Optional[VoiceAgentAudioConfig] = ..., 
-                avatar: Optional[VoiceAgentSessionAvatarConfig] = ..., 
-                expires_at: Optional[datetime] = ..., 
-                greeting: Optional[VoiceAgentGreetingConfig] = ..., 
-                handoff: Optional[VoiceAgentHandoffState] = ..., 
-                id: str, 
-                include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ..., 
-                instructions: Optional[str] = ..., 
-                interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
-                max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                model: str, 
-                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
-                parallel_tool_calls: Optional[bool] = ..., 
-                reasoning: Optional[RealtimeReasoning] = ..., 
-                temperature: Optional[float] = ..., 
-                tool_choice: Optional[VoiceAgentToolChoice] = ..., 
+                self,
+                *,
+                animation: Optional[VoiceAgentAnimationConfig] = ...,
+                audio: Optional[VoiceAgentAudioConfig] = ...,
+                avatar: Optional[VoiceAgentSessionAvatarConfig] = ...,
+                expires_at: Optional[datetime] = ...,
+                greeting: Optional[VoiceAgentGreetingConfig] = ...,
+                handoff: Optional[VoiceAgentHandoffState] = ...,
+                id: str,
+                include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ...,
+                instructions: Optional[str] = ...,
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ...,
+                max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ...,
+                metadata: Optional[dict[str, str]] = ...,
+                model: str,
+                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ...,
+                parallel_tool_calls: Optional[bool] = ...,
+                reasoning: Optional[RealtimeReasoning] = ...,
+                temperature: Optional[float] = ...,
+                tool_choice: Optional[VoiceAgentToolChoice] = ...,
                 tools: Optional[list[VoiceAgentTool]] = ...
             ) -> None: ...
 
@@ -21009,22 +21072,22 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                animation: Optional[VoiceAgentAnimationConfig] = ..., 
-                audio: Optional[VoiceAgentAudioConfig] = ..., 
-                avatar: Optional[VoiceAgentSessionAvatarConfig] = ..., 
-                greeting: Optional[VoiceAgentGreetingConfig] = ..., 
-                include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ..., 
-                instructions: Optional[str] = ..., 
-                interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
-                max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
-                parallel_tool_calls: Optional[bool] = ..., 
-                reasoning: Optional[RealtimeReasoning] = ..., 
-                temperature: Optional[float] = ..., 
-                tool_choice: Optional[VoiceAgentToolChoice] = ..., 
+                self,
+                *,
+                animation: Optional[VoiceAgentAnimationConfig] = ...,
+                audio: Optional[VoiceAgentAudioConfig] = ...,
+                avatar: Optional[VoiceAgentSessionAvatarConfig] = ...,
+                greeting: Optional[VoiceAgentGreetingConfig] = ...,
+                include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ...,
+                instructions: Optional[str] = ...,
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ...,
+                max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ...,
+                metadata: Optional[dict[str, str]] = ...,
+                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ...,
+                parallel_tool_calls: Optional[bool] = ...,
+                reasoning: Optional[RealtimeReasoning] = ...,
+                temperature: Optional[float] = ...,
+                tool_choice: Optional[VoiceAgentToolChoice] = ...,
                 tools: Optional[list[VoiceAgentTool]] = ...
             ) -> None: ...
 
@@ -21041,12 +21104,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                background: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
-                closing: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
-                opening: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
-                transfer: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                self,
+                *,
+                background: Optional[VoiceAgentSoundscapeTrackConfig] = ...,
+                closing: Optional[VoiceAgentSoundscapeTrackConfig] = ...,
+                opening: Optional[VoiceAgentSoundscapeTrackConfig] = ...,
+                transfer: Optional[VoiceAgentSoundscapeTrackConfig] = ...,
                 working: Optional[VoiceAgentSoundscapeWorkingTrackConfig] = ...
             ) -> None: ...
 
@@ -21070,8 +21133,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 name: Union[str, VoiceAgentSoundscapeSound]
             ) -> None: ...
 
@@ -21085,9 +21148,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                gain: Optional[float] = ..., 
+                self,
+                *,
+                gain: Optional[float] = ...,
                 source: VoiceAgentSoundscapeSourceConfig
             ) -> None: ...
 
@@ -21102,10 +21165,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delay_ms: Optional[timedelta] = ..., 
-                gain: Optional[float] = ..., 
+                self,
+                *,
+                delay_ms: Optional[timedelta] = ...,
+                gain: Optional[float] = ...,
                 source: VoiceAgentSoundscapeSourceConfig
             ) -> None: ...
 
@@ -21121,10 +21184,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                latency_threshold_ms: Optional[timedelta] = ..., 
-                texts: Optional[list[str]] = ..., 
+                self,
+                *,
+                latency_threshold_ms: Optional[timedelta] = ...,
+                texts: Optional[list[str]] = ...,
                 triggers: Optional[list[Union[str, VoiceAgentInterimResponseTrigger]]] = ...
             ) -> None: ...
 
@@ -21146,12 +21209,12 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_capabilities: str, 
-                agent_name: str, 
-                agent_version: Optional[str] = ..., 
-                invoke_timeout_seconds: Optional[timedelta] = ..., 
+                self,
+                *,
+                agent_capabilities: str,
+                agent_name: str,
+                agent_version: Optional[str] = ...,
+                invoke_timeout_seconds: Optional[timedelta] = ...,
                 response_policy: Optional[VoiceAgentSubagentResponsePolicy] = ...
             ) -> None: ...
 
@@ -21173,8 +21236,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 subagent_type: str
             ) -> None: ...
 
@@ -21193,14 +21256,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                ack_instructions: Optional[str] = ..., 
-                enable_delta_progress: Optional[bool] = ..., 
-                gap_filling_instructions: Optional[str] = ..., 
-                gap_filling_interval: Optional[timedelta] = ..., 
-                immediate_ack: Optional[bool] = ..., 
-                progress_instructions: Optional[str] = ..., 
+                self,
+                *,
+                ack_instructions: Optional[str] = ...,
+                enable_delta_progress: Optional[bool] = ...,
+                gap_filling_instructions: Optional[str] = ...,
+                gap_filling_interval: Optional[timedelta] = ...,
+                immediate_ack: Optional[bool] = ...,
+                progress_instructions: Optional[str] = ...,
                 progress_update_interval: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -21221,10 +21284,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
                 timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -21245,13 +21308,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                name: Union[str, VoiceAgentSystemToolName], 
-                object: Optional[Literal[item]] = ..., 
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: Union[str, VoiceAgentSystemToolName],
+                object: Optional[Literal[item]] = ...,
                 status: Union[str, VoiceAgentSystemToolItemStatus]
             ) -> None: ...
 
@@ -21282,8 +21345,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -21296,8 +21359,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -21327,10 +21390,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                response_scheduling: Optional[Union[str, VoiceAgentToolResponseScheduling]] = ..., 
-                toolbox_name: str, 
+                self,
+                *,
+                response_scheduling: Optional[Union[str, VoiceAgentToolResponseScheduling]] = ...,
+                toolbox_name: str,
                 toolbox_version: str
             ) -> None: ...
 
@@ -21348,13 +21411,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                confidence: Optional[float] = ..., 
-                duration_milliseconds: timedelta, 
-                locale: Optional[str] = ..., 
-                offset_milliseconds: timedelta, 
-                text: str, 
+                self,
+                *,
+                confidence: Optional[float] = ...,
+                duration_milliseconds: timedelta,
+                locale: Optional[str] = ...,
+                offset_milliseconds: timedelta,
+                text: str,
                 words: Optional[list[VoiceAgentTranscriptionWord]] = ...
             ) -> None: ...
 
@@ -21369,10 +21432,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                duration_milliseconds: timedelta, 
-                offset_milliseconds: timedelta, 
+                self,
+                *,
+                duration_milliseconds: timedelta,
+                offset_milliseconds: timedelta,
                 text: str
             ) -> None: ...
 
@@ -21386,9 +21449,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                type: Union[str, VoiceAgentTransferDestinationType], 
+                self,
+                *,
+                type: Union[str, VoiceAgentTransferDestinationType],
                 value: str
             ) -> None: ...
 
@@ -21408,9 +21471,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                ring_timeout_seconds: Optional[int] = ..., 
+                self,
+                *,
+                ring_timeout_seconds: Optional[int] = ...,
                 strategy: Union[str, VoiceAgentTransferStrategy]
             ) -> None: ...
 
@@ -21434,11 +21497,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                require_handoff: Optional[bool] = ..., 
-                targets: list[VoiceAgentTransferTarget], 
+                self,
+                *,
+                description: Optional[str] = ...,
+                require_handoff: Optional[bool] = ...,
+                targets: list[VoiceAgentTransferTarget],
                 timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -21454,11 +21517,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                destinations: list[VoiceAgentTransferDestination], 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                destinations: list[VoiceAgentTransferDestination],
+                name: str,
                 routing: VoiceAgentTransferRouting
             ) -> None: ...
 
@@ -21477,9 +21540,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auto_truncate: Optional[bool] = ..., 
+                self,
+                *,
+                auto_truncate: Optional[bool] = ...,
                 type: str
             ) -> None: ...
 
@@ -21512,20 +21575,20 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                custom_lexicon_url: Optional[str] = ..., 
-                custom_text_normalization_url: Optional[str] = ..., 
-                custom_voice_endpoint_id: Optional[str] = ..., 
-                personal_voice_model: Optional[str] = ..., 
-                pitch: Optional[str] = ..., 
-                prefer_locales: Optional[list[str]] = ..., 
-                speed: Optional[float] = ..., 
-                style: Optional[str] = ..., 
-                voice: Optional[str] = ..., 
-                voice_locale: Optional[str] = ..., 
-                voice_temperature: Optional[float] = ..., 
-                voice_type: Optional[Union[str, VoiceType]] = ..., 
+                self,
+                *,
+                custom_lexicon_url: Optional[str] = ...,
+                custom_text_normalization_url: Optional[str] = ...,
+                custom_voice_endpoint_id: Optional[str] = ...,
+                personal_voice_model: Optional[str] = ...,
+                pitch: Optional[str] = ...,
+                prefer_locales: Optional[list[str]] = ...,
+                speed: Optional[float] = ...,
+                style: Optional[str] = ...,
+                voice: Optional[str] = ...,
+                voice_locale: Optional[str] = ...,
+                voice_temperature: Optional[float] = ...,
+                voice_type: Optional[Union[str, VoiceType]] = ...,
                 volume: Optional[str] = ...
             ) -> None: ...
 
@@ -21557,17 +21620,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                blob_uri: Optional[str] = ..., 
-                channels: Optional[int] = ..., 
-                codec: Optional[Union[str, VoiceAudioCodec]] = ..., 
-                conversation_id: str, 
-                duration_ms: Optional[timedelta] = ..., 
-                format: Optional[Union[str, VoiceAudioContainerFormat]] = ..., 
-                item_id: str, 
-                role: Optional[Union[str, VoiceAudioRole]] = ..., 
-                sample_rate: Optional[int] = ..., 
+                self,
+                *,
+                blob_uri: Optional[str] = ...,
+                channels: Optional[int] = ...,
+                codec: Optional[Union[str, VoiceAudioCodec]] = ...,
+                conversation_id: str,
+                duration_ms: Optional[timedelta] = ...,
+                format: Optional[Union[str, VoiceAudioContainerFormat]] = ...,
+                item_id: str,
+                role: Optional[Union[str, VoiceAudioRole]] = ...,
+                sample_rate: Optional[int] = ...,
                 start_offset_ms: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -21592,14 +21655,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                completed_at: Optional[datetime] = ..., 
-                created_at: datetime, 
-                id: str, 
-                last_error: Optional[ApiError] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                status: Union[str, VoiceConversationStatus], 
+                self,
+                *,
+                completed_at: Optional[datetime] = ...,
+                created_at: datetime,
+                id: str,
+                last_error: Optional[ApiError] = ...,
+                metadata: Optional[dict[str, str]] = ...,
+                status: Union[str, VoiceConversationStatus],
                 usage: Optional[RealtimeResponseUsage] = ...
             ) -> None: ...
 
@@ -21612,8 +21675,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -21645,17 +21708,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                blob_uri: Optional[str] = ..., 
-                channels: Optional[int] = ..., 
-                codec: Optional[Union[str, VoiceAudioCodec]] = ..., 
-                conversation_id: str, 
-                duration_ms: Optional[timedelta] = ..., 
-                format: Optional[Union[str, VoiceAudioContainerFormat]] = ..., 
-                item_id: str, 
-                role: Optional[Union[str, VoiceAudioRole]] = ..., 
-                sample_rate: Optional[int] = ..., 
+                self,
+                *,
+                blob_uri: Optional[str] = ...,
+                channels: Optional[int] = ...,
+                codec: Optional[Union[str, VoiceAudioCodec]] = ...,
+                conversation_id: str,
+                duration_ms: Optional[timedelta] = ...,
+                format: Optional[Union[str, VoiceAudioContainerFormat]] = ...,
+                item_id: str,
+                role: Optional[Union[str, VoiceAudioRole]] = ...,
+                sample_rate: Optional[int] = ...,
                 start_offset_ms: Optional[timedelta] = ...
             ) -> None: ...
 
@@ -21670,9 +21733,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -21703,14 +21766,14 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                blob_uri: Optional[str] = ..., 
-                channel_layout: VoiceRecordingChannelLayout, 
-                channels: int, 
-                conversation_id: str, 
-                duration_ms: timedelta, 
-                format: Union[str, VoiceAudioContainerFormat], 
+                self,
+                *,
+                blob_uri: Optional[str] = ...,
+                channel_layout: VoiceRecordingChannelLayout,
+                channels: int,
+                conversation_id: str,
+                duration_ms: timedelta,
+                format: Union[str, VoiceAudioContainerFormat],
                 sample_rate: int
             ) -> None: ...
 
@@ -21724,9 +21787,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                left: Literal[VoiceAudioRole.USER], 
+                self,
+                *,
+                left: Literal[VoiceAudioRole.USER],
                 right: Literal[VoiceAudioRole.AGENT]
             ) -> None: ...
 
@@ -21752,21 +21815,21 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                audio: Optional[VoiceResponseAudio] = ..., 
-                completed_at: Optional[datetime] = ..., 
-                conversation_id: Optional[str] = ..., 
-                created_at: Optional[datetime] = ..., 
-                id: Optional[str] = ..., 
-                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                object: Optional[Literal[response]] = ..., 
-                output: Optional[list[RealtimeConversationItem]] = ..., 
-                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
-                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
-                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
-                temperature: Optional[float] = ..., 
+                self,
+                *,
+                audio: Optional[VoiceResponseAudio] = ...,
+                completed_at: Optional[datetime] = ...,
+                conversation_id: Optional[str] = ...,
+                created_at: Optional[datetime] = ...,
+                id: Optional[str] = ...,
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ...,
+                metadata: Optional[Metadata] = ...,
+                object: Optional[Literal[response]] = ...,
+                output: Optional[list[RealtimeConversationItem]] = ...,
+                output_modalities: Optional[list[Literal[text, audio]]] = ...,
+                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ...,
+                status_details: Optional[RealtimeResponseStatusDetails] = ...,
+                temperature: Optional[float] = ...,
                 usage: Optional[RealtimeResponseUsage] = ...
             ) -> None: ...
 
@@ -21779,8 +21842,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 output: Optional[VoiceResponseAudioOutput] = ...
             ) -> None: ...
 
@@ -21796,11 +21859,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                format: Optional[RealtimeAudioFormats] = ..., 
-                voice: Optional[str] = ..., 
-                voice_locale: Optional[str] = ..., 
+                self,
+                *,
+                format: Optional[RealtimeAudioFormats] = ...,
+                voice: Optional[str] = ...,
+                voice_locale: Optional[str] = ...,
                 voice_type: Optional[Union[str, VoiceType]] = ...
             ) -> None: ...
 
@@ -21825,10 +21888,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                project_connection_id: str, 
-                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
+                self,
+                *,
+                project_connection_id: str,
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ...,
                 server_label: Optional[str] = ...
             ) -> None: ...
 
@@ -21847,13 +21910,13 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: str, 
-                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
-                server_label: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                project_connection_id: str,
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ...,
+                server_label: Optional[str] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -21870,11 +21933,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                city: Optional[str] = ..., 
-                country: Optional[str] = ..., 
-                region: Optional[str] = ..., 
+                self,
+                *,
+                city: Optional[str] = ...,
+                country: Optional[str] = ...,
+                region: Optional[str] = ...,
                 timezone: Optional[str] = ...
             ) -> None: ...
 
@@ -21888,9 +21951,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                instance_name: str, 
+                self,
+                *,
+                instance_name: str,
                 project_connection_id: str
             ) -> None: ...
 
@@ -21906,10 +21969,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                search_content_types: Optional[list[Union[str, SearchContentType]]] = ..., 
-                search_context_size: Optional[Union[str, SearchContextSize]] = ..., 
+                self,
+                *,
+                search_content_types: Optional[list[Union[str, SearchContentType]]] = ...,
+                search_context_size: Optional[Union[str, SearchContextSize]] = ...,
                 user_location: Optional[ApproximateLocation] = ...
             ) -> None: ...
 
@@ -21930,15 +21993,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
-                description: Optional[str] = ..., 
-                external_web_access: Optional[bool] = ..., 
-                filters: Optional[WebSearchToolFilters] = ..., 
-                name: Optional[str] = ..., 
-                search_context_size: Optional[Literal[low, medium, high]] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                self,
+                *,
+                custom_search_configuration: Optional[WebSearchConfiguration] = ...,
+                description: Optional[str] = ...,
+                external_web_access: Optional[bool] = ...,
+                filters: Optional[WebSearchToolFilters] = ...,
+                name: Optional[str] = ...,
+                search_context_size: Optional[Literal[low, medium, high]] = ...,
+                tool_configs: Optional[dict[str, ToolConfig]] = ...,
                 user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
@@ -21951,8 +22014,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 allowed_domains: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -21973,15 +22036,15 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
-                description: Optional[str] = ..., 
-                external_web_access: Optional[bool] = ..., 
-                filters: Optional[WebSearchToolFilters] = ..., 
-                name: Optional[str] = ..., 
-                search_context_size: Optional[Literal[low, medium, high]] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                self,
+                *,
+                custom_search_configuration: Optional[WebSearchConfiguration] = ...,
+                description: Optional[str] = ...,
+                external_web_access: Optional[bool] = ...,
+                filters: Optional[WebSearchToolFilters] = ...,
+                name: Optional[str] = ...,
+                search_context_size: Optional[Literal[low, medium, high]] = ...,
+                tool_configs: Optional[dict[str, ToolConfig]] = ...,
                 user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
@@ -21995,8 +22058,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 days_of_week: list[Union[str, DayOfWeek]]
             ) -> None: ...
 
@@ -22010,8 +22073,8 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 project_connection_id: str
             ) -> None: ...
 
@@ -22028,11 +22091,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
+                project_connection_id: str,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -22047,9 +22110,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                rai_config: Optional[RaiConfig] = ..., 
+                self,
+                *,
+                rai_config: Optional[RaiConfig] = ...,
                 workflow: Optional[str] = ...
             ) -> None: ...
 
@@ -22062,549 +22125,549 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.AgentsOperations(GeneratedAgentsOperations):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def begin_create_optimization_job(
-                self, 
-                job: AgentOptimizationJob, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: AgentOptimizationJob,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AgentOptimizationLROPoller: ...
 
         @overload
         def begin_create_optimization_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: JSON,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AgentOptimizationLROPoller: ...
 
         @overload
         def begin_create_optimization_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AgentOptimizationLROPoller: ...
 
         @distributed_trace
         def cancel_optimization_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> AgentOptimizationJob: ...
 
         @overload
         def create_session(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_session_id: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                version_indicator: VersionIndicator, 
+                self,
+                agent_name: str,
+                *,
+                agent_session_id: Optional[str] = ...,
+                content_type: str = "application/json",
+                version_indicator: VersionIndicator,
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
         @overload
         def create_session(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
         @overload
         def create_session(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
         @overload
         def create_version(
-                self, 
-                agent_name: str, 
-                *, 
-                blueprint_reference: Optional[AgentBlueprintReference] = ..., 
-                content_type: str = "application/json", 
-                definition: AgentDefinition, 
-                description: Optional[str] = ..., 
-                draft: Optional[bool] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                blueprint_reference: Optional[AgentBlueprintReference] = ...,
+                content_type: str = "application/json",
+                definition: AgentDefinition,
+                description: Optional[str] = ...,
+                draft: Optional[bool] = ...,
+                metadata: Optional[dict[str, str]] = ...,
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         def create_version(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         def create_version(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @distributed_trace
         def create_version_from_code(
-                self, 
-                agent_name: str, 
-                *, 
-                code: IO[bytes], 
-                code_zip_sha256: Optional[str] = ..., 
-                definition: HostedAgentDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                code: IO[bytes],
+                code_zip_sha256: Optional[str] = ...,
+                definition: HostedAgentDefinition,
+                description: Optional[str] = ...,
+                metadata: Optional[dict[str, str]] = ...,
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         def create_version_from_manifest(
-                self, 
-                agent_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                manifest_id: str, 
-                metadata: Optional[dict[str, str]] = ..., 
-                parameter_values: dict[str, Any], 
+                self,
+                agent_name: str,
+                *,
+                content_type: str = "application/json",
+                description: Optional[str] = ...,
+                manifest_id: str,
+                metadata: Optional[dict[str, str]] = ...,
+                parameter_values: dict[str, Any],
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         def create_version_from_manifest(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @overload
         def create_version_from_manifest(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @distributed_trace
         def delete(
-                self, 
-                agent_name: str, 
-                *, 
-                force: Optional[bool] = ..., 
+                self,
+                agent_name: str,
+                *,
+                force: Optional[bool] = ...,
                 **kwargs: Any
             ) -> DeleteAgentResponse: ...
 
         @distributed_trace
         def delete_optimization_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_session(
-                self, 
-                agent_name: str, 
-                session_id: str, 
+                self,
+                agent_name: str,
+                session_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                path: str, 
-                recursive: Optional[bool] = ..., 
+                self,
+                agent_name: str,
+                session_id: str,
+                *,
+                path: str,
+                recursive: Optional[bool] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_version(
-                self, 
-                agent_name: str, 
-                agent_version: str, 
-                *, 
-                force: Optional[bool] = ..., 
+                self,
+                agent_name: str,
+                agent_version: str,
+                *,
+                force: Optional[bool] = ...,
                 **kwargs: Any
             ) -> DeleteAgentVersionResponse: ...
 
         @distributed_trace
         def disable(
-                self, 
-                agent_name: str, 
+                self,
+                agent_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def download_code(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_version: Optional[str] = ..., 
+                self,
+                agent_name: str,
+                *,
+                agent_version: Optional[str] = ...,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def download_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                path: str, 
+                self,
+                agent_name: str,
+                session_id: str,
+                *,
+                path: str,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def enable(
-                self, 
-                agent_name: str, 
+                self,
+                agent_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @overload
         def estimate_optimization_job(
-                self, 
-                inputs: AgentOptimizationEstimateInputs, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                inputs: AgentOptimizationEstimateInputs,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentOptimizationEstimateResult: ...
 
         @overload
         def estimate_optimization_job(
-                self, 
-                inputs: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                inputs: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentOptimizationEstimateResult: ...
 
         @overload
         def estimate_optimization_job(
-                self, 
-                inputs: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                inputs: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentOptimizationEstimateResult: ...
 
         @distributed_trace
         def get(
-                self, 
-                agent_name: str, 
+                self,
+                agent_name: str,
                 **kwargs: Any
             ) -> AgentDetails: ...
 
         @overload
         def get_microsoft365_package(
-                self, 
-                agent_name: str, 
-                *, 
-                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
-                agent_display_name: Optional[str] = ..., 
-                app_version: Optional[str] = ..., 
-                bot_service_arm_id: Optional[str] = ..., 
-                can_respond_without_mention: Optional[bool] = ..., 
-                color_icon_base64: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                developer_name: Optional[str] = ..., 
-                developer_website_url: Optional[str] = ..., 
-                full_description: Optional[str] = ..., 
-                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
-                outline_icon_base64: Optional[str] = ..., 
-                privacy_url: Optional[str] = ..., 
-                publish_as_autopilot: Optional[bool] = ..., 
-                publish_scope: Union[str, Microsoft365PublishScope], 
-                short_description: Optional[str] = ..., 
-                terms_of_use_url: Optional[str] = ..., 
+                self,
+                agent_name: str,
+                *,
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ...,
+                agent_display_name: Optional[str] = ...,
+                app_version: Optional[str] = ...,
+                bot_service_arm_id: Optional[str] = ...,
+                can_respond_without_mention: Optional[bool] = ...,
+                color_icon_base64: Optional[str] = ...,
+                content_type: str = "application/json",
+                developer_name: Optional[str] = ...,
+                developer_website_url: Optional[str] = ...,
+                full_description: Optional[str] = ...,
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ...,
+                outline_icon_base64: Optional[str] = ...,
+                privacy_url: Optional[str] = ...,
+                publish_as_autopilot: Optional[bool] = ...,
+                publish_scope: Union[str, Microsoft365PublishScope],
+                short_description: Optional[str] = ...,
+                terms_of_use_url: Optional[str] = ...,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @overload
         def get_microsoft365_package(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @overload
         def get_microsoft365_package(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def get_microsoft365_publish_defaults(
-                self, 
-                agent_name: str, 
-                *, 
-                publish_as_digital_worker: Optional[bool] = ..., 
+                self,
+                agent_name: str,
+                *,
+                publish_as_digital_worker: Optional[bool] = ...,
                 **kwargs: Any
             ) -> Microsoft365PublishDefaults: ...
 
         @distributed_trace
         def get_optimization_candidate(
-                self, 
-                job_id: str, 
-                candidate_id: str, 
+                self,
+                job_id: str,
+                candidate_id: str,
                 **kwargs: Any
             ) -> AgentOptimizationCandidate: ...
 
         @distributed_trace
         def get_optimization_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> AgentOptimizationJob: ...
 
         @distributed_trace
         def get_session(
-                self, 
-                agent_name: str, 
-                session_id: str, 
+                self,
+                agent_name: str,
+                session_id: str,
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
         @distributed_trace
         def get_session_log_stream(
-                self, 
-                agent_name: str, 
-                agent_version: str, 
-                session_id: str, 
+                self,
+                agent_name: str,
+                agent_version: str,
+                session_id: str,
                 **kwargs: Any
             ) -> SessionLogEvent: ...
 
         @distributed_trace
         def get_version(
-                self, 
-                agent_name: str, 
-                agent_version: str, 
+                self,
+                agent_name: str,
+                agent_version: str,
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                kind: Optional[Union[str, AgentKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                kind: Optional[Union[str, AgentKind]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[AgentDetails]: ...
 
         @distributed_trace
         def list_optimization_candidates(
-                self, 
-                job_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                expand: Optional[List[Union[str, AgentOptimizationCandidateExpand]]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                job_id: str,
+                *,
+                before: Optional[str] = ...,
+                expand: Optional[List[Union[str, AgentOptimizationCandidateExpand]]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[AgentOptimizationCandidate]: ...
 
         @distributed_trace
         def list_optimization_jobs(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, JobStatus]] = ..., 
+                self,
+                *,
+                agent_name: Optional[str] = ...,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                status: Optional[Union[str, JobStatus]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[AgentOptimizationJob]: ...
 
         @distributed_trace
         def list_session_files(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                path: Optional[str] = ..., 
+                self,
+                agent_name: str,
+                session_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                path: Optional[str] = ...,
                 **kwargs: Any
             ) -> ItemPaged[SessionDirectoryEntry]: ...
 
         @distributed_trace
         def list_sessions(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[AgentSessionResource]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                include_drafts: Optional[bool] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                include_drafts: Optional[bool] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[AgentVersionDetails]: ...
 
         @distributed_trace
         def promote_optimization_candidate(
-                self, 
-                job_id: str, 
-                candidate_id: str, 
+                self,
+                job_id: str,
+                candidate_id: str,
                 **kwargs: Any
             ) -> AgentOptimizationCandidate: ...
 
         @overload
         def publish_to_microsoft365(
-                self, 
-                agent_name: str, 
-                *, 
-                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
-                agent_display_name: Optional[str] = ..., 
-                app_version: Optional[str] = ..., 
-                bot_service_arm_id: Optional[str] = ..., 
-                can_respond_without_mention: Optional[bool] = ..., 
-                color_icon_base64: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                developer_name: Optional[str] = ..., 
-                developer_website_url: Optional[str] = ..., 
-                full_description: Optional[str] = ..., 
-                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
-                outline_icon_base64: Optional[str] = ..., 
-                privacy_url: Optional[str] = ..., 
-                publish_as_autopilot: Optional[bool] = ..., 
-                publish_scope: Union[str, Microsoft365PublishScope], 
-                short_description: Optional[str] = ..., 
-                terms_of_use_url: Optional[str] = ..., 
+                self,
+                agent_name: str,
+                *,
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ...,
+                agent_display_name: Optional[str] = ...,
+                app_version: Optional[str] = ...,
+                bot_service_arm_id: Optional[str] = ...,
+                can_respond_without_mention: Optional[bool] = ...,
+                color_icon_base64: Optional[str] = ...,
+                content_type: str = "application/json",
+                developer_name: Optional[str] = ...,
+                developer_website_url: Optional[str] = ...,
+                full_description: Optional[str] = ...,
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ...,
+                outline_icon_base64: Optional[str] = ...,
+                privacy_url: Optional[str] = ...,
+                publish_as_autopilot: Optional[bool] = ...,
+                publish_scope: Union[str, Microsoft365PublishScope],
+                short_description: Optional[str] = ...,
+                terms_of_use_url: Optional[str] = ...,
                 **kwargs: Any
             ) -> Microsoft365PublishResult: ...
 
         @overload
         def publish_to_microsoft365(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Microsoft365PublishResult: ...
 
         @overload
         def publish_to_microsoft365(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Microsoft365PublishResult: ...
 
         @distributed_trace
         def stop_session(
-                self, 
-                agent_name: str, 
-                session_id: str, 
+                self,
+                agent_name: str,
+                session_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @overload
         def update_details(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_card: Optional[AgentCard] = ..., 
-                agent_endpoint: Optional[AgentEndpointConfig] = ..., 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                agent_name: str,
+                *,
+                agent_card: Optional[AgentCard] = ...,
+                agent_endpoint: Optional[AgentEndpointConfig] = ...,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentDetails: ...
 
         @overload
         def update_details(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentDetails: ...
 
         @overload
         def update_details(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentDetails: ...
 
         @overload
         def upload_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                content: bytes, 
-                *, 
-                content_type: str = "application/octet-stream", 
-                path: str, 
+                self,
+                agent_name: str,
+                session_id: str,
+                content: bytes,
+                *,
+                content_type: str = "application/octet-stream",
+                path: str,
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
         @overload
         def upload_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                content: IO[bytes], 
-                *, 
-                content_type: str = "application/octet-stream", 
-                path: str, 
+                self,
+                agent_name: str,
+                session_id: str,
+                content: IO[bytes],
+                *,
+                content_type: str = "application/octet-stream",
+                path: str,
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
@@ -22612,217 +22675,217 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: AgentInsightRunCreate, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                monitor_id: str,
+                run: AgentInsightRunCreate,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
         @overload
         def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                monitor_id: str,
+                run: JSON,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
         @overload
         def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                monitor_id: str,
+                run: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
         @distributed_trace
         def cancel_run(
-                self, 
-                monitor_id: str, 
-                run_id: str, 
+                self,
+                monitor_id: str,
+                run_id: str,
                 **kwargs: Any
             ) -> AgentInsightRun: ...
 
         @overload
         def create(
-                self, 
-                monitor: AgentInsightMonitorCreate, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                monitor: AgentInsightMonitorCreate,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         def create(
-                self, 
-                monitor: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                monitor: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         def create(
-                self, 
-                monitor: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                monitor: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @distributed_trace
         def delete(
-                self, 
-                monitor_id: str, 
+                self,
+                monitor_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                monitor_id: str, 
+                self,
+                monitor_id: str,
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @distributed_trace
         def get_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                *, 
-                include_details: Optional[bool] = ..., 
+                self,
+                monitor_id: str,
+                insight_id: str,
+                *,
+                include_details: Optional[bool] = ...,
                 **kwargs: Any
             ) -> AgentInsight: ...
 
         @distributed_trace
         def get_run(
-                self, 
-                monitor_id: str, 
-                run_id: str, 
+                self,
+                monitor_id: str,
+                run_id: str,
                 **kwargs: Any
             ) -> AgentInsightRun: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                agent_name: Optional[str] = ...,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[AgentInsightMonitorListItem]: ...
 
         @distributed_trace
         def list_insights(
-                self, 
-                monitor_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                category: Optional[str] = ..., 
-                include_details: Optional[bool] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                severity: Optional[Union[str, AgentInsightSeverity]] = ..., 
-                status: Optional[Union[str, AgentInsightStatus]] = ..., 
+                self,
+                monitor_id: str,
+                *,
+                before: Optional[str] = ...,
+                category: Optional[str] = ...,
+                include_details: Optional[bool] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                severity: Optional[Union[str, AgentInsightSeverity]] = ...,
+                status: Optional[Union[str, AgentInsightStatus]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[AgentInsight]: ...
 
         @distributed_trace
         def list_runs(
-                self, 
-                monitor_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, JobStatus]] = ..., 
-                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ..., 
+                self,
+                monitor_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                status: Optional[Union[str, JobStatus]] = ...,
+                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[AgentInsightRun]: ...
 
         @distributed_trace
         def reset(
-                self, 
-                monitor_id: str, 
+                self,
+                monitor_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @overload
         def update(
-                self, 
-                monitor_id: str, 
-                monitor: AgentInsightMonitorUpdate, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                monitor: AgentInsightMonitorUpdate,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         def update(
-                self, 
-                monitor_id: str, 
-                monitor: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                monitor: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         def update(
-                self, 
-                monitor_id: str, 
-                monitor: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                monitor: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsightMonitor: ...
 
         @overload
         def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: AgentInsightUpdate, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                insight_id: str,
+                update: AgentInsightUpdate,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsight: ...
 
         @overload
         def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                insight_id: str,
+                update: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsight: ...
 
         @overload
         def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                monitor_id: str,
+                insight_id: str,
+                update: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> AgentInsight: ...
 
@@ -22830,15 +22893,15 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace
         def create_from_prompt(
-                self, 
-                body: GenerateAgentRequest, 
+                self,
+                body: GenerateAgentRequest,
                 **kwargs: Any
             ) -> AgentDetails: ...
 
@@ -22846,91 +22909,91 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def create(
-                self, 
-                name: str, 
-                taxonomy: EvaluationTaxonomy, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: EvaluationTaxonomy,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @overload
         def create(
-                self, 
-                name: str, 
-                taxonomy: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @overload
         def create(
-                self, 
-                name: str, 
-                taxonomy: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @distributed_trace
         def delete(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                input_name: Optional[str] = ..., 
-                input_type: Optional[str] = ..., 
+                self,
+                *,
+                input_name: Optional[str] = ...,
+                input_type: Optional[str] = ...,
                 **kwargs: Any
             ) -> ItemPaged[EvaluationTaxonomy]: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                taxonomy: EvaluationTaxonomy, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: EvaluationTaxonomy,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                taxonomy: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                taxonomy: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                taxonomy: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationTaxonomy: ...
 
@@ -22938,369 +23001,431 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaInsightsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def generate(
-                self, 
-                insight: Insight, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                insight: Insight,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Insight: ...
 
         @overload
         def generate(
-                self, 
-                insight: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                insight: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Insight: ...
 
         @overload
         def generate(
-                self, 
-                insight: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                insight: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Insight: ...
 
         @distributed_trace
         def get(
-                self, 
-                insight_id: str, 
-                *, 
-                include_coordinates: Optional[bool] = ..., 
+                self,
+                insight_id: str,
+                *,
+                include_coordinates: Optional[bool] = ...,
                 **kwargs: Any
             ) -> Insight: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                eval_id: Optional[str] = ..., 
-                include_coordinates: Optional[bool] = ..., 
-                run_id: Optional[str] = ..., 
-                type: Optional[Union[str, InsightType]] = ..., 
+                self,
+                *,
+                agent_name: Optional[str] = ...,
+                eval_id: Optional[str] = ...,
+                include_coordinates: Optional[bool] = ...,
+                run_id: Optional[str] = ...,
+                type: Optional[Union[str, InsightType]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[Insight]: ...
+
+
+    class azure.ai.projects.operations.BetaLive:
+
+        def __init__(
+                self,
+                *args: Any,
+                **kwargs: Any
+            ) -> None: ...
+
+        def connect(
+                self,
+                *,
+                agent_name: str,
+                agent_version: Optional[str] = ...,
+                api_version: Optional[str] = ...,
+                connection_url: Optional[str] = ...,
+                credential_scopes: Optional[list[str]] = ...,
+                extra_headers: Optional[Mapping[str, str]] = ...,
+                extra_query: Optional[Mapping[str, str]] = ...,
+                store: Optional[bool] = ...,
+                structured_inputs: Optional[Mapping[str, Any]] = ...,
+                **kwargs: Any
+            ) -> BetaLiveConnectionManager: ...
+
+
+    class azure.ai.projects.operations.BetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClientEvent]): implements ContextManager
+        property closed: bool    # Read-only
+
+        def __init__(self, connection: ClientConnection) -> None: ...
+
+        def __iter__(self) -> Iterator[LiveServerEvent]: ...
+
+        def __repr__(self) -> str: ...
+
+        def close(
+                self,
+                *,
+                code: int = 1000,
+                reason: str = ""
+            ) -> None: ...
+
+        def recv(
+                self,
+                *,
+                timeout: Optional[float] = ...
+            ) -> LiveServerEvent: ...
+
+        def send(self, event: LiveClientEvent) -> None: ...
+
+
+    class azure.ai.projects.operations.BetaLiveConnectionManager(_BaseWebSocketConnectionManager[BetaLiveConnection]): implements ContextManager
+
+        def __init__(
+                self,
+                *,
+                agent_version: Optional[str] = ...,
+                store: Optional[bool] = ...,
+                **kwargs: Any
+            ) -> None: ...
+
+        def enter(self) -> BetaLiveConnection: ...
 
 
     class azure.ai.projects.operations.BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def begin_update_memories(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                items: Optional[Union[str, ResponseInputParam]] = ..., 
-                previous_update_id: Optional[str] = ..., 
-                scope: str, 
-                update_delay: Optional[int] = ..., 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                items: Optional[Union[str, ResponseInputParam]] = ...,
+                previous_update_id: Optional[str] = ...,
+                scope: str,
+                update_delay: Optional[int] = ...,
                 **kwargs: Any
             ) -> UpdateMemoriesLROPoller: ...
 
         @overload
         def begin_update_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> UpdateMemoriesLROPoller: ...
 
         @overload
         def begin_update_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> UpdateMemoriesLROPoller: ...
 
         @overload
         def create(
-                self, 
-                *, 
-                content_type: str = "application/json", 
-                definition: MemoryStoreDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                name: str, 
+                self,
+                *,
+                content_type: str = "application/json",
+                definition: MemoryStoreDefinition,
+                description: Optional[str] = ...,
+                metadata: Optional[dict[str, str]] = ...,
+                name: str,
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         def create(
-                self, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         def create(
-                self, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         def create_memory(
-                self, 
-                name: str, 
-                *, 
-                content: str, 
-                content_type: str = "application/json", 
-                kind: Union[str, MemoryItemKind], 
-                scope: str, 
+                self,
+                name: str,
+                *,
+                content: str,
+                content_type: str = "application/json",
+                kind: Union[str, MemoryItemKind],
+                scope: str,
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @overload
         def create_memory(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @overload
         def create_memory(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @distributed_trace
         def delete(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> DeleteMemoryStoreResult: ...
 
         @distributed_trace
         def delete_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
+                self,
+                name: str,
+                memory_id: str,
                 **kwargs: Any
             ) -> DeleteMemoryResult: ...
 
         @overload
         def delete_scope(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                scope: str, 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                scope: str,
                 **kwargs: Any
             ) -> MemoryStoreDeleteScopeResult: ...
 
         @overload
         def delete_scope(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDeleteScopeResult: ...
 
         @overload
         def delete_scope(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDeleteScopeResult: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @distributed_trace
         def get_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
+                self,
+                name: str,
+                memory_id: str,
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[MemoryStoreDetails]: ...
 
         @overload
         def list_memories(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                scope: str, 
+                self,
+                name: str,
+                *,
+                before: Optional[str] = ...,
+                content_type: str = "application/json",
+                kind: Optional[Union[str, MemoryItemKind]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                scope: str,
                 **kwargs: Any
             ) -> ItemPaged[MemoryItem]: ...
 
         @overload
         def list_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                before: Optional[str] = ...,
+                content_type: str = "application/json",
+                kind: Optional[Union[str, MemoryItemKind]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[MemoryItem]: ...
 
         @overload
         def list_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                before: Optional[str] = ...,
+                content_type: str = "application/json",
+                kind: Optional[Union[str, MemoryItemKind]] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[MemoryItem]: ...
 
         @overload
         def search_memories(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                items: Optional[Union[str, ResponseInputParam]] = ..., 
-                options: Optional[MemorySearchOptions] = ..., 
-                previous_search_id: Optional[str] = ..., 
-                scope: str, 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                items: Optional[Union[str, ResponseInputParam]] = ...,
+                options: Optional[MemorySearchOptions] = ...,
+                previous_search_id: Optional[str] = ...,
+                scope: str,
                 **kwargs: Any
             ) -> MemoryStoreSearchResult: ...
 
         @overload
         def search_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreSearchResult: ...
 
         @overload
         def search_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreSearchResult: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                description: Optional[str] = ...,
+                metadata: Optional[dict[str, str]] = ...,
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
         @overload
         def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                *, 
-                content: str, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                memory_id: str,
+                *,
+                content: str,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @overload
         def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                memory_id: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
         @overload
         def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                memory_id: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> MemoryItem: ...
 
@@ -23308,93 +23433,93 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaModelsOperations(BetaModelsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def create(
-                self, 
-                *, 
-                azcopy_path: Optional[str] = ..., 
-                base_model: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                polling_interval: float = 2.0, 
-                polling_timeout: float = 300.0, 
-                source: Union[str, PathLike[str]], 
-                tags: Optional[dict[str, str]] = ..., 
-                version: str, 
-                wait_for_commit: Literal[True] = True, 
-                weight_type: Optional[str] = ..., 
+                self,
+                *,
+                azcopy_path: Optional[str] = ...,
+                base_model: Optional[str] = ...,
+                description: Optional[str] = ...,
+                name: str,
+                polling_interval: float = 2.0,
+                polling_timeout: float = 300.0,
+                source: Union[str, PathLike[str]],
+                tags: Optional[dict[str, str]] = ...,
+                version: str,
+                wait_for_commit: Literal[True] = True,
+                weight_type: Optional[str] = ...,
                 **kwargs: Any
             ) -> ModelVersion: ...
 
         @overload
         def create(
-                self, 
-                *, 
-                azcopy_path: Optional[str] = ..., 
-                base_model: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                polling_interval: float = 2.0, 
-                polling_timeout: float = 300.0, 
-                source: Union[str, PathLike[str]], 
-                tags: Optional[dict[str, str]] = ..., 
-                version: str, 
-                wait_for_commit: Literal[False], 
-                weight_type: Optional[str] = ..., 
+                self,
+                *,
+                azcopy_path: Optional[str] = ...,
+                base_model: Optional[str] = ...,
+                description: Optional[str] = ...,
+                name: str,
+                polling_interval: float = 2.0,
+                polling_timeout: float = 300.0,
+                source: Union[str, PathLike[str]],
+                tags: Optional[dict[str, str]] = ...,
+                version: str,
+                wait_for_commit: Literal[False],
+                weight_type: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> ModelVersion: ...
 
         @overload
         def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: ModelCredentialRequest, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                credential_request: ModelCredentialRequest,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DatasetCredential: ...
 
         @overload
         def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                credential_request: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DatasetCredential: ...
 
         @overload
         def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                credential_request: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DatasetCredential: ...
 
@@ -23403,107 +23528,107 @@ namespace azure.ai.projects.operations
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> ItemPaged[ModelVersion]: ...
 
         @overload
         def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: ModelVersion, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                model_version: ModelVersion,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> CreateAsyncResponse: ...
 
         @overload
         def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                model_version: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> CreateAsyncResponse: ...
 
         @overload
         def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                model_version: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> CreateAsyncResponse: ...
 
         @overload
         def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: ModelPendingUploadRequest, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: ModelPendingUploadRequest,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ModelPendingUploadResponse: ...
 
         @overload
         def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ModelPendingUploadResponse: ...
 
         @overload
         def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ModelPendingUploadResponse: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: UpdateModelVersionRequest, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                model_version_update: UpdateModelVersionRequest,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> ModelVersion: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                model_version_update: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> ModelVersion: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                model_version_update: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> ModelVersion: ...
 
@@ -23522,8 +23647,8 @@ namespace azure.ai.projects.operations
         voice_agents: BetaVoiceAgentsOperations
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -23531,28 +23656,28 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaRealtime:
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
         def connect(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                api_version: Optional[str] = ..., 
-                connection_url: Optional[str] = ..., 
-                credential_scopes: Optional[List[str]] = ..., 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
+                self,
+                *,
+                agent_name: str,
+                agent_session_id: Optional[str] = ...,
+                api_version: Optional[str] = ...,
+                connection_url: Optional[str] = ...,
+                credential_scopes: Optional[List[str]] = ...,
+                extra_headers: Optional[Mapping[str, str]] = ...,
+                extra_query: Optional[Mapping[str, str]] = ...,
+                structured_inputs: Optional[Mapping[str, Any]] = ...,
+                transport: Optional[Union[str, VoiceAgentTransport]] = ...,
                 **kwargs: Any
             ) -> BetaRealtimeConnectionManager: ...
 
 
-    class azure.ai.projects.operations.BetaRealtimeConnection: implements ContextManager 
+    class azure.ai.projects.operations.BetaRealtimeConnection(_BaseWebSocketConnection[ServerEvent, ClientEvent]): implements ContextManager
         property closed: bool    # Read-only
 
         def __init__(self, connection: ClientConnection) -> None: ...
@@ -23562,37 +23687,37 @@ namespace azure.ai.projects.operations
         def __repr__(self) -> str: ...
 
         def close(
-                self, 
-                *, 
-                code: int = 1000, 
+                self,
+                *,
+                code: int = 1000,
                 reason: str = ""
             ) -> None: ...
 
         def recv(
-                self, 
-                *, 
+                self,
+                *,
                 timeout: Optional[float] = ...
             ) -> ServerEvent: ...
 
         def send(self, event: ClientEvent) -> None: ...
 
 
-    class azure.ai.projects.operations.BetaRealtimeConnectionManager: implements ContextManager 
+    class azure.ai.projects.operations.BetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[BetaRealtimeConnection]): implements ContextManager
 
         def __init__(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                api_version: str, 
-                connection_url: Optional[str] = ..., 
-                credential: TokenCredential, 
-                credential_scopes: List[str], 
-                endpoint: str, 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
+                self,
+                *,
+                agent_name: str,
+                agent_session_id: Optional[str] = ...,
+                api_version: str,
+                connection_url: Optional[str] = ...,
+                credential: TokenCredential,
+                credential_scopes: List[str],
+                endpoint: str,
+                extra_headers: Optional[Mapping[str, str]] = ...,
+                extra_query: Optional[Mapping[str, str]] = ...,
+                structured_inputs: Optional[Mapping[str, Any]] = ...,
+                transport: Optional[Union[str, VoiceAgentTransport]] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -23602,42 +23727,42 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaRedTeamsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def create(
-                self, 
-                red_team: RedTeam, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                red_team: RedTeam,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> RedTeam: ...
 
         @overload
         def create(
-                self, 
-                red_team: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                red_team: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> RedTeam: ...
 
         @overload
         def create(
-                self, 
-                red_team: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                red_team: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> RedTeam: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> RedTeam: ...
 
@@ -23648,122 +23773,122 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaRoutinesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def create_or_update(
-                self, 
-                routine_name: str, 
-                *, 
-                action: Optional[RoutineAction] = ..., 
-                authorization: Optional[RoutineAuthorization] = ..., 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                enabled: Optional[bool] = ..., 
-                triggers: Optional[dict[str, RoutineTrigger]] = ..., 
+                self,
+                routine_name: str,
+                *,
+                action: Optional[RoutineAction] = ...,
+                authorization: Optional[RoutineAuthorization] = ...,
+                content_type: str = "application/json",
+                description: Optional[str] = ...,
+                enabled: Optional[bool] = ...,
+                triggers: Optional[dict[str, RoutineTrigger]] = ...,
                 **kwargs: Any
             ) -> Routine: ...
 
         @overload
         def create_or_update(
-                self, 
-                routine_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                routine_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Routine: ...
 
         @overload
         def create_or_update(
-                self, 
-                routine_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                routine_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Routine: ...
 
         @distributed_trace
         def delete(
-                self, 
-                routine_name: str, 
+                self,
+                routine_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def disable(
-                self, 
-                routine_name: str, 
+                self,
+                routine_name: str,
                 **kwargs: Any
             ) -> Routine: ...
 
         @overload
         def dispatch(
-                self, 
-                routine_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                payload: Optional[RoutineDispatchPayload] = ..., 
+                self,
+                routine_name: str,
+                *,
+                content_type: str = "application/json",
+                payload: Optional[RoutineDispatchPayload] = ...,
                 **kwargs: Any
             ) -> DispatchRoutineResult: ...
 
         @overload
         def dispatch(
-                self, 
-                routine_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                routine_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DispatchRoutineResult: ...
 
         @overload
         def dispatch(
-                self, 
-                routine_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                routine_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> DispatchRoutineResult: ...
 
         @distributed_trace
         def enable(
-                self, 
-                routine_name: str, 
+                self,
+                routine_name: str,
                 **kwargs: Any
             ) -> Routine: ...
 
         @distributed_trace
         def get(
-                self, 
-                routine_name: str, 
+                self,
+                routine_name: str,
                 **kwargs: Any
             ) -> Routine: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                after: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                after: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[Routine]: ...
 
         @distributed_trace
         def list_runs(
-                self, 
-                routine_name: str, 
-                *, 
-                after: Optional[str] = ..., 
-                filter: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                routine_name: str,
+                *,
+                after: Optional[str] = ...,
+                filter: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[RoutineRun]: ...
 
@@ -23771,79 +23896,79 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaSchedulesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: Schedule, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                schedule_id: str,
+                schedule: Schedule,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Schedule: ...
 
         @overload
         def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                schedule_id: str,
+                schedule: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Schedule: ...
 
         @overload
         def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                schedule_id: str,
+                schedule: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> Schedule: ...
 
         @distributed_trace
         def delete(
-                self, 
-                schedule_id: str, 
+                self,
+                schedule_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                schedule_id: str, 
+                self,
+                schedule_id: str,
                 **kwargs: Any
             ) -> Schedule: ...
 
         @distributed_trace
         def get_run(
-                self, 
-                schedule_id: str, 
-                run_id: str, 
+                self,
+                schedule_id: str,
+                run_id: str,
                 **kwargs: Any
             ) -> ScheduleRun: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                type: Optional[Union[str, ScheduleTaskType]] = ..., 
+                self,
+                *,
+                enabled: Optional[bool] = ...,
+                type: Optional[Union[str, ScheduleTaskType]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[Schedule]: ...
 
         @distributed_trace
         def list_runs(
-                self, 
-                schedule_id: str, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                type: Optional[Union[str, ScheduleTaskType]] = ..., 
+                self,
+                schedule_id: str,
+                *,
+                enabled: Optional[bool] = ...,
+                type: Optional[Union[str, ScheduleTaskType]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ScheduleRun]: ...
 
@@ -23851,151 +23976,151 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaSkillsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def create(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default: Optional[bool] = ..., 
-                inline_content: Optional[SkillInlineContent] = ..., 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                default: Optional[bool] = ...,
+                inline_content: Optional[SkillInlineContent] = ...,
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @overload
         def create(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @overload
         def create(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @overload
         def create_from_files(
-                self, 
-                name: str, 
-                content: CreateSkillVersionFromFilesBody, 
+                self,
+                name: str,
+                content: CreateSkillVersionFromFilesBody,
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @overload
         def create_from_files(
-                self, 
-                name: str, 
-                content: JSON, 
+                self,
+                name: str,
+                content: JSON,
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @distributed_trace
         def delete(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> DeleteSkillResult: ...
 
         @distributed_trace
         def delete_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> DeleteSkillVersionResult: ...
 
         @distributed_trace
         def download(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def download_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> SkillDetails: ...
 
         @distributed_trace
         def get_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> SkillVersion: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[SkillDetails]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[SkillVersion]: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default_version: str, 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                default_version: str,
                 **kwargs: Any
             ) -> SkillDetails: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> SkillDetails: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> SkillDetails: ...
 
@@ -24003,142 +24128,142 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaVoiceAgentsConversationsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace
         def delete(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def download_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def download_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def download_generated_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def get(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> VoiceConversation: ...
 
         @distributed_trace
         def get_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> VoiceRecording: ...
 
         @distributed_trace
         def get_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> VoiceAudioItem: ...
 
         @distributed_trace
         def get_generated_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> VoiceGeneratedAudioItem: ...
 
         @distributed_trace
         def get_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> RealtimeConversationItem: ...
 
         @distributed_trace
         def get_response(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                response_id: str,
                 **kwargs: Any
             ) -> VoiceResponse: ...
 
         @distributed_trace
         def list(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[VoiceConversation]: ...
 
         @distributed_trace
         def list_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[RealtimeConversationItem]: ...
 
         @distributed_trace
         def list_response_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                response_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[RealtimeConversationItem]: ...
 
         @distributed_trace
         def list_responses(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[VoiceResponse]: ...
 
@@ -24146,103 +24271,104 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace
         def delete(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def download_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def download_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def get(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> VoiceAgentLiveConversation: ...
 
         @distributed_trace
         def get_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
                 **kwargs: Any
             ) -> VoiceRecording: ...
 
         @distributed_trace
         def get_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> VoiceAudioItem: ...
 
         @distributed_trace
         def get_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
                 **kwargs: Any
             ) -> VoiceAgentLiveConversationItem: ...
 
         @distributed_trace
         def list(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[VoiceAgentLiveConversation]: ...
 
         @distributed_trace
         def list_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                agent_name: str,
+                conversation_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[VoiceAgentLiveConversationItem]: ...
 
 
     class azure.ai.projects.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         conversations: BetaVoiceAgentsConversationsOperations
+        live: BetaLive
         live_conversations: BetaVoiceAgentsLiveConversationsOperations
         realtime: BetaRealtime
         telephony: BetaVoiceAgentsTelephonyOperations
 
         def __init__(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -24250,288 +24376,288 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace
         def cancel_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
-                *, 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                call_job_id: str,
+                *,
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @overload
         def create_binding(
-                self, 
-                agent_name: str, 
-                binding: TelephonyBinding, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                binding: TelephonyBinding,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         def create_binding(
-                self, 
-                agent_name: str, 
-                binding: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                binding: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         def create_binding(
-                self, 
-                agent_name: str, 
-                binding: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                binding: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         def create_call_job(
-                self, 
-                agent_name: str, 
-                job: TelephonyCallJobCreate, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
+                self,
+                agent_name: str,
+                job: TelephonyCallJobCreate,
+                *,
+                content_type: str = "application/json",
+                idempotency_key: str,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @overload
         def create_call_job(
-                self, 
-                agent_name: str, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
+                self,
+                agent_name: str,
+                job: JSON,
+                *,
+                content_type: str = "application/json",
+                idempotency_key: str,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @overload
         def create_call_job(
-                self, 
-                agent_name: str, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
+                self,
+                agent_name: str,
+                job: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                idempotency_key: str,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @distributed_trace
         def delete_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                *, 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                binding_id: str,
+                *,
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
+                self,
+                agent_name: str,
+                call_job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def end_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
+                self,
+                agent_name: str,
+                call_id: str,
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @distributed_trace
         def get_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
+                self,
+                agent_name: str,
+                binding_id: str,
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @distributed_trace
         def get_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
+                self,
+                agent_name: str,
+                call_id: str,
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @distributed_trace
         def get_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
+                self,
+                agent_name: str,
+                call_job_id: str,
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
         @distributed_trace
         def get_transfer_targets(
-                self, 
-                agent_name: str, 
+                self,
+                agent_name: str,
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
         @distributed_trace
         def list_bindings(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                provider: Optional[Union[str, TelephonyProvider]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                provider: Optional[Union[str, TelephonyProvider]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[TelephonyBindingListItem]: ...
 
         @distributed_trace
         def list_call_jobs(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                campaign_name: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, TelephonyCallJobStatus]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                campaign_name: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                status: Optional[Union[str, TelephonyCallJobStatus]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[TelephonyCallJob]: ...
 
         @distributed_trace
         def list_calls(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                provider: Optional[Union[str, TelephonyProvider]] = ..., 
-                started_after_time: Optional[datetime] = ..., 
-                started_before_time: Optional[datetime] = ..., 
-                status: Optional[Union[str, TelephonyCallStatus]] = ..., 
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                provider: Optional[Union[str, TelephonyProvider]] = ...,
+                started_after_time: Optional[datetime] = ...,
+                started_before_time: Optional[datetime] = ...,
+                status: Optional[Union[str, TelephonyCallStatus]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[TelephonyCallSummary]: ...
 
         @overload
         def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                transfer_targets: List[TelephonyTransferTarget], 
+                self,
+                agent_name: str,
+                *,
+                content_type: str = "application/json",
+                etag: str,
+                match_condition: MatchConditions,
+                transfer_targets: List[TelephonyTransferTarget],
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
         @overload
         def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
         @overload
         def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
         @overload
         def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                *, 
-                content_type: str = "application/json", 
-                target: str, 
+                self,
+                agent_name: str,
+                call_id: str,
+                *,
+                content_type: str = "application/json",
+                target: str,
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @overload
         def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                call_id: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @overload
         def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                agent_name: str,
+                call_id: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
         @overload
         def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: UpdateTelephonyBindingRequest, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                binding_id: str,
+                body: UpdateTelephonyBindingRequest,
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                binding_id: str,
+                body: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
         @overload
         def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                self,
+                agent_name: str,
+                binding_id: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
+                etag: str,
+                match_condition: MatchConditions,
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
@@ -24539,35 +24665,35 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.ConnectionsOperations(ConnectionsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
-                *, 
-                include_credentials: Optional[bool] = False, 
+                self,
+                name: str,
+                *,
+                include_credentials: Optional[bool] = False,
                 **kwargs: Any
             ) -> Connection: ...
 
         @distributed_trace
         def get_default(
-                self, 
-                connection_type: Union[str, ConnectionType], 
-                *, 
-                include_credentials: Optional[bool] = False, 
+                self,
+                connection_type: Union[str, ConnectionType],
+                *,
+                include_credentials: Optional[bool] = False,
                 **kwargs: Any
             ) -> Connection: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                connection_type: Optional[Union[str, ConnectionType]] = ..., 
-                default_connection: Optional[bool] = ..., 
+                self,
+                *,
+                connection_type: Optional[Union[str, ConnectionType]] = ...,
+                default_connection: Optional[bool] = ...,
                 **kwargs: Any
             ) -> ItemPaged[Connection]: ...
 
@@ -24575,116 +24701,116 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.DatasetsOperations(_DatasetsOperationsWithGeneration):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def begin_create_generation_job(
-                self, 
-                job: DataGenerationJobInputs, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: DataGenerationJobInputs,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> DatasetGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: JSON,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> DatasetGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> DatasetGenerationLROPoller: ...
 
         @distributed_trace
         def cancel_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> DataGenerationJob: ...
 
         @overload
         def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                dataset_version: DatasetVersion, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                dataset_version: DatasetVersion,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> DatasetVersion: ...
 
         @overload
         def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                dataset_version: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                dataset_version: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> DatasetVersion: ...
 
         @overload
         def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                dataset_version: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                dataset_version: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> DatasetVersion: ...
 
         @distributed_trace
         def delete(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> DatasetVersion: ...
 
         @distributed_trace
         def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> DatasetCredential: ...
 
         @distributed_trace
         def get_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> DataGenerationJob: ...
 
@@ -24693,74 +24819,74 @@ namespace azure.ai.projects.operations
 
         @distributed_trace
         def list_generation_jobs(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[DataGenerationJob]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> ItemPaged[DatasetVersion]: ...
 
         @overload
         def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: PendingUploadRequest, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: PendingUploadRequest,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> PendingUploadResponse: ...
 
         @overload
         def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> PendingUploadResponse: ...
 
         @overload
         def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                pending_upload_request: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> PendingUploadResponse: ...
 
         @distributed_trace
         def upload_file(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                file_path: str, 
-                name: str, 
-                version: str, 
+                self,
+                *,
+                connection_name: Optional[str] = ...,
+                file_path: str,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> FileDatasetVersion: ...
 
         @distributed_trace
         def upload_folder(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                file_pattern: Optional[Pattern] = ..., 
-                folder: str, 
-                name: str, 
-                version: str, 
+                self,
+                *,
+                connection_name: Optional[str] = ...,
+                file_pattern: Optional[Pattern] = ...,
+                folder: str,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> FolderDatasetVersion: ...
 
@@ -24768,25 +24894,25 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.DeploymentsOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> Deployment: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                deployment_type: Optional[Union[str, DeploymentType]] = ..., 
-                model_name: Optional[str] = ..., 
-                model_publisher: Optional[str] = ..., 
+                self,
+                *,
+                deployment_type: Optional[Union[str, DeploymentType]] = ...,
+                model_name: Optional[str] = ...,
+                model_publisher: Optional[str] = ...,
                 **kwargs: Any
             ) -> ItemPaged[Deployment]: ...
 
@@ -24794,62 +24920,62 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def create_or_update(
-                self, 
-                id: str, 
-                evaluation_rule: EvaluationRule, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                id: str,
+                evaluation_rule: EvaluationRule,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationRule: ...
 
         @overload
         def create_or_update(
-                self, 
-                id: str, 
-                evaluation_rule: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                id: str,
+                evaluation_rule: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationRule: ...
 
         @overload
         def create_or_update(
-                self, 
-                id: str, 
-                evaluation_rule: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                id: str,
+                evaluation_rule: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluationRule: ...
 
         @distributed_trace
         def delete(
-                self, 
-                id: str, 
+                self,
+                id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                id: str, 
+                self,
+                id: str,
                 **kwargs: Any
             ) -> EvaluationRule: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                action_type: Optional[Union[str, EvaluationRuleActionType]] = ..., 
-                agent_name: Optional[str] = ..., 
-                enabled: Optional[bool] = ..., 
+                self,
+                *,
+                action_type: Optional[Union[str, EvaluationRuleActionType]] = ...,
+                agent_name: Optional[str] = ...,
+                enabled: Optional[bool] = ...,
                 **kwargs: Any
             ) -> ItemPaged[EvaluationRule]: ...
 
@@ -24857,167 +24983,167 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.EvaluatorsOperations(EvaluatorsOperationsGenerated):
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def begin_create_generation_job(
-                self, 
-                job: EvaluatorGenerationInputs, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: EvaluatorGenerationInputs,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> EvaluatorGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: JSON,
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> EvaluatorGenerationLROPoller: ...
 
         @overload
         def begin_create_generation_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
+                self,
+                job: IO[bytes],
+                *,
+                content_type: str = "application/json",
+                operation_id: Optional[str] = ...,
                 **kwargs: Any
             ) -> EvaluatorGenerationLROPoller: ...
 
         @distributed_trace
         def cancel_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> EvaluatorGenerationJob: ...
 
         @overload
         def create_version(
-                self, 
-                name: str, 
-                evaluator_version: EvaluatorVersion, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                evaluator_version: EvaluatorVersion,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @overload
         def create_version(
-                self, 
-                name: str, 
-                evaluator_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                evaluator_version: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @overload
         def create_version(
-                self, 
-                name: str, 
-                evaluator_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                evaluator_version: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @distributed_trace
         def delete_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get_generation_job(
-                self, 
-                job_id: str, 
+                self,
+                job_id: str,
                 **kwargs: Any
             ) -> EvaluatorGenerationJob: ...
 
         @distributed_trace
         def get_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                limit: Optional[int] = ..., 
-                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
+                self,
+                *,
+                limit: Optional[int] = ...,
+                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[EvaluatorVersion]: ...
 
         @distributed_trace
         def list_generation_jobs(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[EvaluatorGenerationJob]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
-                *, 
-                limit: Optional[int] = ..., 
-                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
+                self,
+                name: str,
+                *,
+                limit: Optional[int] = ...,
+                type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[EvaluatorVersion]: ...
 
         @overload
         def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: EvaluatorVersion, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                evaluator_version: EvaluatorVersion,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @overload
         def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                evaluator_version: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
         @overload
         def update_version(
-                self, 
-                name: str, 
-                version: str, 
-                evaluator_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                version: str,
+                evaluator_version: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> EvaluatorVersion: ...
 
@@ -25025,57 +25151,57 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.IndexesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                index: Index, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                index: Index,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> Index: ...
 
         @overload
         def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                index: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                index: JSON,
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> Index: ...
 
         @overload
         def create_or_update(
-                self, 
-                name: str, 
-                version: str, 
-                index: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
+                self,
+                name: str,
+                version: str,
+                index: IO[bytes],
+                *,
+                content_type: str = "application/merge-patch+json",
                 **kwargs: Any
             ) -> Index: ...
 
         @distributed_trace
         def delete(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> Index: ...
 
@@ -25084,8 +25210,8 @@ namespace azure.ai.projects.operations
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> ItemPaged[Index]: ...
 
@@ -25101,131 +25227,131 @@ namespace azure.ai.projects.operations
     class azure.ai.projects.operations.ToolboxesOperations:
 
         def __init__(
-                self, 
-                *args, 
+                self,
+                *args,
                 **kwargs
             ) -> None: ...
 
         @overload
         def create_version(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                policies: Optional[ToolboxPolicies] = ..., 
-                skills: Optional[List[ToolboxSkill]] = ..., 
-                tools: List[ToolboxTool], 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                description: Optional[str] = ...,
+                metadata: Optional[dict[str, str]] = ...,
+                policies: Optional[ToolboxPolicies] = ...,
+                skills: Optional[List[ToolboxSkill]] = ...,
+                tools: List[ToolboxTool],
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
         @overload
         def create_version(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
         @overload
         def create_version(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
         @distributed_trace
         def delete(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def delete_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> None: ...
 
         @distributed_trace
         def get(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 **kwargs: Any
             ) -> ToolboxObject: ...
 
         @distributed_trace
         def get_version(
-                self, 
-                name: str, 
-                version: str, 
+                self,
+                name: str,
+                version: str,
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
         @distributed_trace
         def invoke_latest_toolbox_mcp(
-                self, 
-                name: str, 
-                request: dict[str, Any], 
+                self,
+                name: str,
+                request: dict[str, Any],
                 **kwargs: Any
             ) -> Any: ...
 
         @distributed_trace
         def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ToolboxObject]: ...
 
         @distributed_trace
         def list_versions(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
+                self,
+                name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ToolboxVersionObject]: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default_version: str, 
+                self,
+                name: str,
+                *,
+                content_type: str = "application/json",
+                default_version: str,
                 **kwargs: Any
             ) -> ToolboxObject: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: JSON,
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ToolboxObject: ...
 
         @overload
         def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
+                self,
+                name: str,
+                body: IO[bytes],
+                *,
+                content_type: str = "application/json",
                 **kwargs: Any
             ) -> ToolboxObject: ...
 
@@ -25240,9 +25366,9 @@ namespace azure.ai.projects.telemetry
         def __init__(self) -> None: ...
 
         def instrument(
-                self, 
-                enable_content_recording: Optional[bool] = None, 
-                enable_trace_context_propagation: Optional[bool] = None, 
+                self,
+                enable_content_recording: Optional[bool] = None,
+                enable_trace_context_propagation: Optional[bool] = None,
                 enable_baggage_propagation: Optional[bool] = None
             ) -> None: ...
 

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+* Added preview GPT Live clients at `beta.voice_agents.live` for text and audio streaming, typed events, session controls, and Responses function-tool results. Both synchronous and asynchronous clients are available.
+* Added typed Realtime handoff, system-tool argument, and input-collection events to the synchronous and asynchronous WebSocket clients.
 * Added preview Live voice agent models, including `VoiceAgentLiveDefinition`, Live session configuration, client and server events, audio formats, decision responses, and usage details.
 * Added Live delegation models for Responses backends, application-managed work, and same-project prompt agents: `VoiceAgentLiveResponsesDelegation`, `VoiceAgentLiveClientDelegation`, and `VoiceAgentLiveManagedAgentDelegation`.
 * Added `.beta.voice_agents.live_conversations` for listing, retrieving, and deleting stored Live conversations, retrieving conversation items, and retrieving or downloading item-level and conversation-level audio.
@@ -46,9 +48,11 @@ Breaking changes in beta classes:
 * Constructor argument `timestamp_type` on `VoiceAgentServerEventResponseAudioTimestampDelta` is now required and uses `VoiceAgentAudioTimestampType.WORD`.
 * Constructor arguments `left` and `right` on `VoiceRecordingChannelLayout` are now required and use `VoiceAudioRole.USER` and `VoiceAudioRole.AGENT`, respectively.
 
-### Bugs Fixed
-
 ### Sample updates
+
+* Simplified Voice Agent examples to one sample per scenario: synchronous REST and asynchronous WebSocket workflows.
+* Included a spoken-question WAV in the Live audio and managed-agent examples so they run without an input-audio path setting.
+* Added GPT Live samples for session setup, text conversations, function tools, WAV and microphone audio, and stored-conversation readback. The REST sample creates and cleans up a conversation when no ID is supplied, or reads an existing conversation without changing it. Audio downloads use a unique user-temporary folder.
 
 ## 2.10.0 (2026-10-30)
 

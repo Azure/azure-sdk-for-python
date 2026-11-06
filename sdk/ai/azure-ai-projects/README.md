@@ -199,9 +199,8 @@ The table below lists the operation groups supported by the client library, with
 
 ### Voice Agent realtime transport (preview)
 
-Select the connection transport with the optional `transport` keyword. The SDK constructs the wire
-query internally; callers do not need to put the transport in `extra_query`. Omitting the option
-preserves the service's default WebSocket behavior.
+Use `project_client.beta.voice_agents.realtime` for agents created with `VoiceAgentDefinition`.
+Connections use WebSocket by default. You can also select the transport explicitly:
 
 ```python
 from azure.ai.projects.models import VoiceAgentTransport
@@ -223,9 +222,77 @@ async with async_project_client.beta.voice_agents.realtime.connect(
     print("Voice Agent connection is ready.")
 ```
 
-`VoiceAgentTransport.WEBRTC` selects WebRTC signaling over the WebSocket. The application must manage
-the peer connection, media, and SDP offer/answer exchange using `rtc.call.sdp.create` and
-`rtc.call.sdp.created` events. Selecting this value does not automatically create a WebRTC media client.
+Use `transport`, not `extra_query`, to select a transport. `VoiceAgentTransport.WEBRTC` enables
+WebRTC signaling over the WebSocket, but your app must handle the peer connection, audio/video,
+and SDP offer/answer exchange (`rtc.call.sdp.create` and `rtc.call.sdp.created`).
+
+Start with the [text conversation sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_text_conversation_async.py)
+or [microphone sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_audio_conversation_async.py).
+The [async interruption sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_interruption_async.py)
+cancels a spoken response and confirms truncation over the WebSocket.
+It requires no audio devices: because it plays no audio, it reports zero heard milliseconds.
+A real player must report its actual playback position.
+The separate [sync REST example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_read_generated_audio.py)
+reads an existing generated-audio artifact and optionally saves it to a new output file.
+It requires the stored item ID from REST and a deployment that persists unheard audio.
+
+### Voice Agent GPT Live (preview)
+
+Use `.beta.voice_agents.live` for GPT Live sessions and `.beta.voice_agents.live_conversations`
+for their stored conversations. Realtime uses separate clients and agent definitions.
+
+**Get started**
+
+1. Install the sample dependencies:
+
+```powershell
+pip install "azure-ai-projects[voice]" azure-identity python-dotenv
+```
+
+2. Set `FOUNDRY_PROJECT_ENDPOINT` and `FOUNDRY_VOICE_AGENT_MODEL` in your environment or `.env`.
+   The model value must be your GPT Live **deployment name**, not a model catalog ID.
+3. Choose an example below and follow its `USAGE` instructions. Samples authenticate with
+   `DefaultAzureCredential` and opt in to preview features.
+
+**Choose an example**
+
+| Task | Example | Additional settings |
+|---|---|---|
+| Open, update, and close a session | [Async connection](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_connection_async.py) | None |
+| Send text messages | [Async text](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_text_conversation_async.py) | `FOUNDRY_MODEL_NAME` for the Responses backend |
+| Run a local function tool | [Async function tool](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_function_tool_async.py) | `FOUNDRY_MODEL_NAME` for the Responses backend |
+| Ask a same-project prompt agent a spoken question | [Async managed agent](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_managed_agent_async.py) | `FOUNDRY_MODEL_NAME` for the prompt agent |
+| Send a WAV file or use a microphone | [Async audio](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py) | None; a spoken question is included |
+| Read a stored conversation and download audio | [Sync REST readback](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_read_conversation.py) | Optional existing conversation and agent IDs |
+
+**Inputs and cleanup**
+
+- Audio examples use the included `audio/question.wav`; no input-path setting or audio device
+  is needed. It asks, "What is two plus two? Please ask the backend agent to answer my question."
+  To use your own **PCM16, mono, 24-kHz WAV**, set `FOUNDRY_VOICE_AUDIO_INPUT_PATH`.
+  The managed-agent example accepts up to 30 seconds and creates both agents in the same project.
+  For microphone mode, install `pyaudio` and set `USE_MICROPHONE = True`.
+- For multiple text turns, set `TEXT_PROMPTS` in the text example. The examples delete only
+  resources they create; existing agents and conversations are never changed by REST readback.
+- To read an existing stored conversation, set `FOUNDRY_VOICE_AGENT_NAME` and
+  `FOUNDRY_VOICE_CONVERSATION_ID`. Use the ID from `session.started.conversation_id`, not
+  `session.id`, after a session with `store=True`. Without an ID, the REST example creates
+  and cleans up its own greeting conversation.
+- Audio is not saved by default. `SAVE_AUDIO = True` saves replies in the audio example;
+  REST downloads use a unique temporary folder. These files contain conversation content;
+  remove them when finished. Customer-storage (BYOS) audio requires your own storage credentials.
+
+**Session notes**
+
+- Wait for `session.started` before sending commands. Foundry starts the session automatically.
+  To finish, send `session.close` and wait for `session.closed`; Live has no `response.cancel`.
+- Keep input audio paced while waiting for context updates. The connection example sends
+  silent frames for this purpose; it needs no microphone.
+- Responses commands require a Responses backend. Foundry handles managed-agent delegation;
+  the client must not answer those requests itself. Session updates cannot change the saved
+  delegation target, frontend model, or audio format.
+- Printed backend text is not proof that speech finished. Audio examples wait for three
+  quiet seconds, so a long pause can end capture early. Unsupported REST routes return HTTP 404.
 
 ## Client-side tracing
 
@@ -293,7 +360,8 @@ openai_logger.setLevel(logging.DEBUG)
 openai_logger.propagate = False
 openai_logger.addHandler(handler)
 
-# Optional: Voice Agent WebSocket transport logger.
+# Optional: Voice Agent Realtime WebSocket transport logger.
+# For GPT Live, use "azure.ai.projects.live" instead.
 voice_logger = logging.getLogger("azure.ai.projects.realtime")
 voice_logger.setLevel(logging.DEBUG)
 voice_logger.propagate = False
@@ -304,7 +372,7 @@ voice_logger.addHandler(handler)
 # handler.setFormatter(formatter)
 ```
 
-The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. At `DEBUG` level, the Voice Agent logger records connection and close events and the type and byte count of each event sent or received. It does not log event payloads, URL query strings, request headers, or authentication tokens.
+The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. The `azure.ai.projects.realtime` and `azure.ai.projects.live` loggers record connection and close events and the type and byte count of each event sent or received at `DEBUG` level. They do not log event payloads, URL query strings, request headers, or authentication tokens.
 
 By default, logs redact URL query values, some HTTP request and response headers (including `Authorization`), and request and response payloads. To create HTTP pipeline logs without redaction, add `logging_enable=True` to the client constructor:
 

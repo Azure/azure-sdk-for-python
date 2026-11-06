@@ -6,11 +6,11 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 210 unique public methods:
+There are a total of 211 unique public methods:
 
 - 5 stable methods on the client
 - 84 stable methods on top-level sub-clients
-- 121 beta methods on nested beta sub-clients
+- 122 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
@@ -43,6 +43,7 @@ There are a total of 210 unique public methods:
 | `beta.skills` | BetaSkillsOperations | 11 |
 | `beta.voice_agents.campaigns` | BetaVoiceAgentsCampaignsOperations | 7 |
 | `beta.voice_agents.conversations` | BetaVoiceAgentsConversationsOperations | 14 |
+| `beta.voice_agents.live` | BetaLive | 1 |
 | `beta.voice_agents.live_conversations` | BetaVoiceAgentsLiveConversationsOperations | 9 |
 | `beta.voice_agents.realtime` | BetaRealtime | 1 |
 | `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 16 |
@@ -270,6 +271,8 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.voice_agents.conversations.list_items
 .beta.voice_agents.conversations.list_response_items
 .beta.voice_agents.conversations.list_responses
+
+.beta.voice_agents.live.connect*
 
 .beta.voice_agents.live_conversations.delete
 .beta.voice_agents.live_conversations.download_audio
