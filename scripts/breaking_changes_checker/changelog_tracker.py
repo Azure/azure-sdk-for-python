@@ -35,8 +35,12 @@ class ChangelogTracker(BreakingChangesTracker):
         "Added model `{}`"
     ADDED_CLASS_METHOD_MSG = \
         "Model `{}` added method `{}`"
+    ADDED_OPERATION_GROUP_METHOD_MSG = \
+        "Operation group `{}` added method `{}`"
     ADDED_CLASS_METHOD_PARAMETER_MSG = \
         "Model `{}` added parameter `{}` in method `{}`"
+    ADDED_OPERATION_GROUP_METHOD_PARAMETER_MSG = \
+        "Operation group `{}` added parameter `{}` in method `{}`"
     ADDED_FUNCTION_PARAMETER_MSG = \
         "Function `{}` added parameter `{}`"
     ADDED_CLASS_PROPERTY_MSG = \
@@ -124,7 +128,9 @@ class ChangelogTracker(BreakingChangesTracker):
                                 else:
                                     # This is a new class method
                                     fa = (
-                                        self.ADDED_CLASS_METHOD_MSG,
+                                        self.ADDED_OPERATION_GROUP_METHOD_MSG
+                                        if self.is_operation_group(self.module_name, self.class_name)
+                                        else self.ADDED_CLASS_METHOD_MSG,
                                         ChangeType.ADDED_CLASS_METHOD,
                                         self.module_name, class_name, method_name
                                     )
@@ -184,7 +190,10 @@ class ChangelogTracker(BreakingChangesTracker):
                 else:
                     self.features_added.append(
                         (
-                            self.ADDED_CLASS_METHOD_PARAMETER_MSG, ChangeType.ADDED_CLASS_METHOD_PARAMETER,
+                            self.ADDED_OPERATION_GROUP_METHOD_PARAMETER_MSG
+                            if self.is_operation_group(self.module_name, self.class_name)
+                            else self.ADDED_CLASS_METHOD_PARAMETER_MSG,
+                            ChangeType.ADDED_CLASS_METHOD_PARAMETER,
                             self.module_name, self.class_name, self.parameter_name, self.function_name
                         )
                     )

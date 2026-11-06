@@ -168,18 +168,8 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
         if hasattr(assign, "target"):
             if hasattr(assign.target, "id") and not assign.target.id.startswith("_"):
                 attr = assign.target.id
-                attr_type = None
-                # FIXME: This can get the type hint for a limited set attributes. We need to address more complex
-                # type hints in the future.
-                # Build type hint for the attribute
-                if hasattr(assign.annotation, "value") and isinstance(
-                    assign.annotation.value, ast.Name
-                ):
-                    attr_type = assign.annotation.value.id
-                    if attr_type == "List" and hasattr(assign.annotation, "slice"):
-                        if isinstance(assign.annotation.slice, ast.Constant):
-                            attr_type = f"{attr_type}[{assign.annotation.slice.value}]"
-                attribute_names.update({attr: attr_type})
+                attr_type = ast.unparse(assign.annotation)
+                attribute_names.update({attr: {"attr_type": attr_type}})
 
     func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
     if func_nodes:
@@ -195,14 +185,15 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
                         assign.target, "attr"
                     ) and not assign.target.attr.startswith("_"):
                         attr = assign.target
-                        attribute_names.update(
-                            {attr.attr: {"attr_type": get_property_type(assign)}}
+                        attribute_names.setdefault(
+                            attr.attr, {"attr_type": ast.unparse(assign.annotation)}
                         )
                 if hasattr(assign, "targets"):
                     for target in assign.targets:
                         if hasattr(target, "attr") and not target.attr.startswith("_"):
-                            attribute_names.update(
-                                {target.attr: {"attr_type": get_property_type(assign)}}
+                            attribute_names.setdefault(
+                                target.attr,
+                                {"attr_type": get_property_type(assign), "is_annotation": False},
                             )
 
 
