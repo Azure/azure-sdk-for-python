@@ -1,5 +1,11 @@
 # Release History
 
+## 1.18.12 (Unreleased)
+
+### Bugs Fixed
+
+- `DocumentRetrievalEvaluator` computes `fidelity` correctly when `ground_truth_label_min` is below 0. On such a scale 0 is a relevant label, but a retrieved document labeled 0 was treated as a document without a label, so fidelity was 0 when every retrieved document was labeled 0. Retrieved documents without a label were given label 0 and counted as relevant. They now get the minimum label, so they count as irrelevant, and `top1_relevance` and `top3_max_relevance` report the minimum label for them. Scales that start at 0 or above are not affected.
+
 ## 1.18.11 (2026-11-03)
 
 ### Features Added

@@ -428,3 +428,96 @@ def test_missing_threshold_error_metadata():
         evaluator._get_binary_result(unknown_metric=1.0)
 
     _assert_exception_metadata(exc_info.value, category=ErrorCategory.FAILED_EXECUTION, blame=ErrorBlame.SYSTEM_ERROR)
+
+
+# On a scale of -1 to 2, -1 is the configured minimum ("irrelevant") and 0 is the lowest relevant label.
+NEGATIVE_SCALE_GROUND_TRUTH = [
+    {"document_id": "relevant_0", "query_relevance_label": 0},
+    {"document_id": "irrelevant", "query_relevance_label": -1},
+]
+
+
+def _negative_scale_properties(retrieved_ids):
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=-1, ground_truth_label_max=2)
+    result = evaluator(
+        retrieval_ground_truth=NEGATIVE_SCALE_GROUND_TRUTH,
+        retrieved_documents=[
+            {"document_id": doc_id, "relevance_score": float(len(retrieved_ids) - i)}
+            for i, doc_id in enumerate(retrieved_ids)
+        ],
+    )
+    return result["document_retrieval_properties"]
+
+
+def test_fidelity_counts_label_zero_as_relevant_when_label_min_is_negative():
+    # The only relevant document is retrieved, so fidelity is 1. It used to be 0, because a retrieved
+    # document labeled 0 was treated like a document without a label.
+    properties = _negative_scale_properties(["relevant_0"])
+    assert properties["fidelity"] == pytest.approx(1.0)
+    assert properties["top1_relevance"] == 0
+    assert properties["top3_max_relevance"] == 0
+    assert properties["holes"] == 0
+
+    # Also retrieving the irrelevant document does not change fidelity.
+    properties = _negative_scale_properties(["relevant_0", "irrelevant"])
+    assert properties["fidelity"] == pytest.approx(1.0)
+
+
+def test_holes_do_not_count_as_relevant_when_label_min_is_negative():
+    # A retrieved document without a label used to get label 0, which is relevant on this scale,
+    # so an irrelevant document plus a hole gave fidelity 1.
+    properties = _negative_scale_properties(["irrelevant", "unlabeled"])
+    assert properties["fidelity"] == 0
+    assert properties["top1_relevance"] == -1
+    assert properties["top3_max_relevance"] == -1
+    assert properties["holes"] == 1
+
+    properties = _negative_scale_properties(["unlabeled"])
+    assert properties["fidelity"] == 0
+    assert properties["top1_relevance"] == -1
+    assert properties["holes"] == 1
+
+
+@pytest.mark.parametrize(
+    "label_min, label_max, ground_truth, retrieved_ids, expected",
+    [
+        # Default scale: a retrieved document labeled 0 (the minimum) still reports zeros.
+        (
+            0,
+            4,
+            [("a", 0), ("b", 3)],
+            ["a"],
+            {"ndcg@3": 0, "fidelity": 0, "top1_relevance": 0, "top3_max_relevance": 0, "holes": 0},
+        ),
+        # Default scale: only holes retrieved.
+        (
+            0,
+            4,
+            [("a", 2)],
+            ["x", "y"],
+            {"ndcg@3": 0, "fidelity": 0, "top1_relevance": 0, "top3_max_relevance": 0, "holes": 2},
+        ),
+        # Scale starting above 0: holes still get label 0, and a document at the minimum is scored as before.
+        (
+            1,
+            4,
+            [("a", 1), ("b", 3)],
+            ["a", "x"],
+            {"fidelity": 0, "top1_relevance": 1, "top3_max_relevance": 1, "holes": 1},
+        ),
+    ],
+)
+def test_label_scales_starting_at_or_above_zero_are_unchanged(
+    label_min, label_max, ground_truth, retrieved_ids, expected
+):
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=label_min, ground_truth_label_max=label_max)
+    result = evaluator(
+        retrieval_ground_truth=[{"document_id": d, "query_relevance_label": label} for d, label in ground_truth],
+        retrieved_documents=[
+            {"document_id": doc_id, "relevance_score": float(len(retrieved_ids) - i)}
+            for i, doc_id in enumerate(retrieved_ids)
+        ],
+    )
+    properties = result["document_retrieval_properties"]
+    for key, value in expected.items():
+        assert properties[key] == pytest.approx(value), key

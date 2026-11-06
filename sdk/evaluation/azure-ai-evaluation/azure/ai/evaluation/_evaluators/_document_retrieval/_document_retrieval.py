@@ -417,9 +417,13 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         qrels_sorted_by_rank = sorted(qrels_lookup.items(), key=lambda x: x[1], reverse=True)
         results_sorted_by_rank = sorted(results_lookup.items(), key=lambda x: x[1], reverse=True)
 
+        # retrieved documents without a ground truth label (holes) get label 0, or the configured minimum
+        # if it is below 0, because 0 is a relevant label on such a scale and holes must not count as relevant.
+        hole_label = min(0, self.ground_truth_label_min)
+
         # find ground truth labels for the results set and ideal set
         result_docs_groundtruth_labels = [
-            qrels_lookup[doc_id] if doc_id in qrels_lookup else 0 for (doc_id, _) in results_sorted_by_rank
+            qrels_lookup[doc_id] if doc_id in qrels_lookup else hole_label for (doc_id, _) in results_sorted_by_rank
         ]
         ideal_docs_groundtruth_labels = [label for (_, label) in qrels_sorted_by_rank]
 
@@ -427,14 +431,16 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         holes = self._compute_holes([x[0] for x in results_sorted_by_rank], [x[0] for x in qrels_sorted_by_rank])
         holes_ratio = holes / float(len(results))
 
-        # if none of the retrieved docs are labeled, report holes only
-        if not any(result_docs_groundtruth_labels):
+        # if none of the retrieved docs has a label above the hole label, report holes only.
+        # Comparing with the hole label rather than testing for 0 keeps a retrieved document labeled 0
+        # from being treated as a hole when 0 is a relevant label (ground_truth_label_min < 0).
+        if all(label == hole_label for label in result_docs_groundtruth_labels):
             metrics = {
                 f"ndcg@{self.k}": 0,
                 f"xdcg@{self.k}": 0,
                 "fidelity": 0,
-                "top1_relevance": 0,
-                "top3_max_relevance": 0,
+                "top1_relevance": hole_label,
+                "top3_max_relevance": hole_label,
                 "holes": holes,
                 "holes_ratio": holes_ratio,
                 "total_retrieved_documents": len(results),
