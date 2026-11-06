@@ -32,10 +32,12 @@ contract. Expected IDs use the framework's configured subscription:
 `/subscriptions/{subscriptionId}/providers/Microsoft.PlatformValidation/...`.
 Sweden Central live catalog verification now passes the strict subscription-scoped
 identity assertions. Catalog and provider-discovery recordings were refreshed
-after the service correction; the other sixteen scenario recordings were retained
-unchanged. This does not establish fresh Sweden lifecycle/boot execution or rollout
-to other regions. No fallback, expected-failure masking or rewritten responses are
-used to make assertions pass.
+after the service correction. Ten plan, update, execution and result recordings
+were subsequently refreshed using an approved credential-free image fixture,
+including fresh sync and async boot executions in Sweden Central. Six CV-only
+recordings were retained. This does not establish rollout to other regions.
+No fallback, expected-failure masking or rewritten responses are used to make
+assertions pass.
 Description-only PATCH tests verify that omitted tags and configuration are preserved.
 
 Run serially; do not re-submit an existing execution merely to test its
@@ -101,8 +103,9 @@ Playback supplies fake prerequisites and creates no Azure resources.
 Cleanup order is EPR and cascaded VTRs, VEP, CV, service-managed MRG disappearance,
 then the owned parent RG. Exact IDs, ownership tags, run descriptions and terminal
 states are required. Unexpected siblings, active resources and orphan results
-block deletion. The parent is retained if prerequisite cleanup is unconfirmed,
-even when ARM's generic resource list is empty.
+block deletion. The parent is retained if prerequisite cleanup is unconfirmed or
+a submitted mutation has not reached confirmed completion, even when ARM's
+generic resource list is empty.
 
 CV deletion retries only HTTP 409 `CannotDeleteResource`, at most 30 attempts
 ten seconds apart, checking that the plan list is empty before each attempt.
@@ -126,8 +129,11 @@ tests create and delete only their own new plans and submit no executions.
 Read-only result tests create or delete nothing.
 
 Creation tests also require `PLATFORMVALIDATION_SOURCE_VHD_URI`: supply an
-approved HTTPS Linux Gen1 X64 image through a secure process environment.
-Do not place a signed URI in source, shell history, `.env`, logs or recordings.
+approved credential-free HTTPS Linux Gen1 X64 `.vhd` URL through the process
+environment. Inputs containing URL credentials, query strings or fragments are
+rejected before execution resources are created. A private blob requires backend
+service identity read access; the tests do not change storage permissions.
+Do not place signed URIs in source, shell history, `.env`, logs or recordings.
 Playback uses `https://example.invalid/image.vhd` and needs no image access.
 The approved fixture uses `Standard_D4s_v3` and one
 `compute-vmimagevalidation-vm-boot-test` step.
@@ -188,10 +194,10 @@ in playback. Inspect recordings for secrets and valid nested JSON before
 publication. Sanitizers remove cookies/private headers, redact signed query
 values and identity fields, replace image URLs, and redact unrelated resources
 in subscription lists while preserving the target identity. The package replaces
-the generic SAS sanitizer with an escape-preserving expression. The shared
-SDK-tools SAS expression also preserves closing JSON escapes; otherwise it can
-corrupt embedded documents before package sanitizers run. Mocked regressions
-cover both expressions with nested JSON, escaped slashes and Unicode escapes.
+the generic SAS sanitizer with an escape-preserving expression. Approved live
+image inputs are credential-free; these tests require no changes to shared SDK
+test tools. Mocked regressions cover the package expression with nested JSON,
+escaped slashes and Unicode escapes.
 
 This package is already migrated to external recording assets. Use the
 [recording update workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings),

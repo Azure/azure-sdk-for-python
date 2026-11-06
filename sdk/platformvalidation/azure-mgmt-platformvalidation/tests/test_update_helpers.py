@@ -15,7 +15,7 @@ from _update_testcase import (
 
 
 def test_configuration_update_changes_only_metadata_description():
-    original = json.loads(plan_configuration("plan", IMAGE_PLACEHOLDER))
+    original = json.loads(plan_configuration("plan", IMAGE_PLACEHOLDER, "test"))
     updated = json.loads(updated_configuration(json.dumps(original)))
     assert updated["metadata"].pop("description") == "Updated SDK recorded plan metadata"
     assert updated == original

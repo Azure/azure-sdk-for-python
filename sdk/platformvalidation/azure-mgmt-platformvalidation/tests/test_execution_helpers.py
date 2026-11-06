@@ -55,11 +55,13 @@ async def items(values):
 
 
 def test_configuration_uses_public_boot_contract():
-    value = json.loads(helpers.plan_configuration("plan", helpers.IMAGE_PLACEHOLDER))
+    value = json.loads(helpers.plan_configuration("plan", helpers.IMAGE_PLACEHOLDER, "test"))
     assert value["apiVersion"] == "microsoft.validate/executionPlan.v0"
     assert value["kind"] == "ExecutionPlan"
     assert value["parameters"]["certificationPackageReference"]["vmGenerationType"] == "V1"
-    assert value["authoring"]["steps"][0]["testRef"].endswith("/compute-vmimagevalidation-vm-boot-test")
+    assert value["authoring"]["steps"][0]["testRef"] == (
+        "/subscriptions/test/providers/Microsoft.PlatformValidation/validationTests/compute-vmimagevalidation-vm-boot-test"
+    )
 
 
 def test_playback_never_uses_live_image(monkeypatch):
@@ -79,6 +81,69 @@ def test_live_image_registers_sanitizer(monkeypatch):
     monkeypatch.setenv("PLATFORMVALIDATION_SOURCE_VHD_URI", helpers.IMAGE_PLACEHOLDER)
     assert helpers.image_source(True) == helpers.IMAGE_PLACEHOLDER
     sanitizer.assert_called_once_with(target=helpers.IMAGE_PLACEHOLDER, value=helpers.IMAGE_PLACEHOLDER)
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "https://example.invalid/image.vhd?sig=example-secret",
+        "https://example-secret@example.invalid/image.vhd",
+        "https://example.invalid/image.vhd#example-secret",
+        "https://[invalid/image.vhd",
+    ],
+)
+def test_live_image_rejects_embedded_credentials_without_echoing_input(monkeypatch, source):
+    monkeypatch.setenv("PLATFORMVALIDATION_SOURCE_VHD_URI", source)
+    with pytest.raises(ValueError) as failure:
+        helpers.image_source(True)
+    assert str(failure.value) == "An approved HTTPS credential-free PLATFORMVALIDATION_SOURCE_VHD_URI is required."
+
+
+def test_execution_clients_disable_http_body_logging(monkeypatch):
+    from devtools_testutils import AzureMgmtRecordedTestCase
+
+    factory = Mock()
+    monkeypatch.setattr(AzureMgmtRecordedTestCase, "create_client_from_credential", factory)
+    helpers.ExecutionTestCase().create_client_from_credential(Mock(), Mock(), logging_enable=True)
+    assert factory.call_args.kwargs["logging_enable"] is False
+
+
+@pytest.mark.parametrize("subscription", ["test", "other", None])
+def test_test_run_requires_the_requested_subscription(monkeypatch, subscription):
+    case = helpers.ExecutionTestCase()
+    monkeypatch.setattr(case, "get_settings_value", lambda _: "test")
+    catalog_id = "/providers/Microsoft.PlatformValidation/validationTests/compute-vmimagevalidation-vm-boot-test"
+    test = NS(
+        name="vm-boot-test",
+        id=f"{RUN_ID}/validationTestRuns/vm-boot-test",
+        properties=NS(
+            status="Completed",
+            provisioning_state="Succeeded",
+            test_id=f"/subscriptions/{subscription}{catalog_id}" if subscription else catalog_id,
+            error=None,
+            pass_details=["Passed"],
+            failure_details=[],
+        ),
+    )
+    if subscription == "test":
+        case.assert_test_run(test, RUN_ID)
+    else:
+        with pytest.raises(AssertionError):
+            case.assert_test_run(test, RUN_ID)
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
+@pytest.mark.asyncio
+async def test_unresolved_creation_blocks_cleanup_even_if_lists_would_be_empty(async_mode):
+    client = Mock()
+    client.execution_plan_runs.list_by_execution_plan.return_value = []
+    with pytest.raises(AssertionError, match="Unresolved execution mutation"):
+        if async_mode:
+            await helpers.cleanup_execution_async(client, ARGS, PLAN_ID, "run", "owned", mutation_in_progress=True)
+        else:
+            helpers.cleanup_execution(client, ARGS, PLAN_ID, "run", "owned", mutation_in_progress=True)
+    client.validation_execution_plans.get.assert_not_called()
+    client.validation_execution_plans.begin_delete.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -243,30 +308,6 @@ def test_subscription_list_sanitizers_preserve_target_identity(monkeypatch):
     tagged = json.dumps({"tags": {"private-key": 'value with {"nested"} braces and \\ escapes'}})
     settings = tags.call_args.kwargs
     assert json.loads(re.sub(settings["regex"], settings["value"], tagged)) == {"tags": {}}
-
-
-@pytest.mark.parametrize("key", ["sig", "se", "st", "sv"])
-@pytest.mark.parametrize("depth", [0, 1, 2])
-@pytest.mark.parametrize("value", ["private", r"\/private", r"private\/tail", r"\u0070rivate"])
-def test_common_sas_sanitizer_preserves_embedded_json_escapes(monkeypatch, key, depth, value):
-    import devtools_testutils.proxy_startup as startup
-    from devtools_testutils.sanitizers import Sanitizer
-
-    batch = Mock()
-    monkeypatch.setattr(startup, "add_batch_sanitizers", batch)
-    monkeypatch.setattr(startup, "set_custom_default_matcher", Mock())
-    monkeypatch.setattr(startup, "remove_batch_sanitizers", Mock())
-    startup.set_common_sanitizers()
-    settings = batch.call_args.kwargs["sanitizers"][Sanitizer.GENERAL_REGEX][0]
-    regex = settings["regex"].replace("(?<secret>", "(?P<secret>")
-    document = '{"sourceVhdUri": "https://example.invalid/?' + key + "=" + value + '"}'
-    for _ in range(depth):
-        document = json.dumps({"planConfigurationJson": document})
-    sanitized = re.sub(regex, lambda match: match[0].replace(match["secret"], "Sanitized"), document)
-    assert "private" not in sanitized
-    for _ in range(depth):
-        sanitized = json.loads(sanitized)["planConfigurationJson"]
-    assert json.loads(sanitized)["sourceVhdUri"].endswith("=Sanitized")
 
 
 @pytest.mark.parametrize("key", ["sig", "se", "st", "sv", "s", "c", "h", "t"])

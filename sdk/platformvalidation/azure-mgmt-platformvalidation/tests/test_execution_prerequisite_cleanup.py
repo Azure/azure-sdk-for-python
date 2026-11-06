@@ -39,7 +39,7 @@ def prerequisites(monkeypatch):
     monkeypatch.setattr(setup, "wait_for_managed_group_deletion", Mock())
     monkeypatch.setattr(setup.time, "sleep", Mock())
     preparer = setup.ExecutionPrerequisitesPreparer()
-    preparer.test_class_instance = Mock(is_live=True)
+    preparer.test_class_instance = Mock(is_live=True, _execution_mutation_in_progress=False)
     preparer.test_class_instance.get_settings_value.return_value = SUBSCRIPTION
     resources, cv = MagicMock(), MagicMock()
     clients = {
@@ -183,6 +183,16 @@ def test_remaining_plan_blocks_all_parent_cleanup(cleanup_ready):
         preparer.remove_resource(NAME)
     resources.resource_groups.begin_delete.assert_not_called()
     cv.cloud_validations.begin_delete.assert_not_called()
+
+
+def test_unresolved_submission_retains_cv_even_when_plan_list_is_empty(cleanup_ready):
+    preparer, resources, cv, _ = cleanup_ready
+    preparer.test_class_instance._execution_mutation_in_progress = True
+    with pytest.raises(AssertionError, match="Unresolved execution mutation"):
+        preparer.remove_resource(NAME)
+    cv.validation_execution_plans.list_by_resource_group.assert_not_called()
+    cv.cloud_validations.begin_delete.assert_not_called()
+    resources.resource_groups.begin_delete.assert_not_called()
 
 
 def deletion_conflict(code="CannotDeleteResource", status=409):

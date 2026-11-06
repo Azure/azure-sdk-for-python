@@ -89,7 +89,8 @@ class TestExecutionLifecycleAsync(ExecutionTestCase):
         plan_id = f"{self.resource_id(group, cv)}/validationExecutionPlans/{name}"
         run_id = f"{plan_id}/executionPlanRuns/{run_name}"
         description = f"SDK owned execution {run_name}"
-        configuration = plan_configuration(name, image_source(self.is_live))
+        configuration = plan_configuration(name, image_source(self.is_live), self.get_settings_value("SUBSCRIPTION_ID"))
+        self._execution_mutation_in_progress = False
         tags = {"sdk-test": name}
         credential = self.get_credential(PlatformValidationMgmtClient, is_async=True)
         try:
@@ -106,6 +107,7 @@ class TestExecutionLifecycleAsync(ExecutionTestCase):
                 )
                 await assert_missing_async(client.validation_execution_plans.get, *args)
                 try:
+                    self._execution_mutation_in_progress = True
                     plan = await complete_async(
                         await client.validation_execution_plans.begin_create_or_update(
                             *args,
@@ -119,6 +121,7 @@ class TestExecutionLifecycleAsync(ExecutionTestCase):
                             ),
                         )
                     )
+                    self._execution_mutation_in_progress = False
                     self.assert_plan(plan, plan_id, name, tags, "SDK boot plan", configuration)
                     self.assert_plan(
                         await client.validation_execution_plans.get(*args),
@@ -136,6 +139,7 @@ class TestExecutionLifecycleAsync(ExecutionTestCase):
                     assert len(matches) == 1
                     tags = {**tags, "phase": "updated"}
                     target = []
+                    self._execution_mutation_in_progress = True
                     updated = await complete_async(
                         await client.validation_execution_plans.begin_update(
                             *args,
@@ -143,6 +147,7 @@ class TestExecutionLifecycleAsync(ExecutionTestCase):
                             raw_response_hook=partial(operation_status_target, target=target),
                         )
                     )
+                    self._execution_mutation_in_progress = False
                     self.assert_plan(updated, plan_id, name, tags, "SDK boot plan", configuration)
                     self.assert_plan(
                         await client.validation_execution_plans.get(*args),
@@ -157,13 +162,16 @@ class TestExecutionLifecycleAsync(ExecutionTestCase):
                     if not execute:
                         return
                     await assert_missing_async(client.execution_plan_runs.get, *run_args)
+                    self._execution_mutation_in_progress = True
                     await complete_async(
                         await client.execution_plan_runs.begin_create_or_update(
                             *run_args,
                             ExecutionPlanRun(properties=ExecutionPlanRunProperties(description=description)),
                         )
                     )
-                    self.assert_workload(await wait_for_run_async(client, run_args), run_id, description)
+                    terminal_run = await wait_for_run_async(client, run_args)
+                    self._execution_mutation_in_progress = False
+                    self.assert_workload(terminal_run, run_id, description)
                     runs = [run async for run in client.execution_plan_runs.list_by_execution_plan(*args)]
                     assert len(runs) == 1
                     self.assert_workload(runs[0], run_id, description)
@@ -175,6 +183,13 @@ class TestExecutionLifecycleAsync(ExecutionTestCase):
                         run_id,
                     )
                 finally:
-                    await cleanup_execution_async(client, args, plan_id, run_name, description)
+                    await cleanup_execution_async(
+                        client,
+                        args,
+                        plan_id,
+                        run_name,
+                        description,
+                        mutation_in_progress=self._execution_mutation_in_progress,
+                    )
         finally:
             await credential.close()

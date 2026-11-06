@@ -157,6 +157,9 @@ class ExecutionPrerequisitesPreparer(AzureMgmtPreparer):
             raise
 
     def _cleanup(self) -> None:
+        assert not getattr(
+            self.test_class_instance, "_execution_mutation_in_progress", False
+        ), "Unresolved execution mutation; retain its CloudValidation and resource group."
         try:
             parent = self.cv.cloud_validations.get(self.group, self.name)
         except ResourceNotFoundError as error:

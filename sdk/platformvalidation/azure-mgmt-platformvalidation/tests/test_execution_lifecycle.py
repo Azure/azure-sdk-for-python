@@ -89,7 +89,8 @@ class TestExecutionLifecycle(ExecutionTestCase):
         plan_id = f"{self.resource_id(group, cv)}/validationExecutionPlans/{name}"
         run_id = f"{plan_id}/executionPlanRuns/{run_name}"
         description = f"SDK owned execution {run_name}"
-        configuration = plan_configuration(name, image_source(self.is_live))
+        configuration = plan_configuration(name, image_source(self.is_live), self.get_settings_value("SUBSCRIPTION_ID"))
+        self._execution_mutation_in_progress = False
         tags = {"sdk-test": name}
         with self.create_mgmt_client(PlatformValidationMgmtClient) as client:
             self.assert_parent(
@@ -100,6 +101,7 @@ class TestExecutionLifecycle(ExecutionTestCase):
             )
             assert_missing(client.validation_execution_plans.get, *args)
             try:
+                self._execution_mutation_in_progress = True
                 plan = complete(
                     client.validation_execution_plans.begin_create_or_update(
                         *args,
@@ -113,6 +115,7 @@ class TestExecutionLifecycle(ExecutionTestCase):
                         ),
                     )
                 )
+                self._execution_mutation_in_progress = False
                 self.assert_plan(plan, plan_id, name, tags, "SDK boot plan", configuration)
                 self.assert_plan(
                     client.validation_execution_plans.get(*args),
@@ -130,6 +133,7 @@ class TestExecutionLifecycle(ExecutionTestCase):
                 assert len(matches) == 1
                 tags = {**tags, "phase": "updated"}
                 target = []
+                self._execution_mutation_in_progress = True
                 updated = complete(
                     client.validation_execution_plans.begin_update(
                         *args,
@@ -137,6 +141,7 @@ class TestExecutionLifecycle(ExecutionTestCase):
                         raw_response_hook=partial(operation_status_target, target=target),
                     )
                 )
+                self._execution_mutation_in_progress = False
                 self.assert_plan(updated, plan_id, name, tags, "SDK boot plan", configuration)
                 self.assert_plan(
                     client.validation_execution_plans.get(*args),
@@ -151,13 +156,16 @@ class TestExecutionLifecycle(ExecutionTestCase):
                 if not execute:
                     return
                 assert_missing(client.execution_plan_runs.get, *run_args)
+                self._execution_mutation_in_progress = True
                 complete(
                     client.execution_plan_runs.begin_create_or_update(
                         *run_args,
                         ExecutionPlanRun(properties=ExecutionPlanRunProperties(description=description)),
                     )
                 )
-                self.assert_workload(wait_for_run(client, run_args), run_id, description)
+                terminal_run = wait_for_run(client, run_args)
+                self._execution_mutation_in_progress = False
+                self.assert_workload(terminal_run, run_id, description)
                 runs = list(client.execution_plan_runs.list_by_execution_plan(*args))
                 assert len(runs) == 1
                 self.assert_workload(runs[0], run_id, description)
@@ -166,4 +174,11 @@ class TestExecutionLifecycle(ExecutionTestCase):
                 self.assert_test_run(tests[0], run_id)
                 self.assert_test_run(client.validation_test_runs.get(*run_args, tests[0].name), run_id)
             finally:
-                cleanup_execution(client, args, plan_id, run_name, description)
+                cleanup_execution(
+                    client,
+                    args,
+                    plan_id,
+                    run_name,
+                    description,
+                    mutation_in_progress=self._execution_mutation_in_progress,
+                )

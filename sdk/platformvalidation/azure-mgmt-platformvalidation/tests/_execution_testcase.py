@@ -84,7 +84,7 @@ def protect_execution_errors(function):
     return wrapper
 
 
-def plan_configuration(name, source):
+def plan_configuration(name, source, subscription):
     return json.dumps(
         {
             "apiVersion": "microsoft.validate/executionPlan.v0",
@@ -108,8 +108,8 @@ def plan_configuration(name, source):
                     {
                         "name": "vm-boot-test",
                         "type": "test",
-                        "testRef": "/providers/Microsoft.PlatformValidation/validationTests/"
-                        "compute-vmimagevalidation-vm-boot-test",
+                        "testRef": f"/subscriptions/{subscription}/providers/Microsoft.PlatformValidation/"
+                        "validationTests/compute-vmimagevalidation-vm-boot-test",
                     }
                 ]
             },
@@ -122,8 +122,22 @@ def image_source(is_live):
     if not is_live:
         return IMAGE_PLACEHOLDER
     source = os.environ.get("PLATFORMVALIDATION_SOURCE_VHD_URI")
-    if not source or urlsplit(source).scheme != "https":
-        raise ValueError("An approved HTTPS PLATFORMVALIDATION_SOURCE_VHD_URI is required.")
+    message = "An approved HTTPS credential-free PLATFORMVALIDATION_SOURCE_VHD_URI is required."
+    try:
+        uri = urlsplit(source or "")
+        valid = (
+            uri.scheme == "https"
+            and uri.hostname
+            and not uri.username
+            and not uri.password
+            and not uri.query
+            and not uri.fragment
+            and uri.path.lower().endswith(".vhd")
+        )
+    except ValueError:
+        valid = False
+    if not valid:
+        raise ValueError(message)
     add_general_string_sanitizer(target=source, value=IMAGE_PLACEHOLDER)
     return source
 
@@ -185,7 +199,8 @@ def assert_deletable_run(run, expected_id, description):
     assert run.properties.status in TERMINAL_RUN_STATES, "Execution is still active; retain its parent."
 
 
-def cleanup_execution(client, args, plan_id, run_name, description):
+def cleanup_execution(client, args, plan_id, run_name, description, *, mutation_in_progress=False):
+    assert not mutation_in_progress, "Unresolved execution mutation; retain the run and its parents."
     try:
         plan = client.validation_execution_plans.get(*args)
     except ResourceNotFoundError as error:
@@ -215,7 +230,8 @@ def cleanup_execution(client, args, plan_id, run_name, description):
     assert_missing(client.validation_execution_plans.get, *args)
 
 
-async def cleanup_execution_async(client, args, plan_id, run_name, description):
+async def cleanup_execution_async(client, args, plan_id, run_name, description, *, mutation_in_progress=False):
+    assert not mutation_in_progress, "Unresolved execution mutation; retain the run and its parents."
     try:
         plan = await client.validation_execution_plans.get(*args)
     except ResourceNotFoundError as error:
@@ -246,6 +262,10 @@ async def cleanup_execution_async(client, args, plan_id, run_name, description):
 
 
 class ExecutionTestCase(CloudValidationTestCase):
+    def create_client_from_credential(self, client_class, credential, **kwargs):
+        kwargs["logging_enable"] = False
+        return super().create_client_from_credential(client_class, credential, **kwargs)
+
     def assert_parent(self, parent, group, name, ownership):
         assert ownership in ("borrowed-parent", "owned-parent"), "Explicit parent ownership is required."
         self.assert_identity(parent, group, name)
@@ -283,9 +303,11 @@ class ExecutionTestCase(CloudValidationTestCase):
         assert test.id.lower() == f"{run_id}/validationTestRuns/{test.name}".lower()
         assert test.properties.status == "Completed"
         assert test.properties.provisioning_state == "Succeeded"
-        assert test.properties.test_id == (
-            "/providers/Microsoft.PlatformValidation/validationTests/compute-vmimagevalidation-vm-boot-test"
+        expected = (
+            f"/subscriptions/{self.get_settings_value('SUBSCRIPTION_ID')}/providers/"
+            "Microsoft.PlatformValidation/validationTests/compute-vmimagevalidation-vm-boot-test"
         )
+        assert test.properties.test_id and test.properties.test_id.lower() == expected.lower()
         assert test.properties.error is None
         assert test.properties.pass_details
         assert not test.properties.failure_details

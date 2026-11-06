@@ -65,7 +65,8 @@ class TestExecutionUpdates(ExecutionTestCase):
         plan_id = f"{self.resource_id(group, cv)}/validationExecutionPlans/{name}"
         tags = {"sdk-test": name}
         description = "SDK isolated update plan"
-        configuration = plan_configuration(name, image_source(self.is_live))
+        configuration = plan_configuration(name, image_source(self.is_live), self.get_settings_value("SUBSCRIPTION_ID"))
+        self._execution_mutation_in_progress = False
         self.update_observations = []
 
         def observe(response):
@@ -76,6 +77,7 @@ class TestExecutionUpdates(ExecutionTestCase):
             self.assert_parent(client.cloud_validations.get(group, cv), group, cv, ownership)
             assert_missing(operations.get, *args)
             try:
+                self._execution_mutation_in_progress = True
                 created = complete(
                     operations.begin_create_or_update(
                         *args,
@@ -83,15 +85,19 @@ class TestExecutionUpdates(ExecutionTestCase):
                         raw_response_hook=observe,
                     )
                 )
+                self._execution_mutation_in_progress = False
                 self.assert_plan(created, plan_id, name, tags, description, configuration)
                 if include_description:
                     description = "Description-only PATCH"
+                    self._execution_mutation_in_progress = True
                     patched = complete(
                         operations.begin_update(*args, plan_update(description=description), raw_response_hook=observe)
                     )
+                    self._execution_mutation_in_progress = False
                     self.assert_plan(patched, plan_id, name, tags, description, configuration)
                     self.assert_plan(operations.get(*args), plan_id, name, tags, description, configuration)
                 configuration = updated_configuration(configuration)
+                self._execution_mutation_in_progress = True
                 patched = complete(
                     operations.begin_update(
                         *args,
@@ -99,12 +105,14 @@ class TestExecutionUpdates(ExecutionTestCase):
                         raw_response_hook=observe,
                     )
                 )
+                self._execution_mutation_in_progress = False
                 self.assert_plan(patched, plan_id, name, tags, description, configuration)
                 self.assert_plan(operations.get(*args), plan_id, name, tags, description, configuration)
                 for phase in ("idempotent", "metadata-replacement"):
                     if phase == "metadata-replacement":
                         tags = {**tags, "phase": phase}
                         description = "PUT existing plan metadata"
+                    self._execution_mutation_in_progress = True
                     replaced = complete(
                         operations.begin_create_or_update(
                             *args,
@@ -112,9 +120,17 @@ class TestExecutionUpdates(ExecutionTestCase):
                             raw_response_hook=observe,
                         )
                     )
+                    self._execution_mutation_in_progress = False
                     self.assert_plan(replaced, plan_id, name, tags, description, configuration)
                     self.assert_plan(operations.get(*args), plan_id, name, tags, description, configuration)
                 self.assert_plan(operations.get(*args), plan_id, name, tags, description, configuration)
                 assert not list(client.execution_plan_runs.list_by_execution_plan(*args))
             finally:
-                cleanup_execution(client, args, plan_id, "never-submitted", "No execution was submitted")
+                cleanup_execution(
+                    client,
+                    args,
+                    plan_id,
+                    "never-submitted",
+                    "No execution was submitted",
+                    mutation_in_progress=self._execution_mutation_in_progress,
+                )
