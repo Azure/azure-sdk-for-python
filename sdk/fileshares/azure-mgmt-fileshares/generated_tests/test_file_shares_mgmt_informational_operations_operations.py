@@ -43,7 +43,9 @@ class TestFileSharesMgmtInformationalOperationsOperations(AzureMgmtRecordedTestC
     def test_informational_operations_get_provisioning_recommendation(self, resource_group):
         response = self.client.informational_operations.get_provisioning_recommendation(
             location="str",
-            body={"properties": {"provisionedStorageGiB": 0}},
+            body={
+                "properties": {"provisionedStorageGiB": 0, "mediaTier": "str", "protocol": "str", "scaleMode": "str"}
+            },
         )
 
         # please add some check logic here by yourself

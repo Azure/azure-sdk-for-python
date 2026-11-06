@@ -35,8 +35,24 @@ def main():
         resource_group_name="rgfileshares",
         resource_name="fileshare",
         resource={
+            "identity": {
+                "type": "SystemAssigned,UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/0590b445-524e-4caa-9870-2e2461d23434/resourceGroups/fiddler-mfs-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity": {}
+                },
+            },
             "location": "westus",
             "properties": {
+                "encryption": {
+                    "customerManagedKeyEncryption": {
+                        "keyEncryptionKeyIdentity": {
+                            "identityType": "userAssignedIdentity",
+                            "userAssignedIdentityResourceId": "/subscriptions/0590b445-524e-4caa-9870-2e2461d23434/resourceGroups/fiddler-mfs-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
+                        },
+                        "keyEncryptionKeyUrl": "https://myvault.vault.azure.net/keys/myfilesharekey",
+                    },
+                    "infrastructureEncryption": "enabled",
+                },
                 "mediaTier": "SSD",
                 "mountName": "fileshare",
                 "nfsProtocolProperties": {"encryptionInTransitRequired": "Enabled", "rootSquash": "NoRootSquash"},
@@ -51,6 +67,7 @@ def main():
                 },
                 "publicNetworkAccess": "Enabled",
                 "redundancy": "Local",
+                "scaleMode": "Scale",
             },
             "tags": {"key9647": "xwokdvyoae"},
         },
@@ -58,6 +75,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-01/FileShares_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-01/FileShares_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
