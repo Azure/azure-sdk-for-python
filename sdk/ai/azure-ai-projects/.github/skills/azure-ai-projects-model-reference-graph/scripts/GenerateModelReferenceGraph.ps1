@@ -32,7 +32,7 @@ if (-not $PythonExecutable) {
 }
 Get-Command -Name $PythonExecutable -CommandType Application -ErrorAction Stop | Out-Null
 $tempDirectory = [System.IO.Path]::GetTempPath()
-$timestamp = [DateTime]::UtcNow.ToString("yyyyMMdd-HHmmss-fffffff'Z'", [Globalization.CultureInfo]::InvariantCulture)
+$timestamp = [DateTime]::UtcNow.ToString("yyyyMMdd-HHmmss'Z'", [Globalization.CultureInfo]::InvariantCulture)
 if (-not $ModelsPath) {
     $ModelsPath = Join-Path $packageRoot "azure\ai\projects\models\_models.py"
 }
