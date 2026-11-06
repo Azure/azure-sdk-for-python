@@ -14,18 +14,54 @@ class AccessDecisionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for Access Decision."""
 
     ALLOWED = "Allowed"
-    """Access allowed"""
+    """Access allowed."""
     DENIED = "Denied"
-    """Access denied"""
+    """Access denied."""
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
     INTERNAL = "Internal"
     """Actions are for internal-only APIs."""
+
+
+class BillingAccountCategoryTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported category types for billing account scoped queries. The ResourceGroup and Resource
+    category types are not supported for billing account scope.
+    """
+
+    SUBSCRIPTION = "Subscription"
+    """Emissions aggregated at the subscription level."""
+    LOCATION = "Location"
+    """Emissions aggregated at the location level."""
+    RESOURCE_TYPE = "ResourceType"
+    """Emissions aggregated at the resource type level."""
+
+
+class BillingAccountOrderByColumnEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sorting is supported for columns in billing account scoped ItemDetailsReport. This object
+    includes the column names that sorting is allowed for. Select one of these supported values.
+    The ResourceGroup column is not supported for billing account scope.
+    """
+
+    ITEM_NAME = "ItemName"
+    """The itemName filed in ItemDetailsReport result, see CarbonEmissionItemDetailData for more
+    information."""
+    LATEST_MONTH_EMISSIONS = "LatestMonthEmissions"
+    """The latestMonthEmissions filed in ItemDetailsReport result, see CarbonEmissionItemDetailData
+    for more information."""
+    PREVIOUS_MONTH_EMISSIONS = "PreviousMonthEmissions"
+    """The previousMonthEmissions filed in ItemDetailsReport result, see CarbonEmissionItemDetailData
+    for more information."""
+    MONTH_OVER_MONTH_EMISSIONS_CHANGE_RATIO = "MonthOverMonthEmissionsChangeRatio"
+    """The monthOverMonthEmissionsChangeRatio filed in ItemDetailsReport result, see
+    CarbonEmissionItemDetailData for more information."""
+    MONTHLY_EMISSIONS_CHANGE_VALUE = "MonthlyEmissionsChangeValue"
+    """The monthlyEmissionsChangeValue filed in ItemDetailsReport result, see
+    CarbonEmissionItemDetailData for more information."""
 
 
 class CategoryTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -52,11 +88,11 @@ class EmissionScopeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     SCOPE1 = "Scope1"
-    """Scope1 carbon emission"""
+    """Scope1 carbon emission."""
     SCOPE2 = "Scope2"
-    """Scope2 carbon emission"""
+    """Scope2 carbon emission."""
     SCOPE3 = "Scope3"
-    """Scope3 carbon emission"""
+    """Scope3 carbon emission."""
 
 
 class OrderByColumnEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -86,7 +122,7 @@ class OrderByColumnEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -131,27 +167,27 @@ class ResponseDataTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The response data type of Carbon emission data."""
 
     OVERALL_SUMMARY_DATA = "OverallSummaryData"
-    """The response data type for OverallSummaryReport"""
+    """The response data type for OverallSummaryReport."""
     MONTHLY_SUMMARY_DATA = "MonthlySummaryData"
-    """The response data type for MonthlySummaryReport"""
+    """The response data type for MonthlySummaryReport."""
     TOP_ITEMS_SUMMARY_DATA = "TopItemsSummaryData"
-    """The response data type for TopItemsSummaryReport"""
+    """The response data type for TopItemsSummaryReport."""
     RESOURCE_TOP_ITEMS_SUMMARY_DATA = "ResourceTopItemsSummaryData"
-    """The response data type for Resource's TopItemsSummaryReport"""
+    """The response data type for Resource's TopItemsSummaryReport."""
     RESOURCE_GROUP_TOP_ITEMS_SUMMARY_DATA = "ResourceGroupTopItemsSummaryData"
-    """The response data type for ResourceGroup's TopItemsSummaryReport"""
+    """The response data type for ResourceGroup's TopItemsSummaryReport."""
     TOP_ITEMS_MONTHLY_SUMMARY_DATA = "TopItemsMonthlySummaryData"
-    """The response data type for TopItemsMonthlySummaryReport"""
+    """The response data type for TopItemsMonthlySummaryReport."""
     RESOURCE_TOP_ITEMS_MONTHLY_SUMMARY_DATA = "ResourceTopItemsMonthlySummaryData"
-    """The response data type for Resource's TopItemsMonthlySummaryReport"""
+    """The response data type for Resource's TopItemsMonthlySummaryReport."""
     RESOURCE_GROUP_TOP_ITEMS_MONTHLY_SUMMARY_DATA = "ResourceGroupTopItemsMonthlySummaryData"
-    """The response data type for ResourceGroup's TopItemsMonthlySummaryReport"""
+    """The response data type for ResourceGroup's TopItemsMonthlySummaryReport."""
     ITEM_DETAILS_DATA = "ItemDetailsData"
-    """The response data type for ItemDetailsReport"""
+    """The response data type for ItemDetailsReport."""
     RESOURCE_ITEM_DETAILS_DATA = "ResourceItemDetailsData"
-    """The response data type for Resource's ItemDetailsReport"""
+    """The response data type for Resource's ItemDetailsReport."""
     RESOURCE_GROUP_ITEM_DETAILS_DATA = "ResourceGroupItemDetailsData"
-    """The response data type for ResourceGroup's ItemDetailsReport"""
+    """The response data type for ResourceGroup's ItemDetailsReport."""
 
 
 class SortDirectionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
