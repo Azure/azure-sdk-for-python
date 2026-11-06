@@ -14,8 +14,8 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import traceback
-from collections.abc import Awaitable, Callable, Coroutine, Iterator, Mapping
-from contextlib import contextmanager
+from collections.abc import AsyncIterator, Awaitable, Callable, Coroutine, Iterator, Mapping
+from contextlib import asynccontextmanager, contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
 from functools import wraps
@@ -456,7 +456,10 @@ def _with_task_admission(
         with _task_manager_scope(lambda: manager), manager._task_admission(  # pylint: disable=protected-access
             task_id=task_id if isinstance(task_id, str) else None
         ):
-            return await method(manager, *args, **kwargs)
+            async with manager._task_producer(  # pylint: disable=protected-access
+                task_id if isinstance(task_id, str) else None
+            ):
+                return await method(manager, *args, **kwargs)
 
     return admitted
 
@@ -514,6 +517,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._shutdown_event = shutdown_event or asyncio.Event()
         self._active_admissions: dict[asyncio.Task[Any], int] = {}
         self._admitted_task_ids: dict[str, int] = {}
+        self._task_producers: dict[str, tuple[asyncio.Task[Any], asyncio.Event]] = {}
         self._admissions_drained = asyncio.Event()
         self._admissions_drained.set()
         self._preserve_recoverable_tasks_on_shutdown = False
@@ -601,6 +605,37 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 del self._active_admissions[caller]
             if not self._active_admissions:
                 self._admissions_drained.set()
+
+    @asynccontextmanager
+    async def _task_producer(self, task_id: str | None) -> AsyncIterator[None]:
+        """Serialize claim and registration, allowing the actual producer to re-enter.
+
+        :param task_id: Task to coordinate, or None for non-task-specific operations.
+        :type task_id: str | None
+        :return: Scope for one task producer.
+        :rtype: AsyncIterator[None]
+        """
+        if task_id is None:
+            yield
+            return
+        caller = asyncio.current_task()
+        if caller is None:
+            raise RuntimeError("Task production requires a running asyncio task")
+        while True:
+            producer = self._task_producers.get(task_id)
+            if producer is None:
+                released = asyncio.Event()
+                self._task_producers[task_id] = (caller, released)
+                try:
+                    yield
+                finally:
+                    del self._task_producers[task_id]
+                    released.set()
+                return
+            if producer[0] is caller:
+                yield
+                return
+            await producer[1].wait()
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
@@ -3350,102 +3385,117 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 or not self._recovery_is_authorized(self._find_resume_callback_name(task_info))
             ):
                 continue
+            await self._recover_stale_task(task_info)
 
-            # (Spec 038) One-time legacy cleanup: delete pre-schema tasks
-            # (no payload.schema_version) instead of recovering them.
-            if await self._delete_if_pre_schema_legacy(task_info):
-                continue
+    @_with_task_admission
+    async def _recover_stale_task(self, task_info: TaskInfo) -> None:
+        """Keep one recovery claim and registration inside the same producer scope.
 
-            #  — opportunistic orphan attachment cleanup. If a prior
-            # lifetime crashed between a steering-append attachment PATCH
-            # and the queue update (cannot happen in the happy path
-            # because Phase 4 makes them a single atomic PATCH, but
-            # defense-in-depth is cheap), delete any
-            # ``_steering_input_*`` attachment that no live ref in
-            # ``pending_inputs`` references.
+        :param task_info: Stale record selected by the recovery scan.
+        :type task_info: TaskInfo
+        """
+        if (
+            self._shutdown_event.is_set()
+            or task_info.id in self._active_tasks
+            or not self._recovery_is_authorized(self._find_resume_callback_name(task_info))
+        ):
+            return
+
+        # (Spec 038) One-time legacy cleanup: delete pre-schema tasks
+        # (no payload.schema_version) instead of recovering them.
+        if await self._delete_if_pre_schema_legacy(task_info):
+            return
+
+        #  — opportunistic orphan attachment cleanup. If a prior
+        # lifetime crashed between a steering-append attachment PATCH
+        # and the queue update (cannot happen in the happy path
+        # because Phase 4 makes them a single atomic PATCH, but
+        # defense-in-depth is cheap), delete any
+        # ``_steering_input_*`` attachment that no live ref in
+        # ``pending_inputs`` references.
+        try:
+            refreshed = await self._steering_cleanup_orphan_attachments(task_info)
+            if refreshed is not None:
+                # Cleanup wrote — adopt the post-cleanup record so the
+                # reclaim below carries the current etag (else reclaim
+                # 412s on the stale scan etag and recovery is skipped).
+                task_info = refreshed
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning(
+                "Orphan attachment cleanup failed for %s",
+                task_info.id,
+                exc_info=True,
+            )
+
+        # Reclaim the lease with our new instance ID
+        try:
+            #   / C-LSE-2 — both reclaim sites
+            # (inline AND cold-start/periodic) carry if_match. On
+            # 412, ABANDON per §25.3 — another process beat us;
+            # let the next scan re-evaluate.
+            #
+            # Route through _reclaim_one so the reclaim takes the
+            # per-task write lock AND refreshes the tracked etag from
+            # the post-reclaim record. Adopt that record as task_info
+            # so (a) the lease-renewal heartbeat's tracked etag
+            # matches the store — otherwise its first tick sends the
+            # stale pre-reclaim etag, 412s, and recovery is cancelled
+            # as "lost ownership" ~one lease-half-life in — and (b)
+            # _start_existing_task sees the post-reclaim lease
+            # generation/instance.
+            reclaimed_info = await self._reclaim_one(task_info)
+            if reclaimed_info is not None:
+                task_info = reclaimed_info
+            logger.info(
+                "Reclaimed stale task %s (generation will increment)",
+                task_info.id,
+            )
+        except _HostedConflict as exc:
+            translated = _translate_hosted_conflict(exc, task_id=task_info.id)
+            if translated is None or getattr(translated, "current_status", None) == "in_progress":
+                logger.info(
+                    "Reclaim conflict for task %s — another process beat us; letting next scan re-evaluate.",
+                    task_info.id,
+                )
+            else:
+                logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
+            return
+        except (EtagConflict, ValueError) as exc:
+            # 412 ABANDON for reclaim per §25.3.
+            if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
+                logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
+                return
+            logger.info(
+                "Reclaim 412 for task %s — another process beat us; "
+                "letting next scan re-evaluate (/ §25.3 ABANDON).",
+                task_info.id,
+            )
+            return
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
+            return
+
+        # Find resume callback and dispatch
+        fn = self._find_resume_callback(task_info)
+        if fn is not None:
             try:
-                refreshed = await self._steering_cleanup_orphan_attachments(task_info)
-                if refreshed is not None:
-                    # Cleanup wrote — adopt the post-cleanup record so the
-                    # reclaim below carries the current etag (else reclaim
-                    # 412s on the stale scan etag and recovery is skipped).
-                    task_info = refreshed
+                # Look up stored opts for resumed-task configuration.
+                fn_name = (task_info.source or {}).get("name", "")
+                opts = self._resume_opts.get(fn_name)
+                await self._start_existing_task(
+                    fn=fn,
+                    fn_name=task_info.agent_name,
+                    task_info=task_info,
+                    entry_mode="recovered",
+                    opts=opts,
+                )
+                logger.info("Recovered task %s is now active", task_info.id)
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
-                    "Orphan attachment cleanup failed for %s",
+                    "Failed to resume recovered task %s",
                     task_info.id,
                     exc_info=True,
                 )
-
-            # Reclaim the lease with our new instance ID
-            try:
-                #   / C-LSE-2 — both reclaim sites
-                # (inline AND cold-start/periodic) carry if_match. On
-                # 412, ABANDON per §25.3 — another process beat us;
-                # let the next scan re-evaluate.
-                #
-                # Route through _reclaim_one so the reclaim takes the
-                # per-task write lock AND refreshes the tracked etag from
-                # the post-reclaim record. Adopt that record as task_info
-                # so (a) the lease-renewal heartbeat's tracked etag
-                # matches the store — otherwise its first tick sends the
-                # stale pre-reclaim etag, 412s, and recovery is cancelled
-                # as "lost ownership" ~one lease-half-life in — and (b)
-                # _start_existing_task sees the post-reclaim lease
-                # generation/instance.
-                reclaimed_info = await self._reclaim_one(task_info)
-                if reclaimed_info is not None:
-                    task_info = reclaimed_info
-                logger.info(
-                    "Reclaimed stale task %s (generation will increment)",
-                    task_info.id,
-                )
-            except _HostedConflict as exc:
-                translated = _translate_hosted_conflict(exc, task_id=task_info.id)
-                if translated is None or getattr(translated, "current_status", None) == "in_progress":
-                    logger.info(
-                        "Reclaim conflict for task %s — another process beat us; letting next scan re-evaluate.",
-                        task_info.id,
-                    )
-                    continue
-                logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
-                continue
-            except (EtagConflict, ValueError) as exc:
-                # 412 ABANDON for reclaim per §25.3.
-                if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
-                    logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
-                    continue
-                logger.info(
-                    "Reclaim 412 for task %s — another process beat us; "
-                    "letting next scan re-evaluate (/ §25.3 ABANDON).",
-                    task_info.id,
-                )
-                continue
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
-                continue
-
-            # Find resume callback and dispatch
-            fn = self._find_resume_callback(task_info)
-            if fn is not None:
-                try:
-                    # Look up stored opts for resumed-task configuration.
-                    fn_name = (task_info.source or {}).get("name", "")
-                    opts = self._resume_opts.get(fn_name)
-                    await self._start_existing_task(
-                        fn=fn,
-                        fn_name=task_info.agent_name,
-                        task_info=task_info,
-                        entry_mode="recovered",
-                        opts=opts,
-                    )
-                    logger.info("Recovered task %s is now active", task_info.id)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning(
-                        "Failed to resume recovered task %s",
-                        task_info.id,
-                        exc_info=True,
-                    )
 
     def _find_resume_callback(self, task_info: TaskInfo) -> Callable[..., Any] | None:
         """Find a registered resume callback for a task.

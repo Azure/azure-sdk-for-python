@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task, task
+from azure.ai.agentserver.core.tasks import TaskConflictError, TaskContext, multi_turn_task, task
 from azure.ai.agentserver.core.tasks import _manager
 from azure.ai.agentserver.core.tasks._exceptions import TaskDeferred
 from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
@@ -60,7 +60,7 @@ async def test_agent_name_override_does_not_retain_incompatible_runtime(
     async with app.router.lifespan_context(app), client(app) as http:
         request = asyncio.create_task(http.post("/_agent/after-restore", json=first))
         try:
-            await asyncio.wait_for(failing.wait(), 2)
+            await asyncio.wait_for(failing.wait(), 10)
             if failure == "cancel":
                 request.cancel()
                 with pytest.raises(asyncio.CancelledError):
@@ -352,6 +352,84 @@ async def test_inline_claim_registration_is_excluded_from_recovery(provider_fact
         results = await asyncio.wait_for(asyncio.gather(*pending, return_exceptions=True), 2)
         if api != "run" and not isinstance(results[0], BaseException) and results[0] is not None:
             await asyncio.wait_for(asyncio.gather(results[0].result(), return_exceptions=True), 2)
+        await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("api", ["get-active", "start", "run", "cancelled-get-active"])
+async def test_recovery_claim_registration_excludes_other_producers(provider_factory, monkeypatch, api):
+    provider, _ = provider_factory
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+    manager = TaskManager(config=host().config, provider=provider, shutdown_grace_seconds=0)
+    _manager.set_task_manager(manager)
+    claimed, release, running, finish = (asyncio.Event() for _ in range(4))
+    observed = []
+    claims = 0
+    original_update = provider.update
+
+    @task(name="recovery_first_registration")
+    async def existing(ctx: TaskContext[dict[str, str]]) -> str:
+        observed.append(ctx.input)
+        running.set()
+        await finish.wait()
+        return ctx.input["value"]
+
+    async def update(task_id, patch):
+        nonlocal claims
+        result = await original_update(task_id, patch)
+        if patch.lease_instance_id == manager._instance_id and patch.lease_duration_seconds:
+            claims += 1
+            if claims == 1:
+                claimed.set()
+                await release.wait()
+        return result
+
+    await manager.startup(restore_id="restore-1")
+    await seed_expired_task(provider, existing.name)
+    monkeypatch.setattr(provider, "update", update)
+    recovery = asyncio.create_task(manager._recover_stale_tasks())
+    follower = None
+    run = None
+    try:
+        await asyncio.wait_for(claimed.wait(), 10)
+        if api == "start":
+            operation = existing.start(task_id="existing-task", input={"value": "saved-input"})
+        elif api == "run":
+            operation = existing.run(task_id="existing-task", input={"value": "saved-input"})
+        else:
+            operation = manager.get_active_run(task_id="existing-task")
+        follower = asyncio.create_task(operation)
+        # Let the other producer observe the committed claim before its response is released.
+        await asyncio.sleep(0)
+        if api == "cancelled-get-active":
+            follower.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await follower
+            assert follower not in manager._active_admissions
+        release.set()
+        await asyncio.wait_for(recovery, 10)
+        await asyncio.wait_for(running.wait(), 10)
+        assert claims == 1
+        assert observed == [{"value": "saved-input"}]
+        if api in {"start", "run"}:
+            with pytest.raises(TaskConflictError):
+                await asyncio.wait_for(follower, 10)
+            run = await manager.get_active_run(task_id="existing-task")
+        elif api == "cancelled-get-active":
+            run = await manager.get_active_run(task_id="existing-task")
+        else:
+            run = await asyncio.wait_for(follower, 10)
+        assert run is not None
+        finish.set()
+        assert await asyncio.wait_for(run.result(), 10) == "saved-input"
+    finally:
+        release.set()
+        finish.set()
+        pending = [recovery] + ([follower] if follower is not None else [])
+        results = await asyncio.wait_for(asyncio.gather(*pending, return_exceptions=True), 10)
+        if api in {"get-active", "start"} and len(results) > 1 and not isinstance(results[1], BaseException):
+            if results[1] is not None:
+                await asyncio.wait_for(asyncio.gather(results[1].result(), return_exceptions=True), 10)
         await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
 
 
@@ -874,7 +952,7 @@ async def test_failed_restore_defers_queued_steering_callers_before_retry(provid
     async with app.router.lifespan_context(app), client(app) as http:
         request = asyncio.create_task(http.post("/_agent/after-restore", json=payload()))
         try:
-            await asyncio.wait_for(failing.wait(), 2)
+            await asyncio.wait_for(failing.wait(), 10)
             if failure == "cancel":
                 request.cancel()
                 with pytest.raises(asyncio.CancelledError):

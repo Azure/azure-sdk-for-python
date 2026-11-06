@@ -277,7 +277,12 @@ recover the original task rather than treating interruption as user cancellation
 Manager shutdown first closes task mutation admission and waits for already
 accepted submissions to settle before taking the final worker/lease snapshot.
 This includes submissions whose provider create/claim has not yet produced an
-active entry. Late accepted handles remain owned even if their workers finish
+active entry. Same-task producers are coordinated across the complete claim and
+worker-registration operation, so inline lookup cannot claim and launch a
+second worker while recovery awaits a committed provider response. Nested calls
+from the same actual async producer can re-enter; other producers wait without
+holding the provider write lock. Cancelled waiters release their admission.
+Late accepted handles remain owned even if their workers finish
 before the snapshot. New child submissions from cancellation/finally code are
 rejected, not launched; rejection during rollback preserves the parent for
 recovery rather than turning cleanup into terminal task failure.

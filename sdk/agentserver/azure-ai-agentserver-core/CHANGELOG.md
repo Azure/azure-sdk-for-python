@@ -22,6 +22,10 @@
 
 - Track task identity throughout inline start/run claims and positional active-
   run lookup, preventing recovery from dispatching work before claim registration.
+- Coordinate same-task producers across lease claims and worker registration,
+  preventing duplicate execution when inline lookup follows a committed recovery
+  claim whose provider response is still pending. Nested calls from the same
+  producer remain reentrant, and cancelled waiters release their admission.
 - Interrupt blocked recovery reads when shutdown begins, so admission can drain
   before scanner cancellation while accepted creates and claims settle safely.
   Host shutdown signals an activating manager before waiting for the serialized

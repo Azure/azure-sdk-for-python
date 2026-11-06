@@ -1056,12 +1056,13 @@ class Task(Generic[Input, Output]):
             with _task_manager_scope(lambda: manager), manager._task_admission(  # pylint: disable=protected-access
                 task_id=task_id
             ):
-                return await self._lifecycle_start_inner(
-                    task_id=task_id,
-                    input=input,
-                    input_id=input_id,
-                    if_last_input_id=if_last_input_id,
-                )
+                async with manager._task_producer(task_id):  # pylint: disable=protected-access
+                    return await self._lifecycle_start_inner(
+                        task_id=task_id,
+                        input=input,
+                        input_id=input_id,
+                        if_last_input_id=if_last_input_id,
+                    )
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc, task_id=task_id)
             if translated is None:
