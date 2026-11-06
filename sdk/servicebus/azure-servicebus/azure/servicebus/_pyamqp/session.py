@@ -314,7 +314,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             )
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
-            self.outgoing_window -= 1
             # TODO: We should probably handle an error at the connection and update state accordingly
             delivery.transfer_state = SessionTransferState.OKAY
 
@@ -337,10 +336,12 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     """Handle is not currently associated with an attached link""",
                 )
             )
-            return
-        if self.incoming_window == 0:
-            self.incoming_window = self.target_incoming_window
-            self._outgoing_flow()
+        finally:
+            # Replenish after delivering the transfer so a failure/cancel during
+            # flow send cannot drop an already-read frame (RECEIVE_AND_DELETE).
+            if self.state == SessionState.MAPPED and self.incoming_window <= 0:
+                self.incoming_window = self.target_incoming_window
+                self._outgoing_flow()
 
     def _outgoing_disposition(self, frame):
         self._connection._process_outgoing_frame(self.channel, frame)  # pylint: disable=protected-access

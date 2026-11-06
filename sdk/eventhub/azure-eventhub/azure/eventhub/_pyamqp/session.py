@@ -314,7 +314,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             )
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
-            self.outgoing_window -= 1
             # TODO: We should probably handle an error at the connection and update state accordingly
             delivery.transfer_state = SessionTransferState.OKAY
 
