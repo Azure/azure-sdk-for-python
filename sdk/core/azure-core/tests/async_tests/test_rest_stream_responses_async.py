@@ -32,7 +32,7 @@ async def test_iter_raw_on_iterable(client):
 
 
 @pytest.mark.asyncio
-async def test_iter_with_error(client):
+async def test_iter_with_error(client, monkeypatch):
     request = HttpRequest("GET", "/errors/403")
 
     async with client.send_request(request, stream=True) as response:
@@ -50,9 +50,14 @@ async def test_iter_with_error(client):
 
     assert response.is_closed
 
-    request = HttpRequest("GET", "http://doesNotExist")
-    with pytest.raises(ServiceRequestError):
-        async with await client.send_request(request, stream=True):
+    # Avoid depending on DNS failures or a proxy's response to an unknown hostname.
+    async def send_error(request, **kwargs):
+        raise ServiceRequestError("Simulated connection failure")
+
+    monkeypatch.setattr(client._client._pipeline._transport, "send", send_error)
+    request = HttpRequest("GET", "/streams/basic")
+    with pytest.raises(ServiceRequestError, match="Simulated connection failure"):
+        async with await client.send_request(request, stream=True, retry_total=0):
             raise ValueError("Should error before entering")
     assert response.is_closed
 

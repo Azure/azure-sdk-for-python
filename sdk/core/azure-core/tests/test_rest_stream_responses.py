@@ -45,7 +45,7 @@ def test_iter_raw_on_iterable(client):
         assert raw == b"Hello, world!"
 
 
-def test_iter_with_error(client):
+def test_iter_with_error(client, monkeypatch):
     request = HttpRequest("GET", "/errors/403")
 
     with client.send_request(request, stream=True) as response:
@@ -58,9 +58,14 @@ def test_iter_with_error(client):
             response.raise_for_status()
     assert response.is_closed
 
-    request = HttpRequest("GET", "http://doesNotExist")
-    with pytest.raises(ServiceRequestError):
-        with client.send_request(request, stream=True) as response:
+    # Avoid depending on DNS failures or a proxy's response to an unknown hostname.
+    def send_error(request, **kwargs):
+        raise ServiceRequestError("Simulated connection failure")
+
+    monkeypatch.setattr(client._client._pipeline._transport, "send", send_error)
+    request = HttpRequest("GET", "/streams/basic")
+    with pytest.raises(ServiceRequestError, match="Simulated connection failure"):
+        with client.send_request(request, stream=True, retry_total=0) as response:
             raise ValueError("Should error before entering")
     assert response.is_closed
 
