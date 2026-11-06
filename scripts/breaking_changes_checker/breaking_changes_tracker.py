@@ -669,6 +669,8 @@ class BreakingChangesTracker:
 
     def check_property_required(self, components: Dict) -> None:
         def _get_property_type(value: Any) -> Any:
+            if isinstance(value, dict) and value.get("is_annotation") is False:
+                return None
             return value.get("attr_type") if isinstance(value, dict) else value
 
         def _is_nullable(annotation: Any) -> bool:
@@ -694,6 +696,8 @@ class BreakingChangesTracker:
                 continue
             stable_type = _get_property_type(stable_properties[key])
             current_type = _get_property_type(current_properties[key])
+            if stable_type is None or current_type is None:
+                continue
             if _is_nullable(stable_type) and not _is_nullable(current_type):
                 bc = (
                     self.REQUIRED_PROPERTY_MSG,
@@ -706,6 +710,8 @@ class BreakingChangesTracker:
 
     def check_property_type_changed(self, components: Dict) -> None:
         def _get_property_type(value: Any) -> Any:
+            if isinstance(value, dict) and value.get("is_annotation") is False:
+                return None
             return value.get("attr_type") if isinstance(value, dict) else value
 
         def _normalize_property_type(annotation: str) -> frozenset:
