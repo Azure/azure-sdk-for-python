@@ -6,10 +6,12 @@
 
 import asyncio
 import hashlib
+import importlib
 import json
 import logging
 import math
 import os
+import pkgutil
 import subprocess
 import sys
 import threading
@@ -27,8 +29,9 @@ from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
 from azure.core.exceptions import ServiceRequestError
 
 from azure.ai.evaluation import CoherenceEvaluator, FluencyEvaluator, GroundednessEvaluator
+from azure.ai.evaluation import _evaluators as evaluators_package
 from azure.ai.evaluation._evaluators._common import EvaluatorBase, ModelEvaluatorBase, PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common import _model_runners
+from azure.ai.evaluation._evaluators._common import _decision_strategy, _model_runners
 from azure.ai.evaluation._evaluators._common._decision_strategy import (
     BinaryScoring,
     DecisionEvaluationStrategy,
@@ -1526,7 +1529,11 @@ class TestDecisionConversationUsage:
     def test_usage_details_are_summed_over_the_turns_that_reported_them(self):
         evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
         first = {"input_tokens_details": {"cached_tokens": 4}, "output_tokens_details": {"reasoning_tokens": 2}}
-        second = {"input_tokens_details": {"cached_tokens": 6, "cache_write_tokens": 1}}
+        # The second turn reports no completion tokens, so its reasoning counter is not summed.
+        second = {
+            "input_tokens_details": {"cached_tokens": 6, "cache_write_tokens": 1},
+            "output_tokens_details": {"reasoning_tokens": 50},
+        }
         turns = [
             {
                 "probe": 1,
@@ -1734,8 +1741,27 @@ class TestDecisionEvaluationMetrics:
         else:
             configured.runner.decision_protocol = protocol
         result = asyncio.run(configured.evaluate({}))
-        assert result["tool_call_accuracy_properties"]["decision_model"]["decision_protocol"] == label
+        provenance = result["tool_call_accuracy_properties"]["decision_model"]
+        # decision_model.protocol keeps the route values that hosted evaluations write.
+        assert provenance["decision_protocol"] == label and "protocol" not in provenance
         assert self.evaluation_attributes(recorded)["protocol"] == label
+
+    def test_every_decision_evaluator_in_this_package_reports_its_result_key(self):
+        for module in pkgutil.walk_packages(evaluators_package.__path__, evaluators_package.__name__ + "."):
+            importlib.import_module(module.name)
+
+        def subclasses(cls):
+            for subclass in cls.__subclasses__():
+                yield subclass
+                yield from subclasses(subclass)
+
+        keys = {
+            cls._RESULT_KEY
+            for cls in subclasses(ModelEvaluatorBase)
+            if getattr(cls, "_supports_decision_models", False) and isinstance(getattr(cls, "_RESULT_KEY", None), str)
+        }
+        assert len(keys) >= 15
+        assert keys <= _decision_strategy._METRIC_NAMES
 
     @staticmethod
     def runner_strategy(runner):

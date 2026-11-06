@@ -43,7 +43,6 @@ _METRIC_NAMES = frozenset(
         "groundedness",
         "intent_resolution",
         "output_quality",
-        "quality_grader",
         "relevance",
         "response_completeness",
         "retrieval",

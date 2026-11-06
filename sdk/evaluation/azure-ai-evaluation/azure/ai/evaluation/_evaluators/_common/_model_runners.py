@@ -522,7 +522,9 @@ class DecisionModelRunner:
     ``context_window_exceeded`` when the evidence and one question exceed the model's context window,
     ``request_token_limit_exceeded``, ``question_limit_exceeded`` or ``invalid_question`` for the provider's other
     rejections, ``request_bytes_exceeded`` for a request over the byte limits, which is not sent, and
-    ``content_filter`` when the provider's content filter rejects the evaluated content.
+    ``content_filter`` when the provider's content filter rejects the evaluated content. Because the limits measure
+    the canonical request, a host that derives them from a provider's wire limit must allow for the larger OpenAI
+    encoding, which repeats Boolean criteria in each predicate and sends structured evidence as JSON text.
     """
 
     SUPPORTED_PROTOCOLS = frozenset(DECISION_PROTOCOLS)
