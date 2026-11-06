@@ -35,8 +35,6 @@ _RETRIEVAL_CAPABILITIES = (
 )
 _STREAM_CAPABILITIES = (
     "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient.retrieve_stream",
-    "KnowledgeBaseRetrievalEvent",
-    "AsyncKnowledgeBaseRetrievalStream",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent",
 )
@@ -92,6 +90,7 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
             KnowledgeBaseRetrievalRequest,
             KnowledgeBaseRetrievalResponse,
             KnowledgeBaseRetrievalStartedEvent,
+            KnowledgeBaseStreamErrorEvent,
             KnowledgeRetrievalMinimalReasoningEffort,
             KnowledgeRetrievalSemanticIntent,
         )
@@ -118,9 +117,9 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
                 async with stream:
                     events = [event async for event in stream]
 
-            assert events[0].event_type == "retrieval.started"
-            assert isinstance(events[0].data, KnowledgeBaseRetrievalStartedEvent)
-            assert events[-1].event_type == "response.completed"
-            assert isinstance(events[-1].data, KnowledgeBaseResponseCompletedEvent)
-            assert isinstance(events[-1].data.response, KnowledgeBaseRetrievalResponse)
-            assert sum(event.event_type in ("response.completed", "error") for event in events) == 1
+            assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
+            assert isinstance(events[-1], KnowledgeBaseResponseCompletedEvent)
+            assert events[-1].status_code in (200, 206)
+            assert isinstance(events[-1].response, KnowledgeBaseRetrievalResponse)
+            assert not any(isinstance(event, KnowledgeBaseStreamErrorEvent) for event in events)
+            assert sum(isinstance(event, KnowledgeBaseResponseCompletedEvent) for event in events) == 1

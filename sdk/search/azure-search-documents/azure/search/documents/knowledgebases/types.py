@@ -18,9 +18,60 @@ from .models._enums import (
 )
 
 if TYPE_CHECKING:
-    from ..indexes.types import SearchIndexKnowledgeSourceQueryHints
     from ..indexes.models import KnowledgeSourceResultsProcessing
-    from .models import KnowledgeRetrievalOutputMode
+    from ..indexes.types import SearchIndexKnowledgeSourceQueryHints
+    from ..types import VectorQueryTopicGraph
+    from .models import KnowledgeRetrievalOutputMode, KnowledgeSourceGraphProvenanceKind
+
+
+class AgentRuntimeGraphHydrateDocumentsParams(TypedDict, total=False):
+    """Selection and count limits for hydrated source documents returned by knowledge retrieval.
+
+    :ivar select: Comma-separated retrievable source fields to include.
+    :vartype select: str
+    :ivar top: Maximum hydrated documents to return. Defaults to 50; this is independent of
+     graph-row count.
+    :vartype top: int
+    """
+
+    select: str
+    """Comma-separated retrievable source fields to include."""
+    top: int
+    """Maximum hydrated documents to return. Defaults to 50; this is independent of graph-row count."""
+
+
+class AgentRuntimeGraphParams(TypedDict, total=False):
+    """Graph-specific overrides for a graph-enabled Azure Blob knowledge source during retrieval.
+
+    :ivar provenance: Controls whether source documents supporting graph results are also returned.
+    :vartype provenance: "AgentRuntimeGraphProvenanceParams"
+    :ivar includeQuery: Include generated GQL in graphSearchArguments.gql. Omitted or false does
+     not expose generated query text.
+    :vartype includeQuery: bool
+    """
+
+    provenance: "AgentRuntimeGraphProvenanceParams"
+    """Controls whether source documents supporting graph results are also returned."""
+    includeQuery: bool
+    """Include generated GQL in graphSearchArguments.gql. Omitted or false does not expose generated
+     query text."""
+
+
+class AgentRuntimeGraphProvenanceParams(TypedDict, total=False):
+    """Source-document hydration policy for knowledge retrieval graph results.
+
+    :ivar kind: Whether graph retrieval returns graph rows only or also hydrates source documents.
+     Known values are: "none" and "hydrate".
+    :vartype kind: Union[str, "KnowledgeSourceGraphProvenanceKind"]
+    :ivar hydrateDocuments: Source-document options; only valid when kind is hydrate.
+    :vartype hydrateDocuments: "AgentRuntimeGraphHydrateDocumentsParams"
+    """
+
+    kind: Union[str, "KnowledgeSourceGraphProvenanceKind"]
+    """Whether graph retrieval returns graph rows only or also hydrates source documents. Known values
+     are: \"none\" and \"hydrate\"."""
+    hydrateDocuments: "AgentRuntimeGraphHydrateDocumentsParams"
+    """Source-document options; only valid when kind is hydrate."""
 
 
 class AzureBlobKnowledgeSourceParams(TypedDict, total=False):
@@ -62,10 +113,12 @@ class AzureBlobKnowledgeSourceParams(TypedDict, total=False):
     :ivar kind: The discriminator value. Required. A knowledge source that read and ingest data
      from Azure Blob Storage to a Search Index.
     :vartype kind: Literal[KnowledgeSourceKind.AZURE_BLOB]
-    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
-     specified, this object replaces the complete set of query hints configured on the knowledge
-     source.
-    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
+    :ivar graphParameters: Graph-query visibility and source-document hydration options for a
+     graph-enabled source.
+    :vartype graphParameters: "AgentRuntimeGraphParams"
+    :ivar topicGraph: Overrides the knowledge source's stored topicGraph for this retrieval. When
+     omitted, the stored knowledge source value applies.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     """
 
     knowledgeSourceName: Required[str]
@@ -98,9 +151,11 @@ class AzureBlobKnowledgeSourceParams(TypedDict, total=False):
     kind: Required[Literal[KnowledgeSourceKind.AZURE_BLOB]]
     """The discriminator value. Required. A knowledge source that read and ingest data from Azure Blob
      Storage to a Search Index."""
-    queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
-    """Hints that guide query planning toward useful filters and boosts. If specified, this object
-     replaces the complete set of query hints configured on the knowledge source."""
+    graphParameters: "AgentRuntimeGraphParams"
+    """Graph-query visibility and source-document hydration options for a graph-enabled source."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Overrides the knowledge source's stored topicGraph for this retrieval. When omitted, the stored
+     knowledge source value applies."""
 
 
 class FabricDataAgentKnowledgeSourceParams(TypedDict, total=False):
@@ -288,10 +343,6 @@ class FileKnowledgeSourceParams(TypedDict, total=False):
     :ivar kind: The discriminator value. Required. A knowledge source that supports direct file
      upload and indexing.
     :vartype kind: Literal[KnowledgeSourceKind.FILE]
-    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
-     specified, this object replaces the complete set of query hints configured on the knowledge
-     source.
-    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -324,9 +375,6 @@ class FileKnowledgeSourceParams(TypedDict, total=False):
     kind: Required[Literal[KnowledgeSourceKind.FILE]]
     """The discriminator value. Required. A knowledge source that supports direct file upload and
      indexing."""
-    queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
-    """Hints that guide query planning toward useful filters and boosts. If specified, this object
-     replaces the complete set of query hints configured on the knowledge source."""
 
 
 class IndexedOneLakeKnowledgeSourceParams(TypedDict, total=False):
@@ -368,10 +416,6 @@ class IndexedOneLakeKnowledgeSourceParams(TypedDict, total=False):
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from indexed
      OneLake.
     :vartype kind: Literal[KnowledgeSourceKind.INDEXED_ONELAKE]
-    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
-     specified, this object replaces the complete set of query hints configured on the knowledge
-     source.
-    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -403,9 +447,6 @@ class IndexedOneLakeKnowledgeSourceParams(TypedDict, total=False):
      When true, images extracted during ingestion are delivered to downstream models."""
     kind: Required[Literal[KnowledgeSourceKind.INDEXED_ONELAKE]]
     """The discriminator value. Required. A knowledge source that reads data from indexed OneLake."""
-    queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
-    """Hints that guide query planning toward useful filters and boosts. If specified, this object
-     replaces the complete set of query hints configured on the knowledge source."""
 
 
 class IndexedSharePointKnowledgeSourceParams(TypedDict, total=False):
@@ -447,10 +488,6 @@ class IndexedSharePointKnowledgeSourceParams(TypedDict, total=False):
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from indexed
      SharePoint.
     :vartype kind: Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]
-    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
-     specified, this object replaces the complete set of query hints configured on the knowledge
-     source.
-    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -482,9 +519,6 @@ class IndexedSharePointKnowledgeSourceParams(TypedDict, total=False):
      When true, images extracted during ingestion are delivered to downstream models."""
     kind: Required[Literal[KnowledgeSourceKind.INDEXED_SHARE_POINT]]
     """The discriminator value. Required. A knowledge source that reads data from indexed SharePoint."""
-    queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
-    """Hints that guide query planning toward useful filters and boosts. If specified, this object
-     replaces the complete set of query hints configured on the knowledge source."""
 
 
 class IndexedSqlKnowledgeSourceParams(TypedDict, total=False):
@@ -526,10 +560,6 @@ class IndexedSqlKnowledgeSourceParams(TypedDict, total=False):
     :ivar kind: The discriminator value. Required. A knowledge source that retrieves and ingests
      data from Azure SQL Database or SQL Managed Instance to a Search Index.
     :vartype kind: Literal[KnowledgeSourceKind.INDEXED_SQL]
-    :ivar queryHintOverrides: Hints that guide query planning toward useful filters and boosts. If
-     specified, this object replaces the complete set of query hints configured on the knowledge
-     source.
-    :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """
 
     knowledgeSourceName: Required[str]
@@ -562,9 +592,6 @@ class IndexedSqlKnowledgeSourceParams(TypedDict, total=False):
     kind: Required[Literal[KnowledgeSourceKind.INDEXED_SQL]]
     """The discriminator value. Required. A knowledge source that retrieves and ingests data from
      Azure SQL Database or SQL Managed Instance to a Search Index."""
-    queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
-    """Hints that guide query planning toward useful filters and boosts. If specified, this object
-     replaces the complete set of query hints configured on the knowledge source."""
 
 
 class KnowledgeBaseImageContent(TypedDict, total=False):
@@ -647,6 +674,8 @@ class KnowledgeBaseRetrievalRequest(TypedDict, total=False):
     :vartype outputMode: Union[str, "KnowledgeRetrievalOutputMode"]
     :ivar knowledgeSourceParams: A list of runtime parameters for the knowledge sources.
     :vartype knowledgeSourceParams: list["KnowledgeSourceParams"]
+    :ivar toolName: The tool to select. Omit for KB-wide retrieval.
+    :vartype toolName: str
     """
 
     messages: list["KnowledgeBaseMessage"]
@@ -670,6 +699,8 @@ class KnowledgeBaseRetrievalRequest(TypedDict, total=False):
      \"answerSynthesis\"."""
     knowledgeSourceParams: list["KnowledgeSourceParams"]
     """A list of runtime parameters for the knowledge sources."""
+    toolName: str
+    """The tool to select. Omit for KB-wide retrieval."""
 
 
 class KnowledgeRetrievalAutoReasoningEffort(TypedDict, total=False):
@@ -936,6 +967,9 @@ class SearchIndexKnowledgeSourceParams(TypedDict, total=False):
      specified, this object replaces the complete set of query hints configured on the knowledge
      source.
     :vartype queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
+    :ivar topicGraph: Overrides the knowledge source's stored topicGraph for this retrieval. When
+     omitted, the stored knowledge source value applies.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     """
 
     knowledgeSourceName: Required[str]
@@ -972,6 +1006,9 @@ class SearchIndexKnowledgeSourceParams(TypedDict, total=False):
     queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
     """Hints that guide query planning toward useful filters and boosts. If specified, this object
      replaces the complete set of query hints configured on the knowledge source."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Overrides the knowledge source's stored topicGraph for this retrieval. When omitted, the stored
+     knowledge source value applies."""
 
 
 class WebKnowledgeSourceParams(TypedDict, total=False):

@@ -56,6 +56,9 @@ def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchInd
         vector_search=response.vector_search,
         permission_filter_option=response.permission_filter_option,
         purview_enabled=response.purview_enabled,
+        graph_profile=response.graph_profile,
+        share_point_connector_app_registration=response.share_point_connector_app_registration,
+        one_lake_security_source=response.one_lake_security_source,
         e_tag=response.e_tag,
     )
 
@@ -95,13 +98,14 @@ class _SearchIndexClientOperationsMixin(
             name = synonym_map  # type: ignore
             return self._delete_synonym_map(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace
     def create_or_update_synonym_map(
         self,
-        synonym_map: Union[_models.SynonymMap, JSON],
+        synonym_map: Union[_models.SynonymMap, _types.SynonymMap, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -147,13 +151,14 @@ class _SearchIndexClientOperationsMixin(
             name = index  # type: ignore
             return self._delete_index(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace
     def create_or_update_index(
         self,
-        index: Union[_models.SearchIndex, JSON],
+        index: Union[_models.SearchIndex, _types.SearchIndex, JSON],
         allow_index_downtime: Optional[bool] = None,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -190,7 +195,7 @@ class _SearchIndexClientOperationsMixin(
     @distributed_trace
     def create_or_update_alias(
         self,
-        alias: Union[_models.SearchAlias, JSON],
+        alias: Union[_models.SearchAlias, _types.SearchAlias, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -246,6 +251,7 @@ class _SearchIndexClientOperationsMixin(
             name = alias  # type: ignore
             return self._delete_alias(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
@@ -279,13 +285,14 @@ class _SearchIndexClientOperationsMixin(
             name = knowledge_base  # type: ignore
             return self._delete_knowledge_base(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace
     def create_or_update_knowledge_base(
         self,
-        knowledge_base: Union[_models.KnowledgeBase, JSON],
+        knowledge_base: Union[_models.KnowledgeBase, _types.KnowledgeBase, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -314,7 +321,7 @@ class _SearchIndexClientOperationsMixin(
     @distributed_trace
     def create_or_update_knowledge_source(
         self,
-        knowledge_source: Union[_models.KnowledgeSource, JSON],
+        knowledge_source: Union[_models.KnowledgeSource, _types.KnowledgeSource, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -370,6 +377,7 @@ class _SearchIndexClientOperationsMixin(
             name = knowledge_source  # type: ignore
             return self._delete_knowledge_source(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
@@ -562,7 +570,7 @@ class _SearchIndexClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return list(
-            self._get_synonym_maps(
+            self.list_synonym_maps(
                 select=select,
                 search=search,
                 page_size=page_size,
@@ -598,7 +606,7 @@ class _SearchIndexClientOperationsMixin(
     def analyze_text(
         self,
         index_name: str,
-        analyze_request: _models.AnalyzeTextOptions,
+        analyze_request: Union[_models.AnalyzeTextOptions, _types.AnalyzeTextOptions, IO[bytes]],
         **kwargs: Any,
     ) -> _models.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
@@ -606,7 +614,7 @@ class _SearchIndexClientOperationsMixin(
         :param index_name: The name of the index to test an analyzer on. Required.
         :type index_name: str
         :param analyze_request: The text and analyzer or analysis components to test. Required.
-        :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
+        :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions or TypedDict or IO[bytes]
         :return: AnalyzeResult
         :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -688,13 +696,16 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name = data_source_connection  # type: ignore
             return self._delete_data_source_connection(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace
     def create_or_update_data_source_connection(
         self,
-        data_source_connection: Union[_models.SearchIndexerDataSourceConnection, JSON],
+        data_source_connection: Union[
+            _models.SearchIndexerDataSourceConnection, _types.SearchIndexerDataSourceConnection, JSON
+        ],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -754,13 +765,14 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name = indexer  # type: ignore
             return self._delete_indexer(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace
     def create_or_update_indexer(
         self,
-        indexer: Union[_models.SearchIndexer, JSON],
+        indexer: Union[_models.SearchIndexer, _types.SearchIndexer, JSON],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -799,7 +811,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     def resync(
         self,
         name: str,
-        indexer_resync: Union[_models.IndexerResyncBody, JSON, IO[bytes]],
+        indexer_resync: Union[_models.IndexerResyncBody, _types.IndexerResyncBody, JSON, IO[bytes]],
         **kwargs: Any,
     ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.
@@ -807,7 +819,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :param name: The name of the indexer. Required.
         :type name: str
         :param indexer_resync: The definition of the indexer resync options. Required.
-        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or JSON or IO[bytes]
+        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or TypedDict or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -876,13 +888,14 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name = skillset  # type: ignore
             return self._delete_skillset(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace
     def create_or_update_skillset(
         self,
-        skillset: Union[_models.SearchIndexerSkillset, JSON],
+        skillset: Union[_models.SearchIndexerSkillset, _types.SearchIndexerSkillset, JSON],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -965,7 +978,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return list(
-            self._get_skillsets(
+            self.list_skillsets(
                 select=select,
                 search=search,
                 page_size=page_size,
@@ -1002,7 +1015,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return list(
-            self._get_indexers(
+            self.list_indexers(
                 select=select,
                 search=search,
                 page_size=page_size,
@@ -1058,7 +1071,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return list(
-            self._get_data_source_connections(
+            self.list_data_source_connections(
                 select=select,
                 search=search,
                 page_size=page_size,

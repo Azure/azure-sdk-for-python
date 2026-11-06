@@ -36,6 +36,20 @@ async def _async_none(*args, **kwargs):
 
 
 @pytest.mark.asyncio
+class TestSearchIndexerClientDeleteAsync:
+    @pytest.mark.parametrize("resource", ["data_source_connection", "indexer", "skillset"])
+    async def test_delete_resource_by_name_preserves_condition_and_etag(self, resource):
+        async with _client() as client:
+            with mock.patch.object(client, "_delete_" + resource, new_callable=mock.AsyncMock) as operation:
+                await getattr(client, "delete_" + resource)(
+                    "owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+                )
+        operation.assert_awaited_once_with(
+            name="owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+        )
+
+
+@pytest.mark.asyncio
 class TestSearchIndexerCreateOrUpdateDataSourceConnectionAsync:
     async def test_create_or_update_data_source_connection_forwards_reset_requirement_option(self):
         require_capability(

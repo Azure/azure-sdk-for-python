@@ -8,12 +8,14 @@ from __future__ import annotations
 
 from devtools_testutils import AzureRecordedTestCase
 
+from _capabilities import require_capability
 from _search_helpers import (
     HOTEL_SUGGESTER_NAME,
     LARGE_HOTEL_DOCUMENT_COUNT,
     SEARCH_SELECT_FIELDS,
     hotel_index,
     live_test,
+    make_index_client,
 )
 
 
@@ -27,6 +29,55 @@ def _assert_budget_results(results):
 
 
 class TestSearchClientSearch(AzureRecordedTestCase):
+    @live_test()
+    def test_search_more_like_this_excludes_seed_document(self, endpoint):
+        require_capability("azure.search.documents.SearchClient.search.more_like_this")
+        index_name = self.get_resource_name("index-search-more-like-this")
+
+        with hotel_index(self, endpoint, index_name) as (search_client, documents):
+            results = list(search_client.search(more_like_this="8", select=["HotelId"], top=3))
+
+            assert results
+            result_ids = {result["HotelId"] for result in results}
+            assert "8" not in result_ids
+            assert result_ids <= {document["HotelId"] for document in documents}
+
+    @live_test()
+    def test_search_random_scoring_preserves_seeded_order(self, endpoint):
+        require_capability(
+            "azure.search.documents.indexes.models.RandomScoringFunction",
+            "azure.search.documents.indexes.models.RandomScoringParameters",
+        )
+        from azure.search.documents.indexes.models import RandomScoringFunction, RandomScoringParameters, ScoringProfile
+
+        index_name = self.get_resource_name("index-search-random-scoring")
+        with hotel_index(self, endpoint, index_name) as (search_client, documents):
+            with make_index_client(endpoint) as index_client:
+                index = index_client.get_index(index_name)
+                index.scoring_profiles = [
+                    ScoringProfile(
+                        name="random-hotels",
+                        functions=[RandomScoringFunction(parameters=RandomScoringParameters(seed_parameter="seed"))],
+                    )
+                ]
+                index_client.create_or_update_index(index)
+
+            options = {
+                "search_text": "*",
+                "scoring_profile": "random-hotels",
+                "scoring_parameters": ["seed-42"],
+                "select": ["HotelId"],
+                "top": len(documents),
+            }
+            first = list(search_client.search(**options))
+            second = list(search_client.search(**options))
+
+            assert len(first) == len(documents)
+            assert {result["HotelId"] for result in first} == {document["HotelId"] for document in documents}
+            assert [(result["HotelId"], result["@search.score"]) for result in first] == [
+                (result["HotelId"], result["@search.score"]) for result in second
+            ]
+
     @live_test()
     def test_search_returns_documents_matching_search_text(self, endpoint):
         index_name = self.get_resource_name("index-search-text")

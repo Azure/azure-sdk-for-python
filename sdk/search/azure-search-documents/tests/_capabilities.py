@@ -58,6 +58,7 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         # File
         f"{_IM}.FileKnowledgeSource",
         f"{_IM}.FileKnowledgeSourceParameters",
+        f"{_IM}.KnowledgeSourceFile",
         f"{_IM}.FileUploadMetadata",
         f"{_IM}.UpdateKnowledgeSourceFileRequest",
         f"{_IM}.UploadKnowledgeSourceFileMultipartRequest",
@@ -111,8 +112,11 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_KBM}.KnowledgeBaseRetrievalResponse",
         f"{_KBM}.KnowledgeRetrievalSemanticIntent",
         f"{_KBM}.KnowledgeSourceIngestionParameters",
+        f"{_KBM}.KnowledgeRetrievalMinimalReasoningEffort",
         f"{_KBM}.KnowledgeRetrievalLowReasoningEffort",
         f"{_KBM}.KnowledgeRetrievalMediumReasoningEffort",
+        f"{_KBM}.KnowledgeBaseSearchIndexActivityRecord",
+        f"{_KBM}.KnowledgeBaseSearchIndexReference",
         f"{_KBM}.KnowledgeRetrievalOutputMode",
         f"{_KBM}.KnowledgeBaseModelQueryPlanningActivityRecord",
         f"{_KBM}.KnowledgeBaseModelAnswerSynthesisActivityRecord",
@@ -449,6 +453,36 @@ _CAPS: dict = {
 }
 _CAPS.update(_model_capabilities())
 _CAPS.update(_client_capabilities())
+for _owner, _kwargs in (
+    ("azure.search.documents.SearchClient.search", ("agentic_options", "more_like_this")),
+    ("azure.search.documents.aio.SearchClient.search", ("agentic_options", "more_like_this")),
+    ("azure.search.documents.models.VectorizedQuery", ("topic_graph",)),
+    ("azure.search.documents.models.AgenticSearchOptions", ("max_runtime_in_seconds",)),
+    ("azure.search.documents.indexes.models.SearchIndex", ("graph_profile",)),
+    ("azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHint", ("auto_configuration",)),
+    ("azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters", ("cache",)),
+    ("azure.search.documents.indexes.SearchIndexClient.begin_ingest_knowledge_source_file_multipart", ()),
+    ("azure.search.documents.indexes.SearchIndexClient.begin_ingest_knowledge_source_file_replacement", ()),
+    ("azure.search.documents.indexes.aio.SearchIndexClient.begin_ingest_knowledge_source_file_multipart", ()),
+    ("azure.search.documents.indexes.aio.SearchIndexClient.begin_ingest_knowledge_source_file_replacement", ()),
+    ("azure.search.documents.indexes.models.RandomScoringFunction", ()),
+    ("azure.search.documents.indexes.models.RandomScoringParameters", ()),
+    ("azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHintAutoConfiguration", ()),
+    ("azure.search.documents.indexes.models.KnowledgeBase", ("tools",)),
+    ("azure.search.documents.indexes.models.KnowledgeBaseTool", ()),
+    ("azure.search.documents.indexes.models.KnowledgeBaseToolKnowledgeSourceReference", ()),
+    ("azure.search.documents.indexes.models.GraphProfile", ()),
+    ("azure.search.documents.indexes.models.GraphFieldMappings", ()),
+    ("azure.search.documents.models.GraphQueryResult", ()),
+    ("azure.search.documents.models.GraphQueryProvenanceParameters", ()),
+    ("azure.search.documents.SearchClient.graph", ()),
+    ("azure.search.documents.aio.SearchClient.graph", ()),
+):
+    if _kwargs:
+        for _kwarg in _kwargs:
+            _CAPS[f"{_owner}.{_kwarg}"] = _surface(_owner, (_kwarg,), available_from="2026-11-01-preview")
+    else:
+        _CAPS[_owner] = _surface(_owner, available_from="2026-11-01-preview")
 
 CAPABILITIES: Mapping[str, Mapping[str, Any]] = _CAPS
 
