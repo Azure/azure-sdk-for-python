@@ -24,7 +24,8 @@ class Action(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-
      and "ForceDisable".
     :vartype action_type: str or ~azure.mgmt.datatransfer.models.DateTransferActionType
     :ivar target_type: Type of target to execute the action on. Required. Known values are:
-     "Pipeline", "Connection", "FlowType", and "FlowProfile".
+     "Pipeline", "Connection", "FlowType", "StorageTransferFlow", "MessagingTransferFlow", and
+     "FlowProfile".
     :vartype target_type: str or ~azure.mgmt.datatransfer.models.TargetType
     :ivar targets: Targets for the action.
     :vartype targets: list[str]
@@ -41,7 +42,8 @@ class Action(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-
         name="targetType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of target to execute the action on. Required. Known values are: \"Pipeline\",
-     \"Connection\", \"FlowType\", and \"FlowProfile\"."""
+     \"Connection\", \"FlowType\", \"StorageTransferFlow\", \"MessagingTransferFlow\", and
+     \"FlowProfile\"."""
     targets: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Targets for the action."""
     justification: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -792,6 +794,14 @@ class DirectionSettings(_Model):  # pylint: disable=docstring-keyword-should-mat
      this direction.
     :vartype messaging_flows_pricing_options: list[str or
      ~azure.mgmt.datatransfer.models.FlowBillingTier]
+    :ivar storage_location_mappings: The one-to-one mappings between storage flow locations in this
+     cloud and corresponding storage flow locations in the other cloud for this direction. Each
+     location and paired location appears in at most one mapping.
+    :vartype storage_location_mappings: list[~azure.mgmt.datatransfer.models.LocationMapping]
+    :ivar messaging_location_mappings: The one-to-one mappings between messaging flow locations in
+     this cloud and corresponding messaging flow locations in the other cloud for this direction.
+     Each location and paired location appears in at most one mapping.
+    :vartype messaging_location_mappings: list[~azure.mgmt.datatransfer.models.LocationMapping]
     """
 
     complete_linking: Union[str, "_models.EnablementStatus"] = rest_field(
@@ -826,6 +836,18 @@ class DirectionSettings(_Model):  # pylint: disable=docstring-keyword-should-mat
         name="messagingFlowsPricingOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """The pricing options available for messaging flows in this direction."""
+    storage_location_mappings: Optional[list["_models.LocationMapping"]] = rest_field(
+        name="storageLocationMappings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The one-to-one mappings between storage flow locations in this cloud and corresponding storage
+     flow locations in the other cloud for this direction. Each location and paired location appears
+     in at most one mapping."""
+    messaging_location_mappings: Optional[list["_models.LocationMapping"]] = rest_field(
+        name="messagingLocationMappings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The one-to-one mappings between messaging flow locations in this cloud and corresponding
+     messaging flow locations in the other cloud for this direction. Each location and paired
+     location appears in at most one mapping."""
 
     @overload
     def __init__(
@@ -838,6 +860,8 @@ class DirectionSettings(_Model):  # pylint: disable=docstring-keyword-should-mat
         messaging_flow_type_schema_validation: Optional[Union[str, "_models.EnablementStatus"]] = None,
         flow_profile_data_classes_available: Optional[list[Union[str, "_models.DataClassType"]]] = None,
         messaging_flows_pricing_options: Optional[list[Union[str, "_models.FlowBillingTier"]]] = None,
+        storage_location_mappings: Optional[list["_models.LocationMapping"]] = None,
+        messaging_location_mappings: Optional[list["_models.LocationMapping"]] = None,
     ) -> None: ...
 
     @overload
@@ -2026,6 +2050,141 @@ class ListPipelineMetadataResult(_Model):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
+class ListTransferFlowsByPipelineRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request resource body to reference.
+
+    :ivar flows: Filters applied to the storage and messaging transfer flows returned.
+    :vartype flows: ~azure.mgmt.datatransfer.models.ListTransferFlowsRequestBody
+    """
+
+    flows: Optional["_models.ListTransferFlowsRequestBody"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Filters applied to the storage and messaging transfer flows returned."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        flows: Optional["_models.ListTransferFlowsRequestBody"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListTransferFlowsParameterBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ListTransferFlowsParameterBody.
+
+    :ivar body: Filters used to select the flow resources to be retrieved.
+    :vartype body: ~azure.mgmt.datatransfer.models.ListTransferFlowsByPipelineRequestBody
+    """
+
+    body: Optional["_models.ListTransferFlowsByPipelineRequestBody"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Filters used to select the flow resources to be retrieved."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        body: Optional["_models.ListTransferFlowsByPipelineRequestBody"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListTransferFlowsRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request resource body to reference for Flow resources.
+
+    :ivar status: Status of the resource(s). If null, all statuses are considered. Known values
+     are: "AwaitingApproval", "ApprovedWaitingToBeLinked", "Enabled", "Disabled", and "Rejected".
+    :vartype status: str or ~azure.mgmt.datatransfer.models.CommonTransferFlowStatus
+    :ivar data_class_types: Data class types of the resource(s). If null, all data class types are
+     considered.
+    :vartype data_class_types: list[str or ~azure.mgmt.datatransfer.models.DataClassType]
+    """
+
+    status: Optional[Union[str, "_models.CommonTransferFlowStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Status of the resource(s). If null, all statuses are considered. Known values are:
+     \"AwaitingApproval\", \"ApprovedWaitingToBeLinked\", \"Enabled\", \"Disabled\", and
+     \"Rejected\"."""
+    data_class_types: Optional[list[Union[str, "_models.DataClassType"]]] = rest_field(
+        name="dataClassTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data class types of the resource(s). If null, all data class types are considered."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.CommonTransferFlowStatus"]] = None,
+        data_class_types: Optional[list[Union[str, "_models.DataClassType"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LocationMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Maps a flow location in this cloud to the corresponding flow location in the other cloud.
+
+    :ivar location: The Azure location name of the flow in this cloud. Required.
+    :vartype location: str
+    :ivar paired_location: The Azure location name of the corresponding flow in the other cloud.
+     Required.
+    :vartype paired_location: str
+    """
+
+    location: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure location name of the flow in this cloud. Required."""
+    paired_location: str = rest_field(name="pairedLocation", visibility=["read", "create", "update", "delete", "query"])
+    """The Azure location name of the corresponding flow in the other cloud. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        paired_location: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
@@ -2110,6 +2269,207 @@ class MessagingOptions(_Model):  # pylint: disable=docstring-keyword-should-matc
         *,
         billing_tier: Optional[Union[str, "_models.FlowBillingTier"]] = None,
         performance_priority: Optional[Union[str, "_models.EnablementStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessagingTransferFlow(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The messaging transfer flow resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.datatransfer.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of MessagingTransferFlow. Required.
+    :vartype properties: ~azure.mgmt.datatransfer.models.MessagingTransferFlowProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.datatransfer.models.ManagedServiceIdentity
+    """
+
+    properties: "_models.MessagingTransferFlowProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of MessagingTransferFlow. Required."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "_models.MessagingTransferFlowProperties",
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessagingTransferFlowProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a messaging flow.
+
+    :ivar pipeline: Name of the pipeline the transfer flow uses. Pipelines are service-managed
+     resources that customers cannot access directly; customers are given the name of the pipeline
+     they are approved to use. Required.
+    :vartype pipeline: str
+    :ivar flow_id: Dataflow GUID associated with this flow.
+    :vartype flow_id: str
+    :ivar transfer_role: Transfer role indicating the direction of data movement. Required. Known
+     values are: "Source" and "Destination".
+    :vartype transfer_role: str or ~azure.mgmt.datatransfer.models.TransferRole
+    :ivar remote_transfer_flow_resource_id: ARM resource ID of the paired transfer flow on the
+     remote side of the pipeline. Required.
+    :vartype remote_transfer_flow_resource_id: str
+    :ivar status: Approval and lifecycle status of the transfer flow. Set by the service; use the
+     approve/reject pipeline actions and the enableTransfer/disableTransfer actions to change it.
+     Known values are: "AwaitingApproval", "ApprovedWaitingToBeLinked", "Enabled", "Disabled", and
+     "Rejected".
+    :vartype status: str or ~azure.mgmt.datatransfer.models.CommonTransferFlowStatus
+    :ivar force_disabled_status: Force disablement status of the current flow.
+    :vartype force_disabled_status: list[str or
+     ~azure.mgmt.datatransfer.models.ForceDisabledStatus]
+    :ivar flow_profile_name: Name of the FlowProfile to use for transfer via the flow. Resolved
+     relative to the pipeline identified by the pipeline property. Required.
+    :vartype flow_profile_name: str
+    :ivar provisioning_state: Provisioning state of the flow. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.datatransfer.models.ProvisioningState
+    :ivar messaging_data_resource_id: ARM resource ID of the Service Bus queue or Event Hub used
+     for this flow. The messaging namespace and messaging type are derived from this ID. Required.
+    :vartype messaging_data_resource_id: str
+    :ivar consumer_group: Event Hub consumer group. Only valid when messagingDataResourceId is an
+     Event Hub. Defaults to "$Default".
+    :vartype consumer_group: str
+    :ivar messaging_options: The messaging options for this flow.
+    :vartype messaging_options: ~azure.mgmt.datatransfer.models.MessagingOptions
+    """
+
+    pipeline: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the pipeline the transfer flow uses. Pipelines are service-managed resources that
+     customers cannot access directly; customers are given the name of the pipeline they are
+     approved to use. Required."""
+    flow_id: Optional[str] = rest_field(name="flowId", visibility=["read"])
+    """Dataflow GUID associated with this flow."""
+    transfer_role: Union[str, "_models.TransferRole"] = rest_field(
+        name="transferRole", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Transfer role indicating the direction of data movement. Required. Known values are: \"Source\"
+     and \"Destination\"."""
+    remote_transfer_flow_resource_id: str = rest_field(
+        name="remoteTransferFlowResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the paired transfer flow on the remote side of the pipeline. Required."""
+    status: Optional[Union[str, "_models.CommonTransferFlowStatus"]] = rest_field(visibility=["read"])
+    """Approval and lifecycle status of the transfer flow. Set by the service; use the approve/reject
+     pipeline actions and the enableTransfer/disableTransfer actions to change it. Known values are:
+     \"AwaitingApproval\", \"ApprovedWaitingToBeLinked\", \"Enabled\", \"Disabled\", and
+     \"Rejected\"."""
+    force_disabled_status: Optional[list[Union[str, "_models.ForceDisabledStatus"]]] = rest_field(
+        name="forceDisabledStatus", visibility=["read"]
+    )
+    """Force disablement status of the current flow."""
+    flow_profile_name: str = rest_field(
+        name="flowProfileName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the FlowProfile to use for transfer via the flow. Resolved relative to the pipeline
+     identified by the pipeline property. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the flow. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Accepted\"."""
+    messaging_data_resource_id: str = rest_field(
+        name="messagingDataResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the Service Bus queue or Event Hub used for this flow. The messaging
+     namespace and messaging type are derived from this ID. Required."""
+    consumer_group: Optional[str] = rest_field(
+        name="consumerGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Event Hub consumer group. Only valid when messagingDataResourceId is an Event Hub. Defaults to
+     \"$Default\"."""
+    messaging_options: Optional["_models.MessagingOptions"] = rest_field(
+        name="messagingOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The messaging options for this flow."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pipeline: str,
+        transfer_role: Union[str, "_models.TransferRole"],
+        remote_transfer_flow_resource_id: str,
+        flow_profile_name: str,
+        messaging_data_resource_id: str,
+        consumer_group: Optional[str] = None,
+        messaging_options: Optional["_models.MessagingOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessagingTransferFlowsPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The messaging transfer flow resource patch definition.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.datatransfer.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -3503,6 +3863,191 @@ class SetStreamPassphrase(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
+class StorageTransferFlow(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The storage flow resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.datatransfer.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of StorageTransferFlow. Required.
+    :vartype properties: ~azure.mgmt.datatransfer.models.StorageTransferFlowProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.datatransfer.models.ManagedServiceIdentity
+    """
+
+    properties: "_models.StorageTransferFlowProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of StorageTransferFlow. Required."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "_models.StorageTransferFlowProperties",
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageTransferFlowProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a storage flow.
+
+    :ivar pipeline: Name of the pipeline the transfer flow uses. Pipelines are service-managed
+     resources that customers cannot access directly; customers are given the name of the pipeline
+     they are approved to use. Required.
+    :vartype pipeline: str
+    :ivar flow_id: Dataflow GUID associated with this flow.
+    :vartype flow_id: str
+    :ivar transfer_role: Transfer role indicating the direction of data movement. Required. Known
+     values are: "Source" and "Destination".
+    :vartype transfer_role: str or ~azure.mgmt.datatransfer.models.TransferRole
+    :ivar remote_transfer_flow_resource_id: ARM resource ID of the paired transfer flow on the
+     remote side of the pipeline. Required.
+    :vartype remote_transfer_flow_resource_id: str
+    :ivar status: Approval and lifecycle status of the transfer flow. Set by the service; use the
+     approve/reject pipeline actions and the enableTransfer/disableTransfer actions to change it.
+     Known values are: "AwaitingApproval", "ApprovedWaitingToBeLinked", "Enabled", "Disabled", and
+     "Rejected".
+    :vartype status: str or ~azure.mgmt.datatransfer.models.CommonTransferFlowStatus
+    :ivar force_disabled_status: Force disablement status of the current flow.
+    :vartype force_disabled_status: list[str or
+     ~azure.mgmt.datatransfer.models.ForceDisabledStatus]
+    :ivar flow_profile_name: Name of the FlowProfile to use for transfer via the flow. Resolved
+     relative to the pipeline identified by the pipeline property. Required.
+    :vartype flow_profile_name: str
+    :ivar provisioning_state: Provisioning state of the flow. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.datatransfer.models.ProvisioningState
+    :ivar storage_data_resource_id: ARM resource ID of the blob container or table used for this
+     flow. The storage account is derived from this ID. Required.
+    :vartype storage_data_resource_id: str
+    """
+
+    pipeline: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the pipeline the transfer flow uses. Pipelines are service-managed resources that
+     customers cannot access directly; customers are given the name of the pipeline they are
+     approved to use. Required."""
+    flow_id: Optional[str] = rest_field(name="flowId", visibility=["read"])
+    """Dataflow GUID associated with this flow."""
+    transfer_role: Union[str, "_models.TransferRole"] = rest_field(
+        name="transferRole", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Transfer role indicating the direction of data movement. Required. Known values are: \"Source\"
+     and \"Destination\"."""
+    remote_transfer_flow_resource_id: str = rest_field(
+        name="remoteTransferFlowResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the paired transfer flow on the remote side of the pipeline. Required."""
+    status: Optional[Union[str, "_models.CommonTransferFlowStatus"]] = rest_field(visibility=["read"])
+    """Approval and lifecycle status of the transfer flow. Set by the service; use the approve/reject
+     pipeline actions and the enableTransfer/disableTransfer actions to change it. Known values are:
+     \"AwaitingApproval\", \"ApprovedWaitingToBeLinked\", \"Enabled\", \"Disabled\", and
+     \"Rejected\"."""
+    force_disabled_status: Optional[list[Union[str, "_models.ForceDisabledStatus"]]] = rest_field(
+        name="forceDisabledStatus", visibility=["read"]
+    )
+    """Force disablement status of the current flow."""
+    flow_profile_name: str = rest_field(
+        name="flowProfileName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the FlowProfile to use for transfer via the flow. Resolved relative to the pipeline
+     identified by the pipeline property. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the flow. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Accepted\"."""
+    storage_data_resource_id: str = rest_field(
+        name="storageDataResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the blob container or table used for this flow. The storage account is
+     derived from this ID. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pipeline: str,
+        transfer_role: Union[str, "_models.TransferRole"],
+        remote_transfer_flow_resource_id: str,
+        flow_profile_name: str,
+        storage_data_resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageTransferFlowsPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The storage transfer flow resource patch definition.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.datatransfer.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class StreamSourceAddresses(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source IP address and CIDR ranges of the stream.
 
@@ -3700,6 +4245,200 @@ class TextMatchingRulesetDeny(_Model):  # pylint: disable=docstring-keyword-shou
         text: str,
         match_type: Union[str, "_models.MatchType"],
         case_sensitivity: Union[str, "_models.Casing"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TransferFlowIdBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The resource to reference.
+
+    :ivar id: ARM resource ID of the transfer flow. Required.
+    :vartype id: str
+    :ivar status: Flow resource's status. Known values are: "AwaitingApproval",
+     "ApprovedWaitingToBeLinked", "Enabled", "Disabled", and "Rejected".
+    :vartype status: str or ~azure.mgmt.datatransfer.models.CommonTransferFlowStatus
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ARM resource ID of the transfer flow. Required."""
+    status: Optional[Union[str, "_models.CommonTransferFlowStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flow resource's status. Known values are: \"AwaitingApproval\", \"ApprovedWaitingToBeLinked\",
+     \"Enabled\", \"Disabled\", and \"Rejected\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.CommonTransferFlowStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TransferFlowRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request resource body to reference.
+
+    :ivar id: ARM resource IDs of the transfer flows to approve or reject.
+    :vartype id: list[str]
+    :ivar status_reason: Reason for resource operation.
+    :vartype status_reason: str
+    """
+
+    id: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ARM resource IDs of the transfer flows to approve or reject."""
+    status_reason: Optional[str] = rest_field(
+        name="statusReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reason for resource operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[list[str]] = None,  # pylint: disable=redefined-builtin
+        status_reason: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TransferFlowResponseBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The resource response body to reference.
+
+    :ivar id: The transfer flows that were approved or rejected, with their resulting status.
+     Required.
+    :vartype id: list[~azure.mgmt.datatransfer.models.TransferFlowIdBody]
+    """
+
+    id: list["_models.TransferFlowIdBody"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The transfer flows that were approved or rejected, with their resulting status. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: list["_models.TransferFlowIdBody"],  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TransferFlowSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Compact summary of a transfer flow associated with a pipeline.
+
+    :ivar id: ARM resource ID of the transfer flow. Required.
+    :vartype id: str
+    :ivar status: Status of the transfer flow. Known values are: "AwaitingApproval",
+     "ApprovedWaitingToBeLinked", "Enabled", "Disabled", and "Rejected".
+    :vartype status: str or ~azure.mgmt.datatransfer.models.CommonTransferFlowStatus
+    :ivar transfer_role: Transfer role of the transfer flow. Known values are: "Source" and
+     "Destination".
+    :vartype transfer_role: str or ~azure.mgmt.datatransfer.models.TransferRole
+    :ivar flow_profile_name: Name of the FlowProfile used by the transfer flow.
+    :vartype flow_profile_name: str
+    :ivar remote_transfer_flow_resource_id: ARM resource ID of the paired transfer flow on the
+     remote side of the pipeline.
+    :vartype remote_transfer_flow_resource_id: str
+    :ivar data_resource_id: ARM resource ID of the data resource (storage container/table or
+     messaging queue/event hub) used by the transfer flow.
+    :vartype data_resource_id: str
+    :ivar requestor: The identity that requested the transfer flow.
+    :vartype requestor: str
+    :ivar pipeline: The pipeline associated with the transfer flow.
+    :vartype pipeline: str
+    :ivar data_class_type: Data class type of the transfer flow. Known values are: "Messaging",
+     "API", "Stream", "Files", "SoftwareArtifacts", and "Complex".
+    :vartype data_class_type: str or ~azure.mgmt.datatransfer.models.DataClassType
+    :ivar tenant_id: Tenant ID of the transfer flow.
+    :vartype tenant_id: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ARM resource ID of the transfer flow. Required."""
+    status: Optional[Union[str, "_models.CommonTransferFlowStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Status of the transfer flow. Known values are: \"AwaitingApproval\",
+     \"ApprovedWaitingToBeLinked\", \"Enabled\", \"Disabled\", and \"Rejected\"."""
+    transfer_role: Optional[Union[str, "_models.TransferRole"]] = rest_field(
+        name="transferRole", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Transfer role of the transfer flow. Known values are: \"Source\" and \"Destination\"."""
+    flow_profile_name: Optional[str] = rest_field(
+        name="flowProfileName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the FlowProfile used by the transfer flow."""
+    remote_transfer_flow_resource_id: Optional[str] = rest_field(
+        name="remoteTransferFlowResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the paired transfer flow on the remote side of the pipeline."""
+    data_resource_id: Optional[str] = rest_field(
+        name="dataResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the data resource (storage container/table or messaging queue/event hub)
+     used by the transfer flow."""
+    requestor: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identity that requested the transfer flow."""
+    pipeline: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The pipeline associated with the transfer flow."""
+    data_class_type: Optional[Union[str, "_models.DataClassType"]] = rest_field(
+        name="dataClassType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data class type of the transfer flow. Known values are: \"Messaging\", \"API\", \"Stream\",
+     \"Files\", \"SoftwareArtifacts\", and \"Complex\"."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """Tenant ID of the transfer flow."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.CommonTransferFlowStatus"]] = None,
+        transfer_role: Optional[Union[str, "_models.TransferRole"]] = None,
+        flow_profile_name: Optional[str] = None,
+        remote_transfer_flow_resource_id: Optional[str] = None,
+        data_resource_id: Optional[str] = None,
+        requestor: Optional[str] = None,
+        pipeline: Optional[str] = None,
+        data_class_type: Optional[Union[str, "_models.DataClassType"]] = None,
+        tenant_id: Optional[str] = None,
     ) -> None: ...
 
     @overload

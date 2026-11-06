@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,8 +25,10 @@ from .operations import (
     ConnectionsOperations,
     FlowProfilesOperations,
     FlowsOperations,
+    MessagingTransferFlowsOperations,
     Operations,
     PipelinesOperations,
+    StorageTransferFlowsOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -38,7 +41,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataTransferMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class DataTransferMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """DataTransferMgmtClient.
 
     :ivar operations: Operations operations
@@ -51,6 +54,12 @@ class DataTransferMgmtClient:  # pylint: disable=docstring-keyword-should-match-
     :vartype connections: azure.mgmt.datatransfer.aio.operations.ConnectionsOperations
     :ivar flows: FlowsOperations operations
     :vartype flows: azure.mgmt.datatransfer.aio.operations.FlowsOperations
+    :ivar storage_transfer_flows: StorageTransferFlowsOperations operations
+    :vartype storage_transfer_flows:
+     azure.mgmt.datatransfer.aio.operations.StorageTransferFlowsOperations
+    :ivar messaging_transfer_flows: MessagingTransferFlowsOperations operations
+    :vartype messaging_transfer_flows:
+     azure.mgmt.datatransfer.aio.operations.MessagingTransferFlowsOperations
     :ivar azure_data_transfer: AzureDataTransferOperations operations
     :vartype azure_data_transfer:
      azure.mgmt.datatransfer.aio.operations.AzureDataTransferOperations
@@ -64,7 +73,7 @@ class DataTransferMgmtClient:  # pylint: disable=docstring-keyword-should-match-
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-02-06-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-06-29-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -126,6 +135,12 @@ class DataTransferMgmtClient:  # pylint: disable=docstring-keyword-should-match-
         self.pipelines = PipelinesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.flows = FlowsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.storage_transfer_flows = StorageTransferFlowsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.messaging_transfer_flows = MessagingTransferFlowsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.azure_data_transfer = AzureDataTransferOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
