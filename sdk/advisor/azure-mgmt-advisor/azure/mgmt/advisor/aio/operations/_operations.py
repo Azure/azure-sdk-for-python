@@ -53,10 +53,13 @@ from ...operations._operations import (
     build_recommendation_metadata_get_request,
     build_recommendation_metadata_list_request,
     build_recommendations_generate_request,
+    build_recommendations_get_by_service_group_request,
     build_recommendations_get_generate_status_request,
     build_recommendations_get_request,
+    build_recommendations_list_by_service_group_request,
     build_recommendations_list_by_tenant_request,
     build_recommendations_list_request,
+    build_recommendations_update_by_service_group_request,
     build_recommendations_update_request,
     build_resiliency_reviews_get_request,
     build_resiliency_reviews_list_request,
@@ -73,7 +76,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -183,7 +186,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecommendationMetadataOperations:
+class RecommendationMetadataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -212,6 +215,7 @@ class RecommendationMetadataOperations:
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
@@ -251,7 +255,6 @@ class RecommendationMetadataOperations:
             error = None
             if response.status_code == 404:
                 error = _failsafe_deserialize(_models.ARMErrorResponseBody, response)
-                raise ResourceNotFoundError(response=response, model=error, error_format=ARMErrorFormat)
             else:
                 error = _failsafe_deserialize(
                     _models.ArmErrorResponse,
@@ -270,9 +273,26 @@ class RecommendationMetadataOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.MetadataEntity"]:
+    def list(self, *, filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models.MetadataEntity"]:
         """Gets the list of metadata entities.
 
+        :keyword filter: The filter to apply to the recommendation metadata.<br>Filter can be applied
+         to properties ['`recommendationCategory <#category>`_', '`recommendationSubCategory
+         <#recommendationSubCategory>`_', 'RetirementDate'] with operators ['eq', 'and', 'le',
+         'ge']<br>The filter can also be applied to property ['[TrackingIds]']<br><br>⚠ **Note:**
+         ``recommendationControl`` is a legacy filter property and will be deprecated in the future.
+         Please use ``recommendationSubCategory`` for filtering recommendation subcategory.<br><br>Valid
+         options for recommendationSubCategory: ['BusinessContinuity', 'DisasterRecovery',
+         'HighAvailability', 'MonitoringAndAlerting', 'Other', 'Personalized',
+         'PrioritizedRecommendations', 'Scalability', 'ServiceUpgradeAndRetirement',
+         'Validation']<br><br>Example:<br>- $filter=recommendationCategory eq 'HighAvailability' and
+         recommendationSubCategory eq 'ServiceUpgradeAndRetirement' and retirementDate ge '2024-01-01'
+         and retirementDate le '2028-01-01'. Filter can be applied on trackingIds as well.<br>-
+         $filter=trackingIds/any(t: t eq 'some-guid')<br><br>⚠ **Note:** ``trackingIDs`` filter can be
+         used for filtering one value at a time. The support to filter multiple values is not currently
+         available. Also the support to add other filters along with ``trackingIDs`` is not available.
+         Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of MetadataEntity
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.advisor.models.MetadataEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -294,6 +314,7 @@ class RecommendationMetadataOperations:
             if not next_link:
 
                 _request = build_recommendation_metadata_list_request(
+                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -362,7 +383,7 @@ class RecommendationMetadataOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecommendationsOperations:
+class RecommendationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -522,7 +543,7 @@ class RecommendationsOperations:
         params_added_on={
             "2026-02-01-preview": ["api_version", "subscription_id", "recommendation_id", "content_type", "accept"]
         },
-        api_versions_list=["2026-02-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2026-02-01-preview", "2026-03-01-preview", "2026-08-01-preview"],
     )
     async def update(
         self,
@@ -610,32 +631,45 @@ class RecommendationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "subscription_id", "filter", "mode", "top", "skip_token", "accept"]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
     def list(
         self,
         *,
         filter: Optional[str] = None,
+        mode: Optional[Union[str, _models.RecommendationListMode]] = None,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.ResourceRecommendationBase"]:
-        """Obtains cached recommendations for a subscription. The recommendations are generated or
-        computed by invoking generateRecommendations.
+        """Obtains recommendations for a subscription.
 
         :keyword filter: The filter to apply to the recommendations.<br>Filter can be applied to
          properties ['ResourceId', 'ResourceGroup', 'RecommendationTypeGuid', '`Category <#category>`_',
-         'SubCategory', 'RetirementDate', '`RecommendationStatus <#recommendationStatus>`_'] with
-         operators ['eq', 'and', 'or', 'lt', 'gt', 'le', 'ge']<br>.
+         'SubCategory', 'RetirementDate', '`RecommendationStatus <#recommendationStatus>`_',
+         'Criticality'] with operators ['eq', 'and', 'or', 'lt', 'gt', 'le', 'ge']<br>.
          <br>**Note:** ``Control`` is a legacy filter property and will be deprecated in the future.
          Please use ``SubCategory`` for filtering recommendation subcategory.<br>
          <br>**Note:** ``RecommendationStatus`` filter is available from API Version 2026-02-01-preview
          and onwards.<br>
+         <br>**Note:** ``Criticality`` filter is available from API Version 2026-08-01-preview and
+         onwards.<br>
          <br>Valid options for SubCategory:<br>['BusinessContinuity', 'DisasterRecovery',
          'HighAvailability', 'MonitoringAndAlerting', 'Other', 'Personalized',
          'PrioritizedRecommendations', 'Scalability', 'ServiceUpgradeAndRetirement', 'Validation']<br>
          <br>Example:<br>- $filter=Category eq 'Cost' and ResourceGroup eq
          'MyResourceGroup'<br>-$filter=SubCategory eq 'ServiceUpgradeAndRetirement' and RetirementDate
-         le '2024-01-01' and RetirementDate ge '2028-01-01'. Default value is None.
+         le '2028-01-01' and RetirementDate ge '2024-01-01'<br>-$filter=Criticality eq 'Critical'.
+         Default value is None.
         :paramtype filter: str
+        :keyword mode: The recommendation retrieval mode. Known values are: "all" and "contextual".
+         Default value is None.
+        :paramtype mode: str or ~azure.mgmt.advisor.models.RecommendationListMode
         :keyword top: The number of recommendations per page if a paged version of this API is being
          used. Default value is None.
         :paramtype top: int
@@ -666,6 +700,7 @@ class RecommendationsOperations:
                 _request = build_recommendations_list_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
+                    mode=mode,
                     top=top,
                     skip_token=skip_token,
                     api_version=self._config.api_version,
@@ -855,6 +890,381 @@ class RecommendationsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @distributed_trace
+    def list_by_service_group(
+        self,
+        service_group_name: str,
+        *,
+        filter: Optional[str] = None,
+        mode: Optional[Union[str, _models.RecommendationListMode]] = None,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.ResourceRecommendationBase"]:
+        """Obtains recommendations for a service group.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :keyword filter: The filter to apply to the recommendations.<br>Filter can be applied to
+         properties ['ResourceId', 'ResourceGroup', 'RecommendationTypeGuid', '`Category <#category>`_',
+         'SubCategory', 'RetirementDate', '`RecommendationStatus <#recommendationStatus>`_',
+         'Criticality'] with operators ['eq', 'and', 'or', 'lt', 'gt', 'le', 'ge']<br>.
+         <br>**Note:** ``Control`` is a legacy filter property and will be deprecated in the future.
+         Please use ``SubCategory`` for filtering recommendation subcategory.<br>
+         <br>**Note:** ``RecommendationStatus`` filter is available from API Version 2026-02-01-preview
+         and onwards.<br>
+         <br>**Note:** ``Criticality`` filter is available from API Version 2026-08-01-preview and
+         onwards.<br>
+         <br>Valid options for SubCategory:<br>['BusinessContinuity', 'DisasterRecovery',
+         'HighAvailability', 'MonitoringAndAlerting', 'Other', 'Personalized',
+         'PrioritizedRecommendations', 'Scalability', 'ServiceUpgradeAndRetirement', 'Validation']<br>
+         <br>Example:<br>- $filter=Category eq 'Cost' and ResourceGroup eq
+         'MyResourceGroup'<br>-$filter=SubCategory eq 'ServiceUpgradeAndRetirement' and RetirementDate
+         le '2028-01-01' and RetirementDate ge '2024-01-01'<br>-$filter=Criticality eq 'High'. Default
+         value is None.
+        :paramtype filter: str
+        :keyword mode: The recommendation retrieval mode. Known values are: "all" and "contextual".
+         Default value is None.
+        :paramtype mode: str or ~azure.mgmt.advisor.models.RecommendationListMode
+        :keyword top: The number of recommendations per page. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token for the next page. Default value is None.
+        :paramtype skip_token: str
+        :return: An iterator like instance of ResourceRecommendationBase
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.advisor.models.ResourceRecommendationBase]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ResourceRecommendationBase]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_recommendations_list_by_service_group_request(
+                    service_group_name=service_group_name,
+                    filter=filter,
+                    mode=mode,
+                    top=top,
+                    skip_token=skip_token,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ResourceRecommendationBase],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ArmErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_by_service_group(
+        self, service_group_name: str, recommendation_id: str, **kwargs: Any
+    ) -> _models.ResourceRecommendationBase:
+        """Obtains details of a recommendation for a service group.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recommendation_id: The recommendation ID. Required.
+        :type recommendation_id: str
+        :return: ResourceRecommendationBase. The ResourceRecommendationBase is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBase
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ResourceRecommendationBase] = kwargs.pop("cls", None)
+
+        _request = build_recommendations_get_by_service_group_request(
+            service_group_name=service_group_name,
+            recommendation_id=recommendation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ArmErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ResourceRecommendationBase, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_by_service_group(
+        self,
+        service_group_name: str,
+        recommendation_id: str,
+        properties: _models.RecommendationPatchPayload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ResourceRecommendationBase:
+        """Updates the state of a recommendation for a service group.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recommendation_id: The recommendation ID. Required.
+        :type recommendation_id: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.advisor.models.RecommendationPatchPayload
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ResourceRecommendationBase. The ResourceRecommendationBase is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBase
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_by_service_group(
+        self,
+        service_group_name: str,
+        recommendation_id: str,
+        properties: _types.RecommendationPatchPayload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ResourceRecommendationBase:
+        """Updates the state of a recommendation for a service group.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recommendation_id: The recommendation ID. Required.
+        :type recommendation_id: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.advisor.types.RecommendationPatchPayload
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ResourceRecommendationBase. The ResourceRecommendationBase is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBase
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_by_service_group(
+        self,
+        service_group_name: str,
+        recommendation_id: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ResourceRecommendationBase:
+        """Updates the state of a recommendation for a service group.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recommendation_id: The recommendation ID. Required.
+        :type recommendation_id: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ResourceRecommendationBase. The ResourceRecommendationBase is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBase
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_by_service_group(
+        self,
+        service_group_name: str,
+        recommendation_id: str,
+        properties: Union[_models.RecommendationPatchPayload, _types.RecommendationPatchPayload, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ResourceRecommendationBase:
+        """Updates the state of a recommendation for a service group.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recommendation_id: The recommendation ID. Required.
+        :type recommendation_id: str
+        :param properties: The resource properties to be updated. Is either a
+         RecommendationPatchPayload type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.advisor.models.RecommendationPatchPayload or
+         ~azure.mgmt.advisor.types.RecommendationPatchPayload or IO[bytes]
+        :return: ResourceRecommendationBase. The ResourceRecommendationBase is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBase
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceRecommendationBase] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_recommendations_update_by_service_group_request(
+            service_group_name=service_group_name,
+            recommendation_id=recommendation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ArmErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ResourceRecommendationBase, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @distributed_trace_async
     async def generate(self, **kwargs: Any) -> None:
         """Initiates the recommendation generation or computation process for a subscription. This
@@ -980,7 +1390,7 @@ class RecommendationsOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class SuppressionsOperations:
+class SuppressionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1016,6 +1426,7 @@ class SuppressionsOperations:
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
@@ -1057,7 +1468,6 @@ class SuppressionsOperations:
             error = None
             if response.status_code == 404:
                 error = _failsafe_deserialize(_models.ArmErrorResponse, response)
-                raise ResourceNotFoundError(response=response, model=error, error_format=ARMErrorFormat)
             else:
                 error = _failsafe_deserialize(
                     _models.ArmErrorResponse,
@@ -1204,6 +1614,7 @@ class SuppressionsOperations:
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
@@ -1255,7 +1666,6 @@ class SuppressionsOperations:
             error = None
             if response.status_code == 404:
                 error = _failsafe_deserialize(_models.ArmErrorResponse, response)
-                raise ResourceNotFoundError(response=response, model=error, error_format=ARMErrorFormat)
             else:
                 error = _failsafe_deserialize(
                     _models.ArmErrorResponse,
@@ -1438,7 +1848,7 @@ class SuppressionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AdvisorScoresOperations:
+class AdvisorScoresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1615,7 +2025,7 @@ class AdvisorScoresOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AssessmentsOperations:
+class AssessmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2008,7 +2418,7 @@ class AssessmentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class resiliencyReviewsOperations:
+class resiliencyReviewsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2204,7 +2614,7 @@ class resiliencyReviewsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConfigurationsOperations:
+class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2765,7 +3175,7 @@ class ConfigurationsOperations:
         return deserialized  # type: ignore
 
 
-class AssessmentTypesOperations:
+class AssessmentTypesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2879,7 +3289,7 @@ class AssessmentTypesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkloadsOperations:
+class WorkloadsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

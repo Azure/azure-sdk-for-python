@@ -35,6 +35,8 @@
         "azure.mgmt.advisor.models.ResiliencyReviewProperties": "Microsoft.Advisor.ResiliencyReviewProperties",
         "azure.mgmt.advisor.models.ResourceMetadata": "Microsoft.Advisor.ResourceMetadata",
         "azure.mgmt.advisor.models.ResourceRecommendationBase": "Microsoft.Advisor.ResourceRecommendationBase",
+        "azure.mgmt.advisor.models.ResourceRecommendationSavings": "Microsoft.Advisor.ResourceRecommendationSavings",
+        "azure.mgmt.advisor.models.ResourceRecommendationSavingsDetails": "Microsoft.Advisor.ResourceRecommendationSavingsDetails",
         "azure.mgmt.advisor.models.ScoreEntity": "Microsoft.Advisor.ScoreEntity",
         "azure.mgmt.advisor.models.ShortDescription": "Microsoft.Advisor.ShortDescription",
         "azure.mgmt.advisor.models.SuppressionContract": "Microsoft.Advisor.SuppressionContract",
@@ -52,6 +54,7 @@
         "azure.mgmt.advisor.models.RecommendationDismissReason": "Microsoft.Advisor.RecommendationDismissReason",
         "azure.mgmt.advisor.models.Risk": "Microsoft.Advisor.Risk",
         "azure.mgmt.advisor.models.Priority": "Microsoft.Advisor.Priority",
+        "azure.mgmt.advisor.models.RecommendationListMode": "Microsoft.Advisor.RecommendationListMode",
         "azure.mgmt.advisor.models.Aggregated": "Microsoft.Advisor.Aggregated",
         "azure.mgmt.advisor.models.ReviewStatus": "Microsoft.Advisor.ReviewStatus",
         "azure.mgmt.advisor.models.CpuThreshold": "Microsoft.Advisor.CpuThreshold",
@@ -73,6 +76,12 @@
         "azure.mgmt.advisor.aio.operations.RecommendationsOperations.list": "Microsoft.Advisor.ResourceRecommendationBases.list",
         "azure.mgmt.advisor.operations.RecommendationsOperations.list_by_tenant": "Microsoft.Advisor.ResourceRecommendationBases.listByTenant",
         "azure.mgmt.advisor.aio.operations.RecommendationsOperations.list_by_tenant": "Microsoft.Advisor.ResourceRecommendationBases.listByTenant",
+        "azure.mgmt.advisor.operations.RecommendationsOperations.list_by_service_group": "Microsoft.Advisor.ServiceGroupRecommendations.list",
+        "azure.mgmt.advisor.aio.operations.RecommendationsOperations.list_by_service_group": "Microsoft.Advisor.ServiceGroupRecommendations.list",
+        "azure.mgmt.advisor.operations.RecommendationsOperations.get_by_service_group": "Microsoft.Advisor.ServiceGroupRecommendations.get",
+        "azure.mgmt.advisor.aio.operations.RecommendationsOperations.get_by_service_group": "Microsoft.Advisor.ServiceGroupRecommendations.get",
+        "azure.mgmt.advisor.operations.RecommendationsOperations.update_by_service_group": "Microsoft.Advisor.ServiceGroupRecommendations.update",
+        "azure.mgmt.advisor.aio.operations.RecommendationsOperations.update_by_service_group": "Microsoft.Advisor.ServiceGroupRecommendations.update",
         "azure.mgmt.advisor.operations.RecommendationsOperations.generate": "Microsoft.Advisor.RecommendationsOperationGroup.generate",
         "azure.mgmt.advisor.aio.operations.RecommendationsOperations.generate": "Microsoft.Advisor.RecommendationsOperationGroup.generate",
         "azure.mgmt.advisor.operations.RecommendationsOperations.get_generate_status": "Microsoft.Advisor.RecommendationsOperationGroup.getGenerateStatus",
@@ -116,5 +125,5 @@
         "azure.mgmt.advisor.AdvisorManagementClient.predict": "Microsoft.Advisor.predict",
         "azure.mgmt.advisor.aio.AdvisorManagementClient.predict": "Microsoft.Advisor.predict"
     },
-    "CrossLanguageVersion": "4849c9dbc876"
+    "CrossLanguageVersion": "9a5b662d75e4"
 }
