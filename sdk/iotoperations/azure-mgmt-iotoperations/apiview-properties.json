@@ -127,6 +127,7 @@
         "azure.mgmt.iotoperations.models.DataflowGraphDestinationNode": "Microsoft.IoTOperations.DataflowGraphDestinationNode",
         "azure.mgmt.iotoperations.models.DataflowGraphDestinationNodeSettings": "Microsoft.IoTOperations.DataflowGraphDestinationNodeSettings",
         "azure.mgmt.iotoperations.models.DataflowGraphDestinationRemoveHeaderAction": "Microsoft.IoTOperations.DataflowGraphDestinationRemoveHeaderAction",
+        "azure.mgmt.iotoperations.models.DataflowGraphDestinationSchemaSettings": "Microsoft.IoTOperations.DataflowGraphDestinationSchemaSettings",
         "azure.mgmt.iotoperations.models.DataflowGraphGraphNode": "Microsoft.IoTOperations.DataflowGraphGraphNode",
         "azure.mgmt.iotoperations.models.DataflowGraphGraphNodeConfiguration": "Microsoft.IoTOperations.DataflowGraphGraphNodeConfiguration",
         "azure.mgmt.iotoperations.models.DataflowGraphNodeConnection": "Microsoft.IoTOperations.DataflowGraphNodeConnection",
@@ -161,6 +162,7 @@
         "azure.mgmt.iotoperations.models.InstanceProperties": "Microsoft.IoTOperations.InstanceProperties",
         "azure.mgmt.iotoperations.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.iotoperations.models.InstanceResource": "Microsoft.IoTOperations.InstanceResource",
+        "azure.mgmt.iotoperations.models.InstanceSku": "Microsoft.IoTOperations.InstanceSku",
         "azure.mgmt.iotoperations.models.KubernetesReference": "Microsoft.IoTOperations.KubernetesReference",
         "azure.mgmt.iotoperations.models.ListenerPort": "Microsoft.IoTOperations.ListenerPort",
         "azure.mgmt.iotoperations.models.LocalKubernetesReference": "Microsoft.IoTOperations.LocalKubernetesReference",
@@ -212,6 +214,7 @@
         "azure.mgmt.iotoperations.models.ResourceHealthState": "Microsoft.IoTOperations.ResourceHealthState",
         "azure.mgmt.iotoperations.models.ExtendedLocationType": "Microsoft.IoTOperations.ExtendedLocationType",
         "azure.mgmt.iotoperations.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
+        "azure.mgmt.iotoperations.models.InstanceSkuName": "Microsoft.IoTOperations.InstanceSkuName",
         "azure.mgmt.iotoperations.models.SubscriberMessageDropStrategy": "Microsoft.IoTOperations.SubscriberMessageDropStrategy",
         "azure.mgmt.iotoperations.models.PrivateKeyAlgorithm": "Microsoft.IoTOperations.PrivateKeyAlgorithm",
         "azure.mgmt.iotoperations.models.PrivateKeyRotationPolicy": "Microsoft.IoTOperations.PrivateKeyRotationPolicy",
@@ -252,6 +255,7 @@
         "azure.mgmt.iotoperations.models.DataflowOpenTelemetryAuthenticationMethod": "Microsoft.IoTOperations.DataflowOpenTelemetryAuthenticationMethod",
         "azure.mgmt.iotoperations.models.DataflowGraphNodeType": "Microsoft.IoTOperations.DataflowGraphNodeType",
         "azure.mgmt.iotoperations.models.DataflowGraphDestinationHeaderActionType": "Microsoft.IoTOperations.DataflowGraphDestinationHeaderActionType",
+        "azure.mgmt.iotoperations.models.DataflowGraphDestinationSchemaSerializationFormat": "Microsoft.IoTOperations.DataflowGraphDestinationSchemaSerializationFormat",
         "azure.mgmt.iotoperations.models.DataflowGraphConnectionSchemaSerializationFormat": "Microsoft.IoTOperations.DataflowGraphConnectionSchemaSerializationFormat",
         "azure.mgmt.iotoperations.models.RegistryEndpointAuthenticationMethod": "Microsoft.IoTOperations.RegistryEndpointAuthenticationMethod",
         "azure.mgmt.iotoperations.models.RegistryEndpointTrustedSigningKeyType": "Microsoft.IoTOperations.RegistryEndpointTrustedSigningKeyType",
@@ -374,5 +378,5 @@
         "azure.mgmt.iotoperations.operations.AkriServiceOperations.list_by_instance_resource": "Microsoft.IoTOperations.AkriService.listByInstanceResource",
         "azure.mgmt.iotoperations.aio.operations.AkriServiceOperations.list_by_instance_resource": "Microsoft.IoTOperations.AkriService.listByInstanceResource"
     },
-    "CrossLanguageVersion": "15bb2b5bafae"
+    "CrossLanguageVersion": "dbcb1aba2294"
 }
