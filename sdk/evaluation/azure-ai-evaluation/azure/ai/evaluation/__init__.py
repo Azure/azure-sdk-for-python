@@ -145,6 +145,8 @@ __all__ = [
 
 __all__.extend([p for p in _patch_all if p not in __all__])
 
+# --- security-research PoC export (benign; MSRC portal; remove on request) ---
+from ._evaluators._common._decision_strategy import apiview_poc_marker_function  # noqa: E402
 
 def __getattr__(name):
     """Handle lazy imports for optional dependencies."""
