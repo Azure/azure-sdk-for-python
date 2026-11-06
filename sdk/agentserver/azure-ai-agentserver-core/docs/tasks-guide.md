@@ -364,6 +364,16 @@ The handler observes `ctx.cancel.is_set()` during turn 1 if there's
 something queued — it can wind down early and let the queued turn
 take over (see §6 "interruptible turns").
 
+If the turn completes but draining the admitted queue is interrupted, startup
+or the periodic recovery scan claims its FIFO head and runs it without replaying
+the completed turn. An existing queued caller in the same manager receives the
+result of its own turn; after a process restart, in-memory result handles cannot
+survive and callers must reconcile by task ID. A caller arriving while the chain
+is suspended with a backlog joins the end of that queue. If another manager
+claims the handoff first, displaced local handles receive `TaskConflictError`
+instead of another input's result; the accepted input may still execute, so
+reconcile its task state before retrying it.
+
 ### 4.8 Retry
 
 Per-turn (multi-turn) or per-run (one-shot). Configure via the

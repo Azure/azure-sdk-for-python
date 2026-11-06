@@ -20,6 +20,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
 import logging as _logging
+from uuid import uuid4
 from collections.abc import Awaitable, Callable, Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -823,6 +824,7 @@ class Task(Generic[Input, Output]):
         task_id: str,
         input_val: Any,
         existing: Any,
+        input_token: str,
         input_id: str | None = None,
         if_last_input_id: str | None = None,
     ) -> None:
@@ -837,6 +839,8 @@ class Task(Generic[Input, Output]):
                 :keyword existing: The previously-fetched task record (used for the
                     first etag attempt; later attempts re-fetch internally).
                 :paramtype existing: Any
+                :keyword input_token: Stable internal identity for this queued input.
+                :paramtype input_token: str
         :keyword input_id:  When set, the new input's identity.
                     Used to advance ``payload["last_input_id"]``
                     atomically with the queue append.
@@ -851,6 +855,7 @@ class Task(Generic[Input, Output]):
         from ._models import (  # pylint: disable=import-outside-toplevel
             TaskPatchRequest,
         )
+        from ._manager import _pending_steering_ids  # pylint: disable=import-outside-toplevel
 
         max_retries = 5
         serialized = _serialize_input(input_val)
@@ -878,6 +883,10 @@ class Task(Generic[Input, Output]):
             payload = dict(task_info.payload) if task_info.payload else {}
             steering = dict(payload.get("steering", {}))
             pending: list[Any] = list(steering.get("pending_inputs", []))
+            manager._reconcile_steering_futures(  # pylint: disable=protected-access
+                task_id, steering, task_info.status, appending=input_token
+            )
+            pending_ids = _pending_steering_ids(steering)
 
             if len(pending) >= _DEFAULT_MAX_PENDING_STEERING:
                 raise SteeringQueueFull(task_id, _DEFAULT_MAX_PENDING_STEERING)
@@ -908,7 +917,9 @@ class Task(Generic[Input, Output]):
                 steering["next_input_seq"] = next_seq + 1
 
             pending.append(queue_entry)
+            pending_ids.append(input_token)
             steering["pending_inputs"] = pending
+            steering["pending_input_ids"] = pending_ids
             steering["cancel_requested"] = True
             #   SOT: the
             # internal _steering["generation"] payload field is removed
@@ -931,7 +942,13 @@ class Task(Generic[Input, Output]):
             # the caller is not the active owner of the task (the
             # ``_lease_ext_kwargs`` helper returns ``{}`` in that
             # case, so the wire format is unchanged).
-            lease_kwargs = manager._lease_ext_kwargs(task_id)  # pylint: disable=protected-access
+            lease_kwargs = (
+                manager._lease_ext_kwargs(task_id)
+                if task_info.status == "in_progress"
+                and task_info.lease is not None
+                and task_info.lease.instance_id == manager._instance_id
+                else {}
+            )  # pylint: disable=protected-access
             try:
                 await manager.provider.update(
                     task_id,
@@ -974,8 +991,8 @@ class Task(Generic[Input, Output]):
         manager: Any,
         task_id: str,
         future: Any,
+        input_token: str,
         input_id: str | None = None,
-        input_val: Any = None,
     ) -> TaskRun[Output]:
         """Create a TaskRun for a queued steering input.
 
@@ -987,9 +1004,8 @@ class Task(Generic[Input, Output]):
         :type future: Any
         :param input_id: The input_id stamped on the queued input (if any).
         :type input_id: str | None
-        :param input_val: The raw queued input value (used to identify the
-            slot when ``cancel()`` is invoked on the returned handle).
-        :type input_val: Any
+        :param input_token: Persisted identity of the queued entry.
+        :type input_token: str
         :return: A :class:`TaskRun` whose result resolves with the queued turn.
         :rtype: TaskRun[Output]
         """
@@ -998,8 +1014,7 @@ class Task(Generic[Input, Output]):
             await manager._cancel_queued_steering_input(  # pylint: disable=protected-access
                 task_id=task_id,
                 future=future,
-                input_id=input_id,
-                input_val=input_val,
+                input_token=input_token,
             )
 
         return TaskRun(
@@ -1009,6 +1024,57 @@ class Task(Generic[Input, Output]):
             input_id=input_id,
             queued_cancel_callback=_queued_cancel_cb,
         )
+
+    async def _queue_steering_start(
+        self,
+        manager: Any,
+        *,
+        task_id: str,
+        input_val: Any,
+        existing: Any,
+        input_id: str | None,
+        if_last_input_id: str | None,
+    ) -> TaskRun[Output]:
+        """Append a uniquely identified queued input and bind its local caller.
+
+        :param manager: Current task manager.
+        :type manager: TaskManager
+        :keyword task_id: Chain task identifier.
+        :paramtype task_id: str
+        :keyword input_val: Input to enqueue.
+        :paramtype input_val: Any
+        :keyword existing: Previously read task snapshot.
+        :paramtype existing: TaskInfo
+        :keyword input_id: Optional public input identifier.
+        :paramtype input_id: str | None
+        :keyword if_last_input_id: Optional input precondition.
+        :paramtype if_last_input_id: str | None
+        :return: A handle bound to the queued turn.
+        :rtype: TaskRun[Output]
+        """
+        input_token = uuid4().hex
+        future = manager._register_steering_future(task_id, input_token)  # pylint: disable=protected-access
+        try:
+            await self._append_steering_input(
+                manager,
+                task_id=task_id,
+                input_val=input_val,
+                existing=existing,
+                input_token=input_token,
+                input_id=input_id,
+                if_last_input_id=if_last_input_id,
+            )
+        except BaseException:
+            pending = manager._pending_steering_futures.get(task_id, {})  # pylint: disable=protected-access
+            pending.pop(input_token, None)
+            if not pending:
+                manager._pending_steering_futures.pop(task_id, None)  # pylint: disable=protected-access
+            future.cancel()
+            raise
+        active = manager._active_tasks.get(task_id)  # pylint: disable=protected-access
+        if active is not None:
+            active.context.cancel.set()
+        return self._create_steering_ack_run(manager, task_id, future, input_id=input_id, input_token=input_token)
 
     async def _lifecycle_start(  # pylint: disable=too-many-locals
         self,
@@ -1043,6 +1109,7 @@ class Task(Generic[Input, Output]):
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskConflictError,
         )
+        from ._manager import get_task_manager  # pylint: disable=import-outside-toplevel
 
         #: orphan-sandbox eviction at scheduling
         # entry points MUST surface as TaskConflictError(current_status=
@@ -1050,12 +1117,13 @@ class Task(Generic[Input, Output]):
         # per Invariant 1. Operator-facing WARNING logs (in _manager.py
         # and _lease.py) are the only differentiator.
         try:
-            return await self._lifecycle_start_inner(
-                task_id=task_id,
-                input=input,
-                input_id=input_id,
-                if_last_input_id=if_last_input_id,
-            )
+            async with get_task_manager()._get_task_admission_lock(task_id):  # pylint: disable=protected-access
+                return await self._lifecycle_start_inner(
+                    task_id=task_id,
+                    input=input,
+                    input_id=input_id,
+                    if_last_input_id=if_last_input_id,
+                )
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc, task_id=task_id)
             if translated is None:
@@ -1069,7 +1137,7 @@ class Task(Generic[Input, Output]):
                 raise TaskConflictError(task_id, "in_progress") from exc
             raise
 
-    async def _lifecycle_start_inner(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
+    async def _lifecycle_start_inner(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches,too-many-return-statements
         self,
         *,
         task_id: str,
@@ -1151,6 +1219,15 @@ class Task(Generic[Input, Output]):
             )
 
         if existing.status == "suspended":
+            if self._opts.steerable and ((existing.payload or {}).get("steering") or {}).get("pending_inputs"):
+                return await self._queue_steering_start(
+                    manager,
+                    task_id=task_id,
+                    input_val=input,
+                    existing=existing,
+                    input_id=input_id,
+                    if_last_input_id=if_last_input_id,
+                )
             # Resume — patch input onto task, then start.
             #  Etag-protected retry loop so concurrent
             # suspended-resume POSTs race safely instead of silently
@@ -1216,6 +1293,10 @@ class Task(Generic[Input, Output]):
                     refreshed = await manager._provider_get_tracked(task_id)  # pylint: disable=protected-access
                     if refreshed is None:
                         raise RuntimeError(f"Task {task_id!r} disappeared during suspended-resume retry") from exc
+                    if refreshed.status != "suspended" or (
+                        self._opts.steerable and ((refreshed.payload or {}).get("steering") or {}).get("pending_inputs")
+                    ):
+                        raise TaskConflictError(task_id, refreshed.status) from exc
                     _check_input_precondition(
                         existing=refreshed,
                         task_id=task_id,
@@ -1237,6 +1318,10 @@ class Task(Generic[Input, Output]):
                     refreshed = await manager._provider_get_tracked(task_id)  # pylint: disable=protected-access
                     if refreshed is None:
                         raise RuntimeError(f"Task {task_id!r} disappeared during suspended-resume retry") from exc
+                    if refreshed.status != "suspended" or (
+                        self._opts.steerable and ((refreshed.payload or {}).get("steering") or {}).get("pending_inputs")
+                    ):
+                        raise TaskConflictError(task_id, refreshed.status) from exc
                     # Re-check the precondition against the now-refreshed view.
                     # On a precondition failure here, the exception propagates
                     # out (validation failure, not concurrency conflict).
@@ -1284,6 +1369,8 @@ class Task(Generic[Input, Output]):
                 existing,
                 this_lease_owner=manager._lease_owner,  # pylint: disable=protected-access
                 active_locally=active_locally,
+            ) and not manager._claimed_queued_lease_is_live(  # pylint: disable=protected-access
+                existing
             )
 
             if lease_dead:
@@ -1330,9 +1417,7 @@ class Task(Generic[Input, Output]):
                 )
             if self._opts.steerable:
                 # Steering path: append input to queue, signal cancel, return ack
-                # pylint: disable=protected-access
-                ack_future = manager._register_steering_future(task_id)
-                await self._append_steering_input(
+                return await self._queue_steering_start(
                     manager,
                     task_id=task_id,
                     input_val=input,
@@ -1340,12 +1425,6 @@ class Task(Generic[Input, Output]):
                     input_id=input_id,
                     if_last_input_id=if_last_input_id,
                 )
-                # Set cancel on in-memory context if task runs in this process
-                active = manager._active_tasks.get(task_id)
-                # pylint: enable=protected-access
-                if active:
-                    active.context.cancel.set()
-                return self._create_steering_ack_run(manager, task_id, ack_future, input_id=input_id, input_val=input)
             raise TaskConflictError(task_id, "in_progress")
 
         # completed (or any other terminal status)
@@ -1753,39 +1832,26 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
         except RuntimeError:
             return  # no manager -> nothing to delete
 
-        # 1. Resolve any active in-process caller's future with TaskCancelled.
-        active = getattr(mgr, "_active_tasks", {}).get(task_id)
-        if active is not None:
-            fut = getattr(active, "result_future", None)
-            if fut is not None and not fut.done():
-                fut.set_exception(TaskCancelled())
-            # Signal the handler's cancel event so the running coroutine
-            # winds down cooperatively.
-            cancel_evt = getattr(active.context, "cancel", None)
-            if cancel_evt is not None:
-                cancel_evt.set()
-            # Force-cancel the running execution_task so handlers blocked
-            # on awaits that don't check ctx.cancel still exit.
-            exec_task = getattr(active, "execution_task", None)
-            if exec_task is not None and not exec_task.done():
-                exec_task.cancel()
+        async with mgr._get_task_admission_lock(task_id):  # pylint: disable=protected-access
+            active = mgr._active_tasks.get(task_id)  # pylint: disable=protected-access
+            if active is not None:
+                if not active.result_future.done():
+                    active.result_future.set_exception(TaskCancelled())
+                active.context.cancel.set()
+                if not active.execution_task.done():
+                    active.execution_task.cancel()
 
-        # 2. Resolve all queued steerer futures with TaskCancelled.
-        pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, [])
-        for queued_fut in pending:
-            if not queued_fut.done():
-                queued_fut.set_exception(TaskCancelled())
+            pending = mgr._pending_steering_futures.pop(task_id, {})  # pylint: disable=protected-access
+            for queued_fut in pending.values():
+                if not queued_fut.done():
+                    queued_fut.set_exception(TaskCancelled())
 
-        # 3. Force-delete the record (idempotent — only swallow the
-        # "already-gone" classes).
-        provider = getattr(mgr, "_provider", None)
-        if provider is not None:
             from ._exceptions_internal import TaskNotFound  # pylint: disable=import-outside-toplevel
 
             try:
-                await provider.delete(task_id, force=True)
+                await mgr.provider.delete(task_id, force=True)
             except TaskNotFound:
-                pass  # idempotent: already gone
+                pass
 
 
 @overload
