@@ -10,13 +10,21 @@
 from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import DrillType, RecoveryGroupActionType, ResourceProtectionSolutionType
+from .models._enums import (
+    DrillType,
+    RecoveryGroupActionType,
+    ResiliencyType,
+    ResourceProtectionSolutionType,
+    WorkloadType,
+)
 
 if TYPE_CHECKING:
     from .models import (
         AttestationState,
         AutoFailover,
+        BackupType,
         ConfirmationStatus,
+        CopyOptions,
         CreatedByType,
         DrillAttestation,
         DrillMode,
@@ -32,6 +40,7 @@ if TYPE_CHECKING:
         FailoverState,
         ForceInclusionAndUpdate,
         InitialConfig,
+        IsoDuration,
         JobStatus,
         ManagedServiceIdentityType,
         ProvisioningState,
@@ -42,14 +51,22 @@ if TYPE_CHECKING:
         RecoveryOperationStatus,
         RecoveryPlanState,
         RecoveryPlanType,
+        RecoveryPointHealthStatus,
+        RecoveryPointPolicyType,
+        RecoveryResourceInclusionEligibility,
+        RecoveryType,
         RelativeResourceCompositionState,
+        ReplicationMode,
+        ResourceInclusionDisabledReason,
         ResourceInclusionState,
+        ResourceProtectionState,
         ResourceProtectionStatus,
         ResourceReplicationRole,
         ResourceTypeCategories,
         SliType,
         SliTypeMatchState,
         SolutionDisplayName,
+        TargetProvisioningMode,
         TestFailoverState,
         UsagePlanType,
         UserConsent,
@@ -346,6 +363,81 @@ class CustomFaultDetails(TypedDict, total=False):
     """ID of ARM resource used for automation (e.g. Automation runbook URL). Required."""
 
 
+class CyberResiliencyGroupProperties(TypedDict, total=False):
+    """Cyber resiliency properties for a recovery orchestration group.
+
+    :ivar resiliencyType: The resiliency type represented by these properties. Required. Cyber
+     resiliency properties.
+    :vartype resiliencyType: Literal[ResiliencyType.CYBER_RESILIENCY]
+    :ivar recoveryConfigProfileAssociations: Recovery configuration profiles associated by workload
+     type.
+    :vartype recoveryConfigProfileAssociations: list["RecoveryConfigProfileAssociation"]
+    """
+
+    resiliencyType: Required[Literal[ResiliencyType.CYBER_RESILIENCY]]
+    """The resiliency type represented by these properties. Required. Cyber resiliency properties."""
+    recoveryConfigProfileAssociations: list["RecoveryConfigProfileAssociation"]
+    """Recovery configuration profiles associated by workload type."""
+
+
+class CyberResiliencyPlanProperties(TypedDict, total=False):
+    """Cyber resiliency properties for a recovery plan.
+
+    :ivar resiliencyType: The resiliency type represented by these properties. Required. Cyber
+     resiliency properties.
+    :vartype resiliencyType: Literal[ResiliencyType.CYBER_RESILIENCY]
+    :ivar targetEnvironment: The required subscriptions and locations where recovery is targeted.
+     Required.
+    :vartype targetEnvironment: "TargetEnvironment"
+    """
+
+    resiliencyType: Required[Literal[ResiliencyType.CYBER_RESILIENCY]]
+    """The resiliency type represented by these properties. Required. Cyber resiliency properties."""
+    targetEnvironment: Required["TargetEnvironment"]
+    """The required subscriptions and locations where recovery is targeted. Required."""
+
+
+class CyberResiliencyResourceProperties(TypedDict, total=False):
+    """Cyber resiliency properties for a recovery resource.
+
+    :ivar resiliencyType: The resiliency type represented by these properties. Required. Cyber
+     resiliency properties.
+    :vartype resiliencyType: Literal[ResiliencyType.CYBER_RESILIENCY]
+    :ivar workloadType: The workload type of the Azure resource linked to the recovery resource.
+     Known values are: "AzureVm", "SqlDatabaseInAzureVm", "SapHanaInAzureVm", "SapAseInAzureVm",
+     "OracleInAzureVm", and "AzureFileShare".
+    :vartype workloadType: Union[str, "WorkloadType"]
+    :ivar protectedItemDetails: The backup protection details for the protected items associated
+     with this resource.
+    :vartype protectedItemDetails: list["ProtectedItemDetails"]
+    :ivar membershipThroughServiceGroupMembers: The service group member identifiers through which
+     this resource was discovered.
+    :vartype membershipThroughServiceGroupMembers: list[str]
+    :ivar recoveryConfigProfileId: The Azure resource identifier of the per-resource recovery
+     configuration profile override.
+    :vartype recoveryConfigProfileId: str
+    :ivar inclusionEligibility: The resource's eligibility for inclusion for the configured
+     targets. Known values are: "CanBeIncluded" and "CannotBeIncluded".
+    :vartype inclusionEligibility: Union[str, "RecoveryResourceInclusionEligibility"]
+    """
+
+    resiliencyType: Required[Literal[ResiliencyType.CYBER_RESILIENCY]]
+    """The resiliency type represented by these properties. Required. Cyber resiliency properties."""
+    workloadType: Union[str, "WorkloadType"]
+    """The workload type of the Azure resource linked to the recovery resource. Known values are:
+     \"AzureVm\", \"SqlDatabaseInAzureVm\", \"SapHanaInAzureVm\", \"SapAseInAzureVm\",
+     \"OracleInAzureVm\", and \"AzureFileShare\"."""
+    protectedItemDetails: list["ProtectedItemDetails"]
+    """The backup protection details for the protected items associated with this resource."""
+    membershipThroughServiceGroupMembers: list[str]
+    """The service group member identifiers through which this resource was discovered."""
+    recoveryConfigProfileId: str
+    """The Azure resource identifier of the per-resource recovery configuration profile override."""
+    inclusionEligibility: Union[str, "RecoveryResourceInclusionEligibility"]
+    """The resource's eligibility for inclusion for the configured targets. Known values are:
+     \"CanBeIncluded\" and \"CannotBeIncluded\"."""
+
+
 class DiskReprotectInputDetails(TypedDict, total=False):
     """Disk Reprotect Input Details.
 
@@ -564,6 +656,17 @@ class DrillUpdateProperties(TypedDict, total=False):
      array is the new desired state."""
 
 
+class EffectiveConfiguration(TypedDict, total=False):
+    """The effective, resolved recovery configuration.
+
+    :ivar workloadConfig: The effective workload configuration. Required.
+    :vartype workloadConfig: "WorkloadConfig"
+    """
+
+    workloadConfig: Required["WorkloadConfig"]
+    """The effective workload configuration. Required."""
+
+
 class Enrollment(ProxyResource):
     """An enrollment that links a usage plan to a service group.
 
@@ -765,6 +868,39 @@ class FaultProperties(TypedDict, total=False):
     """Custom Fault Details selected by user."""
 
 
+class FileShareRecoveryConfig(TypedDict, total=False):
+    """Recovery configuration for an Azure Files workload.
+
+    :ivar workloadType: The workload type represented by this configuration. Required. An Azure
+     Files workload.
+    :vartype workloadType: Literal[WorkloadType.AZURE_FILE_SHARE]
+    :ivar targetNamePrefix: The prefix used when naming recovered file shares.
+    :vartype targetNamePrefix: str
+    :ivar storageAccount: The target storage account. Required.
+    :vartype storageAccount: "TargetResourceSpec"
+    :ivar targetFolderPath: The destination folder path in the target file share.
+    :vartype targetFolderPath: str
+    :ivar identity: The system-assigned and/or user-assigned managed identities used for restore.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar copyOptions: The behavior when a copied file already exists. Known values are:
+     "Overwrite" and "Skip".
+    :vartype copyOptions: Union[str, "CopyOptions"]
+    """
+
+    workloadType: Required[Literal[WorkloadType.AZURE_FILE_SHARE]]
+    """The workload type represented by this configuration. Required. An Azure Files workload."""
+    targetNamePrefix: str
+    """The prefix used when naming recovered file shares."""
+    storageAccount: Required["TargetResourceSpec"]
+    """The target storage account. Required."""
+    targetFolderPath: str
+    """The destination folder path in the target file share."""
+    identity: "ManagedServiceIdentity"
+    """The system-assigned and/or user-assigned managed identities used for restore."""
+    copyOptions: Union[str, "CopyOptions"]
+    """The behavior when a copied file already exists. Known values are: \"Overwrite\" and \"Skip\"."""
+
+
 class GoalAssignment(ProxyResource):
     """A goal assignment resource in the Azure Resilience Management provider.
 
@@ -793,6 +929,11 @@ class GoalAssignmentProperties(TypedDict, total=False):
     :ivar requireZonalResiliency: Whether zonal resiliency is required for this goal assignment.
      Required.
     :vartype requireZonalResiliency: bool
+    :ivar requireRegionalResiliency: Whether regional resiliency is required for this goal
+     assignment.
+    :vartype requireRegionalResiliency: bool
+    :ivar regionalObjectives: Recovery objectives targeted for regional resiliency.
+    :vartype regionalObjectives: "RegionalObjectives"
     :ivar serviceLevelResources: List of service level resources.
     :vartype serviceLevelResources: list["ServiceLevelResource"]
     :ivar provisioningState: The provisioning state of the goal assignment. Known values are:
@@ -805,6 +946,10 @@ class GoalAssignmentProperties(TypedDict, total=False):
 
     requireZonalResiliency: Required[bool]
     """Whether zonal resiliency is required for this goal assignment. Required."""
+    requireRegionalResiliency: bool
+    """Whether regional resiliency is required for this goal assignment."""
+    regionalObjectives: "RegionalObjectives"
+    """Recovery objectives targeted for regional resiliency."""
     serviceLevelResources: list["ServiceLevelResource"]
     """List of service level resources."""
     provisioningState: Union[str, "ProvisioningState"]
@@ -861,6 +1006,9 @@ class GoalResourceProperties(TypedDict, total=False):
     :ivar zonalResiliency: The zonal resiliency posture for the ARM resource, including
      participation, attestation, exclusion reason, and user confirmations.
     :vartype zonalResiliency: "ResiliencyProperties"
+    :ivar regionalResiliency: The regional resiliency posture for the ARM resource, including
+     participation, attestation, exclusion reason, and user confirmations.
+    :vartype regionalResiliency: "ResiliencyProperties"
     :ivar provisioningState: The provisioning state of the goal resource. Known values are:
      "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and
      "NeedsAttention".
@@ -871,6 +1019,9 @@ class GoalResourceProperties(TypedDict, total=False):
     """The fully qualified ARM resource ID represented by this goal resource. Required."""
     zonalResiliency: "ResiliencyProperties"
     """The zonal resiliency posture for the ARM resource, including participation, attestation,
+     exclusion reason, and user confirmations."""
+    regionalResiliency: "ResiliencyProperties"
+    """The regional resiliency posture for the ARM resource, including participation, attestation,
      exclusion reason, and user confirmations."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the goal resource. Known values are: \"Succeeded\", \"Failed\",
@@ -913,6 +1064,45 @@ class IncludeOrUpdateResource(TypedDict, total=False):
     """Fault properties."""
 
 
+class InfrastructureResiliencyGroupProperties(TypedDict, total=False):
+    """Infrastructure resiliency properties for a recovery orchestration group.
+
+    :ivar resiliencyType: The resiliency type represented by these properties. Required.
+     Infrastructure resiliency properties.
+    :vartype resiliencyType: Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]
+    """
+
+    resiliencyType: Required[Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]]
+    """The resiliency type represented by these properties. Required. Infrastructure resiliency
+     properties."""
+
+
+class InfrastructureResiliencyPlanProperties(TypedDict, total=False):
+    """Infrastructure resiliency properties for a recovery plan.
+
+    :ivar resiliencyType: The resiliency type represented by these properties. Required.
+     Infrastructure resiliency properties.
+    :vartype resiliencyType: Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]
+    """
+
+    resiliencyType: Required[Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]]
+    """The resiliency type represented by these properties. Required. Infrastructure resiliency
+     properties."""
+
+
+class InfrastructureResiliencyResourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Infrastructure resiliency properties for a recovery resource.
+
+    :ivar resiliencyType: The resiliency type represented by these properties. Required.
+     Infrastructure resiliency properties.
+    :vartype resiliencyType: Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]
+    """
+
+    resiliencyType: Required[Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]]
+    """The resiliency type represented by these properties. Required. Infrastructure resiliency
+     properties."""
+
+
 class LastRunProperties(TypedDict, total=False):
     """Definition of Last Run properties.
 
@@ -927,6 +1117,8 @@ class LastRunProperties(TypedDict, total=False):
     :ivar lastRunAttestation: Attestation state of the last run of this Drill. Known values are:
      "Success" and "Failed".
     :vartype lastRunAttestation: Union[str, "DrillAttestation"]
+    :ivar lastRunRecoveryTimeActual: Actual recovery time of the last run of this Drill.
+    :vartype lastRunRecoveryTimeActual: str
     """
 
     lastRunTime: str
@@ -939,6 +1131,8 @@ class LastRunProperties(TypedDict, total=False):
     """Timespan of the last run of this Drill."""
     lastRunAttestation: Union[str, "DrillAttestation"]
     """Attestation state of the last run of this Drill. Known values are: \"Success\" and \"Failed\"."""
+    lastRunRecoveryTimeActual: str
+    """Actual recovery time of the last run of this Drill."""
 
 
 class ListReportDownloadUrlRequest(TypedDict, total=False):
@@ -1029,6 +1223,40 @@ class MonitoringPropertiesOfDrill(TypedDict, total=False):
      for service group and its resources."""
 
 
+class ProtectedItemDetails(TypedDict, total=False):
+    """Backup protection details for a protected item.
+
+    :ivar vaultResourceId: The Azure resource identifier of the backup vault protecting the item.
+    :vartype vaultResourceId: str
+    :ivar containerResourceId: The Azure resource identifier of the container for a
+     non-Azure-resource child.
+    :vartype containerResourceId: str
+    :ivar protectedItemId: The Azure resource identifier of the protected item in the backup vault.
+    :vartype protectedItemId: str
+    :ivar protectionState: The current backup protection state of the item. Known values are:
+     "Unknown", "Protected", and "NotProtected".
+    :vartype protectionState: Union[str, "ResourceProtectionState"]
+    :ivar location: The location of the protected resource.
+    :vartype location: str
+    :ivar recoveryLocations: The locations that support recovery of the protected item.
+    :vartype recoveryLocations: list[str]
+    """
+
+    vaultResourceId: str
+    """The Azure resource identifier of the backup vault protecting the item."""
+    containerResourceId: str
+    """The Azure resource identifier of the container for a non-Azure-resource child."""
+    protectedItemId: str
+    """The Azure resource identifier of the protected item in the backup vault."""
+    protectionState: Union[str, "ResourceProtectionState"]
+    """The current backup protection state of the item. Known values are: \"Unknown\", \"Protected\",
+     and \"NotProtected\"."""
+    location: str
+    """The location of the protected resource."""
+    recoveryLocations: list[str]
+    """The locations that support recovery of the protected item."""
+
+
 class RecommendCapacityRequest(TypedDict, total=False):
     """Request body for the recommend capacity action. Provide specific resource IDs to evaluate, or
     pass an empty array to let the service automatically select non-resilient resources from the
@@ -1055,6 +1283,97 @@ class RecoveryActionRequest(TypedDict, total=False):
 
     description: str
     """User-provided input for the action."""
+
+
+class RecoveryConfigProfile(ProxyResource):
+    """A reusable, plan-scoped clean-room recovery configuration.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "RecoveryConfigProfileProperties"
+    """
+
+    properties: "RecoveryConfigProfileProperties"
+    """The resource-specific properties for this resource."""
+
+
+class RecoveryConfigProfileAssociation(TypedDict, total=False):
+    """Associates a workload type with a plan-scoped recovery configuration profile.
+
+    :ivar workloadType: The workload type configured by the profile. Required. Known values are:
+     "AzureVm", "SqlDatabaseInAzureVm", "SapHanaInAzureVm", "SapAseInAzureVm", "OracleInAzureVm",
+     and "AzureFileShare".
+    :vartype workloadType: Union[str, "WorkloadType"]
+    :ivar recoveryConfigProfileId: The Azure resource identifier of the plan-scoped recovery
+     configuration profile. Required.
+    :vartype recoveryConfigProfileId: str
+    """
+
+    workloadType: Required[Union[str, "WorkloadType"]]
+    """The workload type configured by the profile. Required. Known values are: \"AzureVm\",
+     \"SqlDatabaseInAzureVm\", \"SapHanaInAzureVm\", \"SapAseInAzureVm\", \"OracleInAzureVm\", and
+     \"AzureFileShare\"."""
+    recoveryConfigProfileId: Required[str]
+    """The Azure resource identifier of the plan-scoped recovery configuration profile. Required."""
+
+
+class RecoveryConfigProfileProperties(TypedDict, total=False):
+    """Properties of a plan-scoped recovery configuration profile.
+
+    :ivar workloadType: The workload type configured by this profile. This response-only value is
+     populated by the service from workloadConfig.workloadType. Required. Known values are:
+     "AzureVm", "SqlDatabaseInAzureVm", "SapHanaInAzureVm", "SapAseInAzureVm", "OracleInAzureVm",
+     and "AzureFileShare".
+    :vartype workloadType: Union[str, "WorkloadType"]
+    :ivar targetScope: The subscription and location targeted by this profile. Required.
+    :vartype targetScope: "TargetScope"
+    :ivar workloadConfig: The workload-specific recovery configuration. Required.
+    :vartype workloadConfig: "WorkloadConfig"
+    :ivar recoveryPointPolicy: Default recovery point selection.
+    :vartype recoveryPointPolicy: "RecoveryPointPolicy"
+    :ivar provisioningState: The provisioning state of the recovery configuration profile. Known
+     values are: "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting",
+     "Accepted", and "NeedsAttention".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar needsAttention: Indicates whether the profile requires user attention.
+    :vartype needsAttention: bool
+    :ivar attentionReasons: Structured reasons that the profile requires attention.
+    :vartype attentionReasons: list[str]
+    :ivar effectiveConfiguration: The effective profile configuration resolved at read time.
+    :vartype effectiveConfiguration: "EffectiveConfiguration"
+    """
+
+    workloadType: Required[Union[str, "WorkloadType"]]
+    """The workload type configured by this profile. This response-only value is populated by the
+     service from workloadConfig.workloadType. Required. Known values are: \"AzureVm\",
+     \"SqlDatabaseInAzureVm\", \"SapHanaInAzureVm\", \"SapAseInAzureVm\", \"OracleInAzureVm\", and
+     \"AzureFileShare\"."""
+    targetScope: Required["TargetScope"]
+    """The subscription and location targeted by this profile. Required."""
+    workloadConfig: Required["WorkloadConfig"]
+    """The workload-specific recovery configuration. Required."""
+    recoveryPointPolicy: "RecoveryPointPolicy"
+    """Default recovery point selection."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the recovery configuration profile. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
+     \"NeedsAttention\"."""
+    needsAttention: bool
+    """Indicates whether the profile requires user attention."""
+    attentionReasons: list[str]
+    """Structured reasons that the profile requires attention."""
+    effectiveConfiguration: "EffectiveConfiguration"
+    """The effective profile configuration resolved at read time."""
 
 
 class RecoveryGroup(ProxyResource):
@@ -1166,6 +1485,9 @@ class RecoveryGroupProperties(TypedDict, total=False):
     :vartype preActions: list["RecoveryGroupBaseAction"]
     :ivar postActions: Post-actions for the recovery orchestration group.
     :vartype postActions: list["RecoveryGroupBaseAction"]
+    :ivar resiliencyGroupProperties: Resiliency-specific properties for the recovery orchestration
+     group.
+    :vartype resiliencyGroupProperties: "RecoveryGroupResiliencyProperties"
     """
 
     groupUniqueId: Required[str]
@@ -1178,6 +1500,8 @@ class RecoveryGroupProperties(TypedDict, total=False):
     """Pre-actions for the recovery orchestration group."""
     postActions: list["RecoveryGroupBaseAction"]
     """Post-actions for the recovery orchestration group."""
+    resiliencyGroupProperties: "RecoveryGroupResiliencyProperties"
+    """Resiliency-specific properties for the recovery orchestration group."""
 
 
 class RecoveryGroupsSetting(TypedDict, total=False):
@@ -1285,7 +1609,8 @@ class RecoveryPlanProperties(TypedDict, total=False):
      "Accepted", and "NeedsAttention".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar planType: The type of the recovery orchestration plan, which can be set during creation
-     but cannot be changed afterward. Required. Known values are: "Regional" and "Zonal".
+     but cannot be changed afterward. Required. Known values are: "Regional", "Zonal", and
+     "CyberRecovery".
     :vartype planType: Union[str, "RecoveryPlanType"]
     :ivar planState: The current state of the recovery orchestration plan. Known values are:
      "UnderEdit", "Warning", and "Ready".
@@ -1295,6 +1620,8 @@ class RecoveryPlanProperties(TypedDict, total=False):
     :ivar recoveryGroupsSetting: Settings for the recovery orchestration groups associated with the
      recovery orchestration plan. Required.
     :vartype recoveryGroupsSetting: "RecoveryGroupsSetting"
+    :ivar resiliencyPlanProperties: Resiliency-specific properties for the recovery plan.
+    :vartype resiliencyPlanProperties: "RecoveryPlanResiliencyProperties"
     :ivar latestFailoverStatus: The status of the most recent failover operation executed.
     :vartype latestFailoverStatus: "RecoveryPlanFailoverOperationStatus"
     :ivar latestValidationStatus: The status of the most recent validation performed.
@@ -1309,7 +1636,7 @@ class RecoveryPlanProperties(TypedDict, total=False):
      \"NeedsAttention\"."""
     planType: Required[Union[str, "RecoveryPlanType"]]
     """The type of the recovery orchestration plan, which can be set during creation but cannot be
-     changed afterward. Required. Known values are: \"Regional\" and \"Zonal\"."""
+     changed afterward. Required. Known values are: \"Regional\", \"Zonal\", and \"CyberRecovery\"."""
     planState: Union[str, "RecoveryPlanState"]
     """The current state of the recovery orchestration plan. Known values are: \"UnderEdit\",
      \"Warning\", and \"Ready\"."""
@@ -1318,6 +1645,8 @@ class RecoveryPlanProperties(TypedDict, total=False):
     recoveryGroupsSetting: Required["RecoveryGroupsSetting"]
     """Settings for the recovery orchestration groups associated with the recovery orchestration plan.
      Required."""
+    resiliencyPlanProperties: "RecoveryPlanResiliencyProperties"
+    """Resiliency-specific properties for the recovery plan."""
     latestFailoverStatus: "RecoveryPlanFailoverOperationStatus"
     """The status of the most recent failover operation executed."""
     latestValidationStatus: "RecoveryPlanOperationStatus"
@@ -1343,6 +1672,59 @@ class RecoveryPlanPropertiesOfDrill(TypedDict, total=False):
     """Recovery Orchestration plan associated with this Drill."""
     recoveryPlanResourceExcludedCount: int
     """Excluded resource count in RecoveryPlan."""
+
+
+class RecoveryPointPolicy(TypedDict, total=False):
+    """Default recovery point selection for a recovery configuration profile.
+
+    :ivar type: The recovery point selection policy type. Required. Known values are: "Latest" and
+     "Random".
+    :vartype type: Union[str, "RecoveryPointPolicyType"]
+    :ivar startTime: The inclusive lower time bound. Required with endTime for Random selection
+     when lookbackDuration is omitted; optional for Latest selection. Mutually exclusive with
+     lookbackDuration.
+    :vartype startTime: str
+    :ivar endTime: The inclusive upper time bound. Required with startTime for Random selection
+     when lookbackDuration is omitted; optional for Latest selection. Mutually exclusive with
+     lookbackDuration.
+    :vartype endTime: str
+    :ivar lookbackDuration: A positive, fixed ISO 8601 duration for relative Random selection, such
+     as P10D or PT12H. Only days, hours, minutes, and seconds are supported; calendar-dependent
+     months and years are not supported. Mutually exclusive with startTime and endTime. The service
+     resolves the duration to absolute bounds at execution time without modifying the saved profile.
+    :vartype lookbackDuration: str
+    :ivar backupType: The explicit, non-empty list of unique backup mechanisms to consider. Random
+     selection cannot include Log, even when other mechanisms are also selected. Required.
+    :vartype backupType: list[Union[str, "BackupType"]]
+    :ivar recoveryPointHealthStatus: The health filter for discrete recovery points. Omission means
+     All. Log and point-in-time recovery candidates are not health-filtered. Known values are:
+     "HealthyOnly", "HealthyAndUnknown", and "All".
+    :vartype recoveryPointHealthStatus: Union[str, "RecoveryPointHealthStatus"]
+    """
+
+    type: Required[Union[str, "RecoveryPointPolicyType"]]
+    """The recovery point selection policy type. Required. Known values are: \"Latest\" and
+     \"Random\"."""
+    startTime: str
+    """The inclusive lower time bound. Required with endTime for Random selection when
+     lookbackDuration is omitted; optional for Latest selection. Mutually exclusive with
+     lookbackDuration."""
+    endTime: str
+    """The inclusive upper time bound. Required with startTime for Random selection when
+     lookbackDuration is omitted; optional for Latest selection. Mutually exclusive with
+     lookbackDuration."""
+    lookbackDuration: str
+    """A positive, fixed ISO 8601 duration for relative Random selection, such as P10D or PT12H. Only
+     days, hours, minutes, and seconds are supported; calendar-dependent months and years are not
+     supported. Mutually exclusive with startTime and endTime. The service resolves the duration to
+     absolute bounds at execution time without modifying the saved profile."""
+    backupType: Required[list[Union[str, "BackupType"]]]
+    """The explicit, non-empty list of unique backup mechanisms to consider. Random selection cannot
+     include Log, even when other mechanisms are also selected. Required."""
+    recoveryPointHealthStatus: Union[str, "RecoveryPointHealthStatus"]
+    """The health filter for discrete recovery points. Omission means All. Log and point-in-time
+     recovery candidates are not health-filtered. Known values are: \"HealthyOnly\",
+     \"HealthyAndUnknown\", and \"All\"."""
 
 
 class RecoveryResource(ProxyResource):
@@ -1389,6 +1771,9 @@ class RecoveryResourceProperties(TypedDict, total=False):
     :ivar inclusionState: A state that indicates the resource status with respect to the recovery
      orchestration plan. Known values are: "Included" and "Excluded".
     :vartype inclusionState: Union[str, "ResourceInclusionState"]
+    :ivar inclusionDisabledReasons: Reasons why inclusion of the resource in a recovery plan is
+     disabled.
+    :vartype inclusionDisabledReasons: list[Union[str, "ResourceInclusionDisabledReason"]]
     :ivar needsAttention: Indicating if resource needs user attention and action, details will be
      found in attentionReasons.
     :vartype needsAttention: bool
@@ -1403,7 +1788,8 @@ class RecoveryResourceProperties(TypedDict, total=False):
     :vartype resourceProtectionSolutions: list["ResourceProtectionSolutionSettings"]
     :ivar selectedProtectionSolutionType: A setting that indicates the protection solution
      selected. Known values are: "None", "AzureNative", "AzureSiteRecovery", "CrossZoneVMRecovery",
-     and "CustomRunbook".
+     "CustomRunbook", "AzureTemplate", "AzureStorageAccount", "AzureServiceBus", "AzureNetAppFiles",
+     and "AzureCosmosDB".
     :vartype selectedProtectionSolutionType: Union[str, "ResourceProtectionSolutionType"]
     :ivar selectedProtectionSolutionSetting: Resource protection solution settings of the
      protection solutions recovery orchestration resource is protected with.
@@ -1416,6 +1802,8 @@ class RecoveryResourceProperties(TypedDict, total=False):
     :vartype associatedIdentity: "AssociatedIdentity"
     :ivar errorDetails: Error details associated with the resource.
     :vartype errorDetails: "ErrorDetail"
+    :ivar resiliencyResourceProperties: Resiliency-specific properties for the recovery resource.
+    :vartype resiliencyResourceProperties: "RecoveryResourceResiliencyProperties"
     """
 
     recoveryResourceUniqueId: Required[str]
@@ -1435,6 +1823,8 @@ class RecoveryResourceProperties(TypedDict, total=False):
     inclusionState: Union[str, "ResourceInclusionState"]
     """A state that indicates the resource status with respect to the recovery orchestration plan.
      Known values are: \"Included\" and \"Excluded\"."""
+    inclusionDisabledReasons: list[Union[str, "ResourceInclusionDisabledReason"]]
+    """Reasons why inclusion of the resource in a recovery plan is disabled."""
     needsAttention: bool
     """Indicating if resource needs user attention and action, details will be found in
      attentionReasons."""
@@ -1449,7 +1839,9 @@ class RecoveryResourceProperties(TypedDict, total=False):
      protected."""
     selectedProtectionSolutionType: Union[str, "ResourceProtectionSolutionType"]
     """A setting that indicates the protection solution selected. Known values are: \"None\",
-     \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", and \"CustomRunbook\"."""
+     \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", \"CustomRunbook\",
+     \"AzureTemplate\", \"AzureStorageAccount\", \"AzureServiceBus\", \"AzureNetAppFiles\", and
+     \"AzureCosmosDB\"."""
     selectedProtectionSolutionSetting: "ResourceBaseProtectionSolutionSetting"
     """Resource protection solution settings of the protection solutions recovery orchestration
      resource is protected with."""
@@ -1460,6 +1852,8 @@ class RecoveryResourceProperties(TypedDict, total=False):
      on it."""
     errorDetails: "ErrorDetail"
     """Error details associated with the resource."""
+    resiliencyResourceProperties: "RecoveryResourceResiliencyProperties"
+    """Resiliency-specific properties for the recovery resource."""
 
 
 class RegionalDrillProperties(TypedDict, total=False):
@@ -1552,6 +1946,25 @@ class RegionalDrillProperties(TypedDict, total=False):
     """The discriminator for the Drill object hierarchy. Required. Regional Drill."""
 
 
+class RegionalObjectives(TypedDict, total=False):
+    """Recovery objectives targeted by a goal assignment for regional resiliency.
+
+    :ivar targetRecoveryPointObjective: Target regional recovery point objective. eg, PT15M for 15
+     minutes. Required. Known values are: "PT15M", "PT1H", "PT4H", and "PT24H".
+    :vartype targetRecoveryPointObjective: Union[str, "IsoDuration"]
+    :ivar targetRecoveryTimeObjective: Target regional recovery time objective. eg, PT1H for 1
+     hour. Required. Known values are: "PT15M", "PT1H", "PT4H", and "PT24H".
+    :vartype targetRecoveryTimeObjective: Union[str, "IsoDuration"]
+    """
+
+    targetRecoveryPointObjective: Required[Union[str, "IsoDuration"]]
+    """Target regional recovery point objective. eg, PT15M for 15 minutes. Required. Known values are:
+     \"PT15M\", \"PT1H\", \"PT4H\", and \"PT24H\"."""
+    targetRecoveryTimeObjective: Required[Union[str, "IsoDuration"]]
+    """Target regional recovery time objective. eg, PT1H for 1 hour. Required. Known values are:
+     \"PT15M\", \"PT1H\", \"PT4H\", and \"PT24H\"."""
+
+
 class ReprotectRequest(TypedDict, total=False):
     """Reprotect post action request.
 
@@ -1604,6 +2017,55 @@ class ResiliencyProperties(TypedDict, total=False):
      \"UserSelectedExclusion\", \"FailedOverResource\", and \"UnsupportedResource\"."""
     userConfirmation: list["UserConfirmationItem"]
     """User confirmations for resiliency solutions recommended for the ARM resource."""
+
+
+class ResourceAzureTemplateProtectionSetting(TypedDict, total=False):
+    """Definition of recovery orchestration resource protection using an Azure Resource Manager
+    template.
+
+    :ivar protectionSolutionType: A setting that indicates Azure Resource Manager template-based
+     recovery. Required. Resource recovery is orchestrated by deploying an Azure Resource Manager
+     template.
+    :vartype protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_TEMPLATE]
+    :ivar templateSpecVersionId: The Azure resource ID of the Template Spec version to deploy.
+     Required.
+    :vartype templateSpecVersionId: str
+    :ivar deploymentScope: The Azure Resource Manager scope at which the recovery template is
+     deployed. Must be the subscription containing the protected resource, or a resource group
+     within it; deployments above subscription scope are not supported. Required.
+    :vartype deploymentScope: str
+    :ivar deploymentLocation: The location used to store deployment metadata. Required when
+     deploymentScope is a subscription.
+    :vartype deploymentLocation: str
+    """
+
+    protectionSolutionType: Required[Literal[ResourceProtectionSolutionType.AZURE_TEMPLATE]]
+    """A setting that indicates Azure Resource Manager template-based recovery. Required. Resource
+     recovery is orchestrated by deploying an Azure Resource Manager template."""
+    templateSpecVersionId: Required[str]
+    """The Azure resource ID of the Template Spec version to deploy. Required."""
+    deploymentScope: Required[str]
+    """The Azure Resource Manager scope at which the recovery template is deployed. Must be the
+     subscription containing the protected resource, or a resource group within it; deployments
+     above subscription scope are not supported. Required."""
+    deploymentLocation: str
+    """The location used to store deployment metadata. Required when deploymentScope is a
+     subscription."""
+
+
+class ResourceCosmosDBProtectionSetting(TypedDict, total=False):
+    """Definition of recovery orchestration resource protection using Azure Cosmos DB.
+
+    :ivar protectionSolutionType: A setting that indicates Azure Cosmos DB protection. Required.
+     Resource is protected with Azure Cosmos DB multiregion replication using customer-managed
+     failover, where recovery promotes a secondary region to the write region.
+    :vartype protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_COSMOS_DB]
+    """
+
+    protectionSolutionType: Required[Literal[ResourceProtectionSolutionType.AZURE_COSMOS_DB]]
+    """A setting that indicates Azure Cosmos DB protection. Required. Resource is protected with Azure
+     Cosmos DB multiregion replication using customer-managed failover, where recovery promotes a
+     secondary region to the write region."""
 
 
 class ResourceCrossZoneVmRecoveryProtectionSetting(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -1715,13 +2177,32 @@ class ResourceNativeProtectionSolutionSetting(TypedDict, total=False):
      Resource is protected with the Azure native solution provided by the native Azure service."""
 
 
+class ResourceNetAppFilesProtectionSetting(TypedDict, total=False):
+    """Definition of recovery orchestration resource protection using Azure NetApp Files.
+
+    :ivar protectionSolutionType: A setting that indicates Azure NetApp Files protection. Required.
+     Resource is protected with Azure NetApp Files cross-region replication, where recovery fails
+     over to the destination volume.
+    :vartype protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_NET_APP_FILES]
+    """
+
+    protectionSolutionType: Required[Literal[ResourceProtectionSolutionType.AZURE_NET_APP_FILES]]
+    """A setting that indicates Azure NetApp Files protection. Required. Resource is protected with
+     Azure NetApp Files cross-region replication, where recovery fails over to the destination
+     volume."""
+
+
 class ResourceProtectionSolutionSettings(TypedDict, total=False):
     """Definition of recovery resource resource protection solution settings.
 
     :ivar protectionSolutionType: A setting that indicates the resource protected with which
      recovery solution. Known values are: "None", "AzureNative", "AzureSiteRecovery",
-     "CrossZoneVMRecovery", and "CustomRunbook".
+     "CrossZoneVMRecovery", "CustomRunbook", "AzureTemplate", "AzureStorageAccount",
+     "AzureServiceBus", "AzureNetAppFiles", and "AzureCosmosDB".
     :vartype protectionSolutionType: Union[str, "ResourceProtectionSolutionType"]
+    :ivar replicationMode: Replication mode configured for the protected resource. Known values
+     are: "None", "ActiveActive", and "ActivePassive".
+    :vartype replicationMode: Union[str, "ReplicationMode"]
     :ivar protectionStatus: A status that indicates the protection status of a resource with an
      Azure solution for regional or zonal recovery. Known values are: "Unknown", "Protected",
      "NotProtected", and "HighlyAvailable".
@@ -1759,8 +2240,12 @@ class ResourceProtectionSolutionSettings(TypedDict, total=False):
 
     protectionSolutionType: Union[str, "ResourceProtectionSolutionType"]
     """A setting that indicates the resource protected with which recovery solution. Known values are:
-     \"None\", \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", and
-     \"CustomRunbook\"."""
+     \"None\", \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", \"CustomRunbook\",
+     \"AzureTemplate\", \"AzureStorageAccount\", \"AzureServiceBus\", \"AzureNetAppFiles\", and
+     \"AzureCosmosDB\"."""
+    replicationMode: Union[str, "ReplicationMode"]
+    """Replication mode configured for the protected resource. Known values are: \"None\",
+     \"ActiveActive\", and \"ActivePassive\"."""
     protectionStatus: Union[str, "ResourceProtectionStatus"]
     """A status that indicates the protection status of a resource with an Azure solution for regional
      or zonal recovery. Known values are: \"Unknown\", \"Protected\", \"NotProtected\", and
@@ -1794,6 +2279,21 @@ class ResourceProtectionSolutionSettings(TypedDict, total=False):
     testFailoverState: Union[str, "TestFailoverState"]
     """TestFailover state of the recovery orchestration resource. Known values are: \"None\" and
      \"TestFailoverCleanupPending\"."""
+
+
+class ResourceServiceBusProtectionSetting(TypedDict, total=False):
+    """Definition of recovery orchestration resource protection using Azure Service Bus.
+
+    :ivar protectionSolutionType: A setting that indicates Azure Service Bus protection. Required.
+     Resource is protected with Azure Service Bus geo-replication, where a premium namespace
+     replicates data to a secondary region and recovery promotes that secondary in place.
+    :vartype protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_SERVICE_BUS]
+    """
+
+    protectionSolutionType: Required[Literal[ResourceProtectionSolutionType.AZURE_SERVICE_BUS]]
+    """A setting that indicates Azure Service Bus protection. Required. Resource is protected with
+     Azure Service Bus geo-replication, where a premium namespace replicates data to a secondary
+     region and recovery promotes that secondary in place."""
 
 
 class ResourceSiteRecoveryProtectionSetting(TypedDict, total=False):
@@ -1853,6 +2353,19 @@ class ResourceSiteRecoveryTestFailoverParams(TypedDict, total=False):
 
     networkResourceId: str
     """The Azure network resource is which will be used for test failover virtual machine."""
+
+
+class ResourceStorageAccountProtectionSetting(TypedDict, total=False):
+    """Definition of recovery orchestration resource protection using an Azure Storage account.
+
+    :ivar protectionSolutionType: A setting that indicates Azure Storage account protection.
+     Required. Resource is protected with Azure Storage account customer-managed failover.
+    :vartype protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT]
+    """
+
+    protectionSolutionType: Required[Literal[ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT]]
+    """A setting that indicates Azure Storage account protection. Required. Resource is protected with
+     Azure Storage account customer-managed failover."""
 
 
 class ServiceLevelResource(TypedDict, total=False):
@@ -1998,6 +2511,72 @@ class SystemMetadata(TypedDict, total=False):
      values are: \"Pending\" and \"Complete\"."""
     resourceTypeCategories: list[Union[str, "ResourceTypeCategories"]]
     """An indication whether a intrested resource type is present in drill resource."""
+
+
+class TargetEnvironment(TypedDict, total=False):
+    """The target subscriptions and locations for cyber recovery.
+
+    :ivar targetSubscriptionIds: The subscription identifiers available as recovery targets.
+     Required.
+    :vartype targetSubscriptionIds: list[str]
+    :ivar targetLocations: The Azure locations available as recovery targets. Required.
+    :vartype targetLocations: list[str]
+    """
+
+    targetSubscriptionIds: Required[list[str]]
+    """The subscription identifiers available as recovery targets. Required."""
+    targetLocations: Required[list[str]]
+    """The Azure locations available as recovery targets. Required."""
+
+
+class TargetResourceSpec(TypedDict, total=False):
+    """A target resource required by a recovery workload.
+
+    :ivar armResourceType: The full Azure resource type of the target. Supported types include
+     Microsoft.Resources/resourceGroups, Microsoft.Compute/virtualMachines,
+     Microsoft.Network/virtualNetworks, Microsoft.Network/virtualNetworks/subnets,
+     Microsoft.Storage/storageAccounts, Microsoft.Compute/diskEncryptionSets,
+     Microsoft.KeyVault/vaults, and Microsoft.Network/networkSecurityGroups. The service validates
+     supported target resource types. Required.
+    :vartype armResourceType: str
+    :ivar provisioningMode: How the target resource is provisioned. "Existing"
+    :vartype provisioningMode: Union[str, "TargetProvisioningMode"]
+    :ivar resourceId: The Azure resource identifier of the existing target. Required when
+     provisioningMode is Existing.
+    :vartype resourceId: str
+    :ivar dependsOn: The target resources that this target depends on.
+    :vartype dependsOn: list[str]
+    """
+
+    armResourceType: Required[str]
+    """The full Azure resource type of the target. Supported types include
+     Microsoft.Resources/resourceGroups, Microsoft.Compute/virtualMachines,
+     Microsoft.Network/virtualNetworks, Microsoft.Network/virtualNetworks/subnets,
+     Microsoft.Storage/storageAccounts, Microsoft.Compute/diskEncryptionSets,
+     Microsoft.KeyVault/vaults, and Microsoft.Network/networkSecurityGroups. The service validates
+     supported target resource types. Required."""
+    provisioningMode: Union[str, "TargetProvisioningMode"]
+    """How the target resource is provisioned. \"Existing\""""
+    resourceId: str
+    """The Azure resource identifier of the existing target. Required when provisioningMode is
+     Existing."""
+    dependsOn: list[str]
+    """The target resources that this target depends on."""
+
+
+class TargetScope(TypedDict, total=False):
+    """The subscription and location targeted by a recovery configuration profile.
+
+    :ivar subscriptionId: The target Azure subscription identifier. Required.
+    :vartype subscriptionId: str
+    :ivar location: The target Azure location. Required.
+    :vartype location: str
+    """
+
+    subscriptionId: Required[str]
+    """The target Azure subscription identifier. Required."""
+    location: Required[str]
+    """The target Azure location. Required."""
 
 
 class TestFailoverCleanupRequest(TypedDict, total=False):
@@ -2211,6 +2790,58 @@ class ValidateForOperationRequest(TypedDict, total=False):
      \"Reprotect\", \"TestFailover\", and \"TestFailoverCleanup\"."""
 
 
+class VmRecoveryConfig(TypedDict, total=False):
+    """Recovery configuration for an Azure virtual machine.
+
+    :ivar recoveryType: The virtual machine recovery behavior. Defaults to creating a new virtual
+     machine. Known values are: "CreateNewVM", "AlternateLocation", "RestoreAsDisks", and
+     "RestoreAsFiles".
+    :vartype recoveryType: Union[str, "RecoveryType"]
+    :ivar targetNamePrefix: The prefix used when naming recovered virtual machines.
+    :vartype targetNamePrefix: str
+    :ivar resourceGroup: The target resource group. Required.
+    :vartype resourceGroup: "TargetResourceSpec"
+    :ivar virtualNetwork: The target virtual network. Required.
+    :vartype virtualNetwork: "TargetResourceSpec"
+    :ivar subnet: The target subnet. Required.
+    :vartype subnet: "TargetResourceSpec"
+    :ivar storageAccount: The target storage account. Required.
+    :vartype storageAccount: "TargetResourceSpec"
+    :ivar workloadType: The workload type represented by this configuration. Required. An Azure
+     virtual machine workload.
+    :vartype workloadType: Literal[WorkloadType.AZURE_VM]
+    :ivar diskEncryptionSet: The target disk encryption set.
+    :vartype diskEncryptionSet: "TargetResourceSpec"
+    :ivar identity: The system-assigned and/or user-assigned managed identities used for restore.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar zones: The target availability zones.
+    :vartype zones: list[str]
+    """
+
+    recoveryType: Union[str, "RecoveryType"]
+    """The virtual machine recovery behavior. Defaults to creating a new virtual machine. Known values
+     are: \"CreateNewVM\", \"AlternateLocation\", \"RestoreAsDisks\", and \"RestoreAsFiles\"."""
+    targetNamePrefix: str
+    """The prefix used when naming recovered virtual machines."""
+    resourceGroup: Required["TargetResourceSpec"]
+    """The target resource group. Required."""
+    virtualNetwork: Required["TargetResourceSpec"]
+    """The target virtual network. Required."""
+    subnet: Required["TargetResourceSpec"]
+    """The target subnet. Required."""
+    storageAccount: Required["TargetResourceSpec"]
+    """The target storage account. Required."""
+    workloadType: Required[Literal[WorkloadType.AZURE_VM]]
+    """The workload type represented by this configuration. Required. An Azure virtual machine
+     workload."""
+    diskEncryptionSet: "TargetResourceSpec"
+    """The target disk encryption set."""
+    identity: "ManagedServiceIdentity"
+    """The system-assigned and/or user-assigned managed identities used for restore."""
+    zones: list[str]
+    """The target availability zones."""
+
+
 class ZonalDrillProperties(TypedDict, total=False):
     """Definition of Zonal Drill properties.
 
@@ -2307,11 +2938,22 @@ class ZonalDrillProperties(TypedDict, total=False):
      values are: \"Present\" and \"Absent\"."""
 
 
+RecoveryGroupResiliencyProperties = Union[CyberResiliencyGroupProperties, InfrastructureResiliencyGroupProperties]
+RecoveryPlanResiliencyProperties = Union[CyberResiliencyPlanProperties, InfrastructureResiliencyPlanProperties]
+RecoveryResourceResiliencyProperties = Union[
+    CyberResiliencyResourceProperties, InfrastructureResiliencyResourceProperties
+]
 DrillProperties = Union[RegionalDrillProperties, ZonalDrillProperties]
+WorkloadConfig = Union[FileShareRecoveryConfig, VmRecoveryConfig]
 RecoveryGroupBaseAction = Union[RecoveryGroupCustomRunbookAction, RecoveryGroupManualAction]
 ResourceBaseProtectionSolutionSetting = Union[
+    ResourceCosmosDBProtectionSetting,
     ResourceNativeProtectionSolutionSetting,
+    ResourceNetAppFilesProtectionSetting,
+    ResourceServiceBusProtectionSetting,
     ResourceSiteRecoveryProtectionSetting,
+    ResourceStorageAccountProtectionSetting,
+    ResourceAzureTemplateProtectionSetting,
     ResourceCrossZoneVmRecoveryProtectionSetting,
     ResourceCustomProtectionSetting,
 ]

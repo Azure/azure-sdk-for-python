@@ -30,6 +30,7 @@ from .operations import (
     GoalResourcesOperations,
     OperationStatusOperations,
     Operations,
+    RecoveryConfigProfilesOperations,
     RecoveryJobResourcesOperations,
     RecoveryJobsOperations,
     RecoveryPlanActionsOperations,
@@ -64,6 +65,9 @@ class ResilienceManagementClient:  # pylint: disable=too-many-instance-attribute
     :vartype goal_resources: azure.mgmt.resiliencemanagement.aio.operations.GoalResourcesOperations
     :ivar recovery_plans: RecoveryPlansOperations operations
     :vartype recovery_plans: azure.mgmt.resiliencemanagement.aio.operations.RecoveryPlansOperations
+    :ivar recovery_config_profiles: RecoveryConfigProfilesOperations operations
+    :vartype recovery_config_profiles:
+     azure.mgmt.resiliencemanagement.aio.operations.RecoveryConfigProfilesOperations
     :ivar recovery_plan_actions: RecoveryPlanActionsOperations operations
     :vartype recovery_plan_actions:
      azure.mgmt.resiliencemanagement.aio.operations.RecoveryPlanActionsOperations
@@ -101,9 +105,10 @@ class ResilienceManagementClient:  # pylint: disable=too-many-instance-attribute
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-10-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-11-30-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -167,6 +172,9 @@ class ResilienceManagementClient:  # pylint: disable=too-many-instance-attribute
         )
         self.goal_resources = GoalResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.recovery_plans = RecoveryPlansOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.recovery_config_profiles = RecoveryConfigProfilesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.recovery_plan_actions = RecoveryPlanActionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

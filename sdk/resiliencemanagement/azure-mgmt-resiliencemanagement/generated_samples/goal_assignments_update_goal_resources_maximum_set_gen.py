@@ -32,18 +32,26 @@ def main():
     )
 
     client.goal_assignments.begin_update_goal_resources(
-        service_group_name="production-sg",
-        goal_assignment_name="zonal-resiliency-goal",
+        service_group_name="sg1",
+        goal_assignment_name="ga1",
         body={
             "resources": [
                 {
                     "properties": {
+                        "regionalResiliency": {
+                            "attestationStatus": "ManuallyAttested",
+                            "goalParticipation": "Excluded",
+                        },
                         "resourceArmId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine",
                         "zonalResiliency": {"attestationStatus": "ManuallyAttested", "goalParticipation": "Excluded"},
                     }
                 },
                 {
                     "properties": {
+                        "regionalResiliency": {
+                            "attestationStatus": "ManuallyAttested",
+                            "goalParticipation": "Excluded",
+                        },
                         "resourceArmId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine1",
                         "zonalResiliency": {"attestationStatus": "ManuallyAttested", "goalParticipation": "Excluded"},
                     }
@@ -53,6 +61,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-10-01/GoalAssignments_UpdateGoalResources_MaximumSet_Gen.json
+# x-ms-original-file: 2026-11-30-preview/GoalAssignments_UpdateGoalResources_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
