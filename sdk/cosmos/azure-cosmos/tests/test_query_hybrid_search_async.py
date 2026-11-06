@@ -174,6 +174,10 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         # RRF ordering regresses, while tolerating service side score/_rid differences.
         assert [res['index'] for res in result_list] == full_rrf_ranking[5:15]
 
+        # Without a WHERE clause, zero-score documents also receive ordinal ranks.
+        expected_unfiltered_indices = {
+            item['index'] for item in hybrid_search_data.get_hybrid_search_items()['items']
+        }
         query = "SELECT TOP 10 c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query)
@@ -181,7 +185,9 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(result_list) == 10
         result_indices = {res['index'] for res in result_list}
         assert len(result_indices) == 10
-        assert result_indices <= expected_rrf_indices
+        assert result_indices <= expected_unfiltered_indices
+        paged_results = self.test_container.query_items(query, max_item_count=3)
+        assert [res['index'] async for res in paged_results] == [res['index'] for res in result_list]
 
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) " \
@@ -189,7 +195,9 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 13
-        assert {res['index'] for res in result_list} == expected_rrf_indices
+        result_indices = {res['index'] for res in result_list}
+        assert len(result_indices) == 13
+        assert result_indices <= expected_unfiltered_indices
 
         read_item = await self.test_container.read_item('50', '1')
         item_vector = read_item['vector']
@@ -199,8 +207,9 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         results = self.test_container.query_items(query)
         result_list = [item async for item in results]
         assert len(result_list) == 10
-        for res in result_list:
-            assert res['index'] in [51, 54, 28, 70, 24, 61, 56, 26, 58, 77, 2, 68]
+        result_indices = {res['index'] for res in result_list}
+        assert len(result_indices) == 10
+        assert result_indices <= expected_unfiltered_indices
 
     async def test_hybrid_search_query_pagination_async(self):
         query = "SELECT c.index, c.title FROM c " \

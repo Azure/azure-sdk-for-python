@@ -115,6 +115,18 @@ def test_final_rrf_ties_are_numeric_rid_descending():
         assert scores[1] == scores[256]
 
 
+def test_zero_score_documents_can_outrank_matches_in_unfiltered_rrf():
+    results = [_result(1, [10, 0]), _result(2, [0, 10])]
+    results.extend(_result(rid, [0, 0]) for rid in (3, 4, 5))
+
+    _rank_results(results, {"componentQueryInfos": [{}, {}]})
+
+    # RID 5 ranks second in both components, ahead of documents that rank first
+    # in one component but last in the other.
+    assert [_get_document_rid(result["_rid"]) for result in results] == [5, 2, 1, 4, 3]
+    assert results[0]["Score"] == pytest.approx(2 / 62)
+
+
 @pytest.mark.parametrize("module", [sync_aggregator, async_aggregator], ids=["sync", "async"])
 @pytest.mark.parametrize("legacy_env", [None, "true"], ids=["unset", "legacy-env-ignored"])
 @pytest.mark.asyncio

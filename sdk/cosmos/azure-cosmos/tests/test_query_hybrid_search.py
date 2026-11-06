@@ -179,6 +179,10 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         # RRF ordering regresses, while tolerating service side score/_rid differences.
         assert [res['index'] for res in result_list] == full_rrf_ranking[5:15]
 
+        # Without a WHERE clause, zero-score documents also receive ordinal ranks.
+        expected_unfiltered_indices = {
+            item['index'] for item in hybrid_search_data.get_hybrid_search_items()['items']
+        }
         query = "SELECT TOP 10 c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
@@ -186,7 +190,10 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         assert len(result_list) == 10
         result_indices = {res['index'] for res in result_list}
         assert len(result_indices) == 10
-        assert result_indices <= expected_rrf_indices
+        assert result_indices <= expected_unfiltered_indices
+        paged_results = self.test_container.query_items(
+            query, enable_cross_partition_query=True, max_item_count=3)
+        assert [res['index'] for res in paged_results] == [res['index'] for res in result_list]
 
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) " \
@@ -194,7 +201,9 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 13
-        assert {res['index'] for res in result_list} == expected_rrf_indices
+        result_indices = {res['index'] for res in result_list}
+        assert len(result_indices) == 13
+        assert result_indices <= expected_unfiltered_indices
 
         item_vector = self.test_container.read_item('50', '1')['vector']
         query = "SELECT c.index, c.title FROM c " \
@@ -203,8 +212,9 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 10
-        for res in result_list:
-            assert res['index'] in [51, 54, 28, 70, 24, 61, 56, 26, 58, 77, 2, 68]
+        result_indices = {res['index'] for res in result_list}
+        assert len(result_indices) == 10
+        assert result_indices <= expected_unfiltered_indices
 
     def test_hybrid_search_query_pagination(self):
         query = "SELECT c.index, c.title FROM c " \
