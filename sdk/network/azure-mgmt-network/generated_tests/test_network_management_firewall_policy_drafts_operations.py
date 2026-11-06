@@ -24,7 +24,6 @@ class TestNetworkManagementFirewallPolicyDraftsOperations(AzureMgmtRecordedTestC
         response = self.client.firewall_policy_drafts.get(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +86,6 @@ class TestNetworkManagementFirewallPolicyDraftsOperations(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +97,6 @@ class TestNetworkManagementFirewallPolicyDraftsOperations(AzureMgmtRecordedTestC
         response = self.client.firewall_policy_drafts.delete(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

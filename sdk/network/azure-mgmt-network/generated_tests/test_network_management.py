@@ -34,7 +34,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
                     }
                 ]
             },
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -56,7 +55,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
                     }
                 ]
             },
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -69,7 +67,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             bastion_host_name="str",
             bsl_token_request={"tokens": ["str"]},
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -91,7 +88,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
                     }
                 ]
             },
-            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -103,7 +99,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
         response = self.client.begin_get_active_sessions(
             resource_group_name=resource_group.name,
             bastion_host_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -116,7 +111,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             bastion_host_name="str",
             session_ids={"sessionIds": ["str"]},
-            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -127,7 +121,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
     def test_express_route_provider_port(self, resource_group):
         response = self.client.express_route_provider_port(
             providerport="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -140,7 +133,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             parameters={"regions": ["str"], "skipToken": "str"},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -153,7 +145,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             parameters={"regions": ["str"], "skipToken": "str"},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -166,7 +157,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             parameters={"skipToken": "str"},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -179,7 +169,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             parameters={"skipToken": "str"},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -191,7 +180,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
         response = self.client.supported_security_providers(
             resource_group_name=resource_group.name,
             virtual_wan_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -204,7 +192,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_wan_name="str",
             vpn_client_params={"authenticationMethod": "str", "vpnServerConfigurationResourceId": "str"},
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -216,7 +203,6 @@ class TestNetworkManagement(AzureMgmtRecordedTestCase):
         response = self.client.check_dns_name_availability(
             location="str",
             domain_name_label="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

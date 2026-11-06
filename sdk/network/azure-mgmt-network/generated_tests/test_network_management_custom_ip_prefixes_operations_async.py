@@ -25,7 +25,6 @@ class TestNetworkManagementCustomIPPrefixesOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.custom_ip_prefixes.get(
             resource_group_name=resource_group.name,
             custom_ip_prefix_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +64,6 @@ class TestNetworkManagementCustomIPPrefixesOperationsAsync(AzureMgmtRecordedTest
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -79,7 +77,6 @@ class TestNetworkManagementCustomIPPrefixesOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             custom_ip_prefix_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +89,6 @@ class TestNetworkManagementCustomIPPrefixesOperationsAsync(AzureMgmtRecordedTest
             await self.client.custom_ip_prefixes.begin_delete(
                 resource_group_name=resource_group.name,
                 custom_ip_prefix_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +100,6 @@ class TestNetworkManagementCustomIPPrefixesOperationsAsync(AzureMgmtRecordedTest
     async def test_custom_ip_prefixes_list(self, resource_group):
         response = self.client.custom_ip_prefixes.list(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -113,9 +108,7 @@ class TestNetworkManagementCustomIPPrefixesOperationsAsync(AzureMgmtRecordedTest
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_custom_ip_prefixes_list_all(self, resource_group):
-        response = self.client.custom_ip_prefixes.list_all(
-            api_version="2026-03-01",
-        )
+        response = self.client.custom_ip_prefixes.list_all()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

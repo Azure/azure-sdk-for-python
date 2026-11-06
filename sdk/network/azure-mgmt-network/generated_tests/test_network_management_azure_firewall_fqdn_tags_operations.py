@@ -21,9 +21,7 @@ class TestNetworkManagementAzureFirewallFqdnTagsOperations(AzureMgmtRecordedTest
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_azure_firewall_fqdn_tags_list_all(self, resource_group):
-        response = self.client.azure_firewall_fqdn_tags.list_all(
-            api_version="2026-03-01",
-        )
+        response = self.client.azure_firewall_fqdn_tags.list_all()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

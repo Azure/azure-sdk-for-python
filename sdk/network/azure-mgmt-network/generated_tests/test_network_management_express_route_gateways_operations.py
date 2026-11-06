@@ -24,7 +24,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
         response = self.client.express_route_gateways.get(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +80,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -94,7 +92,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
             express_route_gateway_parameters={"tags": {"str": "str"}},
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -106,7 +103,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
         response = self.client.express_route_gateways.begin_delete(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -117,7 +113,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
     def test_express_route_gateways_list_by_resource_group(self, resource_group):
         response = self.client.express_route_gateways.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -126,9 +121,7 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_express_route_gateways_list_by_subscription(self, resource_group):
-        response = self.client.express_route_gateways.list_by_subscription(
-            api_version="2026-03-01",
-        )
+        response = self.client.express_route_gateways.list_by_subscription()
 
         # please add some check logic here by yourself
         # ...
@@ -139,7 +132,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
         response = self.client.express_route_gateways.begin_get_failover_all_tests_details(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -153,7 +145,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
             express_route_gateway_name="str",
             peering_location="str",
             failover_test_id="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -166,7 +157,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
             peering_location="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -183,7 +173,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
                 "peeringLocation": "str",
                 "wasSimulationSuccessful": bool,
             },
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -195,7 +184,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
         response = self.client.express_route_gateways.begin_get_routes_information(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -207,7 +195,6 @@ class TestNetworkManagementExpressRouteGatewaysOperations(AzureMgmtRecordedTestC
         response = self.client.express_route_gateways.begin_get_resiliency_information(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
