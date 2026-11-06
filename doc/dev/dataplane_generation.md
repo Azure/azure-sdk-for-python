@@ -107,6 +107,46 @@ tsp-client update
 
 tsp-client will look for a `tsp-location.yaml` file in your local directory. `tsp-location.yaml` contains the configuration information that will be used to sync your TypeSpec project and generate your SDK. Please make sure that the commit is targeting the correct TypeSpec project updates you wish to generate your SDK from.
 
+## Validate emitter updates
+
+The [TypeSpec regeneration pipeline](../../eng/pipelines/typespec-regeneration.yml)
+checks emitter updates by regenerating selected SDKs at their recorded spec
+revisions. It runs when `eng/emitter-package.json` or its lockfile changes on
+`main` or in a pull request, and can also be queued manually.
+
+The default run covers three SDKs:
+
+- Advisor (management plane).
+- App Configuration (data plane).
+- Agent Server Responses (nested client).
+
+To choose other SDKs, set **PackageDirectories** when queuing a run. Use
+comma-separated repository paths, such as `sdk/advisor/azure-mgmt-advisor`.
+Package paths include their nested clients. Set it to `*` to run all SDKs across
+eight jobs instead of the default single job.
+
+Download the `typespec-regeneration-<shard>` artifacts for `results.json`,
+per-client logs, and `changes.txt` / `changes.patch`. Generation failures fail
+the job without skipping later clients. Code differences do not fail the job:
+review the patches for unexpected changes.
+
+Maintainers must register the pipeline YAML in Azure Pipelines and enable its
+YAML CI and PR triggers before automatic runs can start.
+
+For a local run, use a **clean, disposable checkout**, Node.js 24, Python 3.10+,
+and PyYAML. Configure feed access using [CONTRIBUTING.md](../../CONTRIBUTING.md),
+then run:
+
+```shell
+npm ci --prefix eng/common/tsp-client
+npm exec --prefix eng/common/tsp-client --no -- tsp-client install-dependencies
+python eng/scripts/regenerate_typespec.py --output ../regeneration-results --packages sdk/advisor/azure-mgmt-advisor
+```
+
+Omitting `--packages` runs all clients. Keep the output directory outside the
+checkout. The runner leaves generated changes in place and marks new SDK files
+as intent-to-add for patch collection; it does not commit them.
+
 ## Post-Generation Steps
 
 The generated code is not enough to release directly. Follow these steps regardless of whether you generated from TypeSpec or Swagger.
