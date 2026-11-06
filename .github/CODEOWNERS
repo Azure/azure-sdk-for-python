@@ -829,7 +829,7 @@
 /eng/tools/                                                          @JennyPng @l0lawrence @danieljurek @laiapat
 /.github/workflows/                                                  @JennyPng @l0lawrence @Azure/azure-sdk-eng
 /.github/workflows/typespec-python-regenerate.yml                    @JennyPng @l0lawrence @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
-/.github/CODEOWNERS                                                  @xirzec @kashifkhan @JennyPng @l0lawrence @Azure/azure-sdk-eng
+/.github/CODEOWNERS                                                  @xirzec @kashifkhan @JennyPng @l0lawrence @Azure/azure-sdk-eng @j7nw4r
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan
 /.github/prompts/                                                    @laiapat @l0lawrence
 /.github/skills/                                                     @laiapat @l0lawrence @Azure/azsdk-cli
