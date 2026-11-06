@@ -294,384 +294,384 @@
   - Added model `UserTokenParameterProperties`
   - Added model `WikiContractProperties`
   - Added model `WorkspaceContractProperties`
-  - Model `ApiDiagnosticOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiDiagnosticOperations` added parameter `etag` in method `delete`
-  - Model `ApiDiagnosticOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiDiagnosticOperations` added parameter `etag` in method `update`
-  - Model `ApiDiagnosticOperations` added parameter `match_condition` in method `update`
-  - Model `ApiGatewayConfigConnectionOperations` added parameter `etag` in method `begin_delete`
-  - Model `ApiGatewayConfigConnectionOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `ApiIssueAttachmentOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiIssueAttachmentOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiIssueAttachmentOperations` added parameter `etag` in method `delete`
-  - Model `ApiIssueAttachmentOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiIssueCommentOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiIssueCommentOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiIssueCommentOperations` added parameter `etag` in method `delete`
-  - Model `ApiIssueCommentOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiIssueOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiIssueOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiIssueOperations` added parameter `etag` in method `delete`
-  - Model `ApiIssueOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiIssueOperations` added parameter `etag` in method `update`
-  - Model `ApiIssueOperations` added parameter `match_condition` in method `update`
-  - Model `ApiManagementServiceOperations` added method `begin_refresh_hostnames`
-  - Model `ApiOperationOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiOperationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiOperationOperations` added parameter `etag` in method `delete`
-  - Model `ApiOperationOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiOperationOperations` added parameter `etag` in method `update`
-  - Model `ApiOperationOperations` added parameter `match_condition` in method `update`
-  - Model `ApiOperationPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiOperationPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiOperationPolicyOperations` added parameter `etag` in method `delete`
-  - Model `ApiOperationPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `ApiOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `ApiOperations` added parameter `etag` in method `begin_delete`
-  - Model `ApiOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `ApiOperations` added parameter `etag` in method `update`
-  - Model `ApiOperations` added parameter `match_condition` in method `update`
-  - Model `ApiPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiPolicyOperations` added parameter `etag` in method `delete`
-  - Model `ApiPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiReleaseOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiReleaseOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiReleaseOperations` added parameter `etag` in method `delete`
-  - Model `ApiReleaseOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiReleaseOperations` added parameter `etag` in method `update`
-  - Model `ApiReleaseOperations` added parameter `match_condition` in method `update`
-  - Model `ApiSchemaOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `ApiSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `ApiSchemaOperations` added parameter `etag` in method `delete`
-  - Model `ApiSchemaOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiTagDescriptionOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiTagDescriptionOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiTagDescriptionOperations` added parameter `etag` in method `delete`
-  - Model `ApiTagDescriptionOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiVersionSetOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiVersionSetOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiVersionSetOperations` added parameter `etag` in method `delete`
-  - Model `ApiVersionSetOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiVersionSetOperations` added parameter `etag` in method `update`
-  - Model `ApiVersionSetOperations` added parameter `match_condition` in method `update`
-  - Model `ApiWikiOperations` added parameter `etag` in method `create_or_update`
-  - Model `ApiWikiOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ApiWikiOperations` added parameter `etag` in method `delete`
-  - Model `ApiWikiOperations` added parameter `match_condition` in method `delete`
-  - Model `ApiWikiOperations` added parameter `etag` in method `update`
-  - Model `ApiWikiOperations` added parameter `match_condition` in method `update`
-  - Model `AuthorizationAccessPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `AuthorizationAccessPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `AuthorizationAccessPolicyOperations` added parameter `etag` in method `delete`
-  - Model `AuthorizationAccessPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `AuthorizationOperations` added parameter `etag` in method `create_or_update`
-  - Model `AuthorizationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `AuthorizationOperations` added parameter `etag` in method `delete`
-  - Model `AuthorizationOperations` added parameter `match_condition` in method `delete`
-  - Model `AuthorizationProviderOperations` added parameter `etag` in method `create_or_update`
-  - Model `AuthorizationProviderOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `AuthorizationProviderOperations` added parameter `etag` in method `delete`
-  - Model `AuthorizationProviderOperations` added parameter `match_condition` in method `delete`
-  - Model `AuthorizationProviderOperations` added method `refresh_secret`
-  - Model `AuthorizationServerOperations` added parameter `etag` in method `create_or_update`
-  - Model `AuthorizationServerOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `AuthorizationServerOperations` added parameter `etag` in method `delete`
-  - Model `AuthorizationServerOperations` added parameter `match_condition` in method `delete`
-  - Model `AuthorizationServerOperations` added parameter `etag` in method `update`
-  - Model `AuthorizationServerOperations` added parameter `match_condition` in method `update`
-  - Model `BackendOperations` added parameter `etag` in method `create_or_update`
-  - Model `BackendOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `BackendOperations` added parameter `etag` in method `delete`
-  - Model `BackendOperations` added parameter `match_condition` in method `delete`
-  - Model `BackendOperations` added parameter `etag` in method `update`
-  - Model `BackendOperations` added parameter `match_condition` in method `update`
-  - Model `CacheOperations` added parameter `etag` in method `create_or_update`
-  - Model `CacheOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `CacheOperations` added parameter `etag` in method `delete`
-  - Model `CacheOperations` added parameter `match_condition` in method `delete`
-  - Model `CacheOperations` added parameter `etag` in method `update`
-  - Model `CacheOperations` added parameter `match_condition` in method `update`
-  - Model `CertificateOperations` added parameter `etag` in method `create_or_update`
-  - Model `CertificateOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `CertificateOperations` added parameter `etag` in method `delete`
-  - Model `CertificateOperations` added parameter `match_condition` in method `delete`
-  - Model `ContentItemOperations` added parameter `etag` in method `create_or_update`
-  - Model `ContentItemOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ContentItemOperations` added parameter `etag` in method `delete`
-  - Model `ContentItemOperations` added parameter `match_condition` in method `delete`
-  - Model `ContentTypeOperations` added parameter `etag` in method `create_or_update`
-  - Model `ContentTypeOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ContentTypeOperations` added parameter `etag` in method `delete`
-  - Model `ContentTypeOperations` added parameter `match_condition` in method `delete`
-  - Model `DelegationSettingsOperations` added parameter `etag` in method `create_or_update`
-  - Model `DelegationSettingsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `DelegationSettingsOperations` added parameter `etag` in method `update`
-  - Model `DelegationSettingsOperations` added parameter `match_condition` in method `update`
-  - Model `DiagnosticOperations` added parameter `etag` in method `create_or_update`
-  - Model `DiagnosticOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `DiagnosticOperations` added parameter `etag` in method `delete`
-  - Model `DiagnosticOperations` added parameter `match_condition` in method `delete`
-  - Model `DiagnosticOperations` added parameter `etag` in method `update`
-  - Model `DiagnosticOperations` added parameter `match_condition` in method `update`
-  - Model `DocumentationOperations` added parameter `etag` in method `create_or_update`
-  - Model `DocumentationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `DocumentationOperations` added parameter `etag` in method `delete`
-  - Model `DocumentationOperations` added parameter `match_condition` in method `delete`
-  - Model `DocumentationOperations` added parameter `etag` in method `update`
-  - Model `DocumentationOperations` added parameter `match_condition` in method `update`
-  - Model `EmailTemplateOperations` added parameter `etag` in method `create_or_update`
-  - Model `EmailTemplateOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `EmailTemplateOperations` added parameter `etag` in method `delete`
-  - Model `EmailTemplateOperations` added parameter `match_condition` in method `delete`
-  - Model `EmailTemplateOperations` added parameter `etag` in method `update`
-  - Model `EmailTemplateOperations` added parameter `match_condition` in method `update`
-  - Model `GatewayCertificateAuthorityOperations` added parameter `etag` in method `create_or_update`
-  - Model `GatewayCertificateAuthorityOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GatewayCertificateAuthorityOperations` added parameter `etag` in method `delete`
-  - Model `GatewayCertificateAuthorityOperations` added parameter `match_condition` in method `delete`
-  - Model `GatewayHostnameConfigurationOperations` added parameter `etag` in method `create_or_update`
-  - Model `GatewayHostnameConfigurationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GatewayHostnameConfigurationOperations` added parameter `etag` in method `delete`
-  - Model `GatewayHostnameConfigurationOperations` added parameter `match_condition` in method `delete`
-  - Model `GatewayOperations` added parameter `etag` in method `create_or_update`
-  - Model `GatewayOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GatewayOperations` added parameter `etag` in method `delete`
-  - Model `GatewayOperations` added parameter `match_condition` in method `delete`
-  - Model `GatewayOperations` added parameter `etag` in method `update`
-  - Model `GatewayOperations` added parameter `match_condition` in method `update`
-  - Model `GlobalSchemaOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `GlobalSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `GlobalSchemaOperations` added parameter `etag` in method `delete`
-  - Model `GlobalSchemaOperations` added parameter `match_condition` in method `delete`
-  - Model `GraphQLApiResolverOperations` added parameter `etag` in method `create_or_update`
-  - Model `GraphQLApiResolverOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GraphQLApiResolverOperations` added parameter `etag` in method `delete`
-  - Model `GraphQLApiResolverOperations` added parameter `match_condition` in method `delete`
-  - Model `GraphQLApiResolverOperations` added parameter `etag` in method `update`
-  - Model `GraphQLApiResolverOperations` added parameter `match_condition` in method `update`
-  - Model `GraphQLApiResolverPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `GraphQLApiResolverPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GraphQLApiResolverPolicyOperations` added parameter `etag` in method `delete`
-  - Model `GraphQLApiResolverPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `GroupOperations` added parameter `etag` in method `create_or_update`
-  - Model `GroupOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `GroupOperations` added parameter `etag` in method `delete`
-  - Model `GroupOperations` added parameter `match_condition` in method `delete`
-  - Model `GroupOperations` added parameter `etag` in method `update`
-  - Model `GroupOperations` added parameter `match_condition` in method `update`
-  - Model `IdentityProviderOperations` added parameter `etag` in method `create_or_update`
-  - Model `IdentityProviderOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `IdentityProviderOperations` added parameter `etag` in method `delete`
-  - Model `IdentityProviderOperations` added parameter `match_condition` in method `delete`
-  - Model `IdentityProviderOperations` added parameter `etag` in method `update`
-  - Model `IdentityProviderOperations` added parameter `match_condition` in method `update`
-  - Model `LoggerOperations` added parameter `etag` in method `create_or_update`
-  - Model `LoggerOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `LoggerOperations` added parameter `etag` in method `delete`
-  - Model `LoggerOperations` added parameter `match_condition` in method `delete`
-  - Model `LoggerOperations` added parameter `etag` in method `update`
-  - Model `LoggerOperations` added parameter `match_condition` in method `update`
-  - Model `NamedValueOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `NamedValueOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `NamedValueOperations` added parameter `etag` in method `begin_update`
-  - Model `NamedValueOperations` added parameter `match_condition` in method `begin_update`
-  - Model `NamedValueOperations` added parameter `etag` in method `delete`
-  - Model `NamedValueOperations` added parameter `match_condition` in method `delete`
-  - Model `NotificationOperations` added parameter `etag` in method `create_or_update`
-  - Model `NotificationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `OpenIdConnectProviderOperations` added parameter `etag` in method `create_or_update`
-  - Model `OpenIdConnectProviderOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `OpenIdConnectProviderOperations` added parameter `etag` in method `delete`
-  - Model `OpenIdConnectProviderOperations` added parameter `match_condition` in method `delete`
-  - Model `OpenIdConnectProviderOperations` added parameter `etag` in method `update`
-  - Model `OpenIdConnectProviderOperations` added parameter `match_condition` in method `update`
-  - Model `PolicyFragmentOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `PolicyFragmentOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `PolicyFragmentOperations` added parameter `etag` in method `delete`
-  - Model `PolicyFragmentOperations` added parameter `match_condition` in method `delete`
-  - Model `PolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `PolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `PolicyOperations` added parameter `etag` in method `delete`
-  - Model `PolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `PolicyRestrictionOperations` added parameter `etag` in method `create_or_update`
-  - Model `PolicyRestrictionOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `PolicyRestrictionOperations` added parameter `etag` in method `delete`
-  - Model `PolicyRestrictionOperations` added parameter `match_condition` in method `delete`
-  - Model `PolicyRestrictionOperations` added parameter `etag` in method `update`
-  - Model `PolicyRestrictionOperations` added parameter `match_condition` in method `update`
-  - Model `PortalConfigOperations` added parameter `etag` in method `create_or_update`
-  - Model `PortalConfigOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `PortalConfigOperations` added parameter `etag` in method `update`
-  - Model `PortalConfigOperations` added parameter `match_condition` in method `update`
-  - Model `PortalRevisionOperations` added parameter `etag` in method `begin_update`
-  - Model `PortalRevisionOperations` added parameter `match_condition` in method `begin_update`
-  - Model `ProductOperations` added parameter `etag` in method `create_or_update`
-  - Model `ProductOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ProductOperations` added parameter `etag` in method `delete`
-  - Model `ProductOperations` added parameter `match_condition` in method `delete`
-  - Model `ProductOperations` added parameter `etag` in method `update`
-  - Model `ProductOperations` added parameter `match_condition` in method `update`
-  - Model `ProductPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `ProductPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ProductPolicyOperations` added parameter `etag` in method `delete`
-  - Model `ProductPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `ProductWikiOperations` added parameter `etag` in method `create_or_update`
-  - Model `ProductWikiOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ProductWikiOperations` added parameter `etag` in method `delete`
-  - Model `ProductWikiOperations` added parameter `match_condition` in method `delete`
-  - Model `ProductWikiOperations` added parameter `etag` in method `update`
-  - Model `ProductWikiOperations` added parameter `match_condition` in method `update`
-  - Model `SignInSettingsOperations` added parameter `etag` in method `create_or_update`
-  - Model `SignInSettingsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `SignInSettingsOperations` added parameter `etag` in method `update`
-  - Model `SignInSettingsOperations` added parameter `match_condition` in method `update`
-  - Model `SignUpSettingsOperations` added parameter `etag` in method `create_or_update`
-  - Model `SignUpSettingsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `SignUpSettingsOperations` added parameter `etag` in method `update`
-  - Model `SignUpSettingsOperations` added parameter `match_condition` in method `update`
-  - Model `SubscriptionOperations` added parameter `etag` in method `create_or_update`
-  - Model `SubscriptionOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `SubscriptionOperations` added parameter `etag` in method `delete`
-  - Model `SubscriptionOperations` added parameter `match_condition` in method `delete`
-  - Model `SubscriptionOperations` added parameter `etag` in method `update`
-  - Model `SubscriptionOperations` added parameter `match_condition` in method `update`
-  - Model `TagOperations` added parameter `etag` in method `create_or_update`
-  - Model `TagOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `TagOperations` added parameter `etag` in method `delete`
-  - Model `TagOperations` added parameter `match_condition` in method `delete`
-  - Model `TagOperations` added parameter `etag` in method `update`
-  - Model `TagOperations` added parameter `match_condition` in method `update`
-  - Model `TenantAccessOperations` added parameter `etag` in method `create`
-  - Model `TenantAccessOperations` added parameter `match_condition` in method `create`
-  - Model `TenantAccessOperations` added parameter `etag` in method `update`
-  - Model `TenantAccessOperations` added parameter `match_condition` in method `update`
-  - Model `UserOperations` added parameter `etag` in method `begin_delete`
-  - Model `UserOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `UserOperations` added parameter `etag` in method `create_or_update`
-  - Model `UserOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `UserOperations` added parameter `etag` in method `update`
-  - Model `UserOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiDiagnosticOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiOperationOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiOperationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiOperationOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiOperationOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiOperationOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiOperationOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiOperationPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiOperationPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiOperationPolicyOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiOperationPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspaceApiOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspaceApiOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiPolicyOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiReleaseOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiReleaseOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiReleaseOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiReleaseOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiReleaseOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiReleaseOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceApiSchemaOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspaceApiSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspaceApiSchemaOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiSchemaOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceApiVersionSetOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceBackendOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceBackendOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceBackendOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceBackendOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceBackendOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceBackendOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceCertificateOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceCertificateOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceCertificateOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceCertificateOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceDiagnosticOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceDiagnosticOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceDiagnosticOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceDiagnosticOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceDiagnosticOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceGlobalSchemaOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspaceGlobalSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspaceGlobalSchemaOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceGlobalSchemaOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceGroupOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceGroupOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceGroupOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceGroupOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceGroupOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceGroupOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceLoggerOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceLoggerOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceLoggerOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceLoggerOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceLoggerOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceLoggerOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceNamedValueOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspaceNamedValueOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspaceNamedValueOperations` added parameter `etag` in method `begin_update`
-  - Model `WorkspaceNamedValueOperations` added parameter `match_condition` in method `begin_update`
-  - Model `WorkspaceNamedValueOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceNamedValueOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceNotificationOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceNotificationOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspacePolicyFragmentOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `WorkspacePolicyFragmentOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `WorkspacePolicyFragmentOperations` added parameter `etag` in method `delete`
-  - Model `WorkspacePolicyFragmentOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspacePolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspacePolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspacePolicyOperations` added parameter `etag` in method `delete`
-  - Model `WorkspacePolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceProductOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceProductOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceProductOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceProductOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceProductOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceProductOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceProductPolicyOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceProductPolicyOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceProductPolicyOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceProductPolicyOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceSubscriptionOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceSubscriptionOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceSubscriptionOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceSubscriptionOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceSubscriptionOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceSubscriptionOperations` added parameter `match_condition` in method `update`
-  - Model `WorkspaceTagOperations` added parameter `etag` in method `create_or_update`
-  - Model `WorkspaceTagOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkspaceTagOperations` added parameter `etag` in method `delete`
-  - Model `WorkspaceTagOperations` added parameter `match_condition` in method `delete`
-  - Model `WorkspaceTagOperations` added parameter `etag` in method `update`
-  - Model `WorkspaceTagOperations` added parameter `match_condition` in method `update`
+  - Operation group `ApiDiagnosticOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiDiagnosticOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiDiagnosticOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiDiagnosticOperations` added parameter `etag` in method `update`
+  - Operation group `ApiDiagnosticOperations` added parameter `match_condition` in method `update`
+  - Operation group `ApiGatewayConfigConnectionOperations` added parameter `etag` in method `begin_delete`
+  - Operation group `ApiGatewayConfigConnectionOperations` added parameter `match_condition` in method `begin_delete`
+  - Operation group `ApiIssueAttachmentOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiIssueAttachmentOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiIssueAttachmentOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiIssueAttachmentOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiIssueCommentOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiIssueCommentOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiIssueCommentOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiIssueCommentOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiIssueOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiIssueOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiIssueOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiIssueOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiIssueOperations` added parameter `etag` in method `update`
+  - Operation group `ApiIssueOperations` added parameter `match_condition` in method `update`
+  - Operation group `ApiManagementServiceOperations` added method `begin_refresh_hostnames`
+  - Operation group `ApiOperationOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiOperationOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiOperationOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiOperationOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiOperationOperations` added parameter `etag` in method `update`
+  - Operation group `ApiOperationOperations` added parameter `match_condition` in method `update`
+  - Operation group `ApiOperationPolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiOperationPolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiOperationPolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiOperationPolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `ApiOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `ApiOperations` added parameter `etag` in method `begin_delete`
+  - Operation group `ApiOperations` added parameter `match_condition` in method `begin_delete`
+  - Operation group `ApiOperations` added parameter `etag` in method `update`
+  - Operation group `ApiOperations` added parameter `match_condition` in method `update`
+  - Operation group `ApiPolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiPolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiPolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiPolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiReleaseOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiReleaseOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiReleaseOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiReleaseOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiReleaseOperations` added parameter `etag` in method `update`
+  - Operation group `ApiReleaseOperations` added parameter `match_condition` in method `update`
+  - Operation group `ApiSchemaOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `ApiSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `ApiSchemaOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiSchemaOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiTagDescriptionOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiTagDescriptionOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiTagDescriptionOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiTagDescriptionOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiVersionSetOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiVersionSetOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiVersionSetOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiVersionSetOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiVersionSetOperations` added parameter `etag` in method `update`
+  - Operation group `ApiVersionSetOperations` added parameter `match_condition` in method `update`
+  - Operation group `ApiWikiOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ApiWikiOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ApiWikiOperations` added parameter `etag` in method `delete`
+  - Operation group `ApiWikiOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ApiWikiOperations` added parameter `etag` in method `update`
+  - Operation group `ApiWikiOperations` added parameter `match_condition` in method `update`
+  - Operation group `AuthorizationAccessPolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `AuthorizationAccessPolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `AuthorizationAccessPolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `AuthorizationAccessPolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `AuthorizationOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `AuthorizationOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `AuthorizationOperations` added parameter `etag` in method `delete`
+  - Operation group `AuthorizationOperations` added parameter `match_condition` in method `delete`
+  - Operation group `AuthorizationProviderOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `AuthorizationProviderOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `AuthorizationProviderOperations` added parameter `etag` in method `delete`
+  - Operation group `AuthorizationProviderOperations` added parameter `match_condition` in method `delete`
+  - Operation group `AuthorizationProviderOperations` added method `refresh_secret`
+  - Operation group `AuthorizationServerOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `AuthorizationServerOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `AuthorizationServerOperations` added parameter `etag` in method `delete`
+  - Operation group `AuthorizationServerOperations` added parameter `match_condition` in method `delete`
+  - Operation group `AuthorizationServerOperations` added parameter `etag` in method `update`
+  - Operation group `AuthorizationServerOperations` added parameter `match_condition` in method `update`
+  - Operation group `BackendOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `BackendOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `BackendOperations` added parameter `etag` in method `delete`
+  - Operation group `BackendOperations` added parameter `match_condition` in method `delete`
+  - Operation group `BackendOperations` added parameter `etag` in method `update`
+  - Operation group `BackendOperations` added parameter `match_condition` in method `update`
+  - Operation group `CacheOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `CacheOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `CacheOperations` added parameter `etag` in method `delete`
+  - Operation group `CacheOperations` added parameter `match_condition` in method `delete`
+  - Operation group `CacheOperations` added parameter `etag` in method `update`
+  - Operation group `CacheOperations` added parameter `match_condition` in method `update`
+  - Operation group `CertificateOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `CertificateOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `CertificateOperations` added parameter `etag` in method `delete`
+  - Operation group `CertificateOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ContentItemOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ContentItemOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ContentItemOperations` added parameter `etag` in method `delete`
+  - Operation group `ContentItemOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ContentTypeOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ContentTypeOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ContentTypeOperations` added parameter `etag` in method `delete`
+  - Operation group `ContentTypeOperations` added parameter `match_condition` in method `delete`
+  - Operation group `DelegationSettingsOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `DelegationSettingsOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `DelegationSettingsOperations` added parameter `etag` in method `update`
+  - Operation group `DelegationSettingsOperations` added parameter `match_condition` in method `update`
+  - Operation group `DiagnosticOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `DiagnosticOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `DiagnosticOperations` added parameter `etag` in method `delete`
+  - Operation group `DiagnosticOperations` added parameter `match_condition` in method `delete`
+  - Operation group `DiagnosticOperations` added parameter `etag` in method `update`
+  - Operation group `DiagnosticOperations` added parameter `match_condition` in method `update`
+  - Operation group `DocumentationOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `DocumentationOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `DocumentationOperations` added parameter `etag` in method `delete`
+  - Operation group `DocumentationOperations` added parameter `match_condition` in method `delete`
+  - Operation group `DocumentationOperations` added parameter `etag` in method `update`
+  - Operation group `DocumentationOperations` added parameter `match_condition` in method `update`
+  - Operation group `EmailTemplateOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `EmailTemplateOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `EmailTemplateOperations` added parameter `etag` in method `delete`
+  - Operation group `EmailTemplateOperations` added parameter `match_condition` in method `delete`
+  - Operation group `EmailTemplateOperations` added parameter `etag` in method `update`
+  - Operation group `EmailTemplateOperations` added parameter `match_condition` in method `update`
+  - Operation group `GatewayCertificateAuthorityOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `GatewayCertificateAuthorityOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `GatewayCertificateAuthorityOperations` added parameter `etag` in method `delete`
+  - Operation group `GatewayCertificateAuthorityOperations` added parameter `match_condition` in method `delete`
+  - Operation group `GatewayHostnameConfigurationOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `GatewayHostnameConfigurationOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `GatewayHostnameConfigurationOperations` added parameter `etag` in method `delete`
+  - Operation group `GatewayHostnameConfigurationOperations` added parameter `match_condition` in method `delete`
+  - Operation group `GatewayOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `GatewayOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `GatewayOperations` added parameter `etag` in method `delete`
+  - Operation group `GatewayOperations` added parameter `match_condition` in method `delete`
+  - Operation group `GatewayOperations` added parameter `etag` in method `update`
+  - Operation group `GatewayOperations` added parameter `match_condition` in method `update`
+  - Operation group `GlobalSchemaOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `GlobalSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `GlobalSchemaOperations` added parameter `etag` in method `delete`
+  - Operation group `GlobalSchemaOperations` added parameter `match_condition` in method `delete`
+  - Operation group `GraphQLApiResolverOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `GraphQLApiResolverOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `GraphQLApiResolverOperations` added parameter `etag` in method `delete`
+  - Operation group `GraphQLApiResolverOperations` added parameter `match_condition` in method `delete`
+  - Operation group `GraphQLApiResolverOperations` added parameter `etag` in method `update`
+  - Operation group `GraphQLApiResolverOperations` added parameter `match_condition` in method `update`
+  - Operation group `GraphQLApiResolverPolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `GraphQLApiResolverPolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `GraphQLApiResolverPolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `GraphQLApiResolverPolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `GroupOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `GroupOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `GroupOperations` added parameter `etag` in method `delete`
+  - Operation group `GroupOperations` added parameter `match_condition` in method `delete`
+  - Operation group `GroupOperations` added parameter `etag` in method `update`
+  - Operation group `GroupOperations` added parameter `match_condition` in method `update`
+  - Operation group `IdentityProviderOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `IdentityProviderOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `IdentityProviderOperations` added parameter `etag` in method `delete`
+  - Operation group `IdentityProviderOperations` added parameter `match_condition` in method `delete`
+  - Operation group `IdentityProviderOperations` added parameter `etag` in method `update`
+  - Operation group `IdentityProviderOperations` added parameter `match_condition` in method `update`
+  - Operation group `LoggerOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `LoggerOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `LoggerOperations` added parameter `etag` in method `delete`
+  - Operation group `LoggerOperations` added parameter `match_condition` in method `delete`
+  - Operation group `LoggerOperations` added parameter `etag` in method `update`
+  - Operation group `LoggerOperations` added parameter `match_condition` in method `update`
+  - Operation group `NamedValueOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `NamedValueOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `NamedValueOperations` added parameter `etag` in method `begin_update`
+  - Operation group `NamedValueOperations` added parameter `match_condition` in method `begin_update`
+  - Operation group `NamedValueOperations` added parameter `etag` in method `delete`
+  - Operation group `NamedValueOperations` added parameter `match_condition` in method `delete`
+  - Operation group `NotificationOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `NotificationOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `OpenIdConnectProviderOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `OpenIdConnectProviderOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `OpenIdConnectProviderOperations` added parameter `etag` in method `delete`
+  - Operation group `OpenIdConnectProviderOperations` added parameter `match_condition` in method `delete`
+  - Operation group `OpenIdConnectProviderOperations` added parameter `etag` in method `update`
+  - Operation group `OpenIdConnectProviderOperations` added parameter `match_condition` in method `update`
+  - Operation group `PolicyFragmentOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `PolicyFragmentOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `PolicyFragmentOperations` added parameter `etag` in method `delete`
+  - Operation group `PolicyFragmentOperations` added parameter `match_condition` in method `delete`
+  - Operation group `PolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `PolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `PolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `PolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `PolicyRestrictionOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `PolicyRestrictionOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `PolicyRestrictionOperations` added parameter `etag` in method `delete`
+  - Operation group `PolicyRestrictionOperations` added parameter `match_condition` in method `delete`
+  - Operation group `PolicyRestrictionOperations` added parameter `etag` in method `update`
+  - Operation group `PolicyRestrictionOperations` added parameter `match_condition` in method `update`
+  - Operation group `PortalConfigOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `PortalConfigOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `PortalConfigOperations` added parameter `etag` in method `update`
+  - Operation group `PortalConfigOperations` added parameter `match_condition` in method `update`
+  - Operation group `PortalRevisionOperations` added parameter `etag` in method `begin_update`
+  - Operation group `PortalRevisionOperations` added parameter `match_condition` in method `begin_update`
+  - Operation group `ProductOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ProductOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ProductOperations` added parameter `etag` in method `delete`
+  - Operation group `ProductOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ProductOperations` added parameter `etag` in method `update`
+  - Operation group `ProductOperations` added parameter `match_condition` in method `update`
+  - Operation group `ProductPolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ProductPolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ProductPolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `ProductPolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ProductWikiOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `ProductWikiOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `ProductWikiOperations` added parameter `etag` in method `delete`
+  - Operation group `ProductWikiOperations` added parameter `match_condition` in method `delete`
+  - Operation group `ProductWikiOperations` added parameter `etag` in method `update`
+  - Operation group `ProductWikiOperations` added parameter `match_condition` in method `update`
+  - Operation group `SignInSettingsOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `SignInSettingsOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `SignInSettingsOperations` added parameter `etag` in method `update`
+  - Operation group `SignInSettingsOperations` added parameter `match_condition` in method `update`
+  - Operation group `SignUpSettingsOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `SignUpSettingsOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `SignUpSettingsOperations` added parameter `etag` in method `update`
+  - Operation group `SignUpSettingsOperations` added parameter `match_condition` in method `update`
+  - Operation group `SubscriptionOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `SubscriptionOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `SubscriptionOperations` added parameter `etag` in method `delete`
+  - Operation group `SubscriptionOperations` added parameter `match_condition` in method `delete`
+  - Operation group `SubscriptionOperations` added parameter `etag` in method `update`
+  - Operation group `SubscriptionOperations` added parameter `match_condition` in method `update`
+  - Operation group `TagOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `TagOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `TagOperations` added parameter `etag` in method `delete`
+  - Operation group `TagOperations` added parameter `match_condition` in method `delete`
+  - Operation group `TagOperations` added parameter `etag` in method `update`
+  - Operation group `TagOperations` added parameter `match_condition` in method `update`
+  - Operation group `TenantAccessOperations` added parameter `etag` in method `create`
+  - Operation group `TenantAccessOperations` added parameter `match_condition` in method `create`
+  - Operation group `TenantAccessOperations` added parameter `etag` in method `update`
+  - Operation group `TenantAccessOperations` added parameter `match_condition` in method `update`
+  - Operation group `UserOperations` added parameter `etag` in method `begin_delete`
+  - Operation group `UserOperations` added parameter `match_condition` in method `begin_delete`
+  - Operation group `UserOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `UserOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `UserOperations` added parameter `etag` in method `update`
+  - Operation group `UserOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceApiDiagnosticOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceApiDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceApiDiagnosticOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceApiDiagnosticOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceApiDiagnosticOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceApiDiagnosticOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceApiOperationOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceApiOperationOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceApiOperationOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceApiOperationOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceApiOperationOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceApiOperationOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceApiOperationPolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceApiOperationPolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceApiOperationPolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceApiOperationPolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceApiOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `WorkspaceApiOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `WorkspaceApiOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceApiOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceApiOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceApiOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceApiPolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceApiPolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceApiPolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceApiPolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceApiReleaseOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceApiReleaseOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceApiReleaseOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceApiReleaseOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceApiReleaseOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceApiReleaseOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceApiSchemaOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `WorkspaceApiSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `WorkspaceApiSchemaOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceApiSchemaOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceApiVersionSetOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceApiVersionSetOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceApiVersionSetOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceApiVersionSetOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceApiVersionSetOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceApiVersionSetOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceBackendOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceBackendOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceBackendOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceBackendOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceBackendOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceBackendOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceCertificateOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceCertificateOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceCertificateOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceCertificateOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceDiagnosticOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceDiagnosticOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceDiagnosticOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceDiagnosticOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceDiagnosticOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceGlobalSchemaOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `WorkspaceGlobalSchemaOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `WorkspaceGlobalSchemaOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceGlobalSchemaOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceGroupOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceGroupOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceGroupOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceGroupOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceGroupOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceGroupOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceLoggerOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceLoggerOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceLoggerOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceLoggerOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceLoggerOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceLoggerOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceNamedValueOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `WorkspaceNamedValueOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `WorkspaceNamedValueOperations` added parameter `etag` in method `begin_update`
+  - Operation group `WorkspaceNamedValueOperations` added parameter `match_condition` in method `begin_update`
+  - Operation group `WorkspaceNamedValueOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceNamedValueOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceNotificationOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceNotificationOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspacePolicyFragmentOperations` added parameter `etag` in method `begin_create_or_update`
+  - Operation group `WorkspacePolicyFragmentOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Operation group `WorkspacePolicyFragmentOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspacePolicyFragmentOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspacePolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspacePolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspacePolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspacePolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceProductOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceProductOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceProductOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceProductOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceProductOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceProductOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceProductPolicyOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceProductPolicyOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceProductPolicyOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceProductPolicyOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceSubscriptionOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceSubscriptionOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceSubscriptionOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceSubscriptionOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceSubscriptionOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceSubscriptionOperations` added parameter `match_condition` in method `update`
+  - Operation group `WorkspaceTagOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `WorkspaceTagOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkspaceTagOperations` added parameter `etag` in method `delete`
+  - Operation group `WorkspaceTagOperations` added parameter `match_condition` in method `delete`
+  - Operation group `WorkspaceTagOperations` added parameter `etag` in method `update`
+  - Operation group `WorkspaceTagOperations` added parameter `match_condition` in method `update`
   - Added operation group `ApiGatewayHostnameBindingOperations`
   - Added operation group `ApiToolOperations`
   - Added operation group `ClientApplicationOperations`

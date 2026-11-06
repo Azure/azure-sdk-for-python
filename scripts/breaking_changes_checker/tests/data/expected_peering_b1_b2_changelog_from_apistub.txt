@@ -1,0 +1,253 @@
+### Features Added
+
+  - Client `PeeringManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `PeeringManagementClient` added method `send_request`
+  - Model `CdnPeeringPrefix` added property `properties`
+  - Model `CdnPeeringPrefix` added property `system_data`
+  - Model `ConnectionMonitorTest` added property `properties`
+  - Model `ConnectionMonitorTest` added property `system_data`
+  - Enum `ConnectionState` added member `EXTERNAL_BLOCKER`
+  - Enum `DirectPeeringType` added member `PEER_PROP`
+  - Model `ErrorDetail` added property `additional_info`
+  - Model `ErrorDetail` added property `details`
+  - Model `ErrorDetail` added property `target`
+  - Model `Operation` added property `properties`
+  - Model `PeerAsn` added property `properties`
+  - Model `PeerAsn` added property `system_data`
+  - Model `Peering` added property `properties`
+  - Model `Peering` added property `system_data`
+  - Model `PeeringLocation` added property `properties`
+  - Model `PeeringLocation` added property `system_data`
+  - Enum `PeeringLocationsDirectPeeringType` added member `PEER_PROP`
+  - Model `PeeringRegisteredAsn` added property `properties`
+  - Model `PeeringRegisteredAsn` added property `system_data`
+  - Model `PeeringRegisteredPrefix` added property `properties`
+  - Model `PeeringRegisteredPrefix` added property `system_data`
+  - Model `PeeringService` added property `properties`
+  - Model `PeeringService` added property `system_data`
+  - Model `PeeringServiceCountry` added property `system_data`
+  - Model `PeeringServiceLocation` added property `properties`
+  - Model `PeeringServiceLocation` added property `system_data`
+  - Model `PeeringServicePrefix` added property `properties`
+  - Model `PeeringServicePrefix` added property `system_data`
+  - Model `PeeringServiceProvider` added property `properties`
+  - Model `PeeringServiceProvider` added property `system_data`
+  - Enum `ProvisioningState` added member `CANCELED`
+  - Model `Resource` added property `system_data`
+  - Added model `CdnPeeringPrefixProperties`
+  - Added model `ConnectionMonitorTestProperties`
+  - Added model `ConnectivityProbe`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `OperationProperties`
+  - Added model `PeerAsnProperties`
+  - Added model `PeeringLocationProperties`
+  - Added model `PeeringProperties`
+  - Added model `PeeringRegisteredAsnProperties`
+  - Added model `PeeringRegisteredPrefixProperties`
+  - Added model `PeeringServiceLocationProperties`
+  - Added model `PeeringServicePrefixProperties`
+  - Added model `PeeringServiceProperties`
+  - Added model `PeeringServiceProviderProperties`
+  - Added enum `Protocol`
+  - Added model `ProxyResource`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Model `BgpSession` changed type of property `max_prefixes_advertised_v4` from `int` to `Optional[int]`
+  - Model `BgpSession` changed type of property `max_prefixes_advertised_v6` from `int` to `Optional[int]`
+  - Model `BgpSession` changed type of property `md5_authentication_key` from `str` to `Optional[str]`
+  - Model `BgpSession` changed type of property `microsoft_session_i_pv4_address` from `str` to `Optional[str]`
+  - Model `BgpSession` changed type of property `microsoft_session_i_pv6_address` from `str` to `Optional[str]`
+  - Model `BgpSession` changed type of property `peer_session_i_pv4_address` from `str` to `Optional[str]`
+  - Model `BgpSession` changed type of property `peer_session_i_pv6_address` from `str` to `Optional[str]`
+  - Model `BgpSession` changed type of property `session_prefix_v4` from `str` to `Optional[str]`
+  - Model `BgpSession` changed type of property `session_prefix_v6` from `str` to `Optional[str]`
+  - Model `BgpSession` changed type of property `session_state_v4` from `Union[str, SessionStateV4]` to `Optional[Union[str, SessionStateV4]]`
+  - Model `BgpSession` changed type of property `session_state_v6` from `Union[str, SessionStateV6]` to `Optional[Union[str, SessionStateV6]]`
+  - Model `CdnPeeringPrefix` deleted or renamed its instance variable `azure_region`
+  - Model `CdnPeeringPrefix` deleted or renamed its instance variable `azure_service`
+  - Model `CdnPeeringPrefix` deleted or renamed its instance variable `bgp_community`
+  - Model `CdnPeeringPrefix` deleted or renamed its instance variable `is_primary_region`
+  - Model `CdnPeeringPrefix` deleted or renamed its instance variable `prefix`
+  - Model `CheckServiceProviderAvailabilityInput` changed type of property `peering_service_location` from `str` to `Optional[str]`
+  - Model `CheckServiceProviderAvailabilityInput` changed type of property `peering_service_provider` from `str` to `Optional[str]`
+  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `destination`
+  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `destination_port`
+  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `is_test_successful`
+  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `path`
+  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `provisioning_state`
+  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `source_agent`
+  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `test_frequency_in_sec`
+  - Model `ContactDetail` changed type of property `email` from `str` to `Optional[str]`
+  - Model `ContactDetail` changed type of property `phone` from `str` to `Optional[str]`
+  - Model `ContactDetail` changed type of property `role` from `Union[str, Role]` to `Optional[Union[str, Role]]`
+  - Model `DirectConnection` changed type of property `bandwidth_in_mbps` from `int` to `Optional[int]`
+  - Model `DirectConnection` changed type of property `bgp_session` from `BgpSession` to `Optional[BgpSession]`
+  - Model `DirectConnection` changed type of property `connection_identifier` from `str` to `Optional[str]`
+  - Model `DirectConnection` changed type of property `connection_state` from `Union[str, ConnectionState]` to `Optional[Union[str, ConnectionState]]`
+  - Model `DirectConnection` changed type of property `error_message` from `str` to `Optional[str]`
+  - Model `DirectConnection` changed type of property `microsoft_tracking_id` from `str` to `Optional[str]`
+  - Model `DirectConnection` changed type of property `peering_db_facility_id` from `int` to `Optional[int]`
+  - Model `DirectConnection` changed type of property `provisioned_bandwidth_in_mbps` from `int` to `Optional[int]`
+  - Model `DirectConnection` changed type of property `session_address_provider` from `Union[str, SessionAddressProvider]` to `Optional[Union[str, SessionAddressProvider]]`
+  - Model `DirectConnection` changed type of property `use_for_peering_service` from `bool` to `Optional[bool]`
+  - Model `DirectPeeringFacility` changed type of property `address` from `str` to `Optional[str]`
+  - Model `DirectPeeringFacility` changed type of property `direct_peering_type` from `Union[str, DirectPeeringType]` to `Optional[Union[str, DirectPeeringType]]`
+  - Model `DirectPeeringFacility` changed type of property `peering_db_facility_id` from `int` to `Optional[int]`
+  - Model `DirectPeeringFacility` changed type of property `peering_db_facility_link` from `str` to `Optional[str]`
+  - Model `ErrorDetail` changed type of property `code` from `str` to `Optional[str]`
+  - Model `ErrorDetail` changed type of property `message` from `str` to `Optional[str]`
+  - Model `ErrorResponse` changed type of property `error` from `ErrorDetail` to `Optional[ErrorDetail]`
+  - Model `ExchangeConnection` changed type of property `bgp_session` from `BgpSession` to `Optional[BgpSession]`
+  - Model `ExchangeConnection` changed type of property `connection_identifier` from `str` to `Optional[str]`
+  - Model `ExchangeConnection` changed type of property `connection_state` from `Union[str, ConnectionState]` to `Optional[Union[str, ConnectionState]]`
+  - Model `ExchangeConnection` changed type of property `error_message` from `str` to `Optional[str]`
+  - Model `ExchangeConnection` changed type of property `peering_db_facility_id` from `int` to `Optional[int]`
+  - Model `ExchangePeeringFacility` changed type of property `bandwidth_in_mbps` from `int` to `Optional[int]`
+  - Model `ExchangePeeringFacility` changed type of property `exchange_name` from `str` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `facility_i_pv4_prefix` from `str` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `facility_i_pv6_prefix` from `str` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `microsoft_i_pv4_address` from `str` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `microsoft_i_pv6_address` from `str` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `peering_db_facility_id` from `int` to `Optional[int]`
+  - Model `ExchangePeeringFacility` changed type of property `peering_db_facility_link` from `str` to `Optional[str]`
+  - Model `LogAnalyticsWorkspaceProperties` changed type of property `connected_agents` from `list[str]` to `Optional[list[str]]`
+  - Model `LogAnalyticsWorkspaceProperties` changed type of property `key` from `str` to `Optional[str]`
+  - Model `LogAnalyticsWorkspaceProperties` changed type of property `workspace_id` from `str` to `Optional[str]`
+  - Model `LookingGlassOutput` changed type of property `command` from `Union[str, Command]` to `Optional[Union[str, Command]]`
+  - Model `LookingGlassOutput` changed type of property `output` from `str` to `Optional[str]`
+  - Model `MetricDimension` changed type of property `display_name` from `str` to `Optional[str]`
+  - Model `MetricDimension` changed type of property `name` from `str` to `Optional[str]`
+  - Model `MetricSpecification` changed type of property `aggregation_type` from `str` to `Optional[str]`
+  - Model `MetricSpecification` changed type of property `dimensions` from `list[MetricDimension]` to `Optional[list[MetricDimension]]`
+  - Model `MetricSpecification` changed type of property `display_description` from `str` to `Optional[str]`
+  - Model `MetricSpecification` changed type of property `display_name` from `str` to `Optional[str]`
+  - Model `MetricSpecification` changed type of property `name` from `str` to `Optional[str]`
+  - Model `MetricSpecification` changed type of property `supported_time_grain_types` from `list[str]` to `Optional[list[str]]`
+  - Model `MetricSpecification` changed type of property `unit` from `str` to `Optional[str]`
+  - Model `Operation` deleted or renamed its instance variable `service_specification`
+  - Model `Operation` changed type of property `display` from `OperationDisplayInfo` to `Optional[OperationDisplayInfo]`
+  - Model `Operation` changed type of property `is_data_action` from `bool` to `Optional[bool]`
+  - Model `Operation` changed type of property `name` from `str` to `Optional[str]`
+  - Model `OperationDisplayInfo` changed type of property `description` from `str` to `Optional[str]`
+  - Model `OperationDisplayInfo` changed type of property `operation` from `str` to `Optional[str]`
+  - Model `OperationDisplayInfo` changed type of property `provider` from `str` to `Optional[str]`
+  - Model `OperationDisplayInfo` changed type of property `resource` from `str` to `Optional[str]`
+  - Model `PeerAsn` deleted or renamed its instance variable `error_message`
+  - Model `PeerAsn` deleted or renamed its instance variable `peer_asn`
+  - Model `PeerAsn` deleted or renamed its instance variable `peer_contact_detail`
+  - Model `PeerAsn` deleted or renamed its instance variable `peer_name`
+  - Model `PeerAsn` deleted or renamed its instance variable `validation_state`
+  - Model `Peering` deleted or renamed its instance variable `direct`
+  - Model `Peering` deleted or renamed its instance variable `exchange`
+  - Model `Peering` deleted or renamed its instance variable `peering_location`
+  - Model `Peering` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringBandwidthOffer` changed type of property `offer_name` from `str` to `Optional[str]`
+  - Model `PeeringBandwidthOffer` changed type of property `value_in_mbps` from `int` to `Optional[int]`
+  - Model `PeeringLocation` deleted or renamed its instance variable `azure_region`
+  - Model `PeeringLocation` deleted or renamed its instance variable `country`
+  - Model `PeeringLocation` deleted or renamed its instance variable `direct`
+  - Model `PeeringLocation` deleted or renamed its instance variable `exchange`
+  - Model `PeeringLocation` deleted or renamed its instance variable `peering_location`
+  - Model `PeeringLocation` changed type of property `kind` from `Union[str, Kind]` to `Optional[Union[str, Kind]]`
+  - Model `PeeringLocationPropertiesDirect` changed type of property `bandwidth_offers` from `list[PeeringBandwidthOffer]` to `Optional[list[PeeringBandwidthOffer]]`
+  - Model `PeeringLocationPropertiesDirect` changed type of property `peering_facilities` from `list[DirectPeeringFacility]` to `Optional[list[DirectPeeringFacility]]`
+  - Model `PeeringLocationPropertiesExchange` changed type of property `peering_facilities` from `list[ExchangePeeringFacility]` to `Optional[list[ExchangePeeringFacility]]`
+  - Model `PeeringPropertiesDirect` changed type of property `connections` from `list[DirectConnection]` to `Optional[list[DirectConnection]]`
+  - Model `PeeringPropertiesDirect` changed type of property `direct_peering_type` from `Union[str, DirectPeeringType]` to `Optional[Union[str, DirectPeeringType]]`
+  - Model `PeeringPropertiesDirect` changed type of property `peer_asn` from `SubResource` to `Optional[SubResource]`
+  - Model `PeeringPropertiesDirect` changed type of property `use_for_peering_service` from `bool` to `Optional[bool]`
+  - Model `PeeringPropertiesExchange` changed type of property `connections` from `list[ExchangeConnection]` to `Optional[list[ExchangeConnection]]`
+  - Model `PeeringPropertiesExchange` changed type of property `peer_asn` from `SubResource` to `Optional[SubResource]`
+  - Model `PeeringReceivedRoute` changed type of property `as_path` from `str` to `Optional[str]`
+  - Model `PeeringReceivedRoute` changed type of property `next_hop` from `str` to `Optional[str]`
+  - Model `PeeringReceivedRoute` changed type of property `origin_as_validation_state` from `str` to `Optional[str]`
+  - Model `PeeringReceivedRoute` changed type of property `prefix` from `str` to `Optional[str]`
+  - Model `PeeringReceivedRoute` changed type of property `received_timestamp` from `str` to `Optional[str]`
+  - Model `PeeringReceivedRoute` changed type of property `rpki_validation_state` from `str` to `Optional[str]`
+  - Model `PeeringReceivedRoute` changed type of property `trust_anchor` from `str` to `Optional[str]`
+  - Model `PeeringRegisteredAsn` deleted or renamed its instance variable `asn`
+  - Model `PeeringRegisteredAsn` deleted or renamed its instance variable `peering_service_prefix_key`
+  - Model `PeeringRegisteredAsn` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `error_message`
+  - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `peering_service_prefix_key`
+  - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `prefix`
+  - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `prefix_validation_state`
+  - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringService` deleted or renamed its instance variable `log_analytics_workspace_properties`
+  - Model `PeeringService` deleted or renamed its instance variable `peering_service_location`
+  - Model `PeeringService` deleted or renamed its instance variable `peering_service_provider`
+  - Model `PeeringService` deleted or renamed its instance variable `provider_backup_peering_location`
+  - Model `PeeringService` deleted or renamed its instance variable `provider_primary_peering_location`
+  - Model `PeeringService` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringService` changed type of property `sku` from `PeeringServiceSku` to `Optional[PeeringServiceSku]`
+  - Model `PeeringServiceLocation` deleted or renamed its instance variable `azure_region`
+  - Model `PeeringServiceLocation` deleted or renamed its instance variable `country`
+  - Model `PeeringServiceLocation` deleted or renamed its instance variable `state`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `error_message`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `events`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `learned_type`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `peering_service_prefix_key`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `prefix`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `prefix_validation_state`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringServicePrefixEvent` changed type of property `event_description` from `str` to `Optional[str]`
+  - Model `PeeringServicePrefixEvent` changed type of property `event_level` from `str` to `Optional[str]`
+  - Model `PeeringServicePrefixEvent` changed type of property `event_summary` from `str` to `Optional[str]`
+  - Model `PeeringServicePrefixEvent` changed type of property `event_timestamp` from `datetime` to `Optional[datetime]`
+  - Model `PeeringServicePrefixEvent` changed type of property `event_type` from `str` to `Optional[str]`
+  - Model `PeeringServiceProvider` deleted or renamed its instance variable `peering_locations`
+  - Model `PeeringServiceProvider` deleted or renamed its instance variable `service_provider_name`
+  - Model `PeeringServiceSku` changed type of property `name` from `str` to `Optional[str]`
+  - Model `PeeringSku` changed type of property `family` from `Union[str, Family]` to `Optional[Union[str, Family]]`
+  - Model `PeeringSku` changed type of property `name` from `str` to `Optional[str]`
+  - Model `PeeringSku` changed type of property `size` from `Union[str, Size]` to `Optional[Union[str, Size]]`
+  - Model `PeeringSku` changed type of property `tier` from `Union[str, Tier]` to `Optional[Union[str, Tier]]`
+  - Model `Resource` changed type of property `id` from `str` to `Optional[str]`
+  - Model `Resource` changed type of property `name` from `str` to `Optional[str]`
+  - Model `Resource` changed type of property `type` from `str` to `Optional[str]`
+  - Model `ResourceTags` changed type of property `tags` from `dict[str, str]` to `Optional[dict[str, str]]`
+  - Model `RpUnbilledPrefix` changed type of property `azure_region` from `str` to `Optional[str]`
+  - Model `RpUnbilledPrefix` changed type of property `peer_asn` from `int` to `Optional[int]`
+  - Model `RpUnbilledPrefix` changed type of property `prefix` from `str` to `Optional[str]`
+  - Model `ServiceSpecification` changed type of property `metric_specifications` from `list[MetricSpecification]` to `Optional[list[MetricSpecification]]`
+  - Model `SubResource` changed type of property `id` from `str` to `Optional[str]`
+  - Deleted or renamed model `CdnPeeringPrefixListResult`
+  - Deleted or renamed model `ConnectionMonitorTestListResult`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `PeerAsnListResult`
+  - Deleted or renamed model `PeeringListResult`
+  - Deleted or renamed model `PeeringLocationListResult`
+  - Deleted or renamed model `PeeringReceivedRouteListResult`
+  - Deleted or renamed model `PeeringRegisteredAsnListResult`
+  - Deleted or renamed model `PeeringRegisteredPrefixListResult`
+  - Deleted or renamed model `PeeringServiceCountryListResult`
+  - Deleted or renamed model `PeeringServiceListResult`
+  - Deleted or renamed model `PeeringServiceLocationListResult`
+  - Deleted or renamed model `PeeringServicePrefixListResult`
+  - Deleted or renamed model `PeeringServiceProviderListResult`
+  - Deleted or renamed model `RpUnbilledPrefixListResult`
+  - Method `CdnPeeringPrefixesOperations.list` changed its parameter `peering_location` from `positional_or_keyword` to `keyword_only`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `asn` from `positional_or_keyword` to `keyword_only`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `direct_peering_type` from `positional_or_keyword` to `keyword_only`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `peering_location` from `positional_or_keyword` to `keyword_only`
+  - Method `LookingGlassOperations.invoke` changed its parameter `command` from `positional_or_keyword` to `keyword_only`
+  - Method `LookingGlassOperations.invoke` changed its parameter `destination_ip` from `positional_or_keyword` to `keyword_only`
+  - Method `LookingGlassOperations.invoke` changed its parameter `source_location` from `positional_or_keyword` to `keyword_only`
+  - Method `LookingGlassOperations.invoke` changed its parameter `source_type` from `positional_or_keyword` to `keyword_only`
+  - Method `PeeringLocationsOperations.list` changed its parameter `direct_peering_type` from `positional_or_keyword` to `keyword_only`
+  - Method `PeeringLocationsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
+  - Method `PeeringServiceLocationsOperations.list` changed its parameter `country` from `positional_or_keyword` to `keyword_only`
+  - Method `PrefixesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PrefixesOperations.list_by_peering_service` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `as_path` from `positional_or_keyword` to `keyword_only`
+  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `origin_as_validation_state` from `positional_or_keyword` to `keyword_only`
+  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `prefix` from `positional_or_keyword` to `keyword_only`
+  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `rpki_validation_state` from `positional_or_keyword` to `keyword_only`
+  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `RpUnbilledPrefixesOperations.list` changed its parameter `consolidate` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `PeeringManagementClientOperationsMixin`

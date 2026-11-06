@@ -169,7 +169,7 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
             if hasattr(assign.target, "id") and not assign.target.id.startswith("_"):
                 attr = assign.target.id
                 attr_type = ast.unparse(assign.annotation)
-                attribute_names.update({attr: attr_type})
+                attribute_names.update({attr: {"attr_type": attr_type}})
 
     func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
     if func_nodes:
@@ -185,7 +185,9 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
                         assign.target, "attr"
                     ) and not assign.target.attr.startswith("_"):
                         attr = assign.target
-                        attribute_names.setdefault(attr.attr, ast.unparse(assign.annotation))
+                        attribute_names.setdefault(
+                            attr.attr, {"attr_type": ast.unparse(assign.annotation)}
+                        )
                 if hasattr(assign, "targets"):
                     for target in assign.targets:
                         if hasattr(target, "attr") and not target.attr.startswith("_"):

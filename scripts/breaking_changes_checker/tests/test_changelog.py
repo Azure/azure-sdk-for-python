@@ -1367,8 +1367,8 @@ def test_class_property_is_required_with_default_report():
     get_property_names(stable_class, stable_properties)
     get_property_names(current_class, current_properties)
 
-    assert stable_properties == {"foo": "Optional[Foo]"}
-    assert current_properties == {"foo": "Foo"}
+    assert stable_properties == {"foo": {"attr_type": "Optional[Foo]"}}
+    assert current_properties == {"foo": {"attr_type": "Foo"}}
 
     stable = {
         "azure.contoso.models": {
@@ -1536,8 +1536,8 @@ def test_class_property_type_changed_with_default_report(stable_type, current_ty
     get_property_names(stable_class, stable_properties)
     get_property_names(current_class, current_properties)
 
-    assert stable_properties == {"foo": stable_type}
-    assert current_properties == {"foo": current_type}
+    assert stable_properties == {"foo": {"attr_type": stable_type}}
+    assert current_properties == {"foo": {"attr_type": current_type}}
 
     stable = {
         "azure.contoso.models": {
