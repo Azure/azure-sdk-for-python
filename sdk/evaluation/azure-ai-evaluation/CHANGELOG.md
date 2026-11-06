@@ -1,5 +1,12 @@
 # Release History
 
+## 1.18.12 (Unreleased)
+
+### Bugs Fixed
+
+- `DocumentRetrievalEvaluator` computes `fidelity` correctly when `ground_truth_label_max` is 10 or more. The label counts were sorted as strings ("1", "10", "2", ...) and multiplied by the weights of other labels, so the reported fidelity could be far off (for example 0.68 instead of 0.0034). The default 0-4 label scale was not affected.
+- `BleuScoreEvaluator`, `GleuScoreEvaluator` and `MeteorScoreEvaluator` tokenize the response and the ground truth with the same tokenizer. When only one of them contained a non-ASCII character, such as a curly quote or an em dash, the two were tokenized differently and words they share no longer matched, which lowered the score. Both texts now use the international tokenizer when either of them contains a non-ASCII character, so scores for such pairs change.
+
 ## 1.18.11 (2026-11-03)
 
 ### Features Added

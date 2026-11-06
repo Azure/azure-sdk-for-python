@@ -292,6 +292,61 @@ def test_no_labeled_retrieved_documents():
     assert properties["holes"] == len(retrieved_docs)
 
 
+def test_fidelity_with_label_scale_of_ten_or_more():
+    # Labels 0-10 sort differently as strings ("1", "10", "2", ...) and as numbers;
+    # the counts must still be multiplied by the weights of their own labels.
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=0, ground_truth_label_max=10)
+    groundtruth_docs = [
+        {"document_id": "a", "query_relevance_label": 10},
+        {"document_id": "b", "query_relevance_label": 2},
+    ]
+    retrieved_docs = [{"document_id": "b", "relevance_score": 1.0}]
+
+    result = evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
+
+    properties = result["document_retrieval_properties"]
+    # Only the label-2 document was retrieved: (2^3 - 1) / ((2^11 - 1) + (2^3 - 1)).
+    expected = (2**3 - 1) / ((2**11 - 1) + (2**3 - 1))
+    assert properties["fidelity"] == pytest.approx(expected)
+    assert properties["fidelity"] == pytest.approx(0.0034, abs=1e-4)
+    assert properties["fidelity_result"] == "fail"
+
+
+@pytest.mark.parametrize("label_min,label_max", [(0, 10), (0, 12), (1, 11), (5, 15)])
+def test_fidelity_counts_match_weights_for_every_label(label_min, label_max):
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=label_min, ground_truth_label_max=label_max)
+    labels = list(range(label_min + 1, label_max + 1))
+    groundtruth_docs = [{"document_id": f"doc_{label}", "query_relevance_label": label} for label in labels]
+
+    for retrieved_label in labels:
+        retrieved_docs = [{"document_id": f"doc_{retrieved_label}", "relevance_score": 1.0}]
+        result = evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
+
+        expected = (2 ** (retrieved_label + 1) - 1) / sum(2 ** (label + 1) - 1 for label in labels)
+        assert result["document_retrieval_properties"]["fidelity"] == pytest.approx(expected)
+
+
+def test_fidelity_default_label_scale_unchanged():
+    evaluator = DocumentRetrievalEvaluator()
+    groundtruth_docs = [
+        {"document_id": "a", "query_relevance_label": 4},
+        {"document_id": "b", "query_relevance_label": 3},
+        {"document_id": "c", "query_relevance_label": 1},
+        {"document_id": "d", "query_relevance_label": 0},
+    ]
+    retrieved_docs = [
+        {"document_id": "b", "relevance_score": 2.0},
+        {"document_id": "c", "relevance_score": 1.0},
+        {"document_id": "d", "relevance_score": 0.5},
+    ]
+
+    result = evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
+
+    # Weights are 2^(label + 1) - 1, and label 0 (the configured minimum) is excluded.
+    expected = (15 + 3) / (31 + 15 + 3)
+    assert result["document_retrieval_properties"]["fidelity"] == pytest.approx(expected)
+
+
 def _assert_exception_metadata(exc, *, category, blame=ErrorBlame.USER_ERROR):
     """Assert that an EvaluationException has the expected blame, category, and target populated."""
     assert exc.blame == blame

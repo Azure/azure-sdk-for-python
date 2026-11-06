@@ -5,7 +5,7 @@ import pathlib
 import base64
 import json
 
-from azure.ai.evaluation._common.utils import nltk_tokenize
+from azure.ai.evaluation._common.utils import nltk_tokenize, nltk_tokenize_pair
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._common.utils import (
     _extract_text_from_content,
@@ -42,6 +42,23 @@ class TestUtils(unittest.TestCase):
         tokens = nltk_tokenize(text)
 
         assert tokens == ["The", "capital", "of", "China", "is", "北京", "."]
+
+    def test_nltk_tokenize_pair_uses_one_tokenizer_for_both_texts(self):
+        reference = "The U.S. economy didn't grow."
+
+        # Both texts are ASCII: both use the NLTK word tokenizer, as nltk_tokenize does.
+        reference_tokens, hypothesis_tokens = nltk_tokenize_pair(reference, reference)
+        assert reference_tokens == hypothesis_tokens == nltk_tokenize(reference)
+
+        # Only one text has a non-ASCII character: both use the international tokenizer,
+        # so the words the texts share are split into the same tokens.
+        shared = ["The", "U", ".", "S", ".", "economy", "didn", "'", "t", "grow", "."]
+        assert nltk_tokenize_pair(reference, reference + " \u2014") == (shared, shared + ["\u2014"])
+        assert nltk_tokenize_pair(reference + " \u2014", reference) == (shared + ["\u2014"], shared)
+        assert nltk_tokenize_pair(reference, "\u201c" + reference + "\u201d") == (
+            shared,
+            ["\u201c"] + shared + ["\u201d"],
+        )
 
     def convert_json_list_to_jsonl(self, project_scope, azure_cred):
 

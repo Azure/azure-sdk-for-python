@@ -6,7 +6,7 @@ from typing import Dict
 from nltk.translate.meteor_score import meteor_score
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._common.utils import nltk_tokenize, ensure_nltk_data_downloaded
+from azure.ai.evaluation._common.utils import nltk_tokenize_pair, ensure_nltk_data_downloaded
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 
@@ -89,8 +89,7 @@ class MeteorScoreEvaluator(EvaluatorBase):
         """
         ground_truth = eval_input["ground_truth"]
         response = eval_input["response"]
-        reference_tokens = nltk_tokenize(ground_truth)
-        hypothesis_tokens = nltk_tokenize(response)
+        reference_tokens, hypothesis_tokens = nltk_tokenize_pair(ground_truth, response)
         score = meteor_score(
             [reference_tokens],
             hypothesis_tokens,

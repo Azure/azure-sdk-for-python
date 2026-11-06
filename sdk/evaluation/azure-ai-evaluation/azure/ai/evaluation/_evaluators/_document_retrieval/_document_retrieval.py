@@ -198,17 +198,18 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             # so we exclude documents with that label from the calculation.
             s = self.ground_truth_label_min + 1
 
-            # get a count of each label
-            label_counts = {str(i): 0 for i in range(s, self.ground_truth_label_max + 1)}
+            # get a count of each label, in numeric label order so that each count lines up with its weight
+            label_range = range(s, self.ground_truth_label_max + 1)
+            label_counts = {i: 0 for i in label_range}
 
             for label in labels:
                 if label >= s:
-                    label_counts[str(label)] += 1
+                    label_counts[label] += 1
 
-            sorted_label_counts = [x[1] for x in sorted(label_counts.items(), key=lambda x: x[0])]
+            sorted_label_counts = [label_counts[i] for i in label_range]
 
             # calculate weights
-            weights = [(math.pow(2, i + 1) - 1) for i in range(s, self.ground_truth_label_max + 1)]
+            weights = [(math.pow(2, i + 1) - 1) for i in label_range]
 
             # return weighted sum
             return sum(starmap(operator.mul, zip(sorted_label_counts, weights)))
