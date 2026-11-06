@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
+from azure.mgmt.monitor import MonitorManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-redisenterprise
+    pip install azure-mgmt-monitor
 # USAGE
-    python redis_enterprise_migration_cancel.py
+    python list_tenant_action_groups.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,17 +25,19 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 
 
 def main():
-    client = RedisEnterpriseManagementClient(
+    client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.migrations.begin_cancel(
-        resource_group_name="rg1",
-        cluster_name="cache1",
-    ).result()
+    response = client.tenant_action_groups.list_by_management_group_id(
+        management_group_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
+        x_ms_client_tenant_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseMigrationCancel.json
+# x-ms-original-file: 2023-05-01-preview/listTenantActionGroups.json
 if __name__ == "__main__":
     main()

@@ -37,7 +37,7 @@ def main():
         parameters={
             "properties": {
                 "skipDataMigration": True,
-                "sourceResourceId": "/subscriptions/e7b5a9d2-6b6a-4d2f-9143-20d9a10f5b8f/resourceGroups/rg1/providers/Microsoft.Cache/redis/cache1",
+                "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Cache/redis/cache1",
                 "sourceType": "AzureCacheForRedis",
                 "switchDns": True,
             }
@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseMigrationStart.json
+# x-ms-original-file: 2026-09-01/RedisEnterpriseMigrationStart.json
 if __name__ == "__main__":
     main()
