@@ -41,15 +41,15 @@ def main():
                         "description": "Testing 123",
                         "flowProfileId": "25f2c41a-6e29-4c40-a033-b4de81d4a681",
                         "name": "flowProfileNamea",
-                        "pipeline": "pipelinea",
+                        "pipeline": "testPipeline",
                         "replicationScenario": "Files",
                         "status": "Enabled",
                     },
                     {
                         "description": "Testing 123",
-                        "flowProfileId": "66b00598-cabb-4a85-b3d8-88905ac899b8",
+                        "flowProfileId": "25f2c41a-6e29-4c40-a033-b4de81d4a681",
                         "name": "flowProfileNameb",
-                        "pipeline": "pipelinea",
+                        "pipeline": "testPipeline",
                         "replicationScenario": "Files",
                         "status": "Enabled",
                     },
@@ -63,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-06-preview/createOrUpdateConnection.json
+# x-ms-original-file: 2026-06-29-preview/createOrUpdateConnection.json
 if __name__ == "__main__":
     main()

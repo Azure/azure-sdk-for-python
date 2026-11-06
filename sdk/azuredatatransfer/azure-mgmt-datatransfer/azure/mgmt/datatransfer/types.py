@@ -16,6 +16,7 @@ if TYPE_CHECKING:
         ApiMode,
         AuthenticationType,
         Casing,
+        CommonTransferFlowStatus,
         ConnectionStatus,
         CreatedByType,
         DataClass,
@@ -41,6 +42,7 @@ if TYPE_CHECKING:
         SchemaType,
         StreamProtocol,
         TargetType,
+        TransferRole,
         XmlReferenceType,
     )
 
@@ -52,7 +54,8 @@ class Action(TypedDict, total=False):
      "ForceDisable".
     :vartype actionType: Union[str, "DateTransferActionType"]
     :ivar targetType: Type of target to execute the action on. Required. Known values are:
-     "Pipeline", "Connection", "FlowType", and "FlowProfile".
+     "Pipeline", "Connection", "FlowType", "StorageTransferFlow", "MessagingTransferFlow", and
+     "FlowProfile".
     :vartype targetType: Union[str, "TargetType"]
     :ivar targets: Targets for the action.
     :vartype targets: list[str]
@@ -65,7 +68,8 @@ class Action(TypedDict, total=False):
      \"ForceDisable\"."""
     targetType: Required[Union[str, "TargetType"]]
     """Type of target to execute the action on. Required. Known values are: \"Pipeline\",
-     \"Connection\", \"FlowType\", and \"FlowProfile\"."""
+     \"Connection\", \"FlowType\", \"StorageTransferFlow\", \"MessagingTransferFlow\", and
+     \"FlowProfile\"."""
     targets: list[str]
     """Targets for the action."""
     justification: str
@@ -975,6 +979,36 @@ class ListPipelineMetadataRequest(TypedDict, total=False):
     """The name of the pipeline for which to retrieve associated metadata. Required."""
 
 
+class ListTransferFlowsByPipelineRequestBody(TypedDict, total=False):
+    """The request resource body to reference.
+
+    :ivar flows: Filters applied to the storage and messaging transfer flows returned.
+    :vartype flows: "ListTransferFlowsRequestBody"
+    """
+
+    flows: "ListTransferFlowsRequestBody"
+    """Filters applied to the storage and messaging transfer flows returned."""
+
+
+class ListTransferFlowsRequestBody(TypedDict, total=False):
+    """The request resource body to reference for Flow resources.
+
+    :ivar status: Status of the resource(s). If null, all statuses are considered. Known values
+     are: "AwaitingApproval", "ApprovedWaitingToBeLinked", "Enabled", "Disabled", and "Rejected".
+    :vartype status: Union[str, "CommonTransferFlowStatus"]
+    :ivar dataClassTypes: Data class types of the resource(s). If null, all data class types are
+     considered.
+    :vartype dataClassTypes: list[Union[str, "DataClassType"]]
+    """
+
+    status: Union[str, "CommonTransferFlowStatus"]
+    """Status of the resource(s). If null, all statuses are considered. Known values are:
+     \"AwaitingApproval\", \"ApprovedWaitingToBeLinked\", \"Enabled\", \"Disabled\", and
+     \"Rejected\"."""
+    dataClassTypes: list[Union[str, "DataClassType"]]
+    """Data class types of the resource(s). If null, all data class types are considered."""
+
+
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
@@ -1025,6 +1059,123 @@ class MessagingOptions(TypedDict, total=False):
      option chooses speed over consistency. When enabled, messages are delivered with minimal delay,
      but delivery is not guaranteed under all conditions. Known values are: \"Enabled\" and
      \"Disabled\"."""
+
+
+class MessagingTransferFlow(TrackedResource):
+    """The messaging transfer flow resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of MessagingTransferFlow. Required.
+    :vartype properties: "MessagingTransferFlowProperties"
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    """
+
+    properties: Required["MessagingTransferFlowProperties"]
+    """Properties of MessagingTransferFlow. Required."""
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+
+
+class MessagingTransferFlowProperties(TypedDict, total=False):
+    """Properties of a messaging flow.
+
+    :ivar pipeline: Name of the pipeline the transfer flow uses. Pipelines are service-managed
+     resources that customers cannot access directly; customers are given the name of the pipeline
+     they are approved to use. Required.
+    :vartype pipeline: str
+    :ivar flowId: Dataflow GUID associated with this flow.
+    :vartype flowId: str
+    :ivar transferRole: Transfer role indicating the direction of data movement. Required. Known
+     values are: "Source" and "Destination".
+    :vartype transferRole: Union[str, "TransferRole"]
+    :ivar remoteTransferFlowResourceId: ARM resource ID of the paired transfer flow on the remote
+     side of the pipeline. Required.
+    :vartype remoteTransferFlowResourceId: str
+    :ivar status: Approval and lifecycle status of the transfer flow. Set by the service; use the
+     approve/reject pipeline actions and the enableTransfer/disableTransfer actions to change it.
+     Known values are: "AwaitingApproval", "ApprovedWaitingToBeLinked", "Enabled", "Disabled", and
+     "Rejected".
+    :vartype status: Union[str, "CommonTransferFlowStatus"]
+    :ivar forceDisabledStatus: Force disablement status of the current flow.
+    :vartype forceDisabledStatus: list[Union[str, "ForceDisabledStatus"]]
+    :ivar flowProfileName: Name of the FlowProfile to use for transfer via the flow. Resolved
+     relative to the pipeline identified by the pipeline property. Required.
+    :vartype flowProfileName: str
+    :ivar provisioningState: Provisioning state of the flow. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Accepted".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar messagingDataResourceId: ARM resource ID of the Service Bus queue or Event Hub used for
+     this flow. The messaging namespace and messaging type are derived from this ID. Required.
+    :vartype messagingDataResourceId: str
+    :ivar consumerGroup: Event Hub consumer group. Only valid when messagingDataResourceId is an
+     Event Hub. Defaults to "$Default".
+    :vartype consumerGroup: str
+    :ivar messagingOptions: The messaging options for this flow.
+    :vartype messagingOptions: "MessagingOptions"
+    """
+
+    pipeline: Required[str]
+    """Name of the pipeline the transfer flow uses. Pipelines are service-managed resources that
+     customers cannot access directly; customers are given the name of the pipeline they are
+     approved to use. Required."""
+    flowId: str
+    """Dataflow GUID associated with this flow."""
+    transferRole: Required[Union[str, "TransferRole"]]
+    """Transfer role indicating the direction of data movement. Required. Known values are: \"Source\"
+     and \"Destination\"."""
+    remoteTransferFlowResourceId: Required[str]
+    """ARM resource ID of the paired transfer flow on the remote side of the pipeline. Required."""
+    status: Union[str, "CommonTransferFlowStatus"]
+    """Approval and lifecycle status of the transfer flow. Set by the service; use the approve/reject
+     pipeline actions and the enableTransfer/disableTransfer actions to change it. Known values are:
+     \"AwaitingApproval\", \"ApprovedWaitingToBeLinked\", \"Enabled\", \"Disabled\", and
+     \"Rejected\"."""
+    forceDisabledStatus: list[Union[str, "ForceDisabledStatus"]]
+    """Force disablement status of the current flow."""
+    flowProfileName: Required[str]
+    """Name of the FlowProfile to use for transfer via the flow. Resolved relative to the pipeline
+     identified by the pipeline property. Required."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Provisioning state of the flow. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Accepted\"."""
+    messagingDataResourceId: Required[str]
+    """ARM resource ID of the Service Bus queue or Event Hub used for this flow. The messaging
+     namespace and messaging type are derived from this ID. Required."""
+    consumerGroup: str
+    """Event Hub consumer group. Only valid when messagingDataResourceId is an Event Hub. Defaults to
+     \"$Default\"."""
+    messagingOptions: "MessagingOptions"
+    """The messaging options for this flow."""
+
+
+class MessagingTransferFlowsPatch(TypedDict, total=False):
+    """The messaging transfer flow resource patch definition.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+    tags: dict[str, str]
+    """Resource tags."""
 
 
 class MimeFilterRuleset(TypedDict, total=False):
@@ -1440,6 +1591,113 @@ class SetStreamPassphrase(TypedDict, total=False):
     """The passphrase used for SRT streams."""
 
 
+class StorageTransferFlow(TrackedResource):
+    """The storage flow resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of StorageTransferFlow. Required.
+    :vartype properties: "StorageTransferFlowProperties"
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    """
+
+    properties: Required["StorageTransferFlowProperties"]
+    """Properties of StorageTransferFlow. Required."""
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+
+
+class StorageTransferFlowProperties(TypedDict, total=False):
+    """Properties of a storage flow.
+
+    :ivar pipeline: Name of the pipeline the transfer flow uses. Pipelines are service-managed
+     resources that customers cannot access directly; customers are given the name of the pipeline
+     they are approved to use. Required.
+    :vartype pipeline: str
+    :ivar flowId: Dataflow GUID associated with this flow.
+    :vartype flowId: str
+    :ivar transferRole: Transfer role indicating the direction of data movement. Required. Known
+     values are: "Source" and "Destination".
+    :vartype transferRole: Union[str, "TransferRole"]
+    :ivar remoteTransferFlowResourceId: ARM resource ID of the paired transfer flow on the remote
+     side of the pipeline. Required.
+    :vartype remoteTransferFlowResourceId: str
+    :ivar status: Approval and lifecycle status of the transfer flow. Set by the service; use the
+     approve/reject pipeline actions and the enableTransfer/disableTransfer actions to change it.
+     Known values are: "AwaitingApproval", "ApprovedWaitingToBeLinked", "Enabled", "Disabled", and
+     "Rejected".
+    :vartype status: Union[str, "CommonTransferFlowStatus"]
+    :ivar forceDisabledStatus: Force disablement status of the current flow.
+    :vartype forceDisabledStatus: list[Union[str, "ForceDisabledStatus"]]
+    :ivar flowProfileName: Name of the FlowProfile to use for transfer via the flow. Resolved
+     relative to the pipeline identified by the pipeline property. Required.
+    :vartype flowProfileName: str
+    :ivar provisioningState: Provisioning state of the flow. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Accepted".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar storageDataResourceId: ARM resource ID of the blob container or table used for this flow.
+     The storage account is derived from this ID. Required.
+    :vartype storageDataResourceId: str
+    """
+
+    pipeline: Required[str]
+    """Name of the pipeline the transfer flow uses. Pipelines are service-managed resources that
+     customers cannot access directly; customers are given the name of the pipeline they are
+     approved to use. Required."""
+    flowId: str
+    """Dataflow GUID associated with this flow."""
+    transferRole: Required[Union[str, "TransferRole"]]
+    """Transfer role indicating the direction of data movement. Required. Known values are: \"Source\"
+     and \"Destination\"."""
+    remoteTransferFlowResourceId: Required[str]
+    """ARM resource ID of the paired transfer flow on the remote side of the pipeline. Required."""
+    status: Union[str, "CommonTransferFlowStatus"]
+    """Approval and lifecycle status of the transfer flow. Set by the service; use the approve/reject
+     pipeline actions and the enableTransfer/disableTransfer actions to change it. Known values are:
+     \"AwaitingApproval\", \"ApprovedWaitingToBeLinked\", \"Enabled\", \"Disabled\", and
+     \"Rejected\"."""
+    forceDisabledStatus: list[Union[str, "ForceDisabledStatus"]]
+    """Force disablement status of the current flow."""
+    flowProfileName: Required[str]
+    """Name of the FlowProfile to use for transfer via the flow. Resolved relative to the pipeline
+     identified by the pipeline property. Required."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Provisioning state of the flow. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Accepted\"."""
+    storageDataResourceId: Required[str]
+    """ARM resource ID of the blob container or table used for this flow. The storage account is
+     derived from this ID. Required."""
+
+
+class StorageTransferFlowsPatch(TypedDict, total=False):
+    """The storage transfer flow resource patch definition.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+    tags: dict[str, str]
+    """Resource tags."""
+
+
 class StreamSourceAddresses(TypedDict, total=False):
     """The source IP address and CIDR ranges of the stream.
 
@@ -1537,6 +1795,21 @@ class TextMatchingRulesetDeny(TypedDict, total=False):
     caseSensitivity: Required[Union[str, "Casing"]]
     """Specifies the text matching conditions based on casing. For more detail please refer to the
      Casing model. Required. Known values are: \"Insensitive\" and \"Sensitive\"."""
+
+
+class TransferFlowRequestBody(TypedDict, total=False):
+    """The request resource body to reference.
+
+    :ivar id: ARM resource IDs of the transfer flows to approve or reject.
+    :vartype id: list[str]
+    :ivar statusReason: Reason for resource operation.
+    :vartype statusReason: str
+    """
+
+    id: list[str]
+    """ARM resource IDs of the transfer flows to approve or reject."""
+    statusReason: str
+    """Reason for resource operation."""
 
 
 class UserAssignedIdentity(TypedDict, total=False):

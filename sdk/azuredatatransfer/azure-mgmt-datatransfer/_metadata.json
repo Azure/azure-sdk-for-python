@@ -1,9 +1,9 @@
 {
-  "apiVersion": "2026-02-06-preview",
+  "apiVersion": "2026-06-29-preview",
   "apiVersions": {
-    "Microsoft.AzureDataTransfer": "2026-02-06-preview"
+    "Microsoft.AzureDataTransfer": "2026-06-29-preview"
   },
-  "commit": "9969c2f086105356220a370bb316291fd26d87af",
+  "commit": "54b97a29d524bae3b69778303813f90a27c7edd5",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/azuredatatransfer/resource-manager/Microsoft.AzureDataTransfer/AzureDataTransfer",
   "emitterVersion": "0.63.10",
