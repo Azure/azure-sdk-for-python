@@ -495,8 +495,19 @@ class ResourceType:
             ResourceType.PartitionKey,
         )
 
-# The list of headers we do not want to log, it needs to be updated if any new headers should not be logged
-_cosmos_disallow_list = ["Authorization", "ProxyAuthorization", "TransferEncoding"]
+# Security-sensitive headers that must never be logged, even when diagnostics logging is enabled.
+# This includes credential/authorization headers and headers that can carry session material
+# (cookies, authentication challenges), matching the headers azure-core's HttpLoggingPolicy
+# redacts by default. Redaction here is deny-by-list, so any newly added sensitive header must be
+# added below to avoid being logged in the clear.
+_cosmos_disallow_list = [
+    "Authorization",
+    "ProxyAuthorization",
+    "TransferEncoding",
+    "SetCookie",
+    "ProxyAuthenticate",
+    "WwwAuthenticate",
+]
 _cosmos_allow_list = set(
     v.lower()
     for k, v in HttpHeaders.__dict__.items()
