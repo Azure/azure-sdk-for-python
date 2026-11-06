@@ -22,45 +22,46 @@ function Get-WhlFile {
   return $true
 }
 
-# Given a library and version, download the .whl file and unpack it to get the namespaces.
-# A temp directory is used for the download and unpack which is cleaned up afterwards.
+# Given a library and version, download a wheel or inspect the supplied wheels.
+# Each wheel is unpacked in isolation and the primary namespaces are deduplicated.
+# Temporary directories are unique to each invocation and cleaned up afterwards.
 function Get-NamespacesFromWhlFile {
   param(
       [Parameter(Mandatory=$true)] [string]$Library,
       [Parameter(Mandatory=$true)] [string]$Version,
       [Parameter(Mandatory=$false)] [string]$ExtraIndexUrl = "",
-      [Parameter(Mandatory=$false)] [string]$PythonWhlFile = $null
+      [Parameter(Mandatory=$false)] [string[]]$PythonWhlFile = $null
   )
 
-  $destination = (Join-Path ([System.IO.Path]::GetTempPath()) "$Library$Version")
-  New-Item $destination -ItemType Directory | Out-Null
+  $destination = (Join-Path ([System.IO.Path]::GetTempPath()) "$Library$Version-$([Guid]::NewGuid())")
+  New-Item $destination -ItemType Directory -ErrorAction Stop | Out-Null
   $namespaces = @()
 
   try {
 
     if ($PythonWhlFile) {
-      if (Test-Path $PythonWhlFile -PathType Leaf) {
-        Write-Host "Copying $PythonWhlFile to $destination"
-        Copy-Item $PythonWhlFile -Destination $destination
-      } else {
-        LogWarning "$PythonWhlFile, does not exist."
-      }
+      $whlFiles = $PythonWhlFile
     } else {
       $success = Get-WhlFile $Library $Version $destination $ExtraIndexUrl
       if (-not $success) {
         LogWarning "Could not download Whl file for $Library $Version"
       }
+      $whlFiles = @(Get-ChildItem -Path $destination -File -Filter "*.whl" |
+          Select-Object -ExpandProperty FullName)
     }
-    # Pulling the whl file generates output, make sure it's sent to null so
-    # it's not returned as part of this function.
-    # Each library gets its own temporary directory. There should only be one whl
-    # file in the destination directory
-    $whlFile = Get-ChildItem -Path $destination -File -Filter "*.whl" | Select-Object -First 1
-    # If we can't download the file or the passed in file doesn't exist then the whlFile
-    # won't exist, there's nothing to process and an empty namesapces list will be returned
-    if ($whlFile) {
-      $unpackDir = Join-Path -Path $destination -ChildPath "$Library-$Version"
-      Expand-Archive -Path $whlFile -DestinationPath $unpackDir
+    foreach ($whlFile in $whlFiles) {
+      if (-not (Test-Path -LiteralPath $whlFile -PathType Leaf)) {
+        LogWarning "$whlFile, does not exist."
+        continue
+      }
+
+      $wheelDestination = Join-Path $destination ([Guid]::NewGuid().ToString())
+      New-Item $wheelDestination -ItemType Directory -ErrorAction Stop | Out-Null
+      Write-Host "Copying $whlFile to $wheelDestination"
+      Copy-Item -LiteralPath $whlFile -Destination $wheelDestination -ErrorAction Stop
+      $unpackDir = Join-Path -Path $wheelDestination -ChildPath "$Library-$Version"
+      $wheelCopy = Join-Path $wheelDestination (Split-Path $whlFile -Leaf)
+      Expand-Archive -LiteralPath $wheelCopy -DestinationPath $unpackDir -ErrorAction Stop
 
       # Look for any directory that contains __init__.py with the following exceptions:
       # 1. *.dist-info directories shouldn't be included in the results.
@@ -93,6 +94,7 @@ function Get-NamespacesFromWhlFile {
           Remove-Item $destination -Recurse -Force
       }
   }
+  $namespaces = @($namespaces | Sort-Object -Unique)
   # Make sure this always returns an array
   Write-Output -NoEnumerate $namespaces
 }
