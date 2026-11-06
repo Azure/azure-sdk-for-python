@@ -33,7 +33,6 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from devtools_testutils import EnvironmentVariableLoader, add_general_regex_sanitizer, is_live
 from devtools_testutils.preparers import AbstractPreparer
 
-
 liveConversationServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",

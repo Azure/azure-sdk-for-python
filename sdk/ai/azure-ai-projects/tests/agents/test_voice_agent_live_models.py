@@ -10,7 +10,6 @@ import pytest
 
 from azure.ai.projects import models
 
-
 _DELEGATIONS = [
     pytest.param(
         models.VoiceAgentLiveClientDelegation,

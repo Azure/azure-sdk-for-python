@@ -17,7 +17,6 @@ import pytest
 from azure.ai.projects import models
 from azure.core.exceptions import ResourceNotFoundError
 
-
 _SAMPLES = Path(__file__).parents[2] / "samples" / "agents" / "voice"
 
 

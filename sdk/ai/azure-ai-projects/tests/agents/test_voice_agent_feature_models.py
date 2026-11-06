@@ -12,7 +12,6 @@ import pytest
 
 from azure.ai.projects import models
 
-
 # Reserved fictional number; used only as inert JSON, never to send or receive an SMS.
 _SMS_SENDER = "+12025550123"
 

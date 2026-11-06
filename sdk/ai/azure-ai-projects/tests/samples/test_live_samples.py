@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -21,7 +22,6 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 
 from azure.ai.projects import models
-
 
 _SAMPLE_DIRECTORY = Path(__file__).resolve().parents[2] / "samples" / "agents" / "voice"
 _ASYNC_SCENARIOS = ("connection", "text_conversation", "function_tool")

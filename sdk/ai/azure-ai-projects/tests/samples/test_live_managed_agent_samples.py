@@ -20,7 +20,6 @@ import pytest
 
 from azure.ai.projects import models
 
-
 _SAMPLES = Path(__file__).resolve().parents[2] / "samples" / "agents" / "voice"
 _BACKEND = "owned-managed-backend-test"
 _VOICE = "owned-managed-frontend-test"

@@ -11,7 +11,6 @@ from uuid import uuid4
 from azure.ai.projects import models
 from devtools_testutils import EnvironmentVariableLoader, add_general_regex_sanitizer
 
-
 liveAgentServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",

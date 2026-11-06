@@ -24,7 +24,6 @@ from devtools_testutils.preparers import AbstractPreparer
 
 from live_conversation_test_base import assert_wav
 
-
 _LOGGER = logging.getLogger(__name__)
 _AGENT = "sanitized-interrupted-audio-agent"
 _CONVERSATION = "sanitized-interrupted-conversation"

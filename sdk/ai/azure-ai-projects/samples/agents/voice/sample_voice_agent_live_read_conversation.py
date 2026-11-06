@@ -68,7 +68,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient, models
 from azure.ai.projects.operations import BetaLiveConnection, BetaVoiceAgentsLiveConversationsOperations
 
-
 _SESSION_TIMEOUT = 45.0
 _FINALIZATION_TIMEOUT = 90.0
 

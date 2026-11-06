@@ -8951,28 +8951,25 @@ class DatasetEvaluatorGenerationJobSource(
 
 
 class DatasetReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Reference to a Foundry Dataset in the current project. Consuming operations define supported
-    Dataset kinds and resolution behavior.
+    """Reference to a Dataset whose concrete version has already been resolved.
 
     :ivar name: Dataset name. Required.
     :vartype name: str
-    :ivar version: Optional Dataset version. Omit to select latest when the consuming operation
-     resolves the reference.
+    :ivar version: Concrete Dataset version. Required.
     :vartype version: str
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Dataset name. Required."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional Dataset version. Omit to select latest when the consuming operation resolves the
-     reference."""
+    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Concrete Dataset version. Required."""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
-        version: Optional[str] = None,
+        version: str,
     ) -> None: ...
 
     @overload
@@ -10673,7 +10670,7 @@ class EvaluatorGenerationArtifacts(_Model):  # pylint: disable=docstring-keyword
      version-aligned to ``EvaluatorVersion.version``) holding all artifacts produced by the
      generation pipeline. Each row in the JSONL carries a ``kind`` field discriminating its content
      (e.g. ``spec``, ``tools``, ``context``). Required.
-    :vartype dataset: ~azure.ai.projects.models.VersionedDatasetReference
+    :vartype dataset: ~azure.ai.projects.models.DatasetReference
     :ivar kinds: The kinds of rows present in ``dataset``. Always contains ``"spec"`` (the
      generated evaluation specification, a Markdown document describing what the evaluator
      measures). May additionally contain ``"tools"`` (when the generation pipeline produced or
@@ -10682,9 +10679,7 @@ class EvaluatorGenerationArtifacts(_Model):  # pylint: disable=docstring-keyword
     :vartype kinds: list[str]
     """
 
-    dataset: "_models.VersionedDatasetReference" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    dataset: "_models.DatasetReference" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reference to the single Foundry Dataset (one combined JSONL file, version-aligned to
      ``EvaluatorVersion.version``) holding all artifacts produced by the generation pipeline. Each
      row in the JSONL carries a ``kind`` field discriminating its content (e.g. ``spec``, ``tools``,
@@ -10700,7 +10695,7 @@ class EvaluatorGenerationArtifacts(_Model):  # pylint: disable=docstring-keyword
     def __init__(
         self,
         *,
-        dataset: "_models.VersionedDatasetReference",
+        dataset: "_models.DatasetReference",
         kinds: list[str],
     ) -> None: ...
 
@@ -32740,7 +32735,7 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
     :ivar recipient_dataset: Same-project CSV/JSON/JSONL uri_file, exclusive with recipients.
      Omitted version pins latest per preparation. Limits: 1-1,000,000 rows, 256 MiB decoded/file, 1
      MiB/row.
-    :vartype recipient_dataset: ~azure.ai.projects.models.DatasetReference
+    :vartype recipient_dataset: ~azure.ai.projects.models.TelephonyCampaignDatasetReference
     :ivar schedule: Dispatch schedule; omission equals ImmediateSchedule. Every mode waits for
      successful preparation, then follows its schedule and available capacity.
     :vartype schedule: ~azure.ai.projects.models.TelephonyCampaignSchedule
@@ -32786,7 +32781,7 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
     recipients: Optional[list["_models.TelephonyRecipient"]] = rest_field(visibility=["create"])
     """1-100 recipients, exclusive with recipient_dataset. The whole UTF-8 request is limited to 1
      MiB. Omitted from reads; retain the submission for row correlation."""
-    recipient_dataset: Optional["_models.DatasetReference"] = rest_field(
+    recipient_dataset: Optional["_models.TelephonyCampaignDatasetReference"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Same-project CSV/JSON/JSONL uri_file, exclusive with recipients. Omitted version pins latest
@@ -32835,9 +32830,45 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
         connection_name: str,
         source: "_models.TelephonyAddress",
         recipients: Optional[list["_models.TelephonyRecipient"]] = None,
-        recipient_dataset: Optional["_models.DatasetReference"] = None,
+        recipient_dataset: Optional["_models.TelephonyCampaignDatasetReference"] = None,
         schedule: Optional["_models.TelephonyCampaignSchedule"] = None,
         retry_policy: Optional["_models.TelephonyOutboundRetryPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyCampaignDatasetReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference to a Foundry Dataset in the current project. Consuming operations define supported
+    Dataset kinds and resolution behavior.
+
+    :ivar name: Dataset name. Required.
+    :vartype name: str
+    :ivar version: Optional Dataset version. Omit to select latest when the consuming operation
+     resolves the reference.
+    :vartype version: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Dataset name. Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional Dataset version. Omit to select latest when the consuming operation resolves the
+     reference."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        version: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -35302,39 +35333,6 @@ class UserProfileMemoryItem(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = MemoryItemKind.USER_PROFILE  # type: ignore
-
-
-class VersionedDatasetReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Reference to a Dataset whose concrete version has already been resolved.
-
-    :ivar name: Dataset name. Required.
-    :vartype name: str
-    :ivar version: Concrete Dataset version. Required.
-    :vartype version: str
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Dataset name. Required."""
-    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Concrete Dataset version. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        version: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class VersionIndicator(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -42577,7 +42575,7 @@ class VoiceAgentTransferRouting(_Model):  # pylint: disable=docstring-keyword-sh
     :ivar ring_timeout_seconds: Per-destination ring timeout in seconds, from 1 to 300. If omitted,
      the service defaults to 20 seconds. Must not exceed the tool's timeout_seconds. ACS allows at
      most 180 seconds.
-    :vartype ring_timeout_seconds: int
+    :vartype ring_timeout_seconds: ~datetime.timedelta
     """
 
     strategy: Union[str, "_models.VoiceAgentTransferStrategy"] = rest_field(
@@ -42585,7 +42583,9 @@ class VoiceAgentTransferRouting(_Model):  # pylint: disable=docstring-keyword-sh
     )
     """The routing strategy. Current native Telephony transfer supports ACS sequential and random
      routing only. Required. Known values are: \"sequential\", \"random\", and \"parallel\"."""
-    ring_timeout_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    ring_timeout_seconds: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-seconds-int"
+    )
     """Per-destination ring timeout in seconds, from 1 to 300. If omitted, the service defaults to 20
      seconds. Must not exceed the tool's timeout_seconds. ACS allows at most 180 seconds."""
 
@@ -42594,7 +42594,7 @@ class VoiceAgentTransferRouting(_Model):  # pylint: disable=docstring-keyword-sh
         self,
         *,
         strategy: Union[str, "_models.VoiceAgentTransferStrategy"],
-        ring_timeout_seconds: Optional[int] = None,
+        ring_timeout_seconds: Optional[datetime.timedelta] = None,
     ) -> None: ...
 
     @overload

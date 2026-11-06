@@ -1,4 +1,4 @@
-# pylint: disable=networking-import-outside-azure-core-transport
+# pylint: disable=networking-import-outside-azure-core-transport,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.

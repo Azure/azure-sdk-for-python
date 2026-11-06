@@ -19,7 +19,6 @@ from test_live_samples import (
     sample_environment,
 )
 
-
 pytestmark = pytest.mark.asyncio
 _SCENARIOS = ("text_conversation", "function_tool")
 

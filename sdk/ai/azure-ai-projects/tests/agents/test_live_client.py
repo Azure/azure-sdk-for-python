@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -35,7 +36,6 @@ from azure.ai.projects import AIProjectClient, __version__, models, operations
 from azure.ai.projects._live_utils import _server_event_types
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from azure.ai.projects.aio import operations as async_operations
-
 
 _ENDPOINT = "https://fake-account.services.ai.azure.com/api/projects/fake-project"
 _HOST = "fake-account.services.ai.azure.com"

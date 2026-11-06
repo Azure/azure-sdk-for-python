@@ -45,7 +45,6 @@ from live_sample_utils import (
     wait_for_event_async,
 )
 
-
 TEXT_PROMPTS: Optional[Sequence[str]] = None
 
 

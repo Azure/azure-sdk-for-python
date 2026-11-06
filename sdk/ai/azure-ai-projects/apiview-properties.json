@@ -196,7 +196,7 @@
         "azure.ai.projects.models.DatasetCredential": "Azure.AI.Projects.AssetCredentialResponse",
         "azure.ai.projects.models.DatasetDataGenerationJobOutput": "Azure.AI.Projects.DatasetDataGenerationJobOutput",
         "azure.ai.projects.models.DatasetEvaluatorGenerationJobSource": "Azure.AI.Projects.DatasetEvaluatorGenerationJobSource",
-        "azure.ai.projects.models.DatasetReference": "Azure.AI.Projects.DatasetReference",
+        "azure.ai.projects.models.DatasetReference": "Azure.AI.Projects.VersionedDatasetReference",
         "azure.ai.projects.models.DatasetVersion": "Azure.AI.Projects.DatasetVersion",
         "azure.ai.projects.models.DecisionResponse": "OpenAI.DecisionResponse",
         "azure.ai.projects.models.DeleteAgentResponse": "Azure.AI.Projects.DeleteAgentResponse",
@@ -690,6 +690,7 @@
         "azure.ai.projects.models.TelephonyCallTiming": "Azure.AI.Projects.TelephonyCallTiming",
         "azure.ai.projects.models.TelephonyCallTrace": "Azure.AI.Projects.TelephonyCallTrace",
         "azure.ai.projects.models.TelephonyCampaign": "Azure.AI.Projects.TelephonyCampaign",
+        "azure.ai.projects.models.TelephonyCampaignDatasetReference": "Azure.AI.Projects.DatasetReference",
         "azure.ai.projects.models.TelephonyCampaignOperation": "Azure.AI.Projects.TelephonyCampaignOperation",
         "azure.ai.projects.models.TelephonyCampaignProgress": "Azure.AI.Projects.TelephonyCampaignProgress",
         "azure.ai.projects.models.TelephonyCampaignValidationError": "Azure.AI.Projects.TelephonyCampaignValidationError",
@@ -750,7 +751,6 @@
         "azure.ai.projects.models.UserConversationSimulationTestCase": "Azure.AI.Projects.UserConversationSimulationTestCase",
         "azure.ai.projects.models.UserConversationSimulationUserBehaviorConfiguration": "Azure.AI.Projects.UserConversationSimulationUserBehaviorConfiguration",
         "azure.ai.projects.models.UserProfileMemoryItem": "Azure.AI.Projects.UserProfileMemoryItem",
-        "azure.ai.projects.models.VersionedDatasetReference": "Azure.AI.Projects.VersionedDatasetReference",
         "azure.ai.projects.models.VersionIndicator": "Azure.AI.Projects.VersionIndicator",
         "azure.ai.projects.models.VersionRefIndicator": "Azure.AI.Projects.VersionRefIndicator",
         "azure.ai.projects.models.VersionSelector": "Azure.AI.Projects.VersionSelector",
@@ -1281,5 +1281,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "676d9843840c"
+    "CrossLanguageVersion": "3247452fbac8"
 }

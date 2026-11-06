@@ -249,9 +249,9 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.skills.list_versions
 .beta.skills.update
 
-.beta.voice_agents.campaigns.begin_cancel
-.beta.voice_agents.campaigns.begin_create
-.beta.voice_agents.campaigns.begin_delete
+.beta.voice_agents.campaigns.begin_cancel*
+.beta.voice_agents.campaigns.begin_create*
+.beta.voice_agents.campaigns.begin_delete*
 .beta.voice_agents.campaigns.get
 .beta.voice_agents.campaigns.get_operation
 .beta.voice_agents.campaigns.list

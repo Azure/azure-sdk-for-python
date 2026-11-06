@@ -19,7 +19,6 @@ import pytest
 from azure.ai.projects import models
 from azure.ai.projects.operations import BetaRealtimeConnection
 
-
 pytestmark = pytest.mark.asyncio
 _SAMPLE_DIRECTORY = Path(__file__).resolve().parents[2].joinpath("samples", "agents", "voice")
 _ENDPOINT = "https://example.invalid/api/projects/offline"

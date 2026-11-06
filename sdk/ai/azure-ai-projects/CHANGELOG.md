@@ -4,23 +4,21 @@
 
 ### Features Added
 
-* Added preview GPT Live clients at `beta.voice_agents.live` for text and audio streaming, typed events, session controls, and Responses function-tool results. Both synchronous and asynchronous clients are available.
-* Added typed Realtime handoff, system-tool argument, and input-collection events to the synchronous and asynchronous WebSocket clients.
-* Added preview Live voice agent models, including `VoiceAgentLiveDefinition`, Live session configuration, client and server events, audio formats, decision responses, and usage details.
+* Added preview GPT Live clients at `.beta.voice_agents.live` for text and audio streaming, typed events, session controls, and Responses function-tool results. Both synchronous and asynchronous clients are available, with `VoiceAgentLiveDefinition` and typed Live session, audio, decision-response, and usage models.
 * Added Live delegation models for Responses backends, application-managed work, and same-project prompt agents: `VoiceAgentLiveResponsesDelegation`, `VoiceAgentLiveClientDelegation`, and `VoiceAgentLiveManagedAgentDelegation`.
-* Added `.beta.voice_agents.live_conversations` for listing, retrieving, and deleting stored Live conversations, retrieving conversation items, and retrieving or downloading item-level and conversation-level audio.
+* Added `.beta.voice_agents.live_conversations` for listing, retrieving, and deleting stored Live conversations, retrieving conversation items, and retrieving or downloading item-level and merged conversation audio.
+* Added `.beta.voice_agents.campaigns` for creating, monitoring, cancelling, and deleting outbound call campaigns, including campaign operations and recipient validation errors. Added `TelephonyCampaign`, `TelephonyRecipient`, `ImmediateSchedule`, `AtTimeSchedule`, and `PerRecipientSchedule` for campaign configuration and scheduling.
 * Added optional `VoiceAgentDefinition.post_call` with `VoiceAgentPostCallConfig`, `VoiceAgentEventGridPostCallDestination`, and `VoiceAgentRoutinePostCallDestination` for post-call transcript delivery to Event Grid connections and routines. Audio delivery is not supported in this preview.
 * Added SIP telephony provider support through `TelephonyProvider.SIP`, `SipTelephonyBinding`, and `SipTelephonyBindingListItem`. Added optional `UpdateTelephonyBindingRequest.allowed_calling_numbers` for incoming caller restrictions.
-* Added `.beta.voice_agents.telephony.list_call_jobs()` for listing outbound call jobs with optional status and campaign filters, and `.beta.voice_agents.telephony.delete_call_job()` for deleting a call job.
-* Added outbound campaign, recipient, scheduling, operation, and progress models, including `TelephonyCampaign`, `TelephonyRecipient`, `ImmediateSchedule`, `AtTimeSchedule`, `PerRecipientSchedule`, `TelephonyCampaignOperation`, and `TelephonyCampaignProgress`. Added optional read-only `TelephonyCallJob.campaign_name`.
+* Added `.beta.voice_agents.telephony.list_call_jobs()` for listing outbound call jobs with optional `status` and `campaign_name` filters, and `.beta.voice_agents.telephony.delete_call_job()` for deleting a call job. Added optional read-only `TelephonyCallJob.campaign_name`.
 * Added inline Voice Agent subagents and handoff configuration through `VoiceAgentInlineSubagentConfig`, `InlineVoiceSubagent`, and `VoiceAgentHandoffPolicy`, with handoff lifecycle events and optional `VoiceAgentSessionResponseConfig.handoff`.
 * Added Voice Agent system tools `VoiceAgentTransferSystemTool`, `VoiceAgentSendDtmfSystemTool`, `VoiceAgentSendSmsSystemTool`, `VoiceAgentCollectDtmfSystemTool`, `VoiceAgentCollectSmsSystemTool`, `VoiceAgentDigitRecognitionSystemTool`, and `VoiceAgentLanguageDetectionSystemTool`.
-* Added optional `VoiceAgentSystemTool.timeout_seconds`, also available on `VoiceAgentEndConversationSystemTool`, for configuring execution timeouts.
-* Added realtime system-tool intent items and argument-streaming and input-collection events through `VoiceAgentSystemToolItem`, `VoiceAgentServerEventSystemToolArgumentsDelta`, `VoiceAgentServerEventSystemToolArgumentsDone`, and `VoiceAgentServerEventInputCollectionStatus`.
-* Added `VoiceAgentBaseDefinition` and `VoiceAgentSubProtocol` to distinguish Realtime and Live voice agent definitions, plus `VoiceAgentToolType`, `VoiceAgentGreetingMode`, `VoiceAgentInterimResponseType`, `VoiceConversationEngineType`, and `VoiceAgentRtcCallErrorType`.
+* Added optional `VoiceAgentSystemTool.timeout_seconds`, also available on `VoiceAgentEndConversationSystemTool`, for configuring execution timeouts with `datetime.timedelta`.
+* Added typed Realtime handoff events, system-tool intent items, argument-streaming events, and input-collection events to the synchronous and asynchronous WebSocket clients, including `VoiceAgentSystemToolItem`, `VoiceAgentServerEventSystemToolArgumentsDelta`, `VoiceAgentServerEventSystemToolArgumentsDone`, and `VoiceAgentServerEventInputCollectionStatus`.
+* Added `VoiceAgentBaseDefinition` and `VoiceAgentSubProtocol` to distinguish Realtime and Live voice agent definitions, plus shared `VoiceAgentVoiceConfig` and typed tool, greeting, interim-response, conversation-engine, and RTC-error enums.
 * Made `DatasetReference.version` optional so consuming operations can resolve the latest dataset version. Added `VersionedDatasetReference` for references with a concrete version.
 * Added optional error details `MisalignmentErrorDetailsResource.review_target` and `RealtimeResponseStatusDetailsError.message`.
-* Expanded `ImageGenTool.model` annotations to include the `gpt-image-2.5-sunburst` and `gpt-image-2.5-flare` model families and their dated versions, and `ImageGenTool.quality` to include `xhigh` and `max`.
+* Expanded `ImageGenTool.model` type annotations to include the `gpt-image-2.5-sunburst` and `gpt-image-2.5-flare` model families and their dated versions, and `ImageGenTool.quality` to include `xhigh` and `max`.
 * Added explicit recursive typing for nested `CompoundFilter` instances in `CompoundFilter.filters`.
 
 ### Breaking Changes
@@ -38,7 +36,7 @@ Breaking changes in beta classes:
 * Removed `CreateTelephonyBindingRequest`, `CreateTeamsPhoneExtensibilityTelephonyBindingRequest`, and `CreateTwilioTelephonyBindingRequest`. Use `TelephonyBinding`, `TeamsPhoneExtensibilityTelephonyBinding`, and `TwilioTelephonyBinding`, respectively.
 * Class `CreateTelephonyCallJobRequest` renamed to `TelephonyCallJobCreate`.
 * Removed `TelephonyOutboundDestination` and `TelephonyOutboundDestinationType`; use `TelephonyAddress` and `TelephonyAddressType`. The `source` and `destination` properties on `TelephonyCallJobCreate` and `TelephonyCallJob` now use `TelephonyAddress`; `source` no longer accepts a plain string.
-* Removed `TelephonyTransferDestination`, `PSTNTelephonyTransferDestination`, `SipTelephonyTransferDestination`, `TeamsTelephonyTransferDestination`, and `TelephonyTransferDestinationKind`. `TelephonyTransferTarget.destination` now uses `TelephonyAddress`, with `PhoneNumber`, `SipAddress`, and `TeamsAddress` variants and `TelephonyAddressType`. The address discriminator is `type` instead of `kind`, and the PSTN value is `phone_number` instead of `pstn`.
+* Removed `TelephonyTransferDestination`, `PSTNTelephonyTransferDestination`, `SipTelephonyTransferDestination`, `TeamsTelephonyTransferDestination`, and `TelephonyTransferDestinationKind`. `TelephonyTransferTarget.destination` now uses `TelephonyAddress`, with `PhoneNumber`, `SipAddress`, and `TeamsAddress` variants. The address discriminator is `type` instead of `kind`, and the PSTN value is `phone_number` instead of `pstn`.
 * Class `TelephonyOutboundFixedIntervalRetryPolicy` renamed to `FixedIntervalRetryPolicy`.
 * Removed `TelephonyBindingStatus` and the `status` property from `TelephonyBinding`, `TelephonyBindingListItem`, their existing provider-specific subclasses, and `UpdateTelephonyBindingRequest`.
 * Properties `TelephonyBinding.id` and `TelephonyBinding.incoming_call_url` are now read-only, including inherited properties on provider-specific bindings.
@@ -48,11 +46,20 @@ Breaking changes in beta classes:
 * Constructor argument `timestamp_type` on `VoiceAgentServerEventResponseAudioTimestampDelta` is now required and uses `VoiceAgentAudioTimestampType.WORD`.
 * Constructor arguments `left` and `right` on `VoiceRecordingChannelLayout` are now required and use `VoiceAudioRole.USER` and `VoiceAudioRole.AGENT`, respectively.
 
+### Bugs Fixed
+
+* Fixed synchronous and asynchronous Voice Agent campaign LROs to recognize cancelled operations, preserve the initiating operation ID when resuming, and return the campaign through an operation-guarded final GET. Campaign deletion completes without a final resource fetch.
+
 ### Sample updates
 
-* Simplified Voice Agent examples to one sample per scenario: synchronous REST and asynchronous WebSocket workflows.
-* Included a spoken-question WAV in the Live audio and managed-agent examples so they run without an input-audio path setting.
-* Added GPT Live samples for session setup, text conversations, function tools, WAV and microphone audio, and stored-conversation readback. The REST sample creates and cleans up a conversation when no ID is supplied, or reads an existing conversation without changing it. Audio downloads use a unique user-temporary folder.
+* GPT Live:
+  * Added `sample_voice_agent_live_read_conversation.py` demonstrating stored-conversation and item retrieval, audio downloads, and optional temporary conversation creation and cleanup.
+  * Added WebSocket examples for session setup, text conversations, function-tool results, WAV and microphone audio, and delegation to a same-project prompt agent.
+  * Included a bundled spoken-question WAV for the audio and managed-agent examples so they run without an input-audio path setting or audio devices.
+* Realtime:
+  * Added `sample_voice_agent_read_generated_audio.py` demonstrating read-only retrieval of generated, unheard audio from an interrupted reply.
+  * Added a reply-interruption workflow demonstrating cancellation and audio-item truncation.
+* Consolidated Voice Agent samples into synchronous REST and asynchronous WebSocket workflows, removing redundant variants.
 
 ## 2.10.0 (2026-10-30)
 
