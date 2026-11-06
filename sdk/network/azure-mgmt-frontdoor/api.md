@@ -103,7 +103,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 self, 
                 resource_group_name: str, 
                 front_door_name: str, 
-                content_file_paths: JSON, 
+                content_file_paths: PurgeParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -147,7 +147,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 resource_group_name: str, 
                 profile_name: str, 
                 experiment_name: str, 
-                parameters: JSON, 
+                parameters: Experiment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -192,7 +192,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 resource_group_name: str, 
                 profile_name: str, 
                 experiment_name: str, 
-                parameters: JSON, 
+                parameters: ExperimentUpdateModel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -248,7 +248,7 @@ namespace azure.mgmt.frontdoor.aio.operations
         @overload
         async def check(
                 self, 
-                check_front_door_name_availability_input: JSON, 
+                check_front_door_name_availability_input: CheckNameAvailabilityInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -284,7 +284,7 @@ namespace azure.mgmt.frontdoor.aio.operations
         @overload
         async def check(
                 self, 
-                check_front_door_name_availability_input: JSON, 
+                check_front_door_name_availability_input: CheckNameAvailabilityInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -324,7 +324,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 self, 
                 resource_group_name: str, 
                 front_door_name: str, 
-                front_door_parameters: JSON, 
+                front_door_parameters: FrontDoor, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -383,7 +383,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 self, 
                 resource_group_name: str, 
                 front_door_name: str, 
-                custom_domain_properties: JSON, 
+                custom_domain_properties: ValidateCustomDomainInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -436,7 +436,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 resource_group_name: str, 
                 front_door_name: str, 
                 frontend_endpoint_name: str, 
-                custom_https_configuration: JSON, 
+                custom_https_configuration: CustomHttpsConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -508,7 +508,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 self, 
                 profile_name: str, 
                 resource_group_name: str, 
-                parameters: JSON, 
+                parameters: Profile, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -549,7 +549,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 self, 
                 resource_group_name: str, 
                 profile_name: str, 
-                parameters: JSON, 
+                parameters: ProfileUpdateModel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -609,7 +609,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 self, 
                 resource_group_name: str, 
                 policy_name: str, 
-                parameters: JSON, 
+                parameters: WebApplicationFirewallPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -650,7 +650,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 self, 
                 resource_group_name: str, 
                 policy_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -767,7 +767,7 @@ namespace azure.mgmt.frontdoor.aio.operations
                 resource_group_name: str, 
                 front_door_name: str, 
                 rules_engine_name: str, 
-                rules_engine_parameters: JSON, 
+                rules_engine_parameters: RulesEngine, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1174,6 +1174,25 @@ namespace azure.mgmt.frontdoor.models
     class azure.mgmt.frontdoor.models.ErrorResponse(_Model):
         code: Optional[str]
         message: Optional[str]
+
+
+    class azure.mgmt.frontdoor.models.ExceptionMatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        REQUEST_HEADER_NAMES = "RequestHeaderNames"
+        REQUEST_URI = "RequestUri"
+        SOCKET_ADDR = "SocketAddr"
+
+
+    class azure.mgmt.frontdoor.models.ExceptionSelectorMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EQUALS = "Equals"
+
+
+    class azure.mgmt.frontdoor.models.ExceptionValueMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONTAINS = "Contains"
+        ENDS_WITH = "EndsWith"
+        EQUALS = "Equals"
+        EQUALS_ANY = "EqualsAny"
+        IP_MATCH = "IPMatch"
+        STARTS_WITH = "StartsWith"
 
 
     class azure.mgmt.frontdoor.models.Experiment(Resource):
@@ -1844,6 +1863,7 @@ namespace azure.mgmt.frontdoor.models
         default_sensitivity: Optional[Union[str, SensitivityType]]
         default_state: Optional[Union[str, ManagedRuleEnabledState]]
         description: Optional[str]
+        paranoia_level: Optional[Union[str, ParanoiaLevel]]
         rule_id: Optional[str]
 
 
@@ -1990,25 +2010,92 @@ namespace azure.mgmt.frontdoor.models
 
 
     class azure.mgmt.frontdoor.models.ManagedRuleSetDefinitionProperties(_Model):
+        display_name: Optional[str]
         provisioning_state: Optional[str]
         rule_groups: Optional[list[ManagedRuleGroupDefinition]]
         rule_set_id: Optional[str]
         rule_set_type: Optional[str]
         rule_set_version: Optional[str]
+        status: Optional[Union[str, ManagedRuleSetStatus]]
+
+
+    class azure.mgmt.frontdoor.models.ManagedRuleSetException(_Model):
+        match_values: list[str]
+        match_variable: Union[str, ExceptionMatchVariable]
+        scopes: list[ManagedRuleSetScope]
+        selector: Optional[str]
+        selector_match_operator: Optional[Union[str, ExceptionSelectorMatchOperator]]
+        value_match_operator: Union[str, ExceptionValueMatchOperator]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                match_values: list[str], 
+                match_variable: Union[str, ExceptionMatchVariable], 
+                scopes: list[ManagedRuleSetScope], 
+                selector: Optional[str] = ..., 
+                selector_match_operator: Optional[Union[str, ExceptionSelectorMatchOperator]] = ..., 
+                value_match_operator: Union[str, ExceptionValueMatchOperator]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.frontdoor.models.ManagedRuleSetExceptionList(_Model):
+        exceptions: Optional[list[ManagedRuleSetException]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                exceptions: Optional[list[ManagedRuleSetException]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.frontdoor.models.ManagedRuleSetList(_Model):
+        exceptions_list: Optional[ManagedRuleSetExceptionList]
         managed_rule_sets: Optional[list[ManagedRuleSet]]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                exceptions_list: Optional[ManagedRuleSetExceptionList] = ..., 
                 managed_rule_sets: Optional[list[ManagedRuleSet]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.frontdoor.models.ManagedRuleSetScope(_Model):
+        rule_group_scopes: Optional[list[RuleGroupScope]]
+        rule_set_type: str
+        rule_set_version: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                rule_group_scopes: Optional[list[RuleGroupScope]] = ..., 
+                rule_set_type: str, 
+                rule_set_version: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.frontdoor.models.ManagedRuleSetStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEPRECATED = "Deprecated"
+        GA = "GA"
+        PREVIEW = "Preview"
+        SUPPORTED = "Supported"
 
 
     class azure.mgmt.frontdoor.models.MatchCondition(_Model):
@@ -2042,6 +2129,7 @@ namespace azure.mgmt.frontdoor.models
 
     class azure.mgmt.frontdoor.models.MatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         COOKIES = "Cookies"
+        JA4 = "JA4"
         POST_ARGS = "PostArgs"
         QUERY_STRING = "QueryString"
         REMOTE_ADDR = "RemoteAddr"
@@ -2068,7 +2156,9 @@ namespace azure.mgmt.frontdoor.models
 
     class azure.mgmt.frontdoor.models.Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ANY = "Any"
+        ASN_MATCH = "AsnMatch"
         BEGINS_WITH = "BeginsWith"
+        CLIENT_FINGERPRINT = "ClientFingerprint"
         CONTAINS = "Contains"
         ENDS_WITH = "EndsWith"
         EQUAL = "Equal"
@@ -2080,6 +2170,13 @@ namespace azure.mgmt.frontdoor.models
         LESS_THAN_OR_EQUAL = "LessThanOrEqual"
         REG_EX = "RegEx"
         SERVICE_TAG_MATCH = "ServiceTagMatch"
+
+
+    class azure.mgmt.frontdoor.models.ParanoiaLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PL1 = "PL1"
+        PL2 = "PL2"
+        PL3 = "PL3"
+        PL4 = "PL4"
 
 
     class azure.mgmt.frontdoor.models.PolicyEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2510,6 +2607,36 @@ namespace azure.mgmt.frontdoor.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.frontdoor.models.RuleGroupScope(_Model):
+        rule_group_name: str
+        rule_scopes: Optional[list[RuleScope]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                rule_group_name: str, 
+                rule_scopes: Optional[list[RuleScope]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.frontdoor.models.RuleScope(_Model):
+        rule_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                rule_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.frontdoor.models.RuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         MATCH_RULE = "MatchRule"
         RATE_LIMIT_RULE = "RateLimitRule"
@@ -2882,7 +3009,9 @@ namespace azure.mgmt.frontdoor.models
 
 
     class azure.mgmt.frontdoor.models.VariableName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ASN = "Asn"
         GEO_LOCATION = "GeoLocation"
+        JA4 = "Ja4"
         NONE = "None"
         SOCKET_ADDR = "SocketAddr"
 
@@ -2994,7 +3123,7 @@ namespace azure.mgmt.frontdoor.operations
                 self, 
                 resource_group_name: str, 
                 front_door_name: str, 
-                content_file_paths: JSON, 
+                content_file_paths: PurgeParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3038,7 +3167,7 @@ namespace azure.mgmt.frontdoor.operations
                 resource_group_name: str, 
                 profile_name: str, 
                 experiment_name: str, 
-                parameters: JSON, 
+                parameters: Experiment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3083,7 +3212,7 @@ namespace azure.mgmt.frontdoor.operations
                 resource_group_name: str, 
                 profile_name: str, 
                 experiment_name: str, 
-                parameters: JSON, 
+                parameters: ExperimentUpdateModel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3139,7 +3268,7 @@ namespace azure.mgmt.frontdoor.operations
         @overload
         def check(
                 self, 
-                check_front_door_name_availability_input: JSON, 
+                check_front_door_name_availability_input: CheckNameAvailabilityInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3175,7 +3304,7 @@ namespace azure.mgmt.frontdoor.operations
         @overload
         def check(
                 self, 
-                check_front_door_name_availability_input: JSON, 
+                check_front_door_name_availability_input: CheckNameAvailabilityInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3215,7 +3344,7 @@ namespace azure.mgmt.frontdoor.operations
                 self, 
                 resource_group_name: str, 
                 front_door_name: str, 
-                front_door_parameters: JSON, 
+                front_door_parameters: FrontDoor, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3274,7 +3403,7 @@ namespace azure.mgmt.frontdoor.operations
                 self, 
                 resource_group_name: str, 
                 front_door_name: str, 
-                custom_domain_properties: JSON, 
+                custom_domain_properties: ValidateCustomDomainInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3327,7 +3456,7 @@ namespace azure.mgmt.frontdoor.operations
                 resource_group_name: str, 
                 front_door_name: str, 
                 frontend_endpoint_name: str, 
-                custom_https_configuration: JSON, 
+                custom_https_configuration: CustomHttpsConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3399,7 +3528,7 @@ namespace azure.mgmt.frontdoor.operations
                 self, 
                 profile_name: str, 
                 resource_group_name: str, 
-                parameters: JSON, 
+                parameters: Profile, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3440,7 +3569,7 @@ namespace azure.mgmt.frontdoor.operations
                 self, 
                 resource_group_name: str, 
                 profile_name: str, 
-                parameters: JSON, 
+                parameters: ProfileUpdateModel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3500,7 +3629,7 @@ namespace azure.mgmt.frontdoor.operations
                 self, 
                 resource_group_name: str, 
                 policy_name: str, 
-                parameters: JSON, 
+                parameters: WebApplicationFirewallPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3541,7 +3670,7 @@ namespace azure.mgmt.frontdoor.operations
                 self, 
                 resource_group_name: str, 
                 policy_name: str, 
-                parameters: JSON, 
+                parameters: TagsObject, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3658,7 +3787,7 @@ namespace azure.mgmt.frontdoor.operations
                 resource_group_name: str, 
                 front_door_name: str, 
                 rules_engine_name: str, 
-                rules_engine_parameters: JSON, 
+                rules_engine_parameters: RulesEngine, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3701,6 +3830,792 @@ namespace azure.mgmt.frontdoor.operations
                 front_door_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[RulesEngine]: ...
+
+
+namespace azure.mgmt.frontdoor.types
+
+    class azure.mgmt.frontdoor.types.Backend(TypedDict, total=False):
+        key "address": str
+        key "backendHostHeader": str
+        key "enabledState": Union[str, BackendEnabledState]
+        key "httpPort": int
+        key "httpsPort": int
+        key "priority": int
+        key "privateEndpointStatus": Union[str, PrivateEndpointStatus]
+        key "privateLinkAlias": str
+        key "privateLinkApprovalMessage": str
+        key "privateLinkLocation": str
+        key "privateLinkResourceId": str
+        key "weight": int
+        address: str
+        backendHostHeader: str
+        enabledState: Union[str, BackendEnabledState]
+        httpPort: int
+        httpsPort: int
+        priority: int
+        privateEndpointStatus: Union[str, PrivateEndpointStatus]
+        privateLinkAlias: str
+        privateLinkApprovalMessage: str
+        privateLinkLocation: str
+        privateLinkResourceId: str
+        weight: int
+
+
+    class azure.mgmt.frontdoor.types.BackendPool(SubResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('BackendPoolProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: BackendPoolProperties
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.BackendPoolProperties(BackendPoolUpdateParameters):
+        key "healthProbeSettings": ForwardRef('SubResource', module='types')
+        key "loadBalancingSettings": ForwardRef('SubResource', module='types')
+        key "resourceState": Union[str, FrontDoorResourceState]
+        backends: list[Backend]
+        healthProbeSettings: SubResource
+        loadBalancingSettings: SubResource
+        resourceState: Union[str, FrontDoorResourceState]
+
+
+    class azure.mgmt.frontdoor.types.BackendPoolUpdateParameters(TypedDict, total=False):
+        key "healthProbeSettings": ForwardRef('SubResource', module='types')
+        key "loadBalancingSettings": ForwardRef('SubResource', module='types')
+        backends: list[Backend]
+        healthProbeSettings: SubResource
+        loadBalancingSettings: SubResource
+
+
+    class azure.mgmt.frontdoor.types.BackendPoolsSettings(TypedDict, total=False):
+        key "enforceCertificateNameCheck": Union[str, EnforceCertificateNameCheckEnabledState]
+        key "sendRecvTimeoutSeconds": int
+        enforceCertificateNameCheck: Union[str, EnforceCertificateNameCheckEnabledState]
+        sendRecvTimeoutSeconds: int
+
+
+    class azure.mgmt.frontdoor.types.BasicResource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "type": str
+        id: str
+        name: str
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.BasicResourceWithSettableIDName(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "type": str
+        id: str
+        name: str
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.CacheConfiguration(TypedDict, total=False):
+        key "cacheDuration": str
+        key "dynamicCompression": Union[str, DynamicCompressionEnabled]
+        key "queryParameterStripDirective": Union[str, FrontDoorQuery]
+        key "queryParameters": str
+        cacheDuration: str
+        dynamicCompression: Union[str, DynamicCompressionEnabled]
+        queryParameterStripDirective: Union[str, FrontDoorQuery]
+        queryParameters: str
+
+
+    class azure.mgmt.frontdoor.types.CheckNameAvailabilityInput(TypedDict, total=False):
+        key "name": Required[str]
+        key "type": Required[Union[str, ResourceType]]
+        name: str
+        type: Union[str, ResourceType]
+
+
+    class azure.mgmt.frontdoor.types.CustomHttpsConfiguration(TypedDict, total=False):
+        key "certificateSource": Required[Union[str, FrontDoorCertificateSource]]
+        key "frontDoorCertificateSourceParameters": ForwardRef('FrontDoorCertificateSourceParameters', module='types')
+        key "keyVaultCertificateSourceParameters": ForwardRef('KeyVaultCertificateSourceParameters', module='types')
+        key "minimumTlsVersion": Required[Union[str, MinimumTLSVersion]]
+        key "protocolType": Required[Union[str, FrontDoorTlsProtocolType]]
+        certificateSource: Union[str, FrontDoorCertificateSource]
+        frontDoorCertificateSourceParameters: FrontDoorCertificateSourceParameters
+        keyVaultCertificateSourceParameters: KeyVaultCertificateSourceParameters
+        minimumTlsVersion: Union[str, MinimumTLSVersion]
+        protocolType: Union[str, FrontDoorTlsProtocolType]
+
+
+    class azure.mgmt.frontdoor.types.CustomRule(TypedDict, total=False):
+        key "action": Required[Union[str, ActionType]]
+        key "enabledState": Union[str, CustomRuleEnabledState]
+        key "matchConditions": Required[list[MatchCondition]]
+        key "name": str
+        key "priority": Required[int]
+        key "rateLimitDurationInMinutes": int
+        key "rateLimitThreshold": int
+        key "ruleType": Required[Union[str, RuleType]]
+        action: Union[str, ActionType]
+        enabledState: Union[str, CustomRuleEnabledState]
+        groupBy: list[GroupByVariable]
+        matchConditions: list[MatchCondition]
+        name: str
+        priority: int
+        rateLimitDurationInMinutes: int
+        rateLimitThreshold: int
+        ruleType: Union[str, RuleType]
+
+
+    class azure.mgmt.frontdoor.types.CustomRuleList(TypedDict, total=False):
+        rules: list[CustomRule]
+
+
+    class azure.mgmt.frontdoor.types.Endpoint(TypedDict, total=False):
+        key "endpoint": str
+        key "name": str
+        endpoint: str
+        name: str
+
+
+    class azure.mgmt.frontdoor.types.Experiment(Resource):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ExperimentProperties', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: ExperimentProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.ExperimentProperties(TypedDict, total=False):
+        key "description": str
+        key "enabledState": Union[str, State]
+        key "endpointA": ForwardRef('Endpoint', module='types')
+        key "endpointB": ForwardRef('Endpoint', module='types')
+        key "resourceState": Union[str, NetworkExperimentResourceState]
+        key "scriptFileUri": str
+        key "status": str
+        description: str
+        enabledState: Union[str, State]
+        endpointA: Endpoint
+        endpointB: Endpoint
+        resourceState: Union[str, NetworkExperimentResourceState]
+        scriptFileUri: str
+        status: str
+
+
+    class azure.mgmt.frontdoor.types.ExperimentUpdateModel(TypedDict, total=False):
+        key "properties": ForwardRef('ExperimentUpdateProperties', module='types')
+        properties: ExperimentUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.frontdoor.types.ExperimentUpdateProperties(TypedDict, total=False):
+        key "description": str
+        key "enabledState": Union[str, State]
+        description: str
+        enabledState: Union[str, State]
+
+
+    class azure.mgmt.frontdoor.types.ForwardingConfiguration(TypedDict):
+        key "@odata.type": Required[Literal["#FrontdoorForwardingConfiguration"]]
+        key "backendPool": ForwardRef('SubResource', module='types')
+        key "cacheConfiguration": ForwardRef('CacheConfiguration', module='types')
+        key "customForwardingPath": str
+        key "forwardingProtocol": Union[str, FrontDoorForwardingProtocol]
+        ``@odata.type``: Literal[#FrontdoorForwardingConfiguration]
+        backendPool: SubResource
+        cacheConfiguration: CacheConfiguration
+        customForwardingPath: str
+        forwardingProtocol: Union[str, FrontDoorForwardingProtocol]
+
+
+    class azure.mgmt.frontdoor.types.FrontDoor(Resource):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('FrontDoorProperties', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: FrontDoorProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.FrontDoorCertificateSourceParameters(TypedDict, total=False):
+        key "certificateType": Union[str, FrontDoorCertificateType]
+        certificateType: Union[str, FrontDoorCertificateType]
+
+
+    class azure.mgmt.frontdoor.types.FrontDoorProperties(FrontDoorUpdateParameters):
+        key "backendPoolsSettings": ForwardRef('BackendPoolsSettings', module='types')
+        key "cname": str
+        key "enabledState": Union[str, FrontDoorEnabledState]
+        key "friendlyName": str
+        key "frontdoorId": str
+        key "provisioningState": str
+        key "resourceState": Union[str, FrontDoorResourceState]
+        backendPools: list[BackendPool]
+        backendPoolsSettings: BackendPoolsSettings
+        cname: str
+        enabledState: Union[str, FrontDoorEnabledState]
+        extendedProperties: dict[str, str]
+        friendlyName: str
+        frontdoorId: str
+        frontendEndpoints: list[FrontendEndpoint]
+        healthProbeSettings: list[HealthProbeSettingsModel]
+        loadBalancingSettings: list[LoadBalancingSettingsModel]
+        provisioningState: str
+        resourceState: Union[str, FrontDoorResourceState]
+        routingRules: list[RoutingRule]
+        rulesEngines: list[RulesEngine]
+
+
+    class azure.mgmt.frontdoor.types.FrontDoorUpdateParameters(TypedDict, total=False):
+        key "backendPoolsSettings": ForwardRef('BackendPoolsSettings', module='types')
+        key "enabledState": Union[str, FrontDoorEnabledState]
+        key "friendlyName": str
+        backendPools: list[BackendPool]
+        backendPoolsSettings: BackendPoolsSettings
+        enabledState: Union[str, FrontDoorEnabledState]
+        friendlyName: str
+        frontendEndpoints: list[FrontendEndpoint]
+        healthProbeSettings: list[HealthProbeSettingsModel]
+        loadBalancingSettings: list[LoadBalancingSettingsModel]
+        routingRules: list[RoutingRule]
+
+
+    class azure.mgmt.frontdoor.types.FrontendEndpoint(BasicResourceWithSettableIDName):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('FrontendEndpointProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: FrontendEndpointProperties
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.FrontendEndpointLink(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.frontdoor.types.FrontendEndpointProperties(FrontendEndpointUpdateParameters):
+        key "customHttpsConfiguration": ForwardRef('CustomHttpsConfiguration', module='types')
+        key "customHttpsProvisioningState": Union[str, CustomHttpsProvisioningState]
+        key "customHttpsProvisioningSubstate": Union[str, CustomHttpsProvisioningSubstate]
+        key "hostName": str
+        key "resourceState": Union[str, FrontDoorResourceState]
+        key "sessionAffinityEnabledState": Union[str, SessionAffinityEnabledState]
+        key "sessionAffinityTtlSeconds": int
+        key "webApplicationFirewallPolicyLink": ForwardRef('FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink', module='types')
+        customHttpsConfiguration: CustomHttpsConfiguration
+        customHttpsProvisioningState: Union[str, CustomHttpsProvisioningState]
+        customHttpsProvisioningSubstate: Union[str, CustomHttpsProvisioningSubstate]
+        hostName: str
+        resourceState: Union[str, FrontDoorResourceState]
+        sessionAffinityEnabledState: Union[str, SessionAffinityEnabledState]
+        sessionAffinityTtlSeconds: int
+        webApplicationFirewallPolicyLink: FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
+
+
+    class azure.mgmt.frontdoor.types.FrontendEndpointUpdateParameters(TypedDict, total=False):
+        key "hostName": str
+        key "sessionAffinityEnabledState": Union[str, SessionAffinityEnabledState]
+        key "sessionAffinityTtlSeconds": int
+        key "webApplicationFirewallPolicyLink": ForwardRef('FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink', module='types')
+        hostName: str
+        sessionAffinityEnabledState: Union[str, SessionAffinityEnabledState]
+        sessionAffinityTtlSeconds: int
+        webApplicationFirewallPolicyLink: FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
+
+
+    class azure.mgmt.frontdoor.types.FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.frontdoor.types.GroupByVariable(TypedDict, total=False):
+        key "variableName": Required[Union[str, VariableName]]
+        variableName: Union[str, VariableName]
+
+
+    class azure.mgmt.frontdoor.types.HeaderAction(TypedDict, total=False):
+        key "headerActionType": Required[Union[str, HeaderActionType]]
+        key "headerName": Required[str]
+        key "value": str
+        headerActionType: Union[str, HeaderActionType]
+        headerName: str
+        value: str
+
+
+    class azure.mgmt.frontdoor.types.HealthProbeSettingsModel(SubResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('HealthProbeSettingsProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: HealthProbeSettingsProperties
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.HealthProbeSettingsProperties(HealthProbeSettingsUpdateParameters):
+        key "enabledState": Union[str, HealthProbeEnabled]
+        key "healthProbeMethod": Union[str, FrontDoorHealthProbeMethod]
+        key "intervalInSeconds": int
+        key "path": str
+        key "protocol": Union[str, FrontDoorProtocol]
+        key "resourceState": Union[str, FrontDoorResourceState]
+        enabledState: Union[str, HealthProbeEnabled]
+        healthProbeMethod: Union[str, FrontDoorHealthProbeMethod]
+        intervalInSeconds: int
+        path: str
+        protocol: Union[str, FrontDoorProtocol]
+        resourceState: Union[str, FrontDoorResourceState]
+
+
+    class azure.mgmt.frontdoor.types.HealthProbeSettingsUpdateParameters(TypedDict, total=False):
+        key "enabledState": Union[str, HealthProbeEnabled]
+        key "healthProbeMethod": Union[str, FrontDoorHealthProbeMethod]
+        key "intervalInSeconds": int
+        key "path": str
+        key "protocol": Union[str, FrontDoorProtocol]
+        enabledState: Union[str, HealthProbeEnabled]
+        healthProbeMethod: Union[str, FrontDoorHealthProbeMethod]
+        intervalInSeconds: int
+        path: str
+        protocol: Union[str, FrontDoorProtocol]
+
+
+    class azure.mgmt.frontdoor.types.KeyVaultCertificateSourceParameters(TypedDict, total=False):
+        key "secretName": str
+        key "secretVersion": str
+        key "vault": ForwardRef('KeyVaultCertificateSourceParametersVault', module='types')
+        secretName: str
+        secretVersion: str
+        vault: KeyVaultCertificateSourceParametersVault
+
+
+    class azure.mgmt.frontdoor.types.KeyVaultCertificateSourceParametersVault(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.frontdoor.types.LoadBalancingSettingsModel(SubResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('LoadBalancingSettingsProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: LoadBalancingSettingsProperties
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.LoadBalancingSettingsProperties(LoadBalancingSettingsUpdateParameters):
+        key "additionalLatencyMilliseconds": int
+        key "resourceState": Union[str, FrontDoorResourceState]
+        key "sampleSize": int
+        key "successfulSamplesRequired": int
+        additionalLatencyMilliseconds: int
+        resourceState: Union[str, FrontDoorResourceState]
+        sampleSize: int
+        successfulSamplesRequired: int
+
+
+    class azure.mgmt.frontdoor.types.LoadBalancingSettingsUpdateParameters(TypedDict, total=False):
+        key "additionalLatencyMilliseconds": int
+        key "sampleSize": int
+        key "successfulSamplesRequired": int
+        additionalLatencyMilliseconds: int
+        sampleSize: int
+        successfulSamplesRequired: int
+
+
+    class azure.mgmt.frontdoor.types.ManagedRuleExclusion(TypedDict, total=False):
+        key "matchVariable": Required[Union[str, ManagedRuleExclusionMatchVariable]]
+        key "selector": Required[str]
+        key "selectorMatchOperator": Required[Union[str, ManagedRuleExclusionSelectorMatchOperator]]
+        matchVariable: Union[str, ManagedRuleExclusionMatchVariable]
+        selector: str
+        selectorMatchOperator: Union[str, ManagedRuleExclusionSelectorMatchOperator]
+
+
+    class azure.mgmt.frontdoor.types.ManagedRuleGroupOverride(TypedDict, total=False):
+        key "ruleGroupName": Required[str]
+        exclusions: list[ManagedRuleExclusion]
+        ruleGroupName: str
+        rules: list[ManagedRuleOverride]
+
+
+    class azure.mgmt.frontdoor.types.ManagedRuleOverride(TypedDict, total=False):
+        key "action": Union[str, ActionType]
+        key "enabledState": Union[str, ManagedRuleEnabledState]
+        key "ruleId": Required[str]
+        key "sensitivity": Union[str, SensitivityType]
+        action: Union[str, ActionType]
+        enabledState: Union[str, ManagedRuleEnabledState]
+        exclusions: list[ManagedRuleExclusion]
+        ruleId: str
+        sensitivity: Union[str, SensitivityType]
+
+
+    class azure.mgmt.frontdoor.types.ManagedRuleSet(TypedDict, total=False):
+        key "ruleSetAction": Union[str, ManagedRuleSetActionType]
+        key "ruleSetType": Required[str]
+        key "ruleSetVersion": Required[str]
+        exclusions: list[ManagedRuleExclusion]
+        ruleGroupOverrides: list[ManagedRuleGroupOverride]
+        ruleSetAction: Union[str, ManagedRuleSetActionType]
+        ruleSetType: str
+        ruleSetVersion: str
+
+
+    class azure.mgmt.frontdoor.types.ManagedRuleSetException(TypedDict, total=False):
+        key "matchValues": Required[list[str]]
+        key "matchVariable": Required[Union[str, ExceptionMatchVariable]]
+        key "scopes": Required[list[ManagedRuleSetScope]]
+        key "selector": str
+        key "selectorMatchOperator": Union[str, ExceptionSelectorMatchOperator]
+        key "valueMatchOperator": Required[Union[str, ExceptionValueMatchOperator]]
+        matchValues: list[str]
+        matchVariable: Union[str, ExceptionMatchVariable]
+        scopes: list[ManagedRuleSetScope]
+        selector: str
+        selectorMatchOperator: Union[str, ExceptionSelectorMatchOperator]
+        valueMatchOperator: Union[str, ExceptionValueMatchOperator]
+
+
+    class azure.mgmt.frontdoor.types.ManagedRuleSetExceptionList(TypedDict, total=False):
+        exceptions: list[ManagedRuleSetException]
+
+
+    class azure.mgmt.frontdoor.types.ManagedRuleSetList(TypedDict, total=False):
+        key "exceptionsList": ForwardRef('ManagedRuleSetExceptionList', module='types')
+        exceptionsList: ManagedRuleSetExceptionList
+        managedRuleSets: list[ManagedRuleSet]
+
+
+    class azure.mgmt.frontdoor.types.ManagedRuleSetScope(TypedDict, total=False):
+        key "ruleSetType": Required[str]
+        key "ruleSetVersion": Required[str]
+        ruleGroupScopes: list[RuleGroupScope]
+        ruleSetType: str
+        ruleSetVersion: str
+
+
+    class azure.mgmt.frontdoor.types.MatchCondition(TypedDict, total=False):
+        key "matchValue": Required[list[str]]
+        key "matchVariable": Required[Union[str, MatchVariable]]
+        key "negateCondition": bool
+        key "operator": Required[Union[str, Operator]]
+        key "selector": str
+        matchValue: list[str]
+        matchVariable: Union[str, MatchVariable]
+        negateCondition: bool
+        operator: Union[str, Operator]
+        selector: str
+        transforms: list[Union[str, TransformType]]
+
+
+    class azure.mgmt.frontdoor.types.PolicySettings(TypedDict, total=False):
+        key "captchaExpirationInMinutes": int
+        key "customBlockResponseBody": str
+        key "customBlockResponseStatusCode": int
+        key "enabledState": Union[str, PolicyEnabledState]
+        key "javascriptChallengeExpirationInMinutes": int
+        key "logScrubbing": ForwardRef('PolicySettingsLogScrubbing', module='types')
+        key "mode": Union[str, PolicyMode]
+        key "redirectUrl": str
+        key "requestBodyCheck": Union[str, PolicyRequestBodyCheck]
+        captchaExpirationInMinutes: int
+        customBlockResponseBody: str
+        customBlockResponseStatusCode: int
+        enabledState: Union[str, PolicyEnabledState]
+        javascriptChallengeExpirationInMinutes: int
+        logScrubbing: PolicySettingsLogScrubbing
+        mode: Union[str, PolicyMode]
+        redirectUrl: str
+        requestBodyCheck: Union[str, PolicyRequestBodyCheck]
+
+
+    class azure.mgmt.frontdoor.types.PolicySettingsLogScrubbing(TypedDict, total=False):
+        key "state": Union[str, WebApplicationFirewallScrubbingState]
+        scrubbingRules: list[WebApplicationFirewallScrubbingRules]
+        state: Union[str, WebApplicationFirewallScrubbingState]
+
+
+    class azure.mgmt.frontdoor.types.Profile(ResourcewithSettableName):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ProfileProperties', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: ProfileProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.ProfileProperties(TypedDict, total=False):
+        key "enabledState": Union[str, State]
+        key "resourceState": Union[str, NetworkExperimentResourceState]
+        enabledState: Union[str, State]
+        resourceState: Union[str, NetworkExperimentResourceState]
+
+
+    class azure.mgmt.frontdoor.types.ProfileUpdateModel(TypedDict, total=False):
+        key "properties": ForwardRef('ProfileUpdateProperties', module='types')
+        properties: ProfileUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.frontdoor.types.ProfileUpdateProperties(TypedDict, total=False):
+        key "enabledState": Union[str, State]
+        enabledState: Union[str, State]
+
+
+    class azure.mgmt.frontdoor.types.PurgeParameters(TypedDict, total=False):
+        key "contentPaths": Required[list[str]]
+        contentPaths: list[str]
+
+
+    class azure.mgmt.frontdoor.types.RedirectConfiguration(TypedDict):
+        key "@odata.type": Required[Literal["#FrontdoorRedirectConfiguration"]]
+        key "customFragment": str
+        key "customHost": str
+        key "customPath": str
+        key "customQueryString": str
+        key "redirectProtocol": Union[str, FrontDoorRedirectProtocol]
+        key "redirectType": Union[str, FrontDoorRedirectType]
+        ``@odata.type``: Literal[#FrontdoorRedirectConfiguration]
+        customFragment: str
+        customHost: str
+        customPath: str
+        customQueryString: str
+        redirectProtocol: Union[str, FrontDoorRedirectProtocol]
+        redirectType: Union[str, FrontDoorRedirectType]
+
+
+    class azure.mgmt.frontdoor.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "type": str
+        id: str
+        location: str
+        name: str
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.ResourcewithSettableName(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "type": str
+        id: str
+        location: str
+        name: str
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.RoutingRule(SubResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RoutingRuleProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: RoutingRuleProperties
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.RoutingRuleLink(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.frontdoor.types.RoutingRuleProperties(RoutingRuleUpdateParameters):
+        key "enabledState": Union[str, RoutingRuleEnabledState]
+        key "resourceState": Union[str, FrontDoorResourceState]
+        key "routeConfiguration": ForwardRef('RouteConfiguration', module='types')
+        key "rulesEngine": ForwardRef('SubResource', module='types')
+        key "webApplicationFirewallPolicyLink": ForwardRef('RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink', module='types')
+        acceptedProtocols: list[Union[str, FrontDoorProtocol]]
+        enabledState: Union[str, RoutingRuleEnabledState]
+        frontendEndpoints: list[SubResource]
+        patternsToMatch: list[str]
+        resourceState: Union[str, FrontDoorResourceState]
+        routeConfiguration: RouteConfiguration
+        rulesEngine: SubResource
+        webApplicationFirewallPolicyLink: RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink
+
+
+    class azure.mgmt.frontdoor.types.RoutingRuleUpdateParameters(TypedDict, total=False):
+        key "enabledState": Union[str, RoutingRuleEnabledState]
+        key "routeConfiguration": ForwardRef('RouteConfiguration', module='types')
+        key "rulesEngine": ForwardRef('SubResource', module='types')
+        key "webApplicationFirewallPolicyLink": ForwardRef('RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink', module='types')
+        acceptedProtocols: list[Union[str, FrontDoorProtocol]]
+        enabledState: Union[str, RoutingRuleEnabledState]
+        frontendEndpoints: list[SubResource]
+        patternsToMatch: list[str]
+        routeConfiguration: RouteConfiguration
+        rulesEngine: SubResource
+        webApplicationFirewallPolicyLink: RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink
+
+
+    class azure.mgmt.frontdoor.types.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.frontdoor.types.RuleGroupScope(TypedDict, total=False):
+        key "ruleGroupName": Required[str]
+        ruleGroupName: str
+        ruleScopes: list[RuleScope]
+
+
+    class azure.mgmt.frontdoor.types.RuleScope(TypedDict, total=False):
+        key "ruleId": Required[str]
+        ruleId: str
+
+
+    class azure.mgmt.frontdoor.types.RulesEngine(BasicResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RulesEngineProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: RulesEngineProperties
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.RulesEngineAction(TypedDict, total=False):
+        key "routeConfigurationOverride": ForwardRef('RouteConfiguration', module='types')
+        requestHeaderActions: list[HeaderAction]
+        responseHeaderActions: list[HeaderAction]
+        routeConfigurationOverride: RouteConfiguration
+
+
+    class azure.mgmt.frontdoor.types.RulesEngineMatchCondition(TypedDict, total=False):
+        key "negateCondition": bool
+        key "rulesEngineMatchValue": Required[list[str]]
+        key "rulesEngineMatchVariable": Required[Union[str, RulesEngineMatchVariable]]
+        key "rulesEngineOperator": Required[Union[str, RulesEngineOperator]]
+        key "selector": str
+        negateCondition: bool
+        rulesEngineMatchValue: list[str]
+        rulesEngineMatchVariable: Union[str, RulesEngineMatchVariable]
+        rulesEngineOperator: Union[str, RulesEngineOperator]
+        selector: str
+        transforms: list[Union[str, Transform]]
+
+
+    class azure.mgmt.frontdoor.types.RulesEngineProperties(RulesEngineUpdateParameters):
+        key "resourceState": Union[str, FrontDoorResourceState]
+        resourceState: Union[str, FrontDoorResourceState]
+        rules: list[RulesEngineRule]
+
+
+    class azure.mgmt.frontdoor.types.RulesEngineRule(TypedDict, total=False):
+        key "action": Required[RulesEngineAction]
+        key "matchProcessingBehavior": Union[str, MatchProcessingBehavior]
+        key "name": Required[str]
+        key "priority": Required[int]
+        action: RulesEngineAction
+        matchConditions: list[RulesEngineMatchCondition]
+        matchProcessingBehavior: Union[str, MatchProcessingBehavior]
+        name: str
+        priority: int
+
+
+    class azure.mgmt.frontdoor.types.RulesEngineUpdateParameters(TypedDict, total=False):
+        rules: list[RulesEngineRule]
+
+
+    class azure.mgmt.frontdoor.types.SecurityPolicyLink(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.frontdoor.types.Sku(TypedDict, total=False):
+        key "name": Union[str, SkuName]
+        name: Union[str, SkuName]
+
+
+    class azure.mgmt.frontdoor.types.SubResource(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.frontdoor.types.TagsObject(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.frontdoor.types.ValidateCustomDomainInput(TypedDict, total=False):
+        key "hostName": Required[str]
+        hostName: str
+
+
+    class azure.mgmt.frontdoor.types.WebApplicationFirewallPolicy(Resource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('WebApplicationFirewallPolicyProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: WebApplicationFirewallPolicyProperties
+        sku: Sku
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.frontdoor.types.WebApplicationFirewallPolicyProperties(TypedDict, total=False):
+        key "customRules": ForwardRef('CustomRuleList', module='types')
+        key "managedRules": ForwardRef('ManagedRuleSetList', module='types')
+        key "policySettings": ForwardRef('PolicySettings', module='types')
+        key "provisioningState": str
+        key "resourceState": Union[str, PolicyResourceState]
+        customRules: CustomRuleList
+        frontendEndpointLinks: list[FrontendEndpointLink]
+        managedRules: ManagedRuleSetList
+        policySettings: PolicySettings
+        provisioningState: str
+        resourceState: Union[str, PolicyResourceState]
+        routingRuleLinks: list[RoutingRuleLink]
+        securityPolicyLinks: list[SecurityPolicyLink]
+
+
+    class azure.mgmt.frontdoor.types.WebApplicationFirewallScrubbingRules(TypedDict, total=False):
+        key "matchVariable": Required[Union[str, ScrubbingRuleEntryMatchVariable]]
+        key "selector": str
+        key "selectorMatchOperator": Required[Union[str, ScrubbingRuleEntryMatchOperator]]
+        key "state": Union[str, ScrubbingRuleEntryState]
+        matchVariable: Union[str, ScrubbingRuleEntryMatchVariable]
+        selector: str
+        selectorMatchOperator: Union[str, ScrubbingRuleEntryMatchOperator]
+        state: Union[str, ScrubbingRuleEntryState]
 
 
 ```

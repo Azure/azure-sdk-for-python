@@ -33,12 +33,11 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import FrontDoorManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -53,7 +52,7 @@ def build_front_doors_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -82,7 +81,7 @@ def build_front_doors_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -111,7 +110,7 @@ def build_front_doors_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}"
     path_format_arguments = {
@@ -134,7 +133,7 @@ def build_front_doors_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +158,7 @@ def build_front_doors_list_request(subscription_id: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -186,7 +185,7 @@ def build_front_doors_validate_custom_domain_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -216,7 +215,7 @@ def build_frontend_endpoints_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -245,7 +244,7 @@ def build_frontend_endpoints_list_by_front_door_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -274,7 +273,7 @@ def build_frontend_endpoints_enable_https_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/frontendEndpoints/{frontendEndpointName}/enableHttps"
     path_format_arguments = {
@@ -301,7 +300,7 @@ def build_frontend_endpoints_disable_https_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/frontendEndpoints/{frontendEndpointName}/disableHttps"
     path_format_arguments = {
@@ -325,7 +324,7 @@ def build_rules_engines_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -355,7 +354,7 @@ def build_rules_engines_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -385,7 +384,7 @@ def build_rules_engines_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}"
     path_format_arguments = {
@@ -409,7 +408,7 @@ def build_rules_engines_list_by_front_door_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -437,7 +436,7 @@ def build_experiments_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -467,7 +466,7 @@ def build_experiments_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -499,7 +498,7 @@ def build_experiments_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -529,7 +528,7 @@ def build_experiments_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}"
     path_format_arguments = {
@@ -553,7 +552,7 @@ def build_experiments_list_by_profile_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -581,7 +580,7 @@ def build_policies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -610,7 +609,7 @@ def build_policies_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -641,7 +640,7 @@ def build_policies_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -670,7 +669,7 @@ def build_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{policyName}"
     path_format_arguments = {
@@ -691,7 +690,7 @@ def build_policies_list_request(resource_group_name: str, subscription_id: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -718,7 +717,7 @@ def build_policies_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -745,7 +744,7 @@ def build_endpoints_purge_content_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/purge"
     path_format_arguments = {
@@ -772,7 +771,7 @@ def build_network_experiment_profiles_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -801,7 +800,7 @@ def build_network_experiment_profiles_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -832,7 +831,7 @@ def build_network_experiment_profiles_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -861,7 +860,7 @@ def build_network_experiment_profiles_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}"
     path_format_arguments = {
@@ -884,7 +883,7 @@ def build_network_experiment_profiles_list_by_resource_group_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -911,7 +910,7 @@ def build_network_experiment_profiles_list_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -937,7 +936,7 @@ def build_preconfigured_endpoints_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -973,7 +972,7 @@ def build_reports_get_latency_scorecards_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1018,7 +1017,7 @@ def build_reports_get_timeseries_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1053,7 +1052,7 @@ def build_managed_rule_sets_list_request(subscription_id: str, **kwargs: Any) ->
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1078,7 +1077,7 @@ def build_front_door_name_availability_check_request(**kwargs: Any) -> HttpReque
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1102,7 +1101,7 @@ def build_front_door_name_availability_with_subscription_check_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1124,7 +1123,7 @@ def build_front_door_name_availability_with_subscription_check_request(  # pylin
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class FrontDoorsOperations:
+class FrontDoorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1216,7 +1215,7 @@ class FrontDoorsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        front_door_parameters: Union[_models.FrontDoor, JSON, IO[bytes]],
+        front_door_parameters: Union[_models.FrontDoor, _types.FrontDoor, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1330,7 +1329,7 @@ class FrontDoorsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        front_door_parameters: JSON,
+        front_door_parameters: _types.FrontDoor,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1345,7 +1344,7 @@ class FrontDoorsOperations:
         :type front_door_name: str
         :param front_door_parameters: Front Door properties needed to create a new Front Door.
          Required.
-        :type front_door_parameters: JSON
+        :type front_door_parameters: ~azure.mgmt.frontdoor.types.FrontDoor
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1390,7 +1389,7 @@ class FrontDoorsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        front_door_parameters: Union[_models.FrontDoor, JSON, IO[bytes]],
+        front_door_parameters: Union[_models.FrontDoor, _types.FrontDoor, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FrontDoor]:
         """Creates a new Front Door with a Front Door name under the specified subscription and resource
@@ -1401,9 +1400,10 @@ class FrontDoorsOperations:
         :type resource_group_name: str
         :param front_door_name: Name of the Front Door which is globally unique. Required.
         :type front_door_name: str
-        :param front_door_parameters: Front Door properties needed to create a new Front Door. Is one
-         of the following types: FrontDoor, JSON, IO[bytes] Required.
-        :type front_door_parameters: ~azure.mgmt.frontdoor.models.FrontDoor or JSON or IO[bytes]
+        :param front_door_parameters: Front Door properties needed to create a new Front Door. Is
+         either a FrontDoor type or a IO[bytes] type. Required.
+        :type front_door_parameters: ~azure.mgmt.frontdoor.models.FrontDoor or
+         ~azure.mgmt.frontdoor.types.FrontDoor or IO[bytes]
         :return: An instance of LROPoller that returns FrontDoor. The FrontDoor is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.frontdoor.models.FrontDoor]
@@ -1803,7 +1803,7 @@ class FrontDoorsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        custom_domain_properties: JSON,
+        custom_domain_properties: _types.ValidateCustomDomainInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1817,7 +1817,7 @@ class FrontDoorsOperations:
         :param front_door_name: Name of the Front Door which is globally unique. Required.
         :type front_door_name: str
         :param custom_domain_properties: Custom domain to be validated. Required.
-        :type custom_domain_properties: JSON
+        :type custom_domain_properties: ~azure.mgmt.frontdoor.types.ValidateCustomDomainInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1861,7 +1861,7 @@ class FrontDoorsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        custom_domain_properties: Union[_models.ValidateCustomDomainInput, JSON, IO[bytes]],
+        custom_domain_properties: Union[_models.ValidateCustomDomainInput, _types.ValidateCustomDomainInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.ValidateCustomDomainOutput:
         """Validates the custom domain mapping to ensure it maps to the correct Front Door endpoint in
@@ -1872,10 +1872,10 @@ class FrontDoorsOperations:
         :type resource_group_name: str
         :param front_door_name: Name of the Front Door which is globally unique. Required.
         :type front_door_name: str
-        :param custom_domain_properties: Custom domain to be validated. Is one of the following types:
-         ValidateCustomDomainInput, JSON, IO[bytes] Required.
-        :type custom_domain_properties: ~azure.mgmt.frontdoor.models.ValidateCustomDomainInput or JSON
-         or IO[bytes]
+        :param custom_domain_properties: Custom domain to be validated. Is either a
+         ValidateCustomDomainInput type or a IO[bytes] type. Required.
+        :type custom_domain_properties: ~azure.mgmt.frontdoor.models.ValidateCustomDomainInput or
+         ~azure.mgmt.frontdoor.types.ValidateCustomDomainInput or IO[bytes]
         :return: ValidateCustomDomainOutput. The ValidateCustomDomainOutput is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.frontdoor.models.ValidateCustomDomainOutput
@@ -1949,7 +1949,7 @@ class FrontDoorsOperations:
         return deserialized  # type: ignore
 
 
-class FrontendEndpointsOperations:
+class FrontendEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2149,7 +2149,7 @@ class FrontendEndpointsOperations:
         resource_group_name: str,
         front_door_name: str,
         frontend_endpoint_name: str,
-        custom_https_configuration: Union[_models.CustomHttpsConfiguration, JSON, IO[bytes]],
+        custom_https_configuration: Union[_models.CustomHttpsConfiguration, _types.CustomHttpsConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2260,7 +2260,7 @@ class FrontendEndpointsOperations:
         resource_group_name: str,
         front_door_name: str,
         frontend_endpoint_name: str,
-        custom_https_configuration: JSON,
+        custom_https_configuration: _types.CustomHttpsConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2276,7 +2276,7 @@ class FrontendEndpointsOperations:
          Door. Required.
         :type frontend_endpoint_name: str
         :param custom_https_configuration: The configuration specifying how to enable HTTPS. Required.
-        :type custom_https_configuration: JSON
+        :type custom_https_configuration: ~azure.mgmt.frontdoor.types.CustomHttpsConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2322,7 +2322,7 @@ class FrontendEndpointsOperations:
         resource_group_name: str,
         front_door_name: str,
         frontend_endpoint_name: str,
-        custom_https_configuration: Union[_models.CustomHttpsConfiguration, JSON, IO[bytes]],
+        custom_https_configuration: Union[_models.CustomHttpsConfiguration, _types.CustomHttpsConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Enables a frontendEndpoint for HTTPS traffic.
@@ -2335,10 +2335,10 @@ class FrontendEndpointsOperations:
         :param frontend_endpoint_name: Name of the Frontend endpoint which is unique within the Front
          Door. Required.
         :type frontend_endpoint_name: str
-        :param custom_https_configuration: The configuration specifying how to enable HTTPS. Is one of
-         the following types: CustomHttpsConfiguration, JSON, IO[bytes] Required.
-        :type custom_https_configuration: ~azure.mgmt.frontdoor.models.CustomHttpsConfiguration or JSON
-         or IO[bytes]
+        :param custom_https_configuration: The configuration specifying how to enable HTTPS. Is either
+         a CustomHttpsConfiguration type or a IO[bytes] type. Required.
+        :type custom_https_configuration: ~azure.mgmt.frontdoor.models.CustomHttpsConfiguration or
+         ~azure.mgmt.frontdoor.types.CustomHttpsConfiguration or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2519,7 +2519,7 @@ class FrontendEndpointsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class RulesEnginesOperations:
+class RulesEnginesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2617,7 +2617,7 @@ class RulesEnginesOperations:
         resource_group_name: str,
         front_door_name: str,
         rules_engine_name: str,
-        rules_engine_parameters: Union[_models.RulesEngine, JSON, IO[bytes]],
+        rules_engine_parameters: Union[_models.RulesEngine, _types.RulesEngine, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2737,7 +2737,7 @@ class RulesEnginesOperations:
         resource_group_name: str,
         front_door_name: str,
         rules_engine_name: str,
-        rules_engine_parameters: JSON,
+        rules_engine_parameters: _types.RulesEngine,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2755,7 +2755,7 @@ class RulesEnginesOperations:
         :type rules_engine_name: str
         :param rules_engine_parameters: Rules Engine Configuration properties needed to create a new
          Rules Engine Configuration. Required.
-        :type rules_engine_parameters: JSON
+        :type rules_engine_parameters: ~azure.mgmt.frontdoor.types.RulesEngine
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2805,7 +2805,7 @@ class RulesEnginesOperations:
         resource_group_name: str,
         front_door_name: str,
         rules_engine_name: str,
-        rules_engine_parameters: Union[_models.RulesEngine, JSON, IO[bytes]],
+        rules_engine_parameters: Union[_models.RulesEngine, _types.RulesEngine, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RulesEngine]:
         """Creates a new Rules Engine Configuration with the specified name within the specified Front
@@ -2820,9 +2820,9 @@ class RulesEnginesOperations:
          Required.
         :type rules_engine_name: str
         :param rules_engine_parameters: Rules Engine Configuration properties needed to create a new
-         Rules Engine Configuration. Is one of the following types: RulesEngine, JSON, IO[bytes]
-         Required.
-        :type rules_engine_parameters: ~azure.mgmt.frontdoor.models.RulesEngine or JSON or IO[bytes]
+         Rules Engine Configuration. Is either a RulesEngine type or a IO[bytes] type. Required.
+        :type rules_engine_parameters: ~azure.mgmt.frontdoor.models.RulesEngine or
+         ~azure.mgmt.frontdoor.types.RulesEngine or IO[bytes]
         :return: An instance of LROPoller that returns RulesEngine. The RulesEngine is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.frontdoor.models.RulesEngine]
@@ -3111,7 +3111,7 @@ class RulesEnginesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ExperimentsOperations:
+class ExperimentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3210,7 +3210,7 @@ class ExperimentsOperations:
         resource_group_name: str,
         profile_name: str,
         experiment_name: str,
-        parameters: Union[_models.Experiment, JSON, IO[bytes]],
+        parameters: Union[_models.Experiment, _types.Experiment, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3325,7 +3325,7 @@ class ExperimentsOperations:
         resource_group_name: str,
         profile_name: str,
         experiment_name: str,
-        parameters: JSON,
+        parameters: _types.Experiment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3342,7 +3342,7 @@ class ExperimentsOperations:
         :param experiment_name: The Experiment identifier associated with the Experiment. Required.
         :type experiment_name: str
         :param parameters: The Experiment resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.frontdoor.types.Experiment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3391,7 +3391,7 @@ class ExperimentsOperations:
         resource_group_name: str,
         profile_name: str,
         experiment_name: str,
-        parameters: Union[_models.Experiment, JSON, IO[bytes]],
+        parameters: Union[_models.Experiment, _types.Experiment, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Experiment]:
         """Creates or updates an Experiment.
@@ -3405,9 +3405,10 @@ class ExperimentsOperations:
         :type profile_name: str
         :param experiment_name: The Experiment identifier associated with the Experiment. Required.
         :type experiment_name: str
-        :param parameters: The Experiment resource. Is one of the following types: Experiment, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.frontdoor.models.Experiment or JSON or IO[bytes]
+        :param parameters: The Experiment resource. Is either a Experiment type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.frontdoor.models.Experiment or
+         ~azure.mgmt.frontdoor.types.Experiment or IO[bytes]
         :return: An instance of LROPoller that returns Experiment. The Experiment is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.frontdoor.models.Experiment]
@@ -3471,7 +3472,7 @@ class ExperimentsOperations:
         resource_group_name: str,
         profile_name: str,
         experiment_name: str,
-        parameters: Union[_models.ExperimentUpdateModel, JSON, IO[bytes]],
+        parameters: Union[_models.ExperimentUpdateModel, _types.ExperimentUpdateModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3582,7 +3583,7 @@ class ExperimentsOperations:
         resource_group_name: str,
         profile_name: str,
         experiment_name: str,
-        parameters: JSON,
+        parameters: _types.ExperimentUpdateModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3599,7 +3600,7 @@ class ExperimentsOperations:
         :param experiment_name: The Experiment identifier associated with the Experiment. Required.
         :type experiment_name: str
         :param parameters: The Experiment Update Model. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.frontdoor.types.ExperimentUpdateModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3648,7 +3649,7 @@ class ExperimentsOperations:
         resource_group_name: str,
         profile_name: str,
         experiment_name: str,
-        parameters: Union[_models.ExperimentUpdateModel, JSON, IO[bytes]],
+        parameters: Union[_models.ExperimentUpdateModel, _types.ExperimentUpdateModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Experiment]:
         """Updates an Experiment by Experiment id.
@@ -3662,9 +3663,10 @@ class ExperimentsOperations:
         :type profile_name: str
         :param experiment_name: The Experiment identifier associated with the Experiment. Required.
         :type experiment_name: str
-        :param parameters: The Experiment Update Model. Is one of the following types:
-         ExperimentUpdateModel, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.frontdoor.models.ExperimentUpdateModel or JSON or IO[bytes]
+        :param parameters: The Experiment Update Model. Is either a ExperimentUpdateModel type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.frontdoor.models.ExperimentUpdateModel or
+         ~azure.mgmt.frontdoor.types.ExperimentUpdateModel or IO[bytes]
         :return: An instance of LROPoller that returns Experiment. The Experiment is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.frontdoor.models.Experiment]
@@ -3954,7 +3956,7 @@ class ExperimentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PoliciesOperations:
+class PoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4046,7 +4048,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        parameters: Union[_models.WebApplicationFirewallPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.WebApplicationFirewallPolicy, _types.WebApplicationFirewallPolicy, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4155,7 +4157,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        parameters: JSON,
+        parameters: _types.WebApplicationFirewallPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4168,7 +4170,7 @@ class PoliciesOperations:
         :param policy_name: The name of the Web Application Firewall Policy. Required.
         :type policy_name: str
         :param parameters: Policy to be created. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.frontdoor.types.WebApplicationFirewallPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4213,7 +4215,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        parameters: Union[_models.WebApplicationFirewallPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.WebApplicationFirewallPolicy, _types.WebApplicationFirewallPolicy, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.WebApplicationFirewallPolicy]:
         """Create or update policy with specified rule set name within a resource group.
@@ -4223,10 +4225,10 @@ class PoliciesOperations:
         :type resource_group_name: str
         :param policy_name: The name of the Web Application Firewall Policy. Required.
         :type policy_name: str
-        :param parameters: Policy to be created. Is one of the following types:
-         WebApplicationFirewallPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy or JSON or
-         IO[bytes]
+        :param parameters: Policy to be created. Is either a WebApplicationFirewallPolicy type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy or
+         ~azure.mgmt.frontdoor.types.WebApplicationFirewallPolicy or IO[bytes]
         :return: An instance of LROPoller that returns WebApplicationFirewallPolicy. The
          WebApplicationFirewallPolicy is compatible with MutableMapping
         :rtype:
@@ -4289,7 +4291,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4394,7 +4396,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        parameters: JSON,
+        parameters: _types.TagsObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4408,7 +4410,7 @@ class PoliciesOperations:
         :param policy_name: The name of the Web Application Firewall Policy. Required.
         :type policy_name: str
         :param parameters: FrontdoorWebApplicationFirewallPolicy parameters to be patched. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.frontdoor.types.TagsObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4454,7 +4456,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        parameters: Union[_models.TagsObject, JSON, IO[bytes]],
+        parameters: Union[_models.TagsObject, _types.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.WebApplicationFirewallPolicy]:
         """Patch a specific frontdoor webApplicationFirewall policy for tags update under the specified
@@ -4465,9 +4467,10 @@ class PoliciesOperations:
         :type resource_group_name: str
         :param policy_name: The name of the Web Application Firewall Policy. Required.
         :type policy_name: str
-        :param parameters: FrontdoorWebApplicationFirewallPolicy parameters to be patched. Is one of
-         the following types: TagsObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.frontdoor.models.TagsObject or JSON or IO[bytes]
+        :param parameters: FrontdoorWebApplicationFirewallPolicy parameters to be patched. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.frontdoor.models.TagsObject or
+         ~azure.mgmt.frontdoor.types.TagsObject or IO[bytes]
         :return: An instance of LROPoller that returns WebApplicationFirewallPolicy. The
          WebApplicationFirewallPolicy is compatible with MutableMapping
         :rtype:
@@ -4837,7 +4840,7 @@ class PoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EndpointsOperations:
+class EndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4858,7 +4861,7 @@ class EndpointsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        content_file_paths: Union[_models.PurgeParameters, JSON, IO[bytes]],
+        content_file_paths: Union[_models.PurgeParameters, _types.PurgeParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4965,7 +4968,7 @@ class EndpointsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        content_file_paths: JSON,
+        content_file_paths: _types.PurgeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4980,7 +4983,7 @@ class EndpointsOperations:
         :param content_file_paths: The path to the content to be purged. Path can be a full URL, e.g.
          '/pictures/city.png' which removes a single file, or a directory with a wildcard, e.g.
          '/pictures/*' which removes all folders and files in the directory. Required.
-        :type content_file_paths: JSON
+        :type content_file_paths: ~azure.mgmt.frontdoor.types.PurgeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5023,7 +5026,7 @@ class EndpointsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        content_file_paths: Union[_models.PurgeParameters, JSON, IO[bytes]],
+        content_file_paths: Union[_models.PurgeParameters, _types.PurgeParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Removes a content from Front Door.
@@ -5035,9 +5038,10 @@ class EndpointsOperations:
         :type front_door_name: str
         :param content_file_paths: The path to the content to be purged. Path can be a full URL, e.g.
          '/pictures/city.png' which removes a single file, or a directory with a wildcard, e.g.
-         '/pictures/*' which removes all folders and files in the directory. Is one of the following
-         types: PurgeParameters, JSON, IO[bytes] Required.
-        :type content_file_paths: ~azure.mgmt.frontdoor.models.PurgeParameters or JSON or IO[bytes]
+         '/pictures/*' which removes all folders and files in the directory. Is either a PurgeParameters
+         type or a IO[bytes] type. Required.
+        :type content_file_paths: ~azure.mgmt.frontdoor.models.PurgeParameters or
+         ~azure.mgmt.frontdoor.types.PurgeParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5090,7 +5094,7 @@ class EndpointsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class NetworkExperimentProfilesOperations:
+class NetworkExperimentProfilesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5183,7 +5187,7 @@ class NetworkExperimentProfilesOperations:
         self,
         profile_name: str,
         resource_group_name: str,
-        parameters: Union[_models.Profile, JSON, IO[bytes]],
+        parameters: Union[_models.Profile, _types.Profile, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5293,7 +5297,7 @@ class NetworkExperimentProfilesOperations:
         self,
         profile_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.Profile,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5308,7 +5312,7 @@ class NetworkExperimentProfilesOperations:
          Required.
         :type resource_group_name: str
         :param parameters: An Network Experiment Profile. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.frontdoor.types.Profile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5353,7 +5357,7 @@ class NetworkExperimentProfilesOperations:
         self,
         profile_name: str,
         resource_group_name: str,
-        parameters: Union[_models.Profile, JSON, IO[bytes]],
+        parameters: Union[_models.Profile, _types.Profile, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Profile]:
         """Creates an NetworkExperiment Profile.
@@ -5365,9 +5369,10 @@ class NetworkExperimentProfilesOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: An Network Experiment Profile. Is one of the following types: Profile, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.frontdoor.models.Profile or JSON or IO[bytes]
+        :param parameters: An Network Experiment Profile. Is either a Profile type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.frontdoor.models.Profile or ~azure.mgmt.frontdoor.types.Profile
+         or IO[bytes]
         :return: An instance of LROPoller that returns Profile. The Profile is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.frontdoor.models.Profile]
@@ -5429,7 +5434,7 @@ class NetworkExperimentProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        parameters: Union[_models.ProfileUpdateModel, JSON, IO[bytes]],
+        parameters: Union[_models.ProfileUpdateModel, _types.ProfileUpdateModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5535,7 +5540,7 @@ class NetworkExperimentProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        parameters: JSON,
+        parameters: _types.ProfileUpdateModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5550,7 +5555,7 @@ class NetworkExperimentProfilesOperations:
         :param profile_name: The Profile identifier associated with the Tenant and Partner. Required.
         :type profile_name: str
         :param parameters: The Profile Update Model. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.frontdoor.types.ProfileUpdateModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5595,7 +5600,7 @@ class NetworkExperimentProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        parameters: Union[_models.ProfileUpdateModel, JSON, IO[bytes]],
+        parameters: Union[_models.ProfileUpdateModel, _types.ProfileUpdateModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Profile]:
         """Updates an NetworkExperimentProfiles by NetworkExperimentProfile name.
@@ -5607,9 +5612,10 @@ class NetworkExperimentProfilesOperations:
         :type resource_group_name: str
         :param profile_name: The Profile identifier associated with the Tenant and Partner. Required.
         :type profile_name: str
-        :param parameters: The Profile Update Model. Is one of the following types: ProfileUpdateModel,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.frontdoor.models.ProfileUpdateModel or JSON or IO[bytes]
+        :param parameters: The Profile Update Model. Is either a ProfileUpdateModel type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.frontdoor.models.ProfileUpdateModel or
+         ~azure.mgmt.frontdoor.types.ProfileUpdateModel or IO[bytes]
         :return: An instance of LROPoller that returns Profile. The Profile is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.frontdoor.models.Profile]
@@ -5980,7 +5986,7 @@ class NetworkExperimentProfilesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PreconfiguredEndpointsOperations:
+class PreconfiguredEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6102,7 +6108,7 @@ class PreconfiguredEndpointsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReportsOperations:
+class ReportsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6330,7 +6336,7 @@ class ReportsOperations:
         return deserialized  # type: ignore
 
 
-class ManagedRuleSetsOperations:
+class ManagedRuleSetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6441,7 +6447,7 @@ class ManagedRuleSetsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FrontDoorNameAvailabilityOperations:
+class FrontDoorNameAvailabilityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6482,12 +6488,17 @@ class FrontDoorNameAvailabilityOperations:
 
     @overload
     def check(
-        self, check_front_door_name_availability_input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        check_front_door_name_availability_input: _types.CheckNameAvailabilityInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a Front Door resource name.
 
         :param check_front_door_name_availability_input: The request body. Required.
-        :type check_front_door_name_availability_input: JSON
+        :type check_front_door_name_availability_input:
+         ~azure.mgmt.frontdoor.types.CheckNameAvailabilityInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6521,15 +6532,18 @@ class FrontDoorNameAvailabilityOperations:
     @distributed_trace
     def check(
         self,
-        check_front_door_name_availability_input: Union[_models.CheckNameAvailabilityInput, JSON, IO[bytes]],
+        check_front_door_name_availability_input: Union[
+            _models.CheckNameAvailabilityInput, _types.CheckNameAvailabilityInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a Front Door resource name.
 
-        :param check_front_door_name_availability_input: The request body. Is one of the following
-         types: CheckNameAvailabilityInput, JSON, IO[bytes] Required.
+        :param check_front_door_name_availability_input: The request body. Is either a
+         CheckNameAvailabilityInput type or a IO[bytes] type. Required.
         :type check_front_door_name_availability_input:
-         ~azure.mgmt.frontdoor.models.CheckNameAvailabilityInput or JSON or IO[bytes]
+         ~azure.mgmt.frontdoor.models.CheckNameAvailabilityInput or
+         ~azure.mgmt.frontdoor.types.CheckNameAvailabilityInput or IO[bytes]
         :return: CheckNameAvailabilityOutput. The CheckNameAvailabilityOutput is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.frontdoor.models.CheckNameAvailabilityOutput
@@ -6600,7 +6614,7 @@ class FrontDoorNameAvailabilityOperations:
         return deserialized  # type: ignore
 
 
-class FrontDoorNameAvailabilityWithSubscriptionOperations:  # pylint: disable=name-too-long
+class FrontDoorNameAvailabilityWithSubscriptionOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6641,12 +6655,17 @@ class FrontDoorNameAvailabilityWithSubscriptionOperations:  # pylint: disable=na
 
     @overload
     def check(
-        self, check_front_door_name_availability_input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        check_front_door_name_availability_input: _types.CheckNameAvailabilityInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a Front Door subdomain.
 
         :param check_front_door_name_availability_input: The request body. Required.
-        :type check_front_door_name_availability_input: JSON
+        :type check_front_door_name_availability_input:
+         ~azure.mgmt.frontdoor.types.CheckNameAvailabilityInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6680,15 +6699,18 @@ class FrontDoorNameAvailabilityWithSubscriptionOperations:  # pylint: disable=na
     @distributed_trace
     def check(
         self,
-        check_front_door_name_availability_input: Union[_models.CheckNameAvailabilityInput, JSON, IO[bytes]],
+        check_front_door_name_availability_input: Union[
+            _models.CheckNameAvailabilityInput, _types.CheckNameAvailabilityInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a Front Door subdomain.
 
-        :param check_front_door_name_availability_input: The request body. Is one of the following
-         types: CheckNameAvailabilityInput, JSON, IO[bytes] Required.
+        :param check_front_door_name_availability_input: The request body. Is either a
+         CheckNameAvailabilityInput type or a IO[bytes] type. Required.
         :type check_front_door_name_availability_input:
-         ~azure.mgmt.frontdoor.models.CheckNameAvailabilityInput or JSON or IO[bytes]
+         ~azure.mgmt.frontdoor.models.CheckNameAvailabilityInput or
+         ~azure.mgmt.frontdoor.types.CheckNameAvailabilityInput or IO[bytes]
         :return: CheckNameAvailabilityOutput. The CheckNameAvailabilityOutput is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.frontdoor.models.CheckNameAvailabilityOutput
