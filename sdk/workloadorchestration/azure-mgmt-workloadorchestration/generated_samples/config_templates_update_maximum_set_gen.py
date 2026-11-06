@@ -33,11 +33,11 @@ def main():
     response = client.config_templates.update(
         resource_group_name="rgconfigurationmanager",
         config_template_name="testname",
-        properties={"properties": {"description": "cavjiqnrbzsvedicrixhwnfj"}, "tags": {"key7701": "wrsv"}},
+        properties={"properties": {"description": "acogkthm"}, "tags": {}},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/ConfigTemplates_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/ConfigTemplates_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

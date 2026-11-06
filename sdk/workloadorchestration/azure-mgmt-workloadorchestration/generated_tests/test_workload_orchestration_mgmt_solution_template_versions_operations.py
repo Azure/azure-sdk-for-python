@@ -32,6 +32,84 @@ class TestWorkloadOrchestrationMgmtSolutionTemplateVersionsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_solution_template_versions_begin_create_or_update(self, resource_group):
+        response = self.client.solution_template_versions.begin_create_or_update(
+            resource_group_name=resource_group.name,
+            solution_template_name="str",
+            solution_template_version_name="str",
+            resource={
+                "eTag": "str",
+                "id": "str",
+                "name": "str",
+                "properties": {
+                    "specification": {"str": {}},
+                    "configurations": "str",
+                    "internalState": "str",
+                    "orchestratorType": "str",
+                    "provisioningState": "str",
+                },
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_solution_template_versions_update(self, resource_group):
+        response = self.client.solution_template_versions.update(
+            resource_group_name=resource_group.name,
+            solution_template_name="str",
+            solution_template_version_name="str",
+            properties={
+                "eTag": "str",
+                "id": "str",
+                "name": "str",
+                "properties": {
+                    "specification": {"str": {}},
+                    "configurations": "str",
+                    "internalState": "str",
+                    "orchestratorType": "str",
+                    "provisioningState": "str",
+                },
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_solution_template_versions_begin_delete(self, resource_group):
+        response = self.client.solution_template_versions.begin_delete(
+            resource_group_name=resource_group.name,
+            solution_template_name="str",
+            solution_template_version_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_solution_template_versions_list_by_solution_template(self, resource_group):
         response = self.client.solution_template_versions.list_by_solution_template(
             resource_group_name=resource_group.name,
@@ -62,7 +140,68 @@ class TestWorkloadOrchestrationMgmtSolutionTemplateVersionsOperations(AzureMgmtR
             solution_template_name="str",
             solution_template_version_name="str",
             body={
-                "targets": [{"targetId": "str", "solutionInstanceName": "str"}],
+                "targets": [
+                    {
+                        "targetId": "str",
+                        "solutionConfiguration": "str",
+                        "solutionDependencies": [
+                            {
+                                "dependencies": [...],
+                                "solutionInstanceName": "str",
+                                "solutionTemplateId": "str",
+                                "solutionTemplateVersion": "str",
+                                "solutionVersionId": "str",
+                                "targetId": "str",
+                            }
+                        ],
+                        "solutionInstanceName": "str",
+                        "solutionVersionId": "str",
+                    }
+                ],
+                "solutionConfiguration": "str",
+                "solutionDependencies": [
+                    {
+                        "dependencies": [...],
+                        "solutionInstanceName": "str",
+                        "solutionTemplateId": "str",
+                        "solutionTemplateVersion": "str",
+                        "solutionVersionId": "str",
+                        "targetId": "str",
+                    }
+                ],
+                "solutionInstanceName": "str",
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_solution_template_versions_begin_bulk_review_solution(self, resource_group):
+        response = self.client.solution_template_versions.begin_bulk_review_solution(
+            resource_group_name=resource_group.name,
+            solution_template_name="str",
+            solution_template_version_name="str",
+            body={
+                "targets": [
+                    {
+                        "targetId": "str",
+                        "solutionConfiguration": "str",
+                        "solutionDependencies": [
+                            {
+                                "dependencies": [...],
+                                "solutionInstanceName": "str",
+                                "solutionTemplateId": "str",
+                                "solutionTemplateVersion": "str",
+                                "solutionVersionId": "str",
+                                "targetId": "str",
+                            }
+                        ],
+                        "solutionInstanceName": "str",
+                    }
+                ],
+                "solutionConfiguration": "str",
                 "solutionDependencies": [
                     {
                         "dependencies": [...],

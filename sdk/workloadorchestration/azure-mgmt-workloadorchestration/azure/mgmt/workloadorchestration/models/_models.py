@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import JobType
@@ -18,7 +18,37 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AvailableSolutionTemplateVersion(_Model):
+class AdditionalData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Additional metadata or properties.
+
+    :ivar workflow_id: Id of the workflow.
+    :vartype workflow_id: str
+    """
+
+    workflow_id: Optional[str] = rest_field(
+        name="workflowId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Id of the workflow."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        workflow_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AvailableSolutionTemplateVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Available Solution template Version along with latest revision.
 
     :ivar solution_template_version: Solution template Version. Required.
@@ -60,14 +90,14 @@ class AvailableSolutionTemplateVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkDeploySolutionParameter(_Model):
+class BulkDeploySolutionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bulk deploy solution parameter.
 
     :ivar targets: Targets to which solution needs to be deployed. Required.
     :vartype targets: list[~azure.mgmt.workloadorchestration.models.BulkDeployTargetDetails]
     """
 
-    targets: List["_models.BulkDeployTargetDetails"] = rest_field(
+    targets: list["_models.BulkDeployTargetDetails"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Targets to which solution needs to be deployed. Required."""
@@ -76,7 +106,7 @@ class BulkDeploySolutionParameter(_Model):
     def __init__(
         self,
         *,
-        targets: List["_models.BulkDeployTargetDetails"],
+        targets: list["_models.BulkDeployTargetDetails"],
     ) -> None: ...
 
     @overload
@@ -90,7 +120,7 @@ class BulkDeploySolutionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkDeployTargetDetails(_Model):
+class BulkDeployTargetDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bulk deploy target details.
 
     :ivar solution_version_id: ArmId of Target Solution Version. Required.
@@ -120,7 +150,7 @@ class BulkDeployTargetDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkPublishSolutionParameter(_Model):
+class BulkPublishSolutionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bulk publish solution parameter.
 
     :ivar targets: Targets to which solution needs to be published. Required.
@@ -130,9 +160,11 @@ class BulkPublishSolutionParameter(_Model):
     :ivar solution_dependencies: Solution dependencies.
     :vartype solution_dependencies:
      list[~azure.mgmt.workloadorchestration.models.SolutionDependencyParameter]
+    :ivar solution_configuration: Configuration of solution.
+    :vartype solution_configuration: str
     """
 
-    targets: List["_models.BulkPublishTargetDetails"] = rest_field(
+    targets: list["_models.BulkPublishTargetDetails"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Targets to which solution needs to be published. Required."""
@@ -140,18 +172,23 @@ class BulkPublishSolutionParameter(_Model):
         name="solutionInstanceName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Name of the solution instance."""
-    solution_dependencies: Optional[List["_models.SolutionDependencyParameter"]] = rest_field(
+    solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = rest_field(
         name="solutionDependencies", visibility=["read", "create", "update", "delete", "query"]
     )
     """Solution dependencies."""
+    solution_configuration: Optional[str] = rest_field(
+        name="solutionConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration of solution."""
 
     @overload
     def __init__(
         self,
         *,
-        targets: List["_models.BulkPublishTargetDetails"],
+        targets: list["_models.BulkPublishTargetDetails"],
         solution_instance_name: Optional[str] = None,
-        solution_dependencies: Optional[List["_models.SolutionDependencyParameter"]] = None,
+        solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = None,
+        solution_configuration: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -165,28 +202,50 @@ class BulkPublishSolutionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkPublishTargetDetails(_Model):
+class BulkPublishTargetDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bulk publish target details.
 
     :ivar target_id: ArmId of Target. Required.
     :vartype target_id: str
+    :ivar solution_dependencies: Solution dependencies.
+    :vartype solution_dependencies:
+     list[~azure.mgmt.workloadorchestration.models.SolutionDependencyParameter]
     :ivar solution_instance_name: Name of the solution instance.
     :vartype solution_instance_name: str
+    :ivar solution_version_id: ArmId of Target Solution Version.
+    :vartype solution_version_id: str
+    :ivar solution_configuration: Configuration of solution.
+    :vartype solution_configuration: str
     """
 
     target_id: str = rest_field(name="targetId", visibility=["read", "create", "update", "delete", "query"])
     """ArmId of Target. Required."""
+    solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = rest_field(
+        name="solutionDependencies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Solution dependencies."""
     solution_instance_name: Optional[str] = rest_field(
         name="solutionInstanceName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Name of the solution instance."""
+    solution_version_id: Optional[str] = rest_field(
+        name="solutionVersionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ArmId of Target Solution Version."""
+    solution_configuration: Optional[str] = rest_field(
+        name="solutionConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration of solution."""
 
     @overload
     def __init__(
         self,
         *,
         target_id: str,
+        solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = None,
         solution_instance_name: Optional[str] = None,
+        solution_version_id: Optional[str] = None,
+        solution_configuration: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -200,7 +259,109 @@ class BulkPublishTargetDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Capability(_Model):
+class BulkReviewSolutionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Bulk publish solution parameter.
+
+    :ivar targets: Targets to which solution needs to be published. Required.
+    :vartype targets: list[~azure.mgmt.workloadorchestration.models.BulkReviewTargetDetails]
+    :ivar solution_instance_name: Name of the solution instance.
+    :vartype solution_instance_name: str
+    :ivar solution_dependencies: Solution dependencies.
+    :vartype solution_dependencies:
+     list[~azure.mgmt.workloadorchestration.models.SolutionDependencyParameter]
+    :ivar solution_configuration: Configuration of solution.
+    :vartype solution_configuration: str
+    """
+
+    targets: list["_models.BulkReviewTargetDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Targets to which solution needs to be published. Required."""
+    solution_instance_name: Optional[str] = rest_field(
+        name="solutionInstanceName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the solution instance."""
+    solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = rest_field(
+        name="solutionDependencies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Solution dependencies."""
+    solution_configuration: Optional[str] = rest_field(
+        name="solutionConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration of solution."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        targets: list["_models.BulkReviewTargetDetails"],
+        solution_instance_name: Optional[str] = None,
+        solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = None,
+        solution_configuration: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BulkReviewTargetDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Bulk publish target details.
+
+    :ivar target_id: ArmId of Target. Required.
+    :vartype target_id: str
+    :ivar solution_dependencies: Solution dependencies.
+    :vartype solution_dependencies:
+     list[~azure.mgmt.workloadorchestration.models.SolutionDependencyParameter]
+    :ivar solution_instance_name: Name of the solution instance.
+    :vartype solution_instance_name: str
+    :ivar solution_configuration: Configuration of solution.
+    :vartype solution_configuration: str
+    """
+
+    target_id: str = rest_field(name="targetId", visibility=["read", "create", "update", "delete", "query"])
+    """ArmId of Target. Required."""
+    solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = rest_field(
+        name="solutionDependencies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Solution dependencies."""
+    solution_instance_name: Optional[str] = rest_field(
+        name="solutionInstanceName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the solution instance."""
+    solution_configuration: Optional[str] = rest_field(
+        name="solutionConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration of solution."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_id: str,
+        solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = None,
+        solution_instance_name: Optional[str] = None,
+        solution_configuration: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Capability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capability, to match in Solution Templates & Targets.
 
     :ivar name: Name of Capability. Required.
@@ -240,7 +401,7 @@ class Capability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComponentStatus(_Model):
+class ComponentStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Component Status.
 
     :ivar name: Component name.
@@ -301,7 +462,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -321,7 +482,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -331,7 +492,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -345,7 +506,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ConfigTemplate(TrackedResource):
+class ConfigTemplate(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Config Template Resource. Contains configuration expressions using the predefined expression
     language.
 
@@ -388,48 +549,8 @@ class ConfigTemplate(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ConfigTemplateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ConfigTemplateProperties(_Model):
-    """Config Template Properties.
-
-    :ivar description: Description of config template. Required.
-    :vartype description: str
-    :ivar latest_version: Latest config template version.
-    :vartype latest_version: str
-    :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
-     "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
-    """
-
-    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Description of config template. Required."""
-    latest_version: Optional[str] = rest_field(name="latestVersion", visibility=["read"])
-    """Latest config template version."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Provisioning state of resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Initialized\", \"InProgress\", and \"Deleting\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        description: str,
     ) -> None: ...
 
     @overload
@@ -460,7 +581,370 @@ class ProxyResource(Resource):
     """
 
 
-class ConfigTemplateVersion(ProxyResource):
+class ConfigTemplateMetadata(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ConfigTemplateMetadata Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadataProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ConfigTemplateMetadataProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ConfigTemplateMetadataProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfigTemplateMetadataProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ConfigTemplateMetadata Properties.
+
+    :ivar context_id: ArmId of Context.
+    :vartype context_id: str
+    :ivar linked_hierarchies: Hierarchy ARM Ids.
+    :vartype linked_hierarchies: list[~azure.mgmt.workloadorchestration.models.HierarchyMetadata]
+    :ivar un_linked_hierarchies: Hierarchy ARM Ids.
+    :vartype un_linked_hierarchies:
+     list[~azure.mgmt.workloadorchestration.models.HierarchyMetadata]
+    :ivar template_unique_identifier: Unique identifier for the config template, generated by the
+     system.
+    :vartype template_unique_identifier: str
+    :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
+    """
+
+    context_id: Optional[str] = rest_field(name="contextId", visibility=["read", "create", "update", "delete", "query"])
+    """ArmId of Context."""
+    linked_hierarchies: Optional[list["_models.HierarchyMetadata"]] = rest_field(
+        name="linkedHierarchies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hierarchy ARM Ids."""
+    un_linked_hierarchies: Optional[list["_models.HierarchyMetadata"]] = rest_field(
+        name="unLinkedHierarchies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hierarchy ARM Ids."""
+    template_unique_identifier: Optional[str] = rest_field(name="templateUniqueIdentifier", visibility=["read"])
+    """Unique identifier for the config template, generated by the system."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Initialized\", \"InProgress\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        context_id: Optional[str] = None,
+        linked_hierarchies: Optional[list["_models.HierarchyMetadata"]] = None,
+        un_linked_hierarchies: Optional[list["_models.HierarchyMetadata"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfigTemplateMetadataUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ConfigTemplateMetadata.
+
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadataUpdateProperties
+    """
+
+    properties: Optional["_models.ConfigTemplateMetadataUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ConfigTemplateMetadataUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfigTemplateMetadataUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the ConfigTemplateMetadata.
+
+    :ivar context_id: ArmId of Context.
+    :vartype context_id: str
+    :ivar linked_hierarchies: Hierarchy ARM Ids.
+    :vartype linked_hierarchies: list[~azure.mgmt.workloadorchestration.models.HierarchyMetadata]
+    :ivar un_linked_hierarchies: Hierarchy ARM Ids.
+    :vartype un_linked_hierarchies:
+     list[~azure.mgmt.workloadorchestration.models.HierarchyMetadata]
+    """
+
+    context_id: Optional[str] = rest_field(name="contextId", visibility=["read", "create", "update", "delete", "query"])
+    """ArmId of Context."""
+    linked_hierarchies: Optional[list["_models.HierarchyMetadata"]] = rest_field(
+        name="linkedHierarchies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hierarchy ARM Ids."""
+    un_linked_hierarchies: Optional[list["_models.HierarchyMetadata"]] = rest_field(
+        name="unLinkedHierarchies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hierarchy ARM Ids."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        context_id: Optional[str] = None,
+        linked_hierarchies: Optional[list["_models.HierarchyMetadata"]] = None,
+        un_linked_hierarchies: Optional[list["_models.HierarchyMetadata"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfigTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Config Template Properties.
+
+    :ivar unique_identifier: A unique identifier for the config template, generated by the system.
+    :vartype unique_identifier: str
+    :ivar description: Description of config template. Required.
+    :vartype description: str
+    :ivar latest_version: Latest config template version.
+    :vartype latest_version: str
+    :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
+    """
+
+    unique_identifier: Optional[str] = rest_field(name="uniqueIdentifier", visibility=["read"])
+    """A unique identifier for the config template, generated by the system."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of config template. Required."""
+    latest_version: Optional[str] = rest_field(name="latestVersion", visibility=["read"])
+    """Latest config template version."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Initialized\", \"InProgress\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfigTemplateSchema(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SolutionSchema Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplateSchemaProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ConfigTemplateSchemaProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ConfigTemplateSchemaProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfigTemplateSchemaProperties(_Model):
+    """ConfigTemplateSchema Properties.
+
+    :ivar value: Value of schema. Is either a str type or a {str: Any} type.
+    :vartype value: str or dict[str, any]
+    :ivar template_unique_identifier: Unique identifier for the config template, generated by the
+     system.
+    :vartype template_unique_identifier: str
+    :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
+    """
+
+    value: Optional[Union[str, dict[str, Any]]] = rest_field(visibility=["read"])
+    """Value of schema. Is either a str type or a {str: Any} type."""
+    template_unique_identifier: Optional[str] = rest_field(name="templateUniqueIdentifier", visibility=["read"])
+    """Unique identifier for the config template, generated by the system."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Initialized\", \"InProgress\", and \"Deleting\"."""
+
+
+class ConfigTemplateUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ConfigTemplate.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplateUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ConfigTemplateUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ConfigTemplateUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfigTemplateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the ConfigTemplate.
+
+    :ivar description: Description of config template.
+    :vartype description: str
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of config template."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfigTemplateVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Config Template Version Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -511,18 +995,19 @@ class ConfigTemplateVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ConfigTemplateVersionProperties(_Model):
+class ConfigTemplateVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Config Template Version Properties.
 
-    :ivar configurations: Configuration values. Required.
-    :vartype configurations: str
+    :ivar configurations: Configuration values. Required. Is either a str type or a {str: Any}
+     type.
+    :vartype configurations: str or dict[str, any]
     :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
     """
 
-    configurations: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Configuration values. Required."""
+    configurations: Union[str, dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Configuration values. Required. Is either a str type or a {str: Any} type."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -533,7 +1018,7 @@ class ConfigTemplateVersionProperties(_Model):
     def __init__(
         self,
         *,
-        configurations: str,
+        configurations: Union[str, dict[str, Any]],
     ) -> None: ...
 
     @overload
@@ -547,7 +1032,7 @@ class ConfigTemplateVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigTemplateVersionWithUpdateType(_Model):
+class ConfigTemplateVersionWithUpdateType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Config Template Version With Update Type.
 
     :ivar update_type: Update type. Known values are: "Major", "Minor", and "Patch".
@@ -590,7 +1075,7 @@ class ConfigTemplateVersionWithUpdateType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Context(TrackedResource):
+class Context(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Context Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -622,7 +1107,7 @@ class Context(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ContextProperties"] = None,
     ) -> None: ...
 
@@ -637,9 +1122,11 @@ class Context(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ContextProperties(_Model):
+class ContextProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Context Properties.
 
+    :ivar unique_identifier: A unique identifier for the context, generated by the system.
+    :vartype unique_identifier: str
     :ivar capabilities: List of Capabilities. Required.
     :vartype capabilities: list[~azure.mgmt.workloadorchestration.models.Capability]
     :ivar hierarchies: List of Hierarchies. Required.
@@ -649,9 +1136,11 @@ class ContextProperties(_Model):
     :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
     """
 
-    capabilities: List["_models.Capability"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    unique_identifier: Optional[str] = rest_field(name="uniqueIdentifier", visibility=["read"])
+    """A unique identifier for the context, generated by the system."""
+    capabilities: list["_models.Capability"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of Capabilities. Required."""
-    hierarchies: List["_models.Hierarchy"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    hierarchies: list["_models.Hierarchy"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of Hierarchies. Required."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -663,8 +1152,8 @@ class ContextProperties(_Model):
     def __init__(
         self,
         *,
-        capabilities: List["_models.Capability"],
-        hierarchies: List["_models.Hierarchy"],
+        capabilities: list["_models.Capability"],
+        hierarchies: list["_models.Hierarchy"],
     ) -> None: ...
 
     @overload
@@ -678,21 +1167,93 @@ class ContextProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobParameterBase(_Model):
+class ContextUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the Context.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.ContextUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ContextUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ContextUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContextUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the Context.
+
+    :ivar capabilities: List of Capabilities.
+    :vartype capabilities: list[~azure.mgmt.workloadorchestration.models.Capability]
+    :ivar hierarchies: List of Hierarchies.
+    :vartype hierarchies: list[~azure.mgmt.workloadorchestration.models.Hierarchy]
+    """
+
+    capabilities: Optional[list["_models.Capability"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of Capabilities."""
+    hierarchies: Optional[list["_models.Hierarchy"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of Hierarchies."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        capabilities: Optional[list["_models.Capability"]] = None,
+        hierarchies: Optional[list["_models.Hierarchy"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class JobParameterBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base Job Parameter.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DeployJobParameter
+    DeployJobParameter, PublishJobParameter, UninstallJobParameter
 
-    :ivar job_type: Job type discriminator value. Required. Known values are: "deploy", "staging",
-     and "externalValidation".
+    :ivar job_type: Job type discriminator value. Required. Known values are: "deploy", "publish",
+     "staging", "externalValidation", and "uninstall".
     :vartype job_type: str or ~azure.mgmt.workloadorchestration.models.JobType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     job_type: str = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])
-    """Job type discriminator value. Required. Known values are: \"deploy\", \"staging\", and
-     \"externalValidation\"."""
+    """Job type discriminator value. Required. Known values are: \"deploy\", \"publish\", \"staging\",
+     \"externalValidation\", and \"uninstall\"."""
 
     @overload
     def __init__(
@@ -712,7 +1273,9 @@ class JobParameterBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeployJobParameter(JobParameterBase, discriminator="deploy"):
+class DeployJobParameter(
+    JobParameterBase, discriminator="deploy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for a deployment job.
 
     :ivar job_type: Job type discriminator value. Required. A deployment job.
@@ -742,26 +1305,27 @@ class DeployJobParameter(JobParameterBase, discriminator="deploy"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, job_type=JobType.DEPLOY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.job_type = JobType.DEPLOY  # type: ignore
 
 
-class JobStepStatisticsBase(_Model):
+class JobStepStatisticsBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base Job Step Statistics.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DeployJobStepStatistics
+    DeployJobStepStatistics, PublishJobStepStatistics, UninstallJobStepStatistics
 
     :ivar statistics_type: Statistics type discriminator value. Required. Known values are:
-     "deploy", "staging", and "externalValidation".
+     "deploy", "publish", "staging", "externalValidation", and "uninstall".
     :vartype statistics_type: str or ~azure.mgmt.workloadorchestration.models.JobType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     statistics_type: str = rest_discriminator(
         name="statisticsType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Statistics type discriminator value. Required. Known values are: \"deploy\", \"staging\", and
-     \"externalValidation\"."""
+    """Statistics type discriminator value. Required. Known values are: \"deploy\", \"publish\",
+     \"staging\", \"externalValidation\", and \"uninstall\"."""
 
     @overload
     def __init__(
@@ -781,7 +1345,9 @@ class JobStepStatisticsBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeployJobStepStatistics(JobStepStatisticsBase, discriminator="deploy"):
+class DeployJobStepStatistics(
+    JobStepStatisticsBase, discriminator="deploy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deploy statistics for a job step, including total, success, and failed counts.
 
     :ivar statistics_type: Statistics type discriminator value. Required. A deployment job.
@@ -826,10 +1392,11 @@ class DeployJobStepStatistics(JobStepStatisticsBase, discriminator="deploy"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, statistics_type=JobType.DEPLOY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.statistics_type = JobType.DEPLOY  # type: ignore
 
 
-class DeploymentStatus(_Model):
+class DeploymentStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment Status.
 
     :ivar last_modified: The lastModified of the Status.
@@ -872,7 +1439,7 @@ class DeploymentStatus(_Model):
     """Status details."""
     generation: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Deployment Generation."""
-    target_statuses: Optional[List["_models.TargetStatus"]] = rest_field(
+    target_statuses: Optional[list["_models.TargetStatus"]] = rest_field(
         name="targetStatuses", visibility=["read", "create", "update", "delete", "query"]
     )
     """Target resource statuses."""
@@ -888,7 +1455,7 @@ class DeploymentStatus(_Model):
         status: Optional[str] = None,
         status_details: Optional[str] = None,
         generation: Optional[int] = None,
-        target_statuses: Optional[List["_models.TargetStatus"]] = None,
+        target_statuses: Optional[list["_models.TargetStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -902,7 +1469,7 @@ class DeploymentStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Diagnostic(TrackedResource):
+class Diagnostic(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Diagnostic resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -922,7 +1489,7 @@ class Diagnostic(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.workloadorchestration.models.DiagnosticProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.workloadorchestration.models.ExtendedLocation
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
@@ -938,6 +1505,7 @@ class Diagnostic(TrackedResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -949,7 +1517,7 @@ class Diagnostic(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.DiagnosticProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -980,7 +1548,57 @@ class DiagnosticProperties(_Model):
      \"Initialized\", \"InProgress\", and \"Deleting\"."""
 
 
-class DynamicSchema(ProxyResource):
+class DiagnosticUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the Diagnostic.
+
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.DiagnosticUpdateProperties
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: Optional["_models.DiagnosticUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DiagnosticUpdateProperties"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiagnosticUpdateProperties(_Model):
+    """The updatable properties of the Diagnostic.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Initialized\", \"InProgress\", and \"Deleting\"."""
+
+
+class DynamicSchema(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DynamicSchema Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1034,6 +1652,8 @@ class DynamicSchema(ProxyResource):
 class DynamicSchemaProperties(_Model):
     """DynamicSchema Properties.
 
+    :ivar display_name: Display name of the dynamic schema.
+    :vartype display_name: str
     :ivar configuration_type: Type of configuration. Known values are: "Shared" and "Hierarchy".
     :vartype configuration_type: str or ~azure.mgmt.workloadorchestration.models.ConfigurationType
     :ivar configuration_model: Type of configuration model. Known values are: "Application" and
@@ -1045,6 +1665,8 @@ class DynamicSchemaProperties(_Model):
     :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
     """
 
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
+    """Display name of the dynamic schema."""
     configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = rest_field(
         name="configurationType", visibility=["read"]
     )
@@ -1060,7 +1682,7 @@ class DynamicSchemaProperties(_Model):
      \"Initialized\", \"InProgress\", and \"Deleting\"."""
 
 
-class DynamicSchemaVersion(ProxyResource):
+class DynamicSchemaVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamic Schema Version Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1111,7 +1733,7 @@ class DynamicSchemaVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAction(_Model):
+class ErrorAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error Action Properties.
 
     :ivar mode: Error action mode. Known values are: "stopOnAnyFailure", "stopOnNFailures", and
@@ -1186,15 +1808,15 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1222,7 +1844,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Execution(ProxyResource):
+class Execution(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Execution Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1238,7 +1860,7 @@ class Execution(ProxyResource):
     :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.workloadorchestration.models.ExecutionProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.workloadorchestration.models.ExtendedLocation
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
@@ -1254,6 +1876,7 @@ class Execution(ProxyResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -1279,7 +1902,7 @@ class Execution(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ExecutionProperties(_Model):
+class ExecutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Execution Properties.
 
     :ivar workflow_version_id: Workflow version of execution. Required.
@@ -1297,7 +1920,7 @@ class ExecutionProperties(_Model):
         name="workflowVersionId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Workflow version of execution. Required."""
-    specification: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    specification: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Execution specification."""
     status: Optional["_models.ExecutionStatus"] = rest_field(visibility=["read"])
     """Status of Execution."""
@@ -1312,7 +1935,7 @@ class ExecutionProperties(_Model):
         self,
         *,
         workflow_version_id: str,
-        specification: Optional[Dict[str, Any]] = None,
+        specification: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -1326,7 +1949,7 @@ class ExecutionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecutionStatus(_Model):
+class ExecutionStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Execution Status.
 
     :ivar update_time: The lastModified timestamp of the Status.
@@ -1349,7 +1972,7 @@ class ExecutionStatus(_Model):
         name="statusMessage", visibility=["read", "create", "update", "delete", "query"]
     )
     """status details."""
-    stage_history: Optional[List["_models.StageStatus"]] = rest_field(
+    stage_history: Optional[list["_models.StageStatus"]] = rest_field(
         name="stageHistory", visibility=["read", "create", "update", "delete", "query"]
     )
     """target resource statuses."""
@@ -1361,7 +1984,7 @@ class ExecutionStatus(_Model):
         update_time: Optional[datetime.datetime] = None,
         status: Optional[int] = None,
         status_message: Optional[str] = None,
-        stage_history: Optional[List["_models.StageStatus"]] = None,
+        stage_history: Optional[list["_models.StageStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -1375,7 +1998,7 @@ class ExecutionStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location. Required.
@@ -1429,7 +2052,7 @@ class ExtensionResource(Resource):
     """
 
 
-class Hierarchy(_Model):
+class Hierarchy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hierarchy, to tag Sites / Hierarchy Provider nodes with what they represent.
 
     :ivar name: Name of Hierarchy. Required.
@@ -1462,7 +2085,218 @@ class Hierarchy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstallSolutionParameter(_Model):
+class HierarchyConfigurationMetadata(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Hierarchy Configuration Metadata Resource attached to a Target or Site.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.workloadorchestration.models.HierarchyConfigurationMetadataProperties
+    """
+
+    properties: Optional["_models.HierarchyConfigurationMetadataProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.HierarchyConfigurationMetadataProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HierarchyConfigurationMetadataProperties(_Model):
+    """Hierarchy Configuration Metadata Properties.
+
+    :ivar display_name: Display name of the hierarchy configuration metadata resource.
+    :vartype display_name: str
+    :ivar config_template_id: Configuration template Id.
+    :vartype config_template_id: str
+    """
+
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
+    """Display name of the hierarchy configuration metadata resource."""
+    config_template_id: Optional[str] = rest_field(name="configTemplateId", visibility=["read"])
+    """Configuration template Id."""
+
+
+class HierarchyConfigurationMetadataVersion(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration Metadata Version Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.workloadorchestration.models.HierarchyConfigurationMetadataVersionProperties
+    """
+
+    properties: Optional["_models.HierarchyConfigurationMetadataVersionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.HierarchyConfigurationMetadataVersionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HierarchyConfigurationMetadataVersionProperties(_Model):  # pylint: disable=name-too-long
+    """Hierarchy Configuration Metadata Version Properties.
+
+    :ivar parent_display_name: Display name of the hierarchy configuration metadata resource.
+    :vartype parent_display_name: str
+    :ivar config_template_version_id: Configuration template version Id.
+    :vartype config_template_version_id: str
+    :ivar schema_id: Schema Id for the config template version at the hierarchy.
+    :vartype schema_id: str
+    :ivar dynamic_configuration_version_id: Dynamic Configuration Id for the config template
+     version.
+    :vartype dynamic_configuration_version_id: str
+    :ivar configuration_status: Configuration status of the config template version. Known values
+     are: "ConfigurationCompleted" and "ConfigurationPending".
+    :vartype configuration_status: str or
+     ~azure.mgmt.workloadorchestration.models.ConfigTemplateConfigurationState
+    """
+
+    parent_display_name: Optional[str] = rest_field(name="parentDisplayName", visibility=["read"])
+    """Display name of the hierarchy configuration metadata resource."""
+    config_template_version_id: Optional[str] = rest_field(name="configTemplateVersionId", visibility=["read"])
+    """Configuration template version Id."""
+    schema_id: Optional[str] = rest_field(name="schemaId", visibility=["read"])
+    """Schema Id for the config template version at the hierarchy."""
+    dynamic_configuration_version_id: Optional[str] = rest_field(
+        name="dynamicConfigurationVersionId", visibility=["read"]
+    )
+    """Dynamic Configuration Id for the config template version."""
+    configuration_status: Optional[Union[str, "_models.ConfigTemplateConfigurationState"]] = rest_field(
+        name="configurationStatus", visibility=["read"]
+    )
+    """Configuration status of the config template version. Known values are:
+     \"ConfigurationCompleted\" and \"ConfigurationPending\"."""
+
+
+class HierarchyMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Hierarchy Ids With Level for applying config Template which will further generate ARG objects.
+
+    :ivar hierarchy_ids: Hierarchy Ids.
+    :vartype hierarchy_ids: list[str]
+    :ivar level: Hierarchy Level.
+    :vartype level: str
+    """
+
+    hierarchy_ids: Optional[list[str]] = rest_field(
+        name="hierarchyIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hierarchy Ids."""
+    level: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Hierarchy Level."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hierarchy_ids: Optional[list[str]] = None,
+        level: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HierarchySelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Hierarchy Ids With Level for applying config Template which will further generate ARG objects.
+
+    :ivar context_id: Context Id. Required.
+    :vartype context_id: str
+    :ivar hierarchy_ids: Hierarchy Ids.
+    :vartype hierarchy_ids: list[str]
+    :ivar level: Hierarchy Level.
+    :vartype level: str
+    """
+
+    context_id: str = rest_field(name="contextId", visibility=["read", "create", "update", "delete", "query"])
+    """Context Id. Required."""
+    hierarchy_ids: Optional[list[str]] = rest_field(
+        name="hierarchyIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hierarchy Ids."""
+    level: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Hierarchy Level."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        context_id: str,
+        hierarchy_ids: Optional[list[str]] = None,
+        level: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InstallSolutionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Install Solution Parameter.
 
     :ivar solution_version_id: Solution Version ARM Id. Required.
@@ -1492,7 +2326,7 @@ class InstallSolutionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Instance(ProxyResource):
+class Instance(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance Resource. Represents a deployment object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1508,7 +2342,7 @@ class Instance(ProxyResource):
     :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.workloadorchestration.models.InstanceProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.workloadorchestration.models.ExtendedLocation
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
@@ -1524,6 +2358,7 @@ class Instance(ProxyResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -1549,7 +2384,7 @@ class Instance(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class InstanceHistory(ProxyResource):
+class InstanceHistory(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InstanceHistory Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1565,7 +2400,7 @@ class InstanceHistory(ProxyResource):
     :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.workloadorchestration.models.InstanceHistoryProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.workloadorchestration.models.ExtendedLocation
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
@@ -1581,6 +2416,7 @@ class InstanceHistory(ProxyResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -1606,7 +2442,7 @@ class InstanceHistory(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class InstanceHistoryProperties(_Model):
+class InstanceHistoryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance History Properties.
 
     :ivar solution_version: Solution version of instance. Required.
@@ -1667,7 +2503,7 @@ class InstanceHistoryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceProperties(_Model):
+class InstanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance Properties.
 
     :ivar solution_version_id: Solution version of instance. Required.
@@ -1740,7 +2576,7 @@ class InstanceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Job(ExtensionResource):
+class Job(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job extension resource for tracking job execution and substatuses.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1791,11 +2627,11 @@ class Job(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class JobProperties(_Model):
+class JobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Job resource, including type, status, parameters, steps, and error details.
 
-    :ivar job_type: The type of job. Required. Known values are: "deploy", "staging", and
-     "externalValidation".
+    :ivar job_type: The type of job. Required. Known values are: "deploy", "publish", "staging",
+     "externalValidation", and "uninstall".
     :vartype job_type: str or ~azure.mgmt.workloadorchestration.models.JobType
     :ivar start_time: Start time of the job (ISO8601).
     :vartype start_time: ~datetime.datetime
@@ -1817,13 +2653,15 @@ class JobProperties(_Model):
     :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
     :ivar error_details: Error Details if any failure is there.
     :vartype error_details: ~azure.mgmt.workloadorchestration.models.ErrorDetail
+    :ivar additional_data: Additional metadata or properties.
+    :vartype additional_data: ~azure.mgmt.workloadorchestration.models.AdditionalData
     """
 
     job_type: Union[str, "_models.JobType"] = rest_field(
         name="jobType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of job. Required. Known values are: \"deploy\", \"staging\", and
-     \"externalValidation\"."""
+    """The type of job. Required. Known values are: \"deploy\", \"publish\", \"staging\",
+     \"externalValidation\", and \"uninstall\"."""
     start_time: Optional[datetime.datetime] = rest_field(
         name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
@@ -1843,7 +2681,7 @@ class JobProperties(_Model):
         name="correlationId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Correlation ID for tracking."""
-    steps: Optional[List["_models.JobStep"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    steps: Optional[list["_models.JobStep"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Steps and substatuses for the job."""
     triggered_by: Optional[str] = rest_field(
         name="triggeredBy", visibility=["read", "create", "update", "delete", "query"]
@@ -1856,6 +2694,10 @@ class JobProperties(_Model):
      \"Initialized\", \"InProgress\", and \"Deleting\"."""
     error_details: Optional["_models.ErrorDetail"] = rest_field(name="errorDetails", visibility=["read"])
     """Error Details if any failure is there."""
+    additional_data: Optional["_models.AdditionalData"] = rest_field(
+        name="additionalData", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional metadata or properties."""
 
     @overload
     def __init__(
@@ -1867,8 +2709,9 @@ class JobProperties(_Model):
         end_time: Optional[datetime.datetime] = None,
         job_parameter: Optional["_models.JobParameterBase"] = None,
         correlation_id: Optional[str] = None,
-        steps: Optional[List["_models.JobStep"]] = None,
+        steps: Optional[list["_models.JobStep"]] = None,
         triggered_by: Optional[str] = None,
+        additional_data: Optional["_models.AdditionalData"] = None,
     ) -> None: ...
 
     @overload
@@ -1882,7 +2725,7 @@ class JobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobStep(_Model):
+class JobStep(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job Step.
 
     :ivar name: Name of the step. Required.
@@ -1923,7 +2766,7 @@ class JobStep(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Statistics for the step."""
-    steps: Optional[List["_models.JobStep"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    steps: Optional[list["_models.JobStep"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Nested substeps for this step."""
     error_details: Optional["_models.ErrorDetail"] = rest_field(name="errorDetails", visibility=["read"])
     """Error Details if any failure is there."""
@@ -1938,7 +2781,7 @@ class JobStep(_Model):
         end_time: Optional[datetime.datetime] = None,
         message: Optional[str] = None,
         statistics: Optional["_models.JobStepStatisticsBase"] = None,
-        steps: Optional[List["_models.JobStep"]] = None,
+        steps: Optional[list["_models.JobStep"]] = None,
     ) -> None: ...
 
     @overload
@@ -1952,7 +2795,94 @@ class JobStep(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReconciliationPolicyProperties(_Model):
+class PublishJobParameter(
+    JobParameterBase, discriminator="publish"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for a publish job.
+
+    :ivar job_type: Job type discriminator value. Required. A publish job.
+    :vartype job_type: str or ~azure.mgmt.workloadorchestration.models.PUBLISH
+    :ivar parameter:
+    :vartype parameter: ~azure.mgmt.workloadorchestration.models.SolutionVersionParameter
+    """
+
+    job_type: Literal[JobType.PUBLISH] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Job type discriminator value. Required. A publish job."""
+    parameter: Optional["_models.SolutionVersionParameter"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameter: Optional["_models.SolutionVersionParameter"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = JobType.PUBLISH  # type: ignore
+
+
+class PublishJobStepStatistics(
+    JobStepStatisticsBase, discriminator="publish"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Publish statistics for a job step, including total, success, and failed counts.
+
+    :ivar statistics_type: Statistics type discriminator value. Required. A publish job.
+    :vartype statistics_type: str or ~azure.mgmt.workloadorchestration.models.PUBLISH
+    :ivar total_count: Total count of items processed in this step.
+    :vartype total_count: int
+    :ivar success_count: Count of successful items in this step.
+    :vartype success_count: int
+    :ivar failed_count: Count of failed items in this step.
+    :vartype failed_count: int
+    """
+
+    statistics_type: Literal[JobType.PUBLISH] = rest_discriminator(name="statisticsType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Statistics type discriminator value. Required. A publish job."""
+    total_count: Optional[int] = rest_field(
+        name="totalCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total count of items processed in this step."""
+    success_count: Optional[int] = rest_field(
+        name="successCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Count of successful items in this step."""
+    failed_count: Optional[int] = rest_field(
+        name="failedCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Count of failed items in this step."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_count: Optional[int] = None,
+        success_count: Optional[int] = None,
+        failed_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.statistics_type = JobType.PUBLISH  # type: ignore
+
+
+class ReconciliationPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a ReconciliationPolicy.
 
     :ivar state: The state of the ReconciliationPolicy. Required. Known values are: "inactive" and
@@ -1988,7 +2918,7 @@ class ReconciliationPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemoveRevisionParameter(_Model):
+class RemoveRevisionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Install Solution Parameter.
 
     :ivar solution_template_id: Solution Template ARM Id. Required.
@@ -2025,7 +2955,7 @@ class RemoveRevisionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemoveVersionResponse(_Model):
+class RemoveVersionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Remove Version response.
 
     :ivar status: Status for remove version response. Required.
@@ -2053,7 +2983,7 @@ class RemoveVersionResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResolvedConfiguration(_Model):
+class ResolvedConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resolved Configuration.
 
     :ivar configuration: Resolved Configuration as string. Required.
@@ -2081,7 +3011,7 @@ class ResolvedConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Schema(TrackedResource):
+class Schema(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2123,7 +3053,7 @@ class Schema(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SchemaProperties"] = None,
     ) -> None: ...
 
@@ -2157,7 +3087,7 @@ class SchemaProperties(_Model):
      \"Initialized\", \"InProgress\", and \"Deleting\"."""
 
 
-class SchemaReference(ExtensionResource):
+class SchemaReference(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema Reference Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2208,7 +3138,7 @@ class SchemaReference(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class SchemaReferenceProperties(_Model):
+class SchemaReferenceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema Reference Properties.
 
     :ivar schema_id: Schema Id of schema reference. Required.
@@ -2244,7 +3174,61 @@ class SchemaReferenceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchemaVersion(ProxyResource):
+class SchemaUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the Schema.
+
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.SchemaUpdateProperties
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: Optional["_models.SchemaUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SchemaUpdateProperties"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchemaUpdateProperties(_Model):
+    """The updatable properties of the Schema.
+
+    :ivar current_version: Current Version of schema.
+    :vartype current_version: str
+    :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
+    """
+
+    current_version: Optional[str] = rest_field(name="currentVersion", visibility=["read"])
+    """Current Version of schema."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Initialized\", \"InProgress\", and \"Deleting\"."""
+
+
+class SchemaVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema Version Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2295,18 +3279,18 @@ class SchemaVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SchemaVersionProperties(_Model):
+class SchemaVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema Version Properties.
 
-    :ivar value: Value of schema version. Required.
-    :vartype value: str
+    :ivar value: Value of schema version. Required. Is either a str type or a {str: Any} type.
+    :vartype value: str or dict[str, any]
     :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
     """
 
-    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Value of schema version. Required."""
+    value: Union[str, dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Value of schema version. Required. Is either a str type or a {str: Any} type."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -2317,7 +3301,7 @@ class SchemaVersionProperties(_Model):
     def __init__(
         self,
         *,
-        value: str,
+        value: Union[str, dict[str, Any]],
     ) -> None: ...
 
     @overload
@@ -2331,7 +3315,7 @@ class SchemaVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchemaVersionWithUpdateType(_Model):
+class SchemaVersionWithUpdateType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema Version With Update Type.
 
     :ivar update_type: Update type. Known values are: "Major", "Minor", and "Patch".
@@ -2373,7 +3357,7 @@ class SchemaVersionWithUpdateType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SiteReference(ProxyResource):
+class SiteReference(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Site Reference Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2414,7 +3398,7 @@ class SiteReference(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SiteReferenceProperties(_Model):
+class SiteReferenceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Site Reference Properties.
 
     :ivar site_id: Azure Resource ID for Site. Required.
@@ -2450,7 +3434,7 @@ class SiteReferenceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Solution(ProxyResource):
+class Solution(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Resource attached to a Target.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2466,7 +3450,7 @@ class Solution(ProxyResource):
     :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.workloadorchestration.models.SolutionProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.workloadorchestration.models.ExtendedLocation
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
@@ -2482,6 +3466,7 @@ class Solution(ProxyResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -2507,7 +3492,7 @@ class Solution(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SolutionDependency(_Model):
+class SolutionDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Dependency Context.
 
     :ivar solution_version_id: Solution Version Id. Required.
@@ -2536,7 +3521,7 @@ class SolutionDependency(_Model):
     """Solution Template Version Id. Required."""
     target_id: str = rest_field(name="targetId", visibility=["read", "create", "update", "delete", "query"])
     """Target Id. Required."""
-    dependencies: Optional[List["_models.SolutionDependency"]] = rest_field(
+    dependencies: Optional[list["_models.SolutionDependency"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Solution dependencies."""
@@ -2549,7 +3534,7 @@ class SolutionDependency(_Model):
         solution_template_version_id: str,
         target_id: str,
         solution_instance_name: Optional[str] = None,
-        dependencies: Optional[List["_models.SolutionDependency"]] = None,
+        dependencies: Optional[list["_models.SolutionDependency"]] = None,
     ) -> None: ...
 
     @overload
@@ -2563,7 +3548,7 @@ class SolutionDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionDependencyParameter(_Model):
+class SolutionDependencyParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Dependency Context.
 
     :ivar solution_version_id: Solution Version Id.
@@ -2599,7 +3584,7 @@ class SolutionDependencyParameter(_Model):
     """Solution Instance Name."""
     target_id: Optional[str] = rest_field(name="targetId", visibility=["read", "create", "update", "delete", "query"])
     """Target Id."""
-    dependencies: Optional[List["_models.SolutionDependencyParameter"]] = rest_field(
+    dependencies: Optional[list["_models.SolutionDependencyParameter"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Solution dependencies."""
@@ -2613,7 +3598,7 @@ class SolutionDependencyParameter(_Model):
         solution_template_version: Optional[str] = None,
         solution_instance_name: Optional[str] = None,
         target_id: Optional[str] = None,
-        dependencies: Optional[List["_models.SolutionDependencyParameter"]] = None,
+        dependencies: Optional[list["_models.SolutionDependencyParameter"]] = None,
     ) -> None: ...
 
     @overload
@@ -2627,11 +3612,344 @@ class SolutionDependencyParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SolutionDeployment(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Solution Deployment Resource. Represents a resource to be deployed on the cloud or edge.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.SolutionDeploymentProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.SolutionDeploymentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.SolutionDeploymentProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Solution Deployment Properties.
+
+    :ivar solution_template_properties: Target properties. Required.
+    :vartype solution_template_properties:
+     ~azure.mgmt.workloadorchestration.models.SolutionTemplateMetadata
+    :ivar input: Input field.
+    :vartype input: dict[str, any]
+    :ivar output: Output field.
+    :vartype output: dict[str, any]
+    :ivar target_properties: Target properties. Required.
+    :vartype target_properties: ~azure.mgmt.workloadorchestration.models.TargetMetadata
+    :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
+    """
+
+    solution_template_properties: "_models.SolutionTemplateMetadata" = rest_field(
+        name="solutionTemplateProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Target properties. Required."""
+    input: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Input field."""
+    output: Optional[dict[str, Any]] = rest_field(visibility=["read"])
+    """Output field."""
+    target_properties: "_models.TargetMetadata" = rest_field(
+        name="targetProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Target properties. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Initialized\", \"InProgress\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        solution_template_properties: "_models.SolutionTemplateMetadata",
+        target_properties: "_models.TargetMetadata",
+        input: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionDeploymentUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the SolutionDeployment.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.workloadorchestration.models.SolutionDeploymentUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.SolutionDeploymentUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.SolutionDeploymentUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionDeploymentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the SolutionDeploymentProperties.
+
+    :ivar solution_template_properties: Target properties.
+    :vartype solution_template_properties:
+     ~azure.mgmt.workloadorchestration.models.SolutionTemplateMetadataUpdate
+    :ivar input: Input field.
+    :vartype input: dict[str, any]
+    :ivar target_properties: Target properties.
+    :vartype target_properties: ~azure.mgmt.workloadorchestration.models.TargetMetadata
+    """
+
+    solution_template_properties: Optional["_models.SolutionTemplateMetadataUpdate"] = rest_field(
+        name="solutionTemplateProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Target properties."""
+    input: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Input field."""
+    target_properties: Optional["_models.TargetMetadata"] = rest_field(
+        name="targetProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Target properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        solution_template_properties: Optional["_models.SolutionTemplateMetadataUpdate"] = None,
+        input: Optional[dict[str, Any]] = None,
+        target_properties: Optional["_models.TargetMetadata"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionMetadata(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Solution Metadata Resource attached to a Target or Site.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.SolutionMetadataProperties
+    """
+
+    properties: Optional["_models.SolutionMetadataProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SolutionMetadataProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionMetadataProperties(_Model):
+    """Solution Metadata Properties.
+
+    :ivar display_name: Display name of the solution metadata resource.
+    :vartype display_name: str
+    :ivar solution_template_id: Solution template Id.
+    :vartype solution_template_id: str
+    :ivar latest_version: Latest solution template version.
+    :vartype latest_version: str
+    :ivar current_version: Current solution template version.
+    :vartype current_version: str
+    """
+
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
+    """Display name of the solution metadata resource."""
+    solution_template_id: Optional[str] = rest_field(name="solutionTemplateId", visibility=["read"])
+    """Solution template Id."""
+    latest_version: Optional[str] = rest_field(name="latestVersion", visibility=["read"])
+    """Latest solution template version."""
+    current_version: Optional[str] = rest_field(name="currentVersion", visibility=["read"])
+    """Current solution template version."""
+
+
+class SolutionMetadataVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Solution Metadata Version Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.SolutionMetadataVersionProperties
+    """
+
+    properties: Optional["_models.SolutionMetadataVersionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SolutionMetadataVersionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionMetadataVersionProperties(_Model):
+    """Solution Metadata Version Properties.
+
+    :ivar parent_display_name: Display name of the solution metadata resource.
+    :vartype parent_display_name: str
+    :ivar solution_template_version_id: Solution template version Id.
+    :vartype solution_template_version_id: str
+    :ivar schema_id: Schema Id for the solution template version at the hierarchy.
+    :vartype schema_id: str
+    :ivar dynamic_configuration_version_id: Dynamic Configuration Id for the solution template
+     version.
+    :vartype dynamic_configuration_version_id: str
+    :ivar configuration_status: Configuration status of the solution template version. Known values
+     are: "ConfigurationCompleted" and "ConfigurationPending".
+    :vartype configuration_status: str or
+     ~azure.mgmt.workloadorchestration.models.ConfigurationState
+    """
+
+    parent_display_name: Optional[str] = rest_field(name="parentDisplayName", visibility=["read"])
+    """Display name of the solution metadata resource."""
+    solution_template_version_id: Optional[str] = rest_field(name="solutionTemplateVersionId", visibility=["read"])
+    """Solution template version Id."""
+    schema_id: Optional[str] = rest_field(name="schemaId", visibility=["read"])
+    """Schema Id for the solution template version at the hierarchy."""
+    dynamic_configuration_version_id: Optional[str] = rest_field(
+        name="dynamicConfigurationVersionId", visibility=["read"]
+    )
+    """Dynamic Configuration Id for the solution template version."""
+    configuration_status: Optional[Union[str, "_models.ConfigurationState"]] = rest_field(
+        name="configurationStatus", visibility=["read"]
+    )
+    """Configuration status of the solution template version. Known values are:
+     \"ConfigurationCompleted\" and \"ConfigurationPending\"."""
+
+
 class SolutionProperties(_Model):
     """Solution Properties.
 
     :ivar solution_template_id: Solution template Id.
     :vartype solution_template_id: str
+    :ivar display_name: Display name of the solution.
+    :vartype display_name: str
     :ivar available_solution_template_versions: List of latest revisions for available solution
      template versions.
     :vartype available_solution_template_versions:
@@ -2643,7 +3961,9 @@ class SolutionProperties(_Model):
 
     solution_template_id: Optional[str] = rest_field(name="solutionTemplateId", visibility=["read"])
     """Solution template Id."""
-    available_solution_template_versions: Optional[List["_models.AvailableSolutionTemplateVersion"]] = rest_field(
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
+    """Display name of the solution."""
+    available_solution_template_versions: Optional[list["_models.AvailableSolutionTemplateVersion"]] = rest_field(
         name="availableSolutionTemplateVersions", visibility=["read"]
     )
     """List of latest revisions for available solution template versions."""
@@ -2654,7 +3974,86 @@ class SolutionProperties(_Model):
      \"Initialized\", \"InProgress\", and \"Deleting\"."""
 
 
-class SolutionTemplate(TrackedResource):
+class SolutionSchema(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SolutionSchema Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.SolutionSchemaProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.SolutionSchemaProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SolutionSchemaProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionSchemaProperties(_Model):
+    """SolutionSchema Properties.
+
+    :ivar value: Value of schema. Is either a str type or a {str: Any} type.
+    :vartype value: str or dict[str, any]
+    :ivar level: Hierarchy Level.
+    :vartype level: str
+    :ivar template_unique_identifier: Unique identifier for the solution template, generated by the
+     system.
+    :vartype template_unique_identifier: str
+    :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
+    """
+
+    value: Optional[Union[str, dict[str, Any]]] = rest_field(visibility=["read"])
+    """Value of schema. Is either a str type or a {str: Any} type."""
+    level: Optional[str] = rest_field(visibility=["read"])
+    """Hierarchy Level."""
+    template_unique_identifier: Optional[str] = rest_field(name="templateUniqueIdentifier", visibility=["read"])
+    """Unique identifier for the solution template, generated by the system."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Initialized\", \"InProgress\", and \"Deleting\"."""
+
+
+class SolutionTemplate(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Template Resource. Contains capabilities and operations for creating versions.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2696,7 +4095,7 @@ class SolutionTemplate(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SolutionTemplateProperties"] = None,
     ) -> None: ...
 
@@ -2711,7 +4110,101 @@ class SolutionTemplate(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SolutionTemplateParameter(_Model):
+class SolutionTemplateMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Solution Template Details.
+
+    :ivar subscription_id: Solution template subscription.
+    :vartype subscription_id: str
+    :ivar resource_group_name: Solution template resource group.
+    :vartype resource_group_name: str
+    :ivar name: Solution template name. Required.
+    :vartype name: str
+    :ivar version: Solution template version. Required.
+    :vartype version: str
+    """
+
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Solution template subscription."""
+    resource_group_name: Optional[str] = rest_field(
+        name="resourceGroupName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Solution template resource group."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Solution template name. Required."""
+    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Solution template version. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        version: str,
+        subscription_id: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionTemplateMetadataUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Solution Template Details for update operations.
+
+    :ivar subscription_id: Solution template subscription.
+    :vartype subscription_id: str
+    :ivar resource_group_name: Solution template resource group.
+    :vartype resource_group_name: str
+    :ivar name: Solution template name.
+    :vartype name: str
+    :ivar version: Solution template version.
+    :vartype version: str
+    """
+
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Solution template subscription."""
+    resource_group_name: Optional[str] = rest_field(
+        name="resourceGroupName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Solution template resource group."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Solution template name."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Solution template version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subscription_id: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionTemplateParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Template Parameter.
 
     :ivar solution_template_version_id: Solution Template Version ARM Id. Required.
@@ -2731,7 +4224,7 @@ class SolutionTemplateParameter(_Model):
         name="solutionInstanceName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Solution Instance Name."""
-    solution_dependencies: Optional[List["_models.SolutionDependencyParameter"]] = rest_field(
+    solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = rest_field(
         name="solutionDependencies", visibility=["read", "create", "update", "delete", "query"]
     )
     """Solution Dependencies."""
@@ -2742,7 +4235,7 @@ class SolutionTemplateParameter(_Model):
         *,
         solution_template_version_id: str,
         solution_instance_name: Optional[str] = None,
-        solution_dependencies: Optional[List["_models.SolutionDependencyParameter"]] = None,
+        solution_dependencies: Optional[list["_models.SolutionDependencyParameter"]] = None,
     ) -> None: ...
 
     @overload
@@ -2756,9 +4249,12 @@ class SolutionTemplateParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionTemplateProperties(_Model):
+class SolutionTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Template Properties.
 
+    :ivar unique_identifier: A unique identifier for the solution template, generated by the
+     system.
+    :vartype unique_identifier: str
     :ivar description: Description of Solution template. Required.
     :vartype description: str
     :ivar capabilities: List of capabilities. Required.
@@ -2774,9 +4270,11 @@ class SolutionTemplateProperties(_Model):
     :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
     """
 
+    unique_identifier: Optional[str] = rest_field(name="uniqueIdentifier", visibility=["read"])
+    """A unique identifier for the solution template, generated by the system."""
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of Solution template. Required."""
-    capabilities: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    capabilities: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of capabilities. Required."""
     latest_version: Optional[str] = rest_field(name="latestVersion", visibility=["read"])
     """Latest solution template version."""
@@ -2799,7 +4297,7 @@ class SolutionTemplateProperties(_Model):
         self,
         *,
         description: str,
-        capabilities: List[str],
+        capabilities: list[str],
         state: Optional[Union[str, "_models.ResourceState"]] = None,
         enable_external_validation: Optional[bool] = None,
     ) -> None: ...
@@ -2815,7 +4313,89 @@ class SolutionTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionTemplateVersion(ProxyResource):
+class SolutionTemplateUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the SolutionTemplate.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.SolutionTemplateUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.SolutionTemplateUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.SolutionTemplateUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionTemplateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the SolutionTemplate.
+
+    :ivar description: Description of Solution template.
+    :vartype description: str
+    :ivar capabilities: List of capabilities.
+    :vartype capabilities: list[str]
+    :ivar state: State of resource. Known values are: "active" and "inactive".
+    :vartype state: str or ~azure.mgmt.workloadorchestration.models.ResourceState
+    :ivar enable_external_validation: Flag to enable external validation.
+    :vartype enable_external_validation: bool
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of Solution template."""
+    capabilities: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of capabilities."""
+    state: Optional[Union[str, "_models.ResourceState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """State of resource. Known values are: \"active\" and \"inactive\"."""
+    enable_external_validation: Optional[bool] = rest_field(
+        name="enableExternalValidation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to enable external validation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        capabilities: Optional[list[str]] = None,
+        state: Optional[Union[str, "_models.ResourceState"]] = None,
+        enable_external_validation: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionTemplateVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Template Version Resource. Contains configurations that use expressions which can be
     resolved hierarchically along with edge specifications.
 
@@ -2867,28 +4447,39 @@ class SolutionTemplateVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SolutionTemplateVersionProperties(_Model):
+class SolutionTemplateVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Template Version Properties.
 
-    :ivar configurations: Config expressions for this solution version. Required.
-    :vartype configurations: str
+    :ivar configurations: Config expressions for this solution version. Is either a str type or a
+     {str: Any} type.
+    :vartype configurations: str or dict[str, any]
     :ivar specification: App components spec. Required.
     :vartype specification: dict[str, any]
     :ivar orchestrator_type: Orchestrator type. "TO"
     :vartype orchestrator_type: str or ~azure.mgmt.workloadorchestration.models.OrchestratorType
+    :ivar internal_state: Internal State of resource. Known values are: "PendingValidation",
+     "Validated", "ValidatedWithSchema", and "ValidatedWithoutSchema".
+    :vartype internal_state: str or ~azure.mgmt.workloadorchestration.models.InternalState
     :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
     """
 
-    configurations: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Config expressions for this solution version. Required."""
-    specification: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    configurations: Optional[Union[str, dict[str, Any]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Config expressions for this solution version. Is either a str type or a {str: Any} type."""
+    specification: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """App components spec. Required."""
     orchestrator_type: Optional[Union[str, "_models.OrchestratorType"]] = rest_field(
         name="orchestratorType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Orchestrator type. \"TO\""""
+    internal_state: Optional[Union[str, "_models.InternalState"]] = rest_field(
+        name="internalState", visibility=["read"]
+    )
+    """Internal State of resource. Known values are: \"PendingValidation\", \"Validated\",
+     \"ValidatedWithSchema\", and \"ValidatedWithoutSchema\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -2899,8 +4490,8 @@ class SolutionTemplateVersionProperties(_Model):
     def __init__(
         self,
         *,
-        configurations: str,
-        specification: Dict[str, Any],
+        specification: dict[str, Any],
+        configurations: Optional[Union[str, dict[str, Any]]] = None,
         orchestrator_type: Optional[Union[str, "_models.OrchestratorType"]] = None,
     ) -> None: ...
 
@@ -2915,7 +4506,7 @@ class SolutionTemplateVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionTemplateVersionWithUpdateType(_Model):
+class SolutionTemplateVersionWithUpdateType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Template Version With Update Type.
 
     :ivar update_type: Update type. Known values are: "Major", "Minor", and "Patch".
@@ -2958,7 +4549,68 @@ class SolutionTemplateVersionWithUpdateType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionVersion(ProxyResource):
+class SolutionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the Solution.
+
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.SolutionUpdateProperties
+    """
+
+    properties: Optional["_models.SolutionUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SolutionUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionUpdateProperties(_Model):
+    """The updatable properties of the Solution.
+
+    :ivar solution_template_id: Solution template Id.
+    :vartype solution_template_id: str
+    :ivar display_name: Display name of the solution.
+    :vartype display_name: str
+    :ivar available_solution_template_versions: List of latest revisions for available solution
+     template versions.
+    :vartype available_solution_template_versions:
+     list[~azure.mgmt.workloadorchestration.models.AvailableSolutionTemplateVersion]
+    :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.workloadorchestration.models.ProvisioningState
+    """
+
+    solution_template_id: Optional[str] = rest_field(name="solutionTemplateId", visibility=["read"])
+    """Solution template Id."""
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
+    """Display name of the solution."""
+    available_solution_template_versions: Optional[list["_models.AvailableSolutionTemplateVersion"]] = rest_field(
+        name="availableSolutionTemplateVersions", visibility=["read"]
+    )
+    """List of latest revisions for available solution template versions."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Initialized\", \"InProgress\", and \"Deleting\"."""
+
+
+class SolutionVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Version Resource. It has the resolved configuration along with edge specification.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2974,7 +4626,7 @@ class SolutionVersion(ProxyResource):
     :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.workloadorchestration.models.SolutionVersionProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.workloadorchestration.models.ExtendedLocation
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
@@ -2990,6 +4642,7 @@ class SolutionVersion(ProxyResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -3015,7 +4668,7 @@ class SolutionVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SolutionVersionParameter(_Model):
+class SolutionVersionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Version Parameter.
 
     :ivar solution_version_id: Solution Version ARM Id. Required.
@@ -3045,7 +4698,7 @@ class SolutionVersionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionVersionProperties(_Model):
+class SolutionVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Version Properties.
 
     :ivar solution_template_version_id: Solution Template Version Id.
@@ -3054,11 +4707,11 @@ class SolutionVersionProperties(_Model):
     :vartype revision: int
     :ivar target_display_name: Name of applicable target's display name.
     :vartype target_display_name: str
-    :ivar configuration: Resolved configuration values.
-    :vartype configuration: str
+    :ivar configuration: Resolved configuration values. Is either a str type or a {str: Any} type.
+    :vartype configuration: str or dict[str, any]
     :ivar target_level_configuration: Configuration on the line level across all solution template
-     versions.
-    :vartype target_level_configuration: str
+     versions. Is either a str type or a {str: Any} type.
+    :vartype target_level_configuration: str or dict[str, any]
     :ivar specification: App components spec. Required.
     :vartype specification: dict[str, any]
     :ivar review_id: Review id of resolved config for this solution version.
@@ -3067,8 +4720,12 @@ class SolutionVersionProperties(_Model):
     :vartype external_validation_id: str
     :ivar state: State of solution instance. Known values are: "InReview", "UpgradeInReview",
      "ReadyToDeploy", "ReadyToUpgrade", "Deploying", "Deployed", "Failed", "Undeployed",
-     "PendingExternalValidation", "ExternalValidationFailed", and "Staging".
+     "PendingExternalValidation", "ExternalValidationFailed", "Staging", and "NotApplicable".
     :vartype state: str or ~azure.mgmt.workloadorchestration.models.State
+    :ivar current_stage: Current Stage of revision.
+    :vartype current_stage: ~azure.mgmt.workloadorchestration.models.StageMap
+    :ivar stages: Stages of revision.
+    :vartype stages: list[~azure.mgmt.workloadorchestration.models.StageMap]
     :ivar solution_instance_name: Solution instance name.
     :vartype solution_instance_name: str
     :ivar solution_dependencies: Solution Dependency Context.
@@ -3079,8 +4736,11 @@ class SolutionVersionProperties(_Model):
     :ivar latest_action_tracking_uri: The URI for tracking the latest action performed on this
      solution version.
     :vartype latest_action_tracking_uri: str
+    :ivar latest_action_triggered_by: Object Id of user who triggered the latest action on this
+     solution version.
+    :vartype latest_action_triggered_by: str
     :ivar action_type: The type of the latest action performed on this solution version. Known
-     values are: "deploy", "staging", and "externalValidation".
+     values are: "deploy", "publish", "staging", "externalValidation", and "uninstall".
     :vartype action_type: str or ~azure.mgmt.workloadorchestration.models.JobType
     :ivar provisioning_state: Provisioning state of resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Initialized", "InProgress", and "Deleting".
@@ -3093,11 +4753,14 @@ class SolutionVersionProperties(_Model):
     """Revision number of resolved config for this solution version."""
     target_display_name: Optional[str] = rest_field(name="targetDisplayName", visibility=["read"])
     """Name of applicable target's display name."""
-    configuration: Optional[str] = rest_field(visibility=["read"])
-    """Resolved configuration values."""
-    target_level_configuration: Optional[str] = rest_field(name="targetLevelConfiguration", visibility=["read"])
-    """Configuration on the line level across all solution template versions."""
-    specification: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    configuration: Optional[Union[str, dict[str, Any]]] = rest_field(visibility=["read"])
+    """Resolved configuration values. Is either a str type or a {str: Any} type."""
+    target_level_configuration: Optional[Union[str, dict[str, Any]]] = rest_field(
+        name="targetLevelConfiguration", visibility=["read"]
+    )
+    """Configuration on the line level across all solution template versions. Is either a str type or
+     a {str: Any} type."""
+    specification: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """App components spec. Required."""
     review_id: Optional[str] = rest_field(name="reviewId", visibility=["read"])
     """Review id of resolved config for this solution version."""
@@ -3106,10 +4769,15 @@ class SolutionVersionProperties(_Model):
     state: Optional[Union[str, "_models.State"]] = rest_field(visibility=["read"])
     """State of solution instance. Known values are: \"InReview\", \"UpgradeInReview\",
      \"ReadyToDeploy\", \"ReadyToUpgrade\", \"Deploying\", \"Deployed\", \"Failed\", \"Undeployed\",
-     \"PendingExternalValidation\", \"ExternalValidationFailed\", and \"Staging\"."""
+     \"PendingExternalValidation\", \"ExternalValidationFailed\", \"Staging\", and
+     \"NotApplicable\"."""
+    current_stage: Optional["_models.StageMap"] = rest_field(name="currentStage", visibility=["read"])
+    """Current Stage of revision."""
+    stages: Optional[list["_models.StageMap"]] = rest_field(visibility=["read"])
+    """Stages of revision."""
     solution_instance_name: Optional[str] = rest_field(name="solutionInstanceName", visibility=["read"])
     """Solution instance name."""
-    solution_dependencies: Optional[List["_models.SolutionDependency"]] = rest_field(
+    solution_dependencies: Optional[list["_models.SolutionDependency"]] = rest_field(
         name="solutionDependencies", visibility=["read"]
     )
     """Solution Dependency Context."""
@@ -3117,9 +4785,11 @@ class SolutionVersionProperties(_Model):
     """Error Details if any failure is there."""
     latest_action_tracking_uri: Optional[str] = rest_field(name="latestActionTrackingUri", visibility=["read"])
     """The URI for tracking the latest action performed on this solution version."""
+    latest_action_triggered_by: Optional[str] = rest_field(name="latestActionTriggeredBy", visibility=["read"])
+    """Object Id of user who triggered the latest action on this solution version."""
     action_type: Optional[Union[str, "_models.JobType"]] = rest_field(name="actionType", visibility=["read"])
     """The type of the latest action performed on this solution version. Known values are: \"deploy\",
-     \"staging\", and \"externalValidation\"."""
+     \"publish\", \"staging\", \"externalValidation\", and \"uninstall\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -3130,7 +4800,7 @@ class SolutionVersionProperties(_Model):
     def __init__(
         self,
         *,
-        specification: Dict[str, Any],
+        specification: dict[str, Any],
     ) -> None: ...
 
     @overload
@@ -3144,7 +4814,7 @@ class SolutionVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionVersionSnapshot(_Model):
+class SolutionVersionSnapshot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Version Snapshot.
 
     :ivar solution_version_id: Solution version of instance.
@@ -3157,7 +4827,7 @@ class SolutionVersionSnapshot(_Model):
         name="solutionVersionId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Solution version of instance."""
-    specification: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    specification: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """App components spec."""
 
     @overload
@@ -3165,7 +4835,7 @@ class SolutionVersionSnapshot(_Model):
         self,
         *,
         solution_version_id: Optional[str] = None,
-        specification: Optional[Dict[str, Any]] = None,
+        specification: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -3179,7 +4849,42 @@ class SolutionVersionSnapshot(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StageSpec(_Model):
+class StageMap(_Model):
+    """Stage Map for Solution Version.
+
+    :ivar display_state: Display State. Required.
+    :vartype display_state: str
+    :ivar stage: Stage name. Required. Known values are: "Configuration", "Publish", "Deployment",
+     "Uninstallation", "ExternalValidation", "Staging", and "Unstaging".
+    :vartype stage: str or ~azure.mgmt.workloadorchestration.models.CMStages
+    :ivar status: Stage status. Required. Known values are: "Pending", "InProgress", "Completed",
+     "Failed", and "None".
+    :vartype status: str or ~azure.mgmt.workloadorchestration.models.StateCategory
+    :ivar start_time: Stage start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Stage end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar child_stages: Child stages which represents more granular level stage status if any.
+    :vartype child_stages: list[~azure.mgmt.workloadorchestration.models.StageMap]
+    """
+
+    display_state: str = rest_field(name="displayState", visibility=["read"])
+    """Display State. Required."""
+    stage: Union[str, "_models.CMStages"] = rest_field(visibility=["read"])
+    """Stage name. Required. Known values are: \"Configuration\", \"Publish\", \"Deployment\",
+     \"Uninstallation\", \"ExternalValidation\", \"Staging\", and \"Unstaging\"."""
+    status: Union[str, "_models.StateCategory"] = rest_field(visibility=["read"])
+    """Stage status. Required. Known values are: \"Pending\", \"InProgress\", \"Completed\",
+     \"Failed\", and \"None\"."""
+    start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
+    """Stage start time."""
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", visibility=["read"], format="rfc3339")
+    """Stage end time."""
+    child_stages: Optional[list["_models.StageMap"]] = rest_field(name="childStages", visibility=["read"])
+    """Child stages which represents more granular level stage status if any."""
+
+
+class StageSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Stage Properties.
 
     :ivar name: Name of Stage. Required.
@@ -3194,9 +4899,9 @@ class StageSpec(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of Stage. Required."""
-    specification: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    specification: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Stage specification."""
-    tasks: Optional[List["_models.TaskSpec"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tasks: Optional[list["_models.TaskSpec"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of tasks in the stage."""
     task_option: Optional["_models.TaskOption"] = rest_field(
         name="taskOption", visibility=["read", "create", "update", "delete", "query"]
@@ -3208,8 +4913,8 @@ class StageSpec(_Model):
         self,
         *,
         name: str,
-        specification: Optional[Dict[str, Any]] = None,
-        tasks: Optional[List["_models.TaskSpec"]] = None,
+        specification: Optional[dict[str, Any]] = None,
+        tasks: Optional[list["_models.TaskSpec"]] = None,
         task_option: Optional["_models.TaskOption"] = None,
     ) -> None: ...
 
@@ -3224,7 +4929,7 @@ class StageSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StageStatus(_Model):
+class StageStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of Stage execution.
 
     :ivar status: Deployment status.
@@ -3265,10 +4970,10 @@ class StageStatus(_Model):
         name="isActive", visibility=["read", "create", "update", "delete", "query"]
     )
     """whether this stage is active or inactive. Known values are: \"active\" and \"inactive\"."""
-    inputs: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    inputs: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The inputs of the StageHistory, Inputs holds a key-value map of user-defined parameters for the
      initial stage."""
-    outputs: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    outputs: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The outputs of the StageHistory, it is different as the different input stages."""
 
     @overload
@@ -3281,8 +4986,8 @@ class StageStatus(_Model):
         nextstage: Optional[str] = None,
         error_message: Optional[str] = None,
         is_active: Optional[Union[str, "_models.ActiveState"]] = None,
-        inputs: Optional[Dict[str, Any]] = None,
-        outputs: Optional[Dict[str, Any]] = None,
+        inputs: Optional[dict[str, Any]] = None,
+        outputs: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -3296,7 +5001,7 @@ class StageStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3363,7 +5068,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Target(TrackedResource):
+class Target(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target Resource. Represents a resource to be deployed on the edge.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3388,7 +5093,7 @@ class Target(TrackedResource):
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
      (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
     :vartype e_tag: str
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.workloadorchestration.models.ExtendedLocation
     """
 
@@ -3404,13 +5109,14 @@ class Target(TrackedResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
 
     @overload
     def __init__(
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.TargetProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -3426,7 +5132,42 @@ class Target(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class TargetProperties(_Model):
+class TargetMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Solution Deployment Target Details.
+
+    :ivar capabilities: List of capabilities.
+    :vartype capabilities: list[str]
+    :ivar target_ids: ARM resource IDs of the Targets resources.
+    :vartype target_ids: list[str]
+    """
+
+    capabilities: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of capabilities."""
+    target_ids: Optional[list[str]] = rest_field(
+        name="targetIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource IDs of the Targets resources."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        capabilities: Optional[list[str]] = None,
+        target_ids: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TargetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target Properties.
 
     :ivar description: Description of target. Required.
@@ -3435,7 +5176,7 @@ class TargetProperties(_Model):
     :vartype display_name: str
     :ivar context_id: ArmId of Context. Required.
     :vartype context_id: str
-    :ivar target_specification: target spec. Required.
+    :ivar target_specification: target spec.
     :vartype target_specification: dict[str, any]
     :ivar capabilities: List of capabilities. Required.
     :vartype capabilities: list[str]
@@ -3458,11 +5199,11 @@ class TargetProperties(_Model):
     """Display name of target. Required."""
     context_id: str = rest_field(name="contextId", visibility=["read", "create", "update", "delete", "query"])
     """ArmId of Context. Required."""
-    target_specification: Dict[str, Any] = rest_field(
+    target_specification: Optional[dict[str, Any]] = rest_field(
         name="targetSpecification", visibility=["read", "create", "update", "delete", "query"]
     )
-    """target spec. Required."""
-    capabilities: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """target spec."""
+    capabilities: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of capabilities. Required."""
     hierarchy_level: str = rest_field(name="hierarchyLevel", visibility=["read", "create", "update", "delete", "query"])
     """Hierarchy Level. Required."""
@@ -3489,9 +5230,9 @@ class TargetProperties(_Model):
         description: str,
         display_name: str,
         context_id: str,
-        target_specification: Dict[str, Any],
-        capabilities: List[str],
+        capabilities: list[str],
         hierarchy_level: str,
+        target_specification: Optional[dict[str, Any]] = None,
         solution_scope: Optional[str] = None,
         state: Optional[Union[str, "_models.ResourceState"]] = None,
     ) -> None: ...
@@ -3507,7 +5248,7 @@ class TargetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetSnapshot(_Model):
+class TargetSnapshot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target Snapshot.
 
     :ivar target_id: Target of instance.
@@ -3520,7 +5261,7 @@ class TargetSnapshot(_Model):
 
     target_id: Optional[str] = rest_field(name="targetId", visibility=["read", "create", "update", "delete", "query"])
     """Target of instance."""
-    target_specification: Optional[Dict[str, Any]] = rest_field(
+    target_specification: Optional[dict[str, Any]] = rest_field(
         name="targetSpecification", visibility=["read", "create", "update", "delete", "query"]
     )
     """target spec."""
@@ -3534,7 +5275,7 @@ class TargetSnapshot(_Model):
         self,
         *,
         target_id: Optional[str] = None,
-        target_specification: Optional[Dict[str, Any]] = None,
+        target_specification: Optional[dict[str, Any]] = None,
         solution_scope: Optional[str] = None,
     ) -> None: ...
 
@@ -3549,7 +5290,7 @@ class TargetSnapshot(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetStatus(_Model):
+class TargetStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target Status.
 
     :ivar name: Target name.
@@ -3564,7 +5305,7 @@ class TargetStatus(_Model):
     """Target name."""
     status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Target status."""
-    component_statuses: Optional[List["_models.ComponentStatus"]] = rest_field(
+    component_statuses: Optional[list["_models.ComponentStatus"]] = rest_field(
         name="componentStatuses", visibility=["read", "create", "update", "delete", "query"]
     )
     """Component statuses."""
@@ -3575,7 +5316,7 @@ class TargetStatus(_Model):
         *,
         name: Optional[str] = None,
         status: Optional[str] = None,
-        component_statuses: Optional[List["_models.ComponentStatus"]] = None,
+        component_statuses: Optional[list["_models.ComponentStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -3589,7 +5330,115 @@ class TargetStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaskOption(_Model):
+class TargetUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the Target.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.workloadorchestration.models.TargetUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.TargetUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.TargetUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TargetUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the Target.
+
+    :ivar description: Description of target.
+    :vartype description: str
+    :ivar display_name: Display name of target.
+    :vartype display_name: str
+    :ivar context_id: ArmId of Context.
+    :vartype context_id: str
+    :ivar target_specification: target spec.
+    :vartype target_specification: dict[str, any]
+    :ivar capabilities: List of capabilities.
+    :vartype capabilities: list[str]
+    :ivar hierarchy_level: Hierarchy Level.
+    :vartype hierarchy_level: str
+    :ivar solution_scope: Scope of the target resource.
+    :vartype solution_scope: str
+    :ivar state: State of resource. Known values are: "active" and "inactive".
+    :vartype state: str or ~azure.mgmt.workloadorchestration.models.ResourceState
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of target."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of target."""
+    context_id: Optional[str] = rest_field(name="contextId", visibility=["read", "create", "update", "delete", "query"])
+    """ArmId of Context."""
+    target_specification: Optional[dict[str, Any]] = rest_field(
+        name="targetSpecification", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """target spec."""
+    capabilities: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of capabilities."""
+    hierarchy_level: Optional[str] = rest_field(
+        name="hierarchyLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hierarchy Level."""
+    solution_scope: Optional[str] = rest_field(
+        name="solutionScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Scope of the target resource."""
+    state: Optional[Union[str, "_models.ResourceState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """State of resource. Known values are: \"active\" and \"inactive\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        display_name: Optional[str] = None,
+        context_id: Optional[str] = None,
+        target_specification: Optional[dict[str, Any]] = None,
+        capabilities: Optional[list[str]] = None,
+        hierarchy_level: Optional[str] = None,
+        solution_scope: Optional[str] = None,
+        state: Optional[Union[str, "_models.ResourceState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TaskOption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Task Option Properties.
 
     :ivar concurrency: Parallel worker numbers of the tasks.
@@ -3624,7 +5473,7 @@ class TaskOption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaskSpec(_Model):
+class TaskSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Task Spec.
 
     :ivar name: Name of Task. Required.
@@ -3639,7 +5488,7 @@ class TaskSpec(_Model):
     """Name of Task. Required."""
     target_id: Optional[str] = rest_field(name="targetId", visibility=["read", "create", "update", "delete", "query"])
     """Target ARM id."""
-    specification: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    specification: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Task specification. Required."""
 
     @overload
@@ -3647,7 +5496,7 @@ class TaskSpec(_Model):
         self,
         *,
         name: str,
-        specification: Dict[str, Any],
+        specification: dict[str, Any],
         target_id: Optional[str] = None,
     ) -> None: ...
 
@@ -3662,7 +5511,94 @@ class TaskSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UninstallSolutionParameter(_Model):
+class UninstallJobParameter(
+    JobParameterBase, discriminator="uninstall"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for an Uninstall job.
+
+    :ivar job_type: Job type discriminator value. Required. An Uninstall job.
+    :vartype job_type: str or ~azure.mgmt.workloadorchestration.models.UNINSTALL
+    :ivar parameter:
+    :vartype parameter: ~azure.mgmt.workloadorchestration.models.UninstallSolutionParameter
+    """
+
+    job_type: Literal[JobType.UNINSTALL] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Job type discriminator value. Required. An Uninstall job."""
+    parameter: Optional["_models.UninstallSolutionParameter"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameter: Optional["_models.UninstallSolutionParameter"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = JobType.UNINSTALL  # type: ignore
+
+
+class UninstallJobStepStatistics(
+    JobStepStatisticsBase, discriminator="uninstall"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Uninstall statistics for a job step, including total, success, and failed counts.
+
+    :ivar statistics_type: Statistics type discriminator value. Required. An Uninstall job.
+    :vartype statistics_type: str or ~azure.mgmt.workloadorchestration.models.UNINSTALL
+    :ivar total_count: Total count of items processed in this step.
+    :vartype total_count: int
+    :ivar success_count: Count of successful items in this step.
+    :vartype success_count: int
+    :ivar failed_count: Count of failed items in this step.
+    :vartype failed_count: int
+    """
+
+    statistics_type: Literal[JobType.UNINSTALL] = rest_discriminator(name="statisticsType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Statistics type discriminator value. Required. An Uninstall job."""
+    total_count: Optional[int] = rest_field(
+        name="totalCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total count of items processed in this step."""
+    success_count: Optional[int] = rest_field(
+        name="successCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Count of successful items in this step."""
+    failed_count: Optional[int] = rest_field(
+        name="failedCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Count of failed items in this step."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_count: Optional[int] = None,
+        success_count: Optional[int] = None,
+        failed_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.statistics_type = JobType.UNINSTALL  # type: ignore
+
+
+class UninstallSolutionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Uninstall Solution Parameter.
 
     :ivar solution_template_id: Solution Template ARM Id. Required.
@@ -3699,7 +5635,7 @@ class UninstallSolutionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateExternalValidationStatusParameter(_Model):
+class UpdateExternalValidationStatusParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update External Validation Status Parameter.
 
     :ivar solution_version_id: Solution Version Id. Required.
@@ -3752,7 +5688,7 @@ class UpdateExternalValidationStatusParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VersionParameter(_Model):
+class VersionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Version Parameter.
 
     :ivar version: Version of the Resource. Required.
@@ -3780,7 +5716,7 @@ class VersionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Workflow(ProxyResource):
+class Workflow(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workflow Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3796,7 +5732,7 @@ class Workflow(ProxyResource):
     :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.workloadorchestration.models.WorkflowProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.workloadorchestration.models.ExtendedLocation
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
@@ -3812,6 +5748,7 @@ class Workflow(ProxyResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -3856,7 +5793,7 @@ class WorkflowProperties(_Model):
      \"Initialized\", \"InProgress\", and \"Deleting\"."""
 
 
-class WorkflowVersion(ProxyResource):
+class WorkflowVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workflow Version Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3872,7 +5809,7 @@ class WorkflowVersion(ProxyResource):
     :vartype system_data: ~azure.mgmt.workloadorchestration.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.workloadorchestration.models.WorkflowVersionProperties
-    :ivar extended_location:
+    :ivar extended_location: The extended location of the resource.
     :vartype extended_location: ~azure.mgmt.workloadorchestration.models.ExtendedLocation
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
@@ -3888,6 +5825,7 @@ class WorkflowVersion(ProxyResource):
     extended_location: Optional["_models.ExtendedLocation"] = rest_field(
         name="extendedLocation", visibility=["read", "create"]
     )
+    """The extended location of the resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -3913,7 +5851,7 @@ class WorkflowVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowVersionProperties(_Model):
+class WorkflowVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workflow Version Properties.
 
     :ivar revision: Revision number of resolved config for this workflow version.
@@ -3926,7 +5864,7 @@ class WorkflowVersionProperties(_Model):
     :vartype review_id: str
     :ivar state: State of workflow version. Known values are: "InReview", "UpgradeInReview",
      "ReadyToDeploy", "ReadyToUpgrade", "Deploying", "Deployed", "Failed", "Undeployed",
-     "PendingExternalValidation", "ExternalValidationFailed", and "Staging".
+     "PendingExternalValidation", "ExternalValidationFailed", "Staging", and "NotApplicable".
     :vartype state: str or ~azure.mgmt.workloadorchestration.models.State
     :ivar specification: Execution specification.
     :vartype specification: dict[str, any]
@@ -3939,7 +5877,7 @@ class WorkflowVersionProperties(_Model):
     """Revision number of resolved config for this workflow version."""
     configuration: Optional[str] = rest_field(visibility=["read"])
     """Resolved configuration values."""
-    stage_spec: List["_models.StageSpec"] = rest_field(
+    stage_spec: list["_models.StageSpec"] = rest_field(
         name="stageSpec", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of stage specs. Required."""
@@ -3948,8 +5886,9 @@ class WorkflowVersionProperties(_Model):
     state: Optional[Union[str, "_models.State"]] = rest_field(visibility=["read"])
     """State of workflow version. Known values are: \"InReview\", \"UpgradeInReview\",
      \"ReadyToDeploy\", \"ReadyToUpgrade\", \"Deploying\", \"Deployed\", \"Failed\", \"Undeployed\",
-     \"PendingExternalValidation\", \"ExternalValidationFailed\", and \"Staging\"."""
-    specification: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+     \"PendingExternalValidation\", \"ExternalValidationFailed\", \"Staging\", and
+     \"NotApplicable\"."""
+    specification: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Execution specification."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -3961,8 +5900,8 @@ class WorkflowVersionProperties(_Model):
     def __init__(
         self,
         *,
-        stage_spec: List["_models.StageSpec"],
-        specification: Optional[Dict[str, Any]] = None,
+        stage_spec: list["_models.StageSpec"],
+        specification: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
