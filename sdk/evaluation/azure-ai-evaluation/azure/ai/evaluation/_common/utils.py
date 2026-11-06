@@ -1648,6 +1648,9 @@ def _normalize_function_call_types(messages):
     return messages
 
 
+_TYPED_TOOL_CALL_BLOCKS = ("tool_call", "function_call", "openapi_call")
+
+
 def _openai_tool_call_to_block(call):
     """Convert one OpenAI chat ``tool_calls`` entry to an SDK ``tool_call`` content block."""
     function = call.get("function") or {}
@@ -1657,6 +1660,11 @@ def _openai_tool_call_to_block(call):
             arguments = json.loads(arguments) if arguments.strip() else {}
         except json.JSONDecodeError:
             pass
+    if arguments is None:
+        arguments = {}
+    elif not isinstance(arguments, dict):
+        # Rendering expects an object; keep any other value visible to the judge.
+        arguments = {"input": arguments}
     return {
         "type": "tool_call",
         "tool_call_id": call.get("id"),
@@ -1665,12 +1673,19 @@ def _openai_tool_call_to_block(call):
     }
 
 
+def _has_typed_tool_calls(content):
+    """Whether content already carries typed tool-call blocks for its ``tool_calls``."""
+    return isinstance(content, list) and any(
+        isinstance(block, dict) and block.get("type") in _TYPED_TOOL_CALL_BLOCKS for block in content
+    )
+
+
 def _normalize_openai_chat_message(msg):
     """Return an SDK-block copy of an OpenAI chat tool message, or the message unchanged."""
     if not isinstance(msg, dict):
         return msg
     role, content = msg.get("role"), msg.get("content")
-    if role == "assistant" and isinstance(msg.get("tool_calls"), list):
+    if role == "assistant" and isinstance(msg.get("tool_calls"), list) and not _has_typed_tool_calls(content):
         blocks = list(content) if isinstance(content, list) else []
         if isinstance(content, str) and content:
             blocks.append({"type": "text", "text": content})

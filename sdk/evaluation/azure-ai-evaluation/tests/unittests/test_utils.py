@@ -1188,20 +1188,45 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(conversation, original)
 
     def test_preprocess_messages_keeps_unparseable_tool_arguments(self):
-        """Non-JSON arguments survive as-is rather than being dropped."""
+        """Non-object arguments are kept under "input" and still render."""
+        for raw, expected in (("not json", {"input": "not json"}), ("[1, 2]", {"input": [1, 2]}), ("", {})):
+            with self.subTest(arguments=raw):
+                messages = [
+                    {
+                        "role": "assistant",
+                        "tool_calls": [{"id": "c1", "function": {"name": "lookup", "arguments": raw}}],
+                    }
+                ]
+
+                preprocessed = _preprocess_messages(messages)
+
+                self.assertEqual(
+                    preprocessed[0]["content"],
+                    [{"type": "tool_call", "tool_call_id": "c1", "name": "lookup", "arguments": expected}],
+                )
+                self.assertEqual(len(_get_agent_response(preprocessed, include_tool_messages=True)), 1)
+
+    def test_preprocess_messages_does_not_duplicate_typed_tool_calls(self):
+        """A message that already has typed tool-call blocks keeps them once."""
+        call = {"id": "call_1", "type": "function", "function": {"name": "lookup", "arguments": '{"id": 1}'}}
         messages = [
             {
                 "role": "assistant",
-                "tool_calls": [{"id": "c1", "function": {"name": "lookup", "arguments": "not json"}}],
-            }
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "tool_call": {"id": "call_1", "function": {"name": "lookup", "arguments": {"id": 1}}},
+                    }
+                ],
+                "tool_calls": [call],
+            },
+            {"role": "tool", "tool_call_id": "call_1", "content": [{"type": "tool_result", "tool_result": "ok"}]},
         ]
 
-        content = _preprocess_messages(messages)[0]["content"]
+        result = _get_agent_response(_preprocess_messages(messages), include_tool_messages=True)
 
-        self.assertEqual(
-            content,
-            [{"type": "tool_call", "tool_call_id": "c1", "name": "lookup", "arguments": "not json"}],
-        )
+        self.assertEqual(result, ["[TOOL_CALL] lookup(id=1)", "[TOOL_RESULT] ok"])
 
     def test_reformat_conversation_history_multiple_tool_calls(self):
         """Test reformat_conversation_history with multiple tool calls in one message"""
