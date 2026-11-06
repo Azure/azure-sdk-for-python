@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import SummaryType
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BinaryHardeningFeatures(_Model):
+class BinaryHardeningFeatures(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Binary hardening features.
 
     :ivar no_execute: Flag indicating the binary's stack is set to NX (no-execute).
@@ -119,7 +119,7 @@ class ProxyResource(Resource):
     """
 
 
-class BinaryHardeningResource(ProxyResource):
+class BinaryHardeningResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing a firmware analysis binary hardening result resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -189,7 +189,7 @@ class BinaryHardeningResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class BinaryHardeningResult(_Model):
+class BinaryHardeningResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Binary hardening of a firmware.
 
     :ivar binary_hardening_id: ID for the binary hardening result.
@@ -269,28 +269,30 @@ class BinaryHardeningResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SummaryResourceProperties(_Model):
+class SummaryResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an analysis summary.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    BinaryHardeningSummaryResource, CveSummary, CryptoCertificateSummaryResource,
-    CryptoKeySummaryResource, FirmwareSummary
+    BinaryHardeningSummaryResource, CveSummaryResource, CveSummary,
+    CryptoCertificateSummaryResource, CryptoKeySummaryResource, FirmwareSummary,
+    PasswordHashSummaryResource, SbomSummaryResource, UnsafeFunctionCallsSummaryResource
 
     :ivar summary_type: The type of summary. Required. Known values are: "Firmware",
-     "CommonVulnerabilitiesAndExposures", "BinaryHardening", "CryptoCertificate", and "CryptoKey".
+     "CommonVulnerabilitiesAndExposures", "BinaryHardening", "CryptoCertificate", "CryptoKey",
+     "CVE", "SBOM", "PasswordHash", and "UnsafeFunctionCalls".
     :vartype summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.SummaryType
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Pending", "Extracting", and "Analyzing".
     :vartype provisioning_state: str or ~azure.mgmt.iotfirmwaredefense.models.ProvisioningState
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     summary_type: str = rest_discriminator(
         name="summaryType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of summary. Required. Known values are: \"Firmware\",
-     \"CommonVulnerabilitiesAndExposures\", \"BinaryHardening\", \"CryptoCertificate\", and
-     \"CryptoKey\"."""
+     \"CommonVulnerabilitiesAndExposures\", \"BinaryHardening\", \"CryptoCertificate\",
+     \"CryptoKey\", \"CVE\", \"SBOM\", \"PasswordHash\", and \"UnsafeFunctionCalls\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -315,7 +317,9 @@ class SummaryResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BinaryHardeningSummaryResource(SummaryResourceProperties, discriminator="BinaryHardening"):
+class BinaryHardeningSummaryResource(
+    SummaryResourceProperties, discriminator="BinaryHardening"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a binary hardening analysis summary.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -337,7 +341,7 @@ class BinaryHardeningSummaryResource(SummaryResourceProperties, discriminator="B
     :ivar stripped_binary_count: Total number of analyzed files that have debug symbols stripped.
     :vartype stripped_binary_count: int
     :ivar summary_type: Describes the type of summary object. Required. The summary contains
-     information about the binary hardening analysis results
+     information about the binary hardening analysis results.
     :vartype summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.BINARY_HARDENING
     """
 
@@ -367,7 +371,7 @@ class BinaryHardeningSummaryResource(SummaryResourceProperties, discriminator="B
     """Total number of analyzed files that have debug symbols stripped."""
     summary_type: Literal[SummaryType.BINARY_HARDENING] = rest_discriminator(name="summaryType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Describes the type of summary object. Required. The summary contains information about the
-     binary hardening analysis results"""
+     binary hardening analysis results."""
 
     @overload
     def __init__(
@@ -389,10 +393,11 @@ class BinaryHardeningSummaryResource(SummaryResourceProperties, discriminator="B
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, summary_type=SummaryType.BINARY_HARDENING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.summary_type = SummaryType.BINARY_HARDENING  # type: ignore
 
 
-class CryptoCertificate(_Model):
+class CryptoCertificate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Crypto certificate properties.
 
     :ivar crypto_cert_id: ID for the certificate result.
@@ -490,11 +495,11 @@ class CryptoCertificate(_Model):
     """Serial number of the certificate."""
     fingerprint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Fingerprint of the certificate."""
-    certificate_usage: Optional[List[Union[str, "_models.CertificateUsage"]]] = rest_field(
+    certificate_usage: Optional[list[Union[str, "_models.CertificateUsage"]]] = rest_field(
         name="certificateUsage", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of functions the certificate can fulfill."""
-    file_paths: Optional[List[str]] = rest_field(name="filePaths", visibility=["read"])
+    file_paths: Optional[list[str]] = rest_field(name="filePaths", visibility=["read"])
     """List of files where this certificate was found."""
     paired_key: Optional["_models.PairedKey"] = rest_field(
         name="pairedKey", visibility=["read", "create", "update", "delete", "query"]
@@ -540,7 +545,7 @@ class CryptoCertificate(_Model):
         encoding: Optional[str] = None,
         serial_number: Optional[str] = None,
         fingerprint: Optional[str] = None,
-        certificate_usage: Optional[List[Union[str, "_models.CertificateUsage"]]] = None,
+        certificate_usage: Optional[list[Union[str, "_models.CertificateUsage"]]] = None,
         paired_key: Optional["_models.PairedKey"] = None,
         is_expired: Optional[bool] = None,
         is_self_signed: Optional[bool] = None,
@@ -559,7 +564,7 @@ class CryptoCertificate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CryptoCertificateEntity(_Model):
+class CryptoCertificateEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information on an entity (distinguished name) in a cryptographic certificate.
 
     :ivar common_name: Common name of the certificate entity.
@@ -611,7 +616,7 @@ class CryptoCertificateEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CryptoCertificateResource(ProxyResource):
+class CryptoCertificateResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing a firmware analysis crypto certificate resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -694,7 +699,9 @@ class CryptoCertificateResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CryptoCertificateSummaryResource(SummaryResourceProperties, discriminator="CryptoCertificate"):
+class CryptoCertificateSummaryResource(
+    SummaryResourceProperties, discriminator="CryptoCertificate"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for cryptographic certificate summary.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -717,7 +724,7 @@ class CryptoCertificateSummaryResource(SummaryResourceProperties, discriminator=
      for the key algorithm.
     :vartype short_key_size_count: int
     :ivar summary_type: Describes the type of summary. Required. The summary contains information
-     about the cryptographic certificate analysis results
+     about the cryptographic certificate analysis results.
     :vartype summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.CRYPTO_CERTIFICATE
     """
 
@@ -751,7 +758,7 @@ class CryptoCertificateSummaryResource(SummaryResourceProperties, discriminator=
     """Total number of certificates found that have an insecure key size for the key algorithm."""
     summary_type: Literal[SummaryType.CRYPTO_CERTIFICATE] = rest_discriminator(name="summaryType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Describes the type of summary. Required. The summary contains information about the
-     cryptographic certificate analysis results"""
+     cryptographic certificate analysis results."""
 
     @overload
     def __init__(
@@ -774,10 +781,11 @@ class CryptoCertificateSummaryResource(SummaryResourceProperties, discriminator=
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, summary_type=SummaryType.CRYPTO_CERTIFICATE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.summary_type = SummaryType.CRYPTO_CERTIFICATE  # type: ignore
 
 
-class CryptoKey(_Model):
+class CryptoKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Crypto key properties.
 
     :ivar crypto_key_id: ID for the key result.
@@ -818,9 +826,9 @@ class CryptoKey(_Model):
         name="keyAlgorithm", visibility=["read", "create", "update", "delete", "query"]
     )
     """Key algorithm name."""
-    usage: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    usage: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Functions the key can fulfill."""
-    file_paths: Optional[List[str]] = rest_field(name="filePaths", visibility=["read"])
+    file_paths: Optional[list[str]] = rest_field(name="filePaths", visibility=["read"])
     """List of files where this key was found."""
     paired_key: Optional["_models.PairedKey"] = rest_field(
         name="pairedKey", visibility=["read", "create", "update", "delete", "query"]
@@ -845,7 +853,7 @@ class CryptoKey(_Model):
         key_type: Optional[Union[str, "_models.CryptoKeyType"]] = None,
         crypto_key_size: Optional[int] = None,
         key_algorithm: Optional[str] = None,
-        usage: Optional[List[str]] = None,
+        usage: Optional[list[str]] = None,
         paired_key: Optional["_models.PairedKey"] = None,
         is_short_key_size: Optional[bool] = None,
     ) -> None: ...
@@ -861,7 +869,7 @@ class CryptoKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CryptoKeyResource(ProxyResource):
+class CryptoKeyResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing a firmware analysis crypto key resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -930,7 +938,9 @@ class CryptoKeyResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CryptoKeySummaryResource(SummaryResourceProperties, discriminator="CryptoKey"):
+class CryptoKeySummaryResource(
+    SummaryResourceProperties, discriminator="CryptoKey"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for cryptographic key summary.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -949,7 +959,7 @@ class CryptoKeySummaryResource(SummaryResourceProperties, discriminator="CryptoK
      algorithm.
     :vartype short_key_size_count: int
     :ivar summary_type: Describes the type of summary. Required. The summary contains information
-     about the cryptographic key analysis results
+     about the cryptographic key analysis results.
     :vartype summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.CRYPTO_KEY
     """
 
@@ -975,7 +985,7 @@ class CryptoKeySummaryResource(SummaryResourceProperties, discriminator="CryptoK
     """Total number of keys found that have an insecure key size for the algorithm."""
     summary_type: Literal[SummaryType.CRYPTO_KEY] = rest_discriminator(name="summaryType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Describes the type of summary. Required. The summary contains information about the
-     cryptographic key analysis results"""
+     cryptographic key analysis results."""
 
     @overload
     def __init__(
@@ -996,10 +1006,11 @@ class CryptoKeySummaryResource(SummaryResourceProperties, discriminator="CryptoK
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, summary_type=SummaryType.CRYPTO_KEY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.summary_type = SummaryType.CRYPTO_KEY  # type: ignore
 
 
-class CveComponent(_Model):
+class CveComponent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Legacy component of a CVE result.
 
     :ivar component_id: ID of the SBOM component.
@@ -1039,7 +1050,7 @@ class CveComponent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CveLink(_Model):
+class CveLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a reference link for a CVE.
 
     :ivar href: The destination of the reference link.
@@ -1072,7 +1083,7 @@ class CveLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CveResource(ProxyResource):
+class CveResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing a firmware analysis CVE result resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1107,9 +1118,15 @@ class CveResource(ProxyResource):
         "cvss_version",
         "effective_cvss_score",
         "effective_cvss_version",
+        "effective_vector_string",
+        "effective_exploit_maturity",
         "cvss_scores",
         "links",
         "description",
+        "epss",
+        "cwes",
+        "kev",
+        "fixed_in_versions",
         "provisioning_state",
     ]
 
@@ -1149,7 +1166,7 @@ class CveResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CveResult(_Model):
+class CveResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a CVE detected in firmware.
 
     :ivar cve_id: ID of the CVE result.
@@ -1166,25 +1183,41 @@ class CveResult(_Model):
     :vartype cve_name: str
     :ivar component: Legacy property for what is now componentName.
     :vartype component: ~azure.mgmt.iotfirmwaredefense.models.CveComponent
-    :ivar cvss_score: Legacy property for the effective CVE score.
+    :ivar cvss_score: Legacy property for the effective CVE score (deprecated).
     :vartype cvss_score: str
     :ivar cvss_v2_score: Legacy property for the CVE CVSS version 2 score, if one existed.
+     (deprecated).
     :vartype cvss_v2_score: str
     :ivar cvss_v3_score: Legacy property for the CVE CVSS version 3 score, if one existed.
+     (deprecated).
     :vartype cvss_v3_score: str
     :ivar cvss_version: Legacy property for the what CVSS version score was stored in the cvssScore
-     property.
+     property (deprecated).
     :vartype cvss_version: str
     :ivar effective_cvss_score: The most recent CVSS score of the CVE.
     :vartype effective_cvss_score: float
     :ivar effective_cvss_version: The version of the effectiveCvssScore property.
     :vartype effective_cvss_version: int
+    :ivar effective_vector_string: The CVSS vector string for the effectiveCvssVersion.
+    :vartype effective_vector_string: str
+    :ivar effective_exploit_maturity: The CVSS exploit maturity value for the effectiveCvssVersion.
+     Known values are: "NOT_DEFINED", "ATTACKED", "PROOF_OF_CONCEPT", and "UNREPORTED".
+    :vartype effective_exploit_maturity: str or
+     ~azure.mgmt.iotfirmwaredefense.models.ExploitMaturityLevel
     :ivar cvss_scores: All known CVSS scores for the CVE.
     :vartype cvss_scores: list[~azure.mgmt.iotfirmwaredefense.models.CvssScore]
     :ivar links: The list of reference links for the CVE.
     :vartype links: list[~azure.mgmt.iotfirmwaredefense.models.CveLink]
     :ivar description: The CVE description.
     :vartype description: str
+    :ivar epss: EPSS (Exploit Prediction Scoring System) information related to this CVE.
+    :vartype epss: ~azure.mgmt.iotfirmwaredefense.models.EpssProperties
+    :ivar cwes: CWE (Common Weakness Enumeration) information related to this CVE.
+    :vartype cwes: list[~azure.mgmt.iotfirmwaredefense.models.CweProperties]
+    :ivar kev: KEV (Known Exploited Vulnerabilities) information related to this CVE.
+    :vartype kev: ~azure.mgmt.iotfirmwaredefense.models.KevProperties
+    :ivar fixed_in_versions: The component versions in which this weakness was fixed, if any.
+    :vartype fixed_in_versions: list[str]
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Pending", "Extracting", and "Analyzing".
     :vartype provisioning_state: str or ~azure.mgmt.iotfirmwaredefense.models.ProvisioningState
@@ -1211,19 +1244,20 @@ class CveResult(_Model):
     component: Optional["_models.CveComponent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Legacy property for what is now componentName."""
     cvss_score: Optional[str] = rest_field(name="cvssScore", visibility=["read", "create", "update", "delete", "query"])
-    """Legacy property for the effective CVE score."""
+    """Legacy property for the effective CVE score (deprecated)."""
     cvss_v2_score: Optional[str] = rest_field(
         name="cvssV2Score", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Legacy property for the CVE CVSS version 2 score, if one existed."""
+    """Legacy property for the CVE CVSS version 2 score, if one existed. (deprecated)."""
     cvss_v3_score: Optional[str] = rest_field(
         name="cvssV3Score", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Legacy property for the CVE CVSS version 3 score, if one existed."""
+    """Legacy property for the CVE CVSS version 3 score, if one existed. (deprecated)."""
     cvss_version: Optional[str] = rest_field(
         name="cvssVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Legacy property for the what CVSS version score was stored in the cvssScore property."""
+    """Legacy property for the what CVSS version score was stored in the cvssScore property
+     (deprecated)."""
     effective_cvss_score: Optional[float] = rest_field(
         name="effectiveCvssScore", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1232,14 +1266,35 @@ class CveResult(_Model):
         name="effectiveCvssVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """The version of the effectiveCvssScore property."""
-    cvss_scores: Optional[List["_models.CvssScore"]] = rest_field(
+    effective_vector_string: Optional[str] = rest_field(
+        name="effectiveVectorString", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The CVSS vector string for the effectiveCvssVersion."""
+    effective_exploit_maturity: Optional[Union[str, "_models.ExploitMaturityLevel"]] = rest_field(
+        name="effectiveExploitMaturity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The CVSS exploit maturity value for the effectiveCvssVersion. Known values are:
+     \"NOT_DEFINED\", \"ATTACKED\", \"PROOF_OF_CONCEPT\", and \"UNREPORTED\"."""
+    cvss_scores: Optional[list["_models.CvssScore"]] = rest_field(
         name="cvssScores", visibility=["read", "create", "update", "delete", "query"]
     )
     """All known CVSS scores for the CVE."""
-    links: Optional[List["_models.CveLink"]] = rest_field(visibility=["read"])
+    links: Optional[list["_models.CveLink"]] = rest_field(visibility=["read"])
     """The list of reference links for the CVE."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The CVE description."""
+    epss: Optional["_models.EpssProperties"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """EPSS (Exploit Prediction Scoring System) information related to this CVE."""
+    cwes: Optional[list["_models.CweProperties"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CWE (Common Weakness Enumeration) information related to this CVE."""
+    kev: Optional["_models.KevProperties"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """KEV (Known Exploited Vulnerabilities) information related to this CVE."""
+    fixed_in_versions: Optional[list[str]] = rest_field(
+        name="fixedInVersions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The component versions in which this weakness was fixed, if any."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -1263,8 +1318,14 @@ class CveResult(_Model):
         cvss_version: Optional[str] = None,
         effective_cvss_score: Optional[float] = None,
         effective_cvss_version: Optional[int] = None,
-        cvss_scores: Optional[List["_models.CvssScore"]] = None,
+        effective_vector_string: Optional[str] = None,
+        effective_exploit_maturity: Optional[Union[str, "_models.ExploitMaturityLevel"]] = None,
+        cvss_scores: Optional[list["_models.CvssScore"]] = None,
         description: Optional[str] = None,
+        epss: Optional["_models.EpssProperties"] = None,
+        cwes: Optional[list["_models.CweProperties"]] = None,
+        kev: Optional["_models.KevProperties"] = None,
+        fixed_in_versions: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1278,8 +1339,10 @@ class CveResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CveSummary(SummaryResourceProperties, discriminator="CommonVulnerabilitiesAndExposures"):
-    """Properties for a CVE analysis summary.
+class CveSummary(
+    SummaryResourceProperties, discriminator="CommonVulnerabilitiesAndExposures"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for a CVE (Common Vulnerabilities and Exposures) analysis summary (deprecated).
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Pending", "Extracting", and "Analyzing".
@@ -1295,7 +1358,7 @@ class CveSummary(SummaryResourceProperties, discriminator="CommonVulnerabilities
     :ivar unknown_cve_count: The total number of unknown severity CVEs detected.
     :vartype unknown_cve_count: int
     :ivar summary_type: Describes the type of summary object. Required. The summary contains
-     information about the Common Vulnerabilities and Exposures analysis results
+     information about the CVE (Common Vulnerabilities and Exposures) analysis results (deprecated).
     :vartype summary_type: str or
      ~azure.mgmt.iotfirmwaredefense.models.COMMON_VULNERABILITIES_AND_EXPOSURES
     """
@@ -1321,8 +1384,8 @@ class CveSummary(SummaryResourceProperties, discriminator="CommonVulnerabilities
     )
     """The total number of unknown severity CVEs detected."""
     summary_type: Literal[SummaryType.COMMON_VULNERABILITIES_AND_EXPOSURES] = rest_discriminator(name="summaryType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Describes the type of summary object. Required. The summary contains information about the
-     Common Vulnerabilities and Exposures analysis results"""
+    """Describes the type of summary object. Required. The summary contains information about the CVE
+     (Common Vulnerabilities and Exposures) analysis results (deprecated)."""
 
     @overload
     def __init__(
@@ -1343,22 +1406,123 @@ class CveSummary(SummaryResourceProperties, discriminator="CommonVulnerabilities
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, summary_type=SummaryType.COMMON_VULNERABILITIES_AND_EXPOSURES, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.summary_type = SummaryType.COMMON_VULNERABILITIES_AND_EXPOSURES  # type: ignore
 
 
-class CvssScore(_Model):
+class CveSummaryResource(
+    SummaryResourceProperties, discriminator="CVE"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for a CVE analysis summary.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Extracting", and "Analyzing".
+    :vartype provisioning_state: str or ~azure.mgmt.iotfirmwaredefense.models.ProvisioningState
+    :ivar total_cve_count: Total number of CVEs found.
+    :vartype total_cve_count: int
+    :ivar critical_cve_count: The total number of critical severity CVEs detected.
+    :vartype critical_cve_count: int
+    :ivar high_cve_count: The total number of high severity CVEs detected.
+    :vartype high_cve_count: int
+    :ivar medium_cve_count: The total number of medium severity CVEs detected.
+    :vartype medium_cve_count: int
+    :ivar low_cve_count: The total number of low severity CVEs detected.
+    :vartype low_cve_count: int
+    :ivar unknown_cve_count: The total number of unknown severity CVEs detected.
+    :vartype unknown_cve_count: int
+    :ivar summary_type: Describes the type of summary object. Required. The summary contains
+     information about the CVE analysis results.
+    :vartype summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.CVE
+    :ivar schema_version: Schema version of the CVE data for this firmware.
+    :vartype schema_version: str
+    """
+
+    total_cve_count: Optional[int] = rest_field(
+        name="totalCveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of CVEs found."""
+    critical_cve_count: Optional[int] = rest_field(
+        name="criticalCveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total number of critical severity CVEs detected."""
+    high_cve_count: Optional[int] = rest_field(
+        name="highCveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total number of high severity CVEs detected."""
+    medium_cve_count: Optional[int] = rest_field(
+        name="mediumCveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total number of medium severity CVEs detected."""
+    low_cve_count: Optional[int] = rest_field(
+        name="lowCveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total number of low severity CVEs detected."""
+    unknown_cve_count: Optional[int] = rest_field(
+        name="unknownCveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total number of unknown severity CVEs detected."""
+    summary_type: Literal[SummaryType.CVE] = rest_discriminator(name="summaryType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Describes the type of summary object. Required. The summary contains information about the CVE
+     analysis results."""
+    schema_version: Optional[str] = rest_field(
+        name="schemaVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schema version of the CVE data for this firmware."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_cve_count: Optional[int] = None,
+        critical_cve_count: Optional[int] = None,
+        high_cve_count: Optional[int] = None,
+        medium_cve_count: Optional[int] = None,
+        low_cve_count: Optional[int] = None,
+        unknown_cve_count: Optional[int] = None,
+        schema_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.summary_type = SummaryType.CVE  # type: ignore
+
+
+class CvssScore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common Vulnerability Scoring System values.
 
     :ivar version: The version of the Common Vulnerability Scoring System (CVSS). Required.
     :vartype version: int
     :ivar score: The score of the CVE according to the CVSS specified.
     :vartype score: float
+    :ivar vector_string: The CVSS vector for the specified score.
+    :vartype vector_string: str
+    :ivar exploit_maturity: The likelihood of the vulnerability being attacked based on information
+     regarding the availability of exploitation code/processes and the state of exploitation
+     techniques. Known values are: "NOT_DEFINED", "ATTACKED", "PROOF_OF_CONCEPT", and "UNREPORTED".
+    :vartype exploit_maturity: str or ~azure.mgmt.iotfirmwaredefense.models.ExploitMaturityLevel
     """
 
     version: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the Common Vulnerability Scoring System (CVSS). Required."""
     score: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The score of the CVE according to the CVSS specified."""
+    vector_string: Optional[str] = rest_field(
+        name="vectorString", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The CVSS vector for the specified score."""
+    exploit_maturity: Optional[Union[str, "_models.ExploitMaturityLevel"]] = rest_field(
+        name="exploitMaturity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The likelihood of the vulnerability being attacked based on information regarding the
+     availability of exploitation code/processes and the state of exploitation techniques. Known
+     values are: \"NOT_DEFINED\", \"ATTACKED\", \"PROOF_OF_CONCEPT\", and \"UNREPORTED\"."""
 
     @overload
     def __init__(
@@ -1366,6 +1530,79 @@ class CvssScore(_Model):
         *,
         version: int,
         score: Optional[float] = None,
+        vector_string: Optional[str] = None,
+        exploit_maturity: Optional[Union[str, "_models.ExploitMaturityLevel"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CweProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """CWE (Common Weakness Enumeration) data related to a CVE.
+
+    :ivar cwe_id: The id of the CWE.
+    :vartype cwe_id: str
+    :ivar cwe_name: The name of the CWE.
+    :vartype cwe_name: str
+    :ivar description: The description of the CWE.
+    :vartype description: str
+    """
+
+    cwe_id: Optional[str] = rest_field(name="cweId", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the CWE."""
+    cwe_name: Optional[str] = rest_field(name="cweName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the CWE."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the CWE."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cwe_id: Optional[str] = None,
+        cwe_name: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EpssProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """EPSS (Exploit Prediction Scoring System) data related to a CVE.
+
+    :ivar score: The probability of observing exploitation activity in the next 30 days.
+    :vartype score: float
+    :ivar percentile: The rank ordering of probabilities from high to low.
+    :vartype percentile: float
+    """
+
+    score: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The probability of observing exploitation activity in the next 30 days."""
+    percentile: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The rank ordering of probabilities from high to low."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        score: Optional[float] = None,
+        percentile: Optional[float] = None,
     ) -> None: ...
 
     @overload
@@ -1415,15 +1652,15 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1451,7 +1688,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Firmware(ProxyResource):
+class Firmware(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Firmware definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1522,7 +1759,7 @@ class Firmware(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FirmwareProperties(_Model):
+class FirmwareProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Firmware properties.
 
     :ivar file_name: File name for a firmware that user uploaded.
@@ -1564,7 +1801,7 @@ class FirmwareProperties(_Model):
     )
     """The status of firmware scan. Known values are: \"Pending\", \"Extracting\", \"Analyzing\",
      \"Ready\", and \"Error\"."""
-    status_messages: Optional[List["_models.StatusMessage"]] = rest_field(
+    status_messages: Optional[list["_models.StatusMessage"]] = rest_field(
         name="statusMessages", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of errors or other messages generated during firmware analysis."""
@@ -1585,7 +1822,7 @@ class FirmwareProperties(_Model):
         description: Optional[str] = None,
         file_size: Optional[int] = None,
         status: Optional[Union[str, "_models.Status"]] = None,
-        status_messages: Optional[List["_models.StatusMessage"]] = None,
+        status_messages: Optional[list["_models.StatusMessage"]] = None,
     ) -> None: ...
 
     @overload
@@ -1599,7 +1836,9 @@ class FirmwareProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FirmwareSummary(SummaryResourceProperties, discriminator="Firmware"):
+class FirmwareSummary(
+    SummaryResourceProperties, discriminator="Firmware"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for high level summary of firmware analysis results.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1620,7 +1859,7 @@ class FirmwareSummary(SummaryResourceProperties, discriminator="Firmware"):
     :ivar root_file_systems: The number of root file systems found.
     :vartype root_file_systems: int
     :ivar summary_type: Describes the type of summary. Required. The summary contains information
-     about the submitted firmware
+     about the submitted firmware.
     :vartype summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.FIRMWARE
     """
 
@@ -1652,7 +1891,7 @@ class FirmwareSummary(SummaryResourceProperties, discriminator="Firmware"):
     """The number of root file systems found."""
     summary_type: Literal[SummaryType.FIRMWARE] = rest_discriminator(name="summaryType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Describes the type of summary. Required. The summary contains information about the submitted
-     firmware"""
+     firmware."""
 
     @overload
     def __init__(
@@ -1675,10 +1914,11 @@ class FirmwareSummary(SummaryResourceProperties, discriminator="Firmware"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, summary_type=SummaryType.FIRMWARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.summary_type = SummaryType.FIRMWARE  # type: ignore
 
 
-class FirmwareUpdateDefinition(_Model):
+class FirmwareUpdateDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Firmware definition.
 
     :ivar properties: The editable properties of a firmware.
@@ -1738,7 +1978,40 @@ class FirmwareUpdateDefinition(_Model):
             super().__setattr__(key, value)
 
 
-class GenerateUploadUrlRequest(_Model):
+class FunctionCall(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Function call count for a specific function.
+
+    :ivar function_name: The name of the function. Required.
+    :vartype function_name: str
+    :ivar count: The number of calls to this function within a single binary. Required.
+    :vartype count: int
+    """
+
+    function_name: str = rest_field(name="functionName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the function. Required."""
+    count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of calls to this function within a single binary. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        function_name: str,
+        count: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GenerateUploadUrlRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for generating an upload URL.
 
     :ivar firmware_id: A unique ID for the firmware to be uploaded.
@@ -1768,7 +2041,61 @@ class GenerateUploadUrlRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class KevProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """KEV (Known Exploited Vulnerabilities) data related to a CVE, published by CISA.
+
+    :ivar known_ransomware_campaign_use: Indication if the vulnerability is known to have been
+     leveraged as part of a ransomware campaign. Known values are: "Known" and "Unknown".
+    :vartype known_ransomware_campaign_use: str or
+     ~azure.mgmt.iotfirmwaredefense.models.RansomwareCampaignUse
+    :ivar date_added: The date the vulnerability was added to the KEV catalog.
+    :vartype date_added: ~datetime.datetime
+    :ivar remediation_due_date: The date the required action is due.
+    :vartype remediation_due_date: ~datetime.datetime
+    :ivar required_action: The required action to address the vulnerability.
+    :vartype required_action: str
+    """
+
+    known_ransomware_campaign_use: Optional[Union[str, "_models.RansomwareCampaignUse"]] = rest_field(
+        name="knownRansomwareCampaignUse", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indication if the vulnerability is known to have been leveraged as part of a ransomware
+     campaign. Known values are: \"Known\" and \"Unknown\"."""
+    date_added: Optional[datetime.datetime] = rest_field(
+        name="dateAdded", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The date the vulnerability was added to the KEV catalog."""
+    remediation_due_date: Optional[datetime.datetime] = rest_field(
+        name="remediationDueDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The date the required action is due."""
+    required_action: Optional[str] = rest_field(
+        name="requiredAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The required action to address the vulnerability."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        known_ransomware_campaign_use: Optional[Union[str, "_models.RansomwareCampaignUse"]] = None,
+        date_added: Optional[datetime.datetime] = None,
+        remediation_due_date: Optional[datetime.datetime] = None,
+        required_action: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1826,7 +2153,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -1856,7 +2183,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PairedKey(_Model):
+class PairedKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a matching paired key or certificate.
 
     :ivar paired_key_id: ID of the paired key or certificate.
@@ -1891,7 +2218,7 @@ class PairedKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PasswordHash(_Model):
+class PasswordHash(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Password hash properties.
 
     :ivar password_hash_id: ID for password hash.
@@ -1959,7 +2286,7 @@ class PasswordHash(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PasswordHashResource(ProxyResource):
+class PasswordHashResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing a firmware analysis password hash result resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2029,7 +2356,49 @@ class PasswordHashResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SbomComponent(_Model):
+class PasswordHashSummaryResource(
+    SummaryResourceProperties, discriminator="PasswordHash"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for Password hash analysis summary.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Extracting", and "Analyzing".
+    :vartype provisioning_state: str or ~azure.mgmt.iotfirmwaredefense.models.ProvisioningState
+    :ivar total_password_hash_count: Total number of password hashes found.
+    :vartype total_password_hash_count: int
+    :ivar summary_type: Describes the type of summary object. Required. The summary contains
+     information about the password hash analysis results.
+    :vartype summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.PASSWORD_HASH
+    """
+
+    total_password_hash_count: Optional[int] = rest_field(
+        name="totalPasswordHashCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of password hashes found."""
+    summary_type: Literal[SummaryType.PASSWORD_HASH] = rest_discriminator(name="summaryType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Describes the type of summary object. Required. The summary contains information about the
+     password hash analysis results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_password_hash_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.summary_type = SummaryType.PASSWORD_HASH  # type: ignore
+
+
+class SbomComponent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SBOM component of a firmware.
 
     :ivar component_id: ID for the component.
@@ -2060,7 +2429,7 @@ class SbomComponent(_Model):
     """Version for the component."""
     license: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """License for the component."""
-    file_paths: Optional[List[str]] = rest_field(
+    file_paths: Optional[list[str]] = rest_field(
         name="filePaths", visibility=["read", "create", "update", "delete", "query"]
     )
     """File paths related to the component. Note, relatedFiles should be used instead of this
@@ -2079,7 +2448,7 @@ class SbomComponent(_Model):
         component_name: Optional[str] = None,
         version: Optional[str] = None,
         license: Optional[str] = None,
-        file_paths: Optional[List[str]] = None,
+        file_paths: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2093,7 +2462,7 @@ class SbomComponent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SbomComponentResource(ProxyResource):
+class SbomComponentResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing a firmware analysis SBOM component result resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2154,7 +2523,49 @@ class SbomComponentResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class Sku(_Model):
+class SbomSummaryResource(
+    SummaryResourceProperties, discriminator="SBOM"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for SBOM analysis summary.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Extracting", and "Analyzing".
+    :vartype provisioning_state: str or ~azure.mgmt.iotfirmwaredefense.models.ProvisioningState
+    :ivar total_component_count: Total number of SBOM components found.
+    :vartype total_component_count: int
+    :ivar summary_type: Describes the type of summary object. Required. The summary contains
+     information about the SBOM (Software Bill of Materials) analysis results.
+    :vartype summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.SBOM
+    """
+
+    total_component_count: Optional[int] = rest_field(
+        name="totalComponentCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of SBOM components found."""
+    summary_type: Literal[SummaryType.SBOM] = rest_discriminator(name="summaryType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Describes the type of summary object. Required. The summary contains information about the SBOM
+     (Software Bill of Materials) analysis results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_component_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.summary_type = SummaryType.SBOM  # type: ignore
+
+
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource model definition representing SKU.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
@@ -2214,7 +2625,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatusMessage(_Model):
+class StatusMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error and status message.
 
     :ivar error_code: The error code.
@@ -2247,7 +2658,7 @@ class StatusMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SummaryResource(ProxyResource):
+class SummaryResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing a firmware analysis summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2288,7 +2699,7 @@ class SummaryResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2355,7 +2766,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2375,7 +2786,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -2385,7 +2796,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2399,6 +2810,172 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
+class UnsafeFunctionCallsResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The object representing a firmware analysis unsafe function calls result resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.iotfirmwaredefense.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.iotfirmwaredefense.models.UnsafeFunctionCallsResult
+    """
+
+    properties: Optional["_models.UnsafeFunctionCallsResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.UnsafeFunctionCallsResult"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UnsafeFunctionCallsResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Unsafe function call analysis results for a binary.
+
+    :ivar file_name: The name of the binary in the firmware.
+    :vartype file_name: str
+    :ivar file_path: The full path to the binary in the firmware.
+    :vartype file_path: str
+    :ivar unsafe_function_calls: List of unsafe function calls and their counts in the binary.
+    :vartype unsafe_function_calls: list[~azure.mgmt.iotfirmwaredefense.models.FunctionCall]
+    :ivar total_unsafe_call_count: Total unsafe function call count in the binary.
+    :vartype total_unsafe_call_count: int
+    :ivar total_network_call_count: Total number of network-related function calls in the binary.
+    :vartype total_network_call_count: int
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Extracting", and "Analyzing".
+    :vartype provisioning_state: str or ~azure.mgmt.iotfirmwaredefense.models.ProvisioningState
+    """
+
+    file_name: Optional[str] = rest_field(name="fileName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the binary in the firmware."""
+    file_path: Optional[str] = rest_field(name="filePath", visibility=["read", "create", "update", "delete", "query"])
+    """The full path to the binary in the firmware."""
+    unsafe_function_calls: Optional[list["_models.FunctionCall"]] = rest_field(
+        name="unsafeFunctionCalls", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of unsafe function calls and their counts in the binary."""
+    total_unsafe_call_count: Optional[int] = rest_field(
+        name="totalUnsafeCallCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total unsafe function call count in the binary."""
+    total_network_call_count: Optional[int] = rest_field(
+        name="totalNetworkCallCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of network-related function calls in the binary."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Pending\", \"Extracting\", and \"Analyzing\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_name: Optional[str] = None,
+        file_path: Optional[str] = None,
+        unsafe_function_calls: Optional[list["_models.FunctionCall"]] = None,
+        total_unsafe_call_count: Optional[int] = None,
+        total_network_call_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UnsafeFunctionCallsSummaryResource(
+    SummaryResourceProperties, discriminator="UnsafeFunctionCalls"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for unsafe function calls analysis summary.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Pending", "Extracting", and "Analyzing".
+    :vartype provisioning_state: str or ~azure.mgmt.iotfirmwaredefense.models.ProvisioningState
+    :ivar total_file_count: Total number of files analyzed for unsafe function calls.
+    :vartype total_file_count: int
+    :ivar total_unsafe_call_count: Total number of unsafe function calls found.
+    :vartype total_unsafe_call_count: int
+    :ivar total_network_call_count: Total number of network calls found.
+    :vartype total_network_call_count: int
+    :ivar unsafe_call_totals: Total unsafe function call counts per function across all binaries.
+    :vartype unsafe_call_totals: list[~azure.mgmt.iotfirmwaredefense.models.FunctionCall]
+    :ivar summary_type: Describes the type of summary object. Required. The summary contains
+     information about the unsafe function call analysis results.
+    :vartype summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.UNSAFE_FUNCTION_CALLS
+    """
+
+    total_file_count: Optional[int] = rest_field(
+        name="totalFileCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of files analyzed for unsafe function calls."""
+    total_unsafe_call_count: Optional[int] = rest_field(
+        name="totalUnsafeCallCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of unsafe function calls found."""
+    total_network_call_count: Optional[int] = rest_field(
+        name="totalNetworkCallCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of network calls found."""
+    unsafe_call_totals: Optional[list["_models.FunctionCall"]] = rest_field(
+        name="unsafeCallTotals", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total unsafe function call counts per function across all binaries."""
+    summary_type: Literal[SummaryType.UNSAFE_FUNCTION_CALLS] = rest_discriminator(name="summaryType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Describes the type of summary object. Required. The summary contains information about the
+     unsafe function call analysis results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_file_count: Optional[int] = None,
+        total_unsafe_call_count: Optional[int] = None,
+        total_network_call_count: Optional[int] = None,
+        unsafe_call_totals: Optional[list["_models.FunctionCall"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.summary_type = SummaryType.UNSAFE_FUNCTION_CALLS  # type: ignore
+
+
 class UrlToken(_Model):
     """Url data for creating or accessing a blob file.
 
@@ -2410,7 +2987,7 @@ class UrlToken(_Model):
     """SAS URL for creating or accessing a blob file."""
 
 
-class UsageMetric(ProxyResource):
+class UsageMetric(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing how many firmwares the user has uploaded to the workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2495,7 +3072,7 @@ class UsageMetricProperties(_Model):
      \"Pending\", \"Extracting\", and \"Analyzing\"."""
 
 
-class Workspace(TrackedResource):
+class Workspace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Firmware analysis workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2533,7 +3110,7 @@ class Workspace(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.WorkspaceProperties"] = None,
         sku: Optional["_models.Sku"] = None,
     ) -> None: ...
@@ -2582,7 +3159,7 @@ class WorkspaceProperties(_Model):
      \"Pending\", \"Extracting\", and \"Analyzing\"."""
 
 
-class WorkspaceUpdate(_Model):
+class WorkspaceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the Workspace.
 
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
@@ -2593,7 +3170,7 @@ class WorkspaceUpdate(_Model):
 
     sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SKU (Stock Keeping Unit) assigned to this resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
@@ -2601,7 +3178,7 @@ class WorkspaceUpdate(_Model):
         self,
         *,
         sku: Optional["_models.Sku"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
