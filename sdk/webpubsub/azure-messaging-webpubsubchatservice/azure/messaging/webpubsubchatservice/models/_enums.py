@@ -27,6 +27,17 @@ class ChatPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allows a room operator to remove users from a room."""
 
 
+class ChatTopicState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle state of a chat topic."""
+
+    NORMAL = "Normal"
+    """The topic is active."""
+    ARCHIVED = "Archived"
+    """The topic is archived."""
+    SOFT_DELETED = "SoftDeleted"
+    """The topic has been soft deleted."""
+
+
 class ChatUserKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Discriminator for the kind of chat user."""
 
