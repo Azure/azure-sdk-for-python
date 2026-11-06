@@ -136,7 +136,7 @@ class _ScopedAzureKeyCredentialPolicy(AzureKeyCredentialPolicy):
 
 
 class _DirectContextPolicy(policies.SansIOHTTPPolicy):
-    """Apply existing direct-route context only to this endpoint's session calls.
+    """Scope direct context to configured legacy and canonical session calls.
 
     A retry policy placement ensures redirects are rechecked. Headers equal to
     SDK defaults include those prepopulated by conveniences. Track those values
@@ -147,13 +147,23 @@ class _DirectContextPolicy(policies.SansIOHTTPPolicy):
 
     def __init__(self, endpoint: str) -> None:
         self._origin = _origin(endpoint)
-        self._prefix = urlsplit(endpoint).path.rstrip("/") + "/fine_tuning/sessions"
+        base_path = urlsplit(endpoint).path.rstrip("/")
+        self._prefix = base_path + "/fine_tuning/sessions"
+        canonical = re.escape(base_path) + r"/fine_tuning_sessions"
+        self._canonical_path = re.compile(
+            canonical + r"(?:/[^/]+(?:/(?:complete|heartbeat|forward_backward|forward|optim_step|"
+            r"checkpoint|checkpoint_sample|sample|checkpoints(?:/[^/]+)?|request/[^/]+))?)?"
+        )
+        self._download_path = re.compile(canonical + r"/[^/]+/checkpoints/[^/]+/download")
         self._context_key = f"finetuning-direct-headers-{id(self)}"
 
     def on_request(self, request: Any) -> None:
         target = urlsplit(request.http_request.url)
         matches = _origin(request.http_request.url) == self._origin and (
-            target.path == self._prefix or target.path.startswith(self._prefix + "/")
+            target.path == self._prefix
+            or target.path.startswith(self._prefix + "/")
+            or self._canonical_path.fullmatch(target.path) is not None
+            or self._download_path.fullmatch(target.path) is not None
         )
         injected = request.context.get(self._context_key, {})
         # HttpRequest headers are case-insensitive, including a caller override

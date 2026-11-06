@@ -43,29 +43,42 @@ from typing import TYPE_CHECKING, Any, Callable, List, Literal, Optional, Union,
 from urllib.request import parse_http_list as _parse_http_list
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.exceptions import AzureError as _AzureError
+from azure.core.exceptions import DecodeError as _DecodeError
 from azure.core.exceptions import HttpResponseError as _HttpResponseError
 from azure.core.exceptions import ServiceRequestError as _ServiceRequestError
 from azure.core.exceptions import ServiceResponseError as _ServiceResponseError
 from azure.core.rest import HttpRequest as _HttpRequest
 
+from ._client import FineTuningSessionClient as FineTuningSessionClientGenerated
 from ._client_options import _prepare_client_options
 from ._exceptions import (
-    _classify_http_error,
-    _classify_poll_failure,
-    RateLimitedError,
     BatchTooLargeError,
     ContentionError,
     EngineDeadError,
-    MalformedDatumError,
-    OperationResultUnavailableError,
-    TrainingEngineError,
     FineTuningSessionsError,
-    RequestValidationError,
-    RequestRetryableError,
+    MalformedDatumError,
+    MalformedResponseError,
     NoCapacityError,
+    OperationResultUnavailableError,
+    RateLimitedError,
+    RequestRetryableError,
+    RequestValidationError,
+    SubscriptionNotAuthorizedError,
+    TextOnlyTrainingChunkError,
+    TrainingEngineError,
+    _classify_http_error,
+    _classify_poll_failure,
 )
 from ._logging_setup import install_default_logging as _install_default_logging
-
+from ._text_only import (
+    _is_protected_mutation,
+    _operation_result,
+    _text_sample_body,
+    _text_training_body,
+    _text_training_response,
+)
+from ._utils.model_base import SdkJSONEncoder as _SdkJSONEncoder
 from .models import (
     AdamParams,
     CreateSessionRequest,
@@ -73,6 +86,7 @@ from .models import (
     ForwardBackwardInput,
     ForwardBackwardOperationResult,
     ForwardBackwardRequest,
+    FoundryFeaturesOptInKeys,
     FromCheckpoint,
     LoRAConfig,
     LossFn,
@@ -86,11 +100,10 @@ from .models import (
     SaveCheckpointRequest,
     SaveSamplerWeightsRequest,
     TensorData,
+    TextOnlySampleInput,
+    TextOnlyTrainingInput,
     TrainingType,
-    FoundryFeaturesOptInKeys,
 )
-from ._client import FineTuningSessionClient as FineTuningSessionClientGenerated
-from ._utils.model_base import SdkJSONEncoder as _SdkJSONEncoder, _deserialize as _deserialize_model
 
 _RequestRetryableError = RequestRetryableError
 
@@ -113,6 +126,7 @@ _LOOM_SUBPATH_TO_OP_TYPE: dict[str, str] = {
     "checkpoint_sample": "save_sampler_weights",
     "sample": "sample",
 }
+
 
 # ---------------------------------------------------------------------------
 # Chunked forward_backward helpers
@@ -168,6 +182,83 @@ _MAX_CHUNK_BYTES = _max_chunk_bytes_from_env()
 
 # Bound per-call synchronous fan-out independently of caller batch size.
 _MAX_CONCURRENT_CHUNKS = 32
+
+_TEXT_ONLY_CHUNK_ERRORS = (_AzureError, RuntimeError, ValueError, TimeoutError)
+
+
+def _chunk_text_training_data(
+    text_only_input: TextOnlyTrainingInput,
+    batch: Optional[List[Datum]],
+    loss_fn: Union[str, LossFn],
+    loss_fn_config: Optional[LossFnConfig],
+) -> List[dict]:
+    """Validate the entire reference batch, then pack whole entries by wire size.
+
+    :param text_only_input: Reference-based training input.
+    :type text_only_input: ~azure.ai.finetuningsessions.models.TextOnlyTrainingInput
+    :param batch: Legacy token batch, which must be omitted in reference mode.
+    :type batch: list or None
+    :param loss_fn: Legacy loss argument; reference loss belongs inside the input.
+    :type loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+    :param loss_fn_config: Legacy loss configuration, which must be omitted.
+    :type loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
+    :return: Validated whole-reference chunks within the existing request budgets.
+    :rtype: list[dict]
+    """
+    data = _text_training_body(text_only_input, batch, loss_fn, loss_fn_config)["text_only_input"]
+    empty_body = {"text_only_input": {**data, "samples": []}}
+    overhead = len(_json.dumps(empty_body, cls=_SdkJSONEncoder, exclude_readonly=True).encode("utf-8"))
+    chunks: List[dict] = []
+    current: list[dict] = []
+    current_bytes = overhead
+    for sample in data["samples"]:
+        size = len(_json.dumps(sample, cls=_SdkJSONEncoder, exclude_readonly=True).encode("utf-8"))
+        separator = 2 if current else 0
+        if current and (len(current) >= _MAX_CHUNK_LEN or current_bytes + separator + size > _MAX_CHUNK_BYTES):
+            chunks.append({"text_only_input": {**data, "samples": current}})
+            current = []
+            current_bytes = overhead
+            separator = 0
+        current.append(sample)
+        current_bytes += separator + size
+    chunks.append({"text_only_input": {**data, "samples": current}})
+    return chunks
+
+
+def _combine_text_training_results(
+    results: List[OperationResult],
+    chunk_sizes: List[int],
+) -> ForwardBackwardOperationResult:
+    """Keep scalar output without inventing metric reduction rules.
+
+    :param results: Completed training results in submission order.
+    :type results: list[~azure.ai.finetuningsessions.models.OperationResult]
+    :param chunk_sizes: Number of sample references in each corresponding chunk.
+    :type chunk_sizes: list[int]
+    :return: Scalar-only combined result with preserved metric labels.
+    :rtype: ~azure.ai.finetuningsessions.models.ForwardBackwardOperationResult
+    """
+    typed: List[ForwardBackwardOperationResult] = []
+    for result in results:
+        if not isinstance(result, ForwardBackwardOperationResult):
+            raise MalformedResponseError("Protected training returned an unexpected result type")
+        typed.append(result)
+    combined = _combine_fwd_bwd_results(typed, chunk_sizes)
+    metrics = dict(combined.metrics or {})
+    reduced_keys = set(metrics)
+    for index, result in enumerate(typed):
+        for key, value in (result.metrics or {}).items():
+            if key not in reduced_keys:
+                metric_key = f"chunk_{index + 1}/{key}"
+                while metric_key in metrics:
+                    metric_key = f"chunk_{index + 1}/{metric_key}"
+                metrics[metric_key] = value
+    return ForwardBackwardOperationResult(
+        total_loss=combined.total_loss,
+        loss_fn_output_type="scalar",
+        loss_fn_outputs=[],
+        metrics=metrics,
+    )
 
 
 def _estimate_bytes_count(datum: Datum) -> int:
@@ -495,7 +586,7 @@ _RETRIEVE_TIMEOUT = 15.0
 #: (bounds RPS for long-running operations).  Backoff resets on every new
 #: poll loop (i.e. per-request), so each future starts polling at MIN.
 _RETRIEVE_POLL_MIN = 1.0
-_RETRIEVE_POLL_MAX = 30.0
+_RETRIEVE_POLL_MAX = 15.0
 
 #: Maximum automatic resubmits of a request that failed with a retryable
 #: (``should_retry``) envelope. Each resubmit uses a NEW request id. Kept small
@@ -1184,6 +1275,7 @@ class FineTuningSession:
         timeout_sec: float = 600.0,
         user_metadata: Optional[dict[str, Any]] = None,
         training_type: Optional[Union[str, TrainingType]] = None,
+        text_only: bool = False,
     ) -> "FineTuningSession":
         """Create a fine-tuning session and wait until the model is loaded.
 
@@ -1211,6 +1303,9 @@ class FineTuningSession:
         :keyword training_type: Training tier, specified as a string or :class:`TrainingType`.
             Set this explicitly to select a tier; omission leaves selection to the service.
         :paramtype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType or None
+        :keyword text_only: Opt in to immutable public text/function-tool mode.
+            Omission preserves token-native behavior.
+        :paramtype text_only: bool
         :note: Poll cadence is controlled by an internal adaptive backoff
             (``_RETRIEVE_POLL_MIN`` doubling up to ``_RETRIEVE_POLL_MAX``);
             it is not currently caller-configurable.
@@ -1234,6 +1329,10 @@ class FineTuningSession:
                 exclude_readonly=True,
             )
         )
+        if not isinstance(text_only, bool):
+            raise ValueError("text_only must be a bool")
+        if text_only:
+            body["text_only"] = True
         if from_checkpoint is not None:
             body["from_checkpoint"] = _json.loads(
                 _json.dumps(from_checkpoint, cls=_SdkJSONEncoder, exclude_readonly=True)
@@ -1466,25 +1565,29 @@ class FineTuningSession:
     # ── Low-level helper ──────────────────────────────────────────────────────
 
     def _submit(self, post_req: "_HttpRequest", subpath: str):
-        """Issue the submit POST and return the raw response.
+        """Issue the submit POST and return the response and parsed sample body.
 
         For a ``/sample`` request a ``429`` is healthy backpressure, not a fault:
         retry the submit in place (honoring ``Retry-After`` + jitter, clamped to
         the remaining budget) until ``_SAMPLE_THROTTLE_TIMEOUT_SEC``, then return
         the final 429 so the caller classifies it as ``RateLimitedError``.
         Sample submissions also retry the known pre-application Envoy JWT
-        rejection within a separate bounded window. Other requests are a single send.
+        rejection within a separate bounded window. Malformed successful sample
+        responses share the bounded fault retry budget. Other requests are a
+        single send.
 
         :param post_req: Prepared POST request reused for any sample-submission retries.
         :type post_req: ~azure.core.rest.HttpRequest
         :param subpath: Action path used to identify sample submissions and label retry logs.
         :type subpath: str
-        :return: The raw HTTP response after any bounded sample-submission retries;
-            unsuccessful statuses are left for the caller to classify.
-        :rtype: ~azure.core.rest.HttpResponse
+        :return: The raw HTTP response and parsed successful sampling body, or
+            ``None`` for the body when parsing is left to the caller.
+        :rtype: tuple[azure.core.rest.HttpResponse, dict[str, typing.Any] or None]
         """
         if not subpath.endswith("/sample"):
-            return self._client.send_request(post_req)
+            return self._client.send_request(post_req), None
+        max_retries = 2
+        fault_attempt = 0
         start = _time.monotonic()
         jwt_retry_state = _ProxyJwtRetryState()
         while True:
@@ -1493,35 +1596,79 @@ class FineTuningSession:
             if retry_wait is not None:
                 _time.sleep(retry_wait)
                 continue
-            if resp.status_code != 429:
-                return resp
-            elapsed = _time.monotonic() - start
-            if elapsed >= _SAMPLE_THROTTLE_TIMEOUT_SEC:
+            if resp.status_code == 429:
+                elapsed = _time.monotonic() - start
+                if elapsed >= _SAMPLE_THROTTLE_TIMEOUT_SEC:
+                    _logger.warning(
+                        "POST %s throttled (429) for %.0fs >= cap %.0fs; giving up",
+                        subpath,
+                        elapsed,
+                        _SAMPLE_THROTTLE_TIMEOUT_SEC,
+                    )
+                    return resp, None
+                retry_after = resp.headers.get("Retry-After")
+                try:
+                    wait = float(retry_after) if retry_after is not None else _RETRIEVE_POLL_MIN
+                except (ValueError, TypeError):
+                    wait = _RETRIEVE_POLL_MIN
+                wait *= 1 - 0.25 * _random.random()  # jitter
+                # Clamp to the remaining budget so a large Retry-After can never push
+                # the wall-clock cap out; the next iteration then crosses the deadline.
+                # Guaranteed > 0 (elapsed < cap here).
+                wait = min(wait, _SAMPLE_THROTTLE_TIMEOUT_SEC - elapsed)
                 _logger.warning(
-                    "POST %s throttled (429) for %.0fs >= cap %.0fs; giving up",
+                    "POST %s throttled (429), retry in %.1fs (%.0fs/%.0fs)",
                     subpath,
+                    wait,
                     elapsed,
                     _SAMPLE_THROTTLE_TIMEOUT_SEC,
                 )
-                return resp
-            retry_after = resp.headers.get("Retry-After")
-            try:
-                wait = float(retry_after) if retry_after is not None else _RETRIEVE_POLL_MIN
-            except (ValueError, TypeError):
-                wait = _RETRIEVE_POLL_MIN
-            wait *= 1 - 0.25 * _random.random()  # jitter
-            # Clamp to the remaining budget so a large Retry-After can never push
-            # the wall-clock cap out; the next iteration then crosses the deadline.
-            # Guaranteed > 0 (elapsed < cap here).
-            wait = min(wait, _SAMPLE_THROTTLE_TIMEOUT_SEC - elapsed)
-            _logger.warning(
-                "POST %s throttled (429), retry in %.1fs (%.0fs/%.0fs)",
-                subpath,
-                wait,
-                elapsed,
-                _SAMPLE_THROTTLE_TIMEOUT_SEC,
-            )
-            _time.sleep(wait)
+                _time.sleep(wait)
+                continue
+            if resp.status_code == 408 or 500 <= resp.status_code < 600:
+                if fault_attempt >= max_retries:
+                    return resp, None
+                retry_after = resp.headers.get("Retry-After")
+                try:
+                    wait = float(retry_after) if retry_after is not None else min(0.5 * (2**fault_attempt), 10.0)
+                except (ValueError, TypeError):
+                    wait = min(0.5 * (2**fault_attempt), 10.0)
+                wait *= 1 - 0.25 * _random.random()
+                fault_attempt += 1
+                _logger.warning(
+                    "POST %s returned %d, retry %d/%d in %.1fs",
+                    subpath,
+                    resp.status_code,
+                    fault_attempt,
+                    max_retries,
+                    wait,
+                )
+                _time.sleep(wait)
+                continue
+            if resp.status_code < 400:
+                data = resp.json()
+                try:
+                    data["request_id"]
+                except KeyError as exc:
+                    malformed_error = MalformedResponseError(
+                        "Successful sampling response is missing request_id",
+                        response=resp,
+                    )
+                    if fault_attempt >= max_retries:
+                        raise malformed_error from exc
+                    wait = min(0.5 * (2**fault_attempt), 10.0) * (1 - 0.25 * _random.random())
+                    fault_attempt += 1
+                    _logger.warning(
+                        "POST %s returned a malformed success response, retry %d/%d in %.1fs",
+                        subpath,
+                        fault_attempt,
+                        max_retries,
+                        wait,
+                    )
+                    _time.sleep(wait)
+                    continue
+                return resp, data
+            return resp, None
 
     def _post_and_poll(
         self,
@@ -1529,6 +1676,8 @@ class FineTuningSession:
         body_model: Any,
         extra_params: Optional[dict] = None,
         extra_result_fields: Optional[dict] = None,
+        *,
+        on_submit: Optional[Callable[[str], None]] = None,
     ) -> OperationResult:
         """POST-then-poll with bounded resubmit on retryable failures.
 
@@ -1538,8 +1687,8 @@ class FineTuningSession:
         timeout), resubmit with a **fresh request id**, up to
         ``_MAX_REQUEST_RETRIES`` times, honoring the server's ``retry_after_sec``
         hint with jitter. Retry is driven purely by the server's ``should_retry``
-        signal — the SDK does not gate on operation type or error code — so the
-        server is responsible for only setting the flag on recoverable failures.
+        signal for token-native operations. Reference-based text-only training
+        is never resubmitted, even when the server marks a failure retryable.
 
         :param subpath: Action path relative to the client endpoint.
         :type subpath: str
@@ -1552,6 +1701,8 @@ class FineTuningSession:
             deserialization when the corresponding server values are missing or
             false-valued.
         :type extra_result_fields: dict[str, typing.Any] or None
+        :keyword on_submit: Optional callback receiving each acknowledged request ID.
+        :paramtype on_submit: typing.Callable[[str], None] or None
         :return: Typed result from the completed operation, after any permitted
             resubmissions of server-marked retryable failures.
         :rtype: ~azure.ai.finetuningsessions.models.OperationResult
@@ -1563,6 +1714,15 @@ class FineTuningSession:
         }
         while True:
             try:
+                if on_submit is not None:
+                    return self._post_and_poll_once(
+                        subpath,
+                        body_model,
+                        extra_params,
+                        extra_result_fields,
+                        timeline,
+                        on_submit=on_submit,
+                    )
                 return self._post_and_poll_once(
                     subpath,
                     body_model,
@@ -1571,7 +1731,7 @@ class FineTuningSession:
                     timeline,
                 )
             except _RequestRetryableError as exc:
-                if attempt >= _MAX_REQUEST_RETRIES:
+                if _is_protected_mutation(subpath, body_model) or attempt >= _MAX_REQUEST_RETRIES:
                     raise
                 attempt += 1
                 wait = _retryable_resubmit_wait(exc.retry_after_sec)
@@ -1592,6 +1752,8 @@ class FineTuningSession:
         extra_params: Optional[dict] = None,
         extra_result_fields: Optional[dict] = None,
         timeline: Optional[dict[str, Optional[float]]] = None,
+        *,
+        on_submit: Optional[Callable[[str], None]] = None,
     ) -> OperationResult:
         """POST to a Loom action endpoint, then poll its request to completion.
 
@@ -1641,6 +1803,8 @@ class FineTuningSession:
             ``operation_started_at`` and ``poll_started_at`` monotonic timestamps.
             An unset poll start is populated in place; ``None`` creates local state.
         :type timeline: dict[str, typing.Optional[float]] or None
+        :keyword on_submit: Optional callback receiving the acknowledged request ID before polling.
+        :paramtype on_submit: typing.Callable[[str], None] or None
         :return: Completed operation result after wire-format normalization and
             insertion of caller-provided fallback fields.
         :rtype: ~azure.ai.finetuningsessions.models.OperationResult
@@ -1658,6 +1822,7 @@ class FineTuningSession:
             1,
         )
         body_json = _json.dumps(body_model, cls=_SdkJSONEncoder, exclude_readonly=True)
+        protected_training = _is_protected_mutation(subpath, body_model)
         post_params: dict = {"api-version": _API_VERSION}
         if extra_params:
             post_params.update(extra_params)
@@ -1677,7 +1842,12 @@ class FineTuningSession:
             subpath,
         )
         _log_http("request", "POST", subpath, body=_json.loads(body_json))
-        post_resp = self._submit(post_req, subpath)
+        try:
+            post_resp, data = self._submit(post_req, subpath)
+        except _DecodeError as exc:
+            if protected_training:
+                raise MalformedResponseError("Protected training returned invalid JSON") from exc
+            raise
         if post_resp.status_code >= 400:
             try:
                 resp_body = post_resp.json()
@@ -1691,9 +1861,14 @@ class FineTuningSession:
             if typed is not None:
                 raise typed
             post_resp.raise_for_status()
-        data = post_resp.json()
+        if protected_training:
+            data = _text_training_response(post_resp.json, submission=True, on_submit=on_submit)
+        elif data is None:
+            data = post_resp.json()
         _log_http("response", "POST", subpath, status=post_resp.status_code, body=data)
         request_id = data["request_id"]
+        if on_submit is not None and not protected_training:
+            on_submit(request_id)
         session_id = _resource_session_id(data.get("session_id", resource_session_id))
         _logger.info(
             "[operation_timeline] submit_completed session_id=%s request_id=%s op=%s elapsed_ms=%.1f",
@@ -1768,7 +1943,11 @@ class FineTuningSession:
                     continue
 
                 if poll_resp.status_code == 200:
-                    envelope = poll_resp.json()
+                    envelope = (
+                        _text_training_response(poll_resp.json, submission=False)
+                        if protected_training
+                        else poll_resp.json()
+                    )
                     _log_http("response", "GET", poll_path, status=200, body=envelope)
                     env_status = envelope.get("status")
                     if env_status == "completed":
@@ -1870,6 +2049,10 @@ class FineTuningSession:
                     raise typed
                 poll_resp.raise_for_status()
 
+            except _DecodeError as exc:
+                if protected_training:
+                    raise MalformedResponseError("Protected training returned invalid JSON") from exc
+                raise
             except (_ServiceRequestError, _ServiceResponseError) as exc:
                 # Transient network error — exponential backoff then retry.
                 elapsed = _time.monotonic() - poll_start
@@ -1895,16 +2078,17 @@ class FineTuningSession:
             for k, v in extra_result_fields.items():
                 if not normalized.get(k):  # server value takes precedence
                     normalized[k] = v
-        return _deserialize_model(OperationResult, normalized)
+        return _operation_result(normalized)
 
     # ── Training ──────────────────────────────────────────────────────────────
 
     def forward_backward(
         self,
-        batch: List[Datum],
+        batch: Optional[List[Datum]] = None,
         *,
         loss_fn: Union[str, LossFn] = LossFn.CROSS_ENTROPY,
         loss_fn_config: Optional[LossFnConfig] = None,
+        text_only_input: Optional[TextOnlyTrainingInput] = None,
         **kwargs: Any,
     ) -> OperationResult:
         """Submit a mini-batch for a forward + backward pass.
@@ -1921,11 +2105,34 @@ class FineTuningSession:
         :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
         :keyword loss_fn_config: Optional per-loss hyper-parameters.
         :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
+        :keyword text_only_input: Reference samples and scalar advantages, instead
+            of a token-native batch. Loss settings belong inside this object.
+            Reference training is never automatically re-POSTed.
+        :paramtype text_only_input: ~azure.ai.finetuningsessions.models.TextOnlyTrainingInput or None
         :return: :class:`~azure.ai.finetuningsessions.models.OperationResult`.
         :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
         # Keep **kwargs accepted and ignored for preview-call compatibility.
         # pylint: disable=unused-argument
+        if text_only_input is not None:
+            text_chunks = _chunk_text_training_data(text_only_input, batch, loss_fn, loss_fn_config)
+            subpath = f"/fine_tuning/sessions/{self.session_id}/forward_backward"
+            if len(text_chunks) == 1:
+                return self._post_and_poll(subpath, text_chunks[0])
+            results: List[OperationResult] = []
+            request_ids: List[str] = []
+            for index, body in enumerate(text_chunks):
+                try:
+                    result = self._post_and_poll(subpath, body, on_submit=request_ids.append)
+                    results.append(result)
+                except _TEXT_ONLY_CHUNK_ERRORS as exc:
+                    raise TextOnlyTrainingChunkError(request_ids, index, "submit/poll") from exc
+            return _combine_text_training_results(
+                results,
+                [len(body["text_only_input"]["samples"]) for body in text_chunks],
+            )
+        if batch is None:
+            raise ValueError("Supply exactly one of batch or text_only_input")
         chunks = _chunk_data(batch)
         if len(chunks) <= 1:
             # Single chunk — no combining needed.
@@ -2143,10 +2350,11 @@ class FineTuningSession:
 
     def sample(
         self,
-        prompt_tokens: List[int] | ModelInput,
-        sampling_params: SamplingParams,
+        prompt_tokens: Optional[List[int] | ModelInput] = None,
+        sampling_params: Optional[SamplingParams] = None,
         *,
         checkpoint_id: str,
+        text_only_input: Optional[TextOnlySampleInput] = None,
         num_samples: int = 1,
         sampling_session_id: Optional[str] = None,
         seq_id: Optional[int] = None,
@@ -2167,6 +2375,9 @@ class FineTuningSession:
         :type sampling_params: ~azure.ai.finetuningsessions.models.SamplingParams
         :keyword checkpoint_id: Sampler checkpoint ID returned by ``save_weights_for_sampler``.
         :paramtype checkpoint_id: str
+        :keyword text_only_input: Complete editable public message/tool history,
+            instead of prompt_tokens. No tokenizer or private history is used.
+        :paramtype text_only_input: ~azure.ai.finetuningsessions.models.TextOnlySampleInput or None
         :keyword num_samples: Number of independent completions to generate. Default 1.
         :paramtype num_samples: int
         :keyword sampling_session_id: ID returned by a prior ``save_weights_for_sampler`` call.
@@ -2190,6 +2401,27 @@ class FineTuningSession:
         """
         # Keep **kwargs accepted and ignored for preview-call compatibility.
         # pylint: disable=unused-argument
+        if sampling_params is None:
+            raise ValueError("sampling_params is required")
+        if text_only_input is not None:
+            body = _text_sample_body(
+                text_only_input,
+                prompt_tokens,
+                sampling_params,
+                num_samples=num_samples,
+                sampling_session_id=sampling_session_id,
+                seq_id=seq_id,
+                prompt_logprobs=prompt_logprobs,
+                topk_prompt_logprobs=topk_prompt_logprobs,
+            )
+            with self._client._sample_semaphore:  # pylint: disable=protected-access
+                return self._post_and_poll(
+                    f"/fine_tuning/sessions/{self.session_id}/sample",
+                    body,
+                    extra_params={"checkpoint_id": checkpoint_id},
+                )
+        if prompt_tokens is None:
+            raise ValueError("Supply exactly one of prompt_tokens or text_only_input")
         # Same-SDK helper must share the client's lifecycle-scoped sampling limit.
         with self._client._sample_semaphore:  # pylint: disable=protected-access
             return self._post_and_poll(
@@ -2295,6 +2527,8 @@ __all__: list[str] = [
     "FineTuningSessionClient",
     "FineTuningSession",
     "FineTuningSessionsError",
+    "MalformedResponseError",
+    "TextOnlyTrainingChunkError",
     "BatchTooLargeError",
     "NoCapacityError",
     "RateLimitedError",
@@ -2304,6 +2538,7 @@ __all__: list[str] = [
     "ContentionError",
     "RequestValidationError",
     "RequestRetryableError",
+    "SubscriptionNotAuthorizedError",
     "MalformedDatumError",
 ]
 

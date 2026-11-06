@@ -258,8 +258,11 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar ejectable: Opt the session into idle hibernation. Default False.
     :vartype ejectable: bool
     :ivar training_type: Training tier. Set this property explicitly to select the tier. If
-     omitted, tier selection is left to the service. Known values are: "GlobalStandard",
-     "DatazoneStandard", and "DeveloperTier".
+     omitted, tier selection is left to the service: sessions assigned to the M365 worker pool
+     default to DatazoneStandard; other pools retain the GlobalStandard baseline. Existing
+     DeveloperTier metadata selection and explicit tier choices are preserved. No client-side
+     default is applied. Known values are: "GlobalStandard", "DatazoneStandard", and
+     "DeveloperTier".
     :vartype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType
     """
 
@@ -277,8 +280,10 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Training tier. Set this property explicitly to select the tier. If omitted, tier selection is
-     left to the service. Known values are: \"GlobalStandard\", \"DatazoneStandard\", and
-     \"DeveloperTier\"."""
+     left to the service: sessions assigned to the M365 worker pool default to DatazoneStandard;
+     other pools retain the GlobalStandard baseline. Existing DeveloperTier metadata selection and
+     explicit tier choices are preserved. No client-side default is applied. Known values are:
+     \"GlobalStandard\", \"DatazoneStandard\", and \"DeveloperTier\"."""
 
     @overload
     def __init__(
@@ -531,7 +536,8 @@ class ForwardBackwardOperationResult(
 
 
 class ForwardBackwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/forward_backward.
+    """Existing token-native raw-operation constructor. Maintained convenience methods serialize
+    reference-based text-only requests without changing it.
 
     :ivar forward_backward_input: Batch inputs for the combined forward and backward pass.
      Required.
@@ -598,7 +604,7 @@ class ForwardInput(ForwardBackwardInput):  # pylint: disable=docstring-keyword-s
 
 
 class ForwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/forward.
+    """Request body for POST /fine_tuning_sessions/{sessionId}/forward.
 
     :ivar forward_input: Batch inputs for the forward-only pass. Required.
     :vartype forward_input: ~azure.ai.finetuningsessions.models.ForwardInput
@@ -999,7 +1005,7 @@ class OptimStepOperationResult(
 
 
 class OptimStepRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/optim_step.
+    """Request body for POST /fine_tuning_sessions/{sessionId}/optim_step.
 
     :ivar adam_params: Adam optimizer parameters used to apply accumulated gradients. Required.
     :vartype adam_params: ~azure.ai.finetuningsessions.models.AdamParams
@@ -1305,7 +1311,7 @@ class SaveCheckpointOperationResult(
 
 
 class SaveCheckpointRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint.
+    """Request body for POST /fine_tuning_sessions/{sessionId}/checkpoint.
 
     :ivar path: User-supplied checkpoint identifier. Alphanumeric plus underscores and hyphens; max
      255 characters. Required.

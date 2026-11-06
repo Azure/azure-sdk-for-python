@@ -57,7 +57,7 @@ def build_sessions_create_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions"
+    _url = "/fine_tuning_sessions"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -85,7 +85,7 @@ def build_sessions_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions"
+    _url = "/fine_tuning_sessions"
 
     # Construct parameters
     if limit is not None:
@@ -114,7 +114,7 @@ def build_sessions_get_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}"
+    _url = "/fine_tuning_sessions/{sessionId}"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -144,7 +144,7 @@ def build_sessions_unload_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/complete"
+    _url = "/fine_tuning_sessions/{sessionId}/complete"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -174,7 +174,7 @@ def build_sessions_heartbeat_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/heartbeat"
+    _url = "/fine_tuning_sessions/{sessionId}/heartbeat"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -205,7 +205,7 @@ def build_training_forward_backward_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/forward_backward"
+    _url = "/fine_tuning_sessions/{sessionId}/forward_backward"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -238,7 +238,7 @@ def build_training_optim_step_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/optim_step"
+    _url = "/fine_tuning_sessions/{sessionId}/optim_step"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -271,7 +271,7 @@ def build_checkpoints_save_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/checkpoint"
+    _url = "/fine_tuning_sessions/{sessionId}/checkpoint"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -304,7 +304,7 @@ def build_checkpoints_save_sampler_weights_request(  # pylint: disable=name-too-
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/checkpoint_sample"
+    _url = "/fine_tuning_sessions/{sessionId}/checkpoint_sample"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -336,7 +336,7 @@ def build_checkpoints_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/checkpoints"
+    _url = "/fine_tuning_sessions/{sessionId}/checkpoints"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -367,7 +367,7 @@ def build_checkpoints_get_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/checkpoints/{checkpointId}"
+    _url = "/fine_tuning_sessions/{sessionId}/checkpoints/{checkpointId}"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
         "checkpointId": _SERIALIZER.url("checkpoint_id", checkpoint_id, "str"),
@@ -400,7 +400,7 @@ def build_sampling_sample_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/sample"
+    _url = "/fine_tuning_sessions/{sessionId}/sample"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -434,7 +434,7 @@ def build_operations_get_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/request/{requestId}"
+    _url = "/fine_tuning_sessions/{sessionId}/request/{requestId}"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
         "requestId": _SERIALIZER.url("request_id_parameter", request_id_parameter, "str"),
