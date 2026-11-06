@@ -45,7 +45,6 @@ except ImportError:
 
 DECISION_MODEL_TYPE = "decision"
 _DECISION_TOKEN_SCOPE = "https://cognitiveservices.azure.com/.default"
-_DECISION_RETRY_STATUS_CODES = [408, 429, 500, 502, 503, 504, 529]
 LOGGER = logging.getLogger(__name__)
 _PREFIX = "azure.ai.evaluation.decision."
 _DECISION_CONFIG_KEYS = {
@@ -62,6 +61,8 @@ _DEFAULT_PROTOCOL = "microsoft"
 _INVALID_EVIDENCE = "Decision evidence must be finite JSON-serializable data."
 # The provider error code, and failed-row error kind, of a content filter rejecting the evaluated content.
 CONTENT_FILTER = "content_filter"
+# The failed-row error kind of an evaluation whose question the decision model refused to answer.
+MODEL_REFUSAL = "model_refusal"
 # Set on the EvaluationException raised when the cancellation callback stops a request. Unlike the execution
 # summary, which is omitted when it exceeds the hosted metadata bounds, it is always present.
 CANCELLED_BY_CALLBACK = "_decision_cancelled_by_callback"
@@ -70,6 +71,34 @@ _IGNORED_CONFIG_KEYS = {"api_version"}
 _USAGE_DETAIL_FIELDS = (
     ("input_tokens_details", ("cached_tokens", "cache_write_tokens")),
     ("output_tokens_details", ("reasoning_tokens",)),
+)
+_ERROR_CODE = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{0,127}")
+# A 422 states its reason only in a ``detail`` sentence, which is never surfaced. These reasons are recognized by the
+# provider's fixed sentence openings, so a quoted question identifier later in the sentence cannot change the kind, and
+# reported as a bounded ``decision_model.error_kind``; any other sentence is ignored. Only the sentence's first
+# characters are read, which hold every opening, so a long question identifier cannot hide the reason.
+_PROVIDER_DETAIL_KINDS = (
+    (
+        re.compile(r"invalid model request: Question prompt exceeds the \d+-token context limit\b"),
+        "context_window_exceeded",
+    ),
+    (
+        re.compile(
+            r"invalid TypeSafe request: request is about \d+ tokens; the limit for the state plus all questions is \d+"
+        ),
+        "request_token_limit_exceeded",
+    ),
+    (re.compile(r"invalid TypeSafe request: request has \d+ questions; the limit is \d+"), "question_limit_exceeded"),
+    (re.compile(r"invalid TypeSafe request: invalid [a-z_]+ for question \""), "invalid_question"),
+)
+_MAX_PROVIDER_DETAIL_CHARS = 1024
+# Reported when a request exceeds the caller's max_request_bytes or max_state_question_bytes and is not sent.
+_REQUEST_BYTES_EXCEEDED = "request_bytes_exceeded"
+# Every bounded decision_model.error_kind that failed result rows keep and evaluation metrics report.
+DECISION_ERROR_KINDS = tuple(kind for _, kind in _PROVIDER_DETAIL_KINDS) + (
+    _REQUEST_BYTES_EXCEEDED,
+    CONTENT_FILTER,
+    MODEL_REFUSAL,
 )
 
 
@@ -381,6 +410,26 @@ def _is_finite_number(value: Any) -> bool:
         return False
 
 
+def _provider_error_code(payload: Any) -> Optional[str]:
+    """Return the provider's nested ``error.code`` when it is a bounded identifier, otherwise None."""
+    provider_error = payload.get("error") if isinstance(payload, dict) else None
+    code = provider_error.get("code") if isinstance(provider_error, dict) else None
+    return code if isinstance(code, str) and _ERROR_CODE.fullmatch(code) is not None else None
+
+
+def _provider_error_kind(status: int, payload: Any) -> Optional[str]:
+    """Name a 422 that states its reason only in a ``detail`` sentence, from the sentence's fixed opening.
+
+    For example ``{"detail": "invalid model request: Question prompt exceeds the 32768-token context limit"}`` is
+    ``context_window_exceeded``. Any other status or unrecognized sentence returns None and is never surfaced.
+    """
+    detail = payload.get("detail") if status == 422 and isinstance(payload, dict) else None
+    if not isinstance(detail, str):
+        return None
+    opening = detail[:_MAX_PROVIDER_DETAIL_CHARS]
+    return next((kind for phrase, kind in _PROVIDER_DETAIL_KINDS if phrase.match(opening)), None)
+
+
 def _probability(value: Any) -> float:
     if not _is_finite_number(value):
         raise ValueError("Decision probabilities must be finite numbers.")
@@ -466,6 +515,11 @@ class DecisionModelRunner:
     encoding, so every protocol admits the same evidence; ``max_state_question_bytes`` applies to the largest
     individual ``{"state", "question"}`` pair. ``max_response_bytes`` limits acceptance before parsing,
     not transport allocation.
+    A failed request names a recognized reason in ``decision_model.error_kind`` of the error's properties:
+    ``context_window_exceeded`` when the evidence and one question exceed the model's context window,
+    ``request_token_limit_exceeded``, ``question_limit_exceeded`` or ``invalid_question`` for the provider's other
+    rejections, ``request_bytes_exceeded`` for a request over the byte limits, which is not sent, and
+    ``content_filter`` when the provider's content filter rejects the evaluated content.
     """
 
     SUPPORTED_PROTOCOLS = frozenset(DECISION_PROTOCOLS)
@@ -639,6 +693,7 @@ class DecisionModelRunner:
             if (self._max_request_bytes is not None and len(request) > self._max_request_bytes) or (
                 self._max_state_question_bytes is not None and state_question_bytes > self._max_state_question_bytes
             ):
+                properties["decision_model"]["error_kind"] = _REQUEST_BYTES_EXCEEDED
                 raise _failed("The decision request exceeds the configured byte budget.", ErrorBlame.USER_ERROR)
             try:
                 body = self._protocol.encode(self._deployment, state, questions)
@@ -734,13 +789,14 @@ class DecisionModelRunner:
 
         policies: Dict[str, Any] = {
             "custom_hook_policy": execution,
+            # azure-core retries 408, 429, 500, 502, 503, 504 and 506 through 998 by default; POST is opted in
+            # per request below.
             "retry_policy": AsyncRetryPolicy(
                 retry_total=self._max_retries,
                 retry_connect=self._max_retries,
                 retry_read=self._max_retries,
                 retry_status=self._max_retries,
                 retry_backoff_factor=0.8,
-                retry_on_status_codes=_DECISION_RETRY_STATUS_CODES,
             ),
             "redirect_policy": AsyncRedirectPolicy(permit_redirects=False),
         }
@@ -783,21 +839,19 @@ class DecisionModelRunner:
                 payload = None
         if status != 200:
             blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
-            provider_error = payload.get("error") if isinstance(payload, dict) else None
-            code = provider_error.get("code") if isinstance(provider_error, dict) else None
-            diagnostic = (
-                f" ({code})"
-                if isinstance(code, str) and re.fullmatch(r"[A-Za-z][A-Za-z0-9_.-]{0,127}", code) is not None
-                else ""
-            )
+            code = _provider_error_code(payload)
+            kind = _provider_error_kind(status, payload)
+            if kind is None and code == CONTENT_FILTER:
+                # The provider's content filter rejected the evaluated content, not how the request was built.
+                kind = CONTENT_FILTER
+            diagnostic = f" ({code or kind})" if code or kind else ""
             message = f"The decision model returned HTTP {status}{diagnostic}."
-            if diagnostic and code == self._protocol.mismatch_code:
+            if code is not None and code == self._protocol.mismatch_code:
                 message = f"{message} {self._protocol.mismatch_hint}"
             error = _failed(message, blame)
             error.properties = self._response_properties(payload)
-            if code == CONTENT_FILTER:
-                # The provider's content filter rejected the evaluated content, not how the request was built.
-                error.properties["decision_model"]["error_kind"] = CONTENT_FILTER
+            if kind is not None:
+                error.properties["decision_model"]["error_kind"] = kind
             raise error
         return payload
 

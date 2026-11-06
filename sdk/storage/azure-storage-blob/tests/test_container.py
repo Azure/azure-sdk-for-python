@@ -15,7 +15,7 @@ import requests
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers import CaptureAuthHeader, _find_session_policy, _parse_session_token
+from test_helpers import CaptureAuthHeader, _find_session_policy
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
@@ -2773,7 +2773,6 @@ class TestStorageContainer(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=credential,
             use_session=True,
-            api_version="2026-10-06",
         )
         cache = _find_session_policy(service._pipeline)._session_provider._cache._entry
         container1_name = self.get_resource_name("utcontainer1")
@@ -2787,13 +2786,15 @@ class TestStorageContainer(StorageRecordedTestCase):
         container1.upload_blob(
             blob1_name, blob1_data, overwrite=True, raw_response_hook=capture_auth_header.hook("c1_upload")
         )
-        assert capture_auth_header["c1_upload"].startswith("Bearer ")
+        is_bearer_auth = capture_auth_header["c1_upload"].startswith("Bearer ")
+        assert is_bearer_auth
 
         blob1_actual = container1.download_blob(
             blob1_name, raw_response_hook=capture_auth_header.hook("c1_download")
         ).readall()
         assert blob1_data == blob1_actual
-        assert capture_auth_header["c1_download"].startswith("Session ")
+        is_session_auth = capture_auth_header["c1_download"].startswith("Session ")
+        assert is_session_auth
         session1 = cache[container1_name]
         # Recorded expiration is stale so pinning it to a future time to test caching
         session1.expires_at = datetime.now(session1.expires_at.tzinfo) + timedelta(hours=1)
@@ -2809,13 +2810,15 @@ class TestStorageContainer(StorageRecordedTestCase):
         container2.upload_blob(
             blob2_name, blob2_data, overwrite=True, raw_response_hook=capture_auth_header.hook("c2_upload")
         )
-        assert capture_auth_header["c2_upload"].startswith("Bearer ")
+        is_bearer_auth = capture_auth_header["c2_upload"].startswith("Bearer ")
+        assert is_bearer_auth
 
         blob2_actual = container2.download_blob(
             blob2_name, raw_response_hook=capture_auth_header.hook("c2_download")
         ).readall()
         assert blob2_data == blob2_actual
-        assert capture_auth_header["c2_download"].startswith("Session ")
+        is_session_auth = capture_auth_header["c2_download"].startswith("Session ")
+        assert is_session_auth
         session2 = cache[container2_name]
         session2.expires_at = datetime.now(session2.expires_at.tzinfo) + timedelta(hours=1)
 
@@ -2825,14 +2828,16 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob1_name, raw_response_hook=capture_auth_header.hook("c1_download2")
         ).readall()
         assert blob1_data == blob1_actual
-        assert capture_auth_header["c1_download2"].startswith("Session ")
+        is_session_auth = capture_auth_header["c1_download2"].startswith("Session ")
+        assert is_session_auth
         assert cache[container1_name] is session1
 
         blob2_actual = container2.download_blob(
             blob2_name, raw_response_hook=capture_auth_header.hook("c2_download2")
         ).readall()
         assert blob2_data == blob2_actual
-        assert capture_auth_header["c2_download2"].startswith("Session ")
+        is_session_auth = capture_auth_header["c2_download2"].startswith("Session ")
+        assert is_session_auth
         assert cache[container2_name] is session2
 
         session1.expires_at = datetime.fromtimestamp(0, tz=session1.expires_at.tzinfo)
@@ -2841,7 +2846,8 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob1_name, raw_response_hook=capture_auth_header.hook("c1_download3")
         ).readall()
         assert blob1_data == blob1_actual
-        assert capture_auth_header["c1_download3"].startswith("Session ")
+        is_session_auth = capture_auth_header["c1_download3"].startswith("Session ")
+        assert is_session_auth
         assert cache[container1_name] is not session1
         assert cache[container1_name] is not session2
 
@@ -2857,7 +2863,6 @@ class TestStorageContainer(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=credential,
             use_session=False,
-            api_version="2026-10-06",
         )
         container = service.get_container_client(self.get_resource_name("utcontainer"))
         try:
@@ -2869,13 +2874,15 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.upload_blob(
             blob_name, blob_data, overwrite=True, raw_response_hook=capture_auth_header.hook("upload")
         )
-        assert capture_auth_header["upload"].startswith("Bearer ")
+        is_bearer_auth = capture_auth_header["upload"].startswith("Bearer ")
+        assert is_bearer_auth
 
         blob_actual = container.download_blob(
             blob_name, raw_response_hook=capture_auth_header.hook("download")
         ).readall()
         assert blob_data == blob_actual
-        assert capture_auth_header["download"].startswith("Bearer ")
+        is_bearer_auth = capture_auth_header["download"].startswith("Bearer ")
+        assert is_bearer_auth
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2893,14 +2900,12 @@ class TestStorageContainer(StorageRecordedTestCase):
             credential=credential,
             use_session=True,
             session_provider=session_provider,
-            api_version="2026-10-06",
         )
         service2 = BlobServiceClient(
             account_url,
             credential=credential,
             use_session=True,
             session_provider=session_provider,
-            api_version="2026-10-06",
         )
 
         assert _find_session_policy(service1._pipeline)._session_provider is session_provider
@@ -2920,7 +2925,8 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob_name, raw_response_hook=capture_auth_header.hook("c1_download")
         ).readall()
         assert blob_data == blob_actual
-        assert capture_auth_header["c1_download"].startswith("Session ")
+        is_session_auth = capture_auth_header["c1_download"].startswith("Session ")
+        assert is_session_auth
         session = cache[container_name]
         session.expires_at = datetime.now(session.expires_at.tzinfo) + timedelta(hours=1)
 
@@ -2929,5 +2935,6 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob_name, raw_response_hook=capture_auth_header.hook("c2_download")
         ).readall()
         assert blob_data == blob_actual
-        assert capture_auth_header["c2_download"].startswith("Session ")
+        is_session_auth = capture_auth_header["c2_download"].startswith("Session ")
+        assert is_session_auth
         assert cache[container_name] is session

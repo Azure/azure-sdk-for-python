@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b59 (Unreleased)
+## 1.0.0b60 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b59 (2026-11-05)
 
 ### Features Added
 - Add support for experimental features flag
@@ -11,14 +21,13 @@
   existing limits apply (256kb for GenAI attributes and 8kb for all other custom properties)
   ([#49648](https://github.com/Azure/azure-sdk-for-python/pull/49648))
 
-### Breaking Changes
-
 ### Bugs Fixed
 - Fix HTTP dependency target being rendered as `host:None` when the span has
   `server.address` but no `server.port` (e.g. default-port requests traced by azure-core)
   ([#49344](https://github.com/Azure/azure-sdk-for-python/pull/49344))
-
-### Other Changes
+- Preserve the sampling decision and sample rate of local parent spans when using the
+  rate-limited sampler
+  ([#49569](https://github.com/Azure/azure-sdk-for-python/pull/49569))
 
 ## 1.0.0b58 (2026-10-07)
 

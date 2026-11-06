@@ -222,6 +222,85 @@ class TestDecisionBatchPersistence:
         )
         assert _decision_error_metadata(error)["properties"] == {"decision_model": {}}
 
+    @pytest.mark.parametrize(
+        "kind,kept",
+        [
+            ("context_window_exceeded", True),
+            ("request_token_limit_exceeded", True),
+            ("question_limit_exceeded", True),
+            ("invalid_question", True),
+            ("request_bytes_exceeded", True),
+            ("DeploymentNotFound", False),
+            ("context_window_exceeded\nprivate", False),
+            (42, False),
+            (None, False),
+        ],
+    )
+    def test_failed_metadata_keeps_only_a_known_error_kind(self, kind, kept):
+        error = EvaluationException("synthetic failure", properties={"decision_model": {"error_kind": kind}})
+        assert _decision_error_metadata(error)["properties"] == {"decision_model": {"error_kind": kind} if kept else {}}
+
+    @pytest.mark.parametrize(
+        "detail,max_request_bytes,kind,message",
+        [
+            (
+                "invalid model request: Question prompt exceeds the 32768-token context limit including the decision "
+                "token",
+                None,
+                "context_window_exceeded",
+                "The decision model returned HTTP 422 (context_window_exceeded).",
+            ),
+            (None, 16, "request_bytes_exceeded", "The decision request exceeds the configured byte budget."),
+        ],
+        ids=["provider", "byte_limit"],
+    )
+    def test_failure_reason_survives_batch_conversion(
+        self, batch_client, tmp_path, monkeypatch, detail, max_request_bytes, kind, message
+    ):
+        sent = []
+
+        class Response(HttpResponse):
+            def __init__(self, request):
+                super().__init__(request, None)
+                self.status_code = 422
+                self.headers = {}
+
+            def body(self):
+                return json.dumps({"detail": detail}).encode()
+
+        class Transport(AsyncHttpTransport):
+            async def open(self):
+                pass
+
+            async def close(self):
+                pass
+
+            async def __aexit__(self, *_):
+                await self.close()
+
+            async def send(self, request, **kwargs):
+                sent.append(request)
+                return Response(request)
+
+        monkeypatch.setattr(
+            _model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=Transport())
+        )
+
+        async def judge(query):
+            runner = DecisionModelRunner(CONFIG, max_retries=0, max_request_bytes=max_request_bytes)
+            return await strategy(runner).evaluate({"query": query})
+
+        _, rows = convert_batch(batch_client, judge, tmp_path)
+        result = next(item for item in rows[0]["results"] if item["name"] == "judge")
+        assert result["status"] == "error" and result["score"] is None
+        assert result["sample"]["error"]["blame"] == "UserError"
+        assert message in result["sample"]["error"]["message"]
+        native = result["properties"]["decision_model"]
+        assert native["error_kind"] == kind
+        assert native["execution"]["last_http_status"] == (422 if detail else None)
+        assert len(sent) == (1 if detail else 0)
+        assert "32768-token" not in json.dumps(rows)
+
     @pytest.mark.parametrize("members", [5, 6])
     @pytest.mark.parametrize("case", ["completed", "skipped", "mixed", "semantic_error"])
     @pytest.mark.parametrize("primary_first", [False, True])

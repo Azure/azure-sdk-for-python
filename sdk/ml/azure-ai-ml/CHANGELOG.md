@@ -3,6 +3,7 @@
 ## 1.36.0 (unreleased)
 
 ### Features Added
+- Added experimental `MLClient.data.resolve_path()` to resolve AML datastore paths to Blob HTTPS or ADLS Gen2/OneLake ABFSS locations, preserving Blob-backed MLTable sources and transformations.
 - Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
 
 ### Bugs Fixed
