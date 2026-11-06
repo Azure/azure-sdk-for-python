@@ -13,7 +13,7 @@ import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
-from test_vector_policy import EGS_SKIP_REASON, VectorPolicyTestData
+from test_vector_policy import EGS_SKIP_REASON, VectorPolicyTestData, get_vector_data_type_test_data
 
 @pytest.mark.cosmosSearchQuery
 class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
@@ -48,9 +48,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # authorize control-plane operations.
         self.client = CosmosClient(self.host, self.masterKey)
         self.test_db = self.client.get_database_client(self.test_db.id)
-        # Data-plane (AAD): added for parity with the key/data client setup. Not
-        # exercised here because every runnable test is control-plane (vector policy
-        # validation). Route per-test data-plane ops through self.data_client when added.
+        # Item operations use the configured key/AAD data-plane client.
         self.data_client = test_config.TestConfig.create_data_client_async()
 
     async def asyncTearDown(self):
@@ -74,9 +72,17 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.test_db.delete_container(created_container.id)
 
+    @pytest.mark.cosmosAADQuery
     async def test_create_valid_vector_embedding_policy_async(self):
         # Using valid data types
         data_types = ["float32", "float16", "int8", "uint8"]
+        # Flat indexes provide exact ranking without approximate-index training or build waits.
+        indexing_policy = {
+            "indexingMode": "consistent",
+            "includedPaths": [{"path": "/*"}],
+            "excludedPaths": [{"path": "/vector1/*"}],
+            "vectorIndexes": [{"path": "/vector1", "type": "flat"}],
+        }
         for data_type in data_types:
             vector_embedding_policy = {
                 "vectorEmbeddings": [
@@ -87,13 +93,30 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                         "distanceFunction": "euclidean"
                     }]}
             container_id = 'vector_container_' + data_type
-            created_container = await self.test_db.create_container(
+            created_container, created_properties = await self.test_db.create_container(
                 id=container_id,
                 partition_key=PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy)
+                vector_embedding_policy=vector_embedding_policy,
+                indexing_policy=indexing_policy,
+                return_properties=True)
             try:
-                properties = await created_container.read()
-                assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
+                for properties in (created_properties, await created_container.read()):
+                    assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+                    assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+
+                data_container = self.data_client.get_database_client(self.test_db.id).get_container_client(container_id)
+                items, queries = get_vector_data_type_test_data(data_type)
+                for item in items:
+                    await data_container.create_item(item)
+
+                for query, parameters, expected_ids, expected_distances in queries:
+                    with self.subTest(data_type=data_type, query=query):
+                        results = [item async for item in data_container.query_items(
+                            query=query,
+                            parameters=parameters,
+                        )]
+                        assert [item["id"] for item in results] == expected_ids
+                        assert [item["distance"] for item in results] == pytest.approx(expected_distances)
             finally:
                 await self.test_db.delete_container(container_id)
 

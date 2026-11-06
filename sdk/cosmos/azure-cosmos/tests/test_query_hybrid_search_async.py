@@ -10,9 +10,10 @@ import pytest
 import azure.cosmos.exceptions as exceptions
 import hybrid_search_data
 import test_config
-from azure.cosmos import http_constants, CosmosClient as CosmosSyncClient
+from azure.cosmos import documents, http_constants, CosmosClient as CosmosSyncClient
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
+from test_query_hybrid_search import verify_gateway_vector_query_responses
 
 
 @pytest.mark.cosmosAADQuery
@@ -67,6 +68,32 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncTearDown(self):
         await self.client.close()
+
+    async def test_multi_type_vector_rrf_gateway_async(self):
+        """Query all four DiskANN embedding types together on a vector-enabled live account."""
+        assert self.client.client_connection.connection_policy.ConnectionMode == documents.ConnectionMode.Gateway
+        data = hybrid_search_data.get_multi_type_vector_search_data()
+        key_database = self.sync_client.get_database_client(self.test_db.id)
+        container = key_database.create_container(
+            id="vector-rrf-" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400,
+            indexing_policy=data["indexing_policy"],
+            vector_embedding_policy=data["vector_embedding_policy"],
+        )
+        self.addCleanup(key_database.delete_container, container.id)
+        data_container = self.test_db.get_container_client(container.id)
+        for item in data["items"]:
+            await data_container.create_item(item)
+
+        responses = []
+        results = [item async for item in data_container.query_items(
+            query=data["query"],
+            parameters=data["parameters"],
+            raw_response_hook=responses.append,
+        )]
+        verify_gateway_vector_query_responses(responses, data_container.container_link)
+        assert results == data["expected_ids"]
 
     async def test_wrong_hybrid_search_queries_async(self):
         try:

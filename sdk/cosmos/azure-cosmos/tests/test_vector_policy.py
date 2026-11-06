@@ -84,6 +84,40 @@ VectorPolicyTestData = {
     },
 }
 
+
+def get_vector_data_type_test_data(data_type):
+    vectors = {
+        "float16": [-1.5, 0.5, 2.0],
+        "float32": [-2.25, 1.25, 3.0],
+        "int8": [-8, 4, 12],
+        "uint8": [128, 192, 240],
+    }
+    vector = vectors[data_type] + [0] * 253
+    items = [
+        {"id": f"item{i}", "vector1": [vector[0] + distance, *vector[1:]]}
+        for i, distance in enumerate([3, 0, 2, 1])
+    ]
+    distance_expression = "VectorDistance(c.vector1, @vector)"
+    parameters = [{"name": "@vector", "value": vector}]
+    queries = [
+        (
+            f"SELECT TOP 3 c.id, {distance_expression} AS distance "
+            f"FROM c ORDER BY {distance_expression}",
+            parameters,
+            ["item1", "item3", "item2"],
+            [0, 1, 2],
+        ),
+        (
+            f"SELECT TOP 2 c.id, {distance_expression} AS distance "
+            f"FROM c WHERE c.id != @excludedId ORDER BY {distance_expression}",
+            parameters + [{"name": "@excludedId", "value": "item1"}],
+            ["item3", "item2"],
+            [1, 2],
+        ),
+    ]
+    return items, queries
+
+
 @pytest.mark.cosmosSearchQuery
 class TestVectorPolicy(unittest.TestCase):
     client: CosmosClient = None
@@ -104,11 +138,7 @@ class TestVectorPolicy(unittest.TestCase):
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.key_client = cls.client  # alias  -  control-plane operations stay on key-auth (Batch 17 prep)
-        # AAD data client added for parity with the key/data client setup. Not exercised
-        # here because every runnable test in this file is control-plane (vector indexing/
-        # embedding policy validation via create_container / replace_container / read).
-        # When per-test data-plane operations are added (e.g., vector similarity queries
-        # against a populated container), route those through cls.data_client.
+        # Item operations use the configured key/AAD data-plane client.
         cls.data_client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.test_db = cls.client.create_database(test_config.unique_database_id("vector-policy"))
@@ -117,9 +147,17 @@ class TestVectorPolicy(unittest.TestCase):
     def tearDownClass(cls):
         test_config.TestConfig.try_delete_database_with_id(cls.client, cls.test_db.id)
 
+    @pytest.mark.cosmosAADQuery
     def test_create_valid_vector_embedding_policy(self):
         # Using valid data types
         data_types = ["float32", "float16", "int8", "uint8"]
+        # Flat indexes provide exact ranking without approximate-index training or build waits.
+        indexing_policy = {
+            "indexingMode": "consistent",
+            "includedPaths": [{"path": "/*"}],
+            "excludedPaths": [{"path": "/vector1/*"}],
+            "vectorIndexes": [{"path": "/vector1", "type": "flat"}],
+        }
         for data_type in data_types:
             vector_embedding_policy = {
                 "vectorEmbeddings": [
@@ -130,13 +168,31 @@ class TestVectorPolicy(unittest.TestCase):
                         "distanceFunction": "euclidean"
                     }]}
             container_id = 'vector_container_' + data_type
-            created_container = self.test_db.create_container(
+            created_container, created_properties = self.test_db.create_container(
                 id=container_id,
                 partition_key=PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy)
+                vector_embedding_policy=vector_embedding_policy,
+                indexing_policy=indexing_policy,
+                return_properties=True)
             try:
-                properties = created_container.read()
-                assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
+                for properties in (created_properties, created_container.read()):
+                    assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+                    assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+
+                data_container = self.data_client.get_database_client(self.test_db.id).get_container_client(container_id)
+                items, queries = get_vector_data_type_test_data(data_type)
+                for item in items:
+                    data_container.create_item(item)
+
+                for query, parameters, expected_ids, expected_distances in queries:
+                    with self.subTest(data_type=data_type, query=query):
+                        results = list(data_container.query_items(
+                            query=query,
+                            parameters=parameters,
+                            enable_cross_partition_query=True,
+                        ))
+                        assert [item["id"] for item in results] == expected_ids
+                        assert [item["distance"] for item in results] == pytest.approx(expected_distances)
             finally:
                 self.test_db.delete_container(container_id)
 
