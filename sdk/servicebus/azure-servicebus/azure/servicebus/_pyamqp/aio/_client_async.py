@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
 import asyncio  # pylint:disable=do-not-import-asyncio
+import inspect
 import logging
 import time
 import queue
@@ -35,6 +36,7 @@ from ..constants import (
 from ..error import AMQPError, ErrorCondition, AMQPException, MessageException
 
 _logger = logging.getLogger(__name__)
+_MGMT_LINK_CLEANUP_TIMEOUT = 1.0
 
 
 class AMQPClientAsync(AMQPClientSync):
@@ -369,29 +371,12 @@ class AMQPClientAsync(AMQPClientSync):
         :rtype: ~pyamqp.message.Message
         """
 
-        # The method also takes "status_code_field" and "status_description_field"
-        # keyword arguments as alternate names for the status code and description
-        # in the response body. Those two keyword arguments are used in Azure services only.
         started = time.monotonic()
-        async with self._mgmt_link_lock_async:
-            try:
-                mgmt_link = self._mgmt_links[node]
-            except KeyError:
-                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-                await mgmt_link.open()
-                self._mgmt_links[node] = mgmt_link
-
-        while True:
-            _get_mgmt_request_remaining_timeout(timeout, started)
-            authenticated = await self.auth_complete_async()
-            remaining = _get_mgmt_request_remaining_timeout(timeout, started)
-            if authenticated:
-                break
-            await asyncio.sleep(min(0.05, remaining) if remaining else 0.05)
-
-        while not await mgmt_link.ready():
-            _get_mgmt_request_remaining_timeout(timeout, started)
-            await self._connection.listen(wait=False)
+        mgmt_link = await self.open_mgmt_link_async(
+            node=node,
+            timeout=_get_mgmt_request_remaining_timeout(timeout, started),
+            **kwargs
+        )
 
         operation_type = operation_type or b"empty"
         status, description, response = await mgmt_link.execute(
@@ -401,6 +386,54 @@ class AMQPClientAsync(AMQPClientSync):
             timeout=_get_mgmt_request_remaining_timeout(timeout, started),
         )
         return status, description, response
+
+    async def open_mgmt_link_async(self, node: str = "$management", timeout: float = 0, **kwargs):
+        """Open and wait for a management link without dispatching a request.
+
+        :param str node: Management target.
+        :param float timeout: Timeout in seconds.
+        :returns: The opened management link.
+        :rtype: ~pyamqp.aio.management_link_async.ManagementOperation
+        """
+        start_time = time.monotonic()
+        mgmt_link = None
+        created_link = False
+        try:
+            async with self._mgmt_link_lock_async:
+                try:
+                    mgmt_link = self._mgmt_links[node]
+                except KeyError:
+                    mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                    created_link = True
+                    self._mgmt_links[node] = mgmt_link
+                    await mgmt_link.open()
+            while True:
+                _get_mgmt_request_remaining_timeout(timeout, start_time)
+                authenticated = await self.auth_complete_async()
+                remaining = _get_mgmt_request_remaining_timeout(timeout, start_time)
+                if authenticated:
+                    break
+                await asyncio.sleep(min(0.05, remaining) if remaining else 0.05)
+
+            while not await mgmt_link.ready():
+                _get_mgmt_request_remaining_timeout(timeout, start_time)
+                await self._connection.listen(wait=False)
+            return mgmt_link
+        except BaseException:
+            if created_link and mgmt_link is not None:
+                # Evict without yielding so another stalled setup cannot block error cleanup.
+                if self._mgmt_links.get(node) is mgmt_link:
+                    self._mgmt_links.pop(node, None)
+                try:
+                    close_result = mgmt_link.close()
+                    if inspect.isawaitable(close_result):
+                        remaining = _MGMT_LINK_CLEANUP_TIMEOUT
+                        if timeout and timeout > 0:
+                            remaining = min(remaining, max(0, timeout - (time.monotonic() - start_time)))
+                        await asyncio.wait_for(close_result, timeout=remaining)
+                except BaseException:  # pylint: disable=broad-except
+                    _logger.warning("Management link cleanup failed; preserving the original error.", exc_info=True)
+            raise
 
 
 class SendClientAsync(SendClientSync, AMQPClientAsync):
