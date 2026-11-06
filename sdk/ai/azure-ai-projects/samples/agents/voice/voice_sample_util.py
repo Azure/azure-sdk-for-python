@@ -30,15 +30,10 @@ _FINALIZE_POLL_ATTEMPTS: Final = 15
 def hold_sample_conversation(
     project_client: AIProjectClient, agent_name: str, prompt: str = "Say a short, friendly hello."
 ) -> str:
-    """Send one short realtime text turn to an existing voice agent and return the resulting
-    persisted conversation id, once it has finished finalizing.
+    """Send one text message and return its stored Realtime conversation ID.
 
-    Samples that read a conversation back (transcript, responses, audio) do not always have a
-    live call handy to read. This helper produces a minimal real conversation on demand so those
-    samples can run without requiring a conversation id up front. The agent named ``agent_name``
-    must already exist (see sample_voice_agent_basic.py) and be configured with ``store=True`` so
-    its conversations are persisted. For a full interactive conversation and a fuller explanation
-    of the realtime event flow used here, see sample_voice_agent_realtime_text_conversation.py.
+    The agent must already exist with ``store=True``. Wait for storage to finish
+    before returning so callers can read the replies and transcript.
 
     :param project_client: The Foundry project client.
     :param agent_name: The name of an existing voice agent, configured with ``store=True``.
@@ -63,8 +58,7 @@ def hold_sample_conversation(
         while True:
             event = conn.recv(timeout=_RESPONSE_TIMEOUT)
             if isinstance(event, RealtimeServerEventSessionCreated):
-                # The persisted conversation id (only present when conversation persistence is
-                # enabled) is set here, not on response.done.
+                # The stored conversation ID arrives at session creation, not response.done.
                 conversation_id = event.conversation_id or conversation_id
             if isinstance(event, RealtimeServerEventResponseDone):
                 break
@@ -77,10 +71,7 @@ def hold_sample_conversation(
             "was configured with `store=True`."
         )
 
-    # `response.done` only means the model finished replying, not that the service has finished
-    # persisting the conversation -- immediately after the session closes, the conversation can
-    # still briefly report `in_progress` while that finalization completes in the background.
-    # Poll until it settles so callers can read a complete transcript right away.
+    # A reply can finish before its transcript is stored; wait for storage to finish too.
     conversations = project_client.beta.voice_agents.conversations
     for _ in range(_FINALIZE_POLL_ATTEMPTS):
         conversation = conversations.get(agent_name, conversation_id)

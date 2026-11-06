@@ -1,5 +1,62 @@
 # Release History
 
+## 2.11.0 (2026-11-10)
+
+### Features Added
+
+* Added preview `.beta.voice_agents.live.connect()` and `VoiceAgentLiveDefinition` for synchronous and asynchronous GPT Live sessions, with typed client and server events, session updates, text and audio input, and Responses backend function-tool support.
+* Added Live delegation models for Responses backends, application-managed work, and same-project prompt agents: `VoiceAgentLiveResponsesDelegation`, `VoiceAgentLiveClientDelegation`, and `VoiceAgentLiveManagedAgentDelegation`.
+* Added `.beta.voice_agents.live_conversations` for listing, retrieving, and deleting stored Live conversations, retrieving conversation items, and retrieving or downloading item-level and conversation-level audio.
+* Added optional `VoiceAgentDefinition.post_call` with `VoiceAgentPostCallConfig`, `VoiceAgentEventGridPostCallDestination`, and `VoiceAgentRoutinePostCallDestination` for post-call transcript delivery to Event Grid connections and routines. Audio delivery is not supported in this preview.
+* Added SIP telephony provider support through `TelephonyProvider.SIP`, `SipTelephonyBinding`, and `SipTelephonyBindingListItem`. Added optional `UpdateTelephonyBindingRequest.allowed_calling_numbers` for incoming caller restrictions.
+* Added `.beta.voice_agents.telephony.list_call_jobs()` for listing outbound call jobs with optional status and campaign filters, and `.beta.voice_agents.telephony.delete_call_job()` for deleting a call job.
+* Added `.beta.voice_agents.campaigns` for managing outbound campaigns, including long-running creation, cancellation, and deletion, campaign retrieval and listing, validation errors, and operation status. Campaign mutations support ETag match conditions.
+* Added campaign configuration, scheduling, and progress models, including `TelephonyCampaign`, `TelephonyRecipient`, `ImmediateSchedule`, `AtTimeSchedule`, `PerRecipientSchedule`, and `TelephonyCampaignProgress`. `TelephonyCampaignDatasetReference` supports an optional version that pins the latest dataset version during campaign preparation when omitted. Added optional read-only `TelephonyCallJob.campaign_name`.
+* Added inline Voice Agent subagents and handoff configuration through `VoiceAgentInlineSubagentConfig`, `InlineVoiceSubagent`, and `VoiceAgentHandoffPolicy`, with handoff lifecycle events and optional `VoiceAgentSessionResponseConfig.handoff`.
+* Added Voice Agent system tools `VoiceAgentTransferSystemTool`, `VoiceAgentSendDtmfSystemTool`, `VoiceAgentSendSmsSystemTool`, `VoiceAgentCollectDtmfSystemTool`, `VoiceAgentCollectSmsSystemTool`, `VoiceAgentDigitRecognitionSystemTool`, and `VoiceAgentLanguageDetectionSystemTool`.
+* Added optional `VoiceAgentSystemTool.timeout_seconds`, also available on `VoiceAgentEndConversationSystemTool`, for configuring execution timeouts.
+* Added realtime system-tool intent items and argument-streaming and input-collection events through `VoiceAgentSystemToolItem`, `VoiceAgentServerEventSystemToolArgumentsDelta`, `VoiceAgentServerEventSystemToolArgumentsDone`, and `VoiceAgentServerEventInputCollectionStatus`.
+* Added `VoiceAgentBaseDefinition`, `VoiceAgentVoiceConfig`, and `VoiceAgentSubProtocol` for shared voice configuration and Realtime/Live definition types. Added extensible enums for tool types, greetings, interim responses, conversation engines, and RTC call errors.
+* Added optional error details `MisalignmentErrorDetailsResource.review_target` and `RealtimeResponseStatusDetailsError.message`.
+* Expanded `ImageGenTool.model` known-value annotations to include the `gpt-image-2.5-sunburst` and `gpt-image-2.5-flare` model families and their dated versions, and `ImageGenTool.quality` to include `xhigh` and `max`.
+* Added explicit recursive typing for nested `CompoundFilter` instances in `CompoundFilter.filters`.
+
+### Breaking Changes
+
+All breaking changes affect preview APIs.
+
+Breaking changes in beta methods:
+
+* Argument `telephony_binding` in `.beta.voice_agents.telephony.create_binding()` renamed to `binding`; the typed body now accepts `TelephonyBinding` instead of `CreateTelephonyBindingRequest`.
+* Argument `body` in `.beta.voice_agents.telephony.create_call_job()` renamed to `job`; the typed body now accepts `TelephonyCallJobCreate` instead of `CreateTelephonyCallJobRequest`.
+* Removed the `status` filter from `.beta.voice_agents.telephony.list_bindings()`.
+
+Breaking changes in beta classes:
+
+* Removed `CreateTelephonyBindingRequest`, `CreateTeamsPhoneExtensibilityTelephonyBindingRequest`, and `CreateTwilioTelephonyBindingRequest`. Use `TelephonyBinding`, `TeamsPhoneExtensibilityTelephonyBinding`, and `TwilioTelephonyBinding`, respectively.
+* Class `CreateTelephonyCallJobRequest` renamed to `TelephonyCallJobCreate`.
+* Removed `TelephonyOutboundDestination` and `TelephonyOutboundDestinationType`; use `TelephonyAddress` and `TelephonyAddressType`. The `source` and `destination` properties on `TelephonyCallJobCreate` and `TelephonyCallJob` now use `TelephonyAddress`; `source` no longer accepts a plain string.
+* Removed `TelephonyTransferDestination`, `PSTNTelephonyTransferDestination`, `SipTelephonyTransferDestination`, `TeamsTelephonyTransferDestination`, and `TelephonyTransferDestinationKind`. `TelephonyTransferTarget.destination` now uses `TelephonyAddress`, with `PhoneNumber`, `SipAddress`, and `TeamsAddress` variants and `TelephonyAddressType`. The discriminator is `type` instead of `kind`, and the PSTN value is `phone_number` instead of `pstn`.
+* Class `TelephonyOutboundFixedIntervalRetryPolicy` renamed to `FixedIntervalRetryPolicy`.
+* Removed `TelephonyBindingStatus` and the `status` property from `TelephonyBinding`, `TelephonyBindingListItem`, their existing provider-specific subclasses, and `UpdateTelephonyBindingRequest`.
+* Properties `TelephonyBinding.id` and `TelephonyBinding.incoming_call_url` are now read-only, including inherited properties on provider-specific bindings.
+* Removed `TelephonyCallJob.object`. Properties `id`, `agent_name`, `status`, `cancellation`, `attempt_count`, `next_attempt_at`, `terminal_reason`, `revision`, `created_at`, and `updated_at` are now read-only.
+* `VoiceAgentSubagentConfig` is now a polymorphic base requiring `subagent_type` instead of `subagents`. Use `VoiceAgentDelegateSubagentConfig` for the previous referenced-agent configuration, or `VoiceAgentInlineSubagentConfig` for inline subagents.
+* `VoiceAgentResponseCreateParams.input` now uses dedicated response-input models (`RealtimeResponseInputMessage`, `RealtimeResponseInputFunctionCall`, `RealtimeResponseInputFunctionCallOutput`, and `RealtimeResponseItemReference`) instead of `RealtimeConversationItem`.
+* Constructor argument `timestamp_type` on `VoiceAgentServerEventResponseAudioTimestampDelta` is now required; use `VoiceAgentAudioTimestampType.WORD`.
+* Constructor arguments `left` and `right` on `VoiceRecordingChannelLayout` are now required; use `VoiceAudioRole.USER` and `VoiceAudioRole.AGENT`, respectively.
+
+### Bugs Fixed
+
+### Sample updates
+
+* Added Live voice-agent samples under `samples/agents/voice/` for session lifecycle, text and audio conversations, local function tools, and same-project managed-agent delegation.
+* Added `sample_voice_agent_live_read_conversation.py` demonstrating stored Live conversation, transcript, and audio retrieval, with an optional temporary greeting session.
+* Added `sample_voice_agent_read_generated_audio.py` demonstrating retrieval of generated, unheard audio from an interrupted Realtime reply.
+* Added a Realtime interruption sample demonstrating response cancellation and conversation-item truncation.
+* Updated existing Voice Agent sample descriptions, configuration guidance, and cleanup instructions.
+* Consolidated the Realtime text-conversation and function-tool examples into their asynchronous samples, and removed the separate asynchronous basic agent sample.
+
 ## 2.10.0 (2026-10-30)
 
 ### Features Added

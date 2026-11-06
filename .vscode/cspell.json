@@ -594,6 +594,22 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-projects/**",
+      "words": [
+        "brise",
+        "flitz",
+        "harema",
+        "juni",
+        "nira",
+        "noeul",
+        "nuri",
+        "orgid",
+        "shida",
+        "unmute",
+        "unmuted"
+      ]
+    },
+    {
       "filename": [
         "sdk/ai/azure-ai-projects/tests.yml",
         "sdk/ai/azure-ai-projects/tests/samples/ci/**",

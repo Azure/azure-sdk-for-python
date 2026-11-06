@@ -6,33 +6,25 @@
 
 """
 DESCRIPTION:
-    End-to-end typed conversation using the ``client.beta.voice_agents.realtime`` namespace added
-    on top of the generated azure-ai-projects client (see
-    ``azure.ai.projects.aio.operations.AsyncBetaRealtime``).
+    Type messages to a Realtime voice agent using the async client and print
+    its replies. If PyAudio is installed, also play reply audio through your
+    speakers. Enter a blank line, "exit", or "quit" to finish.
 
-      1. Create a voice agent with conversation persistence enabled
-         (`store=True`) so the conversation can be read back afterward.
-      2. Hold a typed, multi-turn conversation: each prompt is sent as a
-         ``RealtimeConversationItemMessageUser`` and the reply streams back as
-         typed audio and transcript events. Blank line (or ``exit`` / ``quit``)
-         ends it.
-      3. Fetch the persisted conversation back by id.
-      4. Delete the agent created for this sample.
-
-    Reply audio is PCM16, mono, 24 kHz and plays through the speakers when
-    ``pyaudio`` is installed; runs headless otherwise. For a hands-free mic
-    conversation with barge-in, see sample_voice_agent_realtime_audio_conversation_async.py.
-
-      pip install "azure-ai-projects[voice]>=2.7.0" azure-identity pyaudio
+    The sample creates an agent with store=True, reads back the conversation,
+    and deletes its agent version. Audio is PCM16, mono, 24 kHz.
+    For microphone input, use sample_voice_agent_realtime_audio_conversation_async.py.
 
 USAGE:
     python sample_voice_agent_realtime_text_conversation_async.py
 
+    pip install "azure-ai-projects[voice]>=2.7.0" azure-identity python-dotenv
+    pip install pyaudio  # Optional speaker playback.
+
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - Foundry project endpoint:
        https://<account>.services.ai.azure.com/api/projects/<project>
-    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
-       identifier. Defaults to "gpt-realtime".
+    2) FOUNDRY_VOICE_AGENT_MODEL (optional) - Managed Realtime model;
+       defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the agent created by this
        sample. Defaults to "sample-realtime-text-conversation-agent-async".
 
@@ -48,9 +40,7 @@ from dotenv import load_dotenv
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
-# AsyncBetaRealtimeConnection is re-exported dynamically via aio/operations/_patch.py's `__all__`;
-# pylint's static import resolution cannot trace that, but the symbol is valid (verified by
-# Pyright/mypy).
+# This public re-export is not recognized by Pylint's import resolver.
 from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection  # pylint: disable=no-name-in-module
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
@@ -61,6 +51,7 @@ from azure.ai.projects.models import (
     RealtimeServerEventResponseAudioTranscriptDone,
     RealtimeServerEventResponseCreated,
     RealtimeServerEventResponseDone,
+    RealtimeServerEventResponseTextDone,
     RealtimeServerEventSessionCreated,
     RealtimeServerEventError,
     VoiceAgentAudioConfig,
@@ -242,6 +233,15 @@ async def _run_text_conversation(  # pylint: disable=too-many-statements
             async def pump() -> None:
                 nonlocal conversation_id, audio_delta_count, active_response_id
                 async for event in conn:
+                    # The public models use GA response.output_* names; legacy aliases remain raw mappings.
+                    if isinstance(event, dict):
+                        event_type = event.get("type")
+                        if event_type in ("response.output_audio.delta", "response.audio.delta"):
+                            event = RealtimeServerEventResponseAudioDelta(event)
+                        elif event_type in ("response.output_audio_transcript.done", "response.audio_transcript.done"):
+                            event = RealtimeServerEventResponseAudioTranscriptDone(event)
+                        elif event_type in ("response.output_text.done", "response.text.done"):
+                            event = RealtimeServerEventResponseTextDone(event)
                     if isinstance(event, RealtimeServerEventSessionCreated):
                         # The persisted conversation id (only present when conversation
                         # persistence is enabled) is set here, not on response.done.
@@ -259,6 +259,8 @@ async def _run_text_conversation(  # pylint: disable=too-many-statements
                         player.play(event.delta)
                     elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
                         _safe_print(f"Agent: {event.transcript}")
+                    elif isinstance(event, RealtimeServerEventResponseTextDone):
+                        _safe_print(f"Agent: {event.text}")
 
             if has_greeting:
                 # The service sends the configured greeting as its own response cycle the

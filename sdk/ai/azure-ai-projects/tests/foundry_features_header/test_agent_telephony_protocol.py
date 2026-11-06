@@ -63,9 +63,9 @@ def client() -> Iterator[AIProjectClient]:
 # (method_name, expected HTTP method, expected static URL path -- fake string/required params are
 # always rendered as the literal "fake-value" by FoundryFeaturesHeaderTestBase._fake_for_param).
 _TELEPHONY_PROTOCOL_CASES: List[Tuple[str, str, str]] = [
-    ("create_call_job", "POST", "/agents/fake-value/telephony/call_jobs"),
-    ("get_call_job", "GET", "/agents/fake-value/telephony/call_jobs/fake-value"),
-    ("cancel_call_job", "POST", "/agents/fake-value/telephony/call_jobs/fake-value:cancel"),
+    ("create_call_job", "POST", "/agents/fake-value/telephony_call_jobs"),
+    ("get_call_job", "GET", "/agents/fake-value/telephony_call_jobs/fake-value"),
+    ("cancel_call_job", "POST", "/agents/fake-value/telephony_call_jobs/fake-value:cancel"),
 ]
 
 

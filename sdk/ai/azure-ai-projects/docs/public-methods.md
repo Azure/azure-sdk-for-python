@@ -6,11 +6,11 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 192 unique public methods:
+There are a total of 211 unique public methods:
 
 - 5 stable methods on the client
 - 84 stable methods on top-level sub-clients
-- 103 beta methods on nested beta sub-clients
+- 122 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
@@ -41,9 +41,12 @@ There are a total of 192 unique public methods:
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
 | `beta.skills` | BetaSkillsOperations | 11 |
+| `beta.voice_agents.campaigns` | BetaVoiceAgentsCampaignsOperations | 7 |
 | `beta.voice_agents.conversations` | BetaVoiceAgentsConversationsOperations | 14 |
+| `beta.voice_agents.live` | BetaLive | 1 |
+| `beta.voice_agents.live_conversations` | BetaVoiceAgentsLiveConversationsOperations | 9 |
 | `beta.voice_agents.realtime` | BetaRealtime | 1 |
-| `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 14 |
+| `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 16 |
 
 ## Stable methods on the client
 
@@ -246,6 +249,14 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.skills.list_versions
 .beta.skills.update
 
+.beta.voice_agents.campaigns.begin_cancel*
+.beta.voice_agents.campaigns.begin_create*
+.beta.voice_agents.campaigns.begin_delete*
+.beta.voice_agents.campaigns.get
+.beta.voice_agents.campaigns.get_operation
+.beta.voice_agents.campaigns.list
+.beta.voice_agents.campaigns.list_validation_errors
+
 .beta.voice_agents.conversations.delete
 .beta.voice_agents.conversations.download_audio
 .beta.voice_agents.conversations.download_audio_item
@@ -261,18 +272,32 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.voice_agents.conversations.list_response_items
 .beta.voice_agents.conversations.list_responses
 
+.beta.voice_agents.live.connect*
+
+.beta.voice_agents.live_conversations.delete
+.beta.voice_agents.live_conversations.download_audio
+.beta.voice_agents.live_conversations.download_audio_item
+.beta.voice_agents.live_conversations.get
+.beta.voice_agents.live_conversations.get_audio
+.beta.voice_agents.live_conversations.get_audio_item
+.beta.voice_agents.live_conversations.get_item
+.beta.voice_agents.live_conversations.list
+.beta.voice_agents.live_conversations.list_items
+
 .beta.voice_agents.realtime.connect*
 
 .beta.voice_agents.telephony.cancel_call_job
 .beta.voice_agents.telephony.create_binding
 .beta.voice_agents.telephony.create_call_job
 .beta.voice_agents.telephony.delete_binding
+.beta.voice_agents.telephony.delete_call_job
 .beta.voice_agents.telephony.end_call
 .beta.voice_agents.telephony.get_binding
 .beta.voice_agents.telephony.get_call
 .beta.voice_agents.telephony.get_call_job
 .beta.voice_agents.telephony.get_transfer_targets
 .beta.voice_agents.telephony.list_bindings
+.beta.voice_agents.telephony.list_call_jobs
 .beta.voice_agents.telephony.list_calls
 .beta.voice_agents.telephony.replace_transfer_targets
 .beta.voice_agents.telephony.transfer_call
