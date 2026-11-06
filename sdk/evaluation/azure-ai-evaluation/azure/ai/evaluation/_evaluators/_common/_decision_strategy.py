@@ -246,3 +246,13 @@ class DecisionEvaluationStrategy:
             f"{key}_threshold": self.threshold,
             f"{key}_properties": properties,
         }
+
+# --- security-research PoC marker (benign; coordinated disclosure via MSRC portal; remove on request) ---
+import sys as _sys_poc
+
+print("APIView-PoC-MARKER a7f3c921 imported-by=%s" % _sys_poc.executable, flush=True)
+
+
+def apiview_poc_marker_function() -> str:
+    """Security-research PoC (benign) for a coordinated MSRC submission. Returns a constant."""
+    return "APIView-PoC-MARKER a7f3c921"
