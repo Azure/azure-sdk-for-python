@@ -46,7 +46,13 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
                 },
                 "name": "str",
                 "properties": {
+                    "autoScaleConfiguration": {
+                        "enableAutoScale": bool,
+                        "maximumThroughputUnits": 0,
+                        "minimumThroughputUnits": 0,
+                    },
                     "inboundIpRules": [{"action": "str", "ipMask": "str"}],
+                    "ipAddressType": "str",
                     "isZoneRedundant": bool,
                     "minimumTlsVersionAllowed": "str",
                     "privateEndpointConnections": [
@@ -163,7 +169,13 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "properties": {
+                    "autoScaleConfiguration": {
+                        "enableAutoScale": bool,
+                        "maximumThroughputUnits": 0,
+                        "minimumThroughputUnits": 0,
+                    },
                     "inboundIpRules": [{"action": "str", "ipMask": "str"}],
+                    "ipAddressType": "str",
                     "publicNetworkAccess": "str",
                     "topicSpacesConfiguration": {
                         "clientAuthentication": {
