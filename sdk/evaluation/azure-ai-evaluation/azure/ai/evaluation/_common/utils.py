@@ -1683,7 +1683,7 @@ def _has_typed_tool_calls(content):
     )
 
 
-def _normalize_openai_chat_message(msg):
+def _normalize_openai_chat_message(msg, wrap_text=True):
     """Return an SDK-block copy of an OpenAI chat message, or the message unchanged."""
     if not isinstance(msg, dict):
         return msg
@@ -1692,22 +1692,30 @@ def _normalize_openai_chat_message(msg):
         blocks = list(content) if isinstance(content, list) else []
         if isinstance(content, str) and content:
             blocks.append({"type": "text", "text": content})
-        blocks.extend(_openai_tool_call_to_block(c) for c in msg["tool_calls"] if isinstance(c, dict))
+        blocks.extend(
+            _openai_tool_call_to_block(c)
+            for c in msg["tool_calls"]
+            if isinstance(c, dict) and isinstance(c.get("function"), dict)
+        )
         converted = {k: v for k, v in msg.items() if k != "tool_calls"}
         converted["content"] = blocks
         return converted
     if role == "tool" and isinstance(content, str):
         return {**msg, "content": [{"type": "tool_result", "tool_result": content}]}
-    if role in ("user", "assistant") and isinstance(content, str):
+    if wrap_text and role in ("user", "assistant") and isinstance(content, str):
         return {**msg, "content": [{"type": "text", "text": content}] if content else []}
     return msg
 
 
-def _normalize_openai_chat_messages(messages):
-    """Normalize a message list for the readers below; other values pass through unchanged."""
+def _normalize_openai_chat_messages(messages, wrap_text=True):
+    """Normalize a message list for the readers below; other values pass through unchanged.
+
+    ``wrap_text`` also turns string text into blocks. ``_preprocess_messages`` leaves it off so
+    judge inputs that use the messages directly keep their text shape.
+    """
     if not isinstance(messages, list):
         return messages
-    return [_normalize_openai_chat_message(msg) for msg in messages]
+    return [_normalize_openai_chat_message(msg, wrap_text) for msg in messages]
 
 
 def _preprocess_messages(messages):
@@ -1720,7 +1728,7 @@ def _preprocess_messages(messages):
     :return: The preprocessed messages.
     :rtype: List[dict]
     """
-    messages = _normalize_openai_chat_messages(messages)
+    messages = _normalize_openai_chat_messages(messages, wrap_text=False)
     messages = _drop_mcp_approval_messages(messages)
     messages = _normalize_function_call_types(messages)
     return messages

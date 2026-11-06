@@ -1229,6 +1229,32 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(result, ["[TOOL_CALL] lookup(id=1)", "[TOOL_RESULT] ok"])
 
+    def test_preprocess_messages_keeps_string_text_content(self):
+        """Only tool shapes are converted; plain text content keeps its shape for judge inputs."""
+        messages = [
+            {"role": "user", "content": "What is AI?"},
+            {"role": "assistant", "content": "Artificial intelligence."},
+        ]
+
+        self.assertEqual(_preprocess_messages(messages), messages)
+
+    def test_tool_call_without_function_is_skipped(self):
+        """A non-function tool call has no name or arguments to render."""
+        messages = [
+            {
+                "role": "assistant",
+                "content": "Done.",
+                "tool_calls": [
+                    {"id": "c1", "type": "custom", "custom": {"name": "x", "input": "y"}},
+                    {"id": "c2", "function": {"name": "lookup", "arguments": "{}"}},
+                ],
+            }
+        ]
+
+        result = _get_agent_response(messages, include_tool_messages=True)
+
+        self.assertEqual(result, ["Done.", "[TOOL_CALL] lookup()"])
+
     def test_helpers_read_openai_chat_messages_without_preprocessing(self):
         """Each message helper gives the same result for raw OpenAI chat input as for preprocessed input."""
         conversation = [
