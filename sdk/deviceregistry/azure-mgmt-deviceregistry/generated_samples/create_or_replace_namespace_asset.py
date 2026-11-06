@@ -42,7 +42,7 @@ def main():
             },
             "location": "West Europe",
             "properties": {
-                "assetTypeRefs": ["myAssetTypeRef1", "myAssetTypeRef2"],
+                "assetTypeRefs": ["myAssetTypeRef1"],
                 "attributes": {"floor": "1"},
                 "datasets": [
                     {
@@ -52,13 +52,7 @@ def main():
                                 "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/;s=FastUInt3",
                                 "name": "dataset1DataPoint1",
                                 "typeRef": "dataset1DataPoint1TypeRef",
-                            },
-                            {
-                                "dataPointConfiguration": '{"publishingInterval":8,"samplingInterval":8,"queueSize":4}',
-                                "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/;s=FastUInt4",
-                                "name": "dataset1DataPoint2",
-                                "typeRef": "dataset1DataPoint2TypeRef",
-                            },
+                            }
                         ],
                         "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/Oven;i=5",
                         "datasetConfiguration": '{"publishingInterval":10,"samplingInterval":15,"queueSize":20}',
@@ -87,6 +81,30 @@ def main():
                 "displayName": "AssetDisplayName",
                 "documentationUri": "https://www.example.com/manual",
                 "enabled": True,
+                "eventGroups": [
+                    {
+                        "events": [
+                            {
+                                "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/;s=FastUInt5",
+                                "destinations": [
+                                    {
+                                        "configuration": {
+                                            "qos": "Qos0",
+                                            "retain": "Keep",
+                                            "topic": "/contoso/testEvent1",
+                                            "ttl": 7200,
+                                        },
+                                        "target": "Mqtt",
+                                    }
+                                ],
+                                "eventConfiguration": '{"publishingInterval":7,"samplingInterval":1,"queueSize":8}',
+                                "name": "event1",
+                                "typeRef": "event1Ref",
+                            }
+                        ],
+                        "name": "default",
+                    }
+                ],
                 "externalAssetId": "8ZBA6LRHU0A458969",
                 "hardwareRevision": "1.0",
                 "managementGroups": [
@@ -100,16 +118,7 @@ def main():
                                 "timeoutInSeconds": 60,
                                 "topic": "/contoso/managementGroup1/action1",
                                 "typeRef": "action1TypeRef",
-                            },
-                            {
-                                "actionConfiguration": '{"retryCount":5,"retryBackoffInterval":5}',
-                                "actionType": "Call",
-                                "name": "action2",
-                                "targetUri": "/onvif/device_service?ONVIFProfile=Profile2",
-                                "timeoutInSeconds": 60,
-                                "topic": "/contoso/managementGroup1/action2",
-                                "typeRef": "action2TypeRef",
-                            },
+                            }
                         ],
                         "defaultTimeoutInSeconds": 100,
                         "defaultTopic": "/contoso/managementGroup1",
@@ -130,23 +139,7 @@ def main():
                         "name": "stream1",
                         "streamConfiguration": '{"publishingInterval":8,"samplingInterval":8,"queueSize":4}',
                         "typeRef": "stream1TypeRef",
-                    },
-                    {
-                        "destinations": [
-                            {
-                                "configuration": {
-                                    "qos": "Qos0",
-                                    "retain": "Never",
-                                    "topic": "/contoso/testStream2",
-                                    "ttl": 7200,
-                                },
-                                "target": "Mqtt",
-                            }
-                        ],
-                        "name": "stream2",
-                        "streamConfiguration": '{"publishingInterval":8,"samplingInterval":8,"queueSize":4}',
-                        "typeRef": "stream2TypeRef",
-                    },
+                    }
                 ],
             },
             "tags": {"site": "building-1"},
@@ -155,6 +148,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_NamespaceAsset.json
+# x-ms-original-file: 2026-11-01/CreateOrReplace_NamespaceAsset.json
 if __name__ == "__main__":
     main()
