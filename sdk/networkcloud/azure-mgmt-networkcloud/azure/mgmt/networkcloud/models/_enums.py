@@ -20,6 +20,8 @@ class AccessBridgeAllowedName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The access bridge for cluster access to private vault."""
     STORAGE_DASHBOARD = "StorageDashboard"
     """The access bridge for access to the storage dashboard."""
+    EDGE_MANAGEMENT = "EdgeManagement"
+    """The access bridge for edge management."""
 
 
 class AccessBridgeDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -60,7 +62,7 @@ class ActionStateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -639,7 +641,7 @@ class ClusterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ClusterUpdateStrategyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The mode of operation for runtime protection."""
+    """The strategy for updating the cluster."""
 
     RACK = "Rack"
     """Update the cluster in rack-by-rack increments."""
@@ -834,7 +836,7 @@ class HybridAksPluginType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class IpAllocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the IP address allocation, defaulted to "DualStack"."""
+    """The type of the IP address allocation, defaulted to \"DualStack\"."""
 
     IPV4 = "IPV4"
     """The IPV4 address allocation type."""
@@ -842,6 +844,17 @@ class IpAllocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The IPV6 address allocation type."""
     DUAL_STACK = "DualStack"
     """The DualStack address allocation type."""
+
+
+class KeyValueVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The version of the key value secrets engine. Supports values V1 and V2, which map to engine
+    versions 1 and 2 respectively.
+    """
+
+    V1 = "V1"
+    """Key/value engine version 1."""
+    V2 = "V2"
+    """Key/value engine version 2."""
 
 
 class KubernetesClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1099,7 +1112,7 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -1259,6 +1272,20 @@ class RuntimeProtectionEnforcementLevel(str, Enum, metaclass=CaseInsensitiveEnum
     """Real-time scans detect and remediate detected issues."""
 
 
+class SecretArchiveProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provider of the secret archive. Absence of ``providerConfiguration`` on
+    ``SecretArchiveSettings`` implies Azure Key Vault as the default provider; this enum enumerates
+    only the self-supplied (non-Azure Key Vault) providers.
+    """
+
+    CYBER_ARK = "CyberArk"
+    """CyberArk secret archive provider."""
+    HASHI_CORP_VAULT = "HashiCorpVault"
+    """HashiCorp Vault secret archive provider."""
+    OPEN_BAO = "OpenBao"
+    """OpenBao secret archive provider."""
+
+
 class SecurityRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The direction of allowed network traffic based on the rule."""
 
@@ -1395,6 +1422,15 @@ class ValidationThresholdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The threshold is evaluated based on the percentage of successful operations."""
 
 
+class VaultAuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication method used to authenticate to a HashiCorp Vault or OpenBao secret archive."""
+
+    APP_ROLE = "AppRole"
+    """AppRole authentication method."""
+    CLIENT_CERTIFICATE = "ClientCertificate"
+    """Client certificate authentication method."""
+
+
 class VirtualMachineBootMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Selects the boot method for the virtual machine."""
 
@@ -1464,7 +1500,7 @@ class VirtualMachinePlacementHintPodAffinityScope(  # pylint: disable=name-too-l
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
     """The scope for the virtual machine affinity or anti-affinity placement hint. It should always be
-    "Machine" in the case of node affinity.
+    \"Machine\" in the case of node affinity.
     """
 
     MACHINE = "Machine"
