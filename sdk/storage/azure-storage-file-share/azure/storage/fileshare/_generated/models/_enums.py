@@ -53,7 +53,7 @@ class FileLastWrittenMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class FilePermissionFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The file permission format."""
+    """Type of FilePermissionFormat."""
 
     SDDL = "Sddl"
     """Sddl."""
@@ -135,6 +135,14 @@ class ListFilesIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Attributes."""
     PERMISSION_KEY = "PermissionKey"
     """PermissionKey."""
+    PERMISSIONS = "Permissions"
+    """Permissions."""
+    LINK_COUNT = "LinkCount"
+    """LinkCount."""
+    NFS_ATTRIBUTES = "NfsAttributes"
+    """NfsAttributes."""
+    ALL = "All"
+    """All."""
 
 
 class ListSharesIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

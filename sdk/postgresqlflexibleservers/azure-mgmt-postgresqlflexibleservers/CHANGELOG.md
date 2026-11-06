@@ -1,5 +1,120 @@
 # Release History
 
+## 3.0.0 (2026-10-13)
+
+### Features Added
+
+  - Client `PostgreSQLManagementClient` added method `send_request`
+  - Client `PostgreSQLManagementClient` added operation group `maintenance_events`
+  - Client `PostgreSQLManagementClient` added operation group `major_version_upgrade_precheck`
+  - Model `AdministratorMicrosoftEntra` added property `properties`
+  - Model `AdvancedThreatProtectionSettingsModel` added property `properties`
+  - Model `Backup` added property `immutable_backup`
+  - Model `BackupAutomaticAndOnDemand` added property `properties`
+  - Model `BackupForPatch` added property `immutable_backup`
+  - Model `BackupsLongTermRetentionOperation` added property `properties`
+  - Model `CapturedLog` added property `properties`
+  - Model `Configuration` added property `properties`
+  - Model `DataEncryption` added property `geo_backup_federated_identity_client_id`
+  - Model `DataEncryption` added property `primary_federated_identity_client_id`
+  - Model `Database` added property `properties`
+  - Model `FirewallRule` added property `properties`
+  - Enum `HighAvailabilityState` added member `COMPUTE_UPDATING_BY_FAILOVER`
+  - Enum `HighAvailabilityState` added member `RECREATING_STANDBY`
+  - Model `Migration` added property `properties`
+  - Model `MigrationResourceForPatch` added property `properties`
+  - Model `ObjectRecommendation` added property `properties`
+  - Model `PrivateEndpointConnection` added property `properties`
+  - Model `PrivateLinkResource` added property `properties`
+  - Enum `RecommendationTypeEnum` added member `VACUUM_TABLE`
+  - Enum `RecommendationTypeParameterEnum` added member `VACUUM_TABLE`
+  - Model `Server` added property `properties`
+  - Model `ServerForPatch` added property `properties`
+  - Model `Storage` added property `auto_grow_increment_percent`
+  - Model `Storage` added property `auto_grow_max_threshold_mb`
+  - Model `TuningOptions` added property `properties`
+  - Model `VirtualEndpoint` added property `properties`
+  - Added model `AdministratorMicrosoftEntraProperties`
+  - Added model `AdministratorMicrosoftEntraPropertiesForAdd`
+  - Added model `AdvancedThreatProtectionSettingsProperties`
+  - Added model `BackupAutomaticAndOnDemandProperties`
+  - Added model `BackupsLongTermRetentionResponseProperties`
+  - Added model `CapturedLogProperties`
+  - Added model `ConfigurationProperties`
+  - Added model `DatabaseProperties`
+  - Added enum `FipsMode`
+  - Added model `FirewallRuleProperties`
+  - Added enum `ImmutableBackup`
+  - Added model `LogSpecification`
+  - Added model `LtrBackupOperationResponseProperties`
+  - Added model `MaintenanceEventActionResponse`
+  - Added model `MaintenanceEventRescheduleRequest`
+  - Added model `MaintenanceEventResource`
+  - Added model `MaintenanceEventResourceProperties`
+  - Added enum `MaintenanceEventStatus`
+  - Added enum `MaintenanceEventStatusFilter`
+  - Added enum `MaintenanceType`
+  - Added model `MajorVersionUpgradePrecheckResource`
+  - Added model `MajorVersionUpgradePrecheckResourceProperties`
+  - Added enum `MajorVersionUpgradePrecheckStatus`
+  - Added model `MetricSpecification`
+  - Added model `MigrateNetworkStatus`
+  - Added model `MigrationProperties`
+  - Added model `MigrationPropertiesForPatch`
+  - Added enum `NetworkMigrationState`
+  - Added model `ObjectRecommendationProperties`
+  - Added model `OperationProperties`
+  - Added model `PolicyDetail`
+  - Added enum `PostgreSqlFlexibleServerHighAvailabilityMode`
+  - Added model `PrecheckErrorInfo`
+  - Added model `PrecheckResult`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `ServerProperties`
+  - Added model `ServerPropertiesForPatch`
+  - Added model `ServiceSpecification`
+  - Added model `StartMajorVersionUpgradePrecheckRequest`
+  - Added model `StartMajorVersionUpgradePrecheckResponse`
+  - Added model `TuningOptionsProperties`
+  - Added model `UpgradeSequence`
+  - Added model `VirtualEndpointResourceProperties`
+  - Operation group `ServersOperations` added method `begin_migrate_network_mode`
+  - Operation group `ServersOperations` added method `begin_start_major_version_upgrade_precheck`
+  - Added operation group `MaintenanceEventsOperations`
+  - Added operation group `MajorVersionUpgradePrecheckOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AdministratorMicrosoftEntra` moved instance variable `object_id`, `principal_name`, `principal_type` and `tenant_id` under property `properties` whose type is `AdministratorMicrosoftEntraProperties`
+  - Model `AdministratorMicrosoftEntraAdd` moved instance variable `principal_type`, `principal_name` and `tenant_id` under property `properties`
+  - Model `AdvancedThreatProtectionSettingsModel` moved instance variable `creation_time` and `state` under property `properties` whose type is `AdvancedThreatProtectionSettingsProperties`
+  - Model `BackupAutomaticAndOnDemand` moved instance variable `backup_type`, `completed_time` and `source` under property `properties` whose type is `BackupAutomaticAndOnDemandProperties`
+  - Model `BackupsLongTermRetentionOperation` moved instance variable `backup_metadata`, `backup_name`, `data_transferred_in_bytes`, `datasource_size_in_bytes`, `end_time`, `error_code`, `error_message`, `percent_complete`, `start_time` and `status` under property `properties` whose type is `BackupsLongTermRetentionResponseProperties`
+  - Model `BackupsLongTermRetentionResponse` moved instance variable `datasource_size_in_bytes`, `data_transferred_in_bytes`, `backup_name`, `backup_metadata`, `status`, `start_time`, `end_time`, `percent_complete`, `error_code` and `error_message` under property `properties`
+  - Model `CapturedLog` moved instance variable `created_time`, `last_modified_time`, `size_in_kb`, `type_properties_type` and `url` under property `properties` whose type is `CapturedLogProperties`
+  - Model `Configuration` moved instance variable `allowed_values`, `data_type`, `default_value`, `description`, `documentation_link`, `is_config_pending_restart`, `is_dynamic_config`, `is_read_only`, `source`, `unit` and `value` under property `properties` whose type is `ConfigurationProperties`
+  - Model `ConfigurationForUpdate` moved instance variable `value`, `description`, `default_value`, `data_type`, `allowed_values`, `source`, `is_dynamic_config`, `is_read_only`, `is_config_pending_restart`, `unit` and `documentation_link` under property `properties`
+  - Model `Database` moved instance variable `charset` and `collation` under property `properties` whose type is `DatabaseProperties`
+  - Model `FirewallRule` moved instance variable `end_ip_address` and `start_ip_address` under property `properties` whose type is `FirewallRuleProperties`
+  - Model `LtrPreBackupResponse` moved instance variable `number_of_containers` under property `properties`
+  - Model `Migration` moved instance variable `cancel`, `current_status`, `dbs_to_cancel_migration_on`, `dbs_to_migrate`, `dbs_to_trigger_cutover_on`, `migrate_roles`, `migration_id`, `migration_instance_resource_id`, `migration_mode`, `migration_option`, `migration_window_end_time_in_utc`, `migration_window_start_time_in_utc`, `overwrite_dbs_in_target`, `secret_parameters`, `setup_logical_replication_on_source_db_if_needed`, `source_db_server_fully_qualified_domain_name`, `source_db_server_metadata`, `source_db_server_resource_id`, `source_type`, `ssl_mode`, `start_data_migration`, `target_db_server_fully_qualified_domain_name`, `target_db_server_metadata`, `target_db_server_resource_id` and `trigger_cutover` under property `properties` whose type is `MigrationProperties`
+  - Model `MigrationResourceForPatch` moved instance variable `cancel`, `dbs_to_cancel_migration_on`, `dbs_to_migrate`, `dbs_to_trigger_cutover_on`, `migrate_roles`, `migration_mode`, `migration_window_start_time_in_utc`, `overwrite_dbs_in_target`, `secret_parameters`, `setup_logical_replication_on_source_db_if_needed`, `source_db_server_fully_qualified_domain_name`, `source_db_server_resource_id`, `start_data_migration`, `target_db_server_fully_qualified_domain_name` and `trigger_cutover` under property `properties` whose type is `MigrationPropertiesForPatch`
+  - Model `ObjectRecommendation` moved instance variable `analyzed_workload`, `current_state`, `details`, `estimated_impact`, `implementation_details`, `improved_query_ids`, `initial_recommended_time`, `last_recommended_time`, `recommendation_reason`, `recommendation_type` and `times_recommended` under property `properties` whose type is `ObjectRecommendationProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `group_ids`, `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `Server` moved instance variable `administrator_login`, `administrator_login_password`, `auth_config`, `availability_zone`, `backup`, `cluster`, `create_mode`, `data_encryption`, `fully_qualified_domain_name`, `high_availability`, `maintenance_window`, `minor_version`, `network`, `point_in_time_utc`, `private_endpoint_connections`, `replica`, `replica_capacity`, `replication_role`, `source_server_resource_id`, `state`, `storage` and `version` under property `properties` whose type is `ServerProperties`
+  - Model `ServerForPatch` moved instance variable `administrator_login`, `administrator_login_password`, `auth_config`, `availability_zone`, `backup`, `cluster`, `create_mode`, `data_encryption`, `high_availability`, `maintenance_window`, `network`, `replica`, `replication_role`, `storage` and `version` under property `properties` whose type is `ServerPropertiesForPatch`
+  - Model `VirtualEndpoint` moved instance variable `endpoint_type`, `members` and `virtual_endpoints` under property `properties` whose type is `VirtualEndpointResourceProperties`
+  - Model `VirtualEndpointResourceForPatch` moved instance variable `endpoint_type`, `members` and `virtual_endpoints` under property `properties` whose type is `VirtualEndpointResourceProperties`
+  - Method `MigrationsOperations.list_by_target_server` changed its parameter `migration_list_filter` from `positional_or_keyword` to `keyword_only`
+  - Method `TuningOptionsOperations.list_recommendations` changed its parameter `recommendation_type` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted models `AdministratorMicrosoftEntraList`/`AdvancedThreatProtectionSettingsList`/`BackupAutomaticAndOnDemandList`/`CapabilityList`/`CapturedLogList`/`ConfigurationList`/`DatabaseList`/`FirewallRuleList`/`LtrServerBackupOperationList`/`MigrationList`/`MigrationDetailsLevel`/`ObjectRecommendationList`/`OperationList`/`PostgresMajorVersion`/`PrivateEndpointConnectionList`/`PrivateLinkResourceList`/`QuotaUsageList`/`ServerList`/`TuningOptionsList`/`VirtualEndpointsList` which actually were not used by SDK users
+
 ## 3.0.0b3 (2026-09-29)
 
 ### Features Added
