@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.2b1
+python install_rle_sdk.py --version 2.7.3b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -50,3 +50,39 @@ The wheel is built from SDK source commit
 changed from `2.7.0b7` to `2.7.2b1`. Existing wheel versions and checksums are
 preserved. Live dual-token gateway/training qualification remains incomplete;
 this artifact is a preview, not a PyPI release.
+
+## Version 2.7.3b1
+
+This preview adds optional queued V3 rollout transport:
+`get_rollout_client(..., protocol_version="v3")`. Explicit V3 negotiates only
+`rle.execute-rollout.v3`, with no legacy fallback. Omitting `protocol_version`
+preserves legacy v2/v1 defaults; synchronous/asynchronous HTTP operations are
+unchanged. The project credential remains primary and the optional renewable
+`finetune_credential` remains separate, with the earlier token expiry bounding
+connection lifetime.
+
+The SDK owns durable acceptance/state/progress/terminal delivery, bounded
+admission, original-ID attachment recovery, received sequence cursors and
+authenticated result retrieval. Connection expiry is checked before each
+submission; recovery preserves deadlines and never replays ambiguous execute
+commands. Safe opaque `ftjob-` IDs, including managed 32-hex IDs, are preserved
+unchanged within the service's 991-character limit.
+
+The wheel is built from merged SDK source
+`4f82d3c33e5e55614aeb167bce2ff1980ceba64e` in
+`sujit-kamireddy/azure-sdk-for-python`, with only the staged package version
+overridden from `2.7.0b7.dev20261104+queuedv3.3` to `2.7.3b1`.
+The wheel is 600811 bytes with SHA-256
+`a3823cc9e9e9386746523137db58a6ff00833f41aa60cec281bee374085a66d8`.
+Existing wheel versions and checksums are preserved; this is distribution,
+not an upstream source merge or a PyPI publication.
+
+The registry selects `2.7.3b1` as `latest`; to pin explicitly:
+
+```powershell
+python install_rle_sdk.py --version 2.7.3b1
+```
+
+Installing this preview does not enable V3 automatically: callers must opt in.
+Image rebuild/selection and service qualification are separate work; this
+publication does not run cloud jobs, deploy resources or change permissions.
