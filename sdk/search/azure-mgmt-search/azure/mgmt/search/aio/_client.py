@@ -22,7 +22,6 @@ from ._configuration import SearchManagementClientConfiguration
 from .operations import (
     AdminKeysOperations,
     NetworkSecurityPerimeterConfigurationsOperations,
-    OfferingsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
@@ -48,8 +47,6 @@ class SearchManagementClient(
 ):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """SearchManagementClient.
 
-    :ivar offerings: OfferingsOperations operations
-    :vartype offerings: azure.mgmt.search.aio.operations.OfferingsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.search.aio.operations.Operations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
@@ -82,10 +79,9 @@ class SearchManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-09-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-11-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -140,7 +136,6 @@ class SearchManagementClient(
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.offerings = OfferingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
