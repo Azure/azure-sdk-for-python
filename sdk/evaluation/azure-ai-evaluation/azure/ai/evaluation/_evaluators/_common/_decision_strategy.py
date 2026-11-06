@@ -74,7 +74,9 @@ def decision_token_counts(response: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _label(result_key: str) -> str:
-    return result_key.replace("_", " ")
+    # A caller can namespace a question key, as in "grade/confirm_details"; the label names only the question.
+    leaf = result_key.rsplit("/", 1)[-1]
+    return (leaf or result_key).replace("_", " ")
 
 
 def _digest(question: Dict[str, Any]) -> str:
