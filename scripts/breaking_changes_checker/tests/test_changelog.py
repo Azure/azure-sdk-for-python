@@ -1367,8 +1367,8 @@ def test_class_property_is_required_with_default_report():
     get_property_names(stable_class, stable_properties)
     get_property_names(current_class, current_properties)
 
-    assert stable_properties == {"foo": "Optional"}
-    assert current_properties == {"foo": None}
+    assert stable_properties == {"foo": "Optional[Foo]"}
+    assert current_properties == {"foo": "Foo"}
 
     stable = {
         "azure.contoso.models": {
@@ -1510,6 +1510,66 @@ def test_class_property_type_changed(
         stable_type = stable_property["attr_type"] if isinstance(stable_property, dict) else stable_property
         current_type = current_property["attr_type"] if isinstance(current_property, dict) else current_property
         assert args == ["azure.contoso.models", "ContosoModel", "foo", stable_type, current_type]
+
+
+@pytest.mark.parametrize(
+    "stable_type,current_type",
+    [
+        pytest.param("str", "int", id="simple"),
+        pytest.param("Optional[str]", "Optional[int]", id="optional"),
+        pytest.param(
+            "Optional[list['_models.Foo']]",
+            "Optional[list['_models.Bar']]",
+            id="nested-model",
+        ),
+    ],
+)
+def test_class_property_type_changed_with_default_report(stable_type, current_type):
+    stable_properties = {}
+    current_properties = {}
+    stable_class = ast.parse(
+        f"class ContosoModel:\n    foo: {stable_type} = rest_field()\n"
+    ).body[0]
+    current_class = ast.parse(
+        f"class ContosoModel:\n    foo: {current_type} = rest_field()\n"
+    ).body[0]
+    get_property_names(stable_class, stable_properties)
+    get_property_names(current_class, current_properties)
+
+    assert stable_properties == {"foo": stable_type}
+    assert current_properties == {"foo": current_type}
+
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": stable_properties,
+                }
+            }
+        }
+    }
+    current = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": current_properties,
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+    changelog = bc.report_changes()
+
+    assert len(bc.breaking_changes) == 1
+    msg, _, *args = bc.breaking_changes[0]
+    assert msg == ChangelogTracker.CHANGED_PROPERTY_TYPE_MSG
+    assert args == ["azure.contoso.models", "ContosoModel", "foo", stable_type, current_type]
+    assert msg.format(*args[1:]) in changelog
 
 
 def test_class_property_type_unchanged_with_metadata_change():
