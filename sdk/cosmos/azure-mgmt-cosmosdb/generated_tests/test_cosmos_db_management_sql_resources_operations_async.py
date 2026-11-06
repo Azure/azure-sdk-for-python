@@ -97,21 +97,6 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_resources_begin_sql_database_partition_merge(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_sql_database_partition_merge(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                merge_parameters={"isDryRun": bool},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_sql_resources_get_sql_database_throughput(self, resource_group):
         response = await self.client.sql_resources.get_sql_database_throughput(
             resource_group_name=resource_group.name,
@@ -186,72 +171,6 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_resources_begin_sql_database_retrieve_throughput_distribution(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_sql_database_retrieve_throughput_distribution(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                retrieve_throughput_parameters={
-                    "properties": {"resource": {"physicalPartitionIds": [{"id": "str"}]}},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_resources_begin_sql_database_redistribute_throughput(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_sql_database_redistribute_throughput(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                redistribute_throughput_parameters={
-                    "properties": {
-                        "resource": {
-                            "sourcePhysicalPartitionThroughputInfo": [
-                                {"id": "str", "targetThroughput": 0.0, "throughput": 0.0}
-                            ],
-                            "targetPhysicalPartitionThroughputInfo": [
-                                {"id": "str", "targetThroughput": 0.0, "throughput": 0.0}
-                            ],
-                            "throughputPolicy": "str",
-                        }
-                    },
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -338,74 +257,6 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 account_name="str",
                 database_name="str",
                 container_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_resources_begin_sql_container_retrieve_throughput_distribution(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_sql_container_retrieve_throughput_distribution(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                container_name="str",
-                retrieve_throughput_parameters={
-                    "properties": {"resource": {"physicalPartitionIds": [{"id": "str"}]}},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_resources_begin_sql_container_redistribute_throughput(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_sql_container_redistribute_throughput(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                container_name="str",
-                redistribute_throughput_parameters={
-                    "properties": {
-                        "resource": {
-                            "sourcePhysicalPartitionThroughputInfo": [
-                                {"id": "str", "targetThroughput": 0.0, "throughput": 0.0}
-                            ],
-                            "targetPhysicalPartitionThroughputInfo": [
-                                {"id": "str", "targetThroughput": 0.0, "throughput": 0.0}
-                            ],
-                            "throughputPolicy": "str",
-                        }
-                    },
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -507,11 +358,6 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                                 "mode": "str",
                             },
                             "createMode": "str",
-                            "dataMaskingPolicy": {
-                                "excludedPaths": [{"path": "str"}],
-                                "includedPaths": [{"path": "str", "length": 0, "startPosition": 0, "strategy": "str"}],
-                                "isPolicyEnabled": bool,
-                            },
                             "defaultTtl": 0,
                             "fullTextPolicy": {
                                 "defaultLanguage": "str",
@@ -537,14 +383,6 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                                     }
                                 ],
                             },
-                            "materializedViewDefinition": {
-                                "definition": "str",
-                                "sourceCollectionId": "str",
-                                "sourceCollectionRid": "str",
-                                "throughputBucketForBuild": 0,
-                            },
-                            "materializedViews": [{"_rid": "str", "id": "str"}],
-                            "materializedViewsProperties": {"throughputBucketForBuild": 0},
                             "partitionKey": {"kind": "str", "paths": ["str"], "systemKey": bool, "version": 0},
                             "restoreParameters": {
                                 "restoreSource": "str",
@@ -602,22 +440,6 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             database_name="str",
         )
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_sql_resources_begin_list_sql_container_partition_merge(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_list_sql_container_partition_merge(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                container_name="str",
-                merge_parameters={"isDryRun": bool},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
         # please add some check logic here by yourself
         # ...
 
