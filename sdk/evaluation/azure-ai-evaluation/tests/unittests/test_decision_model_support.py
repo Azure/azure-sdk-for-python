@@ -9,11 +9,14 @@ import hashlib
 import json
 import logging
 import math
+import os
+import subprocess
 import sys
 import threading
 from copy import deepcopy
 from logging.handlers import BufferingHandler
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, call, patch
 
@@ -23,7 +26,7 @@ from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
 from azure.core.exceptions import ServiceRequestError
 
-from azure.ai.evaluation import CoherenceEvaluator, FluencyEvaluator
+from azure.ai.evaluation import CoherenceEvaluator, FluencyEvaluator, GroundednessEvaluator
 from azure.ai.evaluation._evaluators._common import EvaluatorBase, ModelEvaluatorBase, PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._evaluators._common._decision_strategy import (
@@ -315,7 +318,8 @@ class TestDecisionModelRunnerRequests:
         assert isinstance(retry, AsyncRetryPolicy) and retry.total_retries == 3
         assert isinstance(redirect, AsyncRedirectPolicy) and redirect.allow is False
 
-    @pytest.mark.parametrize("status", _model_runners._DECISION_RETRY_STATUS_CODES)
+    # Statuses that azure-core's retry policy retries by default and a Decision endpoint can return.
+    @pytest.mark.parametrize("status", [408, 429, 500, 502, 503, 504, 529])
     def test_transient_post_response_is_retried_without_retry_after(self, monkeypatch, status):
         from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 
@@ -450,6 +454,113 @@ class TestDecisionModelRunnerRequests:
             if response_limit == 1024
             else {"decision_model": {"deployment": "Decision-1"}}
         )
+
+    @pytest.mark.parametrize(
+        "detail,kind",
+        [
+            (
+                "invalid model request: Question prompt exceeds the 32768-token context limit including the decision "
+                "token",
+                "context_window_exceeded",
+            ),
+            (
+                "invalid TypeSafe request: request is about 75108 tokens; the limit for the state plus all questions "
+                "is 64000",
+                "request_token_limit_exceeded",
+            ),
+            ("invalid TypeSafe request: request has 256 questions; the limit is 255", "question_limit_exceeded"),
+            (
+                'invalid TypeSafe request: invalid instructions for question "private-key": value must not be empty',
+                "invalid_question",
+            ),
+            (
+                'invalid TypeSafe request: invalid criteria for question "q": value must not be empty',
+                "invalid_question",
+            ),
+            ("invalid TypeSafe request: private-message test-key-value", None),
+            (
+                "invalid model request: Question prompt exceeds the 32768-token context limit " + "x" * 5000,
+                "context_window_exceeded",
+            ),
+            (
+                'invalid TypeSafe request: invalid instructions for question "'
+                + "q" * 2000
+                + '": value must not be empty',
+                "invalid_question",
+            ),
+            ("x" * 1100 + "invalid model request: Question prompt exceeds the 32768-token context limit", None),
+            ("", None),
+        ],
+    )
+    def test_provider_rejection_reason_is_named_by_a_known_kind_without_its_text(self, client, detail, kind):
+        client.response = FakeResponse(422, json.dumps({"detail": detail}).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0))
+        diagnostic = f" ({kind})" if kind else ""
+        assert str(raised.value) == f"(UserError) The decision model returned HTTP 422{diagnostic}."
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        native = raised.value.properties["decision_model"]
+        assert native.get("error_kind") == kind
+        persisted = json.dumps(raised.value.properties) + str(raised.value) + raised.value.internal_message
+        assert "private" not in persisted and "test-key-value" not in persisted and "32768" not in persisted
+        assert len(client.calls) == 1
+
+    @pytest.mark.parametrize(
+        "body",
+        [
+            {"detail": ["exceeds the 1-token context limit"]},
+            {"detail": {"message": "exceeds the 1-token context limit"}},
+            {"error": "exceeds the 1-token context limit"},
+            ["exceeds the 1-token context limit"],
+        ],
+    )
+    def test_malformed_provider_rejection_detail_has_no_kind(self, client, body):
+        client.response = FakeResponse(422, json.dumps(body).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0))
+        assert str(raised.value) == "(UserError) The decision model returned HTTP 422."
+        assert "error_kind" not in raised.value.properties["decision_model"]
+
+    def test_provider_error_code_names_the_message_and_only_a_422_has_a_kind(self, client):
+        body = {
+            "error": {"code": "unsupported_request_argument", "message": "private-message"},
+            "detail": "invalid model request: Question prompt exceeds the 32768-token context limit",
+        }
+        client.response = FakeResponse(400, json.dumps(body).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0))
+        assert str(raised.value) == "(UserError) The decision model returned HTTP 400 (unsupported_request_argument)."
+        assert "error_kind" not in raised.value.properties["decision_model"]
+        assert "private-message" not in json.dumps(raised.value.properties)
+
+    @pytest.mark.parametrize(
+        "detail",
+        [
+            'invalid TypeSafe request: invalid instructions for question "exceeds the 32768-token context limit": '
+            "value must not be empty",
+            'invalid TypeSafe request: invalid criteria for question "request has 300 questions; the limit is 255": '
+            "value must not be empty",
+        ],
+    )
+    def test_a_quoted_question_identifier_cannot_change_the_kind(self, client, detail):
+        client.response = FakeResponse(422, json.dumps({"detail": detail}).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0))
+        assert raised.value.properties["decision_model"]["error_kind"] == "invalid_question"
+
+    @pytest.mark.parametrize(
+        "limits",
+        [{"max_request_bytes": 64}, {"max_state_question_bytes": 64}],
+        ids=["request", "state_question"],
+    )
+    def test_request_over_the_byte_limits_names_its_reason_and_is_not_sent(self, client, limits):
+        with pytest.raises(EvaluationException, match="exceeds the configured byte budget") as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, **limits), state={"response": "x" * 200})
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        native = raised.value.properties["decision_model"]
+        assert native["error_kind"] == "request_bytes_exceeded"
+        assert native["execution"]["attempt_count"] == 0
+        assert not client.calls
 
     @pytest.mark.parametrize(
         "payload",
@@ -696,12 +807,15 @@ class TestSharedBaseSelection:
         assert isinstance(evaluator._model_runner, PromptyModelRunner)
         assert evaluator._flow is flow and not evaluator._uses_decision_model
 
-    def test_prompty_only_evaluators_reject_a_decision_configuration(self):
+    def test_evaluators_without_decision_support_reject_a_decision_configuration(self):
+        class PromptyOnlyEvaluator(ProbeModelEvaluator):
+            _supports_decision_models = False
+
         with patch.object(_model_runners.AsyncPrompty, "load", side_effect=AssertionError("prompty loaded")):
             with pytest.raises(EvaluationException) as raised:
-                FluencyEvaluator(DECISION_CONFIG)
+                PromptyOnlyEvaluator(result_key="probe", model_config=DECISION_CONFIG)
         assert raised.value.blame == ErrorBlame.USER_ERROR
-        assert "FluencyEvaluator" in str(raised.value)
+        assert "PromptyOnlyEvaluator does not support decision models." in str(raised.value)
 
     def test_wrapper_is_initialized_once(self):
         original = EvaluatorBase.__init__
@@ -2039,3 +2153,102 @@ class TestDecisionExecutionObservations:
         with patch.dict(sys.modules, {"opentelemetry.metrics": None}):
             summary = execution.finish("error")
         assert summary["attempt_count"] == 0 and summary["usage_state"] == "unknown"
+
+
+DECLARED_ORDER = ["response", "context", "query", "tool_definitions"]
+
+
+class PassThroughDecisionEvaluator(ModelEvaluatorBase):
+    """Sends its converted inputs to the decision model unchanged, as the catalog's task completion evaluator does."""
+
+    _supports_decision_models = True
+
+    def _derive_singleton_inputs(self):
+        return [["response", "context", "query"], ["query", "response", "tool_definitions"]]
+
+    async def _do_eval(self, eval_input):
+        return await DecisionEvaluationStrategy(
+            self._decision_model_runner,
+            result_key="probe",
+            error_target=ErrorTarget.EVALUATE,
+            questions={
+                "status": {"type": "noul", "instructions": "Applicable?"},
+                "probe": {"type": "noul", "instructions": "Good?"},
+            },
+            scoring=BinaryScoring(0.5),
+            threshold=1,
+            timeout=self._LLM_CALL_TIMEOUT,
+        ).evaluate(eval_input)
+
+
+# Runs in a fresh interpreter, because the hash seed is fixed when the interpreter starts.
+HASH_SEED_PROBE = """
+import json
+import azure.ai.evaluation
+from azure.ai.evaluation._evaluators._common import EvaluatorBase
+
+
+class Probe(EvaluatorBase):
+    def _derive_singleton_inputs(self):
+        return [["response", "context", "query"], ["query", "response", "tool_definitions", "ground_truth"]]
+
+    async def _do_eval(self, eval_input):
+        return {}
+
+
+eval_input = Probe()._convert_kwargs_to_eval_input(query="q", response="r", context="c")
+print(json.dumps({"file": azure.ai.evaluation.__file__, "order": list(eval_input[0])}))
+"""
+
+
+class TestDecisionStateOrder:
+    def test_inputs_keep_the_order_their_overloads_declare(self):
+        evaluator = PassThroughDecisionEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        assert evaluator._get_all_singleton_inputs() == DECLARED_ORDER
+        eval_input = evaluator._convert_kwargs_to_eval_input(query="q", response="r", tool_definitions=[{"name": "t"}])
+        assert list(eval_input[0]) == DECLARED_ORDER
+
+    def test_a_built_in_with_several_overloads_keeps_its_declared_order(self):
+        assert GroundednessEvaluator(CHAT_CONFIG)._get_all_singleton_inputs() == DECLARED_ORDER
+
+    def test_a_decision_request_sends_unchanged_inputs_in_their_declared_order(self, client):
+        payload = decision_payload(0.9, probe={"type": "noul", "noul": 0.9})
+        client.response = FakeResponse(body=json.dumps(payload).encode())
+        evaluator = PassThroughDecisionEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        evaluator(query="q", response="r", tool_definitions=[{"name": "t"}])
+        assert client.calls[0]["content"].startswith(
+            b'{"model":"Decision-1","state":{"response":"r","context":null,"query":"q","tool_definitions":[{"name":"t"}]},'
+        )
+
+    def test_the_order_is_the_same_for_every_hash_seed(self, tmp_path):
+        import azure.ai.evaluation
+
+        # The children import the same package as this process, from a checkout or an installed wheel. They start in
+        # an empty directory, because "python -c" puts the working directory first on the path, so a checkout there
+        # would shadow an installed wheel.
+        loaded = Path(azure.ai.evaluation.__file__).resolve()
+        search_path = os.pathsep.join(filter(None, [str(loaded.parents[3]), os.environ.get("PYTHONPATH")]))
+        children = []
+        try:
+            for seed in range(1, 4):
+                environment = dict(os.environ, PYTHONHASHSEED=str(seed), PYTHONNOUSERSITE="1", PYTHONPATH=search_path)
+                children.append(
+                    subprocess.Popen(
+                        [sys.executable, "-c", HASH_SEED_PROBE],
+                        cwd=tmp_path,
+                        env=environment,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                    )
+                )
+            for seed, child in enumerate(children, start=1):
+                output, errors = child.communicate(timeout=180)
+                assert child.returncode == 0, errors[-2000:]
+                result = json.loads(output.strip().splitlines()[-1])
+                assert Path(result["file"]).resolve() == loaded
+                assert result["order"] == DECLARED_ORDER + ["ground_truth"], f"PYTHONHASHSEED={seed}"
+        finally:
+            for child in children:
+                if child.poll() is None:
+                    child.kill()

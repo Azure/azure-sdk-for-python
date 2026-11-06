@@ -24,9 +24,32 @@
 #
 # --------------------------------------------------------------------------
 import sys
+from collections.abc import Generator
+
+import pytest
+
+from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+from azure.monitor.opentelemetry.exporter._configuration import _state as configuration_state
+from azure.monitor.opentelemetry.exporter._utils import Singleton
 
 
 # Ignore tests for Python < 3.6
 collect_ignore_glob = []
 if sys.version_info < (3, 6):
     collect_ignore_glob.append("*")
+
+
+def _reset_configuration_manager() -> None:  # pylint: disable=protected-access
+    manager = configuration_state._configuration_manager or Singleton._instances.get(_ConfigurationManager)
+    if manager is not None:
+        manager.shutdown()
+    configuration_state._configuration_manager = None
+    Singleton._instances.pop(_ConfigurationManager, None)
+
+
+@pytest.fixture(autouse=True)
+def isolate_configuration_manager() -> Generator[None, None, None]:
+    """Give every test a fresh configuration cache, callback registry, and worker."""
+    _reset_configuration_manager()
+    yield
+    _reset_configuration_manager()

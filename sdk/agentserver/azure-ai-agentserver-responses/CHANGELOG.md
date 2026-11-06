@@ -1,10 +1,6 @@
 # Release History
 
-## 2.4.0b3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 2.4.0 (2026-10-29)
 
 ### Bugs Fixed
 
@@ -12,11 +8,12 @@
 
 ### Other Changes
 
+- Stable release of the 2.4.0 preview series. The protocol-scoped task-runtime
+  behavior and its breaking change from earlier stable releases are documented
+  in the preview entry below.
 - Removed the duplicated experimental decorator compatibility fallback.
-- Updated the minimum `azure-ai-agentserver-core` dependency to `2.3.0b3`
-  for the shared experimental decorator without the broken documentation link
-  or the internal `EXPERIMENTAL_LINK_MESSAGE` constant. Publish that Core version
-  before this package.
+- Require the stable `azure-ai-agentserver-core>=2.3.0` release. Publish Core
+  before Responses.
 
 ## 2.4.0b2 (2026-10-27)
 

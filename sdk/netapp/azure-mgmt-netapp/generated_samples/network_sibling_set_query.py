@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-01/NetworkSiblingSet_Query.json
+# x-ms-original-file: 2026-08-15-preview/NetworkSiblingSet_Query.json
 if __name__ == "__main__":
     main()

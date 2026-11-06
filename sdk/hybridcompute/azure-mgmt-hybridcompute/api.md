@@ -19,6 +19,7 @@ namespace azure.mgmt.hybridcompute
         private_link_resources: PrivateLinkResourcesOperations
         private_link_scopes: PrivateLinkScopesOperations
         settings: SettingsOperations
+        vm_applications: VmApplicationsOperations
 
         def __init__(
                 self, 
@@ -129,6 +130,7 @@ namespace azure.mgmt.hybridcompute.aio
         private_link_resources: PrivateLinkResourcesOperations
         private_link_scopes: PrivateLinkScopesOperations
         settings: SettingsOperations
+        vm_applications: VmApplicationsOperations
 
         def __init__(
                 self, 
@@ -1351,6 +1353,129 @@ namespace azure.mgmt.hybridcompute.aio.operations
             ) -> Settings: ...
 
 
+    class azure.mgmt.hybridcompute.aio.operations.VmApplicationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                resource: VmApplication, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[VmApplication]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                resource: VmApplication, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[VmApplication]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[VmApplication]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'machine_name', 'application_name']}, api_versions_list=['2026-09-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                properties: VmApplicationUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[VmApplication]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                properties: VmApplicationUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[VmApplication]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[VmApplication]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'machine_name', 'application_name', 'accept']}, api_versions_list=['2026-09-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                **kwargs: Any
+            ) -> VmApplication: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'machine_name', 'application_name', 'accept']}, api_versions_list=['2026-09-01'])
+        async def get_instance_view(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                **kwargs: Any
+            ) -> VmApplication: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'machine_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-09-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VmApplication]: ...
+
+
 namespace azure.mgmt.hybridcompute.models
 
     class azure.mgmt.hybridcompute.models.AccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1872,6 +1997,7 @@ namespace azure.mgmt.hybridcompute.models
     class azure.mgmt.hybridcompute.models.IdentityKeyStore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DEFAULT = "Default"
         TPM = "TPM"
+        TPM_TRANSITION = "TpmTransition"
 
 
     class azure.mgmt.hybridcompute.models.InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2840,6 +2966,7 @@ namespace azure.mgmt.hybridcompute.models
 
     class azure.mgmt.hybridcompute.models.MachineUpdateProperties(_Model):
         agent_upgrade: Optional[AgentUpgrade]
+        client_public_key: Optional[str]
         cloud_metadata: Optional[CloudMetadata]
         identity_key_store: Optional[str]
         location_data: Optional[LocationData]
@@ -2853,6 +2980,7 @@ namespace azure.mgmt.hybridcompute.models
                 self, 
                 *, 
                 agent_upgrade: Optional[AgentUpgrade] = ..., 
+                client_public_key: Optional[str] = ..., 
                 cloud_metadata: Optional[CloudMetadata] = ..., 
                 identity_key_store: Optional[str] = ..., 
                 location_data: Optional[LocationData] = ..., 
@@ -3675,6 +3803,130 @@ namespace azure.mgmt.hybridcompute.models
         REQUIRED = "Required"
         STARTED = "Started"
         UNKNOWN = "Unknown"
+
+
+    class azure.mgmt.hybridcompute.models.VmApplication(TrackedResource):
+        id: str
+        location: str
+        name: str
+        properties: Optional[VmApplicationProperties]
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                properties: Optional[VmApplicationProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.hybridcompute.models.VmApplicationInstanceView(_Model):
+        actions_performed: Optional[list[VmApplicationInstanceViewAction]]
+        name: Optional[str]
+        result: Optional[str]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                actions_performed: Optional[list[VmApplicationInstanceViewAction]] = ..., 
+                name: Optional[str] = ..., 
+                result: Optional[str] = ..., 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.hybridcompute.models.VmApplicationInstanceViewAction(_Model):
+        operation: Optional[str]
+        result: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                operation: Optional[str] = ..., 
+                result: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.hybridcompute.models.VmApplicationProperties(_Model):
+        community_gallery_application_id: Optional[str]
+        configuration_reference: Optional[str]
+        instance_view: Optional[VmApplicationInstanceView]
+        order: Optional[int]
+        package_reference_id: Optional[str]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        shared_gallery_application_id: Optional[str]
+        treat_failure_as_deployment_failure: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                community_gallery_application_id: Optional[str] = ..., 
+                configuration_reference: Optional[str] = ..., 
+                order: Optional[int] = ..., 
+                package_reference_id: Optional[str] = ..., 
+                shared_gallery_application_id: Optional[str] = ..., 
+                treat_failure_as_deployment_failure: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.hybridcompute.models.VmApplicationUpdate(_Model):
+        properties: Optional[VmApplicationUpdateProperties]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[VmApplicationUpdateProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.hybridcompute.models.VmApplicationUpdateProperties(_Model):
+        community_gallery_application_id: Optional[str]
+        configuration_reference: Optional[str]
+        order: Optional[int]
+        package_reference_id: Optional[str]
+        shared_gallery_application_id: Optional[str]
+        treat_failure_as_deployment_failure: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                community_gallery_application_id: Optional[str] = ..., 
+                configuration_reference: Optional[str] = ..., 
+                order: Optional[int] = ..., 
+                package_reference_id: Optional[str] = ..., 
+                shared_gallery_application_id: Optional[str] = ..., 
+                treat_failure_as_deployment_failure: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.hybridcompute.models.VolumeLicenseDetails(_Model):
@@ -4851,6 +5103,129 @@ namespace azure.mgmt.hybridcompute.operations
             ) -> Settings: ...
 
 
+    class azure.mgmt.hybridcompute.operations.VmApplicationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                resource: VmApplication, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[VmApplication]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                resource: VmApplication, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[VmApplication]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[VmApplication]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'machine_name', 'application_name']}, api_versions_list=['2026-09-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                properties: VmApplicationUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[VmApplication]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                properties: VmApplicationUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[VmApplication]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[VmApplication]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'machine_name', 'application_name', 'accept']}, api_versions_list=['2026-09-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                **kwargs: Any
+            ) -> VmApplication: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'machine_name', 'application_name', 'accept']}, api_versions_list=['2026-09-01'])
+        def get_instance_view(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                application_name: str, 
+                **kwargs: Any
+            ) -> VmApplication: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'machine_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-09-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                machine_name: str, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[VmApplication]: ...
+
+
 namespace azure.mgmt.hybridcompute.types
 
     class azure.mgmt.hybridcompute.types.AgentConfiguration(TypedDict, total=False):
@@ -4858,18 +5233,14 @@ namespace azure.mgmt.hybridcompute.types
         key "extensionsEnabled": str
         key "guestConfigurationEnabled": str
         key "proxyUrl": str
-        config_mode: Union[str, AgentConfigurationMode]
+        configMode: Union[str, AgentConfigurationMode]
         extensionsAllowList: list[ConfigurationExtension]
         extensionsBlockList: list[ConfigurationExtension]
-        extensions_allow_list: list[ConfigurationExtension]
-        extensions_block_list: list[ConfigurationExtension]
-        extensions_enabled: str
-        guest_configuration_enabled: str
+        extensionsEnabled: str
+        guestConfigurationEnabled: str
         incomingConnectionsPorts: list[str]
-        incoming_connections_ports: list[str]
         proxyBypass: list[str]
-        proxy_bypass: list[str]
-        proxy_url: str
+        proxyUrl: str
 
 
     class azure.mgmt.hybridcompute.types.AgentUpgrade(TypedDict, total=False):
@@ -4880,13 +5251,13 @@ namespace azure.mgmt.hybridcompute.types
         key "lastAttemptMessage": str
         key "lastAttemptStatus": Union[str, LastAttemptStatusEnum]
         key "lastAttemptTimestamp": str
-        correlation_id: str
-        desired_version: str
-        enable_automatic_upgrade: bool
-        last_attempt_desired_version: str
-        last_attempt_message: str
-        last_attempt_status: Union[str, LastAttemptStatusEnum]
-        last_attempt_timestamp: str
+        correlationId: str
+        desiredVersion: str
+        enableAutomaticUpgrade: bool
+        lastAttemptDesiredVersion: str
+        lastAttemptMessage: str
+        lastAttemptStatus: Union[str, LastAttemptStatusEnum]
+        lastAttemptTimestamp: str
 
 
     class azure.mgmt.hybridcompute.types.CloudMetadata(TypedDict, total=False):
@@ -4909,13 +5280,13 @@ namespace azure.mgmt.hybridcompute.types
         key "name": str
         key "path": str
         key "usedSpaceInBytes": int
-        disk_type: str
-        generated_id: str
+        diskType: str
+        generatedId: str
         id: str
-        max_size_in_bytes: int
+        maxSizeInBytes: int
         name: str
         path: str
-        used_space_in_bytes: int
+        usedSpaceInBytes: int
 
 
     class azure.mgmt.hybridcompute.types.ErrorAdditionalInfo(TypedDict, total=False):
@@ -4930,7 +5301,6 @@ namespace azure.mgmt.hybridcompute.types
         key "message": str
         key "target": str
         additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
         code: str
         details: list[ErrorDetail]
         message: str
@@ -4940,18 +5310,18 @@ namespace azure.mgmt.hybridcompute.types
     class azure.mgmt.hybridcompute.types.EsuKey(TypedDict, total=False):
         key "licenseStatus": int
         key "sku": str
-        license_status: int
+        licenseStatus: int
         sku: str
 
 
     class azure.mgmt.hybridcompute.types.EsuProfileUpdateProperties(TypedDict, total=False):
         key "assignedLicense": str
-        assigned_license: str
+        assignedLicense: str
 
 
     class azure.mgmt.hybridcompute.types.ExtensionTargetProperties(TypedDict, total=False):
         key "targetVersion": str
-        target_version: str
+        targetVersion: str
 
 
     class azure.mgmt.hybridcompute.types.ExtensionsResourceStatus(TypedDict, total=False):
@@ -4961,7 +5331,7 @@ namespace azure.mgmt.hybridcompute.types
         key "message": str
         key "time": str
         code: str
-        display_status: str
+        displayStatus: str
         level: Union[str, ExtensionsStatusLevelTypes]
         message: str
         time: str
@@ -4970,7 +5340,7 @@ namespace azure.mgmt.hybridcompute.types
     class azure.mgmt.hybridcompute.types.FirmwareProfile(TypedDict, total=False):
         key "serialNumber": str
         key "type": str
-        serial_number: str
+        serialNumber: str
         type: str
 
 
@@ -4985,7 +5355,7 @@ namespace azure.mgmt.hybridcompute.types
         location: str
         name: str
         properties: GatewayProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4996,13 +5366,11 @@ namespace azure.mgmt.hybridcompute.types
         key "gatewayType": Union[str, GatewayType]
         key "provisioningState": Union[str, ProvisioningState]
         allowedFeatures: list[str]
-        allowed_features: list[str]
         gatewayBypass: list[str]
-        gateway_bypass: list[str]
-        gateway_endpoint: str
-        gateway_id: str
-        gateway_type: Union[str, GatewayType]
-        provisioning_state: Union[str, ProvisioningState]
+        gatewayEndpoint: str
+        gatewayId: str
+        gatewayType: Union[str, GatewayType]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.hybridcompute.types.GatewayUpdate(ResourceUpdate):
@@ -5013,17 +5381,15 @@ namespace azure.mgmt.hybridcompute.types
 
     class azure.mgmt.hybridcompute.types.GatewayUpdateProperties(TypedDict, total=False):
         allowedFeatures: list[str]
-        allowed_features: list[str]
         gatewayBypass: list[str]
-        gateway_bypass: list[str]
 
 
     class azure.mgmt.hybridcompute.types.HardwareProfile(TypedDict, total=False):
         key "numberOfCpuSockets": int
         key "totalPhysicalMemoryInBytes": int
-        number_of_cpu_sockets: int
+        numberOfCpuSockets: int
         processors: list[Processor]
-        total_physical_memory_in_bytes: int
+        totalPhysicalMemoryInBytes: int
 
 
     class azure.mgmt.hybridcompute.types.HybridComputePrivateLinkScope(TrackedResource):
@@ -5037,7 +5403,7 @@ namespace azure.mgmt.hybridcompute.types
         location: str
         name: str
         properties: HybridComputePrivateLinkScopeProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5047,12 +5413,10 @@ namespace azure.mgmt.hybridcompute.types
         key "provisioningState": str
         key "publicNetworkAccess": Union[str, PublicNetworkAccessType]
         privateEndpointConnections: list[PrivateEndpointConnectionDataModel]
-        private_endpoint_connections: list[PrivateEndpointConnectionDataModel]
-        private_link_scope_id: str
-        provisioning_state: str
-        public_network_access: Union[str, PublicNetworkAccessType]
+        privateLinkScopeId: str
+        provisioningState: str
+        publicNetworkAccess: Union[str, PublicNetworkAccessType]
         serviceExtensions: list[ServiceExtension]
-        service_extensions: list[ServiceExtension]
 
 
     class azure.mgmt.hybridcompute.types.IpAddress(TypedDict, total=False):
@@ -5060,7 +5424,7 @@ namespace azure.mgmt.hybridcompute.types
         key "ipAddressVersion": str
         key "subnet": ForwardRef('Subnet', module='types')
         address: str
-        ip_address_version: str
+        ipAddressVersion: str
         subnet: Subnet
 
 
@@ -5075,7 +5439,7 @@ namespace azure.mgmt.hybridcompute.types
         location: str
         name: str
         properties: LicenseProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5088,15 +5452,14 @@ namespace azure.mgmt.hybridcompute.types
         key "state": Union[str, LicenseState]
         key "target": Union[str, LicenseTarget]
         key "type": Union[str, LicenseCoreType]
-        assigned_licenses: int
+        assignedLicenses: int
         edition: Union[str, LicenseEdition]
-        immutable_id: str
+        immutableId: str
         processors: int
         state: Union[str, LicenseState]
         target: Union[str, LicenseTarget]
         type: Union[str, LicenseCoreType]
         volumeLicenseDetails: list[VolumeLicenseDetails]
-        volume_license_details: list[VolumeLicenseDetails]
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfile(TrackedResource):
@@ -5110,7 +5473,7 @@ namespace azure.mgmt.hybridcompute.types
         location: str
         name: str
         properties: LicenseProfileProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5121,13 +5484,12 @@ namespace azure.mgmt.hybridcompute.types
         key "esuEligibility": Union[str, EsuEligibility]
         key "esuKeyState": Union[str, EsuKeyState]
         key "serverType": Union[str, EsuServerType]
-        assigned_license: str
-        assigned_license_immutable_id: str
+        assignedLicense: str
+        assignedLicenseImmutableId: str
+        esuEligibility: Union[str, EsuEligibility]
+        esuKeyState: Union[str, EsuKeyState]
         esuKeys: list[EsuKey]
-        esu_eligibility: Union[str, EsuEligibility]
-        esu_key_state: Union[str, EsuKeyState]
-        esu_keys: list[EsuKey]
-        server_type: Union[str, EsuServerType]
+        serverType: Union[str, EsuServerType]
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfileArmEsuPropertiesWithoutAssignedLicense(LicenseProfileStorageModelEsuProperties):
@@ -5135,12 +5497,11 @@ namespace azure.mgmt.hybridcompute.types
         key "esuEligibility": Union[str, EsuEligibility]
         key "esuKeyState": Union[str, EsuKeyState]
         key "serverType": Union[str, EsuServerType]
-        assigned_license_immutable_id: str
+        assignedLicenseImmutableId: str
+        esuEligibility: Union[str, EsuEligibility]
+        esuKeyState: Union[str, EsuKeyState]
         esuKeys: list[EsuKey]
-        esu_eligibility: Union[str, EsuEligibility]
-        esu_key_state: Union[str, EsuKeyState]
-        esu_keys: list[EsuKey]
-        server_type: Union[str, EsuServerType]
+        serverType: Union[str, EsuServerType]
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfileArmProductProfileProperties(TypedDict, total=False):
@@ -5151,15 +5512,14 @@ namespace azure.mgmt.hybridcompute.types
         key "error": ForwardRef('ErrorDetail', module='types')
         key "productType": Union[str, LicenseProfileProductType]
         key "subscriptionStatus": Union[str, LicenseProfileSubscriptionStatus]
-        billing_end_date: str
-        billing_start_date: str
-        disenrollment_date: str
-        enrollment_date: str
+        billingEndDate: str
+        billingStartDate: str
+        disenrollmentDate: str
+        enrollmentDate: str
         error: ErrorDetail
         productFeatures: list[ProductFeature]
-        product_features: list[ProductFeature]
-        product_type: Union[str, LicenseProfileProductType]
-        subscription_status: Union[str, LicenseProfileSubscriptionStatus]
+        productType: Union[str, LicenseProfileProductType]
+        subscriptionStatus: Union[str, LicenseProfileSubscriptionStatus]
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfileMachineInstanceView(TypedDict, total=False):
@@ -5168,11 +5528,11 @@ namespace azure.mgmt.hybridcompute.types
         key "licenseStatus": Union[str, LicenseStatus]
         key "productProfile": ForwardRef('LicenseProfileArmProductProfileProperties', module='types')
         key "softwareAssurance": ForwardRef('LicenseProfileMachineInstanceViewSoftwareAssurance', module='types')
-        esu_profile: LicenseProfileMachineInstanceViewEsuProperties
-        license_channel: str
-        license_status: Union[str, LicenseStatus]
-        product_profile: LicenseProfileArmProductProfileProperties
-        software_assurance: LicenseProfileMachineInstanceViewSoftwareAssurance
+        esuProfile: LicenseProfileMachineInstanceViewEsuProperties
+        licenseChannel: str
+        licenseStatus: Union[str, LicenseStatus]
+        productProfile: LicenseProfileArmProductProfileProperties
+        softwareAssurance: LicenseProfileMachineInstanceViewSoftwareAssurance
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfileMachineInstanceViewEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssignedLicense):
@@ -5182,19 +5542,18 @@ namespace azure.mgmt.hybridcompute.types
         key "esuKeyState": Union[str, EsuKeyState]
         key "licenseAssignmentState": Union[str, LicenseAssignmentState]
         key "serverType": Union[str, EsuServerType]
-        assigned_license: License
-        assigned_license_immutable_id: str
+        assignedLicense: License
+        assignedLicenseImmutableId: str
+        esuEligibility: Union[str, EsuEligibility]
+        esuKeyState: Union[str, EsuKeyState]
         esuKeys: list[EsuKey]
-        esu_eligibility: Union[str, EsuEligibility]
-        esu_key_state: Union[str, EsuKeyState]
-        esu_keys: list[EsuKey]
-        license_assignment_state: Union[str, LicenseAssignmentState]
-        server_type: Union[str, EsuServerType]
+        licenseAssignmentState: Union[str, LicenseAssignmentState]
+        serverType: Union[str, EsuServerType]
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfileMachineInstanceViewSoftwareAssurance(TypedDict, total=False):
         key "softwareAssuranceCustomer": bool
-        software_assurance_customer: bool
+        softwareAssuranceCustomer: bool
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfileProperties(TypedDict, total=False):
@@ -5202,22 +5561,21 @@ namespace azure.mgmt.hybridcompute.types
         key "productProfile": ForwardRef('LicenseProfileArmProductProfileProperties', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "softwareAssurance": ForwardRef('LicenseProfilePropertiesSoftwareAssurance', module='types')
-        esu_profile: LicenseProfileArmEsuProperties
-        product_profile: LicenseProfileArmProductProfileProperties
-        provisioning_state: Union[str, ProvisioningState]
-        software_assurance: LicenseProfilePropertiesSoftwareAssurance
+        esuProfile: LicenseProfileArmEsuProperties
+        productProfile: LicenseProfileArmProductProfileProperties
+        provisioningState: Union[str, ProvisioningState]
+        softwareAssurance: LicenseProfilePropertiesSoftwareAssurance
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfilePropertiesSoftwareAssurance(TypedDict, total=False):
         key "softwareAssuranceCustomer": bool
-        software_assurance_customer: bool
+        softwareAssuranceCustomer: bool
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfileStorageModelEsuProperties(TypedDict, total=False):
         key "assignedLicenseImmutableId": str
-        assigned_license_immutable_id: str
+        assignedLicenseImmutableId: str
         esuKeys: list[EsuKey]
-        esu_keys: list[EsuKey]
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfileUpdate(ResourceUpdate):
@@ -5230,14 +5588,14 @@ namespace azure.mgmt.hybridcompute.types
         key "esuProfile": ForwardRef('EsuProfileUpdateProperties', module='types')
         key "productProfile": ForwardRef('ProductProfileUpdateProperties', module='types')
         key "softwareAssurance": ForwardRef('LicenseProfileUpdatePropertiesSoftwareAssurance', module='types')
-        esu_profile: EsuProfileUpdateProperties
-        product_profile: ProductProfileUpdateProperties
-        software_assurance: LicenseProfileUpdatePropertiesSoftwareAssurance
+        esuProfile: EsuProfileUpdateProperties
+        productProfile: ProductProfileUpdateProperties
+        softwareAssurance: LicenseProfileUpdatePropertiesSoftwareAssurance
 
 
     class azure.mgmt.hybridcompute.types.LicenseProfileUpdatePropertiesSoftwareAssurance(TypedDict, total=False):
         key "softwareAssuranceCustomer": bool
-        software_assurance_customer: bool
+        softwareAssuranceCustomer: bool
 
 
     class azure.mgmt.hybridcompute.types.LicenseProperties(TypedDict, total=False):
@@ -5245,10 +5603,10 @@ namespace azure.mgmt.hybridcompute.types
         key "licenseType": Union[str, LicenseType]
         key "provisioningState": Union[str, ProvisioningState]
         key "tenantId": str
-        license_details: LicenseDetails
-        license_type: Union[str, LicenseType]
-        provisioning_state: Union[str, ProvisioningState]
-        tenant_id: str
+        licenseDetails: LicenseDetails
+        licenseType: Union[str, LicenseType]
+        provisioningState: Union[str, ProvisioningState]
+        tenantId: str
 
 
     class azure.mgmt.hybridcompute.types.LicenseUpdate(ResourceUpdate):
@@ -5260,8 +5618,8 @@ namespace azure.mgmt.hybridcompute.types
     class azure.mgmt.hybridcompute.types.LicenseUpdateProperties(TypedDict, total=False):
         key "licenseDetails": ForwardRef('LicenseUpdatePropertiesLicenseDetails', module='types')
         key "licenseType": Union[str, LicenseType]
-        license_details: LicenseUpdatePropertiesLicenseDetails
-        license_type: Union[str, LicenseType]
+        licenseDetails: LicenseUpdatePropertiesLicenseDetails
+        licenseType: Union[str, LicenseType]
 
 
     class azure.mgmt.hybridcompute.types.LicenseUpdatePropertiesLicenseDetails(TypedDict, total=False):
@@ -5279,11 +5637,8 @@ namespace azure.mgmt.hybridcompute.types
 
     class azure.mgmt.hybridcompute.types.LinuxParameters(TypedDict, total=False):
         classificationsToInclude: list[Union[str, VMGuestPatchClassificationLinux]]
-        classifications_to_include: list[Union[str, VMGuestPatchClassificationLinux]]
         packageNameMasksToExclude: list[str]
         packageNameMasksToInclude: list[str]
-        package_name_masks_to_exclude: list[str]
-        package_name_masks_to_include: list[str]
 
 
     class azure.mgmt.hybridcompute.types.LocationData(TypedDict, total=False):
@@ -5292,7 +5647,7 @@ namespace azure.mgmt.hybridcompute.types
         key "district": str
         key "name": Required[str]
         city: str
-        country_or_region: str
+        countryOrRegion: str
         district: str
         name: str
 
@@ -5313,7 +5668,7 @@ namespace azure.mgmt.hybridcompute.types
         name: str
         properties: MachineProperties
         resources: list[MachineExtension]
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5329,7 +5684,7 @@ namespace azure.mgmt.hybridcompute.types
         location: str
         name: str
         properties: MachineExtensionProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5342,7 +5697,7 @@ namespace azure.mgmt.hybridcompute.types
         name: str
         status: MachineExtensionInstanceViewStatus
         type: str
-        type_handler_version: str
+        typeHandlerVersion: str
 
 
     class azure.mgmt.hybridcompute.types.MachineExtensionInstanceViewStatus(TypedDict, total=False):
@@ -5352,7 +5707,7 @@ namespace azure.mgmt.hybridcompute.types
         key "message": str
         key "time": str
         code: str
-        display_status: str
+        displayStatus: str
         level: Union[str, StatusLevelTypes]
         message: str
         time: str
@@ -5367,17 +5722,16 @@ namespace azure.mgmt.hybridcompute.types
         key "publisher": str
         key "type": str
         key "typeHandlerVersion": str
-        auto_upgrade_minor_version: bool
-        enable_automatic_upgrade: bool
-        force_update_tag: str
-        instance_view: MachineExtensionInstanceView
+        autoUpgradeMinorVersion: bool
+        enableAutomaticUpgrade: bool
+        forceUpdateTag: str
+        instanceView: MachineExtensionInstanceView
         protectedSettings: dict[str, Any]
-        protected_settings: dict[str, Any]
-        provisioning_state: str
+        provisioningState: str
         publisher: str
         settings: dict[str, Any]
         type: str
-        type_handler_version: str
+        typeHandlerVersion: str
 
 
     class azure.mgmt.hybridcompute.types.MachineExtensionUpdate(ResourceUpdate):
@@ -5393,20 +5747,18 @@ namespace azure.mgmt.hybridcompute.types
         key "publisher": str
         key "type": str
         key "typeHandlerVersion": str
-        auto_upgrade_minor_version: bool
-        enable_automatic_upgrade: bool
-        force_update_tag: str
+        autoUpgradeMinorVersion: bool
+        enableAutomaticUpgrade: bool
+        forceUpdateTag: str
         protectedSettings: dict[str, Any]
-        protected_settings: dict[str, Any]
         publisher: str
         settings: dict[str, Any]
         type: str
-        type_handler_version: str
+        typeHandlerVersion: str
 
 
     class azure.mgmt.hybridcompute.types.MachineExtensionUpgrade(TypedDict, total=False):
         extensionTargets: dict[str, ExtensionTargetProperties]
-        extension_targets: dict[str, ExtensionTargetProperties]
 
 
     class azure.mgmt.hybridcompute.types.MachineInstallPatchesParameters(TypedDict, total=False):
@@ -5414,10 +5766,10 @@ namespace azure.mgmt.hybridcompute.types
         key "maximumDuration": Required[str]
         key "rebootSetting": Required[Union[str, VMGuestPatchRebootSetting]]
         key "windowsParameters": ForwardRef('WindowsParameters', module='types')
-        linux_parameters: LinuxParameters
-        maximum_duration: str
-        reboot_setting: Union[str, VMGuestPatchRebootSetting]
-        windows_parameters: WindowsParameters
+        linuxParameters: LinuxParameters
+        maximumDuration: str
+        rebootSetting: Union[str, VMGuestPatchRebootSetting]
+        windowsParameters: WindowsParameters
 
 
     class azure.mgmt.hybridcompute.types.MachineProperties(TypedDict, total=False):
@@ -5456,46 +5808,44 @@ namespace azure.mgmt.hybridcompute.types
         key "tpmEkCertificate": str
         key "vmId": str
         key "vmUuid": str
-        ad_fqdn: str
-        agent_configuration: AgentConfiguration
-        agent_upgrade: AgentUpgrade
-        agent_version: str
-        client_public_key: str
-        cloud_metadata: CloudMetadata
+        adFqdn: str
+        agentConfiguration: AgentConfiguration
+        agentUpgrade: AgentUpgrade
+        agentVersion: str
+        clientPublicKey: str
+        cloudMetadata: CloudMetadata
         detectedProperties: dict[str, str]
-        detected_properties: dict[str, str]
-        display_name: str
-        dns_fqdn: str
-        domain_name: str
+        displayName: str
+        dnsFqdn: str
+        domainName: str
         errorDetails: list[ErrorDetail]
-        error_details: list[ErrorDetail]
         extensions: list[MachineExtensionInstanceView]
-        firmware_profile: FirmwareProfile
-        hardware_profile: HardwareProfile
-        hardware_resource_id: str
-        identity_key_store: Union[str, IdentityKeyStore]
-        last_status_change: str
-        license_profile: LicenseProfileMachineInstanceView
-        location_data: LocationData
-        machine_fqdn: str
-        mssql_discovered: str
-        network_profile: NetworkProfile
-        os_edition: str
-        os_name: str
-        os_profile: OSProfile
-        os_sku: str
-        os_type: str
-        os_version: str
-        parent_cluster_resource_id: str
-        private_link_scope_resource_id: str
-        provisioning_state: str
-        service_statuses: ServiceStatuses
+        firmwareProfile: FirmwareProfile
+        hardwareProfile: HardwareProfile
+        hardwareResourceId: str
+        identityKeyStore: Union[str, IdentityKeyStore]
+        lastStatusChange: str
+        licenseProfile: LicenseProfileMachineInstanceView
+        locationData: LocationData
+        machineFqdn: str
+        mssqlDiscovered: str
+        networkProfile: NetworkProfile
+        osEdition: str
+        osName: str
+        osProfile: OSProfile
+        osSku: str
+        osType: str
+        osVersion: str
+        parentClusterResourceId: str
+        privateLinkScopeResourceId: str
+        provisioningState: str
+        serviceStatuses: ServiceStatuses
         status: Union[str, StatusTypes]
-        status_reason: Union[str, MachineStatusReason]
-        storage_profile: StorageProfile
-        tpm_ek_certificate: str
-        vm_id: str
-        vm_uuid: str
+        statusReason: Union[str, MachineStatusReason]
+        storageProfile: StorageProfile
+        tpmEkCertificate: str
+        vmId: str
+        vmUuid: str
 
 
     class azure.mgmt.hybridcompute.types.MachineRunCommand(TrackedResource):
@@ -5509,7 +5859,7 @@ namespace azure.mgmt.hybridcompute.types
         location: str
         name: str
         properties: MachineRunCommandProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5522,13 +5872,13 @@ namespace azure.mgmt.hybridcompute.types
         key "exitCode": int
         key "output": str
         key "startTime": str
-        end_time: str
+        endTime: str
         error: str
-        execution_message: str
-        execution_state: Union[str, ExecutionState]
-        exit_code: int
+        executionMessage: str
+        executionState: Union[str, ExecutionState]
+        exitCode: int
         output: str
-        start_time: str
+        startTime: str
         statuses: list[ExtensionsResourceStatus]
 
 
@@ -5544,20 +5894,19 @@ namespace azure.mgmt.hybridcompute.types
         key "runAsUser": str
         key "source": ForwardRef('MachineRunCommandScriptSource', module='types')
         key "timeoutInSeconds": int
-        async_execution: bool
-        error_blob_managed_identity: RunCommandManagedIdentity
-        error_blob_uri: str
-        instance_view: MachineRunCommandInstanceView
-        output_blob_managed_identity: RunCommandManagedIdentity
-        output_blob_uri: str
+        asyncExecution: bool
+        errorBlobManagedIdentity: RunCommandManagedIdentity
+        errorBlobUri: str
+        instanceView: MachineRunCommandInstanceView
+        outputBlobManagedIdentity: RunCommandManagedIdentity
+        outputBlobUri: str
         parameters: list[RunCommandInputParameter]
         protectedParameters: list[RunCommandInputParameter]
-        protected_parameters: list[RunCommandInputParameter]
-        provisioning_state: str
-        run_as_password: str
-        run_as_user: str
+        provisioningState: str
+        runAsPassword: str
+        runAsUser: str
         source: MachineRunCommandScriptSource
-        timeout_in_seconds: int
+        timeoutInSeconds: int
 
 
     class azure.mgmt.hybridcompute.types.MachineRunCommandScriptSource(TypedDict, total=False):
@@ -5565,10 +5914,10 @@ namespace azure.mgmt.hybridcompute.types
         key "script": str
         key "scriptUri": str
         key "scriptUriManagedIdentity": ForwardRef('RunCommandManagedIdentity', module='types')
-        command_id: str
+        commandId: str
         script: str
-        script_uri: str
-        script_uri_managed_identity: RunCommandManagedIdentity
+        scriptUri: str
+        scriptUriManagedIdentity: RunCommandManagedIdentity
 
 
     class azure.mgmt.hybridcompute.types.MachineUpdate(ResourceUpdate):
@@ -5583,6 +5932,7 @@ namespace azure.mgmt.hybridcompute.types
 
     class azure.mgmt.hybridcompute.types.MachineUpdateProperties(TypedDict, total=False):
         key "agentUpgrade": ForwardRef('AgentUpgrade', module='types')
+        key "clientPublicKey": str
         key "cloudMetadata": ForwardRef('CloudMetadata', module='types')
         key "identityKeyStore": str
         key "locationData": ForwardRef('LocationData', module='types')
@@ -5590,25 +5940,25 @@ namespace azure.mgmt.hybridcompute.types
         key "parentClusterResourceId": str
         key "privateLinkScopeResourceId": str
         key "tpmEkCertificate": str
-        agent_upgrade: AgentUpgrade
-        cloud_metadata: CloudMetadata
-        identity_key_store: str
-        location_data: LocationData
-        os_profile: OSProfile
-        parent_cluster_resource_id: str
-        private_link_scope_resource_id: str
-        tpm_ek_certificate: str
+        agentUpgrade: AgentUpgrade
+        clientPublicKey: str
+        cloudMetadata: CloudMetadata
+        identityKeyStore: str
+        locationData: LocationData
+        osProfile: OSProfile
+        parentClusterResourceId: str
+        privateLinkScopeResourceId: str
+        tpmEkCertificate: str
 
 
     class azure.mgmt.hybridcompute.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.hybridcompute.types.NetworkInterface(TypedDict, total=False):
@@ -5617,33 +5967,31 @@ namespace azure.mgmt.hybridcompute.types
         key "name": str
         id: str
         ipAddresses: list[IpAddress]
-        ip_addresses: list[IpAddress]
-        mac_address: str
+        macAddress: str
         name: str
 
 
     class azure.mgmt.hybridcompute.types.NetworkProfile(TypedDict, total=False):
         networkInterfaces: list[NetworkInterface]
-        network_interfaces: list[NetworkInterface]
 
 
     class azure.mgmt.hybridcompute.types.OSProfile(TypedDict, total=False):
         key "computerName": str
         key "linuxConfiguration": ForwardRef('OSProfileLinuxConfiguration', module='types')
         key "windowsConfiguration": ForwardRef('OSProfileWindowsConfiguration', module='types')
-        computer_name: str
-        linux_configuration: OSProfileLinuxConfiguration
-        windows_configuration: OSProfileWindowsConfiguration
+        computerName: str
+        linuxConfiguration: OSProfileLinuxConfiguration
+        windowsConfiguration: OSProfileWindowsConfiguration
 
 
     class azure.mgmt.hybridcompute.types.OSProfileLinuxConfiguration(TypedDict, total=False):
         key "patchSettings": ForwardRef('PatchSettings', module='types')
-        patch_settings: PatchSettings
+        patchSettings: PatchSettings
 
 
     class azure.mgmt.hybridcompute.types.OSProfileWindowsConfiguration(TypedDict, total=False):
         key "patchSettings": ForwardRef('PatchSettings', module='types')
-        patch_settings: PatchSettings
+        patchSettings: PatchSettings
 
 
     class azure.mgmt.hybridcompute.types.PatchSettings(TypedDict, total=False):
@@ -5651,9 +5999,9 @@ namespace azure.mgmt.hybridcompute.types
         key "enableHotpatching": bool
         key "patchMode": Union[str, PatchModeTypes]
         key "status": ForwardRef('PatchSettingsStatus', module='types')
-        assessment_mode: Union[str, AssessmentModeTypes]
-        enable_hotpatching: bool
-        patch_mode: Union[str, PatchModeTypes]
+        assessmentMode: Union[str, AssessmentModeTypes]
+        enableHotpatching: bool
+        patchMode: Union[str, PatchModeTypes]
         status: PatchSettingsStatus
 
 
@@ -5661,7 +6009,7 @@ namespace azure.mgmt.hybridcompute.types
         key "error": ForwardRef('ErrorDetail', module='types')
         key "hotpatchEnablementStatus": Union[str, HotpatchEnablementStatus]
         error: ErrorDetail
-        hotpatch_enablement_status: Union[str, HotpatchEnablementStatus]
+        hotpatchEnablementStatus: Union[str, HotpatchEnablementStatus]
 
 
     class azure.mgmt.hybridcompute.types.PrivateEndpointConnection(ProxyResource):
@@ -5673,7 +6021,7 @@ namespace azure.mgmt.hybridcompute.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5693,10 +6041,9 @@ namespace azure.mgmt.hybridcompute.types
         key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionStateProperty', module='types')
         key "provisioningState": str
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpointProperty
-        private_link_service_connection_state: PrivateLinkServiceConnectionStateProperty
-        provisioning_state: str
+        privateEndpoint: PrivateEndpointProperty
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionStateProperty
+        provisioningState: str
 
 
     class azure.mgmt.hybridcompute.types.PrivateEndpointProperty(TypedDict, total=False):
@@ -5708,7 +6055,7 @@ namespace azure.mgmt.hybridcompute.types
         key "actionsRequired": str
         key "description": Required[str]
         key "status": Required[str]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: str
 
@@ -5717,7 +6064,7 @@ namespace azure.mgmt.hybridcompute.types
         key "name": str
         key "numberOfCores": int
         name: str
-        number_of_cores: int
+        numberOfCores: int
 
 
     class azure.mgmt.hybridcompute.types.ProductFeature(TypedDict, total=False):
@@ -5728,29 +6075,28 @@ namespace azure.mgmt.hybridcompute.types
         key "error": ForwardRef('ErrorDetail', module='types')
         key "name": str
         key "subscriptionStatus": Union[str, LicenseProfileSubscriptionStatus]
-        billing_end_date: str
-        billing_start_date: str
-        disenrollment_date: str
-        enrollment_date: str
+        billingEndDate: str
+        billingStartDate: str
+        disenrollmentDate: str
+        enrollmentDate: str
         error: ErrorDetail
         name: str
-        subscription_status: Union[str, LicenseProfileSubscriptionStatus]
+        subscriptionStatus: Union[str, LicenseProfileSubscriptionStatus]
 
 
     class azure.mgmt.hybridcompute.types.ProductFeatureUpdate(TypedDict, total=False):
         key "name": str
         key "subscriptionStatus": Union[str, LicenseProfileSubscriptionStatusUpdate]
         name: str
-        subscription_status: Union[str, LicenseProfileSubscriptionStatusUpdate]
+        subscriptionStatus: Union[str, LicenseProfileSubscriptionStatusUpdate]
 
 
     class azure.mgmt.hybridcompute.types.ProductProfileUpdateProperties(TypedDict, total=False):
         key "productType": Union[str, LicenseProfileProductType]
         key "subscriptionStatus": Union[str, LicenseProfileSubscriptionStatusUpdate]
         productFeatures: list[ProductFeatureUpdate]
-        product_features: list[ProductFeatureUpdate]
-        product_type: Union[str, LicenseProfileProductType]
-        subscription_status: Union[str, LicenseProfileSubscriptionStatusUpdate]
+        productType: Union[str, LicenseProfileProductType]
+        subscriptionStatus: Union[str, LicenseProfileSubscriptionStatusUpdate]
 
 
     class azure.mgmt.hybridcompute.types.ProxyResource(Resource):
@@ -5760,7 +6106,7 @@ namespace azure.mgmt.hybridcompute.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5771,7 +6117,7 @@ namespace azure.mgmt.hybridcompute.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5789,29 +6135,29 @@ namespace azure.mgmt.hybridcompute.types
     class azure.mgmt.hybridcompute.types.RunCommandManagedIdentity(TypedDict, total=False):
         key "clientId": str
         key "objectId": str
-        client_id: str
-        object_id: str
+        clientId: str
+        objectId: str
 
 
     class azure.mgmt.hybridcompute.types.ServiceExtension(TypedDict, total=False):
         key "serviceExtensionPublicNetworkAccess": Union[str, ServiceExtensionPublicNetworkAccess]
         key "serviceExtensionType": ForwardRef('ServiceExtensionType', module='types')
-        service_extension_public_network_access: Union[str, ServiceExtensionPublicNetworkAccess]
-        service_extension_type: ServiceExtensionType
+        serviceExtensionPublicNetworkAccess: Union[str, ServiceExtensionPublicNetworkAccess]
+        serviceExtensionType: ServiceExtensionType
 
 
     class azure.mgmt.hybridcompute.types.ServiceStatus(TypedDict, total=False):
         key "startupType": str
         key "status": str
-        startup_type: str
+        startupType: str
         status: str
 
 
     class azure.mgmt.hybridcompute.types.ServiceStatuses(TypedDict, total=False):
         key "extensionService": ForwardRef('ServiceStatus', module='types')
         key "guestConfigurationService": ForwardRef('ServiceStatus', module='types')
-        extension_service: ServiceStatus
-        guest_configuration_service: ServiceStatus
+        extensionService: ServiceStatus
+        guestConfigurationService: ServiceStatus
 
 
     class azure.mgmt.hybridcompute.types.Settings(ProxyResource):
@@ -5823,20 +6169,20 @@ namespace azure.mgmt.hybridcompute.types
         id: str
         name: str
         properties: SettingsProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.hybridcompute.types.SettingsGatewayProperties(TypedDict, total=False):
         key "gatewayResourceId": str
-        gateway_resource_id: str
+        gatewayResourceId: str
 
 
     class azure.mgmt.hybridcompute.types.SettingsProperties(TypedDict, total=False):
         key "gatewayProperties": ForwardRef('SettingsGatewayProperties', module='types')
         key "tenantId": str
-        gateway_properties: SettingsGatewayProperties
-        tenant_id: str
+        gatewayProperties: SettingsGatewayProperties
+        tenantId: str
 
 
     class azure.mgmt.hybridcompute.types.SetupExtensionRequest(TypedDict, total=False):
@@ -5849,7 +6195,7 @@ namespace azure.mgmt.hybridcompute.types
 
     class azure.mgmt.hybridcompute.types.Subnet(TypedDict, total=False):
         key "addressPrefix": str
-        address_prefix: str
+        addressPrefix: str
 
 
     class azure.mgmt.hybridcompute.types.SystemData(TypedDict, total=False):
@@ -5859,12 +6205,12 @@ namespace azure.mgmt.hybridcompute.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.hybridcompute.types.TagsResource(TypedDict, total=False):
@@ -5880,7 +6226,7 @@ namespace azure.mgmt.hybridcompute.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5888,32 +6234,100 @@ namespace azure.mgmt.hybridcompute.types
     class azure.mgmt.hybridcompute.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.hybridcompute.types.VmApplication(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('VmApplicationProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: VmApplicationProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.hybridcompute.types.VmApplicationInstanceView(TypedDict, total=False):
+        key "name": str
+        key "result": str
+        key "version": str
+        actionsPerformed: list[VmApplicationInstanceViewAction]
+        name: str
+        result: str
+        version: str
+
+
+    class azure.mgmt.hybridcompute.types.VmApplicationInstanceViewAction(TypedDict, total=False):
+        key "operation": str
+        key "result": str
+        operation: str
+        result: str
+
+
+    class azure.mgmt.hybridcompute.types.VmApplicationProperties(TypedDict, total=False):
+        key "communityGalleryApplicationId": str
+        key "configurationReference": str
+        key "instanceView": ForwardRef('VmApplicationInstanceView', module='types')
+        key "order": int
+        key "packageReferenceId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sharedGalleryApplicationId": str
+        key "treatFailureAsDeploymentFailure": bool
+        communityGalleryApplicationId: str
+        configurationReference: str
+        instanceView: VmApplicationInstanceView
+        order: int
+        packageReferenceId: str
+        provisioningState: Union[str, ProvisioningState]
+        sharedGalleryApplicationId: str
+        treatFailureAsDeploymentFailure: bool
+
+
+    class azure.mgmt.hybridcompute.types.VmApplicationUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('VmApplicationUpdateProperties', module='types')
+        properties: VmApplicationUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.hybridcompute.types.VmApplicationUpdateProperties(TypedDict, total=False):
+        key "communityGalleryApplicationId": str
+        key "configurationReference": str
+        key "order": int
+        key "packageReferenceId": str
+        key "sharedGalleryApplicationId": str
+        key "treatFailureAsDeploymentFailure": bool
+        communityGalleryApplicationId: str
+        configurationReference: str
+        order: int
+        packageReferenceId: str
+        sharedGalleryApplicationId: str
+        treatFailureAsDeploymentFailure: bool
 
 
     class azure.mgmt.hybridcompute.types.VolumeLicenseDetails(TypedDict, total=False):
         key "invoiceId": str
         key "programYear": Union[str, ProgramYear]
-        invoice_id: str
-        program_year: Union[str, ProgramYear]
+        invoiceId: str
+        programYear: Union[str, ProgramYear]
 
 
     class azure.mgmt.hybridcompute.types.WindowsParameters(TypedDict, total=False):
         key "excludeKbsRequiringReboot": bool
         key "maxPatchPublishDate": str
         classificationsToInclude: list[Union[str, VMGuestPatchClassificationWindows]]
-        classifications_to_include: list[Union[str, VMGuestPatchClassificationWindows]]
-        exclude_kbs_requiring_reboot: bool
+        excludeKbsRequiringReboot: bool
         kbNumbersToExclude: list[str]
         kbNumbersToInclude: list[str]
-        kb_numbers_to_exclude: list[str]
-        kb_numbers_to_include: list[str]
-        max_patch_publish_date: str
+        maxPatchPublishDate: str
         patchNameMasksToExclude: list[str]
         patchNameMasksToInclude: list[str]
-        patch_name_masks_to_exclude: list[str]
-        patch_name_masks_to_include: list[str]
 
 
 ```

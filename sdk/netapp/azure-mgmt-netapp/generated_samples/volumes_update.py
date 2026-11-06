@@ -35,60 +35,11 @@ def main():
         account_name="account1",
         pool_name="pool1",
         volume_name="volume1",
-        body={
-            "id": "str",
-            "location": "str",
-            "name": "str",
-            "properties": {
-                "coolAccess": bool,
-                "coolAccessRetrievalPolicy": "str",
-                "coolAccessTieringPolicy": "str",
-                "coolnessPeriod": 0,
-                "dataProtection": {
-                    "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
-                    "ransomwareProtection": {"desiredRansomwareProtectionState": "str"},
-                    "snapshot": {"snapshotPolicyId": "str"},
-                },
-                "defaultGroupQuotaInKiBs": 0,
-                "defaultUserQuotaInKiBs": 0,
-                "exportPolicy": {
-                    "rules": [
-                        {
-                            "allowedClients": "str",
-                            "chownMode": "str",
-                            "cifs": bool,
-                            "hasRootAccess": bool,
-                            "kerberos5ReadOnly": bool,
-                            "kerberos5ReadWrite": bool,
-                            "kerberos5iReadOnly": bool,
-                            "kerberos5iReadWrite": bool,
-                            "kerberos5pReadOnly": bool,
-                            "kerberos5pReadWrite": bool,
-                            "nfsv3": bool,
-                            "nfsv41": bool,
-                            "ruleIndex": 0,
-                            "unixReadOnly": bool,
-                            "unixReadWrite": bool,
-                        }
-                    ]
-                },
-                "isDefaultQuotaEnabled": bool,
-                "protocolTypes": ["str"],
-                "serviceLevel": "str",
-                "smbAccessBasedEnumeration": "str",
-                "smbNonBrowsable": "str",
-                "snapshotDirectoryVisible": bool,
-                "throughputMibps": 0.0,
-                "unixPermissions": "str",
-                "usageThreshold": 0,
-            },
-            "tags": {"str": "str"},
-            "type": "str",
-        },
+        body={"properties": {"asyncDirectoryDelete": {"status": "Enabled", "trashBinName": "trash"}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-08-01/Volumes_Update.json
+# x-ms-original-file: 2026-08-15-preview/Volumes_Update.json
 if __name__ == "__main__":
     main()

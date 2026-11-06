@@ -11,6 +11,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._decision_rubric import decode_message_list, rubric_strategy
 from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._model_configurations import Conversation, Message
 from azure.ai.evaluation._common._experimental import experimental
@@ -42,7 +43,8 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     4: Mostly complete — Includes most of the necessary details with minimal omissions.
     5: Fully complete — Contains all key information without any omissions.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
@@ -61,7 +63,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     # Constants must be defined within eval's directory to be save/loadable
 
     _PROMPTY_FILE = "response_completeness.prompty"
+    _DECISION_FILE = "response_completeness.decision.yaml"
     _RESULT_KEY = "response_completeness"
+    _supports_decision_models = True
 
     id = "azureai://built-in/evaluators/response_completeness"
 
@@ -86,6 +90,11 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             credential=credential,
             _higher_is_better=True,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.COMPLETENESS_EVALUATOR)
+            if self._uses_decision_model
+            else None
         )
 
     @overload
@@ -176,6 +185,10 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.COMPLETENESS_EVALUATOR,
             )
 
+        if self._uses_decision_model:
+            # Like the catalog evaluator, a JSON-encoded message list is judged as messages.
+            eval_input["response"] = decode_message_list(eval_input["response"])
+
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
             return self._return_not_applicable_result(
@@ -188,6 +201,10 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             eval_input["response"] = _preprocess_messages(eval_input["response"])
         if isinstance(eval_input.get("ground_truth"), list):
             eval_input["ground_truth"] = _preprocess_messages(eval_input["ground_truth"])
+
+        if self._uses_decision_model:
+            state = {"response": eval_input["response"], "ground_truth": eval_input["ground_truth"]}
+            return await self._decision.evaluate(state)
 
         result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = result.get("llm_output", result) if isinstance(result, dict) else result

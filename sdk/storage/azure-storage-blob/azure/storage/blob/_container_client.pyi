@@ -28,6 +28,7 @@ from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
+from azure.storage.blob._shared.session import SessionProvider
 from ._blob_client import BlobClient
 from ._blob_service_client import BlobServiceClient
 from ._download import StorageStreamDownloader
@@ -67,10 +68,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_block_size: int = 4 * 1024 * 1024,
         max_page_size: int = 4 * 1024 * 1024,
         max_chunk_get_size: int = 4 * 1024 * 1024,
-        max_single_put_size: int = 64 * 1024 * 1024,
-        max_single_get_size: int = 32 * 1024 * 1024,
+        max_single_put_size: int = 4 * 1024 * 1024,
+        max_single_get_size: int = 4 * 1024 * 1024,
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
+        use_session: bool = False,
+        session_provider: Optional[SessionProvider] = None,
+        session_account_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None: ...
     def __enter__(self) -> Self: ...
@@ -92,8 +96,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_block_size: int = 4 * 1024 * 1024,
         max_page_size: int = 4 * 1024 * 1024,
         max_chunk_get_size: int = 4 * 1024 * 1024,
-        max_single_put_size: int = 64 * 1024 * 1024,
-        max_single_get_size: int = 32 * 1024 * 1024,
+        max_single_put_size: int = 4 * 1024 * 1024,
+        max_single_get_size: int = 4 * 1024 * 1024,
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any,
@@ -113,8 +117,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_block_size: int = 4 * 1024 * 1024,
         max_page_size: int = 4 * 1024 * 1024,
         max_chunk_get_size: int = 4 * 1024 * 1024,
-        max_single_put_size: int = 64 * 1024 * 1024,
-        max_single_get_size: int = 32 * 1024 * 1024,
+        max_single_put_size: int = 4 * 1024 * 1024,
+        max_single_get_size: int = 4 * 1024 * 1024,
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any,
