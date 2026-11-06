@@ -4,7 +4,7 @@
 
 ### Features Added
 
-## 12.32.0b1 (2026-11-04)
+## 12.32.0b1 (2026-11-05)
 
 ### Breaking Changes
 - Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
