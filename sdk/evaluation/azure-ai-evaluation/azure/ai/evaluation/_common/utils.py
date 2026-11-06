@@ -623,6 +623,8 @@ def validate_conversation(conversation):
 
 
 def _extract_text_from_content(content):
+    if isinstance(content, str):
+        return [content] if content else []
     text = []
     for msg in content:
         if "text" in msg:
@@ -643,7 +645,7 @@ def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
         used_tool_names = set()
         any_tools_used = False
         for msgs in msgs_lists:
-            for msg in msgs:
+            for msg in _normalize_openai_chat_messages(msgs):
                 if msg.get("role") == "assistant" and "content" in msg:
                     for content in msg.get("content", []):
                         if content.get("type") == "tool_call":
@@ -669,6 +671,7 @@ def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
 def _get_conversation_history(
     query, include_system_messages=False, include_tool_messages=False, include_tool_calls=False
 ):
+    query = _normalize_openai_chat_messages(query)
     if include_tool_calls:
         return _get_conversation_history_with_tool_calls(query, include_system_messages=include_system_messages)
     all_user_queries, all_agent_responses = [], []
@@ -753,6 +756,8 @@ def reformat_conversation_history(
     query, logger=None, include_system_messages=False, include_tool_messages=False, include_tool_calls=False
 ):
     """Reformats the conversation history to a more compact representation."""
+    if isinstance(query, str):
+        return query
     try:
         conversation_history = _get_conversation_history(
             query,
@@ -789,6 +794,7 @@ def _format_value(v):
 
 def _get_agent_response(agent_response_msgs, include_tool_messages=False):
     """Extracts formatted agent response including text, and optionally tool calls/results."""
+    agent_response_msgs = _normalize_openai_chat_messages(agent_response_msgs)
     agent_response_text = []
     tool_results = {}
 
@@ -807,7 +813,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
             text = _extract_text_from_content(msg["content"])
             if text:
                 agent_response_text.extend(text)
-            if include_tool_messages:
+            if include_tool_messages and isinstance(msg["content"], list):
                 for content in msg.get("content", []):
                     # Todo: Verify if this is the correct way to handle tool calls
                     if content.get("type") == "tool_call":
@@ -1139,6 +1145,7 @@ def _get_tool_calls_results(agent_response_msgs):
     :return: A list of formatted tool-call/result lines.
     :rtype: List[str]
     """
+    agent_response_msgs = _normalize_openai_chat_messages(agent_response_msgs)
     agent_response_text = []
     tool_results = {}
 
@@ -1644,6 +1651,73 @@ def _normalize_function_call_types(messages):
     return messages
 
 
+_TYPED_TOOL_CALL_BLOCKS = ("tool_call", "function_call", "openapi_call")
+
+
+def _openai_tool_call_to_block(call):
+    """Convert one OpenAI chat ``tool_calls`` entry to an SDK ``tool_call`` content block."""
+    function = call.get("function") or {}
+    arguments = function.get("arguments", {})
+    if isinstance(arguments, str):
+        try:
+            arguments = json.loads(arguments) if arguments.strip() else {}
+        except json.JSONDecodeError:
+            pass
+    if arguments is None:
+        arguments = {}
+    elif not isinstance(arguments, dict):
+        # Rendering expects an object; keep any other value visible to the judge.
+        arguments = {"input": arguments}
+    return {
+        "type": "tool_call",
+        "tool_call_id": call.get("id"),
+        "name": function.get("name"),
+        "arguments": arguments,
+    }
+
+
+def _has_typed_tool_calls(content):
+    """Whether content already carries typed tool-call blocks for its ``tool_calls``."""
+    return isinstance(content, list) and any(
+        isinstance(block, dict) and block.get("type") in _TYPED_TOOL_CALL_BLOCKS for block in content
+    )
+
+
+def _normalize_openai_chat_message(msg, wrap_text=True):
+    """Return an SDK-block copy of an OpenAI chat message, or the message unchanged."""
+    if not isinstance(msg, dict):
+        return msg
+    role, content = msg.get("role"), msg.get("content")
+    if role == "assistant" and isinstance(msg.get("tool_calls"), list) and not _has_typed_tool_calls(content):
+        blocks = list(content) if isinstance(content, list) else []
+        if isinstance(content, str) and content:
+            blocks.append({"type": "text", "text": content})
+        blocks.extend(
+            _openai_tool_call_to_block(c)
+            for c in msg["tool_calls"]
+            if isinstance(c, dict) and isinstance(c.get("function"), dict)
+        )
+        converted = {k: v for k, v in msg.items() if k != "tool_calls"}
+        converted["content"] = blocks
+        return converted
+    if role == "tool" and isinstance(content, str):
+        return {**msg, "content": [{"type": "tool_result", "tool_result": content}]}
+    if wrap_text and role in ("user", "assistant") and isinstance(content, str):
+        return {**msg, "content": [{"type": "text", "text": content}] if content else []}
+    return msg
+
+
+def _normalize_openai_chat_messages(messages, wrap_text=True):
+    """Normalize a message list for the readers below; other values pass through unchanged.
+
+    ``wrap_text`` also turns string text into blocks. ``_preprocess_messages`` leaves it off so
+    judge inputs that use the messages directly keep their text shape.
+    """
+    if not isinstance(messages, list):
+        return messages
+    return [_normalize_openai_chat_message(msg, wrap_text) for msg in messages]
+
+
 def _preprocess_messages(messages):
     """Preprocess conversation messages by dropping MCP approval messages and normalizing function call types.
 
@@ -1654,6 +1728,7 @@ def _preprocess_messages(messages):
     :return: The preprocessed messages.
     :rtype: List[dict]
     """
+    messages = _normalize_openai_chat_messages(messages, wrap_text=False)
     messages = _drop_mcp_approval_messages(messages)
     messages = _normalize_function_call_types(messages)
     return messages

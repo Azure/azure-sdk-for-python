@@ -1,5 +1,6 @@
 import pytest
 import unittest
+import unittest.mock
 import os
 import pathlib
 import base64
@@ -23,6 +24,8 @@ from azure.ai.evaluation._common.utils import (
     _collect_failed_tool_calls,
     _get_tool_calls_results,
     _reformat_tool_calls_results,
+    _preprocess_messages,
+    filter_to_used_tools,
 )
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage, ErrorTarget
 
@@ -590,6 +593,50 @@ class TestUtils(unittest.TestCase):
                 )
                 assert result == expected
 
+    def test_reformat_conversation_history_plain_string_query_is_returned_without_warning(self):
+        """A plain string query is already the right judge input; no fallback warning."""
+        logger = unittest.mock.MagicMock()
+
+        result = reformat_conversation_history("What is AI?", logger=logger)
+
+        assert result == "What is AI?"
+        logger.warning.assert_not_called()
+
+    def test_reformat_conversation_history_with_string_content(self):
+        """OpenAI-style string content is parsed like typed text content."""
+        query = [
+            {"role": "system", "content": "This is a system message."},
+            {"role": "user", "content": "What is AI?"},
+            {"role": "assistant", "content": "Artificial intelligence."},
+            {"role": "user", "content": "Tell me more."},
+        ]
+        expected = (
+            "SYSTEM_PROMPT:\n  This is a system message.\n\n"
+            "User turn 1:\n  What is AI?\n\n"
+            "Agent turn 1:\n  Artificial intelligence.\n\n"
+            "User turn 2:\n  Tell me more.\n\n"
+        )
+        logger = unittest.mock.MagicMock()
+
+        for include_tool_messages in (False, True):
+            with self.subTest(include_tool_messages=include_tool_messages):
+                result = reformat_conversation_history(
+                    query,
+                    logger=logger,
+                    include_system_messages=True,
+                    include_tool_messages=include_tool_messages,
+                )
+                assert result == expected
+        logger.warning.assert_not_called()
+
+    def test__get_agent_response_with_string_content(self):
+        """String assistant content is text, including when tool messages are rendered."""
+        msgs = [{"role": "assistant", "content": "Hello!"}]
+
+        assert _get_agent_response(msgs) == ["Hello!"]
+        assert _get_agent_response(msgs, include_tool_messages=True) == ["Hello!"]
+        assert _extract_text_from_content("") == []
+
     def test__get_agent_response(self):
         """Test _get_agent_response function"""
         # Test with valid agent response
@@ -1101,6 +1148,144 @@ class TestUtils(unittest.TestCase):
             "  Thanks for the weather info!\n\n"
         )
         self.assertEqual(result_with_tools, expected_with_tools)
+
+    def test_preprocess_messages_converts_openai_chat_tool_calls(self):
+        """OpenAI chat tool_calls and string tool results render like SDK blocks."""
+        conversation = [
+            {"role": "user", "content": "What's the weather in Seattle?"},
+            {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [
+                    {
+                        "id": "call_123",
+                        "type": "function",
+                        "function": {
+                            "name": "get_weather",
+                            "arguments": '{"location": "Seattle", "units": "fahrenheit"}',
+                        },
+                    }
+                ],
+            },
+            {"role": "tool", "tool_call_id": "call_123", "content": "Temperature: 65F, Conditions: Partly cloudy"},
+            {"role": "assistant", "content": "The weather in Seattle is 65°F and partly cloudy."},
+            {"role": "user", "content": "Thanks for the weather info!"},
+        ]
+        original = json.loads(json.dumps(conversation))
+
+        result = reformat_conversation_history(_preprocess_messages(conversation), include_tool_messages=True)
+
+        self.assertEqual(
+            result,
+            "User turn 1:\n"
+            "  What's the weather in Seattle?\n\n"
+            "Agent turn 1:\n"
+            '  [TOOL_CALL] get_weather(location="Seattle", units="fahrenheit")\n'
+            "  [TOOL_RESULT] Temperature: 65F, Conditions: Partly cloudy\n"
+            "  The weather in Seattle is 65°F and partly cloudy.\n\n"
+            "User turn 2:\n"
+            "  Thanks for the weather info!\n\n",
+        )
+        self.assertEqual(conversation, original)
+
+    def test_preprocess_messages_keeps_unparseable_tool_arguments(self):
+        """Non-object arguments are kept under "input" and still render."""
+        for raw, expected in (("not json", {"input": "not json"}), ("[1, 2]", {"input": [1, 2]}), ("", {})):
+            with self.subTest(arguments=raw):
+                messages = [
+                    {
+                        "role": "assistant",
+                        "tool_calls": [{"id": "c1", "function": {"name": "lookup", "arguments": raw}}],
+                    }
+                ]
+
+                preprocessed = _preprocess_messages(messages)
+
+                self.assertEqual(
+                    preprocessed[0]["content"],
+                    [{"type": "tool_call", "tool_call_id": "c1", "name": "lookup", "arguments": expected}],
+                )
+                self.assertEqual(len(_get_agent_response(preprocessed, include_tool_messages=True)), 1)
+
+    def test_preprocess_messages_does_not_duplicate_typed_tool_calls(self):
+        """A message that already has typed tool-call blocks keeps them once."""
+        call = {"id": "call_1", "type": "function", "function": {"name": "lookup", "arguments": '{"id": 1}'}}
+        messages = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "tool_call": {"id": "call_1", "function": {"name": "lookup", "arguments": {"id": 1}}},
+                    }
+                ],
+                "tool_calls": [call],
+            },
+            {"role": "tool", "tool_call_id": "call_1", "content": [{"type": "tool_result", "tool_result": "ok"}]},
+        ]
+
+        result = _get_agent_response(_preprocess_messages(messages), include_tool_messages=True)
+
+        self.assertEqual(result, ["[TOOL_CALL] lookup(id=1)", "[TOOL_RESULT] ok"])
+
+    def test_preprocess_messages_keeps_string_text_content(self):
+        """Only tool shapes are converted; plain text content keeps its shape for judge inputs."""
+        messages = [
+            {"role": "user", "content": "What is AI?"},
+            {"role": "assistant", "content": "Artificial intelligence."},
+        ]
+
+        self.assertEqual(_preprocess_messages(messages), messages)
+
+    def test_tool_call_without_function_is_skipped(self):
+        """A non-function tool call has no name or arguments to render."""
+        messages = [
+            {
+                "role": "assistant",
+                "content": "Done.",
+                "tool_calls": [
+                    {"id": "c1", "type": "custom", "custom": {"name": "x", "input": "y"}},
+                    {"id": "c2", "function": {"name": "lookup", "arguments": "{}"}},
+                ],
+            }
+        ]
+
+        result = _get_agent_response(messages, include_tool_messages=True)
+
+        self.assertEqual(result, ["Done.", "[TOOL_CALL] lookup()"])
+
+    def test_helpers_read_openai_chat_messages_without_preprocessing(self):
+        """Each message helper gives the same result for raw OpenAI chat input as for preprocessed input."""
+        conversation = [
+            {"role": "user", "content": "Find order 1"},
+            {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [{"id": "call_1", "function": {"name": "lookup", "arguments": '{"id": 1}'}}],
+            },
+            {"role": "tool", "tool_call_id": "call_1", "content": "shipped"},
+            {"role": "assistant", "content": "Order 1 has shipped."},
+            {"role": "user", "content": "Thanks"},
+        ]
+        response = conversation[1:4]
+        tools = [{"name": "lookup"}, {"name": "unused"}]
+        preprocessed = _preprocess_messages(conversation)
+        cases = {
+            "history_tool_messages": lambda c: reformat_conversation_history(c, include_tool_messages=True),
+            "history_tool_calls": lambda c: reformat_conversation_history(c, include_tool_calls=True),
+            "agent_response": lambda c: reformat_agent_response(c[1:4], include_tool_messages=True),
+            "tool_calls_results": lambda c: _reformat_tool_calls_results(c[1:4]),
+            "used_tools": lambda c: filter_to_used_tools(tools, [c[1:4]]),
+        }
+
+        for name, call in cases.items():
+            with self.subTest(helper=name):
+                expected = call(preprocessed)
+                self.assertNotEqual(expected, conversation)
+                self.assertNotEqual(expected, response)
+                self.assertEqual(call(conversation), expected)
+        self.assertEqual(filter_to_used_tools(tools, [preprocessed[1:4]]), [{"name": "lookup"}])
 
     def test_reformat_conversation_history_multiple_tool_calls(self):
         """Test reformat_conversation_history with multiple tool calls in one message"""
