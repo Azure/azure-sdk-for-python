@@ -1,5 +1,5 @@
-apiHash: 1aa9a41876d0be96d35f66712bb6f992726f12ccfb2935c14b46856622419620
+apiHash: 80e4671bc82b63fd45cd845a1ca610e347896e18a84106976f0125ac5a8af063
 packageRelativePath: sdk/storage/azure-storage-blob
-packageVersion: 12.31.0
+packageVersion: 12.33.0b1
 parserVersion: 0.3.31
 pythonVersion: 3.12.15
