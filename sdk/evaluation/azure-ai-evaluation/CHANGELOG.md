@@ -1,5 +1,12 @@
 # Release History
 
+## 1.18.12 (Unreleased)
+
+### Bugs Fixed
+
+- Conversation-aware evaluators, such as `IntentResolutionEvaluator`, `TaskAdherenceEvaluator` and `ToolCallAccuracyEvaluator`, now read `query` and `response` messages in OpenAI chat format. Messages whose `content` is a string, assistant messages with top-level `tool_calls`, and tool messages whose `content` is a string used to be unreadable: user turns were dropped, the conversation could not be parsed, and the judge model received the raw messages instead of the formatted conversation. They are now converted to the typed content the evaluators expect. Tool call arguments that are not valid JSON are kept as they are.
+- A plain string `query` is passed to the judge model without the "Conversation history could not be parsed" warning. The input was already used as is.
+
 ## 1.18.11 (2026-11-03)
 
 ### Features Added

@@ -623,6 +623,8 @@ def validate_conversation(conversation):
 
 
 def _extract_text_from_content(content):
+    if isinstance(content, str):
+        return [content] if content else []
     text = []
     for msg in content:
         if "text" in msg:
@@ -753,6 +755,8 @@ def reformat_conversation_history(
     query, logger=None, include_system_messages=False, include_tool_messages=False, include_tool_calls=False
 ):
     """Reformats the conversation history to a more compact representation."""
+    if isinstance(query, str):
+        return query
     try:
         conversation_history = _get_conversation_history(
             query,
@@ -807,7 +811,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
             text = _extract_text_from_content(msg["content"])
             if text:
                 agent_response_text.extend(text)
-            if include_tool_messages:
+            if include_tool_messages and isinstance(msg["content"], list):
                 for content in msg.get("content", []):
                     # Todo: Verify if this is the correct way to handle tool calls
                     if content.get("type") == "tool_call":
@@ -1644,6 +1648,41 @@ def _normalize_function_call_types(messages):
     return messages
 
 
+def _openai_tool_call_to_block(call):
+    """Convert one OpenAI chat ``tool_calls`` entry to an SDK ``tool_call`` content block."""
+    function = call.get("function") or {}
+    arguments = function.get("arguments", {})
+    if isinstance(arguments, str):
+        try:
+            arguments = json.loads(arguments) if arguments.strip() else {}
+        except json.JSONDecodeError:
+            pass
+    return {
+        "type": "tool_call",
+        "tool_call_id": call.get("id"),
+        "name": function.get("name"),
+        "arguments": arguments,
+    }
+
+
+def _normalize_openai_chat_message(msg):
+    """Return an SDK-block copy of an OpenAI chat tool message, or the message unchanged."""
+    if not isinstance(msg, dict):
+        return msg
+    role, content = msg.get("role"), msg.get("content")
+    if role == "assistant" and isinstance(msg.get("tool_calls"), list):
+        blocks = list(content) if isinstance(content, list) else []
+        if isinstance(content, str) and content:
+            blocks.append({"type": "text", "text": content})
+        blocks.extend(_openai_tool_call_to_block(c) for c in msg["tool_calls"] if isinstance(c, dict))
+        converted = {k: v for k, v in msg.items() if k != "tool_calls"}
+        converted["content"] = blocks
+        return converted
+    if role == "tool" and isinstance(content, str):
+        return {**msg, "content": [{"type": "tool_result", "tool_result": content}]}
+    return msg
+
+
 def _preprocess_messages(messages):
     """Preprocess conversation messages by dropping MCP approval messages and normalizing function call types.
 
@@ -1654,6 +1693,8 @@ def _preprocess_messages(messages):
     :return: The preprocessed messages.
     :rtype: List[dict]
     """
+    if isinstance(messages, list):
+        messages = [_normalize_openai_chat_message(msg) for msg in messages]
     messages = _drop_mcp_approval_messages(messages)
     messages = _normalize_function_call_types(messages)
     return messages
