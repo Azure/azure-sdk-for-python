@@ -41,6 +41,7 @@ class TestAzureStackHCIVmNetworkInterfacesOperations(AzureMgmtRecordedTestCase):
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "bypassSdnPolicies": bool,
                     "createFromLocal": bool,
                     "dnsSettings": {"dnsServers": ["str"]},
                     "ipConfigurations": [
@@ -86,7 +87,11 @@ class TestAzureStackHCIVmNetworkInterfacesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_interface_name="str",
             properties={
-                "properties": {"dnsSettings": {"dnsServers": ["str"]}, "networkSecurityGroup": {"id": "str"}},
+                "properties": {
+                    "bypassSdnPolicies": bool,
+                    "dnsSettings": {"dnsServers": ["str"]},
+                    "networkSecurityGroup": {"id": "str"},
+                },
                 "tags": {"str": "str"},
             },
         ).result()  # call '.result()' to poll until service return final result
