@@ -19,6 +19,23 @@ class ApplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """other."""
 
 
+class AzureMonitorWorkspaceIngestionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the state of the OpenTelemetry ingestion into the Azure Monitor workspace that is
+    linked to the Application Insights component.
+    """
+
+    NOT_OPTED_IN = "NotOptedIn"
+    """The component has not been opted in to Azure Monitor workspace ingestion. Clients may specify
+    this value on create to decline Azure Monitor workspace ingestion."""
+    ENABLED = "Enabled"
+    """Azure Monitor workspace ingestion is enabled for the component. Clients may specify this value
+    to opt in. Opting back out after ingestion has been enabled is not supported."""
+    DISABLED = "Disabled"
+    """Azure Monitor workspace ingestion is disabled for the component because the link to the Azure
+    Monitor workspace is broken. This value is set only by the service and is rejected if specified
+    by a client."""
+
+
 class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of CategoryType."""
 
