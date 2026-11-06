@@ -22,6 +22,7 @@ from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExec
 from ..._evaluate._utils import _has_aggregator
 from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
 from ..._exceptions import EvaluationException
+from ..._evaluators._common._decision_protocols import DECISION_PROTOCOLS
 from ..._evaluators._common._model_runners import (
     DECISION_ERROR_KINDS,
     _is_finite_number,
@@ -59,7 +60,8 @@ def _decision_error_metadata(exception: EvaluationException) -> Dict[str, Any]:
                 provenance[key] = value
         for key, accepted in (
             ("backend", ("foundry_decision", "system_one")),
-            ("protocol", ("microsoft", "openai", "system_one", "shared_sdk")),
+            ("protocol", ("shared_sdk", "system_one")),
+            ("decision_protocol", tuple(DECISION_PROTOCOLS)),
             ("result_usage_scope", ("reported_attempts_only", "final_response_only", "reported_turns_only")),
             ("error_kind", DECISION_ERROR_KINDS),
         ):

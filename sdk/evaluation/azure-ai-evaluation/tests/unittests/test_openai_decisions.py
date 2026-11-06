@@ -249,6 +249,8 @@ class TestResponse:
             lambda p: p["answers"][0].update(name=None),
             lambda p: p["answers"][1].update(type="predicate"),
             lambda p: p["answers"][0].update(type="choice"),
+            lambda p: p["answers"][0].update(type="noul"),
+            lambda p: p["answers"][1].update(type="score_answer"),
         ],
     )
     def test_answers_that_cannot_bind_to_the_questions_are_invalid(self, mutation):
@@ -260,6 +262,31 @@ class TestResponse:
             asyncio.run(runner(state="evidence", questions=QUESTIONS, timeout=30))
         assert raised.value.blame == ErrorBlame.SYSTEM_ERROR
         assert raised.value.properties["total_tokens"] == 15
+
+    @pytest.mark.parametrize("kind", _model_runners.DECISION_ERROR_KINDS)
+    def test_failed_rows_keep_every_bounded_error_kind_and_both_protocol_fields(self, kind):
+        error = EvaluationException(
+            message="failed",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
+        native = {"error_kind": kind, "decision_protocol": "openai", "protocol": "shared_sdk"}
+        error.properties = {"decision_model": dict(native)}
+        assert _decision_error_metadata(error)["properties"]["decision_model"] == native
+
+    def test_failed_rows_drop_unknown_error_kinds_and_protocols(self):
+        error = EvaluationException(
+            message="failed",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
+        # decision_model.protocol keeps the hosted route vocabulary; the wire protocol is decision_protocol.
+        error.properties = {
+            "decision_model": {"error_kind": "private text", "decision_protocol": "custom", "protocol": "microsoft"}
+        }
+        assert _decision_error_metadata(error)["properties"]["decision_model"] == {}
 
     def test_the_microsoft_protocol_still_rejects_a_refusal_answer(self):
         config = {key: value for key, value in CONFIG.items() if key != "decision_protocol"}
@@ -293,7 +320,7 @@ class TestResponse:
         assert raised.value.blame == ErrorBlame.USER_ERROR
         assert "private filter detail" not in str(raised.value)
         persisted = _decision_error_metadata(raised.value)["properties"]["decision_model"]
-        assert persisted["error_kind"] == "content_filter" and persisted["protocol"] == "openai"
+        assert persisted["error_kind"] == "content_filter" and persisted["decision_protocol"] == "openai"
         assert persisted["execution"]["last_http_status"] == 400
 
     def test_execution_observations_name_the_protocol(self):
@@ -312,7 +339,7 @@ class TestScoring:
         assert result["quality"] == 1 and result["quality_passed"] is False
         assert result["quality_total_tokens"] == 15 and result["quality_model"] == "judge"
         provenance = result["quality_properties"]["decision_model"]
-        assert provenance["protocol"] == "openai"
+        assert provenance["decision_protocol"] == "openai"
         assert provenance["native_status_answer"] == {"type": "noul", "noul": 0.9}
         assert provenance["native_answer"] == {
             "type": "score",
@@ -344,6 +371,13 @@ class TestScoring:
                 "confidence": 1,
                 "probabilities": [{"value": 0, "probability": 1}, {"value": 0, "probability": 0}],
             },
+            {
+                "type": "score",
+                "name": "quality",
+                "score": 0.8,
+                "confidence": 0.4,
+                "probabilities": {"0": 0.2, "1": 0.8, "2": 0.0},
+            },
         ],
     )
     def test_a_skipped_evaluation_never_reads_its_grade(self, quality):
@@ -362,11 +396,11 @@ class TestScoring:
         assert error.blame == ErrorBlame.USER_ERROR and error.category == ErrorCategory.FAILED_EXECUTION
         assert error.properties["total_tokens"] == 15
         provenance = error.properties["decision_model"]
-        assert provenance["protocol"] == "openai" and provenance["error_kind"] == "model_refusal"
+        assert provenance["decision_protocol"] == "openai" and provenance["error_kind"] == "model_refusal"
         persisted = _decision_error_metadata(error)
         assert persisted["blame"] == "UserError"
         assert persisted["properties"]["decision_model"]["error_kind"] == "model_refusal"
-        assert persisted["properties"]["decision_model"]["protocol"] == "openai"
+        assert persisted["properties"]["decision_model"]["decision_protocol"] == "openai"
         assert persisted["properties"]["decision_model"]["usage_details"]["input_tokens_details"]["cached_tokens"] == 4
 
     def test_a_refusal_survives_copies_and_pickles_with_its_metadata(self):
@@ -378,13 +412,22 @@ class TestScoring:
             assert isinstance(copied, DecisionRefusalError) and str(copied) == str(raised.value)
             assert copied.properties == raised.value.properties and copied.target == raised.value.target
 
-    def test_a_malformed_grade_that_is_read_is_an_invalid_response(self):
+    @pytest.mark.parametrize(
+        "probabilities",
+        [
+            [{"value": 0, "probability": 1}, {"value": 0, "probability": 0}],
+            {"0": 0.2, "1": 0.8, "2": 0.0},
+            [{"value": True, "probability": 1}, {"value": 1, "probability": 0}, {"value": 2, "probability": 0}],
+        ],
+        ids=["duplicate_level", "canonical_map", "boolean_level"],
+    )
+    def test_a_malformed_grade_that_is_read_is_an_invalid_response(self, probabilities):
         quality = {
             "type": "score",
             "name": "quality",
             "score": 0,
             "confidence": 1,
-            "probabilities": [{"value": 0, "probability": 1}, {"value": 0, "probability": 0}],
+            "probabilities": probabilities,
         }
         with pytest.raises(EvaluationException, match="invalid response") as raised:
             evaluate(response(quality=quality))

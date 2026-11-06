@@ -4,7 +4,7 @@
 
 import asyncio
 import math
-from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
@@ -13,6 +13,7 @@ from . import EvaluatorBase
 from ._model_runners import (
     DecisionModelRunner,
     PromptyModelRunner,
+    USAGE_DETAIL_TOKENS,
     _is_finite_number,
     is_decision_model_config,
     usage_details,
@@ -69,7 +70,9 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
     :keyword cancellation_requested: Optional Decision cancellation callback, polled during authentication,
         requests and retry waits. Cancelling stops awaiting synchronous credential calls, not their worker threads.
     :paramtype cancellation_requested: Optional[Callable[[], bool]]
-    :keyword max_request_bytes: Optional limit on the compact UTF-8 serialized Decision request.
+    :keyword max_request_bytes: Optional limit on the compact UTF-8 JSON of the canonical Decision request
+        (deployment, evidence and questions), measured before protocol encoding so every protocol admits the same
+        evidence.
     :paramtype max_request_bytes: Optional[int]
     :keyword max_state_question_bytes: Optional limit on the largest individual state/question pair.
     :paramtype max_state_question_bytes: Optional[int]
@@ -204,10 +207,11 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         """Aggregate scores normally, but sum independently known Decision usage across turns.
 
         Token totals are each summed over the turns that reported them, and cache or reasoning counters over the
-        turns whose token usage is counted. A single shared model is promoted for attribution. Mixed or missing
-        model identities remain per-turn rather than attributing all usage to the last model. When the final turn
-        has properties, root properties use the same usage and model, without a single-request execution summary;
-        other diagnostics retain their final-turn semantics. Prompty aggregation is unchanged.
+        turns that reported the token count they describe part of. A single shared model is promoted for
+        attribution. Mixed or missing model identities remain per-turn rather than attributing all usage to the last
+        model. When the final turn has properties, root properties use the same usage and model, without a
+        single-request execution summary; other diagnostics retain their final-turn semantics. Prompty aggregation is
+        unchanged.
         """
         aggregated: Dict[str, Any] = super()._aggregate_results(per_turn_results)
         if not self._uses_decision_model:
@@ -241,9 +245,8 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
             fields = ("prompt_tokens", "completion_tokens", "total_tokens")
             usage = self._known_turn_usage(aggregated, fields, prefix=prefix)
             details = self._summed_usage_details(
-                turn.get(properties_key)
+                (turn.get(properties_key), self._known_turn_usage(turn, fields, prefix=prefix))
                 for turn in per_turn_results
-                if self._known_turn_usage(turn, fields, prefix=prefix)
             )
             aggregated[properties_key] = self._reconcile_decision_properties(
                 properties, usage, aggregated.get(f"{self._result_key}_model"), details
@@ -256,9 +259,9 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         """Preserve known Decision turn usage without changing the failure or Prompty behavior.
 
         Only the request-owning result's usage is accumulated, and cache or reasoning counters only from the turns
-        whose token usage is counted. A failed turn's execution summary cannot describe all these turns, so it is
-        omitted and the wider usage scope is explicit. When no earlier turn counted usage, the failure's own
-        properties already describe every counted request and are left unchanged.
+        that reported the token count they describe part of. A failed turn's execution summary cannot describe all
+        these turns, so it is omitted and the wider usage scope is explicit. When no earlier turn counted usage, the
+        failure's own properties already describe every counted request and are left unchanged.
         """
         if not self._uses_decision_model or not per_turn_results:
             return
@@ -270,7 +273,7 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
             usage = self._known_turn_usage(result, fields, prefix=f"{self._result_key}_")
             if usage:
                 contributions.append((usage, result.get(f"{self._result_key}_model")))
-                reported.append(result.get(properties_key))
+                reported.append((result.get(properties_key), usage))
         if not contributions:
             return
         error_properties = getattr(error, "properties", None)
@@ -278,7 +281,7 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         failing_usage = self._known_turn_usage(properties, fields)
         if failing_usage:
             contributions.append((failing_usage, properties.get("model")))
-            reported.append(properties)
+            reported.append((properties, failing_usage))
         usage = {}
         for field in fields:
             known = [item[field] for item, _ in contributions if field in item]
@@ -292,19 +295,24 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         setattr(error, "properties", self._reconcile_decision_properties(properties, usage, common_model, details))
 
     @staticmethod
-    def _summed_usage_details(turn_properties: Iterable[Any]) -> Dict[str, Dict[str, int]]:
-        """Sum each known cache or reasoning counter over the turns that reported it, like the token totals.
+    def _summed_usage_details(turns: Iterable[Tuple[Any, Dict[str, int]]]) -> Dict[str, Dict[str, int]]:
+        """Sum each known cache or reasoning counter over the turns whose matching token count is counted.
 
-        :param turn_properties: The properties of each turn whose Decision response is accounted for.
-        :type turn_properties: Iterable[Any]
+        Input counters are summed over the turns that report prompt tokens and output counters over the turns that
+        report completion tokens, so the counters never cover requests that the token totals omit.
+
+        :param turns: The properties and known token usage of each turn whose Decision response is accounted for.
+        :type turns: Iterable[Tuple[Any, Dict[str, int]]]
         :return: The summed counters grouped like the provider's usage object; empty when no turn reported any.
         :rtype: Dict[str, Dict[str, int]]
         """
         totals: Dict[str, Dict[str, int]] = {}
-        for properties in turn_properties:
+        for properties, usage in turns:
             native = properties.get("decision_model") if isinstance(properties, dict) else None
             details = usage_details(native.get("usage_details")) if isinstance(native, dict) else {}
             for group, counters in details.items():
+                if USAGE_DETAIL_TOKENS[group] not in usage:
+                    continue
                 summed = totals.setdefault(group, {})
                 for counter, value in counters.items():
                     summed[counter] = summed.get(counter, 0) + value

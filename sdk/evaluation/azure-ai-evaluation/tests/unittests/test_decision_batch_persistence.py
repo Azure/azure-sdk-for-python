@@ -661,7 +661,9 @@ class TestDecisionBatchPersistence:
             assert "total_tokens" not in result["properties"] and "prompt_tokens" not in result["properties"]
         else:
             assert "usage" not in result["sample"] and "model" not in result["sample"]
-            assert result["properties"] == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
+            assert result["properties"] == {
+                "decision_model": {"deployment": "Decision-1", "decision_protocol": "microsoft"}
+            }
         if "cancel" in case:
             assert result["sample"]["error"]["blame"] == "UserError"
         else:

@@ -2,8 +2,7 @@
 
 Use a GPT-6 Luna deployment with the `decision` capability in a region where Azure OpenAI Decisions is available
 (East US 2 is excluded). Use the account's OpenAI endpoint, such as `https://YOUR-ACCOUNT.openai.azure.com`.
-This requires `azure-ai-evaluation` 1.18.11 or later, where the built-in evaluators accept a Decision model
-configuration.
+This requires `azure-ai-evaluation` 1.18.12 or later; 1.18.11 and earlier reject `decision_protocol`.
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -29,8 +28,9 @@ The SDK retains the existing retry, timeout, cancellation, and credential owners
 There is no dependency on `openai.decisions.create`, which needs a newer major version of the `openai` package;
 the shared asynchronous HTTP transport sends the same request to `/openai/v1/decisions`.
 
-Omitting `decision_protocol` selects the Microsoft Decision protocol. A deployment that serves the other protocol
-fails with an error that names the setting to change. An ordinary chat configuration continues to use chat even when
+Omitting `decision_protocol` selects the Microsoft Decision protocol. When an Azure OpenAI Decisions request fails
+with `model_not_found`, the error says to set `decision_protocol` to `microsoft`, or remove it, if the deployment is a
+Microsoft Decision model. An ordinary chat configuration continues to use chat even when
 that deployment also supports Decisions; GPT-6 Luna is a reasoning model, so pass `is_reasoning_model=True` to an
 evaluator that uses it as a chat judge.
 
@@ -39,8 +39,9 @@ criteria, and each ordinal question into levels labeled `Level 1` to `Level n` f
 rubric text such as "imply level 2" uses. Answers are bound back by question name, so
 the evaluator scores them exactly as it scores Microsoft Decision answers: ordinal metrics select the
 highest-probability level, resolving ties to the lowest level, and the provider's weighted mean is kept only as
-`native_mean`. `decision_model.native_answer` holds the answer in this shared shape, and `decision_model.protocol`
-is `openai`. Cache and reasoning counters stay under `decision_model.usage_details` and are not added to token totals.
+`native_mean`. `decision_model.native_answer` holds the answer in this shared shape, and
+`decision_model.decision_protocol` is `openai`. Cache and reasoning counters stay under `decision_model.usage_details`
+and are not added to token totals.
 
 A refused question fails the evaluation only when the evaluation reads that answer. For example, when the
 applicability question says the metric does not apply, the evaluation is skipped even if its grade was refused.

@@ -69,14 +69,12 @@ class DecisionProtocol(ABC):
 
 
 class MicrosoftDecisionProtocol(DecisionProtocol):
-    """The Microsoft Decision contract, which is also the canonical shape. A supplied endpoint path is kept."""
+    """The Microsoft Decision contract, which is also the canonical shape. A supplied endpoint path is kept.
+
+    Its errors carry no protocol hint, because ``unknown_model`` also answers a mistyped or chat deployment.
+    """
 
     name = "microsoft"
-    mismatch_code = "unknown_model"
-    mismatch_hint = (
-        "The deployment is not a Microsoft Decision model; for an Azure OpenAI Decisions deployment, "
-        "set decision_protocol to 'openai'."
-    )
     _PATH = "/providers/microsoft/v1/systemone"
 
     def operation_url(self, endpoint: str) -> str:
@@ -107,8 +105,7 @@ class OpenAIDecisionProtocol(DecisionProtocol):
     supports_refusals = True
     mismatch_code = "model_not_found"
     mismatch_hint = (
-        "The deployment is not an Azure OpenAI Decisions model; for a Microsoft Decision deployment, "
-        "set decision_protocol to 'microsoft' or remove it."
+        "If the deployment is a Microsoft Decision model, set decision_protocol to 'microsoft' or remove it."
     )
     MAX_QUESTIONS = 400
     _BASE_PATHS = ("", "/openai", "/openai/v1")
@@ -185,19 +182,21 @@ class OpenAIDecisionProtocol(DecisionProtocol):
                 "confidence": answer.get("confidence"),
                 "probabilities": _level_probabilities(answer.get("probabilities")),
             }
-        # A refusal, or an unexpected type that the runner rejects against its question.
-        return {"type": kind}
+        if kind == REFUSAL:
+            return {"type": REFUSAL}
+        # Any other type, including a canonical type such as "noul", matches no question, so the runner rejects it.
+        return {"type": None}
 
 
-def _level_probabilities(distribution: Any) -> Any:
-    """Key each level's probability by its index; a malformed list is kept as is and fails when it is read."""
+def _level_probabilities(distribution: Any) -> Optional[Dict[str, Any]]:
+    """Key each level's probability by its index; a malformed distribution is None and fails when it is read."""
     if not isinstance(distribution, list):
-        return distribution
+        return None
     probabilities: Dict[str, Any] = {}
     for item in distribution:
         index = item.get("value") if isinstance(item, dict) else None
         if isinstance(index, bool) or not isinstance(index, int) or str(index) in probabilities:
-            return distribution
+            return None
         probabilities[str(index)] = item.get("probability")
     return probabilities
 

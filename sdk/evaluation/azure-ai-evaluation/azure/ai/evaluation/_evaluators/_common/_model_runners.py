@@ -72,6 +72,9 @@ _USAGE_DETAIL_FIELDS = (
     ("input_tokens_details", ("cached_tokens", "cache_write_tokens")),
     ("output_tokens_details", ("reasoning_tokens",)),
 )
+# The token count that each group of usage details describes part of. A group is kept only when that count is known,
+# so the counters never cover requests that the token totals omit.
+USAGE_DETAIL_TOKENS = {"input_tokens_details": "prompt_tokens", "output_tokens_details": "completion_tokens"}
 _ERROR_CODE = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{0,127}")
 # A 422 states its reason only in a ``detail`` sentence, which is never surfaced. These reasons are recognized by the
 # provider's fixed sentence openings, so a quoted question identifier later in the sentence cannot change the kind, and
@@ -858,19 +861,23 @@ class DecisionModelRunner:
     def _response_properties(self, payload: Any) -> Dict[str, Any]:
         """Retain only independently known final-response usage, never raw answers or retry totals."""
         properties: Dict[str, Any] = {
-            "decision_model": {"deployment": self._deployment, "protocol": self.decision_protocol}
+            "decision_model": {"deployment": self._deployment, "decision_protocol": self.decision_protocol}
         }
         usage = payload.get("usage") if isinstance(payload, dict) else None
         usage = usage if isinstance(usage, dict) else {}
-        details = usage_details(usage)
-        if details:
-            properties["decision_model"]["usage_details"] = details
         for native_key, key in (("input_tokens", "prompt_tokens"), ("output_tokens", "completion_tokens")):
             value = usage.get(native_key)
             if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
                 properties[key] = value
         if "prompt_tokens" in properties and "completion_tokens" in properties:
             properties["total_tokens"] = properties["prompt_tokens"] + properties["completion_tokens"]
+        details = {
+            group: counters
+            for group, counters in usage_details(usage).items()
+            if USAGE_DETAIL_TOKENS[group] in properties
+        }
+        if details:
+            properties["decision_model"]["usage_details"] = details
         model = payload.get("model") if isinstance(payload, dict) else None
         if isinstance(model, str) and model.strip():
             properties["model"] = model

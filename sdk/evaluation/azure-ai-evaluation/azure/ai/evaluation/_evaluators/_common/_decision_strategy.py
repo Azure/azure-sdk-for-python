@@ -17,10 +17,12 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ._base_model_eval import not_applicable_result
-from ._decision_protocols import REFUSAL
+from ._decision_protocols import DECISION_PROTOCOLS, REFUSAL
 from ._model_runners import (
+    _DEFAULT_PROTOCOL,
     CANCELLED_BY_CALLBACK,
-    CONTENT_FILTER,
+    DECISION_ERROR_KINDS,
+    MODEL_REFUSAL,
     DecisionModelRunner,
     _diagnostic,
     validate_noul_answer,
@@ -30,6 +32,32 @@ from ._model_runners import (
 
 STATUS_CUTOFF = 0.5
 _METRIC_PREFIX = "azure.ai.evaluation.decision."
+# The result keys of this package's and the Microsoft Foundry catalog's Decision evaluators. Evaluation metrics report
+# any other result key as "custom", so a customer-defined evaluator name never becomes a metric dimension.
+_METRIC_NAMES = frozenset(
+    {
+        "coherence",
+        "customer_satisfaction",
+        "deflection_rate",
+        "fluency",
+        "groundedness",
+        "intent_resolution",
+        "output_quality",
+        "quality_grader",
+        "relevance",
+        "response_completeness",
+        "retrieval",
+        "similarity",
+        "task_adherence",
+        "task_completion",
+        "tool_call_accuracy",
+        "tool_call_success",
+        "tool_input_accuracy",
+        "tool_output_utilization",
+        "tool_selection",
+        "tool_use_quality",
+    }
+)
 T = TypeVar("T")
 
 
@@ -41,7 +69,7 @@ class DecisionRefusalError(EvaluationException):
     content-filter refusal.
     """
 
-    ERROR_KIND = "model_refusal"
+    ERROR_KIND = MODEL_REFUSAL
 
     def __init__(self, question_id: str, error_target: ErrorTarget) -> None:
         self.question_id = question_id
@@ -60,12 +88,19 @@ class DecisionRefusalError(EvaluationException):
 
 
 def _error_kind(error: EvaluationException) -> str:
-    """Return the bounded error kind of a failed evaluation: a refusal, a content filter rejection, or none."""
+    """Return the bounded ``decision_model.error_kind`` of a failed evaluation, or ``none`` when it has none."""
     if isinstance(error, DecisionRefusalError):
-        return DecisionRefusalError.ERROR_KIND
+        return MODEL_REFUSAL
     properties = getattr(error, "properties", None)
     native = properties.get("decision_model") if isinstance(properties, dict) else None
-    return CONTENT_FILTER if isinstance(native, dict) and native.get("error_kind") == CONTENT_FILTER else "none"
+    kind = native.get("error_kind") if isinstance(native, dict) else None
+    return kind if isinstance(kind, str) and kind in DECISION_ERROR_KINDS else "none"
+
+
+def _protocol_name(runner: Any) -> str:
+    """Return the runner's protocol name: the default for a runner without one, ``unknown`` if unrecognized."""
+    name = getattr(runner, "decision_protocol", _DEFAULT_PROTOCOL)
+    return name if isinstance(name, str) and name in DECISION_PROTOCOLS else "unknown"
 
 
 def _cancelled_by_callback(error: EvaluationException) -> bool:
@@ -73,16 +108,27 @@ def _cancelled_by_callback(error: EvaluationException) -> bool:
     return getattr(error, CANCELLED_BY_CALLBACK, False) is True
 
 
-def _record_evaluation(attributes: Dict[str, str], elapsed_ms: float) -> None:
+def _record_evaluation(
+    runner: Any, result_key: Any, outcome: str, blame: str, error_kind: str, elapsed_ms: float
+) -> None:
     """Count one Decision evaluation and record its duration when OpenTelemetry is installed.
 
-    Instruments are looked up per call, like the request metrics, so strategies stay picklable. A metric sink
-    failure, including a broken OpenTelemetry installation, is logged and never changes the evaluation result or
-    exception.
+    Instruments are looked up per call, like the request metrics, so strategies stay picklable. Attributes are
+    bounded: the protocol name, the result key of a known evaluator or ``custom``, and fixed outcome, blame and
+    error kind values. A metric failure, including a broken OpenTelemetry installation, is logged and never changes
+    the evaluation result or exception.
     """
     try:
         from opentelemetry.metrics import get_meter  # pylint: disable=import-outside-toplevel
 
+        attributes = {
+            "backend": "decision",
+            "protocol": _protocol_name(runner),
+            "metric": result_key if isinstance(result_key, str) and result_key in _METRIC_NAMES else "custom",
+            "outcome": outcome,
+            "blame": blame,
+            "error_kind": error_kind,
+        }
         meter = get_meter("azure.ai.evaluation.decision")
         meter.create_counter(_METRIC_PREFIX + "evaluations").add(1, attributes=attributes)
         meter.create_histogram(_METRIC_PREFIX + "evaluation.duration", unit="ms").record(
@@ -256,9 +302,10 @@ class DecisionEvaluationStrategy:
     async def evaluate(self, eval_input: Dict[str, Any]) -> Dict[str, Any]:
         """Request and interpret one Decision evaluation, recording its outcome and duration as metrics.
 
-        Outcomes are ``completed``, ``skipped`` (not applicable), ``error`` with the error's blame, or
-        ``cancelled`` by ``asyncio`` or the cancellation callback. A refusal or a content filter rejection is an
-        error with ``error_kind`` ``model_refusal`` or ``content_filter``.
+        Each call counts once, so a conversation scored turn by turn counts each turn. Outcomes are ``completed``,
+        ``skipped`` (not applicable), ``error`` with the error's blame and bounded ``error_kind``, or ``cancelled``
+        by ``asyncio`` or the cancellation callback. ``metric`` is the evaluator's result key for this package's and
+        the Microsoft Foundry catalog's evaluators and ``custom`` for any other.
         """
         started = time.monotonic()
         outcome, blame, error_kind = "error", "system", "none"
@@ -289,15 +336,7 @@ class DecisionEvaluationStrategy:
             raise
         finally:
             _record_evaluation(
-                {
-                    "backend": "decision",
-                    "protocol": str(getattr(self.runner, "decision_protocol", "microsoft")),
-                    "metric": self.result_key,
-                    "outcome": outcome,
-                    "blame": blame,
-                    "error_kind": error_kind,
-                },
-                (time.monotonic() - started) * 1000,
+                self.runner, self.result_key, outcome, blame, error_kind, (time.monotonic() - started) * 1000
             )
 
     def parse(self, response: Dict[str, Any], eval_input: Dict[str, Any]) -> Dict[str, Any]:
@@ -310,7 +349,7 @@ class DecisionEvaluationStrategy:
         properties = self.extra_properties(eval_input) if self.extra_properties else {}
         properties["decision_model"] = {
             "deployment": self.runner.deployment,
-            "protocol": self.runner.decision_protocol,
+            "decision_protocol": _protocol_name(self.runner),
             "model": response["model"],
             "rubric_hash": _digest(self.questions[key]),
             "status_rubric_hash": _digest(self.questions["status"]),

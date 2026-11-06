@@ -446,34 +446,67 @@ class TestDecisionModelRunnerRequests:
         assert execution["outcome"] == "error"
         assert raised.value.properties == (
             {
-                "decision_model": {"deployment": "Decision-1", "protocol": "microsoft"},
+                "decision_model": {"deployment": "Decision-1", "decision_protocol": "microsoft"},
                 "prompt_tokens": 120,
                 "completion_tokens": 3,
                 "total_tokens": 123,
                 "model": "microsoft-decision-1",
             }
             if response_limit == 1024
-            else {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
+            else {"decision_model": {"deployment": "Decision-1", "decision_protocol": "microsoft"}}
         )
 
-    @pytest.mark.parametrize(
-        "protocol, status, code, fix",
-        [
-            ("microsoft", 400, "unknown_model", "set decision_protocol to 'openai'."),
-            ("openai", 404, "model_not_found", "set decision_protocol to 'microsoft' or remove it."),
-        ],
-    )
-    def test_a_deployment_that_serves_the_other_protocol_names_the_fix(self, client, protocol, status, code, fix):
-        payload = {"error": {"code": code, "message": "test-key-value and private-message"}}
-        client.response = FakeResponse(status, json.dumps(payload).encode())
+    def test_an_openai_deployment_that_is_not_found_suggests_the_microsoft_protocol(self, client):
+        payload = {"error": {"code": "model_not_found", "message": "test-key-value and private-message"}}
+        client.response = FakeResponse(404, json.dumps(payload).encode())
         with pytest.raises(EvaluationException) as raised:
-            run(DecisionModelRunner({**DECISION_CONFIG, "decision_protocol": protocol}, max_retries=0))
-        message = str(raised.value)
-        assert message.startswith(f"(UserError) The decision model returned HTTP {status} ({code}). The deployment")
-        assert message.endswith(fix)
-        assert "test-key-value" not in message and "private-message" not in message
+            run(DecisionModelRunner({**DECISION_CONFIG, "decision_protocol": "openai"}, max_retries=0))
+        assert str(raised.value) == (
+            "(UserError) The decision model returned HTTP 404 (model_not_found). If the deployment is a Microsoft "
+            "Decision model, set decision_protocol to 'microsoft' or remove it."
+        )
         assert raised.value.blame == ErrorBlame.USER_ERROR
-        assert raised.value.properties["decision_model"]["protocol"] == protocol
+        assert raised.value.properties["decision_model"]["decision_protocol"] == "openai"
+
+    @pytest.mark.parametrize("protocol", [None, "microsoft"])
+    def test_a_microsoft_unknown_model_error_has_no_protocol_hint(self, client, protocol):
+        # unknown_model also answers a mistyped or chat deployment, so the error is the same as in 1.18.11.
+        payload = {"error": {"code": "unknown_model", "message": "test-key-value and private-message"}}
+        client.response = FakeResponse(400, json.dumps(payload).encode())
+        config = DECISION_CONFIG if protocol is None else {**DECISION_CONFIG, "decision_protocol": protocol}
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(config, max_retries=0))
+        assert str(raised.value) == "(UserError) The decision model returned HTTP 400 (unknown_model)."
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+
+    @pytest.mark.parametrize(
+        "usage, kept",
+        [
+            ({"input_tokens_details": {"cached_tokens": 50}, "output_tokens_details": {"reasoning_tokens": 5}}, None),
+            (
+                {
+                    "input_tokens": 9,
+                    "input_tokens_details": {"cached_tokens": 4},
+                    "output_tokens_details": {"reasoning_tokens": 7},
+                },
+                {"input_tokens_details": {"cached_tokens": 4}},
+            ),
+            (
+                {
+                    "output_tokens": 3,
+                    "input_tokens_details": {"cached_tokens": 4},
+                    "output_tokens_details": {"reasoning_tokens": 2},
+                },
+                {"output_tokens_details": {"reasoning_tokens": 2}},
+            ),
+        ],
+        ids=["no_counts", "input_count", "output_count"],
+    )
+    def test_a_failed_request_keeps_usage_details_only_with_their_token_count(self, client, usage, kept):
+        client.response = FakeResponse(500, json.dumps({"usage": usage}).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0))
+        assert raised.value.properties["decision_model"].get("usage_details") == kept
 
     @pytest.mark.parametrize(
         "protocol, code",
@@ -1332,7 +1365,7 @@ class TestDecisionConversationUsage:
         }
         assert properties["model"] == "microsoft-decision-1"
         assert properties["decision_model"]["result_usage_scope"] == "reported_turns_only"
-        assert properties["decision_model"]["protocol"] == "microsoft"
+        assert properties["decision_model"]["decision_protocol"] == "microsoft"
         assert "execution" not in properties["decision_model"]
         assert persisted["properties"] == properties
         turns = result["evaluation_per_turn"]["tool_call_accuracy_properties"]
@@ -1495,7 +1528,12 @@ class TestDecisionConversationUsage:
         first = {"input_tokens_details": {"cached_tokens": 4}, "output_tokens_details": {"reasoning_tokens": 2}}
         second = {"input_tokens_details": {"cached_tokens": 6, "cache_write_tokens": 1}}
         turns = [
-            {"probe": 1, "probe_prompt_tokens": 12, "probe_properties": {"decision_model": {"usage_details": first}}},
+            {
+                "probe": 1,
+                "probe_prompt_tokens": 12,
+                "probe_completion_tokens": 3,
+                "probe_properties": {"decision_model": {"usage_details": first}},
+            },
             {"probe": 5, "probe_prompt_tokens": 34, "probe_properties": {"decision_model": {"usage_details": second}}},
             {"probe": 3, "probe_prompt_tokens": 7, "probe_properties": {"decision_model": {}}},
         ]
@@ -1643,6 +1681,61 @@ class TestDecisionEvaluationMetrics:
             asyncio.run(configured.evaluate({}))
         attributes = self.evaluation_attributes(recorded)
         assert (attributes["outcome"], attributes["blame"]) == ("cancelled", "none")
+
+    @pytest.mark.parametrize("kind", [*_model_runners.DECISION_ERROR_KINDS, "private text", None])
+    def test_request_error_reports_only_a_bounded_error_kind(self, recorded, kind):
+        error = EvaluationException(
+            message="rejected",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
+        error.properties = {"decision_model": {"error_kind": kind}}
+        configured = strategy_with(level_payload(4), LikertScoring(5))
+        configured.runner.side_effect = error
+        with pytest.raises(EvaluationException):
+            asyncio.run(configured.evaluate({}))
+        expected = kind if kind in _model_runners.DECISION_ERROR_KINDS else "none"
+        assert self.evaluation_attributes(recorded)["error_kind"] == expected
+
+    def test_a_named_provider_rejection_reports_its_kind(self, client, recorded):
+        detail = "invalid model request: Question prompt exceeds the 32768-token context limit"
+        client.response = FakeResponse(422, json.dumps({"detail": detail}).encode())
+        runner = DecisionModelRunner(DECISION_CONFIG, max_retries=0)
+        with pytest.raises(EvaluationException, match="context_window_exceeded"):
+            asyncio.run(self.runner_strategy(runner).evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == (
+            "error",
+            "user",
+            "context_window_exceeded",
+        )
+
+    @pytest.mark.parametrize(
+        "key, label",
+        [("coherence", "coherence"), ("deflection_rate", "deflection_rate"), ("customer_rubric_v2", "custom")],
+    )
+    def test_metric_is_a_known_result_key_or_custom(self, recorded, key, label):
+        configured = strategy_with(level_payload(4), LikertScoring(5), key=key)
+        configured.runner.side_effect = asyncio.CancelledError()
+        with pytest.raises(asyncio.CancelledError):
+            asyncio.run(configured.evaluate({}))
+        assert self.evaluation_attributes(recorded)["metric"] == label
+
+    @pytest.mark.parametrize(
+        "protocol, label",
+        [("absent", "microsoft"), ("future", "unknown"), (Mock(), "unknown")],
+        ids=["absent", "unrecognized", "not_a_name"],
+    )
+    def test_runner_protocol_is_bounded_in_metrics_and_provenance(self, recorded, protocol, label):
+        configured = strategy_with(level_payload(4), LikertScoring(5))
+        if protocol == "absent":
+            del configured.runner.decision_protocol
+        else:
+            configured.runner.decision_protocol = protocol
+        result = asyncio.run(configured.evaluate({}))
+        assert result["tool_call_accuracy_properties"]["decision_model"]["decision_protocol"] == label
+        assert self.evaluation_attributes(recorded)["protocol"] == label
 
     @staticmethod
     def runner_strategy(runner):
@@ -1822,7 +1915,9 @@ class TestDecisionExecutionControls:
         assert validated_execution(execution) == execution
         assert execution["outcome"] == "error"
         if response_limit == 1:
-            assert raised.value.properties == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
+            assert raised.value.properties == {
+                "decision_model": {"deployment": "Decision-1", "decision_protocol": "microsoft"}
+            }
         else:
             assert raised.value.properties["total_tokens"] == 123
             assert raised.value.properties["model"] == "microsoft-decision-1"
@@ -1934,7 +2029,7 @@ class TestDecisionExecutionControls:
         execution = raised.value.properties["decision_model"].pop("execution")
         assert execution["usage_state"] == "unknown"
         assert raised.value.properties == {
-            "decision_model": {"deployment": "Decision-1", "protocol": "microsoft"},
+            "decision_model": {"deployment": "Decision-1", "decision_protocol": "microsoft"},
             "completion_tokens": 3,
         }
 
@@ -2023,7 +2118,9 @@ class TestDecisionExecutionControls:
         execution = raised.value.properties["decision_model"].pop("execution")
         assert execution["attempt_count"] == 0
         assert execution["usage_state"] == "unknown"
-        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
+        assert raised.value.properties == {
+            "decision_model": {"deployment": "Decision-1", "decision_protocol": "microsoft"}
+        }
         assert "secret" not in str(raised.value)
         assert not client.calls
 
@@ -2161,7 +2258,7 @@ class TestDecisionExecutionControls:
                 assert execution["attempt_count"] == 1
                 assert execution["outcome"] == ("deadline" if termination == "timeout" else "cancelled")
                 assert raised.value.properties == {
-                    "decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}
+                    "decision_model": {"deployment": "Decision-1", "decision_protocol": "microsoft"}
                 }
             finally:
                 handle.cancel()
@@ -2201,7 +2298,9 @@ class TestDecisionExecutionControls:
         assert execution["attempt_count"] == expected
         assert execution["retry_count"] == max_retries
         assert execution["outcome"] == "error"
-        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
+        assert raised.value.properties == {
+            "decision_model": {"deployment": "Decision-1", "decision_protocol": "microsoft"}
+        }
         assert "secret" not in str(raised.value)
 
     def test_real_pipeline_success_has_no_hook_failure_or_billed_replay(self, monkeypatch):
