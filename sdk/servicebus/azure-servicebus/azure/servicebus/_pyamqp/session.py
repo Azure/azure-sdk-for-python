@@ -339,7 +339,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         finally:
             # Replenish after delivering the transfer so a failure/cancel during
             # flow send cannot drop an already-read frame (RECEIVE_AND_DELETE).
-            if self.incoming_window <= 0:
+            if self.state == SessionState.MAPPED and self.incoming_window <= 0:
                 self.incoming_window = self.target_incoming_window
                 self._outgoing_flow()
 
