@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -48,7 +47,6 @@ def main():
                 "eventHubEndpoints": {"events": {"partitionCount": 2, "retentionTimeInDays": 1}},
                 "features": "None",
                 "ipFilterRules": [],
-                "ipVersion": "ipv4ipv6",
                 "messagingEndpoints": {
                     "fileNotifications": {
                         "lockDurationAsIso8601": "PT1M",
@@ -65,7 +63,6 @@ def main():
                         {"action": "Allow", "filterName": "rule2", "ipMask": "157.55.59.128/25"},
                     ],
                 },
-                "rootCertificate": {"enableRootCertificateV2": True},
                 "routing": {
                     "endpoints": {
                         "eventHubs": [],
@@ -83,7 +80,6 @@ def main():
                     "routes": [
                         {
                             "condition": "true",
-                            "dataSchema": "aio-sr://aiosaalkopkedev/62a24af1d7db61cd44b2ad6b6c3f4ab7312be447f89ff3401d18357d0d05ce3a:1",
                             "endpointNames": ["events"],
                             "isEnabled": True,
                             "name": "Routeid",
@@ -102,6 +98,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01-preview/CreateOrReplace_IotHub.json
+# x-ms-original-file: 2026-11-01/CreateOrReplace_IotHub.json
 if __name__ == "__main__":
     main()
