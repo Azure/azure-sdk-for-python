@@ -39,6 +39,8 @@ from ._operations import RoutePoliciesOperations  # type: ignore
 from ._operations import NetworkMonitorsOperations  # type: ignore
 from ._operations import NetworkBootstrapDevicesOperations  # type: ignore
 from ._operations import NetworkBootstrapInterfacesOperations  # type: ignore
+from ._operations import EdgeConnectorsOperations  # type: ignore
+from ._operations import FabricsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -72,6 +74,8 @@ __all__ = [
     "NetworkMonitorsOperations",
     "NetworkBootstrapDevicesOperations",
     "NetworkBootstrapInterfacesOperations",
+    "EdgeConnectorsOperations",
+    "FabricsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

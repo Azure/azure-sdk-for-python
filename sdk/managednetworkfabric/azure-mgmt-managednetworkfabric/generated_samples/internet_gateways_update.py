@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/InternetGateways_Update.json
+# x-ms-original-file: 2026-01-15-preview/InternetGateways_Update.json
 if __name__ == "__main__":
     main()

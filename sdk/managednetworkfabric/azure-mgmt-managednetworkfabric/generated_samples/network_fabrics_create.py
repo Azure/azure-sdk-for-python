@@ -101,6 +101,13 @@ def main():
                 "networkFabricControllerId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/networkFabricControllers/example-fabricController",
                 "networkFabricSku": "M4-A400-A100-C16-aa",
                 "rackCount": 4,
+                "secretArchiveSettings": {
+                    "associatedIdentity": {
+                        "identityType": "UserAssignedIdentity",
+                        "userAssignedIdentityResourceId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourcegroups/example-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/example-identity",
+                    },
+                    "vaultUri": "https://myvault.vault.azure.net/",
+                },
                 "serverCountPerRack": 8,
                 "storageAccountConfiguration": {
                     "storageAccountId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.Storage/storageAccounts/nfStorage",
@@ -126,6 +133,15 @@ def main():
                     "nniDerivedUniqueRdConfigurationState": "Enabled",
                     "uniqueRdConfigurationState": "Enabled",
                 },
+                "upgradeProfile": [
+                    {
+                        "postUpgradeProfile": {
+                            "maxExitingMaintenanceTimeoutInSeconds": 3000,
+                            "mlagReloadDelayTimeoutInSeconds": 900,
+                        },
+                        "preUpgradeProfile": {"maxEnteringMaintenanceTimeoutInSeconds": 300},
+                    }
+                ],
             },
             "tags": {"keyId": "keyValue"},
         },
@@ -133,6 +149,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkFabrics_Create.json
+# x-ms-original-file: 2026-01-15-preview/NetworkFabrics_Create.json
 if __name__ == "__main__":
     main()

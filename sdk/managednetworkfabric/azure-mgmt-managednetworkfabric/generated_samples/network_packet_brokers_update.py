@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,11 +34,17 @@ def main():
     response = client.network_packet_brokers.begin_update(
         resource_group_name="example-rg",
         network_packet_broker_name="example-networkPacketBroker",
-        body={"identity": {"type": "None", "userAssignedIdentities": {"key8793": {}}}, "tags": {"keyId": "keyValue"}},
+        body={
+            "identity": {"type": "None", "userAssignedIdentities": {"key8793": {}}},
+            "properties": {
+                "sourceNetworkTapRuleId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourcegroups/example-rg/providers/Microsoft.ManagedNetworkFabric/networkTapRules/example-networkTapRule"
+            },
+            "tags": {"keyId": "keyValue"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkPacketBrokers_Update.json
+# x-ms-original-file: 2026-01-15-preview/NetworkPacketBrokers_Update.json
 if __name__ == "__main__":
     main()

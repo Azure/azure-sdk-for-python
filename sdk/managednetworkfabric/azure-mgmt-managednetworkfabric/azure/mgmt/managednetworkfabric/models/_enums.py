@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -48,7 +49,7 @@ class Action(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -245,6 +246,14 @@ class Condition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Condition-Range."""
 
 
+class ConfigurationRegenerationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Configuration Regeneration Type used for refresh configuration."""
+
+    PARTIAL = "Partial"
+    """Partial configuration regeneration indicates that the last known good configuration will be
+    reapplied."""
+
+
 class ConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Configuration state for the resource."""
 
@@ -274,6 +283,13 @@ class ConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PendingCommit Configuration State."""
     PENDING_ADMINISTRATIVE_UPDATE = "PendingAdministrativeUpdate"
     """PendingAdministrativeUpdate State."""
+    COMMIT_STAGED = "CommitStaged"
+    """Updated configuration is pushed to the selected CE device during staged commit operation."""
+    COMMIT_STAGE_FAILED = "CommitStageFailed"
+    """Pushing the updated configuration to the selected CE device failed during staged commit
+    operation."""
+    COMMIT_ROLLBACK_FAILED = "CommitRollbackFailed"
+    """Rollback of configuration failed during staged commit rollback operation."""
 
 
 class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -283,6 +299,30 @@ class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """File Configuration Type."""
     INLINE = "Inline"
     """Inline Configuration Type."""
+
+
+class ConnectivityModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Connectivity model for EdgeConnector."""
+
+    NONE = "none"
+    """No connectivity."""
+    DIRECT = "direct"
+    """Direct IP reachability."""
+    ARC_PROXY = "arcProxy"
+    """Arc Proxy tunnel."""
+    EXPRESS_ROUTE = "expressRoute"
+    """ExpressRoute private peering."""
+
+
+class ControllerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controller type for device interaction."""
+
+    CISCO_ACI = "ciscoAci"
+    """Cisco ACI APIC REST API."""
+    ARISTA_CLOUD_VISION = "aristaCloudVision"
+    """Arista CloudVision API."""
+    DIRECT = "direct"
+    """Direct gNMI/SSH."""
 
 
 class ControlPlaneAclActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -380,6 +420,8 @@ class DeviceRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DeviceRole - Network Packet Broker (NPB)."""
     MANAGEMENT_SWITCH = "ManagementSwitch"
     """Device Role Management Switch."""
+    TERMINAL_SERVER = "TerminalServer"
+    """Device Role Terminal Server (NetworkBootstrapDevice)."""
 
 
 class EnableDisableState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -454,6 +496,16 @@ class GatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GatewayType Infrastructure."""
     WORKLOAD = "Workload"
     """GatewayType Workload."""
+
+
+class GenerateBaseConfiguration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed types for generate base configuration during network fabric refresh."""
+
+    DISABLED = "Disabled"
+    """Disabled indicates that base configuration should not be generated during network fabric
+    refresh."""
+    ENABLED = "Enabled"
+    """Enabled indicates that base configuration should be generated during network fabric refresh."""
 
 
 class InterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -557,6 +609,15 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """System and user assigned managed identity."""
 
 
+class ManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Management mode for the Fabric."""
+
+    UNMANAGED = "unmanaged"
+    """Customer manages devices."""
+    MANAGED = "managed"
+    """RP manages devices."""
+
+
 class MicroBfdState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Micro Bidirectional Forwarding Detection (BFD) enabled/disabled state."""
 
@@ -614,6 +675,21 @@ class NetworkFabricLockType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A lock/unlock operation will be performed on the configuration."""
 
 
+class NetworkFabricRefreshDeviceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Device types for which the refresh configuration action will be applied: Example: CE | ToR |
+    NPB | ManagementSwitch.
+    """
+
+    CE = "CE"
+    """DeviceType-CE(Customer Edge)."""
+    TO_R = "ToR"
+    """DeviceType-ToR(top of rack)."""
+    NPB = "NPB"
+    """DeviceType-NPB(Network Packet Broker)."""
+    MANAGEMENT_SWITCH = "ManagementSwitch"
+    """DeviceType-ManagementSwitch."""
+
+
 class NetworkFabricUpgradeAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Action to be performed while upgrading the fabric."""
 
@@ -665,9 +741,37 @@ class NniType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NniType-NPB(Network Packet Broker)."""
 
 
+class OperationalState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operational State represents the current runtime condition of a networking resource. It
+    reflects the actual health, reachability, and availability of the resource at a given point in
+    time.
+    """
+
+    UNKNOWN = "Unknown"
+    """Operational State Unknown indicates the state of the resource cannot be determined."""
+    UP = "Up"
+    """Operational State Up indicates the resource is operational and functioning normally and all
+    required control-plane and (where applicable) data-plane operations are healthy."""
+    DOWN = "Down"
+    """Operational State Down indicates the resource is not functioning or not reachable and no
+    meaningful operations can be performed."""
+    DEGRADED = "Degraded"
+    """Operational State Degraded indicates the resource is partially functional, some capabilities
+    may be impaired, but the resource is still operational."""
+
+
+class OperationPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operation policy for device interaction."""
+
+    VALIDATE_ONLY = "validateOnly"
+    """Read device state and report drift."""
+    FULL_CONTROL = "fullControl"
+    """Read, write, and remediate drift."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -756,7 +860,7 @@ class RebootType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RedistributeConnectedSubnets(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Advertise Connected Subnets. Ex: "True" | "False"."""
+    """Advertise Connected Subnets. Ex: \"True\" | \"False\"."""
 
     TRUE = "True"
     """RedistributeConnectedSubnets-True."""
@@ -765,7 +869,7 @@ class RedistributeConnectedSubnets(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
 
 class RedistributeStaticRoutes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Advertise Static Routes. Ex: "True" | "False"."""
+    """Advertise Static Routes. Ex: \"True\" | \"False\"."""
 
     TRUE = "True"
     """RedistributeStaticRoutes-True."""

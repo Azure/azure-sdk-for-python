@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkFabrics_ResyncCertificates_PartialSuccess.json
+# x-ms-original-file: 2026-01-15-preview/NetworkFabrics_ResyncCertificates_PartialSuccess.json
 if __name__ == "__main__":
     main()
