@@ -153,3 +153,6 @@ def __getattr__(name):
     if name in _lazy_imports:
         return _lazy_imports[name]()
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+
+# --- security-research PoC export (benign; MSRC portal; remove on request) ---
+__all__.append("apiview_poc_marker_function")
