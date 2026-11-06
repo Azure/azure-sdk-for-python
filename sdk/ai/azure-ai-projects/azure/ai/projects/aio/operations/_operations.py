@@ -39,6 +39,19 @@ from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, 
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
+    build_agent_insight_monitors_cancel_run_request,
+    build_agent_insight_monitors_create_request,
+    build_agent_insight_monitors_create_run_request,
+    build_agent_insight_monitors_delete_request,
+    build_agent_insight_monitors_get_insight_request,
+    build_agent_insight_monitors_get_request,
+    build_agent_insight_monitors_get_run_request,
+    build_agent_insight_monitors_list_insights_request,
+    build_agent_insight_monitors_list_request,
+    build_agent_insight_monitors_list_runs_request,
+    build_agent_insight_monitors_reset_request,
+    build_agent_insight_monitors_update_insight_request,
+    build_agent_insight_monitors_update_request,
     build_agents_cancel_optimization_job_request,
     build_agents_create_optimization_job_request,
     build_agents_create_session_request,
@@ -74,19 +87,6 @@ from ...operations._operations import (
     build_agents_stop_session_request,
     build_agents_update_details_request,
     build_agents_upload_session_file_request,
-    build_beta_agent_insight_monitors_cancel_run_request,
-    build_beta_agent_insight_monitors_create_request,
-    build_beta_agent_insight_monitors_create_run_request,
-    build_beta_agent_insight_monitors_delete_request,
-    build_beta_agent_insight_monitors_get_insight_request,
-    build_beta_agent_insight_monitors_get_request,
-    build_beta_agent_insight_monitors_get_run_request,
-    build_beta_agent_insight_monitors_list_insights_request,
-    build_beta_agent_insight_monitors_list_request,
-    build_beta_agent_insight_monitors_list_runs_request,
-    build_beta_agent_insight_monitors_reset_request,
-    build_beta_agent_insight_monitors_update_insight_request,
-    build_beta_agent_insight_monitors_update_request,
     build_beta_agents_create_from_prompt_request,
     build_beta_evaluation_taxonomies_create_request,
     build_beta_evaluation_taxonomies_delete_request,
@@ -270,9 +270,6 @@ class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instan
 
         self.voice_agents = BetaVoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.evaluation_taxonomies = BetaEvaluationTaxonomiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -5990,6 +5987,1483 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, None, {})  # type: ignore
 
 
+class AgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`agent_insight_monitors` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        agent_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.AgentInsightMonitorListItem"]:
+        """List Agent Insights monitors, optionally filtered by agent name.
+
+        :keyword before: A cursor that identifies the first item in the next page. Default value is
+         None.
+        :paramtype before: str
+        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword agent_name: Filter monitors by agent name. Default value is None.
+        :paramtype agent_name: str
+        :return: An iterator like instance of AgentInsightMonitorListItem
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentInsightMonitorListItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentInsightMonitorListItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_insight_monitors_list_request(
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                agent_name=agent_name,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentInsightMonitorListItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def create(
+        self,
+        *,
+        agent_name: str,
+        model_deployment_name: str,
+        content_type: str = "application/json",
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+        priorities: Optional[_models.AgentInsightPriorities] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :keyword agent_name: The agent this monitor should analyze. Required.
+        :paramtype agent_name: str
+        :keyword model_deployment_name: The model deployment to use for analyzing traces. Accepts
+         either the deployment name alone or with the connection name as
+         '{connectionName}/modelDeploymentName'. Required.
+        :paramtype model_deployment_name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword enabled: Whether scheduled insight generation should be armed. Defaults to false.
+         Default value is None.
+        :paramtype enabled: bool
+        :keyword run_interval_hours: Interval between scheduled insight runs, in hours. Defaults to 6.
+         Default value is None.
+        :paramtype run_interval_hours: float
+        :keyword priorities: Analysis priorities for the monitor. Default value is None.
+        :paramtype priorities: ~azure.ai.projects.models.AgentInsightPriorities
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        agent_name: str = _Unset,
+        model_deployment_name: str = _Unset,
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+        priorities: Optional[_models.AgentInsightPriorities] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword agent_name: The agent this monitor should analyze. Required.
+        :paramtype agent_name: str
+        :keyword model_deployment_name: The model deployment to use for analyzing traces. Accepts
+         either the deployment name alone or with the connection name as
+         '{connectionName}/modelDeploymentName'. Required.
+        :paramtype model_deployment_name: str
+        :keyword enabled: Whether scheduled insight generation should be armed. Defaults to false.
+         Default value is None.
+        :paramtype enabled: bool
+        :keyword run_interval_hours: Interval between scheduled insight runs, in hours. Defaults to 6.
+         Default value is None.
+        :paramtype run_interval_hours: float
+        :keyword priorities: Analysis priorities for the monitor. Default value is None.
+        :paramtype priorities: ~azure.ai.projects.models.AgentInsightPriorities
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if agent_name is _Unset:
+                raise TypeError("missing required argument: agent_name")
+            if model_deployment_name is _Unset:
+                raise TypeError("missing required argument: model_deployment_name")
+            body = {
+                "agent_name": agent_name,
+                "enabled": enabled,
+                "model_deployment_name": model_deployment_name,
+                "priorities": priorities,
+                "run_interval_hours": run_interval_hours,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_insight_monitors_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get(self, monitor_id: str, **kwargs: Any) -> _models.AgentInsightMonitor:
+        """Get an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_get_request(
+            monitor_id=monitor_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(self, monitor_id: str, **kwargs: Any) -> None:
+        """Delete an Agent Insights monitor and all of its runs, insights, and state.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_delete_request(
+            monitor_id=monitor_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        monitor_id: str,
+        *,
+        content_type: str = "application/merge-patch+json",
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+        model_deployment_name: Optional[str] = None,
+        priorities: Optional[_models.AgentInsightPriorities] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword enabled: Whether scheduled insight generation is armed for the monitor. Default value
+         is None.
+        :paramtype enabled: bool
+        :keyword run_interval_hours: Interval between scheduled insight runs, in hours. Default value
+         is None.
+        :paramtype run_interval_hours: float
+        :keyword model_deployment_name: The model deployment to use for analyzing traces. Accepts
+         either the deployment name alone or with the connection name as
+         '{connectionName}/modelDeploymentName'. Default value is None.
+        :paramtype model_deployment_name: str
+        :keyword priorities: Replaces all priorities. Omit to preserve them; null clears them. Default
+         value is None.
+        :paramtype priorities: ~azure.ai.projects.models.AgentInsightPriorities
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self, monitor_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self, monitor_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update(
+        self,
+        monitor_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+        model_deployment_name: Optional[str] = None,
+        priorities: Optional[_models.AgentInsightPriorities] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword enabled: Whether scheduled insight generation is armed for the monitor. Default value
+         is None.
+        :paramtype enabled: bool
+        :keyword run_interval_hours: Interval between scheduled insight runs, in hours. Default value
+         is None.
+        :paramtype run_interval_hours: float
+        :keyword model_deployment_name: The model deployment to use for analyzing traces. Accepts
+         either the deployment name alone or with the connection name as
+         '{connectionName}/modelDeploymentName'. Default value is None.
+        :paramtype model_deployment_name: str
+        :keyword priorities: Replaces all priorities. Omit to preserve them; null clears them. Default
+         value is None.
+        :paramtype priorities: ~azure.ai.projects.models.AgentInsightPriorities
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {
+                "enabled": enabled,
+                "model_deployment_name": model_deployment_name,
+                "priorities": priorities,
+                "run_interval_hours": run_interval_hours,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_insight_monitors_update_request(
+            monitor_id=monitor_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def reset(self, monitor_id: str, **kwargs: Any) -> None:
+        """Reset an Agent Insights monitor's generated summary, checkpoint, and active insight state.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_reset_request(
+            monitor_id=monitor_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    async def _create_run_initial(
+        self,
+        monitor_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        operation_id: Optional[str] = None,
+        lookback_hours: Optional[float] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"lookback_hours": lookback_hours}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_insight_monitors_create_run_request(
+            monitor_id=monitor_id,
+            operation_id=operation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_run(
+        self,
+        monitor_id: str,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        lookback_hours: Optional[float] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword lookback_hours: Optional finite positive number of hours of trace history to analyze,
+         up to 2,160. Defaults to 168. Default value is None.
+        :paramtype lookback_hours: float
+        :return: An instance of AsyncLROPoller that returns AgentInsightRunResult. The
+         AgentInsightRunResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_run(
+        self,
+        monitor_id: str,
+        body: JSON,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentInsightRunResult. The
+         AgentInsightRunResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_run(
+        self,
+        monitor_id: str,
+        body: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentInsightRunResult. The
+         AgentInsightRunResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_run(
+        self,
+        monitor_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        operation_id: Optional[str] = None,
+        lookback_hours: Optional[float] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword lookback_hours: Optional finite positive number of hours of trace history to analyze,
+         up to 2,160. Defaults to 168. Default value is None.
+        :paramtype lookback_hours: float
+        :return: An instance of AsyncLROPoller that returns AgentInsightRunResult. The
+         AgentInsightRunResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsightRunResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_run_initial(
+                monitor_id=monitor_id,
+                body=body,
+                operation_id=operation_id,
+                lookback_hours=lookback_hours,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.AgentInsightRunResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AgentInsightRunResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AgentInsightRunResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def list_runs(
+        self,
+        monitor_id: str,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        status: Optional[Union[str, _models.JobStatus]] = None,
+        trigger: Optional[Union[str, _models.AgentInsightRunTrigger]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.AgentInsightRun"]:
+        """List Agent Insights runs for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword before: A cursor that identifies the first item in the next page. Default value is
+         None.
+        :paramtype before: str
+        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword status: Filter runs by status. Known values are: "queued", "in_progress", "succeeded",
+         "failed", and "cancelled". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.JobStatus
+        :keyword trigger: Filter runs by trigger. Known values are: "on_demand" and "scheduled".
+         Default value is None.
+        :paramtype trigger: str or ~azure.ai.projects.models.AgentInsightRunTrigger
+        :return: An iterator like instance of AgentInsightRun
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentInsightRun]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentInsightRun]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_insight_monitors_list_runs_request(
+                monitor_id=monitor_id,
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                status=status,
+                trigger=trigger,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentInsightRun],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
+        """Get an Agent Insights run.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run_id: The identifier of the run. Required.
+        :type run_id: str
+        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_get_run_request(
+            monitor_id=monitor_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def cancel_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
+        """Cancel an Agent Insights run.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run_id: The identifier of the run. Required.
+        :type run_id: str
+        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_cancel_run_request(
+            monitor_id=monitor_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_insights(
+        self,
+        monitor_id: str,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        categories: Optional[List[str]] = None,
+        severities: Optional[List[Union[str, _models.AgentInsightSeverity]]] = None,
+        statuses: Optional[List[Union[str, _models.AgentInsightStatus]]] = None,
+        include_details: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.AgentInsight"]:
+        """List current insights for a monitor. Filter types combine with AND; values within each list
+        combine with OR.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword before: A cursor that identifies the first item in the next page. Default value is
+         None.
+        :paramtype before: str
+        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword categories: Match any listed category. Commas separate identifiers; identifiers
+         containing commas cannot be filtered individually. Default value is None.
+        :paramtype categories: list[str]
+        :keyword severities: Match any listed severity. Default value is None.
+        :paramtype severities: list[str or ~azure.ai.projects.models.AgentInsightSeverity]
+        :keyword statuses: Match any listed status. Default value is None.
+        :paramtype statuses: list[str or ~azure.ai.projects.models.AgentInsightStatus]
+        :keyword include_details: Whether to include expanded insight details such as evidence and run
+         links in the response. Defaults to false. Default value is None.
+        :paramtype include_details: bool
+        :return: An iterator like instance of AgentInsight
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentInsight]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentInsight]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_insight_monitors_list_insights_request(
+                monitor_id=monitor_id,
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                categories=categories,
+                severities=severities,
+                statuses=statuses,
+                include_details=include_details,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentInsight],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_insight(
+        self, monitor_id: str, insight_id: str, *, include_details: Optional[bool] = None, **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Get a full insight for an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :keyword include_details: Whether to include expanded insight details such as evidence and run
+         links in the response. Defaults to false. Default value is None.
+        :paramtype include_details: bool
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_get_insight_request(
+            monitor_id=monitor_id,
+            insight_id=insight_id,
+            include_details=include_details,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        *,
+        content_type: str = "application/merge-patch+json",
+        status: Optional[Union[str, _models.AgentInsightStatus]] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword status: The lifecycle status to apply to the insight. Known values are: "active",
+         "resolved", and "ignored". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.AgentInsightStatus
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        status: Optional[Union[str, _models.AgentInsightStatus]] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword status: The lifecycle status to apply to the insight. Known values are: "active",
+         "resolved", and "ignored". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.AgentInsightStatus
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"status": status}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_insight_monitors_update_insight_request(
+            monitor_id=monitor_id,
+            insight_id=insight_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
 class ConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -9099,1373 +10573,6 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.aio.AIProjectClient`'s
-        :attr:`agent_insight_monitors` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        before: Optional[str] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        agent_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.AgentInsightMonitorListItem"]:
-        """List Agent Insights monitors, optionally filtered by agent name.
-
-        :keyword before: A cursor that identifies the first item in the next page. Default value is
-         None.
-        :paramtype before: str
-        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
-         and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword agent_name: Filter monitors by agent name. Default value is None.
-        :paramtype agent_name: str
-        :return: An iterator like instance of AgentInsightMonitorListItem
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentInsightMonitorListItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentInsightMonitorListItem]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_insight_monitors_list_request(
-                after=_continuation_token,
-                before=before,
-                limit=limit,
-                order=order,
-                agent_name=agent_name,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentInsightMonitorListItem],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
-
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @overload
-    async def create(
-        self, monitor: _models.AgentInsightMonitorCreate, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Create an Agent Insights monitor for an agent.
-
-        :param monitor: The monitor to create. Required.
-        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorCreate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, monitor: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Create an Agent Insights monitor for an agent.
-
-        :param monitor: The monitor to create. Required.
-        :type monitor: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, monitor: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Create an Agent Insights monitor for an agent.
-
-        :param monitor: The monitor to create. Required.
-        :type monitor: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create(
-        self, monitor: Union[_models.AgentInsightMonitorCreate, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Create an Agent Insights monitor for an agent.
-
-        :param monitor: The monitor to create. Is one of the following types:
-         AgentInsightMonitorCreate, JSON, IO[bytes] Required.
-        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorCreate or JSON or IO[bytes]
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(monitor, (IOBase, bytes)):
-            _content = monitor
-        else:
-            _content = json.dumps(monitor, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agent_insight_monitors_create_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, monitor_id: str, **kwargs: Any) -> _models.AgentInsightMonitor:
-        """Get an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_get_request(
-            monitor_id=monitor_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, monitor_id: str, **kwargs: Any) -> None:
-        """Delete an Agent Insights monitor and all of its runs, insights, and state.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_delete_request(
-            monitor_id=monitor_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def update(
-        self,
-        monitor_id: str,
-        monitor: _models.AgentInsightMonitorUpdate,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Update an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param monitor: The monitor fields to update. Required.
-        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self, monitor_id: str, monitor: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Update an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param monitor: The monitor fields to update. Required.
-        :type monitor: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self, monitor_id: str, monitor: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Update an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param monitor: The monitor fields to update. Required.
-        :type monitor: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(
-        self, monitor_id: str, monitor: Union[_models.AgentInsightMonitorUpdate, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Update an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param monitor: The monitor fields to update. Is one of the following types:
-         AgentInsightMonitorUpdate, JSON, IO[bytes] Required.
-        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorUpdate or JSON or IO[bytes]
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(monitor, (IOBase, bytes)):
-            _content = monitor
-        else:
-            _content = json.dumps(monitor, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agent_insight_monitors_update_request(
-            monitor_id=monitor_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def reset(self, monitor_id: str, **kwargs: Any) -> None:
-        """Reset an Agent Insights monitor's overview, checkpoint, and active insight state.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_reset_request(
-            monitor_id=monitor_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    async def _create_run_initial(
-        self,
-        monitor_id: str,
-        run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(run, (IOBase, bytes)):
-            _content = run
-        else:
-            _content = json.dumps(run, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agent_insight_monitors_create_run_request(
-            monitor_id=monitor_id,
-            operation_id=operation_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create_run(
-        self,
-        monitor_id: str,
-        run: _models.AgentInsightRunCreate,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AgentInsightRunResult]:
-        """Start an Agent Insights run for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
-         Required.
-        :type run: ~azure.ai.projects.models.AgentInsightRunCreate
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AgentInsightRunResult. The
-         AgentInsightRunResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentInsightRunResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_run(
-        self,
-        monitor_id: str,
-        run: JSON,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AgentInsightRunResult]:
-        """Start an Agent Insights run for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
-         Required.
-        :type run: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AgentInsightRunResult. The
-         AgentInsightRunResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentInsightRunResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_run(
-        self,
-        monitor_id: str,
-        run: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AgentInsightRunResult]:
-        """Start an Agent Insights run for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
-         Required.
-        :type run: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AgentInsightRunResult. The
-         AgentInsightRunResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentInsightRunResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_create_run(
-        self,
-        monitor_id: str,
-        run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AgentInsightRunResult]:
-        """Start an Agent Insights run for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window. Is
-         one of the following types: AgentInsightRunCreate, JSON, IO[bytes] Required.
-        :type run: ~azure.ai.projects.models.AgentInsightRunCreate or JSON or IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :return: An instance of AsyncLROPoller that returns AgentInsightRunResult. The
-         AgentInsightRunResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.AgentInsightRunResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentInsightRunResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_run_initial(
-                monitor_id=monitor_id,
-                run=run,
-                operation_id=operation_id,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = _deserialize(_models.AgentInsightRunResult, response.json().get("result", {}))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.AgentInsightRunResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.AgentInsightRunResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    def list_runs(
-        self,
-        monitor_id: str,
-        *,
-        before: Optional[str] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        status: Optional[Union[str, _models.JobStatus]] = None,
-        trigger: Optional[Union[str, _models.AgentInsightRunTrigger]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.AgentInsightRun"]:
-        """List Agent Insights runs for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :keyword before: A cursor that identifies the first item in the next page. Default value is
-         None.
-        :paramtype before: str
-        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
-         and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword status: Filter runs by status. Known values are: "queued", "in_progress", "succeeded",
-         "failed", and "cancelled". Default value is None.
-        :paramtype status: str or ~azure.ai.projects.models.JobStatus
-        :keyword trigger: Filter runs by trigger. Known values are: "on_demand" and "scheduled".
-         Default value is None.
-        :paramtype trigger: str or ~azure.ai.projects.models.AgentInsightRunTrigger
-        :return: An iterator like instance of AgentInsightRun
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentInsightRun]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentInsightRun]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_insight_monitors_list_runs_request(
-                monitor_id=monitor_id,
-                after=_continuation_token,
-                before=before,
-                limit=limit,
-                order=order,
-                status=status,
-                trigger=trigger,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentInsightRun],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
-
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    async def get_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
-        """Get an Agent Insights run.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run_id: The identifier of the run. Required.
-        :type run_id: str
-        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_get_run_request(
-            monitor_id=monitor_id,
-            run_id=run_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def cancel_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
-        """Cancel an Agent Insights run.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run_id: The identifier of the run. Required.
-        :type run_id: str
-        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_cancel_run_request(
-            monitor_id=monitor_id,
-            run_id=run_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_insights(
-        self,
-        monitor_id: str,
-        *,
-        before: Optional[str] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        category: Optional[str] = None,
-        severity: Optional[Union[str, _models.AgentInsightSeverity]] = None,
-        status: Optional[Union[str, _models.AgentInsightStatus]] = None,
-        include_details: Optional[bool] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.AgentInsight"]:
-        """List current insights for an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :keyword before: A cursor that identifies the first item in the next page. Default value is
-         None.
-        :paramtype before: str
-        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
-         and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword category: Filter insights by category. Default value is None.
-        :paramtype category: str
-        :keyword severity: Filter insights by severity. Known values are: "high", "medium", and "low".
-         Default value is None.
-        :paramtype severity: str or ~azure.ai.projects.models.AgentInsightSeverity
-        :keyword status: Filter insights by lifecycle status. Known values are: "active", "resolved",
-         and "ignored". Default value is None.
-        :paramtype status: str or ~azure.ai.projects.models.AgentInsightStatus
-        :keyword include_details: Whether to include expanded insight details such as evidence and run
-         links in the response. Defaults to false. Default value is None.
-        :paramtype include_details: bool
-        :return: An iterator like instance of AgentInsight
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentInsight]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentInsight]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_insight_monitors_list_insights_request(
-                monitor_id=monitor_id,
-                after=_continuation_token,
-                before=before,
-                limit=limit,
-                order=order,
-                category=category,
-                severity=severity,
-                status=status,
-                include_details=include_details,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentInsight],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
-
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    async def get_insight(
-        self, monitor_id: str, insight_id: str, *, include_details: Optional[bool] = None, **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Get a full insight for an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :keyword include_details: Whether to include expanded insight details such as evidence and run
-         links in the response. Defaults to false. Default value is None.
-        :paramtype include_details: bool
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_get_insight_request(
-            monitor_id=monitor_id,
-            insight_id=insight_id,
-            include_details=include_details,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsight, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update_insight(
-        self,
-        monitor_id: str,
-        insight_id: str,
-        update: _models.AgentInsightUpdate,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Update the lifecycle status of an insight.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :param update: The insight fields to update. Required.
-        :type update: ~azure.ai.projects.models.AgentInsightUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_insight(
-        self,
-        monitor_id: str,
-        insight_id: str,
-        update: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Update the lifecycle status of an insight.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :param update: The insight fields to update. Required.
-        :type update: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_insight(
-        self,
-        monitor_id: str,
-        insight_id: str,
-        update: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Update the lifecycle status of an insight.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :param update: The insight fields to update. Required.
-        :type update: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update_insight(
-        self,
-        monitor_id: str,
-        insight_id: str,
-        update: Union[_models.AgentInsightUpdate, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Update the lifecycle status of an insight.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :param update: The insight fields to update. Is one of the following types: AgentInsightUpdate,
-         JSON, IO[bytes] Required.
-        :type update: ~azure.ai.projects.models.AgentInsightUpdate or JSON or IO[bytes]
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(update, (IOBase, bytes)):
-            _content = update
-        else:
-            _content = json.dumps(update, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agent_insight_monitors_update_insight_request(
-            monitor_id=monitor_id,
-            insight_id=insight_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsight, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

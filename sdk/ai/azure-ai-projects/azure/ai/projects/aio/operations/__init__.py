@@ -16,6 +16,7 @@ from ._operations import BetaOperations  # type: ignore
 from ._operations import AgentsOperations  # type: ignore
 from ._operations import EvaluationRulesOperations  # type: ignore
 from ._operations import DatasetsOperations  # type: ignore
+from ._operations import AgentInsightMonitorsOperations  # type: ignore
 from ._operations import ConnectionsOperations  # type: ignore
 from ._operations import DeploymentsOperations  # type: ignore
 from ._operations import IndexesOperations  # type: ignore
@@ -31,6 +32,7 @@ __all__ = [
     "AgentsOperations",
     "EvaluationRulesOperations",
     "DatasetsOperations",
+    "AgentInsightMonitorsOperations",
     "ConnectionsOperations",
     "DeploymentsOperations",
     "IndexesOperations",

@@ -20,12 +20,9 @@ from azure.core.rest import HttpRequest
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
-from azure.ai.projects.aio.operations._patch_agent_insights_async import (
-    BetaAgentInsightMonitorsOperations as AsyncBetaAgentInsightMonitorsOperations,
-)
-from azure.ai.projects.operations._patch_agent_insights import (
-    BetaAgentInsightMonitorsOperations,
-)
+from azure.ai.projects.aio.operations import AgentInsightMonitorsOperations as AsyncAgentInsightMonitorsOperations
+from azure.ai.projects.models import AgentInsightRunLROPoller, AsyncAgentInsightRunLROPoller
+from azure.ai.projects.operations import AgentInsightMonitorsOperations
 
 
 class _RunResponse:
@@ -87,7 +84,7 @@ def _run_response(
 
 
 def _operation_for_status(terminal_status: str, *, is_async: bool = False, initial_status_code: int = 201):
-    operation_type = AsyncBetaAgentInsightMonitorsOperations if is_async else BetaAgentInsightMonitorsOperations
+    operation_type = AsyncAgentInsightMonitorsOperations if is_async else AgentInsightMonitorsOperations
     operation = operation_type.__new__(operation_type)
     operation._client = MagicMock()
     operation._config = MagicMock(polling_interval=0)
@@ -110,10 +107,38 @@ def _operation_for_status(terminal_status: str, *, is_async: bool = False, initi
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_async", [False, True])
+async def test_ga_monitors_are_wired_to_public_clients(is_async: bool) -> None:
+    client_type = AsyncAIProjectClient if is_async else AIProjectClient
+    operation_type = AsyncAgentInsightMonitorsOperations if is_async else AgentInsightMonitorsOperations
+    client = client_type(endpoint="https://example.test", credential=MagicMock())
+    try:
+        assert isinstance(client.agent_insight_monitors, operation_type)
+        assert not hasattr(client.beta, "agent_insight_monitors")
+    finally:
+        if is_async:
+            await client.close()
+        else:
+            client.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("allow_preview", [False, True])
 @pytest.mark.parametrize("custom_headers", [False, True])
-async def test_run_poller_sends_headers_on_every_request(is_async: bool, custom_headers: bool) -> None:
+@pytest.mark.parametrize("request_kind", ["defaults", "keywords", "json", "stream"])
+async def test_run_poller_sends_headers_on_every_request(
+    is_async: bool, allow_preview: bool, custom_headers: bool, request_kind: str
+) -> None:
     headers = {"foundry-features": "custom-preview", "x-custom-header": "custom-value"} if custom_headers else {}
     original_headers = headers.copy()
+    request_arguments: dict[str, Any] = {}
+    expected_body = {} if request_kind == "defaults" else {"lookback_hours": 3}
+    if request_kind == "keywords":
+        request_arguments["lookback_hours"] = 3
+    elif request_kind == "json":
+        request_arguments["body"] = expected_body
+    elif request_kind == "stream":
+        request_arguments["body"] = io.BytesIO(json.dumps(expected_body).encode())
     responses = []
     for index, status in enumerate(["queued", "in_progress", "succeeded", "succeeded"]):
         response = _run_response(status, initial=index == 0).http_response
@@ -140,41 +165,53 @@ async def test_run_poller_sends_headers_on_every_request(is_async: bool, custom_
         async with AsyncAIProjectClient(
             endpoint="https://example.test",
             credential=credential,
+            allow_preview=allow_preview,
             transport=AioHttpTransport(session=session, session_owner=False),
         ) as client:
-            poller = await client.beta.agent_insight_monitors.begin_create_run(
-                "monitor-test", run={}, polling_interval=0, headers=headers
+            poller = await client.agent_insight_monitors.begin_create_run(
+                "monitor-test", polling_interval=0, headers=headers, **request_arguments
             )
+            assert isinstance(poller, AsyncAgentInsightRunLROPoller)
             result = await asyncio.wait_for(poller.result(), timeout=5)
     else:
         session.request.side_effect = responses
         credential.get_token.return_value = token
         with AIProjectClient(
-            endpoint="https://example.test", credential=credential, transport=RequestsTransport(session=session)
+            endpoint="https://example.test",
+            credential=credential,
+            allow_preview=allow_preview,
+            transport=RequestsTransport(session=session),
         ) as client:
-            poller = client.beta.agent_insight_monitors.begin_create_run(
-                "monitor-test", run={}, polling_interval=0, headers=headers
+            poller = client.agent_insight_monitors.begin_create_run(
+                "monitor-test", polling_interval=0, headers=headers, **request_arguments
             )
+            assert isinstance(poller, AgentInsightRunLROPoller)
             result = poller.result(timeout=5)
 
+    assert poller.details == {"run_id": "run-test"}
     assert result.traces_analyzed == 10
     calls = session.request.call_args_list
+    request_body = calls[0].kwargs["data"]
+    if isinstance(request_body, io.BytesIO):
+        request_body = request_body.getvalue()
+    assert json.loads(request_body) == expected_body
     assert [call.args[0] if call.args else call.kwargs["method"] for call in calls] == ["POST", "GET", "GET", "GET"]
     final_url = calls[-1].args[1] if len(calls[-1].args) > 1 else calls[-1].kwargs["url"]
     assert final_url == "https://example.test/runs/run-test"
     for call in calls:
         sent_headers = {key.lower(): value for key, value in call.kwargs["headers"].items()}
-        assert sent_headers["foundry-features"] == ("custom-preview" if custom_headers else "AgentInsights=V1Preview")
         if custom_headers:
+            assert sent_headers["foundry-features"] == "custom-preview"
             assert sent_headers["x-custom-header"] == "custom-value"
-    if custom_headers:
-        assert headers == original_headers
+        else:
+            assert "foundry-features" not in sent_headers
+    assert headers == original_headers
 
 
 @pytest.mark.parametrize("initial_status_code", [201, 202])
 def test_run_poller_stops_after_cancellation(initial_status_code: int) -> None:
     operation = _operation_for_status("cancelled", initial_status_code=initial_status_code)
-    poller = operation.begin_create_run("monitor-test", run={})
+    poller = operation.begin_create_run("monitor-test")
     with pytest.raises(HttpResponseError):
         poller.result(timeout=5)
     assert poller.done()
@@ -186,7 +223,7 @@ def test_run_poller_stops_after_cancellation(initial_status_code: int) -> None:
 @pytest.mark.parametrize("initial_status_code", [201, 202])
 async def test_async_run_poller_stops_after_cancellation(initial_status_code: int) -> None:
     operation = _operation_for_status("cancelled", is_async=True, initial_status_code=initial_status_code)
-    poller = await operation.begin_create_run("monitor-test", run={})
+    poller = await operation.begin_create_run("monitor-test")
     with pytest.raises(HttpResponseError):
         await asyncio.wait_for(poller.result(), timeout=5)
     assert poller.polling_method().finished()
@@ -200,9 +237,9 @@ def test_begin_create_run_preserves_custom_polling_method(is_async):
     polling_method = MagicMock()
     polling_method.finished.return_value = True
     if is_async:
-        poller = asyncio.run(operation.begin_create_run("monitor-test", run={}, polling=polling_method))
+        poller = asyncio.run(operation.begin_create_run("monitor-test", polling=polling_method))
     else:
-        poller = operation.begin_create_run("monitor-test", run={}, polling=polling_method)
+        poller = operation.begin_create_run("monitor-test", polling=polling_method)
     assert poller.polling_method() is polling_method
     polling_method.initialize.assert_called_once()
     operation._client.send_request.assert_not_called()
@@ -213,14 +250,14 @@ def test_begin_create_run_preserves_custom_polling_method(is_async):
 async def test_begin_create_run_resumes_without_creating_another_run(is_async):
     original_operation = _operation_for_status("succeeded", is_async=is_async)
     if is_async:
-        original = await original_operation.begin_create_run("monitor-test", run={})
+        original = await original_operation.begin_create_run("monitor-test")
         await asyncio.wait_for(original.result(), timeout=5)
     else:
-        original = original_operation.begin_create_run("monitor-test", run={})
+        original = original_operation.begin_create_run("monitor-test")
         original.result(timeout=5)
 
     operation = _operation_for_status("succeeded", is_async=is_async)
-    kwargs = {"run": {}, "continuation_token": original.continuation_token()}
+    kwargs = {"body": {}, "continuation_token": original.continuation_token()}
     if is_async:
         poller = await operation.begin_create_run("monitor-test", **kwargs)
         result = await asyncio.wait_for(poller.result(), timeout=5)
