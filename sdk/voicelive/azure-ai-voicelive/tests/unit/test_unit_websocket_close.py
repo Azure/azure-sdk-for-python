@@ -98,7 +98,7 @@ class TestCloseFrameHandling:
         assert exc_info.value.reason == "Connection closed"
 
     async def test_iteration_stops_cleanly_on_closing(self):
-        event = {"type": "session.created", "event_id": "evt_1", "session": {"id": "sess_1"}}
+        event = {"type": "session.created", "event_id": "evt_1", "session": {"id": "session_1"}}
         conn = _connection_returning(
             WSMessage(WSMsgType.TEXT, json.dumps(event), None),
             WSMessage(WSMsgType.CLOSING, None, None),
@@ -125,7 +125,7 @@ class TestDataFramesUnaffected:
         assert await conn.recv_bytes() == b"\x00\x01"
 
     async def test_text_frame_parsed_as_event(self):
-        event = {"type": "session.created", "event_id": "evt_1", "session": {"id": "sess_1"}}
+        event = {"type": "session.created", "event_id": "evt_1", "session": {"id": "session_1"}}
         conn = _connection_returning(WSMessage(WSMsgType.TEXT, json.dumps(event), None))
 
         result = await conn.recv()
