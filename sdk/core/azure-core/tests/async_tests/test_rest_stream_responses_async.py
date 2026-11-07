@@ -32,7 +32,7 @@ async def test_iter_raw_on_iterable(client):
 
 
 @pytest.mark.asyncio
-async def test_iter_with_error(client):
+async def test_iter_with_error(client, connection_error_url):
     request = HttpRequest("GET", "/errors/403")
 
     async with client.send_request(request, stream=True) as response:
@@ -50,7 +50,7 @@ async def test_iter_with_error(client):
 
     assert response.is_closed
 
-    request = HttpRequest("GET", "http://doesNotExist")
+    request = HttpRequest("GET", connection_error_url)
     with pytest.raises(ServiceRequestError):
         async with await client.send_request(request, stream=True):
             raise ValueError("Should error before entering")

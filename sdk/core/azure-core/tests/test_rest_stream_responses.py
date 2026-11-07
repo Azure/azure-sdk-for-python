@@ -45,7 +45,7 @@ def test_iter_raw_on_iterable(client):
         assert raw == b"Hello, world!"
 
 
-def test_iter_with_error(client):
+def test_iter_with_error(client, connection_error_url):
     request = HttpRequest("GET", "/errors/403")
 
     with client.send_request(request, stream=True) as response:
@@ -58,7 +58,7 @@ def test_iter_with_error(client):
             response.raise_for_status()
     assert response.is_closed
 
-    request = HttpRequest("GET", "http://doesNotExist")
+    request = HttpRequest("GET", connection_error_url)
     with pytest.raises(ServiceRequestError):
         with client.send_request(request, stream=True) as response:
             raise ValueError("Should error before entering")
