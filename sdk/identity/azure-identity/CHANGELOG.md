@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixes AadClientBase.get_cached_access_token to use home_account_id and environment for app-only credentials. ([#49860](https://github.com/Azure/azure-sdk-for-python/issues/49860))
 
 ### Other Changes
 
