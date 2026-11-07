@@ -34,7 +34,6 @@ from .sanitizers import (
     remove_batch_sanitizers,
 )
 
-
 load_dotenv(find_dotenv())
 
 # Raise urllib3's exposed logging level so that we don't see tons of warnings while polling the proxy's availability
