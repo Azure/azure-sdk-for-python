@@ -627,8 +627,9 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                         rollback.provider_configuration
                     )
                 )
-            if not manager._preserve_recoverable_tasks_on_shutdown and (  # pylint: disable=protected-access
-                compatible_binding or not manager._has_live_workers  # pylint: disable=protected-access
+            if (
+                not manager._preserve_recoverable_tasks_on_shutdown  # pylint: disable=protected-access
+                and compatible_binding
             ):
                 return False
         logger.warning("Stopping task runtime before restoring its previous session binding")

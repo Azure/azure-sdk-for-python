@@ -639,8 +639,11 @@ async def test_inactive_prepared_provider_is_rebuilt_for_changed_restore_configu
             request.cancel()
             with pytest.raises(asyncio.CancelledError):
                 await request
-            assert app._task_manager is stale
+            assert app._task_manager is None
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
             assert not stale._has_live_workers
+            assert stale._shutdown_event.is_set()
             assert providers[0]._base_url == "https://failed.example.invalid/project/tasks"
             response = await http.post("/_agent/after-restore", json=payload())
             assert response.status_code == 200, response.text
@@ -649,6 +652,85 @@ async def test_inactive_prepared_provider_is_rebuilt_for_changed_restore_configu
             assert len(providers) == 2
             assert get_task_manager().provider is providers[1]
             assert providers[1]._base_url == "https://captured.example.invalid/project/tasks"
+        finally:
+            if not request.done():
+                request.cancel()
+            await asyncio.gather(request, return_exceptions=True)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("change", ["session", "provider", "compatible"])
+@pytest.mark.parametrize("failure", ["exception", "cancel"])
+async def test_failed_restore_unpublishes_incompatible_prepared_runtime(
+    provider_factory, monkeypatch: pytest.MonkeyPatch, change: str, failure: str
+) -> None:
+    provider, factory = provider_factory
+    captured_endpoint = "https://captured.example.invalid/project"
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "hosted")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", captured_endpoint)
+    entered = asyncio.Event()
+    managers = []
+    app = host()
+
+    @task(name="prepared_rollback_submission")
+    async def work(ctx: TaskContext[str]) -> str:
+        return ctx.input
+
+    @app.after_restore_handler
+    async def initialize(context: AgentSessionContext) -> None:
+        managers.append(get_task_manager())
+        if len(managers) != 1:
+            return
+        assert not managers[0]._has_live_workers
+        entered.set()
+        if failure == "exception":
+            raise RuntimeError("Fail before submitting work")
+        await asyncio.Event().wait()
+
+    first = payload(session_id="session-2" if change == "session" else "session-1")
+    if change == "session":
+        first["session_context"]["session_env_overrides"]["FOUNDRY_AGENT_SESSION_GUID"] = "b" * 32
+    elif change == "provider":
+        first["session_context"]["session_env_overrides"][
+            "FOUNDRY_PROJECT_ENDPOINT"
+        ] = "https://failed.example.invalid/project"
+    async with app.router.lifespan_context(app), client(app) as http:
+        request = asyncio.create_task(http.post("/_agent/after-restore", json=first))
+        try:
+            await asyncio.wait_for(entered.wait(), 10)
+            if failure == "cancel":
+                request.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await request
+            else:
+                assert (await request).status_code == 500
+            assert app.config.session_id == "session-1"
+            assert app.config.project_endpoint == captured_endpoint
+            if change == "compatible":
+                assert get_task_manager() is app._task_manager is managers[0]
+                assert not managers[0]._shutdown_event.is_set()
+            else:
+                assert app._task_manager is None
+                assert managers[0]._shutdown_event.is_set()
+                with pytest.raises(TaskManagerNotInitialized):
+                    await work.start(task_id="after-failure", input="must-not-be-persisted")
+                assert await provider.get("after-failure") is None
+            response = await http.post(
+                "/_agent/after-restore",
+                json=payload(
+                    restore_id="restore-2",
+                    session_id=first["session_context"]["session_id"],
+                ),
+            )
+            assert response.status_code == 200, response.text
+            if change == "compatible":
+                assert managers[1] is managers[0]
+                assert factory.call_count == 1
+            else:
+                assert managers[1] is not managers[0]
+                assert factory.call_count == 2
         finally:
             if not request.done():
                 request.cancel()
@@ -734,6 +816,8 @@ async def test_partial_recovery_failure_reuses_valid_inactive_phases(
         await original(manager)
 
     monkeypatch.setattr(TaskManager, "_recover_stale_tasks", recovery)
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
     app = host()
     async with app.router.lifespan_context(app), client(app) as http:
         first = await http.post("/_agent/after-restore", json=payload())
@@ -743,7 +827,7 @@ async def test_partial_recovery_failure_reuses_valid_inactive_phases(
         assert manager._startup_phases["register"].completed
         assert not manager._startup_phases["recovery"].completed
         assert not manager._has_live_workers
-        assert app.config.session_id == ""
+        assert app.config.session_id == "session-1"
         wrong_session = await http.post("/_agent/after-restore", json=payload(session_id="another-session"))
         assert wrong_session.status_code == 409
         second = await http.post("/_agent/after-restore", json=payload())
@@ -780,6 +864,8 @@ async def test_completed_recovery_is_not_repeated_after_scanner_creation_failure
 
     monkeypatch.setattr(TaskManager, "_recover_stale_tasks", recovery)
     monkeypatch.setattr(loop, "create_task", create)
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
     app = host()
     async with app.router.lifespan_context(app), client(app) as http:
         first = await http.post("/_agent/after-restore", json=payload())

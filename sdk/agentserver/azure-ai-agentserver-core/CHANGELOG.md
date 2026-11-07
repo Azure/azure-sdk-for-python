@@ -26,6 +26,9 @@
   preventing duplicate execution when inline lookup follows a committed recovery
   claim whose provider response is still pending. Nested calls from the same
   producer remain reentrant, and cancelled waiters release their admission.
+- Unpublish incompatible prepared task runtimes before failed or cancelled
+  restore configuration rollback, even when no workers started, preventing
+  subsequent submissions from using the failed provider or session binding.
 - Interrupt blocked recovery reads when shutdown begins, so admission can drain
   before scanner cancellation while accepted creates and claims settle safely.
   Host shutdown signals an activating manager before waiting for the serialized

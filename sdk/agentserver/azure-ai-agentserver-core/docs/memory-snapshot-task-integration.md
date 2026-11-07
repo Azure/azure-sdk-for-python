@@ -338,8 +338,12 @@ A newly restored manager records
 its restore ID before recovery so a same-ID retry cannot rotate lease identity
 under retained live workers.
 
-Completed inactive phase resources can survive a failed restore attempt and
-be reused after the same session is rebound. However, rollback cannot revert
+Completed inactive phase resources can survive a failed restore attempt only
+when their session, agent and provider binding matches the rollback target.
+An incompatible prepared manager is stopped and unpublished before
+configuration rollback even if no worker started, so later submissions cannot
+use a provider left behind by the failed attempt. Compatible phase resources
+can be reused after the same session is rebound. However, rollback cannot revert
 shared configuration while recovered workers continue using an incompatible
 binding. Compatibility includes agent identity and the provider backend/location
 captured before restore, not just session ID/GUID. A changed agent name,
