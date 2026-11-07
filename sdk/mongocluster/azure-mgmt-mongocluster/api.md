@@ -1863,17 +1863,16 @@ namespace azure.mgmt.mongocluster.types
         key "password": str
         key "userName": str
         password: str
-        user_name: str
+        userName: str
 
 
     class azure.mgmt.mongocluster.types.AuthConfigProperties(TypedDict, total=False):
         allowedModes: list[Union[str, AuthenticationMode]]
-        allowed_modes: list[Union[str, AuthenticationMode]]
 
 
     class azure.mgmt.mongocluster.types.BackupProperties(TypedDict, total=False):
         key "earliestRestoreTime": str
-        earliest_restore_time: str
+        earliestRestoreTime: str
 
 
     class azure.mgmt.mongocluster.types.CheckNameAvailabilityRequest(TypedDict, total=False):
@@ -1891,8 +1890,8 @@ namespace azure.mgmt.mongocluster.types
     class azure.mgmt.mongocluster.types.CustomerManagedKeyEncryptionProperties(TypedDict, total=False):
         key "keyEncryptionKeyIdentity": ForwardRef('KeyEncryptionKeyIdentity', module='types')
         key "keyEncryptionKeyUrl": str
-        key_encryption_key_identity: KeyEncryptionKeyIdentity
-        key_encryption_key_url: str
+        keyEncryptionKeyIdentity: KeyEncryptionKeyIdentity
+        keyEncryptionKeyUrl: str
 
 
     class azure.mgmt.mongocluster.types.DataApiProperties(TypedDict, total=False):
@@ -1909,7 +1908,7 @@ namespace azure.mgmt.mongocluster.types
 
     class azure.mgmt.mongocluster.types.EncryptionProperties(TypedDict, total=False):
         key "customerManagedKeyEncryption": ForwardRef('CustomerManagedKeyEncryptionProperties', module='types')
-        customer_managed_key_encryption: CustomerManagedKeyEncryptionProperties
+        customerManagedKeyEncryption: CustomerManagedKeyEncryptionProperties
 
 
     class azure.mgmt.mongocluster.types.EntraIdentityProvider(TypedDict, total=False):
@@ -1921,7 +1920,7 @@ namespace azure.mgmt.mongocluster.types
 
     class azure.mgmt.mongocluster.types.EntraIdentityProviderProperties(TypedDict, total=False):
         key "principalType": Required[Union[str, EntraPrincipalType]]
-        principal_type: Union[str, EntraPrincipalType]
+        principalType: Union[str, EntraPrincipalType]
 
 
     class azure.mgmt.mongocluster.types.FirewallRule(ProxyResource):
@@ -1933,7 +1932,7 @@ namespace azure.mgmt.mongocluster.types
         id: str
         name: str
         properties: FirewallRuleProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1941,14 +1940,14 @@ namespace azure.mgmt.mongocluster.types
         key "endIpAddress": Required[str]
         key "provisioningState": Union[str, ProvisioningState]
         key "startIpAddress": Required[str]
-        end_ip_address: str
-        provisioning_state: Union[str, ProvisioningState]
-        start_ip_address: str
+        endIpAddress: str
+        provisioningState: Union[str, ProvisioningState]
+        startIpAddress: str
 
 
     class azure.mgmt.mongocluster.types.HighAvailabilityProperties(TypedDict, total=False):
         key "targetMode": Union[str, HighAvailabilityMode]
-        target_mode: Union[str, HighAvailabilityMode]
+        targetMode: Union[str, HighAvailabilityMode]
 
 
     class azure.mgmt.mongocluster.types.IdentityProvider(TypedDict, total=False):
@@ -1965,19 +1964,18 @@ namespace azure.mgmt.mongocluster.types
     class azure.mgmt.mongocluster.types.KeyEncryptionKeyIdentity(TypedDict, total=False):
         key "identityType": Union[str, KeyEncryptionKeyIdentityType]
         key "userAssignedIdentityResourceId": str
-        identity_type: Union[str, KeyEncryptionKeyIdentityType]
-        user_assigned_identity_resource_id: str
+        identityType: Union[str, KeyEncryptionKeyIdentityType]
+        userAssignedIdentityResourceId: str
 
 
     class azure.mgmt.mongocluster.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.mongocluster.types.MongoCluster(TrackedResource):
@@ -1993,7 +1991,7 @@ namespace azure.mgmt.mongocluster.types
         location: str
         name: str
         properties: MongoClusterProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2020,27 +2018,25 @@ namespace azure.mgmt.mongocluster.types
         key "sharding": ForwardRef('ShardingProperties', module='types')
         key "storage": ForwardRef('StorageProperties', module='types')
         administrator: AdministratorProperties
-        auth_config: AuthConfigProperties
+        authConfig: AuthConfigProperties
         backup: BackupProperties
-        cluster_status: Union[str, MongoClusterStatus]
+        clusterStatus: Union[str, MongoClusterStatus]
         compute: ComputeProperties
-        connection_string: str
-        create_mode: Union[str, CreateMode]
-        data_api: DataApiProperties
+        connectionString: str
+        createMode: Union[str, CreateMode]
+        dataApi: DataApiProperties
         encryption: EncryptionProperties
-        high_availability: HighAvailabilityProperties
-        infrastructure_version: str
-        network_bypass_mode: Union[str, NetworkBypassMode]
+        highAvailability: HighAvailabilityProperties
+        infrastructureVersion: str
+        networkBypassMode: Union[str, NetworkBypassMode]
         previewFeatures: list[Union[str, PreviewFeature]]
-        preview_features: list[Union[str, PreviewFeature]]
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        public_network_access: Union[str, PublicNetworkAccess]
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
         replica: ReplicationProperties
-        replica_parameters: MongoClusterReplicaParameters
-        restore_parameters: MongoClusterRestoreParameters
-        server_version: str
+        replicaParameters: MongoClusterReplicaParameters
+        restoreParameters: MongoClusterRestoreParameters
+        serverVersion: str
         sharding: ShardingProperties
         storage: StorageProperties
 
@@ -2048,15 +2044,15 @@ namespace azure.mgmt.mongocluster.types
     class azure.mgmt.mongocluster.types.MongoClusterReplicaParameters(TypedDict, total=False):
         key "sourceLocation": Required[str]
         key "sourceResourceId": Required[str]
-        source_location: str
-        source_resource_id: str
+        sourceLocation: str
+        sourceResourceId: str
 
 
     class azure.mgmt.mongocluster.types.MongoClusterRestoreParameters(TypedDict, total=False):
         key "pointInTimeUTC": str
         key "sourceResourceId": str
-        point_in_time_utc: str
-        source_resource_id: str
+        pointInTimeUTC: str
+        sourceResourceId: str
 
 
     class azure.mgmt.mongocluster.types.MongoClusterUpdate(TypedDict, total=False):
@@ -2081,17 +2077,16 @@ namespace azure.mgmt.mongocluster.types
         key "sharding": ForwardRef('ShardingProperties', module='types')
         key "storage": ForwardRef('StorageProperties', module='types')
         administrator: AdministratorProperties
-        auth_config: AuthConfigProperties
+        authConfig: AuthConfigProperties
         backup: BackupProperties
         compute: ComputeProperties
-        data_api: DataApiProperties
+        dataApi: DataApiProperties
         encryption: EncryptionProperties
-        high_availability: HighAvailabilityProperties
-        network_bypass_mode: Union[str, NetworkBypassMode]
+        highAvailability: HighAvailabilityProperties
+        networkBypassMode: Union[str, NetworkBypassMode]
         previewFeatures: list[Union[str, PreviewFeature]]
-        preview_features: list[Union[str, PreviewFeature]]
-        public_network_access: Union[str, PublicNetworkAccess]
-        server_version: str
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        serverVersion: str
         sharding: ShardingProperties
         storage: StorageProperties
 
@@ -2110,7 +2105,7 @@ namespace azure.mgmt.mongocluster.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2119,10 +2114,9 @@ namespace azure.mgmt.mongocluster.types
         key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
         key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
 
 
     class azure.mgmt.mongocluster.types.PrivateEndpointConnectionResource(ProxyResource):
@@ -2134,7 +2128,7 @@ namespace azure.mgmt.mongocluster.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2142,7 +2136,7 @@ namespace azure.mgmt.mongocluster.types
         key "actionsRequired": str
         key "description": str
         key "status": Union[str, PrivateEndpointServiceConnectionStatus]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateEndpointServiceConnectionStatus]
 
@@ -2151,7 +2145,7 @@ namespace azure.mgmt.mongocluster.types
         key "mode": Union[str, PromoteMode]
         key "promoteOption": Required[Union[str, PromoteOption]]
         mode: Union[str, PromoteMode]
-        promote_option: Union[str, PromoteOption]
+        promoteOption: Union[str, PromoteOption]
 
 
     class azure.mgmt.mongocluster.types.ProxyResource(Resource):
@@ -2161,7 +2155,7 @@ namespace azure.mgmt.mongocluster.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2169,9 +2163,9 @@ namespace azure.mgmt.mongocluster.types
         key "replicationState": Union[str, ReplicationState]
         key "role": Union[str, ReplicationRole]
         key "sourceResourceId": str
-        replication_state: Union[str, ReplicationState]
+        replicationState: Union[str, ReplicationState]
         role: Union[str, ReplicationRole]
-        source_resource_id: str
+        sourceResourceId: str
 
 
     class azure.mgmt.mongocluster.types.Resource(TypedDict, total=False):
@@ -2181,19 +2175,19 @@ namespace azure.mgmt.mongocluster.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.mongocluster.types.ShardingProperties(TypedDict, total=False):
         key "shardCount": int
-        shard_count: int
+        shardCount: int
 
 
     class azure.mgmt.mongocluster.types.StorageProperties(TypedDict, total=False):
         key "sizeGb": int
         key "type": Union[str, StorageType]
-        size_gb: int
+        sizeGb: int
         type: Union[str, StorageType]
 
 
@@ -2204,12 +2198,12 @@ namespace azure.mgmt.mongocluster.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.mongocluster.types.TrackedResource(Resource):
@@ -2221,7 +2215,7 @@ namespace azure.mgmt.mongocluster.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2235,22 +2229,22 @@ namespace azure.mgmt.mongocluster.types
         id: str
         name: str
         properties: UserProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.mongocluster.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.mongocluster.types.UserProperties(TypedDict, total=False):
         key "identityProvider": ForwardRef('IdentityProvider', module='types')
         key "provisioningState": Union[str, ProvisioningState]
-        identity_provider: IdentityProvider
-        provisioning_state: Union[str, ProvisioningState]
+        identityProvider: IdentityProvider
+        provisioningState: Union[str, ProvisioningState]
         roles: list[DatabaseRole]
 
 
