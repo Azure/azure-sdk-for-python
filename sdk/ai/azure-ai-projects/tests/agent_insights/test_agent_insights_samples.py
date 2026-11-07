@@ -15,7 +15,9 @@ from agent_insights.sample_test_helpers import assert_agent_insights_output
 
 from azure.ai.projects.models import (
     AgentInsight,
+    AgentInsightPrioritiesRead,
     AgentInsightRun,
+    AgentInsightRunInputs,
     AgentInsightRunResult,
     AgentInsightStatus,
 )
@@ -189,6 +191,69 @@ def _on_demand_main(on_demand_sample, monkeypatch):
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "test-model")
     monkeypatch.delenv("FOUNDRY_AGENT_NAME", raising=False)
     return main, operations
+
+
+@pytest.mark.parametrize("has_inputs", [False, True])
+def test_on_demand_uses_ga_priorities_and_filters(on_demand_main, capsys, has_inputs):
+    main, operations = on_demand_main
+    operations.get_run.return_value = AgentInsightRun(
+        status="succeeded",
+        inputs=AgentInsightRunInputs(lookback_hours=3.0) if has_inputs else None,
+    )
+
+    main()
+
+    creation = operations.create.call_args.kwargs
+    assert creation["agent_name"] == "test-agent"
+    assert creation["model_deployment_name"] == "test-model"
+    assert creation["priorities"].as_dict() == {
+        "categories": [],
+        "instructions": "Focus on tool calls made without the user's approval.",
+    }
+    operations.list_insights.assert_called_once_with(
+        "new-monitor", statuses=[AgentInsightStatus.ACTIVE], include_details=True
+    )
+    output = capsys.readouterr().out
+    assert ("Lookback hours: 3.0" in output) is has_inputs
+
+
+@pytest.mark.parametrize("has_priorities", [False, True])
+def test_scheduled_sample_replaces_ga_priorities(scheduled_sample, on_demand_main, monkeypatch, capsys, has_priorities):
+    main = scheduled_sample["main"]
+    configured_main, operations = on_demand_main
+    for name in (
+        "AIProjectClient",
+        "DefaultAzureCredential",
+        "load_dotenv",
+        "LogsQueryClient",
+        "seed_traces",
+        "wait_for_ingestion",
+    ):
+        monkeypatch.setitem(main.__globals__, name, configured_main.__globals__[name])
+    instructions = "Focus on tool calls made without the user's approval."
+    operations.update.side_effect = [
+        SimpleNamespace(
+            enabled=True,
+            run_interval_hours=6,
+            next_scheduled_run_at="2026-11-07T06:00:00+00:00",
+            priorities=AgentInsightPrioritiesRead(categories=[], instructions=instructions) if has_priorities else None,
+        ),
+        None,
+    ]
+
+    main()
+
+    update = operations.update.call_args_list[0]
+    assert update.args == ("new-monitor",)
+    assert update.kwargs["enabled"] is True
+    assert update.kwargs["run_interval_hours"] == 6
+    assert update.kwargs["priorities"].as_dict() == {
+        "categories": [],
+        "instructions": instructions,
+    }
+    output = capsys.readouterr().out
+    assert_agent_insights_output("sample_agent_insights_scheduled.py", output.splitlines())
+    assert (f"Analysis guidance: {instructions}" in output) is has_priorities
 
 
 @pytest.mark.parametrize("polling_error", [RuntimeError("Polling failed"), KeyboardInterrupt()])

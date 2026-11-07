@@ -55,6 +55,7 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
+* Agent Insights samples demonstrate GA analysis priorities, instructions, and plural status filters.
 * Added Live voice-agent samples under `samples/agents/voice/` for session lifecycle, text and audio conversations, local function tools, and same-project managed-agent delegation.
 * Added `sample_voice_agent_live_read_conversation.py` demonstrating stored Live conversation, transcript, and audio retrieval, with an optional temporary greeting session.
 * Added `sample_voice_agent_read_generated_audio.py` demonstrating retrieval of generated, unheard audio from an interrupted Realtime reply.

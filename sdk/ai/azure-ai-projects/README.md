@@ -35,7 +35,7 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
 * **Upload documents and create Datasets** to reference them using `.datasets` operations.
 * **Create and enumerate Search Indexes** using `.indexes` operations.
-* **Analyze agent traces and manage insights** through on-demand runs and scheduled monitors using `.agent_insight_monitors` operations.
+* **Analyze agent traces and manage insights** with configurable priorities, on-demand runs, scheduled monitors, and list-based insight filters through `.agent_insight_monitors` operations.
 * **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using `.evaluation_rules`,
 `.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
 * **Manage memory stores (preview)** for Agent conversations, using `.beta.memory_stores` operations.

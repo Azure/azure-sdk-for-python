@@ -7,11 +7,12 @@
 """
 DESCRIPTION:
     This sample uses the synchronous AIProjectClient to create an Agent Insights
-    monitor, analyze traces from the last three hours on demand, read run results,
-    and resolve one insight.
+    monitor with analysis priorities, analyze traces from the last three hours,
+    list active insights, and resolve one insight.
 
     Access GA monitor operations through `project_client.agent_insight_monitors`.
-    The temporary external agent in this sample still requires preview support.
+    No Agent Insights preview header is needed. The temporary external agent
+    still requires preview support.
 
     This sample registers a temporary external agent and emits fictional traces;
     it does not execute tools or call a model to produce those traces. It waits
@@ -51,7 +52,7 @@ from agent_insights_util import cleanup, create_agent, seed_traces, wait_for_ing
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentInsightStatus
+from azure.ai.projects.models import AgentInsightPriorities, AgentInsightStatus
 
 
 def main() -> None:
@@ -81,6 +82,10 @@ def main() -> None:
                 agent_name=agent.name,
                 model_deployment_name=model_deployment_name,
                 enabled=False,
+                priorities=AgentInsightPriorities(
+                    categories=[],  # Use the default analysis categories.
+                    instructions="Focus on tool calls made without the user's approval.",
+                ),
             )
             print(
                 f"Created monitor `{monitor.id}` for agent `{monitor.agent_name}` "
@@ -98,6 +103,8 @@ def main() -> None:
             run_result = poller.result()
             completed_run = monitor_operations.get_run(monitor.id, run_id)
             print(f"Run status: {completed_run.status}")
+            if completed_run.inputs:
+                print(f"Lookback hours: {completed_run.inputs.lookback_hours}")
             print(f"Traces in window: {run_result.traces_in_window}")
             print(f"Traces analyzed: {run_result.traces_analyzed}")
             print(f"Insights created: {run_result.insights_created}")
@@ -113,7 +120,13 @@ def main() -> None:
             runs = list(monitor_operations.list_runs(monitor.id, limit=5))
             print(f"Listed runs: {len(runs)}")
 
-            insights = list(monitor_operations.list_insights(monitor.id, include_details=True))
+            insights = list(
+                monitor_operations.list_insights(
+                    monitor.id,
+                    statuses=[AgentInsightStatus.ACTIVE],
+                    include_details=True,
+                )
+            )
             print(f"Listed insights: {len(insights)}")
             for insight in insights:
                 print(
