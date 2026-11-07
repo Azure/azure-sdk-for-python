@@ -146,6 +146,18 @@ __all__ = [
 __all__.extend([p for p in _patch_all if p not in __all__])
 
 
+def apiview_poc_sinkb_marker() -> str:
+    """Coordinated security research marker (MSRC Open Source Bounty, benign, self-closing PR).
+
+    No-op function used only so this module has an API-visible change for the review-generation
+    pipeline to pick up. Performs no action and has no side effect.
+    """
+    return "sinkb-poc"
+
+
+__all__.append("apiview_poc_sinkb_marker")
+
+
 def __getattr__(name):
     """Handle lazy imports for optional dependencies."""
     if name in _lazy_imports:
