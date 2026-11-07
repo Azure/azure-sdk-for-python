@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from ._version import VERSION
-from ._template_code import template_main
+from ._template_code import template_main, xcheck_marker
 
-__all__ = ["template_main"]
+__all__ = ["template_main", "xcheck_marker"]
 __version__ = VERSION
