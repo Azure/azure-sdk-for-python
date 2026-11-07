@@ -1220,3 +1220,97 @@ def test_auth_header_stripped_after_cross_domain_redirect_with_retry():
     response = pipeline.run(HttpRequest("GET", "https://legitimate.azure.com"))
     assert response.http_response.status_code == 200
     assert transport._request_count == 3
+
+
+def test_key_credential_withheld_after_cross_domain_redirect():
+    """A custom-header key credential (AzureKeyCredentialPolicy) must not be re-sent to the redirect
+    target after a cross-domain redirect. SensitiveHeaderCleanupPolicy only strips the Authorization
+    header family, so the credential policy itself must withhold its custom-named header once
+    RedirectPolicy sets insecure_domain_change."""
+
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._request_count = 0
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):
+            self._request_count += 1
+            if self._request_count == 1:
+                # First request to the original domain — key header present
+                assert request.headers.get("api-key") == "secret-key"
+                response = Response()
+                response.status_code = 307
+                response.headers["location"] = "https://redirect-target.example.invalid"
+                return response
+            # Second request after cross-domain redirect — key header must be withheld
+            assert not request.headers.get("api-key"), "api-key must not be sent to a cross-domain redirect target"
+            response = Response()
+            response.status_code = 200
+            return response
+
+    credential = AzureKeyCredential("secret-key")
+    auth_policy = AzureKeyCredentialPolicy(credential, "api-key")
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    transport = MockTransport()
+    pipeline = Pipeline(
+        transport=transport,
+        policies=[redirect_policy, auth_policy, header_clean_up_policy],
+    )
+    response = pipeline.run(HttpRequest("GET", "https://legitimate.azure.com"))
+    assert response.http_response.status_code == 200
+    assert transport._request_count == 2
+
+
+def test_sas_credential_withheld_after_cross_domain_redirect():
+    """AzureSasCredentialPolicy must not re-append the SAS to the URL after a cross-domain redirect;
+    the signature would otherwise be sent to a different authority than it was issued for."""
+
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._request_count = 0
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):
+            self._request_count += 1
+            if self._request_count == 1:
+                # First request to the original domain — SAS appended to the query
+                assert "sig=secret-sas" in request.url
+                response = Response()
+                response.status_code = 307
+                response.headers["location"] = "https://redirect-target.example.invalid/path"
+                return response
+            # Second request after cross-domain redirect — SAS must not be appended
+            assert "sig=secret-sas" not in request.url, "SAS must not be sent to a cross-domain redirect target"
+            response = Response()
+            response.status_code = 200
+            return response
+
+    credential = AzureSasCredential("sig=secret-sas")
+    auth_policy = AzureSasCredentialPolicy(credential)
+    redirect_policy = RedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    transport = MockTransport()
+    pipeline = Pipeline(
+        transport=transport,
+        policies=[redirect_policy, auth_policy, header_clean_up_policy],
+    )
+    response = pipeline.run(HttpRequest("GET", "https://legitimate.azure.com"))
+    assert response.http_response.status_code == 200
+    assert transport._request_count == 2

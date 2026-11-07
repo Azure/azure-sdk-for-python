@@ -7,6 +7,10 @@
 - Added `ODataV4Format.as_dict()` to convert parsed OData V4 errors, including nested details and model-valued inner errors, to JSON-compatible dictionaries for generated model serialization, preserving `None` values and empty collections.
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
+### Bugs Fixed
+
+- `AzureKeyCredentialPolicy` and `AzureSasCredentialPolicy` no longer re-attach their credential (the custom key header, or the SAS query signature) after a cross-domain redirect. Previously the redirect credential cleanup only removed the `Authorization` header family, so a custom-named key header or SAS was re-sent to the redirect target host. The credential is now withheld when `RedirectPolicy` signals an insecure domain change, matching the protection already in place for `Authorization`.
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
