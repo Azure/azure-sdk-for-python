@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
+import hashlib
 import math
 from collections import Counter
 import logging
@@ -158,6 +159,12 @@ async def _timed_call_async(op_name, stats, fn, *args, **kwargs):
 def get_user_agent(client_id):
     prefix = USER_AGENT_PREFIX + "-" if USER_AGENT_PREFIX else ""
     return prefix + str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
+
+
+def get_user_agent_suffix(client_id):
+    # The driver's application label allows only 25 URL-safe ASCII characters.
+    label = get_user_agent(client_id)
+    return "perf-" + hashlib.sha256(label.encode("utf-8")).hexdigest()[:20]
 
 
 def _item_keys(suffix):

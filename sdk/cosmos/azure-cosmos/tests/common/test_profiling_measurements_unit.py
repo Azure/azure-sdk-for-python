@@ -1391,6 +1391,8 @@ def test_workload_lifecycle_controls_entry_and_exit_rust(modules, monkeypatch, m
 
     class Client:
         def __init__(self, *args, **kwargs):
+            assert kwargs["user_agent_suffix"] == "profiling-test"
+            assert "user_agent" not in kwargs
             calls.append("construct")
 
         async def __aenter__(self):
@@ -1420,6 +1422,7 @@ def test_workload_lifecycle_controls_entry_and_exit_rust(modules, monkeypatch, m
         "_install_async_stop": lambda event: None,
         "_wrap_backend_for_counting": lambda *args, **kwargs: None,
         "_maybe_freeze_gc": lambda logger: None,
+        "get_user_agent_suffix": lambda client_id: "profiling-test",
     }.items():
         monkeypatch.setattr(workload, name, value)
     monkeypatch.setattr(workload.asyncio, "sleep", AsyncMock())
@@ -1430,6 +1433,44 @@ def test_workload_lifecycle_controls_entry_and_exit_rust(modules, monkeypatch, m
         asyncio.run(workload.run_workload_async("test", None))
     assert calls == (["construct", "enter", "read", "exit", "report"] if manage
                      else ["construct", "read", "report"])
+
+
+def test_sync_workload_uses_supported_application_label_rust(modules, monkeypatch):
+    workload = importlib.import_module("workload")
+
+    class ConstructionChecked(Exception):
+        pass
+
+    def client(*args, **kwargs):
+        assert kwargs["user_agent_suffix"] == "profiling-test"
+        assert "user_agent" not in kwargs
+        raise ConstructionChecked
+
+    monkeypatch.setattr(workload, "SyncClient", client)
+    monkeypatch.setattr(workload, "get_user_agent_suffix", lambda client_id: "profiling-test")
+    monkeypatch.setattr(workload, "WORKLOAD_USE_PROXY", False)
+    monkeypatch.setattr(workload, "WORKLOAD_MIX", {})
+    monkeypatch.setattr(workload, "_start_reporter", lambda: (None, None))
+    monkeypatch.setattr(workload.signal, "signal", lambda *args: None)
+    with pytest.raises(ConstructionChecked):
+        workload.run_workload_sync("test", None)
+
+
+@pytest.mark.parametrize("label", [
+    "workload-123301-20261107-034202",
+    "custom prefix/with spaces and a long application name",
+    "customer-\N{SNOWMAN}",
+])
+def test_workload_application_label_obeys_native_limits_rust(modules, monkeypatch, label):
+    import re
+    utils = modules["workload_utils"]
+    monkeypatch.setattr(utils, "get_user_agent", lambda client_id: label)
+    suffix = utils.get_user_agent_suffix("test")
+    assert len(suffix) <= 25
+    assert re.fullmatch(r"[A-Za-z0-9._~-]+", suffix)
+    assert utils.get_user_agent_suffix("test") == suffix
+    monkeypatch.setattr(utils, "get_user_agent", lambda client_id: label + "-other")
+    assert utils.get_user_agent_suffix("test") != suffix
 
 
 @pytest.mark.parametrize("invalid", [

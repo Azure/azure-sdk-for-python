@@ -53,7 +53,7 @@ from workload_utils import (
     create_logger,
     delete_item,
     delete_item_concurrently,
-    get_user_agent,
+    get_user_agent_suffix,
     mixed_wave_concurrently,
     patch_item,
     patch_item_concurrently,
@@ -218,7 +218,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
             enable_diagnostics_logging=ENABLE_DIAGNOSTICS_LOGGING,
             logger=client_logger,
-            user_agent=get_user_agent(client_id),
+            user_agent_suffix=get_user_agent_suffix(client_id),
         )
         if use_proxy and transport:
             client_kwargs["transport"] = transport
@@ -372,7 +372,7 @@ def run_workload_sync(client_id, client_logger):
             excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
             enable_diagnostics_logging=ENABLE_DIAGNOSTICS_LOGGING,
             logger=client_logger,
-            user_agent=get_user_agent(client_id),
+            user_agent_suffix=get_user_agent_suffix(client_id),
         ) as client:
             db = client.get_database_client(COSMOS_DATABASE)
             cont = db.get_container_client(COSMOS_CONTAINER)
