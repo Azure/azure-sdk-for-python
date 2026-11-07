@@ -1,0 +1,878 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+//! Binding calls for individual items, such as "order-42" in sales/orders.
+//!
+//! Each function checks PreparedRequest.op and extracts typed inputs before
+//! asking the shared item helpers to execute through the Rust driver. Async
+//! variants return an awaitable; validation can still fail during the call.
+
+use super::*;
+use crate::wire::ItemTarget;
+use azure_core::http::headers::HeaderName;
+use azure_data_cosmos_driver::models::{ItemReference, Precondition};
+use azure_data_cosmos_driver::options::PatchStrategy;
+use pyo3::exceptions::{PyNotImplementedError, PyValueError};
+
+pub(super) fn item_target(
+    prepared: &Bound<'_, PyAny>,
+    item_id: impl FnOnce() -> PyResult<String>,
+) -> PyResult<ItemTarget> {
+    match prepared
+        .getattr("item_self_link")?
+        .extract::<Option<String>>()?
+    {
+        Some(link) => ItemTarget::from_self_link(&link),
+        None => Ok(item_id()?.into()),
+    }
+}
+
+fn extract_read_item_inputs(
+    prepared: &Bound<'_, PyAny>,
+) -> PyResult<(
+    String,
+    BindingPartitionKey,
+    RequestHeadersAndOptions,
+    ItemTarget,
+)> {
+    extract_item_inputs(
+        prepared,
+        READ_ITEM_ID_REQUIRED,
+        READ_ITEM_PARTITION_KEY_REQUIRED,
+    )
+}
+
+fn patch_precondition(
+    modifiers: &mut RequestHeadersAndOptions,
+    body: &[u8],
+) -> PyResult<Option<Precondition>> {
+    if modifiers
+        .custom_headers
+        .contains_key(&HeaderName::from_static("if-none-match"))
+    {
+        return Err(PyNotImplementedError::new_err(
+            "The Python Rust binding does not support If-None-Match for patch_item.",
+        ));
+    }
+    let payload: serde_json::Value = serde_json::from_slice(body)
+        .map_err(|error| PyValueError::new_err(format!("Invalid patch body: {error}")))?;
+    if let Some(condition) = payload.get("condition") {
+        if !condition.is_string() {
+            return Err(PyValueError::new_err("patch_item condition must be a string."));
+        }
+        // Auto can evaluate mutations locally, but cannot evaluate the SQL condition.
+        modifiers.patch_strategy = Some(PatchStrategy::ServerSide);
+    }
+    modifiers
+        .custom_headers
+        .remove(&HeaderName::from_static("if-match"))
+        .map(|value| {
+            if value.as_str().trim().is_empty() {
+                return Err(PyValueError::new_err(
+                    "patch_item If-Match must be a non-empty ETag string.",
+                ));
+            }
+            Ok(Precondition::if_match(value.as_str().to_owned()))
+        })
+        .transpose()
+}
+
+fn patch_operation(
+    item: ItemReference,
+    body: Vec<u8>,
+    precondition: Option<Precondition>,
+) -> CosmosOperation {
+    let operation = CosmosOperation::patch_item(item).with_body(body);
+    match precondition {
+        Some(precondition) => operation.with_precondition(precondition),
+        None => operation,
+    }
+}
+
+/// Insert a new item, rejecting an existing item with the same id and partition key.
+///
+/// The Python wrapper normally supplies PreparedRequest.item_id. If that field
+/// is None or empty, read the id from body_bytes. Missing or wrongly typed
+/// attributes raise instead; this does not select the legacy execution path.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
+pub(crate) fn create_item<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    include_fault_diagnostics: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "create_item")?;
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
+        extract_create_body_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+
+    execute_item_operation_sync(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        item_id.into(),
+        body_bytes,
+        "create_item",
+        true,
+        include_attempts,
+        include_fault_diagnostics,
+        |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
+    )
+}
+
+/// Create an item or replace the existing item with the same partition key and id.
+///
+/// This selects the driver's upsert operation rather than implementing an
+/// existence check in the binding. Prepared `If-Match` / `If-None-Match`
+/// headers remain in `custom_headers`; their enforcement is not done here.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn upsert_item<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "upsert_item")?;
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
+        extract_create_body_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+
+    execute_item_operation_sync(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        item_id.into(),
+        body_bytes,
+        "upsert_item",
+        true,
+        include_attempts,
+        false,
+        |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
+    )
+}
+
+/// Replace the target identified by the prepared request, not by the body.
+/// Use item_self_link when supplied for a dictionary target; otherwise use
+/// item_id. Preserving a resource-id address prevents replacing a different
+/// item that was later created with the same name.
+///
+/// An existing item is overwritten (HTTP 200). Returns the saved item unless
+/// `no_response=True`. `If-Match` / `If-None-Match` flow through
+/// `custom_headers`.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn replace_item<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "replace_item")?;
+    // A dictionary's resource address must not become a name-based replacement
+    // of a different item created later with the same item id.
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
+        extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let target = item_target(prepared, || Ok(item_id))?;
+
+    execute_item_operation_sync(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        target,
+        body_bytes,
+        "replace_item",
+        true,
+        include_attempts,
+        false,
+        |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
+    )
+}
+
+/// Delete the prepared resource address or item name with an explicit partition key.
+/// Send no body and leave the write-content-response option unset.
+///
+/// On success the driver returns HTTP 204 with an empty body.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn delete_item<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "delete_item")?;
+    let (container_link, partition_key, mut modifiers, target) = extract_item_inputs(
+        prepared,
+        DELETE_ITEM_ID_REQUIRED,
+        DELETE_ITEM_PARTITION_KEY_REQUIRED,
+    )?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+
+    execute_item_operation_sync(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        target,
+        Vec::new(),
+        "delete_item",
+        false,
+        include_attempts,
+        false,
+        |item_ref, _| CosmosOperation::delete_item(item_ref),
+    )
+}
+
+/// Read the prepared name or resource address with an explicit partition key.
+/// Send no body; return the Rust driver's response through the binding tuple.
+///
+/// On success returns HTTP 200 with the item JSON. Conditional reads
+/// (`If-None-Match`, driven by Python's `etag` + `MatchConditions.IfModified`)
+/// come back as HTTP 304 with an empty body when the customer app's cached etag
+/// still matches the service backend version; the Python parser treats 304 as a
+/// non-error and returns an empty `CosmosDict`.
+/// `x-ms-dedicatedgateway-max-age`, driven by
+/// `max_integrated_cache_staleness_in_ms`, is forwarded through
+/// `custom_headers` like any other per-request header.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
+pub(crate) fn read_item<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    include_fault_diagnostics: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "read_item")?;
+    let (container_link, partition_key, mut modifiers, target) =
+        extract_read_item_inputs(prepared)?;
+    modifiers.read_consistency_strategy = modifiers.parse_read_consistency()?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+
+    execute_item_operation_sync(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        target,
+        Vec::new(),
+        "read_item",
+        false,
+        include_attempts,
+        include_fault_diagnostics,
+        |item_ref, _| CosmosOperation::read_item(item_ref),
+    )
+}
+
+/// Patch using Auto, or ServerSide when the body includes a filter condition.
+/// Remove the guard from custom headers so it cannot leak to an internal read
+/// or override the fresh ETag protecting an internal replacement.
+///
+/// The body contains `PatchInstructions` (`{"operations": [...]}`) rather
+/// than an item. The target uses `item_self_link` when supplied, otherwise `item_id`. The driver
+/// chooses the execution plan for Auto; this entry point does not guarantee a
+/// particular number of service requests. `patch_precondition` accepts If-Match
+/// as a typed precondition and rejects If-None-Match. Filter conditions stay in
+/// the body and force service-side execution, including for increments.
+/// These binding checks raise errors; they do not repeat the operation through legacy.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn patch_item<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "patch_item")?;
+    let (container_link, partition_key, mut modifiers, body_bytes) = extract_body_inputs(prepared)?;
+    let target = item_target(prepared, || {
+        extract_required_item_id(prepared, PATCH_ITEM_ID_REQUIRED)
+    })?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
+    if matches!(partition_key, BindingPartitionKey::Extract) {
+        return Err(PyValueError::new_err(
+            "patch_item requires an explicit partition key",
+        ));
+    }
+
+    execute_item_operation_sync(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        target,
+        body_bytes,
+        "patch_item",
+        true,
+        include_attempts,
+        false,
+        move |item_ref, body| patch_operation(item_ref, body, precondition),
+    )
+}
+
+/// Async twin of `create_item`: identical inputs and driver work, returns a
+/// Python awaitable instead of a ready tuple.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
+pub(crate) fn create_item_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    include_fault_diagnostics: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "create_item")?;
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
+        extract_create_body_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+
+    execute_item_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        item_id.into(),
+        body_bytes,
+        "create_item",
+        true,
+        include_attempts,
+        include_fault_diagnostics,
+        None,
+        |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
+    )
+}
+
+/// Async twin of `upsert_item`: identical inputs and driver work, returns a
+/// Python awaitable instead of a ready tuple.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn upsert_item_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "upsert_item")?;
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
+        extract_create_body_inputs(prepared)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+
+    execute_item_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        item_id.into(),
+        body_bytes,
+        "upsert_item",
+        true,
+        include_attempts,
+        false,
+        None,
+        |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
+    )
+}
+
+/// Async twin of `replace_item`: identical inputs and driver work (URL id from
+/// the request, not the body), returns a Python awaitable instead of a tuple.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn replace_item_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "replace_item")?;
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
+        extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let target = item_target(prepared, || Ok(item_id))?;
+
+    execute_item_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        target,
+        body_bytes,
+        "replace_item",
+        true,
+        include_attempts,
+        false,
+        None,
+        |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
+    )
+}
+
+/// Async twin of `delete_item`: identical inputs and driver work, returns a
+/// Python awaitable instead of a ready tuple.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn delete_item_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "delete_item")?;
+    let (container_link, partition_key, mut modifiers, target) = extract_item_inputs(
+        prepared,
+        DELETE_ITEM_ID_REQUIRED,
+        DELETE_ITEM_PARTITION_KEY_REQUIRED,
+    )?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+
+    execute_item_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        target,
+        Vec::new(),
+        "delete_item",
+        false,
+        include_attempts,
+        false,
+        None,
+        |item_ref, _| CosmosOperation::delete_item(item_ref),
+    )
+}
+
+/// Async twin of `read_item`: identical inputs and driver work, returns a
+/// Python awaitable instead of a ready tuple. The optional internal lifecycle
+/// probe observes this operation future's destruction, not socket or service work.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false, _debug_lifecycle=None))]
+pub(crate) fn read_item_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    include_fault_diagnostics: bool,
+    _debug_lifecycle: Option<PyRef<'py, crate::wire::lifecycle::AsyncOperationProbe>>,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "read_item")?;
+    let (container_link, partition_key, mut modifiers, target) =
+        extract_read_item_inputs(prepared)?;
+    modifiers.read_consistency_strategy = modifiers.parse_read_consistency()?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+
+    execute_item_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        target,
+        Vec::new(),
+        "read_item",
+        false,
+        include_attempts,
+        include_fault_diagnostics,
+        _debug_lifecycle.map(|probe| probe.state.clone()),
+        |item_ref, _| CosmosOperation::read_item(item_ref),
+    )
+}
+
+/// Async twin of `patch_item`: identical inputs and driver work (body is the
+/// PatchInstructions body, resource address or target id from the request), returns a Python
+/// awaitable instead of a ready tuple.
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn patch_item_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "patch_item")?;
+    let (container_link, partition_key, mut modifiers, body_bytes) = extract_body_inputs(prepared)?;
+    let target = item_target(prepared, || {
+        extract_required_item_id(prepared, PATCH_ITEM_ID_REQUIRED)
+    })?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
+    if matches!(partition_key, BindingPartitionKey::Extract) {
+        return Err(PyValueError::new_err(
+            "patch_item requires an explicit partition key",
+        ));
+    }
+
+    execute_item_operation_async(
+        py,
+        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
+        &container_link,
+        partition_key,
+        modifiers,
+        target,
+        body_bytes,
+        "patch_item",
+        true,
+        include_attempts,
+        false,
+        None,
+        move |item_ref, body| patch_operation(item_ref, body, precondition),
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use azure_core::http::headers::HeaderValue;
+    use azure_data_cosmos_driver::{
+        in_memory_emulator::{
+            ContainerConfig, InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
+        },
+        models::{AccountReference, PartitionKey, PartitionKeyDefinition},
+        options::{BinaryEncodingOptions, DriverOptions, OperationOptionsBuilder},
+    };
+    use pyo3::types::{PyBytes, PyDict};
+    use std::{borrow::Cow, sync::Arc};
+
+    fn modifiers(py: Python<'_>) -> RequestHeadersAndOptions {
+        let prepared = py
+            .import_bound("types")
+            .unwrap()
+            .getattr("SimpleNamespace")
+            .unwrap()
+            .call0()
+            .unwrap();
+        prepared
+            .setattr("container_link", "dbs/db/colls/c")
+            .unwrap();
+        prepared
+            .setattr(
+                "partition_key",
+                crate::wire::partition_key_input::test_partition_key(py, Some("[\"pk\"]")),
+            )
+            .unwrap();
+        prepared.setattr("headers", PyDict::new_bound(py)).unwrap();
+        prepared.setattr("protocol_version", 3).unwrap();
+        prepared
+            .setattr("settings", crate::wire::settings::test_settings(py))
+            .unwrap();
+        extract_common_prepared_inputs(&prepared).unwrap().2
+    }
+
+    #[test]
+    fn read_targets_preserve_addresses_and_reject_invalid_links_before_driver_lookup() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let prepared = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call0()
+                .unwrap();
+            prepared
+                .setattr("container_link", "dbs/db/colls/c")
+                .unwrap();
+            prepared.setattr("item_id", "item").unwrap();
+            prepared.setattr("op", "read_item").unwrap();
+            prepared.setattr("protocol_version", 3).unwrap();
+            prepared.setattr("headers", PyDict::new_bound(py)).unwrap();
+            prepared
+                .setattr("settings", crate::wire::settings::test_settings(py))
+                .unwrap();
+            prepared
+                .setattr(
+                    "partition_key",
+                    crate::wire::partition_key_input::test_partition_key(py, Some("[\"pk\"]")),
+                )
+                .unwrap();
+            prepared.setattr("item_self_link", py.None()).unwrap();
+            assert!(matches!(
+                extract_read_item_inputs(&prepared).unwrap().3,
+                ItemTarget::Name(id) if id == "item"
+            ));
+            prepared
+                .setattr(
+                    "item_self_link",
+                    "dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
+                )
+                .unwrap();
+            for id in [py.None(), "different-item".into_py(py), 42.into_py(py)] {
+                prepared.setattr("item_id", id).unwrap();
+                assert!(matches!(
+                    extract_read_item_inputs(&prepared).unwrap().3,
+                    ItemTarget::SelfLink { item, by_rid: true, .. }
+                        if item == "AQAAAIABAAABAAAAAAAAAA=="
+                ));
+                for asynchronous in [false, true] {
+                    let error = if asynchronous {
+                        read_item_async(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false, None).map(|_| ())
+                    } else {
+                        read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
+                    }
+                    .unwrap_err();
+                    assert!(error
+                        .to_string()
+                        .contains("_DriverHandle"));
+                }
+            }
+            prepared.delattr("item_id").unwrap();
+            assert!(matches!(
+                extract_read_item_inputs(&prepared).unwrap().3,
+                ItemTarget::SelfLink { item, by_rid: true, .. }
+                    if item == "AQAAAIABAAABAAAAAAAAAA=="
+            ));
+            prepared.setattr("item_id", "item").unwrap();
+            for link in ["", "dbs/db/colls/c", "dbs/db/colls/c/docs/"] {
+                prepared.setattr("item_self_link", link).unwrap();
+                for asynchronous in [false, true] {
+                    let error = if asynchronous {
+                        read_item_async(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false, None).map(|_| ())
+                    } else {
+                        read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
+                    }
+                    .unwrap_err();
+                    assert!(error.is_instance_of::<PyValueError>(py));
+                    assert!(error.to_string().contains("target _self"));
+                }
+            }
+            prepared.setattr("item_self_link", py.None()).unwrap();
+            prepared.setattr("item_id", py.None()).unwrap();
+            for asynchronous in [false, true] {
+                let error = if asynchronous {
+                    read_item_async(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false, None).map(|_| ())
+                } else {
+                    read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
+                }
+                .unwrap_err();
+                assert!(error.is_instance_of::<PyValueError>(py));
+                assert!(error.to_string().contains("item_id is required"));
+            }
+        });
+    }
+
+    #[test]
+    fn patch_guard_is_typed_and_removed_from_custom_headers() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            for etag in ["\"v1\"", "*"] {
+                let mut modifiers = modifiers(py);
+                modifiers
+                    .custom_headers
+                    .insert(HeaderName::from_static("if-match"), HeaderValue::from(etag));
+                let guard = patch_precondition(&mut modifiers, br#"{"operations":[]}"#).unwrap();
+                assert_eq!(guard, Some(Precondition::if_match(etag)));
+                assert!(!modifiers
+                    .custom_headers
+                    .contains_key(&HeaderName::from_static("if-match")));
+            }
+        });
+    }
+
+    #[test]
+    fn binding_rejects_unsupported_guards_before_driver_lookup() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let prepared = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call0()
+                .unwrap();
+            prepared
+                .setattr("container_link", "dbs/db/colls/c")
+                .unwrap();
+            prepared
+                .setattr(
+                    "partition_key",
+                    crate::wire::partition_key_input::test_partition_key(py, Some("[\"pk\"]")),
+                )
+                .unwrap();
+            prepared.setattr("item_id", "item").unwrap();
+            prepared.setattr("op", "patch_item").unwrap();
+            prepared.setattr("item_self_link", py.None()).unwrap();
+            prepared.setattr("protocol_version", 3).unwrap();
+            prepared
+                .setattr("settings", crate::wire::settings::test_settings(py))
+                .unwrap();
+            for body in [
+                br#"{"operations":[{"op":"set","path":"/n","value":2}]}"#.as_slice(),
+                br#"{"condition":"FROM c","operations":[{"op":"set","path":"/n","value":2}]}"#.as_slice(),
+            ] {
+                let headers = PyDict::new_bound(py);
+                headers.set_item("IF-NONE-MATCH", "*").unwrap();
+                prepared.setattr("headers", headers).unwrap();
+                prepared
+                    .setattr("body_bytes", PyBytes::new_bound(py, body))
+                    .unwrap();
+                for include_attempts in [false, true] {
+                    assert!(patch_item(py, pyo3::types::PyString::new_bound(py, "unused-handle").as_any(), &prepared, None, include_attempts)
+                        .unwrap_err()
+                        .is_instance_of::<PyNotImplementedError>(py));
+                    assert!(patch_item_async(py, pyo3::types::PyString::new_bound(py, "unused-handle").as_any(), &prepared, None, include_attempts)
+                        .unwrap_err()
+                        .is_instance_of::<PyNotImplementedError>(py));
+                }
+            }
+        });
+    }
+
+    #[test]
+    fn filtered_patch_selects_server_side_without_losing_if_match() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            for op in ["set", "incr"] {
+                let body = serde_json::to_vec(&serde_json::json!({
+                    "condition": "FROM c WHERE c.n = 0",
+                    "operations": [{"op": op, "path": "/n", "value": 1}],
+                })).unwrap();
+                let mut settings = modifiers(py);
+                settings.custom_headers.insert(
+                    HeaderName::from_static("if-match"), HeaderValue::from_static("\"v1\""),
+                );
+                let guard = patch_precondition(&mut settings, &body).unwrap();
+                assert_eq!(guard, Some(Precondition::if_match("\"v1\"")));
+                assert_eq!(settings.patch_strategy, Some(PatchStrategy::ServerSide));
+                assert!(settings.custom_headers.is_empty());
+            }
+            let mut settings = modifiers(py);
+            patch_precondition(&mut settings, br#"{"operations":[]}"#).unwrap();
+            assert_eq!(settings.patch_strategy, None);
+            for body in [
+                br#"{"condition":7,"operations":[]}"#.as_slice(),
+                br#"{"condition":null,"operations":[]}"#.as_slice(),
+                b"invalid",
+            ] {
+                assert!(patch_precondition(&mut modifiers(py), body).unwrap_err()
+                    .is_instance_of::<PyValueError>(py));
+            }
+        });
+    }
+
+    #[tokio::test]
+    async fn guarded_auto_patch_handles_server_and_client_side_mutations() {
+        pyo3::prepare_freethreaded_python();
+        let url = azure_core::http::Url::parse("https://patch.emulator.local").unwrap();
+        let config =
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
+        emulator.store().create_database("db");
+        emulator.store().create_container_with_config(
+            "db",
+            "c",
+            PartitionKeyDefinition::new(vec![Cow::Borrowed("/pk")]),
+            ContainerConfig::new()
+                .with_partition_count(1)
+                .build()
+                .unwrap(),
+        );
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let options = OperationOptionsBuilder::new()
+            .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false))
+            .build();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                    .with_operation_options(options)
+                    .build(),
+            )
+            .await
+            .unwrap();
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        let item = ItemReference::from_name(&container, PartitionKey::from("pk"), "item");
+        driver
+            .execute_singleton_operation(
+                CosmosOperation::create_item(item.clone())
+                    .with_body(br#"{"id":"item","pk":"pk","n":0}"#.to_vec()),
+                Default::default(),
+            )
+            .await
+            .unwrap();
+        for op in ["set", "incr"] {
+            let read = driver
+                .execute_singleton_operation(
+                    CosmosOperation::read_item(item.clone()),
+                    Default::default(),
+                )
+                .await
+                .unwrap();
+            let etag = read
+                .headers()
+                .to_raw_headers()
+                .iter()
+                .find(|(name, _)| name.as_str() == "etag")
+                .map(|(_, value)| value.as_str().to_owned())
+                .unwrap();
+            let body = serde_json::to_vec(&serde_json::json!({
+                "operations": [{"op": op, "path": "/n", "value": 2}]
+            }))
+            .unwrap();
+            let guard = Python::with_gil(|py| {
+                let mut modifiers = modifiers(py);
+                modifiers.custom_headers.insert(
+                    HeaderName::from_static("if-match"),
+                    HeaderValue::from(etag.clone()),
+                );
+                patch_precondition(&mut modifiers, &body).unwrap()
+            });
+            let success = driver
+                .execute_singleton_operation(
+                    patch_operation(item.clone(), body.clone(), guard.clone()),
+                    Default::default(),
+                )
+                .await
+                .unwrap();
+            assert_eq!(u16::from(success.status().status_code()), 200);
+            let rejected = driver
+                .execute_singleton_operation(
+                    patch_operation(item.clone(), body, guard),
+                    Default::default(),
+                )
+                .await
+                .unwrap_err();
+            assert_eq!(u16::from(rejected.status().status_code()), 412);
+        }
+        let final_read = driver
+            .execute_singleton_operation(CosmosOperation::read_item(item), Default::default())
+            .await
+            .unwrap();
+        let azure_data_cosmos_driver::models::ResponseBody::Bytes(bytes) = final_read.body() else {
+            panic!("expected JSON point response");
+        };
+        let body: serde_json::Value = serde_json::from_slice(bytes).unwrap();
+        assert_eq!(
+            body["n"], 4,
+            "rejected guards must never reapply a mutation"
+        );
+    }
+}

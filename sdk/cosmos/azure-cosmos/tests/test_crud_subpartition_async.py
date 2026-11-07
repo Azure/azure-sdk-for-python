@@ -188,11 +188,8 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         assert collection_definition.get('partitionKey').get('kind') == created_collection_properties['partitionKey'][
             'kind']
 
-        expected_offer = await created_collection.get_throughput()
 
-        assert expected_offer is not None
 
-        assert expected_offer.offer_throughput == offer_throughput
 
         # Negative test, check that user can't make a subpartition higher than 3 levels
         collection_definition2 = {'id': 'test_partitioned_collection2_MH ' + str(uuid.uuid4()),

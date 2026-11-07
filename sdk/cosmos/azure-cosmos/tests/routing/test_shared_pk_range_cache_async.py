@@ -48,7 +48,7 @@ class TestSharedPartitionKeyRangeCacheAsync(unittest.IsolatedAsyncioTestCase):
     def tearDown(self):
         _reset_shared_cache_state()
 
-    async def test_same_endpoint_shares_cache_async(self):
+    async def test_same_endpoint_shares_cache_async_rust(self):
         """Async: Two caches with the same endpoint share the same dict."""
         c1 = MockClient("https://async-account1.documents.azure.com:443/")
         c2 = MockClient("https://async-account1.documents.azure.com:443/")
@@ -57,7 +57,7 @@ class TestSharedPartitionKeyRangeCacheAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIs(cache1._collection_routing_map_by_item,
                       cache2._collection_routing_map_by_item)
 
-    async def test_different_endpoints_isolated_async(self):
+    async def test_different_endpoints_isolated_async_rust(self):
         """Async: Two caches with different endpoints have isolated dicts."""
         c1 = MockClient("https://async-account1.documents.azure.com:443/")
         c2 = MockClient("https://async-account2.documents.azure.com:443/")
@@ -66,7 +66,7 @@ class TestSharedPartitionKeyRangeCacheAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIsNot(cache1._collection_routing_map_by_item,
                          cache2._collection_routing_map_by_item)
 
-    async def test_shared_cache_populated_by_first_client_async(self):
+    async def test_shared_cache_populated_by_first_client_async_rust(self):
         """Async: Data added by one cache is visible to another sharing the same endpoint."""
         c1 = MockClient("https://async-account1.documents.azure.com:443/")
         c2 = MockClient("https://async-account1.documents.azure.com:443/")
@@ -80,7 +80,7 @@ class TestSharedPartitionKeyRangeCacheAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIn("test-collection", cache2._collection_routing_map_by_item)
         self.assertIs(cache2._collection_routing_map_by_item["test-collection"], crm)
 
-    async def test_clear_cache_resets_for_endpoint_async(self):
+    async def test_clear_cache_resets_for_endpoint_async_rust(self):
         """Async: clear_cache() empties the shared dict while preserving identity."""
         c1 = MockClient("https://async-account1.documents.azure.com:443/")
         c2 = MockClient("https://async-account1.documents.azure.com:443/")
@@ -93,7 +93,7 @@ class TestSharedPartitionKeyRangeCacheAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIs(cache1._collection_routing_map_by_item, original_dict)
         self.assertIs(cache2._collection_routing_map_by_item, original_dict)
 
-    async def test_clear_cache_does_not_affect_other_endpoints_async(self):
+    async def test_clear_cache_does_not_affect_other_endpoints_async_rust(self):
         """Async: clear_cache() on one endpoint doesn't affect another."""
         c1 = MockClient("https://async-account1.documents.azure.com:443/")
         c2 = MockClient("https://async-account2.documents.azure.com:443/")
@@ -116,7 +116,7 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
     def _refcount(self, endpoint):
         return _shared_cache_refcounts.get(endpoint, 0)
 
-    async def test_construct_and_release_async(self):
+    async def test_construct_and_release_async_rust(self):
         ep = "https://async-lifecycle1.documents.azure.com:443/"
         self.assertEqual(self._refcount(ep), 0)
         c1 = PartitionKeyRangeCache(MockClient(ep))
@@ -127,7 +127,7 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         c2.release()
         self.assertEqual(self._refcount(ep), 0)
 
-    async def test_release_evicts_at_zero_async(self):
+    async def test_release_evicts_at_zero_async_rust(self):
         ep = "https://async-lifecycle2.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         for d in (_shared_routing_map_cache, _shared_collection_locks,
@@ -138,7 +138,7 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
                   _shared_locks_locks, _shared_cache_refcounts):
             self.assertNotIn(ep, d)
 
-    async def test_release_is_idempotent_async(self):
+    async def test_release_is_idempotent_async_rust(self):
         ep = "https://async-lifecycle3.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         c2 = PartitionKeyRangeCache(MockClient(ep))
@@ -151,7 +151,7 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         # Keep c2 alive until the assertion above runs.
         _ = c2
 
-    async def test_concurrent_release_does_not_double_decrement_async(self):
+    async def test_concurrent_release_does_not_double_decrement_async_rust(self):
         """TOCTOU regression: concurrent release() decrements at most once.
 
         Mirrors the sync lifecycle guard for the async module's shared cache.
@@ -179,7 +179,7 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         self.assertIn(ep, _shared_routing_map_cache)
         self.assertIs(c_keep._collection_routing_map_by_item, _shared_routing_map_cache[ep])
 
-    async def test_del_fallback_releases_async(self):
+    async def test_del_fallback_releases_async_rust(self):
         """``__del__`` decrements refcount when explicit release is skipped."""
 
         ep = "https://async-lifecycle6.documents.azure.com:443/"
@@ -190,7 +190,7 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         self.assertEqual(self._refcount(ep), 0)
         self.assertNotIn(ep, _shared_routing_map_cache)
 
-    async def test_clear_cache_does_not_change_refcount_async(self):
+    async def test_clear_cache_does_not_change_refcount_async_rust(self):
         ep = "https://async-lifecycle4.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         before = self._refcount(ep)
@@ -198,7 +198,7 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         self.assertEqual(self._refcount(ep), before)
         self.assertIn(ep, _shared_routing_map_cache)
 
-    async def test_reentrant_release_during_init_does_not_deadlock_async(self):
+    async def test_reentrant_release_during_init_does_not_deadlock_async_rust(self):
         """Acquires the async module's ``_shared_cache_lock`` on a single
         thread and calls ``release()`` from inside that critical section.
         A non-reentrant ``Lock`` would deadlock here; an ``RLock`` returns
@@ -234,7 +234,7 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         self.assertEqual(self._refcount(ep), 0)
         self.assertNotIn(ep, _shared_routing_map_cache)
 
-    async def test_init_under_gc_triggered_by_dict_op_does_not_deadlock_async(self):
+    async def test_init_under_gc_triggered_by_dict_op_does_not_deadlock_async_rust(self):
         """Reproduces the GC re-entry chain that requires the async module's
         ``_shared_cache_lock`` to be an ``RLock``.
 

@@ -21,7 +21,6 @@
 
 import json
 import os
-import urllib
 from typing import Any, cast, Optional
 from urllib.parse import urlparse
 from urllib3.util.retry import Retry
@@ -30,7 +29,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (AsyncHTTPPolicy, ContentDecodePolicy,
                                           DistributedTracingPolicy, HeadersPolicy,
-                                          NetworkTraceLoggingPolicy, ProxyPolicy, UserAgentPolicy)
+                                          NetworkTraceLoggingPolicy, UserAgentPolicy)
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.utils import CaseInsensitiveDict
 
@@ -122,17 +121,10 @@ class _InferenceService:
             raise TypeError(
                 "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
-        proxies = {}
-        if connection_policy.ProxyConfiguration and connection_policy.ProxyConfiguration.Host:
-            host = connection_policy.ProxyConfiguration.Host
-            url = urllib.parse.urlparse(host)
-            proxy = host if url.port else host + ":" + str(connection_policy.ProxyConfiguration.Port)
-            proxies.update({url.scheme: proxy})
         self._user_agent: str = self._client_connection._user_agent
 
         policies = [
             HeadersPolicy(),
-            ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=self._get_user_agent()),
             ContentDecodePolicy(),
             retry_policy,
@@ -162,19 +154,13 @@ class _InferenceService:
     def _get_ssl_verification_setting(self) -> bool:
         """Determine whether SSL verification should be enabled for inference endpoint.
 
-        This mirrors the logic used in the core client (localhost / DisableSSLVerification).
+        This retains the core client's local-emulator exception.
 
         :returns: True if SSL verification is enabled, otherwise False.
         :rtype: bool
         """
-        connection_policy = self._client_connection.connection_policy
         parsed = urlparse(self._inference_endpoint)
-
-        return (
-                parsed.hostname != "localhost"
-                and parsed.hostname != "127.0.0.1"
-                and not connection_policy.DisableSSLVerification
-        )
+        return parsed.hostname not in ("localhost", "127.0.0.1")
 
     async def rerank(
         self,

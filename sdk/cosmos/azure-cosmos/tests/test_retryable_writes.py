@@ -12,6 +12,7 @@ from azure.cosmos.partition_key import PartitionKey
 from _fault_injection_transport import FaultInjectionTransport
 from typing import Callable
 import test_config  # Import test_config for configuration details
+from _client_transport import create_client_with_transport
 
 HPK_CONTAINER = "TestContainerHPK"
 
@@ -53,7 +54,7 @@ class TestRetryableWrites:
             database_id: str = TEST_DATABASE_ID,
             container_id: str = TEST_CONTAINER_SINGLE_PARTITION_ID,
             **kwargs):
-        client = CosmosClient(default_endpoint, key, consistency_level="Session",
+        client = create_client_with_transport(CosmosClient, default_endpoint, key, consistency_level="Session",
                               transport=custom_transport, **kwargs)
         db: DatabaseProxy = client.create_database_if_not_exists(database_id)
         container: ContainerProxy = db.create_container_if_not_exists(container_id, PartitionKey(path="/pk"))

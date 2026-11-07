@@ -20,13 +20,12 @@
 # SOFTWARE.
 
 from ._version import VERSION
+from .runtime import CosmosRuntime, ConnectionPoolOptions
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
 from .cosmos_client import CosmosClient
 from .database import DatabaseProxy
-from .user import UserProxy
-from .scripts import ScriptsProxy
 from .offer import Offer
 from .offer import ThroughputProperties
 from .documents import (
@@ -34,36 +33,24 @@ from .documents import (
     DataType,
     IndexKind,
     IndexingMode,
-    PermissionMode,
-    ProxyConfiguration,
-    SSLConfiguration,
-    TriggerOperation,
-    TriggerType,
     DatabaseAccount,
 )
 from .partition_key import PartitionKey
-from .permission import Permission
 from ._global_secondary_index import GlobalSecondaryIndexDefinition
 
 __all__ = (
     "CosmosClient",
+    "CosmosRuntime",
+    "ConnectionPoolOptions",
     "DatabaseProxy",
     "ContainerProxy",
     "PartitionKey",
-    "Permission",
-    "ScriptsProxy",
-    "UserProxy",
     "Offer",
     "DatabaseAccount",
     "ConsistencyLevel",
     "DataType",
     "IndexKind",
     "IndexingMode",
-    "PermissionMode",
-    "ProxyConfiguration",
-    "SSLConfiguration",
-    "TriggerOperation",
-    "TriggerType",
     "ConnectionRetryPolicy",
     "ThroughputProperties",
     "CosmosDict",

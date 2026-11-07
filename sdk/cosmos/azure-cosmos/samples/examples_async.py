@@ -243,17 +243,6 @@ async def examples_async():
         print("New container TTL: {}".format(json.dumps(container_props['defaultTtl'])))
         # [END reset_container_properties]
 
-        # Create a user in the database.
-        # [START create_user]
-        try:
-            await database.create_user(dict(id="Walter Harp"))
-            print("Created user Walter Harp.")
-        except exceptions.CosmosResourceExistsError:
-            print("A user with that ID already exists.")
-        except exceptions.CosmosHttpResponseError as failure:
-            print("Failed to create user. Status code:{}".format(failure.status_code))
-        # [END create_user]
-
         # delete all items in a given partition key
         # [START delete_all_items_by_partition_key]
         container_name = "products"

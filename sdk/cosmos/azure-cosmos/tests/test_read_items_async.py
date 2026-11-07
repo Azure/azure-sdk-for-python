@@ -18,6 +18,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
 from azure.cosmos.aio._gone_retry_policy_async import PartitionKeyRangeGoneRetryPolicyAsync
+from _client_transport import create_client_with_transport
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosAADLong
@@ -123,7 +124,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
     def _setup_fault_injection_async(self, error_to_inject, inject_once=False):
         """Helper to set up a client with fault injection for async read_items queries."""
         fault_injection_transport = FaultInjectionTransportAsync()
-        client_with_faults = CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)
+        client_with_faults = create_client_with_transport(CosmosClient, self.host, self.masterKey, transport=fault_injection_transport)
         container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
             self.container.id)
 

@@ -35,7 +35,6 @@ class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
         """Async setup for each test."""
         self.key_client, self.key_db, self.client, self.created_db = test_config.TestConfig.create_test_clients_async(
             self.TEST_DATABASE_ID,
-            connection_verify=False,
         )
         await self.key_client.__aenter__()
         await self.client.__aenter__()

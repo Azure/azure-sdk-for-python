@@ -21,9 +21,12 @@
 
 """Internal query builder for multi-item operations."""
 
+import json
 from typing import Tuple, Any, TYPE_CHECKING, Sequence
 
-from azure.cosmos.partition_key import _Undefined, _Empty, NonePartitionKeyValue
+from azure.cosmos.partition_key import _Undefined
+from azure.cosmos._helpers._paths import parse_paths
+from azure.cosmos._helpers._read_items import partition_key_components, partition_key_identity
 if TYPE_CHECKING:
     from azure.cosmos._cosmos_client_connection import PartitionKeyType
 
@@ -39,13 +42,8 @@ class _QueryBuilder:
         :return: The query field expression.
         :rtype: str
         """
-        field_name = path.lstrip("/")
-        if "/" in field_name:
-            # Handle nested paths like "a/b" -> c["a"]["b"]
-            field_parts = field_name.split("/")
-            return "c" + "".join(f'["{part}"]' for part in field_parts)
-        # Handle simple paths like "pk" -> c.pk or c["non-identifier-pk"]
-        return f"c.{field_name}" if field_name.isidentifier() else f'c["{field_name}"]'
+        parts = parse_paths([path])
+        return "c" + "".join(f"[{json.dumps(part)}]" for part in parts)
 
     @staticmethod
     def is_id_partition_key_query(
@@ -83,8 +81,27 @@ class _QueryBuilder:
         """
         if not items or len(items) <= 1:
             return False
-        first_pk = items[0][1]
-        return all(item[1] == first_pk for item in items)
+        first_pk = partition_key_identity(items[0][1])
+        return all(partition_key_identity(item[1]) == first_pk for item in items)
+
+    @staticmethod
+    def _partition_predicates(
+        value: Any, paths: Sequence[str], prefix: str
+    ) -> Tuple[list[str], list[dict[str, Any]]]:
+        components = partition_key_components(value)
+        if len(components) != len(paths):
+            raise ValueError("read_items requires every component of the container's partition key.")
+        predicates = []
+        parameters: list[dict[str, Any]] = []
+        for index, (path, component) in enumerate(zip(paths, components)):
+            field = _QueryBuilder._get_field_expression(path)
+            if isinstance(component, _Undefined):
+                predicates.append(f"IS_DEFINED({field}) = false")
+            else:
+                name = f"{prefix}_{index}"
+                predicates.append(f"{field} = {name}")
+                parameters.append({"name": name, "value": component})
+        return predicates, parameters
 
     @staticmethod
     def build_pk_and_id_in_query(
@@ -100,15 +117,13 @@ class _QueryBuilder:
         :return: A dictionary containing the query text and parameters.
         :rtype: dict[str, any]
         """
-        partition_key_path = partition_key_definition['paths'][0].lstrip('/')
-        partition_key_value = items[0][1]
-
         id_params = {f"@id{i}": item[0] for i, item in enumerate(items)}
         id_param_names = ", ".join(id_params.keys())
 
-        query_text = f"SELECT * FROM c WHERE c.{partition_key_path} = @pk AND c.id IN ({id_param_names})"
-
-        parameters = [{"name": "@pk", "value": partition_key_value}]
+        predicates, parameters = _QueryBuilder._partition_predicates(
+            items[0][1], partition_key_definition["paths"], "@pk"
+        )
+        query_text = f"SELECT * FROM c WHERE {' AND '.join(predicates)} AND c.id IN ({id_param_names})"
         parameters.extend([{"name": name, "value": value} for name, value in id_params.items()])
 
         return {"query": query_text, "parameters": parameters}
@@ -155,25 +170,11 @@ class _QueryBuilder:
             parameters.append({"name": id_param_name, "value": item_id})
             condition_parts = [f"c.id = {id_param_name}"]
 
-            pk_values = []
-            if partition_key_value is not None and not isinstance(partition_key_value, type(NonePartitionKeyValue)):
-                pk_values = partition_key_value if isinstance(partition_key_value, list) else [partition_key_value]
-                if len(pk_values) != len(partition_key_paths):
-                    raise ValueError(
-                        f"Number of components in partition key value ({len(pk_values)}) "
-                        f"does not match definition ({len(partition_key_paths)})"
-                    )
-
-            for j, path in enumerate(partition_key_paths):
-                field_expr = _QueryBuilder._get_field_expression(path)
-                pk_value = pk_values[j] if j < len(pk_values) else None
-
-                if pk_value is None or isinstance(pk_value, (_Undefined, _Empty)):
-                    condition_parts.append(f"IS_DEFINED({field_expr}) = false")
-                else:
-                    pk_param_name = f"@param_pk{i}{j}"
-                    parameters.append({"name": pk_param_name, "value": pk_value})
-                    condition_parts.append(f"{field_expr} = {pk_param_name}")
+            predicates, pk_parameters = _QueryBuilder._partition_predicates(
+                partition_key_value, partition_key_paths, f"@param_pk{i}"
+            )
+            condition_parts.extend(predicates)
+            parameters.extend(pk_parameters)
 
             query_parts.append(f"( {' AND '.join(condition_parts)} )")
 

@@ -26,7 +26,6 @@ import base64
 from hashlib import sha256
 import hmac
 import warnings
-import urllib.parse
 from . import http_constants
 
 
@@ -65,11 +64,6 @@ def _get_authorization_header(
         return __get_authorization_token_using_master_key(
             verb, resource_id_or_fullname, resource_type, headers, cosmos_client_connection.master_key
         )
-    if cosmos_client_connection.resource_tokens:
-        return __get_authorization_token_using_resource_token(
-            cosmos_client_connection.resource_tokens, path, resource_id_or_fullname
-        )
-
     return None
 
 
@@ -106,54 +100,3 @@ def __get_authorization_token_using_master_key(verb, resource_id_or_fullname, re
     master_token = "master"
     token_version = "1.0"
     return "type={type}&ver={ver}&sig={sig}".format(type=master_token, ver=token_version, sig=signature[:-1])
-
-
-def __get_authorization_token_using_resource_token(resource_tokens, path, resource_id_or_fullname):
-    """Get the authorization token using `resource_tokens`.
-
-    :param dict resource_tokens:
-    :param str path:
-    :param str resource_id_or_fullname:
-    :return: The authorization token.
-    :rtype: dict
-
-    """
-    if resource_tokens:
-        # For database account access(through GetDatabaseAccount API), path and
-        # resource_id_or_fullname are '', so in this case we return the first token to be
-        # used for creating the auth header as the service will accept any token in this case
-        path = urllib.parse.unquote(path)
-        if not path and not resource_id_or_fullname:
-            for resource_token in resource_tokens.values():
-                return resource_token
-
-        if resource_tokens.get(resource_id_or_fullname):
-            return resource_tokens[resource_id_or_fullname]
-
-        path_parts = []
-        if path:
-            path_parts = [item for item in path.split("/") if item]
-        resource_types = [
-            "dbs",
-            "colls",
-            "docs",
-            "sprocs",
-            "udfs",
-            "triggers",
-            "users",
-            "permissions",
-            "attachments",
-            "conflicts",
-            "offers",
-        ]
-
-        # Get the last resource id or resource name from the path and get it's token from resource_tokens
-        for i in range(len(path_parts), 1, -1):
-            segment = path_parts[i - 1]
-            sub_path = "/".join(path_parts[:i])
-            if not segment in resource_types:
-                for resource_path, resource_token in resource_tokens.items():
-                    if sub_path in resource_path:
-                        return resource_tokens[resource_path]
-
-    return None

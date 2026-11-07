@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import json
+
 from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
@@ -357,9 +359,10 @@ async def execute_item_batch(database):
     # one of the operations failed within your batch request.
     print("\nResults for the batch operations: {}\n".format(batch_results))
 
-    # You can also use this logic to read directly from a file into the batch you'd like to create:
-    with open("file_name.txt", "r") as data_file:
-        container.execute_item_batch([("upsert", (t,)) for t in data_file.readlines()])
+    # Each JSON Lines document must have account_number="Account1"; the file must fit one batch.
+    with open("file_name.txt", "r", encoding="utf-8") as data_file:
+        operations = [("upsert", (json.loads(line),)) for line in data_file]
+        await container.execute_item_batch(operations, partition_key="Account1")
 
     # For error handling, you should use try/ except with CosmosBatchOperationError and use the information in the
     # error returned for your application debugging, making it easy to pinpoint the failing operation

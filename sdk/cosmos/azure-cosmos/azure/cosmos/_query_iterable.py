@@ -27,6 +27,7 @@ from azure.core.paging import PageIterator  # type: ignore
 from azure.cosmos._constants import _Constants, TimeoutScope
 from azure.cosmos._execution_context import execution_dispatcher
 from azure.cosmos import exceptions
+from azure.cosmos._helpers._page_response_hook import PageResponseHookError
 
 # pylint: disable=protected-access
 
@@ -49,7 +50,6 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
         continuation_token=None,
         resource_type=None,
         response_hook=None,
-        raw_response_hook=None,
     ):
         """Instantiates a QueryIterable for non-client side partitioning queries.
 
@@ -73,6 +73,9 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
         self.retry_options = client.connection_policy.RetryOptions
         self._query = query
         self._options = options
+        if query is not None:
+            from ._helpers._query_items import reject_rust_continuation_token
+            reject_rust_continuation_token({"continuation": continuation_token or options.get("continuation")})
         if continuation_token:
             options['continuation'] = continuation_token
         self._fetch_function = fetch_function
@@ -81,15 +84,17 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
         self._partition_key = partition_key
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function,
-            response_hook, raw_response_hook, resource_type)
+            response_hook, resource_type)
 
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):
         continuation = None
-        if self._client.last_response_headers:
-            continuation = self._client.last_response_headers.get("x-ms-continuation") or \
-                self._client.last_response_headers.get('etag')
+        headers = self._options.get("_read_all_response_headers", self._client.last_response_headers)
+        if headers:
+            continuation = headers.get("x-ms-continuation")
+            if "_read_all_response_headers" not in self._options:
+                continuation = continuation or headers.get('etag')
         if block:
             self._did_a_call_already = False
         return continuation, block
@@ -115,7 +120,10 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
             if elapsed >= timeout:
                 raise exceptions.CosmosClientTimeoutError()
 
-        block = self._ex_context.fetch_next_block()
+        try:
+            block = self._ex_context.fetch_next_block()
+        except PageResponseHookError as error:
+            raise error.original from None
 
         if not block:
             raise StopIteration

@@ -51,7 +51,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         mock_connection.aad_credentials = MagicMock()
         mock_connection.connection_policy.InferenceRequestTimeout = inference_request_timeout
         mock_connection.connection_policy.ConnectionRetryConfiguration = 3
-        mock_connection.connection_policy.ProxyConfiguration = None
         mock_connection._user_agent = "test-agent"
         mock_connection._enable_diagnostics_logging = False
         return mock_connection
@@ -77,7 +76,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         """Test that async inference service converts ServiceRequestError to 408."""
         async def run_test():
             mock_connection = self._create_mock_connection()
-            mock_connection.connection_policy.DisableSSLVerification = False
             service = _AsyncInferenceService(mock_connection)
 
             with patch.object(
@@ -104,7 +102,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
     def test_async_inference_timeout_value_from_connection_policy(self):
         """Test that async inference service reads timeout from connection policy."""
         mock_connection = self._create_mock_connection(inference_request_timeout=15)
-        mock_connection.connection_policy.DisableSSLVerification = False
         service = _AsyncInferenceService(mock_connection)
 
         self.assertEqual(service._inference_request_timeout, 15)
@@ -130,13 +127,11 @@ class TestInferenceServiceTimeout(unittest.TestCase):
             mock_run.assert_called_once()
             call_kwargs = mock_run.call_args[1]
             self.assertEqual(call_kwargs["connection_timeout"], 7)
-            self.assertEqual(call_kwargs["read_timeout"], 7)
 
     def test_async_inference_passes_timeout_to_pipeline(self):
         """Test that async inference service passes timeout kwargs to pipeline.run()."""
         async def run_test():
             mock_connection = self._create_mock_connection(inference_request_timeout=12)
-            mock_connection.connection_policy.DisableSSLVerification = False
             service = _AsyncInferenceService(mock_connection)
 
             mock_response = MagicMock()
@@ -155,7 +150,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
                 mock_run.assert_called_once()
                 call_kwargs = mock_run.call_args[1]
                 self.assertEqual(call_kwargs["connection_timeout"], 12)
-                self.assertEqual(call_kwargs["read_timeout"], 12)
 
         asyncio.run(run_test())
 
@@ -188,7 +182,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         """Async version of the wiring check above."""
         async def run_test():
             mock_connection = self._create_mock_connection()
-            mock_connection.connection_policy.DisableSSLVerification = False
             service = _AsyncInferenceService(mock_connection)
 
             raw_response_data = b'{"Scores": []}'
@@ -241,7 +234,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         """Async version of the 2xx invalid-bytes check above."""
         async def run_test():
             mock_connection = self._create_mock_connection()
-            mock_connection.connection_policy.DisableSSLVerification = False
             service = _AsyncInferenceService(mock_connection)
 
             invalid_utf8 = b'{"Scores": "caf\xc3\x28"}'
@@ -313,7 +305,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         """Async version of the REPLACE check above."""
         async def run_test():
             mock_connection = self._create_mock_connection()
-            mock_connection.connection_policy.DisableSSLVerification = False
             service = _AsyncInferenceService(mock_connection)
 
             invalid_utf8 = b'{"Scores":[{"index":0,"score":0.5,"label":"caf\xc3\x28"}]}'
@@ -386,7 +377,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         bad byte is dropped from the async inference response and parsing succeeds."""
         async def run_test():
             mock_connection = self._create_mock_connection()
-            mock_connection.connection_policy.DisableSSLVerification = False
             service = _AsyncInferenceService(mock_connection)
 
             invalid_utf8 = b'{"Scores":[{"index":0,"score":0.5,"label":"caf\xc3\x28"}]}'
@@ -436,7 +426,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         """Test that async inference service converts ServiceResponseError to 408."""
         async def run_test():
             mock_connection = self._create_mock_connection()
-            mock_connection.connection_policy.DisableSSLVerification = False
             service = _AsyncInferenceService(mock_connection)
 
             with patch.object(
@@ -478,7 +467,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         With lazy init, this error is deferred from client construction to first use."""
         os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
         mock_connection = self._create_mock_connection()
-        mock_connection.connection_policy.DisableSSLVerification = False
         with self.assertRaises(ValueError) as ctx:
             _AsyncInferenceService(mock_connection)
         self.assertIn(_INFERENCE_ENDPOINT_ENV_VAR, str(ctx.exception))
@@ -492,7 +480,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
     def test_async_inference_service_created_with_env_var(self):
         """Test that async _InferenceService can be created when env var is set."""
         mock_connection = self._create_mock_connection()
-        mock_connection.connection_policy.DisableSSLVerification = False
         service = _AsyncInferenceService(mock_connection)
         self.assertIsNotNone(service)
 
@@ -513,7 +500,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         credentials are present and the env var is set."""
         mock_conn = self._create_mock_connection()
         mock_conn._inference_service = None
-        mock_conn.connection_policy.DisableSSLVerification = False
 
         result = _AsyncCosmosClientConnection._get_inference_service(mock_conn)
         self.assertIsNotNone(result)
@@ -537,7 +523,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
         mock_conn = self._create_mock_connection()
         mock_conn._inference_service = None
-        mock_conn.connection_policy.DisableSSLVerification = False
 
         with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
             _AsyncCosmosClientConnection._get_inference_service(mock_conn)
@@ -582,7 +567,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         repeated calls."""
         mock_conn = self._create_mock_connection()
         mock_conn._inference_service = None
-        mock_conn.connection_policy.DisableSSLVerification = False
 
         first = _AsyncCosmosClientConnection._get_inference_service(mock_conn)
         second = _AsyncCosmosClientConnection._get_inference_service(mock_conn)

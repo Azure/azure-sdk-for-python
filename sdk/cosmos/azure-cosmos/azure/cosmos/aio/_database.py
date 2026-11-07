@@ -19,29 +19,63 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Interact with databases in the Azure Cosmos DB SQL API service.
+"""Provide DatabaseProxy, the asynchronous Python wrapper object for one database.
+
+The customer app obtains this object through
+client.get_database_client("sales"). Here, proxy means a Python object
+representing a service resource, not a network proxy.
+
+The object lets the customer app select containers and perform database
+operations. For example::
+
+    database = client.get_database_client("sales")
+    orders = database.get_container_client("orders")
+
+These calls create local Python objects without reading, creating, or
+checking the resources in the service backend. The returned objects
+retain the existing client context for later operations.
+
+Neither call above requires await. An operation such as
+await database.read() requests the database's properties from the
+service backend; obtaining the DatabaseProxy does not.
 """
 
-from typing import Any, Mapping, Optional, Union, Callable, overload, Literal
+from azure.cosmos._backend.capabilities import OperationRouting
+from .._backend.capabilities import prepare_operation_kwargs
+
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Union, Callable, overload, Literal
 
 import warnings
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.tracing.decorator_async import distributed_trace_async
+from .._telemetry import BindingAlternatives, delegate_operation, trace_operation_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, \
-    _replace_throughput
+from .._base import build_options as _build_options, _set_throughput_options, _build_properties_cache
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
-from ..http_constants import StatusCodes
 from ..exceptions import CosmosResourceNotFoundError
-from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 from .._cosmos_responses import CosmosDict
+from .._helpers._item_arguments import get_selected_backend
+from ._helpers._list_containers import list_containers as _list_containers, query_containers as _query_containers
+from ._helpers._container_operations import AsyncContainerHelper
+from .._helpers._request_container import (
+    parse_container_create_args,
+    prepare_container_get_or_create_read,
+    validate_container_create_kwargs,
+)
+from ._helpers._database_operations import AsyncDatabaseHelper
+from .._helpers._database_throughput import (
+    get_database_throughput_async,
+    replace_database_throughput_async,
+)
 from .._global_secondary_index import GlobalSecondaryIndexDefinition, _normalize_gsi_container_properties
 
+if TYPE_CHECKING:
+    from .._helpers._item_context import ItemClientContext
+    from ._backend.cosmos_backend import AsyncCosmosBackend
 
 __all__ = ("DatabaseProxy",)
 
@@ -63,16 +97,12 @@ class DatabaseProxy(object):
     """An interface to interact with a specific database.
 
     This class should not be instantiated directly. Instead use the
-    :func:`~azure.cosmos.aio.CosmosClient.get_database_client` method to get an existing
-    database, or the :func:`~azure.cosmos.aio.CosmosClient.create_database` method to create
+    :func:`~azure.cosmos.aio.CosmosClient.get_database_client` method to obtain a local
+    database proxy, or :func:`~azure.cosmos.aio.CosmosClient.create_database` to create
     a new database.
 
     A database contains one or more containers, each of which can contain items,
     stored procedures, triggers, and user-defined functions.
-
-    A database can also have associated users, each of which is configured with
-    a set of permissions for accessing certain containers, stored procedures,
-    triggers, user-defined functions, or items.
 
     :ivar id: The ID (name) of the database.
 
@@ -84,21 +114,23 @@ class DatabaseProxy(object):
     * `_self`:	The unique addressable URI for the resource.
     * `_etag`:	The resource etag required for optimistic concurrency control.
     * `_colls`:	The addressable path of the collections resource.
-    * `_users`:	The addressable path of the users resource.
     """
 
     def __init__(
         self,
         client_connection: CosmosClientConnection,
         id: str,
-        properties: Optional[dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None,
+        *,
+        _item_context: "Optional[ItemClientContext[AsyncCosmosBackend]]" = None,
     ) -> None:
         """
-        :param client_connection: Client from which this database was retrieved.
-        :type client_connection: ~azure.cosmos.aio.CosmosClientConnection
+        :param client_connection: Connection owned by the client creating this proxy.
+        :type client_connection: ~azure.cosmos.aio._cosmos_client_connection_async.CosmosClientConnection
         :param str id: ID (name) of the database.
         """
         self.client_connection = client_connection
+        self._item_context = _item_context
         self.id = id
         self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
@@ -116,48 +148,65 @@ class DatabaseProxy(object):
     def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
         return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
-    def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
-        if isinstance(user_or_id, str):
-            return "{}/users/{}".format(self.database_link, user_or_id)
-        if isinstance(user_or_id, UserProxy):
-            return user_or_id.user_link
-        return "{}/users/{}".format(self.database_link, user_or_id["id"])
-
-    async def _get_properties(self) -> dict[str, Any]:
+    async def _get_properties(self, *, deadline: Optional[float] = None) -> dict[str, Any]:
         if self._properties is None:
-            self._properties = await self.read()
+            if deadline is None:
+                self._properties = await self.read()
+            else:
+                self._properties = await AsyncDatabaseHelper(
+                    self.client_connection, get_selected_backend(self.client_connection),
+                ).read_database(self.id, {}, deadline=deadline)
         return self._properties
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="read_database")
     async def read(
         self,
         *,
         initial_headers: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> CosmosDict:
-        """Read the database properties.
+        """Fetch the database properties and refresh this proxy's stored properties.
 
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
+        :keyword response_hook: Called after success with a separate response-header
+            snapshot and the database properties (``None`` for a 304 response).
+            The callback is synchronous.
+        :paramtype response_hook: Callable[[Mapping[str, Any], Optional[dict[str, Any]]], None]
+        :keyword str etag: Database ETag used with ``match_condition`` for a conditional read.
+        :keyword match_condition: Condition translated to a request header. Use
+            ``IfModified`` with an ETag for cache validation; a 304 returns an empty
+            dict. ``If-Match`` is forwarded but is not an enforced guard on this GET.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword float timeout: Operation timeout in seconds. On Rust, must be a finite
+            numeric duration of at least one second within its duration range.
+            ``None`` leaves the override unset.
+        :raises TypeError: An obsolete option or a per-call read timeout was supplied.
+        :raises NotImplementedError: A setting cannot be honored by the Rust backend.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         :returns: A dict representing the database properties
-        :rtype: dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict
         """
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
+        for option in ("session_token", "populate_query_metrics"):
+            if option in kwargs:
+                raise TypeError("DatabaseProxy.read() does not support the '{}' keyword argument".format(option))
 
-        database_link = _get_database_link(self)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        response_hook = kwargs.pop("response_hook", None)
         request_options = _build_options(kwargs)
+        # A wildcard match condition does not need an etag, so one may be left
+        # over in kwargs after the options are built. Drop it.
+        kwargs.pop("etag", None)
 
-        self._properties = await self.client_connection.ReadDatabase(
-            database_link, options=request_options, **kwargs
+        self._properties = await AsyncDatabaseHelper(
+            self.client_connection,
+            get_selected_backend(self.client_connection),
+        ).read_database(
+            self.id,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
         )
 
         return self._properties
@@ -334,7 +383,7 @@ class DatabaseProxy(object):
         """
         ...
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="create_container")
     async def create_container( # pylint:disable=docstring-should-be-keyword, too-many-statements
         self,
         *args: Any,
@@ -344,7 +393,7 @@ class DatabaseProxy(object):
 
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
 
-        :param Any args: args
+        :param Any args: Optional positional values for ``id`` and ``partition_key`` only.
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
@@ -359,8 +408,14 @@ class DatabaseProxy(object):
         :keyword list[dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
+        :keyword response_hook: Called after success with a response-header copy and
+            the created container properties. The callback is synchronous.
+        :paramtype response_hook: Callable[[Mapping[str, Any], CosmosDict], None]
+        :keyword float timeout: Operation timeout in seconds. Rust supports finite,
+            non-boolean numeric durations of at least one second within its duration
+            range; ``None`` leaves the override unset.
+        :raises TypeError: An obsolete keyword, per-call read timeout, or extra positional setting was supplied.
+        :raises NotImplementedError: A setting cannot be honored by the Rust backend; no legacy fallback occurs.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -405,11 +460,10 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
+        prepare_operation_kwargs(self, kwargs)
 
-        id = args[0] if len(args) > 0 else kwargs.pop('id')
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
-        if len(args) > 2:
-            raise TypeError(f"Unexpected positional parameters: {args[2:]}")
+        id, partition_key = parse_container_create_args(args, kwargs)
+        validate_container_create_kwargs(kwargs)
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
@@ -422,25 +476,6 @@ class DatabaseProxy(object):
         full_text_policy = kwargs.pop('full_text_policy', None)
         global_secondary_index = kwargs.pop('global_secondary_index', None)
         return_properties = kwargs.pop('return_properties', False)
-
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
 
         definition: dict[str, Any] = {"id": id}
         if partition_key is not None:
@@ -472,16 +507,29 @@ class DatabaseProxy(object):
             gsi_dict = await self._resolve_gsi_definition(global_secondary_index)
             definition["globalSecondaryIndexDefinition"] = gsi_dict
             definition["materializedViewDefinition"] = gsi_dict
+        response_hook = kwargs.pop("response_hook", None)
         request_options = _build_options(kwargs)
+        # A wildcard match condition does not need an etag, so one may be left
+        # over in kwargs after the options are built. Drop it.
+        kwargs.pop("etag", None)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
-        data = await self.client_connection.CreateContainer(
-            database_link=self.database_link, collection=definition, options=request_options, **kwargs
+        data = await AsyncContainerHelper(
+            self.client_connection,
+            get_selected_backend(self.client_connection),
+        ).create_container(
+            self.database_link,
+            definition,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
         )
         _normalize_gsi_container_properties(data)
         if not return_properties:
-            return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
-        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data), data
+            return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data,
+                                  _item_context=self._item_context)
+        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data,
+                              _item_context=self._item_context), data
 
     @overload
     async def create_container_if_not_exists(
@@ -506,9 +554,20 @@ class DatabaseProxy(object):
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
 
-        If the container already exists, the existing settings are returned.
-        Note: it does not check or update the existing container settings or offer throughput
-        if they differ from what was passed into the method.
+        Existing container settings and throughput are neither checked nor updated.
+        Only ``id`` and ``partition_key`` may be positional. Missing or duplicate
+        required arguments raise ``TypeError`` before sending a request.
+        ``session_token`` and ``populate_query_metrics`` are rejected even when
+        ``None``.
+        Unsupported Rust options fail before the first request rather than
+        falling back to legacy Python. A supported ``timeout`` applies separately
+        to the read and create steps, not to the combined workflow. Driver setup
+        consumes each step's budget before the remaining time reaches the binding.
+        The response hook receives copied headers and the returned properties from the successful
+        step; its exceptions propagate without triggering creation.
+        This is not atomic: a concurrent create can cause a 409 conflict, which
+        propagates without rereading. Conditional headers are forwarded, not
+        interpreted as a lock spanning the two steps.
 
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
@@ -576,9 +635,19 @@ class DatabaseProxy(object):
     ) -> tuple[ContainerProxy, CosmosDict]:
         """Create a container if it does not exist already.
 
-        If the container already exists, the existing settings are returned.
-        Note: it does not check or update the existing container settings or offer throughput
-        if they differ from what was passed into the method.
+        Existing container settings and throughput are neither checked nor updated.
+        Only ``id`` and ``partition_key`` may be positional. Missing or duplicate
+        required arguments raise ``TypeError`` before sending a request.
+        ``session_token`` and ``populate_query_metrics`` are rejected even when
+        ``None``.
+        Unsupported Rust options fail before the first request rather than
+        falling back to legacy Python. A supported ``timeout`` applies separately
+        to the read and create steps, not to the combined workflow.
+        The response hook receives copied headers and properties from the successful
+        step; its exceptions propagate without triggering creation.
+        This is not atomic: a concurrent create can cause a 409 conflict, which
+        propagates without rereading. Conditional headers are forwarded, not
+        interpreted as a lock spanning the two steps.
 
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
@@ -623,7 +692,7 @@ class DatabaseProxy(object):
         """
         ...
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation=("read_container", "create_container"))
     async def create_container_if_not_exists( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
@@ -631,9 +700,19 @@ class DatabaseProxy(object):
     ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a container if it does not exist already.
 
-        If the container already exists, the existing settings are returned.
-        Note: it does not check or update the existing container settings or offer throughput
-        if they differ from what was passed into the method.
+        Existing container settings and throughput are neither checked nor updated.
+        Only ``id`` and ``partition_key`` may be positional. Missing or duplicate
+        required arguments raise ``TypeError`` before sending a request.
+        ``session_token`` and ``populate_query_metrics`` are rejected even when
+        ``None``.
+        Unsupported Rust options fail before the first request rather than
+        falling back to legacy Python. A supported ``timeout`` applies separately
+        to the read and create steps, not to the combined workflow.
+        The response hook receives copied headers and properties from the successful
+        step; its exceptions propagate without triggering creation.
+        This is not atomic: a concurrent create can cause a 409 conflict, which
+        propagates without rereading. Conditional headers are forwarded, not
+        interpreted as a lock spanning the two steps.
 
         :param Any args: args
         :param str id: ID (name) of container to create.
@@ -678,11 +757,12 @@ class DatabaseProxy(object):
             and CosmosDict with the container properties.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
         """
+        prepare_operation_kwargs(self, kwargs)
 
-        id = args[0] if len(args) > 0 else kwargs.pop('id')
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
-        if len(args) > 2:
-            raise TypeError(f"Unexpected positional parameters: {args[2:]}")
+        id, partition_key = parse_container_create_args(
+            args, kwargs, method_name="create_container_if_not_exists"
+        )
+        validate_container_create_kwargs(kwargs, method_name="create_container_if_not_exists")
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
@@ -697,60 +777,67 @@ class DatabaseProxy(object):
         global_secondary_index = kwargs.pop('global_secondary_index', None)
         return_properties = kwargs.pop('return_properties', False)
 
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        response_hook = kwargs.pop("response_hook", None)
+        read_options, read_kwargs, rust_eligible = prepare_container_get_or_create_read(
+            kwargs, initial_headers=initial_headers, offer_throughput=offer_throughput
+        )
+        container_proxy = self.get_container_client(id)
         try:
-            container_proxy = self.get_container_client(id)
-            properties = await container_proxy.read(
-                initial_headers=initial_headers,
-                **kwargs
+            properties = await AsyncContainerHelper(
+                self.client_connection, get_selected_backend(self.client_connection)
+            ).read_container(
+                container_proxy.container_link,
+                read_options,
+                kwargs=read_kwargs,
+                routing=OperationRouting(
+                    "read_container",
+                    rust_eligible,
+                    capability="create_container_if_not_exists",
+                ),
             )
-            if not return_properties:
-                return container_proxy
-            return container_proxy, properties
         except CosmosResourceNotFoundError:
-            return await self.create_container(
-                id=id,
-                partition_key=partition_key,
-                indexing_policy=indexing_policy,
-                default_ttl=default_ttl,
-                offer_throughput=offer_throughput,
-                unique_key_policy=unique_key_policy,
-                conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl,
-                computed_properties=computed_properties,
-                initial_headers=initial_headers,
-                vector_embedding_policy=vector_embedding_policy,
-                change_feed_policy=change_feed_policy,
-                full_text_policy=full_text_policy,
-                global_secondary_index=global_secondary_index,
-                return_properties=return_properties,
-                **kwargs
-            )
+            with delegate_operation(self, "create_container"):
+                return await self.create_container(
+                    id=id,
+                    partition_key=partition_key,
+                    indexing_policy=indexing_policy,
+                    default_ttl=default_ttl,
+                    offer_throughput=offer_throughput,
+                    unique_key_policy=unique_key_policy,
+                    conflict_resolution_policy=conflict_resolution_policy,
+                    analytical_storage_ttl=analytical_storage_ttl,
+                    computed_properties=computed_properties,
+                    initial_headers=initial_headers,
+                    vector_embedding_policy=vector_embedding_policy,
+                    change_feed_policy=change_feed_policy,
+                    full_text_policy=full_text_policy,
+                    global_secondary_index=global_secondary_index,
+                    return_properties=return_properties,
+                    response_hook=response_hook,
+                    **kwargs
+                )
+        _normalize_gsi_container_properties(properties)
+        if response_hook is not None:
+            response_hook(properties.get_response_headers(), properties)
+        self.client_connection._set_container_properties_cache(
+            container_proxy.container_link, _build_properties_cache(properties, container_proxy.container_link)
+        )
+        if not return_properties:
+            return container_proxy
+        return container_proxy, properties
 
-    def get_container_client(self, container: Union[str, ContainerProxy, dict[str, Any]]) -> ContainerProxy:
-        """Get a `ContainerProxy` for a container with specified ID (name).
+    def get_container_client(self, container: Union[str, ContainerProxy, Mapping[str, Any]]) -> ContainerProxy:
+        """Create a local `ContainerProxy` without reading or creating a container.
 
-        :param container: The ID (name), dict representing the properties, or :class:`ContainerProxy`
+        This method does not check whether the container exists. The target is
+        always in this database. Properties mappings supply only ``id``, which
+        is converted to a string; other properties are not cached.
+        Call this method without ``await``; await the returned client's service operations.
+
+        :param container: The ID (name), properties mapping containing ``id``, or :class:`ContainerProxy`
             instance of the container to get.
-        :type container: Union[str, dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
-        :returns: A `ContainerProxy` instance representing the container.
+        :type container: Union[str, Mapping[str, Any], ~azure.cosmos.aio.ContainerProxy]
+        :returns: A new `ContainerProxy` instance representing the container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
 
         .. admonition:: Example:
@@ -760,7 +847,7 @@ class DatabaseProxy(object):
                 :end-before: [END get_container]
                 :language: python
                 :dedent: 0
-                :caption: Get an existing container, handling a failure if encountered:
+                :caption: Get a container client for subsequent operations:
                 :name: get_container
         """
         if isinstance(container, str):
@@ -769,7 +856,7 @@ class DatabaseProxy(object):
             id_value = container.id
         else:
             id_value = str(container['id'])
-        return ContainerProxy(self.client_connection, self.database_link, id_value)
+        return ContainerProxy(self.client_connection, self.database_link, id_value, _item_context=self._item_context)
 
     async def _resolve_gsi_definition(
         self,
@@ -804,16 +891,34 @@ class DatabaseProxy(object):
         max_item_count: Optional[int] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """List the containers in the database.
 
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword int max_item_count: Maximum number of containers requested per page, not a total result limit.
+        :keyword float timeout: Timeout budget in seconds per page fetch by default, not for draining
+            the whole iterator. Rust supports finite numeric durations of at least one second
+            within its duration range; ``None`` leaves the override unset.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A synchronous callable invoked after each successfully fetched page,
+            with that page's response headers and the same results iterator returned by this method.
+            It is not called before iteration. Consume results outside the hook; the iterator is
+            already being advanced when the hook runs.
         :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[dict[str, Any]]
+
+        Use ``async for`` to consume this iterator; do not await this method.
+        All settings are keyword-only. ``session_token``, ``populate_query_metrics``,
+        and ``availability_strategy`` are rejected, including explicit ``None`` or ``False``.
+        Unsupported Rust page options raise during iteration instead of using legacy Python.
+
+        Each page iterator owns its continuation token; other operations cannot
+        overwrite it. A final empty page clears it. Empty service pages share the
+        current page-fetch deadline. Cancellation waits for page work to stop.
+        After a failed or cancelled fetch, or a failed hook, resume a new pager from
+        the last fully processed page's bookmark. Hook iteration-stop exceptions
+        become ``RuntimeError``; other hook failures propagate without replay.
 
         .. admonition:: Example:
 
@@ -825,29 +930,21 @@ class DatabaseProxy(object):
                 :caption: List all containers in the database:
                 :name: list_containers
         """
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
+        for option in ("session_token", "populate_query_metrics", "availability_strategy"):
+            if option in kwargs:
+                raise TypeError(f"list_containers() does not support the '{option}' keyword argument")
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        result = self.client_connection.ReadContainers(
-            database_link=self.database_link, options=feed_options, **kwargs
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
+            kwargs["max_item_count"] = max_item_count
+        kwargs["response_hook"] = response_hook
+        return _list_containers(self, kwargs)
 
     @distributed_trace
     def query_containers(
         self,
-        query: str,
+        query: Optional[Union[str, dict[str, Any]]],
         *,
         parameters: Optional[list[dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
@@ -855,40 +952,50 @@ class DatabaseProxy(object):
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
-        """List the properties for containers in the current database.
+        """Query container properties in the current database, not the items inside them.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
-        :keyword parameters: Optional array of parameters to the query.
-            Each parameter is a dict() with 'name' and 'value' keys.
-        :paramtype parameters: Optional[list[dict[str, Any]]]
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param query: SQL text or a dictionary containing query text and optional parameters.
+            Explicit ``None`` without parameters retains unfiltered listing behavior.
+        :type query: Union[str, dict[str, Any], None]
+        :keyword parameters: Optional query parameters, each with ``name`` and ``value`` keys.
+        :paramtype parameters: list[dict[str, Any]]
+        :keyword int max_item_count: Maximum number of containers requested per page, not a total result limit.
+        :keyword float timeout: Timeout budget in seconds per page fetch by default. Rust supports
+            finite numeric durations of at least one second within its duration range;
+            ``None`` leaves the override unset.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A synchronous callable invoked after each successfully fetched page,
+            with that page's response headers and the same results iterator returned by this method.
+            It is not called before iteration. Consume results outside the hook; the iterator is
+            already being advanced when the hook runs.
         :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[dict[str, Any]]
+
+        ``query`` is required; all other settings are keyword-only. Use ``list_containers()``
+        for an unfiltered inventory. ``session_token``, ``populate_query_metrics``,
+        ``availability_strategy``, and ``enable_cross_partition_query`` are rejected,
+        including explicit ``None`` or ``False``. Unsupported Rust options raise during iteration rather than
+        switching to legacy Python.
+
+        Query inputs and settings are copied at construction. Each page iterator owns
+        its bookmark; other operations cannot overwrite it. A final empty page clears
+        the bookmark. Cancellation waits for page work to stop. After a failed or
+        cancelled fetch, or a failed hook, resume a new pager from the last fully
+        processed page's bookmark. Hook iteration-stop exceptions become
+        ``RuntimeError``; other hook failures propagate without replaying the request.
         """
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
+        for option in ("session_token", "populate_query_metrics", "availability_strategy",
+                       "enable_cross_partition_query"):
+            if option in kwargs:
+                raise TypeError(f"query_containers() does not support the '{option}' keyword argument")
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        result = self.client_connection.QueryContainers(
-            database_link=self.database_link,
-            query=query if parameters is None else {"query": query, "parameters": parameters},
-            options=feed_options,
-            **kwargs
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
+            kwargs["max_item_count"] = max_item_count
+        kwargs["response_hook"] = response_hook
+        return _query_containers(self, query, parameters, kwargs)
 
     @overload
     async def replace_container(
@@ -896,9 +1003,9 @@ class DatabaseProxy(object):
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[dict[str, str]] = None,
+        indexing_policy: Optional[dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
-        conflict_resolution_policy: Optional[dict[str, str]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
@@ -962,9 +1069,9 @@ class DatabaseProxy(object):
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[dict[str, str]] = None,
+        indexing_policy: Optional[dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
-        conflict_resolution_policy: Optional[dict[str, str]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
@@ -1023,7 +1130,7 @@ class DatabaseProxy(object):
         """
         ...
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="replace_container")
     async def replace_container( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
@@ -1034,16 +1141,22 @@ class DatabaseProxy(object):
         Property changes are persisted immediately. Any properties not specified
         will be reset to their default values.
 
+        Only ``container`` and ``partition_key`` may be positional. Missing or duplicate
+        required arguments raise ``TypeError``. ``session_token`` and ``populate_query_metrics``
+        are rejected even when set to ``None`` or ``False``.
+        Conditional ``etag`` and ``match_condition`` settings remain supported.
+        Unsupported Rust options fail without legacy fallback.
+
         :param Any args: args
         :param container: The ID (name), dict representing the properties or
             :class:`ContainerProxy` instance of the container to be replaced.
         :type container: Union[str, dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
@@ -1051,8 +1164,12 @@ class DatabaseProxy(object):
         :keyword list[dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
+        :keyword response_hook: A synchronous callable receiving independent snapshots of
+            ``(headers, properties)`` once after a successful replacement.
+        :paramtype response_hook: Callable[[Mapping[str, Any], dict[str, Any]], None]
+        :keyword float timeout: Supported Rust timeout in seconds for metadata resolution and
+            replacement together. A finite numeric duration of at least one second within
+            Rust's duration range is supported; ``None`` leaves the override unset.
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
@@ -1078,11 +1195,12 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
                 :name: reset_container_properties
         """
+        prepare_operation_kwargs(self, kwargs)
 
-        container = args[0] if len(args) > 0 else kwargs.pop('container')
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
-        if len(args) > 2:
-            raise TypeError(f"Unexpected positional parameters: {args[2:]}")
+        container, partition_key = parse_container_create_args(
+            args, kwargs, method_name="replace_container", target_parameter="container",
+        )
+        validate_container_create_kwargs(kwargs, method_name="replace_container")
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
@@ -1094,27 +1212,11 @@ class DatabaseProxy(object):
         return_properties = kwargs.pop('return_properties', False)
         vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
 
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        response_hook = kwargs.pop("response_hook", None)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         request_options = _build_options(kwargs)
+        kwargs.pop("etag", None)
 
         container_id = self._get_container_id(container)
         container_link = self._get_container_link(container_id)
@@ -1138,21 +1240,24 @@ class DatabaseProxy(object):
             parameters["globalSecondaryIndexDefinition"] = gsi_dict
             parameters["materializedViewDefinition"] = gsi_dict
 
-        container_properties = await self.client_connection.ReplaceContainer(
-            container_link, collection=parameters, options=request_options, **kwargs
+        container_properties = await AsyncContainerHelper(
+            self.client_connection, get_selected_backend(self.client_connection),
+        ).replace_container(
+            container_link, parameters, request_options, response_hook=response_hook, kwargs=kwargs,
         )
         _normalize_gsi_container_properties(container_properties)
 
         if not return_properties:
             return ContainerProxy(
-                self.client_connection, self.database_link, container_properties["id"], properties=container_properties)
+                self.client_connection, self.database_link, container_properties["id"],
+                properties=container_properties, _item_context=self._item_context)
         return ContainerProxy(
             self.client_connection,
             self.database_link,
             container_properties["id"],
-            properties=container_properties), container_properties
+            properties=container_properties, _item_context=self._item_context), container_properties
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="delete_container")
     async def delete_container(
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
@@ -1160,293 +1265,99 @@ class DatabaseProxy(object):
         initial_headers: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
-        """Delete a container.
+        """Delete a container and its contents, returning ``None`` on success.
+
+        A missing container raises ``CosmosResourceNotFoundError``. Only the
+        container may be positional. Session/metrics keywords are rejected.
+        Unsupported Rust settings fail without
+        legacy fallback. The response hook receives copied headers and ``None``.
 
         :param container: The ID (name) of the container to delete. You can either
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
             a dict representing the properties of the container.
         :type container: str or dict[str, Any] or ~azure.cosmos.aio.ContainerProxy
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: The container version used with ``match_condition``.
+        :keyword ~azure.core.MatchConditions match_condition: The condition applied to the ETag.
+        :keyword float timeout: Operation timeout in seconds. On Rust, an explicit timeout covers
+            both the internal container lookup and deletion.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
+        validate_container_create_kwargs(kwargs, method_name="delete_container")
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        response_hook = kwargs.pop("response_hook", None)
         request_options = _build_options(kwargs)
-
+        kwargs.pop("etag", None)
         collection_link = self._get_container_link(container)
-        await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
-
-    @distributed_trace_async
-    async def create_user(
-        self,
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> UserProxy:  # body should just be id?
-        """Create a new user in the container.
-
-        To update or replace an existing user, use the
-        :func:`ContainerProxy.upsert_user` method.
-
-        :param dict[str, Any] body: A dict object with an `id` key and value representing the user to be created.
-            The user ID must be unique within the database, and consist of no more than 255 characters.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[dict[str, str], dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
-        :returns: A `UserProxy` instance representing the new user.
-        :rtype: ~azure.cosmos.aio.UserProxy
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/examples_async.py
-                :start-after: [START create_user]
-                :end-before: [END create_user]
-                :language: python
-                :dedent: 0
-                :caption: Create a database user:
-                :name: create_user
-        """
-        request_options = _build_options(kwargs)
-
-        user = await self.client_connection.CreateUser(
-            database_link=self.database_link, user=body, options=request_options, **kwargs)
-
-        return UserProxy(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
+        await AsyncContainerHelper(self.client_connection, get_selected_backend(self.client_connection)).delete_container(
+            collection_link, request_options, response_hook=response_hook, kwargs=kwargs,
         )
 
-    def get_user_client(
-        self,
-        user: Union[str, UserProxy, Mapping[str, Any]]
-    ) -> UserProxy:
-        """Get a `UserProxy` for a user with specified ID.
-
-        :param user: The ID (name), dict representing the properties, or :class:`UserProxy`
-            instance of the user to get.
-        :type user: Union[str, dict[str, Any], ~azure.cosmos.aio.UserProxy]
-        :returns: A `UserProxy` instance representing the retrieved user.
-        :rtype: ~azure.cosmos.aio.UserProxy
-        """
-        if isinstance(user, str):
-            id_value = user
-        elif isinstance(user, UserProxy):
-            id_value = user.id
-        else:
-            id_value = str(user['id'])
-        return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
-
-    @distributed_trace
-    def list_users(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """List all the users in the container.
-
-        :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]
-        :returns: An AsyncItemPaged of user properties (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
-        """
-        feed_options = _build_options(kwargs)
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        result = self.client_connection.ReadUsers(
-            database_link=self.database_link, options=feed_options, **kwargs
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
-
-    @distributed_trace
-    def query_users(
-        self,
-        query: str,
-        *,
-        parameters: Optional[list[dict[str, Any]]] = None,
-        max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Return all users matching the given `query`.
-
-        :param str query: The Azure Cosmos DB SQL query to execute.
-        :keyword parameters: Optional array of parameters to the query.
-            Each parameter is a dict() with 'name' and 'value' keys.
-            Ignored if no query is provided.
-        :paramtype parameters: Optional[list[dict[str, Any]]]
-        :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]
-        :returns: An AsyncItemPaged of user properties (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
-        """
-        feed_options = _build_options(kwargs)
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        result = self.client_connection.QueryUsers(
-            database_link=self.database_link,
-            query=query if parameters is None else {"query": query, "parameters": parameters},
-            options=feed_options,
-            **kwargs
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
-
-    @distributed_trace_async
-    async def upsert_user(
-        self,
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> UserProxy:
-        """Insert or update the specified user.
-
-        If the user already exists in the container, it is replaced. If the user
-        does not already exist, it is inserted.
-
-        :param dict[str, Any] body: A dict-like object representing the user to update or insert.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[dict[str, str], dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
-        :returns: A `UserProxy` instance representing the upserted user.
-        :rtype: ~azure.cosmos.aio.UserProxy
-        """
-        request_options = _build_options(kwargs)
-
-        user = await self.client_connection.UpsertUser(
-            database_link=self.database_link, user=body, options=request_options, **kwargs
-        )
-        return UserProxy(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
-        )
-
-    @distributed_trace_async
-    async def replace_user(
-        self,
-        user: Union[str, UserProxy, Mapping[str, Any]],
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> UserProxy:
-        """Replaces the specified user if it exists in the container.
-
-        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
-            instance of the user to be replaced.
-        :type user: Union[str, dict[str, Any], ~azure.cosmos.aio.UserProxy]
-        :param dict[str, Any] body: A dict object representing the user to replace.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[dict[str, str], dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If the replace operation failed or the user with given ID does not exist.
-        :returns: A `UserProxy` instance representing the user after replace went through.
-        :rtype: ~azure.cosmos.aio.UserProxy
-        """
-        request_options = _build_options(kwargs)
-
-        replaced_user = await self.client_connection.ReplaceUser(
-            user_link=self._get_user_link(user), user=body, options=request_options, **kwargs)
-
-        return UserProxy(
-            client_connection=self.client_connection,
-            id=replaced_user["id"],
-            database_link=self.database_link,
-            properties=replaced_user
-        )
-
-    @distributed_trace_async
-    async def delete_user(
-        self,
-        user: Union[str, UserProxy, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> None:
-        """Delete the specified user from the container.
-
-        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
-            instance of the user to be deleted.
-        :type user: Union[str, dict[str, Any], ~azure.cosmos.aio.UserProxy]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[dict[str, str], None], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
-        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
-        :rtype: None
-        """
-        request_options = _build_options(kwargs)
-
-        await self.client_connection.DeleteUser(
-            user_link=self._get_user_link(user), options=request_options, **kwargs
-        )
-
-    @distributed_trace_async
+    @trace_operation_async(binding_operation=BindingAlternatives((("read_database", "get_throughput"), ("get_throughput",))))
     async def get_throughput(
             self,
             *,
             response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]] = None,
             **kwargs: Any) -> ThroughputProperties:
-        """Get the ThroughputProperties object for this database.
+        """Read the manual or autoscale throughput shared by this database.
 
-        If no ThroughputProperties already exists for the database, an exception is raised.
+        The Rust path does not fall back to legacy Python. A single timeout
+        budget covers uncached database properties and the complete offer query.
 
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: Called once after success with copied response
+            headers and a list of offer dictionaries. Mutations do not change the result.
         :paramtype response_hook: Callable[[Mapping[str, Any], list[dict[str, Any]]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
-            or the throughput properties could not be retrieved.
-        :returns: ThroughputProperties for the database.
-        :rtype: ~azure.cosmos.offer.ThroughputProperties
+        :keyword float timeout: Overall operation budget in seconds, including
+            metadata and all offer pages. None inherits the client default.
+            Rust requires a finite duration of at least one second.
+        :returns: The database's configured manual or autoscale throughput.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError:
+            The database does not exist or has no shared throughput.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The throughput could not be retrieved.
+        :raises NotImplementedError: An input cannot be honored on the Rust path.
+        :rtype: ~azure.cosmos.ThroughputProperties
         """
-        properties = await self._get_properties()
-        link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
-        }
-        throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(throughput_properties) == 0:
-            raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
-                message="Could not find ThroughputProperties for database " + self.database_link)
+        prepare_operation_kwargs(self, kwargs)
 
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, throughput_properties)
+        async def get_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                if deadline is None:
+                    return await self._get_properties()
+                return await self._get_properties(deadline=deadline)
 
-        return _deserialize_throughput(throughput=throughput_properties)
+        return await get_database_throughput_async(
+            client_connection=self.client_connection,
+            database_link=self.database_link,
+            get_properties=get_properties,
+            not_found_message="Could not find ThroughputProperties for database " + self.database_link,
+            response_hook=response_hook,
+            kwargs=kwargs,
+        )
 
-    @distributed_trace_async
+    @trace_operation_async(
+        binding_operation=BindingAlternatives(
+            (
+                ("read_database", "get_throughput", "replace_throughput"),
+                ("get_throughput", "replace_throughput"),
+            )
+        )
+    )
     async def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
         **kwargs: Any
     ) -> ThroughputProperties:
-        """Replace the database-level throughput.
+        """Replace the manual or autoscale throughput shared by this database.
 
+        One operation budget covers metadata, offer lookup and replacement.
         If no ThroughputProperties already exist for the database, an exception is raised.
 
-        :param throughput: The throughput to be set.
+        :param throughput: Manual RU/s as an integer, or manual/autoscale settings.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[dict[str, str], dict[str, Any]], None]
@@ -1455,22 +1366,19 @@ class DatabaseProxy(object):
         :returns: ThroughputProperties for the database, updated with new throughput.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        properties = await self._get_properties()
-        link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": link}],
-        }
-        throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, **kwargs)]
-        if len(throughput_properties) == 0:
-            raise CosmosResourceNotFoundError(
-                status_code=StatusCodes.NOT_FOUND,
-                message="Could not find Offer for database " + self.database_link)
+        prepare_operation_kwargs(self, kwargs)
 
-        new_offer = throughput_properties[0].copy()
-        _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
-        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
-                                                         offer=throughput_properties[0], **kwargs)
+        async def get_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                if deadline is None:
+                    return await self._get_properties()
+                return await self._get_properties(deadline=deadline)
 
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return await replace_database_throughput_async(
+            client_connection=self.client_connection,
+            database_link=self.database_link,
+            get_properties=get_properties,
+            throughput=throughput,
+            not_found_message="Could not find ThroughputProperties for database " + self.database_link,
+            kwargs=kwargs,
+        )

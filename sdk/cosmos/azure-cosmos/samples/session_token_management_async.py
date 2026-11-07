@@ -70,9 +70,9 @@ async def storing_session_tokens_pk(container):
 
 async def perform_create_item_with_cached_session_token(cache, container, feed_ranges_and_session_tokens, item,
                                                         target_feed_range):
-    # only doing this for the key to be immutable
-    feed_range_json = json.dumps(target_feed_range)
-    session_token = cache[feed_range_json] if feed_range_json in cache else None
+    # Serialize the target range so it can be used as a dictionary key.
+    target_range_key = json.dumps(target_feed_range)
+    session_token = cache.get(target_range_key)
     response = await container.create_item(item, session_token=session_token)
     response_session_token = response.get_response_headers()[HttpHeaders.SessionToken]
     # adding everything from the cache in case consolidation is possible
@@ -81,7 +81,7 @@ async def perform_create_item_with_cached_session_token(cache, container, feed_r
         feed_ranges_and_session_tokens.append((feed_range, session_token_cache))
     feed_ranges_and_session_tokens.append((target_feed_range, response_session_token))
     latest_session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
-    cache[feed_range_json] = latest_session_token
+    cache[target_range_key] = latest_session_token
 
 
 async def storing_session_tokens_container_feed_ranges(container):

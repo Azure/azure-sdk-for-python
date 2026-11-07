@@ -8,14 +8,14 @@ import pytest
 
 import test_config
 from azure.core import MatchConditions
-from azure.cosmos import Offer, http_constants, CosmosClient, DatabaseProxy, ContainerProxy, PartitionKey
+from azure.cosmos import http_constants, CosmosClient, DatabaseProxy, ContainerProxy, PartitionKey
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
-def check_pk_range_statistics_request_headers(raw_response):
-    assert raw_response.http_request.headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] == 'True'
+def check_pk_range_statistics_request_headers(request):
+    assert request.headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] == 'True'
 
-def check_quota_info_request_headers(raw_response):
-    assert raw_response.http_request.headers[http_constants.HttpHeaders.PopulateQuotaInfo] == 'True'
+def check_quota_info_request_headers(request):
+    assert request.headers[http_constants.HttpHeaders.PopulateQuotaInfo] == 'True'
 
 @pytest.mark.cosmosEmulator
 class TestBackwardsCompatibility(unittest.TestCase):
@@ -43,23 +43,26 @@ class TestBackwardsCompatibility(unittest.TestCase):
         cls.data_client = test_config.TestConfig.create_data_client()
         cls.data_database = cls.data_client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
-    def test_offer_methods(self):
-        database_offer = self.databaseForTest.get_throughput()
-        container_offer = self.containerForTest.get_throughput()
-
-        self.assertTrue("ThroughputProperties" in str(type(database_offer)))
-        self.assertTrue("ThroughputProperties" in str(type(container_offer)))
-
-        self.assertTrue(isinstance(database_offer, Offer))
-        self.assertTrue(isinstance(container_offer, Offer))
 
     def test_populate_quota_info(self):
-            self.containerForTest.read(populate_quota_info=True, raw_response_hook=check_quota_info_request_headers)
-            self.containerForTest.read(False, False, True, raw_response_hook=check_quota_info_request_headers)
+            with test_config.capture_requests(self.containerForTest, resource_type='colls') as requests:
+                self.containerForTest.read(populate_quota_info=True)
+            for request in requests:
+                check_quota_info_request_headers(request)
+            with test_config.capture_requests(self.containerForTest, resource_type='colls') as requests:
+                self.containerForTest.read(False, False, True)
+            for request in requests:
+                check_quota_info_request_headers(request)
 
     def test_populate_partition_key_range_statistics(self):
-        self.containerForTest.read(populate_partition_key_range_statistics=True, raw_response_hook=check_pk_range_statistics_request_headers)
-        self.containerForTest.read(False, True, raw_response_hook=check_pk_range_statistics_request_headers)
+        with test_config.capture_requests(self.containerForTest, resource_type='colls') as requests:
+            self.containerForTest.read(populate_partition_key_range_statistics=True)
+        for request in requests:
+            check_pk_range_statistics_request_headers(request)
+        with test_config.capture_requests(self.containerForTest, resource_type='colls') as requests:
+            self.containerForTest.read(False, True)
+        for request in requests:
+            check_pk_range_statistics_request_headers(request)
 
     def test_session_token_compatibility(self):
         # Verifying that behavior is unaffected across the board for using `session_token` on irrelevant methods

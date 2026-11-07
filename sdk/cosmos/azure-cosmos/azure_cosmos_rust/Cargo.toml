@@ -1,0 +1,79 @@
+[package]
+name        = "azure_cosmos_rust"
+version     = "0.1.0"
+description = "PyO3 binding that exposes the azure_data_cosmos_driver crate to the azure-cosmos Python SDK"
+authors.workspace      = true
+edition.workspace      = true
+license.workspace      = true
+repository.workspace   = true
+rust-version.workspace = true
+publish = false
+
+# `cdylib` is the load-bearing line: tells Cargo to produce a C-compatible
+# dynamic library that Python can load via the import machinery. Maturin
+# then renames the resulting .dll/.so/.dylib to _rust.{pyd,so}
+# and drops it into azure/cosmos/ next to the .py files.
+[lib]
+name       = "azure_cosmos_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+# PyO3 makes Rust functions Python-callable.
+#
+# `extension-module` : use Python-extension linking behavior.
+# `abi3-py310`      : use the stable ABI from Python 3.10 onward.
+# `generate-import-lib`: support Windows ARM64 builds on an x64 machine.
+pyo3 = { version = "0.22", features = [
+    "extension-module",
+    "abi3-py310",
+    "generate-import-lib",
+] }
+
+# The workspace pins the driver source so CI needs no neighboring checkout.
+#
+# Enable the driver's internal native query-planning integration. A query plan
+# describes execution across partitions and result combination. This feature
+# alone does not guarantee local planning: the native library must be available,
+# and the query's execution path and plan cache affect whether planning is needed.
+# Keep this feature aligned with the wheel's QueryPlanInterop packaging.
+# Filtered PATCH must use the service, where the condition is evaluated atomically.
+azure_data_cosmos_driver = { workspace = true, features = ["__internal_native_query_plan", "fault_injection", "unstable_patch"] }
+
+# Tokio runtime. Lives here, not in the driver, because the binding is
+# what bridges Python's sync call into Rust's async world.
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+
+# Non-poisoning RwLock for the driver cache (endpoint, credential fingerprint,
+# config fingerprint) and token cache. Lock acquisition returns a guard rather
+# than a LockResult; this does not make arbitrary panics or interrupted mutations safe.
+parking_lot = "0.12"
+
+# Process-salted cryptographic driver identities; never expose raw credentials.
+sha2 = "0.10"
+getrandom = "0.3"
+
+# Bridges a Rust future to a Python asyncio awaitable, so the async path can hand
+# the event loop something to `await` instead of parking one worker thread per
+# in-flight call. Version tracks pyo3 (0.22). Used by the async entry points in
+# `ffi/` / `wire/`.
+pyo3-async-runtimes = { version = "0.22", features = ["tokio-runtime"] }
+
+# `async-trait` is required to implement the driver/azure_core `TokenCredential`
+# trait (an `async fn` trait method) for the Python-backed credential bridge.
+async-trait = { workspace = true }
+
+# Parsing the account endpoint when constructing AccountReference.
+url = { workspace = true }
+
+# JSON request/response conversion. The body-id helper retains only `id`, but
+# still scans the JSON body rather than stopping at that field.
+serde = { workspace = true }
+serde_json = { workspace = true, features = ["raw_value"] }
+
+# Surfaced at the binding boundary when forwarding driver errors. Inherit the
+# workspace's driver-aligned crates.io version so the Rust types unify.
+azure_core = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+azure_data_cosmos_driver = { workspace = true, features = ["__internal_in_memory_emulator"] }

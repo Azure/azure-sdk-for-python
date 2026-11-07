@@ -1,0 +1,102 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+  - name: ToolchainFeed
+    type: string
+  - name: Lanes
+    type: object
+    default:
+      - name: Offline
+        suite: offline
+      - name: ServiceParity
+        suite: parity
+
+jobs:
+  - ${{ each lane in parameters.Lanes }}:
+    - job: Cosmos_Rust_${{ lane.name }}
+      displayName: Cosmos Rust ${{ lane.name }}
+      dependsOn: Build_Windows
+      timeoutInMinutes: 240
+      pool:
+        name: $(WINDOWSPOOL)
+        image: $(WINDOWSVMIMAGE)
+        os: windows
+      templateContext:
+        outputs:
+          - output: pipelineArtifact
+            targetPath: $(Build.ArtifactStagingDirectory)/rust-ci-${{ lane.suite }}
+            artifactName: cosmos-rust-${{ lane.suite }}
+            condition: succeededOrFailed()
+            sbomEnabled: false
+      steps:
+        - checkout: self
+        - template: /eng/pipelines/templates/steps/use-python-version.yml
+          parameters:
+            versionSpec: '3.13'
+        - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+          parameters:
+            DevFeedName: public/azure-sdk-for-python
+            EnableTwineAuth: false
+        - template: /eng/pipelines/templates/steps/use-venv.yml
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            artifactName: packages_windows
+            targetPath: $(Pipeline.Workspace)/cosmos-rust-wheels
+        - pwsh: |
+            $ErrorActionPreference = 'Stop'
+            $PSNativeCommandUseErrorActionPreference = $true
+            New-Item -ItemType Directory -Force '$(Build.ArtifactStagingDirectory)/rust-ci-${{ lane.suite }}' | Out-Null
+            $(PIP_EXE) install -r eng/ci_tools.txt
+            Push-Location sdk/cosmos/azure-cosmos
+            try {
+              $(PIP_EXE) install -r dev_requirements.txt
+            } finally {
+              Pop-Location
+            }
+            $wheels = @(Get-ChildItem '$(Pipeline.Workspace)/cosmos-rust-wheels' -Recurse -Filter 'azure_cosmos-*-win_amd64.whl')
+            if ($wheels.Count -ne 1) {
+              throw "Expected exactly one Cosmos Windows x64 wheel; found $($wheels.Count)."
+            }
+            $(PIP_EXE) install --no-deps $wheels[0].FullName
+          displayName: Install test dependencies and the built native wheel
+        - ${{ if eq(lane.suite, 'offline') }}:
+          - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
+            parameters:
+              ToolchainFeed: ${{ parameters.ToolchainFeed }}
+              WorkingDirectory: $(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos
+          - pwsh: |
+              $ErrorActionPreference = 'Stop'
+              $env:PYO3_PYTHON = (Get-Command python).Source
+              python -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py native `
+                --results '$(Build.ArtifactStagingDirectory)/rust-ci-offline'
+              exit $LASTEXITCODE
+            displayName: Run required Cargo workspace tests
+        - ${{ if eq(lane.suite, 'parity') }}:
+          - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+            parameters:
+              StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Session'
+        - pwsh: |
+            python -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py ${{ lane.suite }} `
+              --require-installed-wheel `
+              --results '$(Build.ArtifactStagingDirectory)/rust-ci-${{ lane.suite }}'
+            exit $LASTEXITCODE
+          displayName: Run required ${{ lane.suite }} tests with coverage assertions
+          condition: succeededOrFailed()
+          env:
+            ${{ if eq(lane.suite, 'parity') }}:
+              COSMOS_BACKEND: rust
+            ${{ else }}:
+              COSMOS_BACKEND: core-python
+            COSMOS_TEST_DATA_AUTH_MODE: key
+            ACCOUNT_HOST: https://localhost:8081/
+            # Public emulator credential, never a cloud-account secret.
+            ACCOUNT_KEY: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+        - task: PublishTestResults@2
+          condition: succeededOrFailed()
+          inputs:
+            testResultsFormat: JUnit
+            testResultsFiles: $(Build.ArtifactStagingDirectory)/rust-ci-${{ lane.suite }}/pytest.xml
+            testRunTitle: Cosmos Rust ${{ lane.name }}
+            failTaskOnFailedTests: true
+            failTaskOnMissingResultsFile: true

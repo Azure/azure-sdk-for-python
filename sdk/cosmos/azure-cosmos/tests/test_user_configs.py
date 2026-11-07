@@ -88,30 +88,36 @@ class TestUserConfigs(unittest.TestCase):
 
         # Check Session token remains the same for read operation as with previous create item operation
         self.assertEqual(session_token2, read_session_token)
-        self.key_client.delete_database(database_id)
 
         # Now testing a user-defined consistency level as opposed to using the account one
         custom_level = "Eventual"
         eventual_consistency_client = cosmos_client.CosmosClient(url=TestConfig.host,
                                                                  credential=TestConfig.masterKey,
                                                                  consistency_level=custom_level)
-        database_account = eventual_consistency_client.get_database_account()
-        account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
-        # Here they're not equal, since the headers being used make the client use a different level of consistency
-        self.assertNotEqual(
-            eventual_consistency_client
-            .client_connection.default_headers[http_constants.HttpHeaders.ConsistencyLevel],
-            account_consistency_level)
+        with eventual_consistency_client:
+            database_account = eventual_consistency_client.get_database_account()
+            self.assertEqual(
+                database_account.ConsistencyPolicy["defaultConsistencyLevel"],
+                account_consistency_level,
+            )
+            eventual_container = eventual_consistency_client.get_database_client(
+                database_id
+            ).get_container_client(container_id)
+            actual = eventual_container.read_item(item2["id"], partition_key=item2["id"])
+            self.assertEqual(actual["id"], item2["id"])
 
-        # Test for failure when trying to set consistency to higher level than account level
+        # Strong is a read override; it does not change the account's write policy.
         custom_level = "Strong"
         strong_consistency_client = cosmos_client.CosmosClient(url=TestConfig.host,
                                                                credential=TestConfig.masterKey,
                                                                consistency_level=custom_level)
-        try:
-            strong_consistency_client.create_database(database_id)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
+        with strong_consistency_client:
+            strong_container = strong_consistency_client.get_database_client(
+                database_id
+            ).get_container_client(container_id)
+            with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
+                strong_container.read_item(item2["id"], partition_key=item2["id"])
+            self.assertEqual(caught.exception.status_code, http_constants.StatusCodes.BAD_REQUEST)
 
 
 if __name__ == "__main__":

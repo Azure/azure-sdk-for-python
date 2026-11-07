@@ -95,7 +95,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         client = TestRoutingMapProvider.MockedCosmosClientConnection(partition_key_ranges)
         return SmartRoutingMapProvider(client)
 
-    def test_full_range(self):
+    def test_full_range_rust(self):
         # query range is the whole partition key range
         pkRange = routing_range.Range("", "FF", True, False)
         overlapping_partition_key_ranges = self.get_overlapping_ranges([pkRange])
@@ -108,7 +108,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(self.cached_collection_routing_map.get_overlapping_ranges([pkRange]),
                          self.partition_key_ranges)
 
-    def test_empty_ranges(self):
+    def test_empty_ranges_rust(self):
         # query range is the whole partition key range
         pkRange = routing_range.Range("", "FF", True, False)
         overlapping_partition_key_ranges = self.get_overlapping_ranges([pkRange])
@@ -128,7 +128,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                                          [empty_range, empty_end_range],
                                          [empty_range, empty_range, empty_end_range])
 
-    def test_bad_overlapping_query_ranges(self):
+    def test_bad_overlapping_query_ranges_rust(self):
         # they share AA point
         r1 = routing_range.Range("", "AA", True, True)
         r2 = routing_range.Range("AA", "FF", True, False)
@@ -155,7 +155,7 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         self.assertRaises(ValueError, func_overlap)
 
-    def test_empty_ranges_are_thrown_away(self):
+    def test_empty_ranges_are_thrown_away_rust(self):
         e1 = routing_range.Range("", "", True, False)
         r1 = routing_range.Range("", "AB", True, False)
         e2 = routing_range.Range("AB", "AB", True, False)
@@ -166,7 +166,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.validate_overlapping_ranges_results([e1, r1, e2, r2, e3, e4], self.get_overlapping_ranges([r1, r2]))
         self.validate_against_cached_collection_results([e1, r1, e2, r2, e3, e4])
 
-    def test_simple(self):
+    def test_simple_rust(self):
         r = routing_range.Range("AB", "AC", True, False)
         self.validate_against_cached_collection_results([r])
 
@@ -177,7 +177,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         ]
         self.validate_against_cached_collection_results(ranges)
 
-    def test_simple_boundary(self):
+    def test_simple_boundary_rust(self):
         ranges = [
 
             routing_range.Range("05C1C9CD673398", "05C1D9CD673398", True, False),
@@ -185,7 +185,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.validate_against_cached_collection_results(ranges)
         self.validate_overlapping_ranges_results(ranges, self.partition_key_ranges[1:2])
 
-    def test_two_adjacent_boundary(self):
+    def test_two_adjacent_boundary_rust(self):
         ranges = [
             # self.partition_key_ranges[1]
             routing_range.Range("05C1C9CD673398", "05C1D9CD673398", True, False),
@@ -196,7 +196,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.validate_against_cached_collection_results(ranges)
         self.validate_overlapping_ranges_results(ranges, self.partition_key_ranges[1:3])
 
-    def test_two_ranges_in_one_partition_key_range(self):
+    def test_two_ranges_in_one_partition_key_range_rust(self):
         # two ranges fall in the same partition key range
         ranges = [
             routing_range.Range("05C1C9CD673400", "05C1C9CD673401", True, False),
@@ -206,7 +206,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.validate_against_cached_collection_results(ranges)
         self.validate_overlapping_ranges_results(ranges, self.partition_key_ranges[1:2])
 
-    def test_complex(self):
+    def test_complex_rust(self):
         ranges = [
             # all are covered by self.partition_key_ranges[1]
             routing_range.Range("05C1C9CD673398", "05C1D9CD673391", True, False),
@@ -239,7 +239,7 @@ class TestRoutingMapProvider(unittest.TestCase):
     def get_overlapping_ranges(self, queryRanges):
         return self.smart_routing_map_provider.get_overlapping_ranges("dbs/db/colls/container", queryRanges)
 
-    def test_get_routing_map_caches_on_first_call(self):
+    def test_get_routing_map_caches_on_first_call_rust(self):
         """Initial call to get_routing_map fetches from service and caches the result."""
         provider = PartitionKeyRangeCache(
             TestRoutingMapProvider.MockedCosmosClientConnection(self.partition_key_ranges)
@@ -255,7 +255,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         self.assertIn(collection_id, provider._collection_routing_map_by_item)
 
-    def test_fetch_routing_map_preserves_user_response_hook_and_internal_etag_capture(self):
+    def test_fetch_routing_map_preserves_user_response_hook_and_internal_etag_capture_rust(self):
         """User response_hook should still be invoked while internal header capture sets map ETag."""
         hook_calls = []
         expected_internal_etag = '"internal-etag"'
@@ -284,7 +284,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(result.change_feed_etag, expected_internal_etag)
         self.assertEqual(hook_calls, ['"user-hook-etag"'])
 
-    def test_get_routing_map_returns_cached_on_second_call(self):
+    def test_get_routing_map_returns_cached_on_second_call_rust(self):
         """Second call returns the same cached object without re-fetching."""
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
@@ -306,7 +306,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         # One logical drain == data page + final 304 page (matches peer SDKs).
         self.assertEqual(call_count['count'], 2, "Service should only be called once (data page + 304)")
 
-    def test_get_routing_map_force_refresh(self):
+    def test_get_routing_map_force_refresh_rust(self):
         """force_refresh=True causes a re-fetch even when cache is populated.
 
         The force_refresh path passes the previous routing map as the base for an
@@ -352,7 +352,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         # Verify the split was applied: should now have 6 ranges (original 5 minus '0' plus '5' and '6')
         self.assertEqual(len(list(result2._orderedPartitionKeyRanges)), 6)
 
-    def test_is_cache_stale_etag_logic(self):
+    def test_is_cache_stale_etag_logic_rust(self):
         """_is_cache_stale returns correct results for all ETag scenarios."""
         provider = PartitionKeyRangeCache(
             TestRoutingMapProvider.MockedCosmosClientConnection(self.partition_key_ranges)
@@ -381,7 +381,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         mock_map2.change_feed_etag = cached_map.change_feed_etag
         self.assertFalse(provider._is_cache_stale(collection_id, mock_map2))
 
-    def test_fetch_routing_map_full_load_with_incomplete_ranges_surfaces_503(self):
+    def test_fetch_routing_map_full_load_with_incomplete_ranges_surfaces_503_rust(self):
         """When a full load (previous_routing_map=None) repeatedly returns
         gapped ranges, the retry budget should be exhausted and the provider
         should surface a retryable HTTP 503."""
@@ -416,7 +416,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         # drains to a literal 304, so per attempt the mock sees data + 304 = 2 calls.
         self.assertEqual(call_count['count'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS * 2)
 
-    def test_fetch_routing_map_incremental_with_parents(self):
+    def test_fetch_routing_map_incremental_with_parents_rust(self):
         """Incremental update correctly merges child ranges that reference a parent."""
         # Build initial map with 2 ranges
         initial_ranges = [
@@ -460,7 +460,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(ranges[1]['id'], '3')
         self.assertEqual(ranges[2]['id'], '1')
 
-    def test_fetch_routing_map_cleans_if_none_match_on_fallback(self):
+    def test_fetch_routing_map_cleans_if_none_match_on_fallback_rust(self):
         """When falling back from incremental to full load, stale IfNoneMatch is removed."""
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}
@@ -521,7 +521,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         # Call 5 is full-load fallback and must clear stale IfNoneMatch.
         self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[4])
 
-    def test_fetch_routing_map_merge_parents0_evicted_later_parent_cached(self):
+    def test_fetch_routing_map_merge_parents0_evicted_later_parent_cached_rust(self):
         """Merge where parents[0] is an evicted grandparent but a later parent IS in cache.
 
         Scenario:
@@ -576,7 +576,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         ids = [r['id'] for r in ranges]
         self.assertEqual(ids, ['0', '3', '2'])
 
-    def test_fetch_routing_map_merge_all_parents_cached(self):
+    def test_fetch_routing_map_merge_all_parents_cached_rust(self):
         """Merge where all parents are in cache — validates first-match range_info inheritance.
 
         Scenario:
@@ -627,7 +627,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         # Stable range '2' should keep its original range_info
         self.assertEqual(result._orderedPartitionInfo[1], 'info_2')
 
-    def test_fetch_routing_map_two_rapid_splits_all_parents_missing(self):
+    def test_fetch_routing_map_two_rapid_splits_all_parents_missing_rust(self):
         """Two rapid splits where the intermediate range was never cached.
 
         Scenario:
@@ -705,7 +705,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         ids = [r['id'] for r in ranges]
         self.assertEqual(ids, ['0', '1A-i', '1A-ii', '1B', '2'])
 
-    def test_fetch_routing_map_merge_range_info_from_correct_parent(self):
+    def test_fetch_routing_map_merge_range_info_from_correct_parent_rust(self):
         """Verifies range_info is inherited from the first CACHED parent, not necessarily parents[0].
 
         Scenario:
@@ -760,7 +760,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         # range_info for '3' should come from '1A' (first cached parent), not '1' (evicted)
         self.assertEqual(result._orderedPartitionInfo[1], 'info_1A')
 
-    def test_force_refresh_without_previous_map_triggers_targeted_fetch(self):
+    def test_force_refresh_without_previous_map_triggers_targeted_fetch_rust(self):
         """force_refresh=True without previous_routing_map should still trigger a targeted fetch.
 
         This guards the 410 path where collection_link is known but previous_routing_map
@@ -799,7 +799,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         )
         self.assertIsNotNone(result2)
 
-    def test_concurrent_refresh_serialized_by_lock(self):
+    def test_concurrent_refresh_serialized_by_lock_rust(self):
         """Under concurrent force_refresh calls, the per-collection lock serializes refreshes.
 
         Verifies that threads don't corrupt the cache and all get a valid result.
@@ -862,7 +862,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         for i, r in enumerate(results):
             self.assertIsNotNone(r, f"Thread {i} got None")
 
-    def test_cache_never_none_during_refresh(self):
+    def test_cache_never_none_during_refresh_rust(self):
         """Fast-path readers should never see None in the cache during a refresh.
 
         The cache entry is atomically replaced, never deleted. This test verifies
@@ -990,7 +990,7 @@ class TestRoutingMapProvider(unittest.TestCase):
             _shared_locks_locks.clear()
             _shared_cache_refcounts.clear()
 
-    def test_smart_provider_does_not_leak_overlap_value_error_on_persistent_inconsistency(self):
+    def test_smart_provider_does_not_leak_overlap_value_error_on_persistent_inconsistency_rust(self):
         """A persistent overlap or gap snapshot must raise 503 with sub_status
         21015 from SmartRoutingMapProvider.get_overlapping_ranges, not a bare
         ValueError or AssertionError."""
@@ -1025,7 +1025,7 @@ class TestRoutingMapProvider(unittest.TestCase):
                 finally:
                     self._reset_shared_cache_state(provider)
 
-    def test_smart_provider_recovers_through_full_stack_after_transient_overlap(self):
+    def test_smart_provider_recovers_through_full_stack_after_transient_overlap_rust(self):
         """A bad overlap response followed by a good one must return the
         expected ranges from get_overlapping_ranges."""
         full_range = routing_range.Range("", "FF", True, False)
