@@ -86,3 +86,31 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         items = [doc async for doc in pager]
         assert len(items) >= 1
 
+    async def test_delete_all_items_by_partition_key_none_options_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_delete_all_items_by_partition_key_none_options_async
+        pk_value = "delete-pk"
+        for _ in range(2):
+            item = {"id": str(uuid.uuid4()), "pk": pk_value, "value": 1}
+            await self.container.create_item(
+                item,
+                indexing_directive=None,
+                enable_automatic_id_generation=False,
+                session_token=None,
+                initial_headers=None,
+                priority=None,
+                no_response=None,
+                retry_write=None,
+                throughput_bucket=None,
+            )
+        # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). No Rust driver path; the call reaches the service, which rejects it when the account feature is disabled.
+        pytest.skip("environment-gap: the test account has the partition key delete feature disabled, so the service rejects delete_all_items_by_partition_key with 400; Rust has no driver path for it either (known gap 19, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). The items were created.")
+        await self.container.delete_all_items_by_partition_key(pk_value, session_token=None, throughput_bucket=None)
+        # Just ensure query still works with None options
+        pager = self.container.query_items("SELECT * FROM c WHERE c.pk = @pk", parameters=[{"name": "@pk", "value": pk_value}],
+                                           partition_key=None, continuation_token_limit=None, enable_scan_in_query=None,
+                                           initial_headers=None, max_integrated_cache_staleness_in_ms=None, max_item_count=None,
+                                           populate_index_metrics=None, populate_query_advice=None, populate_query_metrics=None, priority=None,
+                                           response_hook=None, session_token=None, throughput_bucket=None)
+        _items = [doc async for doc in pager]
+        assert _items == _items

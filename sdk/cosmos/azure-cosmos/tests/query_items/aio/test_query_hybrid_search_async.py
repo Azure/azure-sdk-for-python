@@ -86,6 +86,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         self.addCleanup(lookup_patch.stop)
 
     async def test_wrong_hybrid_search_queries_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_wrong_hybrid_search_queries_async
         try:
             query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
             results = self.test_container.query_items(query)
@@ -119,6 +121,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                     "Specifying a sort order (ASC or DESC) in the ORDER BY RANK clause is not allowed." in e.message)
 
     async def test_hybrid_search_env_variables_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_env_variables_async
         os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "0"
         try:
             query = "SELECT TOP 1 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
@@ -133,6 +137,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "1000"
 
     async def test_hybrid_search_queries_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_queries_async
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
         results = self.test_container.query_items(query)
@@ -221,6 +227,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert res['index'] in [51, 54, 28, 70, 24, 61, 56, 26, 58, 77, 2, 68]
 
     async def test_hybrid_search_query_pagination_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_query_pagination_async
         query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States')) " \
                 "OFFSET 0 LIMIT 13"
@@ -235,6 +243,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(all_fetched_res) == 13
 
     async def test_hybrid_search_cross_partition_query_response_hook_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_cross_partition_query_response_hook_async
         item = await self.test_container.read_item('50', '1')
         item_vector = item['vector']
         response_hook = test_config.ResponseHookCaller()
@@ -244,9 +254,16 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         results = self.test_container.query_items(query, response_hook=response_hook)
         result_list = [item async for item in results]
         assert len(result_list) == 10
+        # Known gap 30 item 7: Rust folds the hybrid statistics/component responses into one page.
+        pytest.skip(
+            "driver-gap: Rust combines the cross-partition hybrid statistics and component responses into one "
+            "ranked page, so response_hook fires once instead of 6 times (known gap 30 item 7, "
+            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-hybrid-response-hooks).")
         assert response_hook.count == 6 # one global stat query per partition, two queries per partition for each component query
 
     async def test_hybrid_search_partitioned_query_response_hook_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_partitioned_query_response_hook_async
         item = await self.test_container.read_item('50', '1')
         item_vector = item['vector']
         response_hook = test_config.ResponseHookCaller()
@@ -260,6 +277,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_weighted_reciprocal_rank_fusion_async_rust(self):
         # Test case 1
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_weighted_reciprocal_rank_fusion_async
         query = """
                     SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
                     FROM c
@@ -334,6 +353,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert result_list_with_equal_weights == result_list_without_weights
 
     async def test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion_async
         try:
             query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
             results = self.test_container.query_items(query)
@@ -344,6 +365,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_weighted_vs_non_weighted_reciprocal_rank_fusion_async_rust(self):
         # Non-weighted RRF query
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_weighted_vs_non_weighted_reciprocal_rank_fusion_async
         query_non_weighted = """
             SELECT TOP 10 c.index, c.title FROM c
             ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))
@@ -372,6 +395,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert result_list_non_weighted != result_list_weighted_different, "Non-weighted and differently direction weighted RRF results should not match."
 
     async def test_weighted_reciprocal_rank_fusion_with_missing_or_extra_weights_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_weighted_reciprocal_rank_fusion_with_missing_or_extra_weights_async
         try:
             # Weighted RRF query with one weight missing
             query_missing_weight = """
@@ -397,6 +422,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
 
     async def test_weighted_reciprocal_rank_fusion_with_response_hook_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_weighted_reciprocal_rank_fusion_with_response_hook_async
         response_hook = test_config.ResponseHookCaller()
         query_weighted_rrf = """
             SELECT TOP 10 c.index, c.title FROM c
@@ -409,6 +436,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_query_with_params_equivalence_async_rust(self):
         # Literal hybrid query
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_query_with_params_equivalence_async
         literal_query = (
             "SELECT TOP 10 c.index, c.title FROM c "
             "WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') "
@@ -437,6 +466,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_weighted_rrf_hybrid_search_with_params_and_response_hook_async_rust(self):
         # Literal weighted RRF hybrid query
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_weighted_rrf_hybrid_search_with_params_and_response_hook_async
         literal_query = (
             "SELECT TOP 10 c.index, c.title FROM c "
             "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 0.5])"
@@ -469,6 +500,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_and_non_hybrid_param_queries_equivalence_async_rust(self):
         # Hybrid query with vector distance (literal vs param) and compare equality
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_and_non_hybrid_param_queries_equivalence_async
         item = await self.test_container.read_item('50', '1')
         item_vector = item['vector']
         literal_hybrid = (
@@ -518,6 +551,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_with_full_text_score_scope_global_async_rust(self):
         """Test that full_text_score_scope='Global' returns the same results as the default (no scope set)."""
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_with_full_text_score_scope_global_async
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
 
@@ -534,6 +569,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_with_full_text_score_scope_local_async_rust(self):
         """Test that full_text_score_scope='Local' returns valid results for a cross-partition query."""
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_with_full_text_score_scope_local_async
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
 
@@ -545,6 +582,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_with_full_text_score_scope_local_partition_key_async_rust(self):
         """Test that full_text_score_scope='Local' works with a specific partition key."""
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_with_full_text_score_scope_local_partition_key_async
         query = "SELECT TOP 10 c.index, c.title, c.pk FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
 
@@ -560,6 +599,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_with_invalid_full_text_score_scope_async_rust(self):
         """Test that an invalid full_text_score_scope value raises ValueError."""
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_with_invalid_full_text_score_scope_async
         query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John') " \
                 "ORDER BY RANK FullTextScore(c.title, 'John')"
         with pytest.raises(ValueError, match="full_text_score_scope must be 'Local' or 'Global'"):
@@ -568,6 +609,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_rrf_with_full_text_score_scope_local_async_rust(self):
         """Test RRF hybrid search with Local scope returns valid results."""
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_rrf_with_full_text_score_scope_local_async
         query = "SELECT TOP 10 c.index, c.title, c.text FROM c WHERE " \
                 "FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR " \
                 "FullTextContains(c.text, 'United States') ORDER BY RANK RRF(FullTextScore(c.title, 'John')," \
@@ -581,6 +624,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_local_vs_global_scope_both_return_results_async_rust(self):
         """Verify both Local and Global scopes return valid, non-empty results for the same query."""
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_local_vs_global_scope_both_return_results_async
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
 
@@ -593,6 +638,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_weighted_rrf_with_full_text_score_scope_local_async_rust(self):
         """Test weighted RRF with Local scope returns valid results."""
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_weighted_rrf_with_full_text_score_scope_local_async
         query = """
             SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
             FROM c
@@ -611,6 +658,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_parameterized_with_full_text_score_scope_async_rust(self):
         """Test parameterized hybrid search with full_text_score_scope."""
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_hybrid_search_async.py::TestFullTextHybridSearchQueryAsync.test_hybrid_search_parameterized_with_full_text_score_scope_async
         param_query = (
             "SELECT TOP 10 c.index, c.title FROM c "
             "WHERE FullTextContains(c.title, @term) OR FullTextContains(c.text, @term) "

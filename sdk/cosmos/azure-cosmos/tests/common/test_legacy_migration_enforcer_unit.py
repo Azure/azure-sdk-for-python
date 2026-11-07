@@ -400,16 +400,21 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         env.pop("PYTEST_ADDOPTS", None)
 
         def collect(extra_args):
-            result = subprocess.run(
-                [sys.executable, "-m", "pytest", "--noconftest", "--import-mode=importlib",
-                 "--collect-only", "-q", *extra_args, *map(str, files)],
-                cwd=_PKG_ROOT, env=env, capture_output=True, text=True, timeout=60, check=False,
-            )
-            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            return {
-                line for line in result.stdout.splitlines()
-                if line.startswith("tests/") and "::test_" in line
-            }
+            collected = set()
+            # Batches keep each command line under the Windows length limit (WinError 206).
+            for start in range(0, len(files), 40):
+                batch = [os.path.relpath(path, _PKG_ROOT) for path in files[start:start + 40]]
+                result = subprocess.run(
+                    [sys.executable, "-m", "pytest", "--noconftest", "--import-mode=importlib",
+                     "--collect-only", "-q", *extra_args, *batch],
+                    cwd=_PKG_ROOT, env=env, capture_output=True, text=True, timeout=60, check=False,
+                )
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                collected |= {
+                    line.replace("\\", "/") for line in result.stdout.splitlines()
+                    if line.replace("\\", "/").startswith("tests/") and "::test_" in line
+                }
+            return collected
 
         unfiltered = collect([])
         self.assertSetEqual(

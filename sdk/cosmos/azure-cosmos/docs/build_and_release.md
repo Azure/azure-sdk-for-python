@@ -1687,7 +1687,7 @@ The pipeline must answer a larger question:
 
 This section covers build preparation, packaging, documentation generation,
 and release processing. Test coverage and execution belong in the
-[testing guide](V5/testing/v5-testing.md).
+testing guide.
 
 ### The SDK entry point calls shared Central instructions
 
@@ -2383,11 +2383,12 @@ remain pending:
 
 Each change needs regression tests and must be included in the source used
 by the pipeline. A saved patch or an SDK opt-in is not
-evidence that the shared implementation exists. Integrating the temporary
-parity jobs is not part of this Central work list. The SDK team must complete
-the retained-test migration through the normal pipeline and raise any specific
-shared blockers it demonstrates. The current publishers still do not enforce
-the source-archive restriction.
+evidence that the shared implementation exists. The SDK team must complete
+the retained-test migration and provide the package-side runners. Central
+must integrate the required checks into the normal pipeline; the temporary
+job layout is not a requirement. The specific pipeline files are recorded in
+the [Central pipeline handoff](#pipeline-changes-for-central-to-implement).
+The current publishers still do not enforce the source-archive restriction.
 
 ### Treat the Rust-backed release as a v5 upgrade
 
@@ -2472,3 +2473,43 @@ successful planning by that provider, not merely a library filename in the ZIP.
 
 The release needs both kinds of evidence: correct configuration and working
 final packages in the environments we promise to support.
+
+### Pipeline changes for Central to implement
+
+**The SDK team changes files inside `sdk/cosmos/azure-cosmos/`. Central changes
+the pipeline files outside that package.** We should not change root settings
+such as `.vscode/cspell.json` as part of this SDK work.
+
+Why do we need pipeline changes at all? The old package contained Python code.
+The new package also contains compiled Rust code. The pipeline must have the
+tools to build that code, put it in the wheel, and test the wheel that customers
+will install. Adding a test file to the package does not, by itself, tell the
+pipeline to run it.
+
+The four files below already have draft changes in this branch. Leave them
+unchanged for now. Central should review and implement the work they describe.
+These paths start at the repository root.
+
+| File | Why the change is needed | What Central needs to do |
+|---|---|---|
+| `sdk/cosmos/ci.yml` | The pipeline needs instructions for building and checking the new Rust-backed package. | Install the selected Rust compiler, build and sign the required wheels, connect the required tests, and prevent publication of a source archive until source installation is supported. |
+| `sdk/cosmos/templates/rust-tests.yml` | A wheel can build successfully and still contain broken or missing code. | Run the Rust tests and the Python tests against the installed wheel. Start the emulator for tests that need a service, and report failures. |
+| `sdk/cosmos/templates/telemetry-tests.yml` | Operations can succeed while the SDK's tracing or diagnostic reporting is broken. | Run the telemetry checks against the built wheel and save their results. Missing required results must not count as success. |
+| `sdk/cosmos/templates/toxiproxy-tests.yml` | Tests on a healthy connection do not show what happens when the network slows down or disconnects. | Install the network-fault test tool, run the package's failure scenarios against the built wheel and emulator, and save the results. |
+
+For example, Alpha Bank needs a wheel that installs, reads an order, reports
+useful diagnostics, and handles a broken connection as intended. These checks
+cover different parts of that promise.
+
+Central does not have to keep these exact four files or create separate jobs
+for every check. It can use the existing pipeline structure. What matters is
+that the required checks actually run against the right wheel and that their
+failures are visible. This note records the work for Central; it does not ask
+the SDK team to make more root or pipeline changes.
+
+Spelling fixes follow the same boundary. The package keeps its technical
+terms in `sdk/cosmos/azure-cosmos/cspell.json`, without changing the root
+dictionary. The draft `rust-tests.yml` and `toxiproxy-tests.yml` files still
+need spelling annotations for their tool names and command-line flags.
+Central should add those annotations when it takes over the pipeline changes;
+the package dictionary does not cover files outside the package.
