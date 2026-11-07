@@ -1,11 +1,5 @@
 # Release History
 
-## 2.11.0 (Unreleased)
-
-### Bugs Fixed
-
-* Fixed `AIProjectInstrumentor` raising `AttributeError: 'NonRecordingSpan' object has no attribute 'attributes'` after a successful non-streamed `responses.create` call when the current span is not recording, for example when the sampler drops the trace ([GitHub issue 49854](https://github.com/Azure/azure-sdk-for-python/issues/49854)).
-
 ## 2.10.0 (2026-10-30)
 
 ### Features Added
