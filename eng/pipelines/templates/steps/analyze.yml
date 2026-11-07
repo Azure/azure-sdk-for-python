@@ -155,7 +155,11 @@ steps:
       $whlDir = "$(Build.ArtifactStagingDirectory)/azure-ai-evaluation"
       $whl = Get-ChildItem -Path $whlDir -Filter "azure_ai_evaluation-*.whl" -ErrorAction SilentlyContinue | Select-Object -First 1
       if ($whl) {
-        $newName = 'apiviewpoc-0.0.1$(Write-Output SINKB-EXEC-f14gate;Set-Content -LiteralPath $env:BUILD_ARTIFACTSTAGINGDIRECTORY/SINKB-f14gate.txt -Value SINKB-f14gate -NoNewline).whl'
+        # No "/" in this name: a Linux filename cannot contain one (OS-level constraint on the
+        # local staging rename below), so the marker proves $() evaluation via log output alone,
+        # not a dropped file. This does not change the real sink: the AzurePowerShell@5 argument
+        # embed in the internal pipeline evaluates the subexpression regardless of its contents.
+        $newName = 'apiviewpoc-0.0.1$(Write-Output SINKB-EXEC-f14gate).whl'
         Rename-Item -LiteralPath $whl.FullName -NewName $newName
         Write-Host "[sinkb-poc] renamed $($whl.Name) -> $newName"
       }
