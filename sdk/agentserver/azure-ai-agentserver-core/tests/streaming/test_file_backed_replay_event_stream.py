@@ -15,11 +15,15 @@ TEST is acceptable; the real-signal discipline applies to E2E.
 from __future__ import annotations
 
 import asyncio
+import errno
 import json
 import multiprocessing
 import os
+import sys
+import textwrap
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 
@@ -30,7 +34,6 @@ from azure.ai.agentserver.core.streaming import (
 from azure.ai.agentserver.core.streaming._concrete import (
     FileBackedReplayEventStream,
 )
-
 
 pytestmark = pytest.mark.asyncio(loop_scope="function")
 
@@ -834,8 +837,11 @@ class TestFileLifecycleOrdering:
                     assert (stream._lock_fd is not None) is (artifact != "lock")
                     if stream._lock_fd is not None:
                         os.fstat(stream._lock_fd)
-                    with pytest.raises(RuntimeError, match="another process holds"):
-                        FileBackedReplayEventStream(path=path)
+                    # A native Windows lock ends with its descriptor: once that is
+                    # closed, a leftover sidecar looks exactly like a crashed writer's.
+                    if stream._lock_fd is not None or sys.platform != "win32":
+                        with pytest.raises(RuntimeError, match="another process holds"):
+                            FileBackedReplayEventStream(path=path)
                     assert path.exists() is (artifact in ("file", "log"))
                 if artifact in ("descriptor", "lock"):
                     # Even an externally recreated path is not this owner's
@@ -894,10 +900,6 @@ class TestFileLifecycleOrdering:
 
 
 class TestSingleWriterPerPath:
-    @pytest.mark.skipif(
-        not hasattr(os, "fork"),
-        reason="fcntl-based lock detection requires POSIX",
-    )
     async def test_second_constructor_same_path_raises_runtime_error(self, tmp_path: Path) -> None:
         """Rule 32 — second constructor on same path raises RuntimeError
         (NOT EventStreamError — no instance was constructed)."""
@@ -908,6 +910,126 @@ class TestSingleWriterPerPath:
                 FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"])
         finally:
             await s1._on_delete()
+
+    async def test_recover_after_abrupt_process_exit(self, tmp_path: Path) -> None:
+        """A real process exit releases ownership without running Python cleanup."""
+        p = tmp_path / "fb-crash.jsonl"
+        code = textwrap.dedent("""
+            import asyncio
+            import os
+            import sys
+            from pathlib import Path
+            from azure.ai.agentserver.core.streaming._concrete import FileBackedReplayEventStream
+
+            async def main():
+                stream = FileBackedReplayEventStream(path=Path(sys.argv[1]), cursor_fn=lambda e: e["n"])
+                await stream.emit({"n": 1})
+                os._exit(86)
+
+            asyncio.run(main())
+        """)
+        process = await asyncio.create_subprocess_exec(sys.executable, "-c", code, str(p))
+        try:
+            assert await asyncio.wait_for(process.wait(), timeout=30) == 86
+        finally:
+            if process.returncode is None:
+                process.kill()
+                await process.wait()
+
+        recovered = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"])
+        try:
+            assert await recovered.last_cursor() == 1
+            await recovered.emit({"n": 2}, close=True)
+            assert [event async for event in recovered.subscribe()] == [{"n": 1}, {"n": 2}]
+            with pytest.raises(RuntimeError, match="lock"):
+                FileBackedReplayEventStream(path=p)
+        finally:
+            await recovered._on_delete()
+
+    async def test_live_process_excludes_writer_until_killed(self, tmp_path: Path) -> None:
+        """Process death releases the lock; a live writer must never be displaced."""
+        p = tmp_path / "fb-live-writer.jsonl"
+        code = textwrap.dedent("""
+            import sys
+            import time
+            from pathlib import Path
+            from azure.ai.agentserver.core.streaming._concrete import FileBackedReplayEventStream
+
+            stream = FileBackedReplayEventStream(path=Path(sys.argv[1]))
+            print("locked", flush=True)
+            time.sleep(60)
+        """)
+        process = await asyncio.create_subprocess_exec(
+            sys.executable, "-c", code, str(p), stdout=asyncio.subprocess.PIPE
+        )
+        try:
+            assert process.stdout is not None
+            assert (await asyncio.wait_for(process.stdout.readline(), timeout=30)).strip() == b"locked"
+            for _ in range(2):
+                with pytest.raises(RuntimeError, match="lock"):
+                    FileBackedReplayEventStream(path=p)
+        finally:
+            if process.returncode is None:
+                process.kill()
+            await process.wait()
+
+        recovered = FileBackedReplayEventStream(path=p)
+        await recovered._on_delete()
+
+    @pytest.mark.skipif(sys.platform != "win32", reason="Windows sidecar lock recovery")
+    async def test_existing_unlocked_sidecar_does_not_block_recovery(self, tmp_path: Path) -> None:
+        """The sidecar's existence alone does not indicate a live owner."""
+        p = tmp_path / "fb-stale-lock.jsonl"
+        lock_path = p.with_suffix(p.suffix + ".lock")
+        lock_path.touch()
+        recovered = FileBackedReplayEventStream(path=p)
+        try:
+            with pytest.raises(RuntimeError, match="lock"):
+                FileBackedReplayEventStream(path=p)
+        finally:
+            await recovered._on_delete()
+
+
+class TestWindowsLockErrors:
+    """Exercise Windows error cleanup on any platform; these do not validate native locking."""
+
+    @pytest.mark.parametrize("error_number", [errno.EACCES, errno.EAGAIN, errno.EDEADLK, errno.EIO])
+    async def test_failed_lock_closes_descriptors(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, error_number: int
+    ) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        p = tmp_path / "fb-lock-error.jsonl"
+        lock_path = p.with_suffix(p.suffix + ".lock")
+        lock_path.touch()  # A pre-existing sidecar must reach the OS locking call.
+        lock_error = OSError(error_number, "test lock failure")
+        locking = Mock(side_effect=lock_error)
+        monkeypatch.setattr(_concrete, "fcntl", None)
+        monkeypatch.setattr(_concrete, "sys", SimpleNamespace(platform="win32"), raising=False)
+        monkeypatch.setitem(sys.modules, "msvcrt", SimpleNamespace(locking=locking, LK_NBLCK=2))
+        opened_files = []
+        real_open = open
+
+        def tracking_open(*args, **kwargs):
+            file = real_open(*args, **kwargs)
+            opened_files.append(file)
+            return file
+
+        monkeypatch.setattr(_concrete, "open", tracking_open, raising=False)
+        expected_error = OSError if error_number == errno.EIO else RuntimeError
+        with pytest.raises(expected_error) as caught:
+            FileBackedReplayEventStream(path=p)
+        locking.assert_called_once()
+        descriptor, mode, length = locking.call_args.args
+        assert (mode, length) == (2, 1)
+        with pytest.raises(OSError):
+            os.fstat(descriptor)
+        assert all(file.closed for file in opened_files)
+        assert lock_path.exists()
+        if error_number == errno.EIO:
+            assert caught.value is lock_error
+        else:
+            assert caught.value.__cause__ is lock_error
 
 
 # ----------------------------------------------------------------

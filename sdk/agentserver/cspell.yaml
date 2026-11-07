@@ -43,6 +43,7 @@ words:
   - dones
   - dtmf
   - Dunders
+  - EDEADLK
   - elts
   - ename
   - etype
@@ -80,6 +81,7 @@ words:
   - mcpr
   - myhost
   - myproj
+  - NBLCK
   - NCUS
   - ncusacr
   - nonbg
