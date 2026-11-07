@@ -478,6 +478,19 @@ def test_holes_do_not_count_as_relevant_when_label_min_is_negative():
     assert properties["holes"] == 1
 
 
+def test_label_zero_only_ground_truth_with_negative_label_min():
+    # With only label-0 ground truth the ideal DCG is 0; nDCG must not divide by zero, and fidelity is still 1.
+    evaluator = DocumentRetrievalEvaluator(ground_truth_label_min=-1, ground_truth_label_max=2)
+    result = evaluator(
+        retrieval_ground_truth=[{"document_id": "a", "query_relevance_label": 0}],
+        retrieved_documents=[{"document_id": "a", "relevance_score": 1.0}],
+    )
+    properties = result["document_retrieval_properties"]
+    assert properties["ndcg@3"] == 0
+    assert properties["fidelity"] == pytest.approx(1.0)
+    assert properties["top1_relevance"] == 0
+
+
 @pytest.mark.parametrize(
     "label_min, label_max, ground_truth, retrieved_ids, expected",
     [

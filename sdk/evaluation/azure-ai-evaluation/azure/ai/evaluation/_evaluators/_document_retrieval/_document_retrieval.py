@@ -151,6 +151,10 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         ranks = list(range(1, self.k + 1))
         dcg = sum(starmap(calculate_dcg, zip(result_docs_groundtruth_labels, ranks)))
         idcg = sum(starmap(calculate_dcg, zip(ideal_docs_groundtruth_labels, ranks)))
+        if idcg == 0:
+            # No ground-truth document has a positive gain (e.g. only label 0 on a scale starting below 0),
+            # so there is no ideal ranking to normalize against.
+            return 0.0
         ndcg = dcg / float(idcg)
 
         return ndcg
