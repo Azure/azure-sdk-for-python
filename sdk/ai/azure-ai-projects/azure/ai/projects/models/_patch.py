@@ -68,7 +68,6 @@ _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
 )
 
 _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
-    "agent_insight_monitors": _FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW.value,
     "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,

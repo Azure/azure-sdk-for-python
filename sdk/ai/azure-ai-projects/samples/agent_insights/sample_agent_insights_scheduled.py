@@ -7,11 +7,12 @@
 """
 DESCRIPTION:
     This sample uses the synchronous AIProjectClient to configure an Agent
-    Insights monitor with a six-hour run interval and read the next scheduled
-    run time. It does not wait for scheduled analysis.
+    Insights monitor with analysis priorities and a six-hour run interval, then
+    read the next scheduled run time. It does not wait for scheduled analysis.
 
-    Agent Insights is a preview feature. In the Python SDK, you access these
-    operations through `project_client.beta.agent_insight_monitors`.
+    Access GA monitor operations through `project_client.agent_insight_monitors`.
+    No Agent Insights preview header is needed. The temporary external agent
+    still requires preview support.
 
     This sample registers a temporary external agent and emits fictional traces;
     it does not execute tools or call a model to produce those traces. It waits
@@ -29,7 +30,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.6.1" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint.
@@ -50,7 +51,7 @@ from agent_insights_util import cleanup, create_agent, seed_traces, wait_for_ing
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentInsightMonitorCreate, AgentInsightMonitorUpdate
+from azure.ai.projects.models import AgentInsightPriorities
 
 ANALYSIS_INTERVAL_HOURS = 6
 
@@ -68,7 +69,7 @@ def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
         LogsQueryClient(credential) as logs_client,
     ):
-        monitor_operations = project_client.beta.agent_insight_monitors
+        monitor_operations = project_client.agent_insight_monitors
 
         agent = None
         monitor = None
@@ -79,26 +80,28 @@ def main() -> None:
             wait_for_ingestion(logs_client, app_insights_resource_id, agent.name, expected_counts)
 
             monitor = monitor_operations.create(
-                AgentInsightMonitorCreate(
-                    agent_name=agent.name,
-                    model_deployment_name=model_deployment_name,
-                    enabled=False,
-                )
+                agent_name=agent.name,
+                model_deployment_name=model_deployment_name,
+                enabled=False,
             )
             print(f"Created disabled monitor `{monitor.id}` for agent `{monitor.agent_name}`.")
 
-            # Set the analysis frequency and enable recurring runs in one update.
+            # Replace priorities and enable recurring runs in one update.
             scheduled_monitor = monitor_operations.update(
                 monitor.id,
-                AgentInsightMonitorUpdate(
-                    enabled=True,
-                    run_interval_hours=ANALYSIS_INTERVAL_HOURS,
+                enabled=True,
+                run_interval_hours=ANALYSIS_INTERVAL_HOURS,
+                priorities=AgentInsightPriorities(
+                    categories=[],  # Use the default analysis categories.
+                    instructions="Focus on tool calls made without the user's approval.",
                 ),
             )
 
             print(f"Scheduled monitor enabled: {scheduled_monitor.enabled}")
             print(f"Run interval hours: {scheduled_monitor.run_interval_hours}")
             print(f"Next scheduled run: {scheduled_monitor.next_scheduled_run_at}")
+            if scheduled_monitor.priorities and scheduled_monitor.priorities.instructions:
+                print(f"Analysis guidance: {scheduled_monitor.priorities.instructions}")
         finally:
             # Enabling schedules the first occurrence for now, so a run may already be active.
             cleanup(project_client, agent, monitor.id if monitor is not None else None, scheduled=True)

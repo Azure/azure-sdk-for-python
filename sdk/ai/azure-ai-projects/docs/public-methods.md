@@ -9,13 +9,14 @@ This document lists all public methods available on `AIProjectClient` and its su
 There are a total of 211 unique public methods:
 
 - 5 stable methods on the client
-- 84 stable methods on top-level sub-clients
-- 122 beta methods on nested beta sub-clients
+- 97 stable methods on top-level sub-clients
+- 109 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
+| `agent_insight_monitors` | AgentInsightMonitorsOperations | 13 |
 | `agents` | AgentsOperations | 35 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 14 |
@@ -30,7 +31,6 @@ There are a total of 211 unique public methods:
 
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
-| `beta.agent_insight_monitors` | BetaAgentInsightMonitorsOperations | 13 |
 | `beta.agents` | BetaAgentsOperations | 1 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 2 |
@@ -65,6 +65,20 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
+.agent_insight_monitors.begin_create_run*
+.agent_insight_monitors.cancel_run
+.agent_insight_monitors.create
+.agent_insight_monitors.delete
+.agent_insight_monitors.get
+.agent_insight_monitors.get_insight
+.agent_insight_monitors.get_run
+.agent_insight_monitors.list
+.agent_insight_monitors.list_insights
+.agent_insight_monitors.list_runs
+.agent_insight_monitors.reset
+.agent_insight_monitors.update
+.agent_insight_monitors.update_insight
+
 .agents.begin_create_optimization_job*
 .agents.cancel_optimization_job
 .agents.create_session
@@ -164,20 +178,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
-.beta.agent_insight_monitors.begin_create_run*
-.beta.agent_insight_monitors.cancel_run
-.beta.agent_insight_monitors.create
-.beta.agent_insight_monitors.delete
-.beta.agent_insight_monitors.get
-.beta.agent_insight_monitors.get_insight
-.beta.agent_insight_monitors.get_run
-.beta.agent_insight_monitors.list
-.beta.agent_insight_monitors.list_insights
-.beta.agent_insight_monitors.list_runs
-.beta.agent_insight_monitors.reset
-.beta.agent_insight_monitors.update
-.beta.agent_insight_monitors.update_insight
-
 .beta.agents.create_from_prompt
 
 .beta.evaluation_taxonomies.create

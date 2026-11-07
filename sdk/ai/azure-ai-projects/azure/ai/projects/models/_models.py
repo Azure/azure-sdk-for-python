@@ -1678,8 +1678,10 @@ class AgentInsightMonitor(_Model):
     :ivar suspension: Why the system suspended scheduled generation. Null when the monitor is not
      suspended. Required.
     :vartype suspension: ~azure.ai.projects.models.AgentInsightSuspension
-    :ivar overview: The effective overview, or null before an overview is available. Required.
-    :vartype overview: ~azure.ai.projects.models.AgentInsightsOverview
+    :ivar agent_summary: Generated summary. Omitted when unavailable.
+    :vartype agent_summary: ~azure.ai.projects.models.AgentInsightSummary
+    :ivar priorities: Analysis priorities. Omitted when not configured.
+    :vartype priorities: ~azure.ai.projects.models.AgentInsightPrioritiesRead
     :ivar updated_at: The time when this monitor was last updated. Required.
     :vartype updated_at: ~datetime.datetime
     """
@@ -1703,60 +1705,16 @@ class AgentInsightMonitor(_Model):
     suspension: "_models.AgentInsightSuspension" = rest_field(visibility=["read"])
     """Why the system suspended scheduled generation. Null when the monitor is not suspended.
      Required."""
-    overview: "_models.AgentInsightsOverview" = rest_field(visibility=["read"])
-    """The effective overview, or null before an overview is available. Required."""
+    agent_summary: Optional["_models.AgentInsightSummary"] = rest_field(visibility=["read"])
+    """Generated summary. Omitted when unavailable."""
+    priorities: Optional["_models.AgentInsightPrioritiesRead"] = rest_field(visibility=["read"])
+    """Analysis priorities. Omitted when not configured."""
     updated_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
     """The time when this monitor was last updated. Required."""
 
 
-class AgentInsightMonitorCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Fields accepted when creating an Agent Insights monitor for an agent.
-
-    :ivar agent_name: The agent this monitor should analyze. Required.
-    :vartype agent_name: str
-    :ivar enabled: Whether scheduled insight generation should be armed. Defaults to false.
-    :vartype enabled: bool
-    :ivar run_interval_hours: Interval between scheduled insight runs, in hours. Defaults to 6.
-    :vartype run_interval_hours: float
-    :ivar model_deployment_name: The model deployment to use for analyzing traces. Accepts either
-     the deployment name alone or with the connection name as
-     '{connectionName}/modelDeploymentName'. Required.
-    :vartype model_deployment_name: str
-    """
-
-    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The agent this monitor should analyze. Required."""
-    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether scheduled insight generation should be armed. Defaults to false."""
-    run_interval_hours: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Interval between scheduled insight runs, in hours. Defaults to 6."""
-    model_deployment_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The model deployment to use for analyzing traces. Accepts either the deployment name alone or
-     with the connection name as '{connectionName}/modelDeploymentName'. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        agent_name: str,
-        model_deployment_name: str,
-        enabled: Optional[bool] = None,
-        run_interval_hours: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AgentInsightMonitorListItem(_Model):
-    """An Agent Insights monitor summary returned by list operations.
+    """Monitor list item without the summary.
 
     :ivar id: The monitor identifier. Required.
     :vartype id: str
@@ -1779,6 +1737,8 @@ class AgentInsightMonitorListItem(_Model):
     :ivar suspension: Why the system suspended scheduled generation. Null when the monitor is not
      suspended. Required.
     :vartype suspension: ~azure.ai.projects.models.AgentInsightSuspension
+    :ivar priorities: Analysis priorities. Omitted when not configured.
+    :vartype priorities: ~azure.ai.projects.models.AgentInsightPrioritiesRead
     :ivar updated_at: The time when this monitor was last updated. Required.
     :vartype updated_at: ~datetime.datetime
     """
@@ -1802,48 +1762,70 @@ class AgentInsightMonitorListItem(_Model):
     suspension: "_models.AgentInsightSuspension" = rest_field(visibility=["read"])
     """Why the system suspended scheduled generation. Null when the monitor is not suspended.
      Required."""
+    priorities: Optional["_models.AgentInsightPrioritiesRead"] = rest_field(visibility=["read"])
+    """Analysis priorities. Omitted when not configured."""
     updated_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
     """The time when this monitor was last updated. Required."""
 
 
-class AgentInsightMonitorUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Fields that can be updated on an Agent Insights monitor.
+class AgentInsightPriorities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Monitor analysis priorities.
 
-    :ivar enabled: Whether scheduled insight generation is armed for the monitor.
-    :vartype enabled: bool
-    :ivar run_interval_hours: Interval between scheduled insight runs, in hours.
-    :vartype run_interval_hours: float
-    :ivar model_deployment_name: The model deployment to use for analyzing traces. Accepts either
-     the deployment name alone or with the connection name as
-     '{connectionName}/modelDeploymentName'.
-    :vartype model_deployment_name: str
-    :ivar overview_override: Sets the effective user overview, or clears it when explicitly set to
-     null. Omission leaves the overview unchanged. This field cannot be combined with other monitor
-     updates.
-    :vartype overview_override: ~azure.ai.projects.models.AgentInsightsOverviewOverride
+    :ivar categories: Up to 20 distinct normalized category identifiers (128 UTF-8 bytes each).
+     Empty uses defaults. Required.
+    :vartype categories: list[str]
+    :ivar instructions: Analysis guidance, up to 2,000 UTF-8 bytes after trimming. Null or blank
+     removes guidance.
+    :vartype instructions: str
     """
 
-    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether scheduled insight generation is armed for the monitor."""
-    run_interval_hours: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Interval between scheduled insight runs, in hours."""
-    model_deployment_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The model deployment to use for analyzing traces. Accepts either the deployment name alone or
-     with the connection name as '{connectionName}/modelDeploymentName'."""
-    overview_override: Optional["_models.AgentInsightsOverviewOverride"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Sets the effective user overview, or clears it when explicitly set to null. Omission leaves the
-     overview unchanged. This field cannot be combined with other monitor updates."""
+    categories: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Up to 20 distinct normalized category identifiers (128 UTF-8 bytes each). Empty uses defaults.
+     Required."""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Analysis guidance, up to 2,000 UTF-8 bytes after trimming. Null or blank removes guidance."""
 
     @overload
     def __init__(
         self,
         *,
-        enabled: Optional[bool] = None,
-        run_interval_hours: Optional[float] = None,
-        model_deployment_name: Optional[str] = None,
-        overview_override: Optional["_models.AgentInsightsOverviewOverride"] = None,
+        categories: list[str],
+        instructions: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightPrioritiesRead(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Monitor analysis priorities returned by the service.
+
+    :ivar categories: Up to 20 distinct normalized category identifiers. Can include legacy names
+     containing commas. Empty uses defaults. Required.
+    :vartype categories: list[str]
+    :ivar instructions: Analysis guidance. Omitted when unavailable.
+    :vartype instructions: str
+    """
+
+    categories: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Up to 20 distinct normalized category identifiers. Can include legacy names containing commas.
+     Empty uses defaults. Required."""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Analysis guidance. Omitted when unavailable."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        categories: list[str],
+        instructions: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2001,7 +1983,7 @@ class AgentInsightRun(_Model):  # pylint: disable=docstring-keyword-should-match
     :ivar id: Server-assigned unique identifier. Required.
     :vartype id: str
     :ivar inputs: Caller-supplied inputs.
-    :vartype inputs: ~azure.ai.projects.models.AgentInsightRunCreate
+    :vartype inputs: ~azure.ai.projects.models.AgentInsightRunInputs
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.AgentInsightRunResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
@@ -2035,7 +2017,7 @@ class AgentInsightRun(_Model):  # pylint: disable=docstring-keyword-should-match
 
     id: str = rest_field(visibility=["read"])
     """Server-assigned unique identifier. Required."""
-    inputs: Optional["_models.AgentInsightRunCreate"] = rest_field(
+    inputs: Optional["_models.AgentInsightRunInputs"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Caller-supplied inputs."""
@@ -2071,7 +2053,7 @@ class AgentInsightRun(_Model):  # pylint: disable=docstring-keyword-should-match
     def __init__(
         self,
         *,
-        inputs: Optional["_models.AgentInsightRunCreate"] = None,
+        inputs: Optional["_models.AgentInsightRunInputs"] = None,
     ) -> None: ...
 
     @overload
@@ -2085,8 +2067,8 @@ class AgentInsightRun(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class AgentInsightRunCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Inputs used when creating an agent insight run.
+class AgentInsightRunInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Inputs recorded for an Agent Insights run.
 
     :ivar lookback_hours: Optional finite positive number of hours of trace history to analyze, up
      to 2,160. Defaults to 168.
@@ -2170,77 +2152,15 @@ class AgentInsightRunResult(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class AgentInsightsOverview(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The effective overview for an Agent Insights monitor.
+class AgentInsightSummary(_Model):
+    """Service-generated agent summary.
 
-    :ivar content: The overview content. Required.
-    :vartype content: str
-    :ivar source: Where the effective overview came from. Required. Known values are: "generated"
-     and "user_override".
-    :vartype source: str or ~azure.ai.projects.models.AgentInsightOverviewSource
-    :ivar updated_at: The time when this overview was last updated. Required.
-    :vartype updated_at: ~datetime.datetime
+    :ivar markdown: Summary in Markdown. Required.
+    :vartype markdown: str
     """
 
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The overview content. Required."""
-    source: Union[str, "_models.AgentInsightOverviewSource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Where the effective overview came from. Required. Known values are: \"generated\" and
-     \"user_override\"."""
-    updated_at: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
-    )
-    """The time when this overview was last updated. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: str,
-        source: Union[str, "_models.AgentInsightOverviewSource"],
-        updated_at: datetime.datetime,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AgentInsightsOverviewOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A user-provided overview that becomes effective immediately and seeds the next generation.
-
-    :ivar content: The nonblank overview content, limited to 64 KiB when encoded as UTF-8.
-     Required.
-    :vartype content: str
-    """
-
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The nonblank overview content, limited to 64 KiB when encoded as UTF-8. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+    markdown: str = rest_field(visibility=["read"])
+    """Summary in Markdown. Required."""
 
 
 class AgentInsightSuspension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -2318,38 +2238,6 @@ class AgentInsightTokenUsage(_Model):  # pylint: disable=docstring-keyword-shoul
         output_tokens: int,
         total_tokens: int,
         cached_tokens: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AgentInsightUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Fields that can be updated on an agent insight.
-
-    :ivar status: The lifecycle status to apply to the insight. Known values are: "active",
-     "resolved", and "ignored".
-    :vartype status: str or ~azure.ai.projects.models.AgentInsightStatus
-    """
-
-    status: Optional[Union[str, "_models.AgentInsightStatus"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The lifecycle status to apply to the insight. Known values are: \"active\", \"resolved\", and
-     \"ignored\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "_models.AgentInsightStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -8951,25 +8839,28 @@ class DatasetEvaluatorGenerationJobSource(
 
 
 class DatasetReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Reference to a Dataset whose concrete version has already been resolved.
+    """Reference to a Foundry Dataset in the current project. Consuming operations define supported
+    Dataset kinds and resolution behavior.
 
     :ivar name: Dataset name. Required.
     :vartype name: str
-    :ivar version: Concrete Dataset version. Required.
+    :ivar version: Optional Dataset version. Omit to select latest when the consuming operation
+     resolves the reference.
     :vartype version: str
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Dataset name. Required."""
-    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Concrete Dataset version. Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional Dataset version. Omit to select latest when the consuming operation resolves the
+     reference."""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
-        version: str,
+        version: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -10670,7 +10561,7 @@ class EvaluatorGenerationArtifacts(_Model):  # pylint: disable=docstring-keyword
      version-aligned to ``EvaluatorVersion.version``) holding all artifacts produced by the
      generation pipeline. Each row in the JSONL carries a ``kind`` field discriminating its content
      (e.g. ``spec``, ``tools``, ``context``). Required.
-    :vartype dataset: ~azure.ai.projects.models.DatasetReference
+    :vartype dataset: ~azure.ai.projects.models.VersionedDatasetReference
     :ivar kinds: The kinds of rows present in ``dataset``. Always contains ``"spec"`` (the
      generated evaluation specification, a Markdown document describing what the evaluator
      measures). May additionally contain ``"tools"`` (when the generation pipeline produced or
@@ -10679,7 +10570,9 @@ class EvaluatorGenerationArtifacts(_Model):  # pylint: disable=docstring-keyword
     :vartype kinds: list[str]
     """
 
-    dataset: "_models.DatasetReference" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    dataset: "_models.VersionedDatasetReference" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reference to the single Foundry Dataset (one combined JSONL file, version-aligned to
      ``EvaluatorVersion.version``) holding all artifacts produced by the generation pipeline. Each
      row in the JSONL carries a ``kind`` field discriminating its content (e.g. ``spec``, ``tools``,
@@ -10695,7 +10588,7 @@ class EvaluatorGenerationArtifacts(_Model):  # pylint: disable=docstring-keyword
     def __init__(
         self,
         *,
-        dataset: "_models.DatasetReference",
+        dataset: "_models.VersionedDatasetReference",
         kinds: list[str],
     ) -> None: ...
 
@@ -32735,7 +32628,7 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
     :ivar recipient_dataset: Same-project CSV/JSON/JSONL uri_file, exclusive with recipients.
      Omitted version pins latest per preparation. Limits: 1-1,000,000 rows, 256 MiB decoded/file, 1
      MiB/row.
-    :vartype recipient_dataset: ~azure.ai.projects.models.TelephonyCampaignDatasetReference
+    :vartype recipient_dataset: ~azure.ai.projects.models.DatasetReference
     :ivar schedule: Dispatch schedule; omission equals ImmediateSchedule. Every mode waits for
      successful preparation, then follows its schedule and available capacity.
     :vartype schedule: ~azure.ai.projects.models.TelephonyCampaignSchedule
@@ -32781,7 +32674,7 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
     recipients: Optional[list["_models.TelephonyRecipient"]] = rest_field(visibility=["create"])
     """1-100 recipients, exclusive with recipient_dataset. The whole UTF-8 request is limited to 1
      MiB. Omitted from reads; retain the submission for row correlation."""
-    recipient_dataset: Optional["_models.TelephonyCampaignDatasetReference"] = rest_field(
+    recipient_dataset: Optional["_models.DatasetReference"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Same-project CSV/JSON/JSONL uri_file, exclusive with recipients. Omitted version pins latest
@@ -32830,45 +32723,9 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
         connection_name: str,
         source: "_models.TelephonyAddress",
         recipients: Optional[list["_models.TelephonyRecipient"]] = None,
-        recipient_dataset: Optional["_models.TelephonyCampaignDatasetReference"] = None,
+        recipient_dataset: Optional["_models.DatasetReference"] = None,
         schedule: Optional["_models.TelephonyCampaignSchedule"] = None,
         retry_policy: Optional["_models.TelephonyOutboundRetryPolicy"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TelephonyCampaignDatasetReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Reference to a Foundry Dataset in the current project. Consuming operations define supported
-    Dataset kinds and resolution behavior.
-
-    :ivar name: Dataset name. Required.
-    :vartype name: str
-    :ivar version: Optional Dataset version. Omit to select latest when the consuming operation
-     resolves the reference.
-    :vartype version: str
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Dataset name. Required."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional Dataset version. Omit to select latest when the consuming operation resolves the
-     reference."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        version: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -35333,6 +35190,39 @@ class UserProfileMemoryItem(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = MemoryItemKind.USER_PROFILE  # type: ignore
+
+
+class VersionedDatasetReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference to a Dataset whose concrete version has already been resolved.
+
+    :ivar name: Dataset name. Required.
+    :vartype name: str
+    :ivar version: Concrete Dataset version. Required.
+    :vartype version: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Dataset name. Required."""
+    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Concrete Dataset version. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class VersionIndicator(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

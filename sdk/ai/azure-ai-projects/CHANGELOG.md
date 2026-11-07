@@ -4,6 +4,7 @@
 
 ### Features Added
 
+* Agent Insights monitor APIs are now GA, available through `.agent_insight_monitors` without a preview opt-in header. Custom run pollers continue to expose the run ID through `details`.
 * Added preview `.beta.voice_agents.live.connect()` and `VoiceAgentLiveDefinition` for synchronous and asynchronous GPT Live sessions, with typed client and server events, session updates, text and audio input, and Responses backend function-tool support.
 * Added Live delegation models for Responses backends, application-managed work, and same-project prompt agents: `VoiceAgentLiveResponsesDelegation`, `VoiceAgentLiveClientDelegation`, and `VoiceAgentLiveManagedAgentDelegation`.
 * Added `.beta.voice_agents.live_conversations` for listing, retrieving, and deleting stored Live conversations, retrieving conversation items, and retrieving or downloading item-level and conversation-level audio.
@@ -27,12 +28,16 @@ All breaking changes affect preview APIs.
 
 Breaking changes in beta methods:
 
+* Moved `.beta.agent_insight_monitors` operations to the top-level `.agent_insight_monitors` sub-client.
+* Agent Insights monitor `create()`, `update()`, `begin_create_run()`, and `update_insight()` now accept keyword parameters or JSON/binary bodies instead of dedicated preview request models. Use `lookback_hours` for run inputs.
 * Argument `telephony_binding` in `.beta.voice_agents.telephony.create_binding()` renamed to `binding`; the typed body now accepts `TelephonyBinding` instead of `CreateTelephonyBindingRequest`.
 * Argument `body` in `.beta.voice_agents.telephony.create_call_job()` renamed to `job`; the typed body now accepts `TelephonyCallJobCreate` instead of `CreateTelephonyCallJobRequest`.
 * Removed the `status` filter from `.beta.voice_agents.telephony.list_bindings()`.
 
 Breaking changes in beta classes:
 
+* Class `BetaAgentInsightMonitorsOperations` renamed to `AgentInsightMonitorsOperations`.
+* Removed `AgentInsightMonitorCreate`, `AgentInsightMonitorUpdate`, `AgentInsightRunCreate`, and `AgentInsightUpdate`; use the corresponding operation's keyword parameters instead.
 * Removed `CreateTelephonyBindingRequest`, `CreateTeamsPhoneExtensibilityTelephonyBindingRequest`, and `CreateTwilioTelephonyBindingRequest`. Use `TelephonyBinding`, `TeamsPhoneExtensibilityTelephonyBinding`, and `TwilioTelephonyBinding`, respectively.
 * Class `CreateTelephonyCallJobRequest` renamed to `TelephonyCallJobCreate`.
 * Removed `TelephonyOutboundDestination` and `TelephonyOutboundDestinationType`; use `TelephonyAddress` and `TelephonyAddressType`. The `source` and `destination` properties on `TelephonyCallJobCreate` and `TelephonyCallJob` now use `TelephonyAddress`; `source` no longer accepts a plain string.
@@ -50,6 +55,7 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
+* Agent Insights samples demonstrate GA analysis priorities, instructions, and plural status filters.
 * Added Live voice-agent samples under `samples/agents/voice/` for session lifecycle, text and audio conversations, local function tools, and same-project managed-agent delegation.
 * Added `sample_voice_agent_live_read_conversation.py` demonstrating stored Live conversation, transcript, and audio retrieval, with an optional temporary greeting session.
 * Added `sample_voice_agent_read_generated_audio.py` demonstrating retrieval of generated, unheard audio from an interrupted Realtime reply.
