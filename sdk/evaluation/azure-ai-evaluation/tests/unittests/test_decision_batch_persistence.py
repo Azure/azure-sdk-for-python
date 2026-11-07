@@ -506,6 +506,7 @@ class TestDecisionBatchPersistence:
     def test_semantic_failure_retains_measured_usage_and_hashes(self, batch_client, tmp_path, status):
         class Runner:
             deployment = "Decision-1"
+            decision_protocol = "microsoft"
 
             async def __call__(self, **kwargs):
                 return payload(status)
@@ -540,6 +541,7 @@ class TestDecisionBatchPersistence:
     def test_success_and_skip_are_not_stamped_as_errors(self, batch_client, tmp_path, status, expected):
         class Runner:
             deployment = "Decision-1"
+            decision_protocol = "microsoft"
 
             async def __call__(self, **kwargs):
                 return payload(status)
@@ -659,7 +661,9 @@ class TestDecisionBatchPersistence:
             assert "total_tokens" not in result["properties"] and "prompt_tokens" not in result["properties"]
         else:
             assert "usage" not in result["sample"] and "model" not in result["sample"]
-            assert result["properties"] == {"decision_model": {"deployment": "Decision-1"}}
+            assert result["properties"] == {
+                "decision_model": {"deployment": "Decision-1", "decision_protocol": "microsoft"}
+            }
         if "cancel" in case:
             assert result["sample"]["error"]["blame"] == "UserError"
         else:

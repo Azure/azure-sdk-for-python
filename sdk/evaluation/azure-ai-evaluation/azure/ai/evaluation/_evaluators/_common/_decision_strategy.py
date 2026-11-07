@@ -8,17 +8,135 @@ An evaluator supplies its questions, scoring policy and error target; this strat
 status gating, score mapping, provenance and result shape.
 """
 
+import asyncio
 import hashlib
 import json
+import time
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ._base_model_eval import not_applicable_result
-from ._model_runners import DecisionModelRunner, validate_noul_answer, validate_score_answer, validated_execution
+from ._decision_protocols import DECISION_PROTOCOLS, REFUSAL
+from ._model_runners import (
+    _DEFAULT_PROTOCOL,
+    CANCELLED_BY_CALLBACK,
+    DECISION_ERROR_KINDS,
+    MODEL_REFUSAL,
+    DecisionModelRunner,
+    _diagnostic,
+    validate_noul_answer,
+    validate_score_answer,
+    validated_execution,
+)
 
 STATUS_CUTOFF = 0.5
+_METRIC_PREFIX = "azure.ai.evaluation.decision."
+# The result keys of this package's and the Microsoft Foundry catalog's Decision evaluators. Evaluation metrics report
+# any other result key as "custom", so a customer-defined evaluator name never becomes a metric dimension.
+_METRIC_NAMES = frozenset(
+    {
+        "coherence",
+        "customer_satisfaction",
+        "deflection_rate",
+        "fluency",
+        "groundedness",
+        "intent_resolution",
+        "output_quality",
+        "relevance",
+        "response_completeness",
+        "retrieval",
+        "similarity",
+        "task_adherence",
+        "task_completion",
+        "tool_call_accuracy",
+        "tool_call_success",
+        "tool_input_accuracy",
+        "tool_output_utilization",
+        "tool_selection",
+        "tool_use_quality",
+    }
+)
 T = TypeVar("T")
+
+
+class DecisionRefusalError(EvaluationException):
+    """The decision model declined to answer a question that the evaluation reads.
+
+    A refusal is not a low probability, a zero score or a skip: the evaluation fails without a score. The model's
+    content policy decided about the evaluated content, so the error is classified like a chat judge's
+    content-filter refusal.
+    """
+
+    ERROR_KIND = MODEL_REFUSAL
+
+    def __init__(self, question_id: str, error_target: ErrorTarget) -> None:
+        self.question_id = question_id
+        message = f"The decision model refused to answer question '{question_id}'; no score is available."
+        super().__init__(
+            message=message,
+            internal_message="The decision model refused to answer an evaluation question.",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=error_target,
+        )
+
+    def __reduce__(self):
+        # Copies and pickles rebuild from the constructor's arguments, then restore attached metadata.
+        return type(self), (self.question_id, self.target), self.__dict__
+
+
+def _error_kind(error: EvaluationException) -> str:
+    """Return the bounded ``decision_model.error_kind`` of a failed evaluation, or ``none`` when it has none."""
+    if isinstance(error, DecisionRefusalError):
+        return MODEL_REFUSAL
+    properties = getattr(error, "properties", None)
+    native = properties.get("decision_model") if isinstance(properties, dict) else None
+    kind = native.get("error_kind") if isinstance(native, dict) else None
+    return kind if isinstance(kind, str) and kind in DECISION_ERROR_KINDS else "none"
+
+
+def _protocol_name(runner: Any) -> str:
+    """Return the runner's protocol name: the default for a runner without one, ``unknown`` if unrecognized."""
+    name = getattr(runner, "decision_protocol", _DEFAULT_PROTOCOL)
+    return name if isinstance(name, str) and name in DECISION_PROTOCOLS else "unknown"
+
+
+def _cancelled_by_callback(error: EvaluationException) -> bool:
+    """Return whether the runner marked the error as a cancellation by the cancellation callback."""
+    return getattr(error, CANCELLED_BY_CALLBACK, False) is True
+
+
+def _record_evaluation(
+    runner: Any, result_key: Any, outcome: str, blame: str, error_kind: str, elapsed_ms: float
+) -> None:
+    """Count one Decision evaluation and record its duration when OpenTelemetry is installed.
+
+    Instruments are looked up per call, like the request metrics, so strategies stay picklable. Attributes are
+    bounded: the protocol name, the result key of a known evaluator or ``custom``, and fixed outcome, blame and
+    error kind values. A metric failure, including a broken OpenTelemetry installation, is logged and never changes
+    the evaluation result or exception.
+    """
+    try:
+        from opentelemetry.metrics import get_meter  # pylint: disable=import-outside-toplevel
+
+        attributes = {
+            "backend": "decision",
+            "protocol": _protocol_name(runner),
+            "metric": result_key if isinstance(result_key, str) and result_key in _METRIC_NAMES else "custom",
+            "outcome": outcome,
+            "blame": blame,
+            "error_kind": error_kind,
+        }
+        meter = get_meter("azure.ai.evaluation.decision")
+        meter.create_counter(_METRIC_PREFIX + "evaluations").add(1, attributes=attributes)
+        meter.create_histogram(_METRIC_PREFIX + "evaluation.duration", unit="ms").record(
+            elapsed_ms, attributes=attributes
+        )
+    except ImportError:
+        return
+    except Exception:  # pylint: disable=broad-except
+        _diagnostic("Decision evaluation metric sink failed; the evaluation result is unchanged.")
 
 
 def _checked_value(validate: Callable[..., T], error_target: ErrorTarget, *args: Any) -> T:
@@ -35,18 +153,26 @@ def _checked_value(validate: Callable[..., T], error_target: ErrorTarget, *args:
         ) from None
 
 
+def _read_answer(response: Dict[str, Any], question_id: str, error_target: ErrorTarget) -> Dict[str, Any]:
+    answer = response["answers"][question_id]
+    if isinstance(answer, dict) and answer.get("type") == REFUSAL:
+        raise DecisionRefusalError(question_id, error_target)
+    return answer
+
+
 def decision_probability(
     response: Dict[str, Any], question_id: str, error_target: ErrorTarget = ErrorTarget.EVALUATE
 ) -> float:
     """Read and validate the probability of a binary decision answer."""
-    return _checked_value(validate_noul_answer, error_target, response["answers"][question_id])
+    return _checked_value(validate_noul_answer, error_target, _read_answer(response, question_id, error_target))
 
 
 def decision_distribution(
     response: Dict[str, Any], question_id: str, levels: int, error_target: ErrorTarget = ErrorTarget.EVALUATE
 ) -> List[float]:
     """Read and validate the distribution of a scored decision answer."""
-    return _checked_value(validate_score_answer, error_target, response["answers"][question_id], levels)
+    answer = _read_answer(response, question_id, error_target)
+    return _checked_value(validate_score_answer, error_target, answer, levels)
 
 
 def decision_skip_reason(
@@ -173,18 +299,44 @@ class DecisionEvaluationStrategy:
         self.extra_properties = extra_properties
 
     async def evaluate(self, eval_input: Dict[str, Any]) -> Dict[str, Any]:
-        response = await self.runner(state=dict(eval_input), questions=self.questions, timeout=self.timeout)
-        result = self.parse(response, eval_input)
-        tokens = decision_token_counts(response)
-        result.update(
-            {
-                f"{self.result_key}_prompt_tokens": tokens["input_token_count"],
-                f"{self.result_key}_completion_tokens": tokens["output_token_count"],
-                f"{self.result_key}_total_tokens": tokens["total_token_count"],
-                f"{self.result_key}_model": tokens["model_id"],
-            }
-        )
-        return result
+        """Request and interpret one Decision evaluation, recording its outcome and duration as metrics.
+
+        Each call counts once, so a conversation scored turn by turn counts each turn. Outcomes are ``completed``,
+        ``skipped`` (not applicable), ``error`` with the error's blame and bounded ``error_kind``, or ``cancelled``
+        by ``asyncio`` or the cancellation callback. ``metric`` is the evaluator's result key for this package's and
+        the Microsoft Foundry catalog's evaluators and ``custom`` for any other.
+        """
+        started = time.monotonic()
+        outcome, blame, error_kind = "error", "system", "none"
+        try:
+            response = await self.runner(state=dict(eval_input), questions=self.questions, timeout=self.timeout)
+            result = self.parse(response, eval_input)
+            tokens = decision_token_counts(response)
+            result.update(
+                {
+                    f"{self.result_key}_prompt_tokens": tokens["input_token_count"],
+                    f"{self.result_key}_completion_tokens": tokens["output_token_count"],
+                    f"{self.result_key}_total_tokens": tokens["total_token_count"],
+                    f"{self.result_key}_model": tokens["model_id"],
+                }
+            )
+            outcome = "skipped" if result.get(f"{self.result_key}_status") == "skipped" else "completed"
+            blame = "none"
+            return result
+        except asyncio.CancelledError:
+            outcome, blame = "cancelled", "none"
+            raise
+        except EvaluationException as exc:
+            if _cancelled_by_callback(exc):
+                outcome, blame = "cancelled", "none"
+            else:
+                blame = "user" if exc.blame == ErrorBlame.USER_ERROR else "system"
+                error_kind = _error_kind(exc)
+            raise
+        finally:
+            _record_evaluation(
+                self.runner, self.result_key, outcome, blame, error_kind, (time.monotonic() - started) * 1000
+            )
 
     def parse(self, response: Dict[str, Any], eval_input: Dict[str, Any]) -> Dict[str, Any]:
         """Interpret a validated response without making a request.
@@ -196,6 +348,7 @@ class DecisionEvaluationStrategy:
         properties = self.extra_properties(eval_input) if self.extra_properties else {}
         properties["decision_model"] = {
             "deployment": self.runner.deployment,
+            "decision_protocol": _protocol_name(self.runner),
             "model": response["model"],
             "rubric_hash": _digest(self.questions[key]),
             "status_rubric_hash": _digest(self.questions["status"]),
@@ -203,6 +356,8 @@ class DecisionEvaluationStrategy:
             "reason_type": "templated",
         }
         execution = validated_execution(response.get("_decision_execution"))
+        if response.get("usage_details"):
+            properties["decision_model"]["usage_details"] = response["usage_details"]
         if execution is not None:
             properties["decision_model"]["execution"] = execution
         tokens = decision_token_counts(response)
@@ -231,6 +386,8 @@ class DecisionEvaluationStrategy:
                 {name: value for name, value in response["answers"][key].items() if name != "legend"},
             )
         except EvaluationException as exc:
+            if isinstance(exc, DecisionRefusalError):
+                properties["decision_model"]["error_kind"] = DecisionRefusalError.ERROR_KIND
             exc.properties = properties
             raise
         properties["decision_model"].update(details)

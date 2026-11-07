@@ -22,7 +22,13 @@ from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExec
 from ..._evaluate._utils import _has_aggregator
 from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
 from ..._exceptions import EvaluationException
-from ..._evaluators._common._model_runners import DECISION_ERROR_KINDS, _is_finite_number, validated_execution
+from ..._evaluators._common._decision_protocols import DECISION_PROTOCOLS
+from ..._evaluators._common._model_runners import (
+    DECISION_ERROR_KINDS,
+    _is_finite_number,
+    usage_details,
+    validated_execution,
+)
 
 from .._utils import get_int_env_var as get_int
 
@@ -55,6 +61,7 @@ def _decision_error_metadata(exception: EvaluationException) -> Dict[str, Any]:
         for key, accepted in (
             ("backend", ("foundry_decision", "system_one")),
             ("protocol", ("shared_sdk", "system_one")),
+            ("decision_protocol", tuple(DECISION_PROTOCOLS)),
             ("result_usage_scope", ("reported_attempts_only", "final_response_only", "reported_turns_only")),
             ("error_kind", DECISION_ERROR_KINDS),
         ):
@@ -63,6 +70,9 @@ def _decision_error_metadata(exception: EvaluationException) -> Dict[str, Any]:
                 provenance[key] = value
         if isinstance(native.get("usage_available"), bool):
             provenance["usage_available"] = native["usage_available"]
+        details = usage_details(native.get("usage_details"))
+        if details:
+            provenance["usage_details"] = details
         execution = validated_execution(native.get("execution"))
         if execution is not None:
             provenance["execution"] = execution
