@@ -1151,6 +1151,7 @@ class TestMultiEndpointRouting(unittest.TestCase):
                 "APPLICATIONINSIGHTS_SDKSTATS_DISABLED": "true",
                 "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED": "true",
                 "APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES": "multi_endpoint_routing",
+                "APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE": "",
             },
         )
         environment.start()
@@ -1337,6 +1338,66 @@ class TestMultiEndpointRouting(unittest.TestCase):
         for request in requests[1::2]:
             self.assertEqual(request.headers["Authorization"], "Bearer test-token")
         credential.get_token.assert_called_once()
+
+    def test_routed_aad_audience_is_independent_of_host_and_frozen(self):
+        for audience, scope in (
+            ("", "https://monitor.azure.com//.default"),
+            (" \t ", "https://monitor.azure.com//.default"),
+            (" https://monitor.azure.cn/ ", "https://monitor.azure.cn//.default"),
+            ("https://monitor.azure.us", "https://monitor.azure.us/.default"),
+        ):
+            with self.subTest(audience=audience), mock.patch.dict(
+                os.environ, {"APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE": audience}
+            ):
+                credential = mock.Mock(spec=["get_token"])
+                credential.get_token.return_value = AccessToken("test-token", int(time.time()) + 3600)
+                exporter = self._exporter(
+                    credential=credential,
+                    connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+                    "IngestionEndpoint=https://host.example/;AadAudience=https://host-audience.example/",
+                )
+                os.environ["APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE"] = "https://changed.example/"
+                self.transport.send.reset_mock()
+                records = [
+                    self._record(),
+                    self._record(auth="aad"),
+                    self._record(endpoint="https://two.example/", auth="aad"),
+                ]
+                self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
+                self.assertEqual(credential.get_token.call_count, 2)
+                for call in credential.get_token.call_args_list:
+                    self.assertEqual(call.args, (scope,))
+                requests = [call.args[0] for call in self.transport.send.call_args_list]
+                self.assertNotIn("Authorization", requests[0].headers)
+                self.assertTrue(all("Authorization" in request.headers for request in requests[1:]))
+
+    def test_single_endpoint_audience_and_credential_ignore_routing_configuration(self):
+        credential = mock.Mock(spec=["get_token"])
+        credential.get_token.return_value = AccessToken("test-token", int(time.time()) + 3600)
+        with mock.patch.dict(
+            os.environ, {"APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE": "https://monitor.azure.cn/"}
+        ):
+            exporter = self._exporter(
+                routing=False,
+                credential=credential,
+                connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+                "IngestionEndpoint=https://host.example/;AadAudience=https://host-audience.example/",
+            )
+        self.assertEqual(exporter.export([self._record(), self._record(auth="aad")]), LogRecordExportResult.SUCCESS)
+        self.transport.send.assert_called_once()
+        self.assertIn("Authorization", self.transport.send.call_args.args[0].headers)
+        credential.get_token.assert_called_once_with("https://host-audience.example//.default")
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
+    def test_routing_uses_environment_credential_only_for_aad(self, managed_identity):
+        managed_identity.return_value.get_token.return_value = AccessToken("test-token", int(time.time()) + 3600)
+        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"}):
+            exporter = self._exporter()
+        self.assertEqual(exporter.export([self._record(), self._record(auth="aad")]), LogRecordExportResult.SUCCESS)
+        requests = [call.args[0] for call in self.transport.send.call_args_list]
+        self.assertNotIn("Authorization", requests[0].headers)
+        self.assertIn("Authorization", requests[1].headers)
+        managed_identity.assert_called_once_with()
 
     def test_missing_aad_credential_does_not_block_other_routes(self):
         exporter = self._exporter(credential=None)
@@ -1591,6 +1652,81 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.transport.send.assert_called_once()
         route_exporter = next(iter(exporter._route_exporters.values()))
         self.assertEqual(route_exporter.client._config.host, "https://one.example")
+
+    def test_routed_aad_redirect_boundaries(self):
+        credential = mock.Mock(spec=["get_token"])
+        credential.get_token.return_value = AccessToken("test-token", int(time.time()) + 3600)
+        for endpoint, location, allowed in (
+            ("https://one.example/", "https://one.example:443/v2/track", True),
+            ("https://one.example:8443/", "https://one.example:8443/v2/track", True),
+            (
+                "https://eastus.in.applicationinsights.azure.com/",
+                "https://westus.in.applicationinsights.azure.com/v2/track",
+                True,
+            ),
+            ("https://one.example/", "https://one.example:8443/", False),
+            ("https://one.example/", "https://one.example:0/", False),
+            ("https://one.example/", "https://other.example/", False),
+            ("https://one.example/", "https://user:redirect-secret@one.example/", False),
+            ("https://one.example/", "https://one.example:invalid/", False),
+            ("https://[::1]/", "https://[::2]/", False),
+            ("https://one.example/", "http://one.example/", False),
+            (
+                "https://eastus.in.applicationinsights.azure.com:8443/",
+                "https://westus.in.applicationinsights.azure.com/",
+                False,
+            ),
+            (
+                "https://eastus.in.applicationinsights.azure.com/",
+                "https://westus.in.applicationinsights.azure.com:8443/",
+                False,
+            ),
+            ("https://eastus.in.applicationinsights.azure.com/", "https://dc.applicationinsights.azure.cn/", False),
+            (
+                "https://eastus.in.applicationinsights.azure.com/",
+                "https://applicationinsights.azure.com.evil.example/",
+                False,
+            ),
+        ):
+            with self.subTest(endpoint=endpoint, location=location):
+                exporter = self._exporter(credential=credential)
+                self.transport.send.reset_mock()
+                self.transport.send.side_effect = lambda request, **kwargs: (
+                    _Response(request, 307, {"location": location})
+                    if self.transport.send.call_count == 1
+                    else _Response(request)
+                )
+                if allowed:
+                    result = exporter.export([self._record(endpoint=endpoint, auth="aad")])
+                    self.assertEqual(result, LogRecordExportResult.SUCCESS)
+                    self.assertEqual(self.transport.send.call_count, 2)
+                    self.assertEqual(self.transport.send.call_args.args[0].url, location)
+                    self.transport.send.reset_mock()
+                    self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+                    self.assertEqual(
+                        exporter.export([self._record(endpoint=endpoint, auth="aad")]), LogRecordExportResult.SUCCESS
+                    )
+                    self.transport.send.assert_called_once()
+                    self.assertEqual(self.transport.send.call_args.args[0].url, location)
+                else:
+                    with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as logs:
+                        result = exporter.export([self._record(endpoint=endpoint, auth="aad")])
+                    self.assertEqual(result, LogRecordExportResult.FAILURE)
+                    self.transport.send.assert_called_once()
+                    self.assertNotIn("redirect-secret", "\n".join(logs.output))
+                    route_exporter = next(iter(exporter._route_exporters.values()))
+                    self.assertEqual(route_exporter.client._config.host, endpoint.rstrip("/"))
+
+    def test_single_endpoint_redirect_keeps_legacy_path_handling(self):
+        exporter = self._exporter(routing=False)
+        self.transport.send.side_effect = lambda request, **kwargs: (
+            _Response(request, 307, {"location": "https://host.example/v2/track"})
+            if self.transport.send.call_count == 1
+            else _Response(request)
+        )
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        self.assertEqual(self.transport.send.call_count, 2)
+        self.assertEqual(self.transport.send.call_args.args[0].url, "https://host.example/v2.1/track")
 
     def test_single_connection_string_redirect_preserves_legacy_storage_lease(self):
         exporter = self._exporter(
