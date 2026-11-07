@@ -7,7 +7,8 @@ json file.
 .DESCRIPTION
 Given an artifact staging directory and the artifacts list, loop through all artifacts
 that docs that aren't skipping docs creation and add the namespace to the PackageInfo
-json file. This is done using the .whl file from the build.
+json file. This is done using the .whl files from the build, combining their
+namespaces without duplicates.
 
 .PARAMETER ArtifactStagingDirectory
 The root directory of the staged artifacts. The PackageInfo files will be in the
@@ -94,14 +95,14 @@ foreach($packageInfoFile in $artifacts) {
     # From the $packageInfo piece together the path to the javadoc jar file
     $WhlDir = Join-Path $ArtifactStagingDirectory $packageInfo.Name
     $WhlName = $packageInfo.Name.Replace("-","_")
-    $WhlFile = Get-ChildItem -Path $WhlDir -File -Filter "$whlName-$version*.whl"
+    $WhlFiles = @(Get-ChildItem -Path $WhlDir -File -Filter "$whlName-$version*.whl")
 
-    if (!(Test-Path $WhlFile -PathType Leaf)) {
+    if ($WhlFiles.Count -eq 0) {
         LogError "Whl file for, $($packageInfo.Name), was not found in $WhlDir. Please ensure that a .whl file is being produced for the library."
         $foundError = $true
         continue
     }
-    $namespaces = Get-NamespacesFromWhlFile $packageInfo.Name $version -PythonWhlFile $WhlFile
+    $namespaces = Get-NamespacesFromWhlFile $packageInfo.Name $version -PythonWhlFile $WhlFiles.FullName
     if ($namespaces.Count -gt 0) {
         Write-Host "Adding/Updating Namespaces property with the following namespaces:"
         $namespaces | Write-Host
