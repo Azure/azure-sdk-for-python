@@ -41,8 +41,8 @@ if TYPE_CHECKING:
 class AdministratorProperties(TypedDict, total=False):
     """The local administrator login properties.
 
-    :ivar user_name: The administrator user name.
-    :vartype user_name: str
+    :ivar userName: The administrator user name.
+    :vartype userName: str
     :ivar password: The administrator password.
     :vartype password: str
     """
@@ -54,10 +54,10 @@ class AdministratorProperties(TypedDict, total=False):
 
 
 class AuthConfigProperties(TypedDict, total=False):
-    """The authentication configuration for the Mongo cluster.
+    """The authentication configuration for the DocumentDB cluster.
 
-    :ivar allowed_modes: Allowed authentication modes for data access on the cluster.
-    :vartype allowed_modes: list[Union[str, "AuthenticationMode"]]
+    :ivar allowedModes: Allowed authentication modes for data access on the cluster.
+    :vartype allowedModes: list[Union[str, "AuthenticationMode"]]
     """
 
     allowedModes: list[Union[str, "AuthenticationMode"]]
@@ -68,8 +68,8 @@ class BackupProperties(TypedDict, total=False):
     """The backup properties of the cluster. This includes the earliest restore time and retention
     settings.
 
-    :ivar earliest_restore_time: Earliest restore timestamp in UTC ISO8601 format.
-    :vartype earliest_restore_time: str
+    :ivar earliestRestoreTime: Earliest restore timestamp in UTC ISO8601 format.
+    :vartype earliestRestoreTime: str
     """
 
     earliestRestoreTime: str
@@ -108,10 +108,10 @@ class ComputeProperties(TypedDict, total=False):
 class CustomerManagedKeyEncryptionProperties(TypedDict, total=False):
     """Customer managed key encryption settings.
 
-    :ivar key_encryption_key_identity: The identity used to access the key encryption key.
-    :vartype key_encryption_key_identity: "KeyEncryptionKeyIdentity"
-    :ivar key_encryption_key_url: The URI of the key vault key used for encryption.
-    :vartype key_encryption_key_url: str
+    :ivar keyEncryptionKeyIdentity: The identity used to access the key encryption key.
+    :vartype keyEncryptionKeyIdentity: "KeyEncryptionKeyIdentity"
+    :ivar keyEncryptionKeyUrl: The URI of the key vault key used for encryption.
+    :vartype keyEncryptionKeyUrl: str
     """
 
     keyEncryptionKeyIdentity: "KeyEncryptionKeyIdentity"
@@ -149,10 +149,10 @@ class DatabaseRole(TypedDict, total=False):
 
 
 class EncryptionProperties(TypedDict, total=False):
-    """The encryption configuration for the mongo cluster.
+    """The encryption configuration for the DocumentDB cluster.
 
-    :ivar customer_managed_key_encryption: Customer managed key encryption settings.
-    :vartype customer_managed_key_encryption: "CustomerManagedKeyEncryptionProperties"
+    :ivar customerManagedKeyEncryption: Customer managed key encryption settings.
+    :vartype customerManagedKeyEncryption: "CustomerManagedKeyEncryptionProperties"
     """
 
     customerManagedKeyEncryption: "CustomerManagedKeyEncryptionProperties"
@@ -178,9 +178,9 @@ class EntraIdentityProvider(TypedDict, total=False):
 class EntraIdentityProviderProperties(TypedDict, total=False):
     """Microsoft Entra ID provider properties.
 
-    :ivar principal_type: The principal type of the user. Required. Known values are: "user" and
+    :ivar principalType: The principal type of the user. Required. Known values are: "user" and
      "servicePrincipal".
-    :vartype principal_type: Union[str, "EntraPrincipalType"]
+    :vartype principalType: Union[str, "EntraPrincipalType"]
     """
 
     principalType: Required[Union[str, "EntraPrincipalType"]]
@@ -198,9 +198,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -226,14 +226,14 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
 class FirewallRule(ProxyResource):
-    """Represents a mongo cluster firewall rule.
+    """Represents a DocumentDB cluster firewall rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -243,9 +243,9 @@ class FirewallRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "FirewallRuleProperties"
     """
@@ -255,34 +255,34 @@ class FirewallRule(ProxyResource):
 
 
 class FirewallRuleProperties(TypedDict, total=False):
-    """The properties of a mongo cluster firewall rule.
+    """The properties of a DocumentDB cluster firewall rule.
 
-    :ivar provisioning_state: The provisioning state of the firewall rule. Known values are:
+    :ivar provisioningState: The provisioning state of the firewall rule. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", "Updating", and "Dropping".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar start_ip_address: The start IP address of the mongo cluster firewall rule. Must be IPv4
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar startIpAddress: The start IP address of the DocumentDB cluster firewall rule. Must be
+     IPv4 format. Required.
+    :vartype startIpAddress: str
+    :ivar endIpAddress: The end IP address of the DocumentDB cluster firewall rule. Must be IPv4
      format. Required.
-    :vartype start_ip_address: str
-    :ivar end_ip_address: The end IP address of the mongo cluster firewall rule. Must be IPv4
-     format. Required.
-    :vartype end_ip_address: str
+    :vartype endIpAddress: str
     """
 
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the firewall rule. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"InProgress\", \"Updating\", and \"Dropping\"."""
     startIpAddress: Required[str]
-    """The start IP address of the mongo cluster firewall rule. Must be IPv4 format. Required."""
+    """The start IP address of the DocumentDB cluster firewall rule. Must be IPv4 format. Required."""
     endIpAddress: Required[str]
-    """The end IP address of the mongo cluster firewall rule. Must be IPv4 format. Required."""
+    """The end IP address of the DocumentDB cluster firewall rule. Must be IPv4 format. Required."""
 
 
 class HighAvailabilityProperties(TypedDict, total=False):
     """The high availability properties of the cluster.
 
-    :ivar target_mode: The target high availability mode requested for the cluster. Known values
+    :ivar targetMode: The target high availability mode requested for the cluster. Known values
      are: "Disabled", "SameZone", and "ZoneRedundantPreferred".
-    :vartype target_mode: Union[str, "HighAvailabilityMode"]
+    :vartype targetMode: Union[str, "HighAvailabilityMode"]
     """
 
     targetMode: Union[str, "HighAvailabilityMode"]
@@ -293,11 +293,11 @@ class HighAvailabilityProperties(TypedDict, total=False):
 class KeyEncryptionKeyIdentity(TypedDict, total=False):
     """The identity used for key encryption key.
 
-    :ivar identity_type: The type of identity. Only 'UserAssignedIdentity' is supported.
+    :ivar identityType: The type of identity. Only 'UserAssignedIdentity' is supported.
      "UserAssignedIdentity"
-    :vartype identity_type: Union[str, "KeyEncryptionKeyIdentityType"]
-    :ivar user_assigned_identity_resource_id: The user assigned identity resource id.
-    :vartype user_assigned_identity_resource_id: str
+    :vartype identityType: Union[str, "KeyEncryptionKeyIdentityType"]
+    :ivar userAssignedIdentityResourceId: The user assigned identity resource id.
+    :vartype userAssignedIdentityResourceId: str
     """
 
     identityType: Union[str, "KeyEncryptionKeyIdentityType"]
@@ -309,17 +309,17 @@ class KeyEncryptionKeyIdentity(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -346,9 +346,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -362,7 +362,7 @@ class TrackedResource(Resource):
 
 
 class MongoCluster(TrackedResource):
-    """Represents a mongo cluster resource.
+    """Represents a DocumentDB cluster resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -372,9 +372,9 @@ class MongoCluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -392,102 +392,102 @@ class MongoCluster(TrackedResource):
 
 
 class MongoClusterProperties(TypedDict, total=False):
-    """The properties of a mongo cluster.
+    """The properties of a DocumentDB cluster.
 
-    :ivar create_mode: The mode to create a mongo cluster. Known values are: "Default",
+    :ivar createMode: The mode to create a DocumentDB cluster. Known values are: "Default",
      "PointInTimeRestore", "GeoReplica", and "Replica".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar restore_parameters: The parameters to create a point-in-time restore mongo cluster.
-    :vartype restore_parameters: "MongoClusterRestoreParameters"
-    :ivar replica_parameters: The parameters to create a replica mongo cluster.
-    :vartype replica_parameters: "MongoClusterReplicaParameters"
-    :ivar administrator: The local administrator properties for the mongo cluster.
+    :vartype createMode: Union[str, "CreateMode"]
+    :ivar restoreParameters: The parameters to create a point-in-time restore DocumentDB cluster.
+    :vartype restoreParameters: "MongoClusterRestoreParameters"
+    :ivar replicaParameters: The parameters to create a replica DocumentDB cluster.
+    :vartype replicaParameters: "MongoClusterReplicaParameters"
+    :ivar administrator: The local administrator properties for the DocumentDB cluster.
     :vartype administrator: "AdministratorProperties"
-    :ivar server_version: The Mongo DB server version. Defaults to the latest available version if
+    :ivar serverVersion: The Mongo DB server version. Defaults to the latest available version if
      not specified.
-    :vartype server_version: str
-    :ivar connection_string: The default mongo connection string for the cluster.
-    :vartype connection_string: str
-    :ivar provisioning_state: The provisioning state of the mongo cluster. Known values are:
+    :vartype serverVersion: str
+    :ivar connectionString: The default mongo connection string for the cluster.
+    :vartype connectionString: str
+    :ivar provisioningState: The provisioning state of the DocumentDB cluster. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", "Updating", and "Dropping".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar cluster_status: The status of the mongo cluster. Known values are: "Ready",
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar clusterStatus: The status of the DocumentDB cluster. Known values are: "Ready",
      "Provisioning", "Updating", "Starting", "Stopping", "Stopped", and "Dropping".
-    :vartype cluster_status: Union[str, "MongoClusterStatus"]
-    :ivar public_network_access: Whether or not public endpoint access is allowed for this mongo
+    :vartype clusterStatus: Union[str, "MongoClusterStatus"]
+    :ivar publicNetworkAccess: Whether or not public endpoint access is allowed for this DocumentDB
      cluster. Known values are: "Enabled" and "Disabled".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar high_availability: The high availability properties of the mongo cluster.
-    :vartype high_availability: "HighAvailabilityProperties"
-    :ivar storage: The storage properties of the mongo cluster.
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar highAvailability: The high availability properties of the DocumentDB cluster.
+    :vartype highAvailability: "HighAvailabilityProperties"
+    :ivar storage: The storage properties of the DocumentDB cluster.
     :vartype storage: "StorageProperties"
-    :ivar sharding: The sharding properties of the mongo cluster.
+    :ivar sharding: The sharding properties of the DocumentDB cluster.
     :vartype sharding: "ShardingProperties"
-    :ivar compute: The compute properties of the mongo cluster.
+    :ivar compute: The compute properties of the DocumentDB cluster.
     :vartype compute: "ComputeProperties"
-    :ivar backup: The backup properties of the mongo cluster.
+    :ivar backup: The backup properties of the DocumentDB cluster.
     :vartype backup: "BackupProperties"
-    :ivar data_api: The Data API properties of the mongo cluster.
-    :vartype data_api: "DataApiProperties"
-    :ivar private_endpoint_connections: List of private endpoint connections.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar preview_features: List of private endpoint connections.
-    :vartype preview_features: list[Union[str, "PreviewFeature"]]
-    :ivar replica: The replication properties for the mongo cluster.
+    :ivar dataApi: The Data API properties of the DocumentDB cluster.
+    :vartype dataApi: "DataApiProperties"
+    :ivar privateEndpointConnections: List of private endpoint connections.
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar previewFeatures: List of private endpoint connections.
+    :vartype previewFeatures: list[Union[str, "PreviewFeature"]]
+    :ivar replica: The replication properties for the DocumentDB cluster.
     :vartype replica: "ReplicationProperties"
-    :ivar infrastructure_version: The infrastructure version the cluster is provisioned on.
-    :vartype infrastructure_version: str
-    :ivar auth_config: The authentication configuration for the cluster.
-    :vartype auth_config: "AuthConfigProperties"
+    :ivar infrastructureVersion: The infrastructure version the cluster is provisioned on.
+    :vartype infrastructureVersion: str
+    :ivar authConfig: The authentication configuration for the cluster.
+    :vartype authConfig: "AuthConfigProperties"
     :ivar encryption: The encryption configuration for the cluster. Depends on identity being
      configured.
     :vartype encryption: "EncryptionProperties"
-    :ivar network_bypass_mode: The network bypass mode for the cluster. Setting to 'AzureCosmosDB'
-     allows Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
+    :ivar networkBypassMode: The network bypass mode for the cluster. Setting to 'AzureCosmosDB'
+     allows the Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
      "AzureCosmosDB".
-    :vartype network_bypass_mode: Union[str, "NetworkBypassMode"]
+    :vartype networkBypassMode: Union[str, "NetworkBypassMode"]
     """
 
     createMode: Union[str, "CreateMode"]
-    """The mode to create a mongo cluster. Known values are: \"Default\", \"PointInTimeRestore\",
+    """The mode to create a DocumentDB cluster. Known values are: \"Default\", \"PointInTimeRestore\",
      \"GeoReplica\", and \"Replica\"."""
     restoreParameters: "MongoClusterRestoreParameters"
-    """The parameters to create a point-in-time restore mongo cluster."""
+    """The parameters to create a point-in-time restore DocumentDB cluster."""
     replicaParameters: "MongoClusterReplicaParameters"
-    """The parameters to create a replica mongo cluster."""
+    """The parameters to create a replica DocumentDB cluster."""
     administrator: "AdministratorProperties"
-    """The local administrator properties for the mongo cluster."""
+    """The local administrator properties for the DocumentDB cluster."""
     serverVersion: str
     """The Mongo DB server version. Defaults to the latest available version if not specified."""
     connectionString: str
     """The default mongo connection string for the cluster."""
     provisioningState: Union[str, "ProvisioningState"]
-    """The provisioning state of the mongo cluster. Known values are: \"Succeeded\", \"Failed\",
+    """The provisioning state of the DocumentDB cluster. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"InProgress\", \"Updating\", and \"Dropping\"."""
     clusterStatus: Union[str, "MongoClusterStatus"]
-    """The status of the mongo cluster. Known values are: \"Ready\", \"Provisioning\", \"Updating\",
-     \"Starting\", \"Stopping\", \"Stopped\", and \"Dropping\"."""
+    """The status of the DocumentDB cluster. Known values are: \"Ready\", \"Provisioning\",
+     \"Updating\", \"Starting\", \"Stopping\", \"Stopped\", and \"Dropping\"."""
     publicNetworkAccess: Union[str, "PublicNetworkAccess"]
-    """Whether or not public endpoint access is allowed for this mongo cluster. Known values are:
+    """Whether or not public endpoint access is allowed for this DocumentDB cluster. Known values are:
      \"Enabled\" and \"Disabled\"."""
     highAvailability: "HighAvailabilityProperties"
-    """The high availability properties of the mongo cluster."""
+    """The high availability properties of the DocumentDB cluster."""
     storage: "StorageProperties"
-    """The storage properties of the mongo cluster."""
+    """The storage properties of the DocumentDB cluster."""
     sharding: "ShardingProperties"
-    """The sharding properties of the mongo cluster."""
+    """The sharding properties of the DocumentDB cluster."""
     compute: "ComputeProperties"
-    """The compute properties of the mongo cluster."""
+    """The compute properties of the DocumentDB cluster."""
     backup: "BackupProperties"
-    """The backup properties of the mongo cluster."""
+    """The backup properties of the DocumentDB cluster."""
     dataApi: "DataApiProperties"
-    """The Data API properties of the mongo cluster."""
+    """The Data API properties of the DocumentDB cluster."""
     privateEndpointConnections: list["PrivateEndpointConnection"]
     """List of private endpoint connections."""
     previewFeatures: list[Union[str, "PreviewFeature"]]
     """List of private endpoint connections."""
     replica: "ReplicationProperties"
-    """The replication properties for the mongo cluster."""
+    """The replication properties for the DocumentDB cluster."""
     infrastructureVersion: str
     """The infrastructure version the cluster is provisioned on."""
     authConfig: "AuthConfigProperties"
@@ -495,17 +495,17 @@ class MongoClusterProperties(TypedDict, total=False):
     encryption: "EncryptionProperties"
     """The encryption configuration for the cluster. Depends on identity being configured."""
     networkBypassMode: Union[str, "NetworkBypassMode"]
-    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows Azure Cosmos DB
+    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows the Azure Cosmos DB
      service to bypass network restrictions. Known values are: \"None\" and \"AzureCosmosDB\"."""
 
 
 class MongoClusterReplicaParameters(TypedDict, total=False):
     """Parameters used for replica operations.
 
-    :ivar source_resource_id: The id of the replication source cluster. Required.
-    :vartype source_resource_id: str
-    :ivar source_location: The location of the source cluster. Required.
-    :vartype source_location: str
+    :ivar sourceResourceId: The id of the replication source cluster. Required.
+    :vartype sourceResourceId: str
+    :ivar sourceLocation: The location of the source cluster. Required.
+    :vartype sourceLocation: str
     """
 
     sourceResourceId: Required[str]
@@ -517,14 +517,14 @@ class MongoClusterReplicaParameters(TypedDict, total=False):
 class MongoClusterRestoreParameters(TypedDict, total=False):
     """Parameters used for restore operations.
 
-    :ivar point_in_time_utc: UTC point in time to restore a mongo cluster.
-    :vartype point_in_time_utc: str
-    :ivar source_resource_id: Resource ID to locate the source cluster to restore.
-    :vartype source_resource_id: str
+    :ivar pointInTimeUTC: UTC point in time to restore a DocumentDB cluster.
+    :vartype pointInTimeUTC: str
+    :ivar sourceResourceId: Resource ID to locate the source cluster to restore.
+    :vartype sourceResourceId: str
     """
 
     pointInTimeUTC: str
-    """UTC point in time to restore a mongo cluster."""
+    """UTC point in time to restore a DocumentDB cluster."""
     sourceResourceId: str
     """Resource ID to locate the source cluster to restore."""
 
@@ -551,58 +551,58 @@ class MongoClusterUpdate(TypedDict, total=False):
 class MongoClusterUpdateProperties(TypedDict, total=False):
     """The updatable properties of the MongoCluster.
 
-    :ivar administrator: The local administrator properties for the mongo cluster.
+    :ivar administrator: The local administrator properties for the DocumentDB cluster.
     :vartype administrator: "AdministratorProperties"
-    :ivar server_version: The Mongo DB server version. Defaults to the latest available version if
+    :ivar serverVersion: The Mongo DB server version. Defaults to the latest available version if
      not specified.
-    :vartype server_version: str
-    :ivar public_network_access: Whether or not public endpoint access is allowed for this mongo
+    :vartype serverVersion: str
+    :ivar publicNetworkAccess: Whether or not public endpoint access is allowed for this DocumentDB
      cluster. Known values are: "Enabled" and "Disabled".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar high_availability: The high availability properties of the mongo cluster.
-    :vartype high_availability: "HighAvailabilityProperties"
-    :ivar storage: The storage properties of the mongo cluster.
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar highAvailability: The high availability properties of the DocumentDB cluster.
+    :vartype highAvailability: "HighAvailabilityProperties"
+    :ivar storage: The storage properties of the DocumentDB cluster.
     :vartype storage: "StorageProperties"
-    :ivar sharding: The sharding properties of the mongo cluster.
+    :ivar sharding: The sharding properties of the DocumentDB cluster.
     :vartype sharding: "ShardingProperties"
-    :ivar compute: The compute properties of the mongo cluster.
+    :ivar compute: The compute properties of the DocumentDB cluster.
     :vartype compute: "ComputeProperties"
-    :ivar backup: The backup properties of the mongo cluster.
+    :ivar backup: The backup properties of the DocumentDB cluster.
     :vartype backup: "BackupProperties"
-    :ivar data_api: The Data API properties of the mongo cluster.
-    :vartype data_api: "DataApiProperties"
-    :ivar preview_features: List of private endpoint connections.
-    :vartype preview_features: list[Union[str, "PreviewFeature"]]
-    :ivar auth_config: The authentication configuration for the cluster.
-    :vartype auth_config: "AuthConfigProperties"
+    :ivar dataApi: The Data API properties of the DocumentDB cluster.
+    :vartype dataApi: "DataApiProperties"
+    :ivar previewFeatures: List of private endpoint connections.
+    :vartype previewFeatures: list[Union[str, "PreviewFeature"]]
+    :ivar authConfig: The authentication configuration for the cluster.
+    :vartype authConfig: "AuthConfigProperties"
     :ivar encryption: The encryption configuration for the cluster. Depends on identity being
      configured.
     :vartype encryption: "EncryptionProperties"
-    :ivar network_bypass_mode: The network bypass mode for the cluster. Setting to 'AzureCosmosDB'
-     allows Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
+    :ivar networkBypassMode: The network bypass mode for the cluster. Setting to 'AzureCosmosDB'
+     allows the Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
      "AzureCosmosDB".
-    :vartype network_bypass_mode: Union[str, "NetworkBypassMode"]
+    :vartype networkBypassMode: Union[str, "NetworkBypassMode"]
     """
 
     administrator: "AdministratorProperties"
-    """The local administrator properties for the mongo cluster."""
+    """The local administrator properties for the DocumentDB cluster."""
     serverVersion: str
     """The Mongo DB server version. Defaults to the latest available version if not specified."""
     publicNetworkAccess: Union[str, "PublicNetworkAccess"]
-    """Whether or not public endpoint access is allowed for this mongo cluster. Known values are:
+    """Whether or not public endpoint access is allowed for this DocumentDB cluster. Known values are:
      \"Enabled\" and \"Disabled\"."""
     highAvailability: "HighAvailabilityProperties"
-    """The high availability properties of the mongo cluster."""
+    """The high availability properties of the DocumentDB cluster."""
     storage: "StorageProperties"
-    """The storage properties of the mongo cluster."""
+    """The storage properties of the DocumentDB cluster."""
     sharding: "ShardingProperties"
-    """The sharding properties of the mongo cluster."""
+    """The sharding properties of the DocumentDB cluster."""
     compute: "ComputeProperties"
-    """The compute properties of the mongo cluster."""
+    """The compute properties of the DocumentDB cluster."""
     backup: "BackupProperties"
-    """The backup properties of the mongo cluster."""
+    """The backup properties of the DocumentDB cluster."""
     dataApi: "DataApiProperties"
-    """The Data API properties of the mongo cluster."""
+    """The Data API properties of the DocumentDB cluster."""
     previewFeatures: list[Union[str, "PreviewFeature"]]
     """List of private endpoint connections."""
     authConfig: "AuthConfigProperties"
@@ -610,7 +610,7 @@ class MongoClusterUpdateProperties(TypedDict, total=False):
     encryption: "EncryptionProperties"
     """The encryption configuration for the cluster. Depends on identity being configured."""
     networkBypassMode: Union[str, "NetworkBypassMode"]
-    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows Azure Cosmos DB
+    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows the Azure Cosmos DB
      service to bypass network restrictions. Known values are: \"None\" and \"AzureCosmosDB\"."""
 
 
@@ -636,9 +636,9 @@ class PrivateEndpointConnection(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The private endpoint connection properties.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -650,16 +650,16 @@ class PrivateEndpointConnection(Resource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of the private endpoint connection.
 
-    :ivar group_ids: The group ids for the private endpoint resource.
-    :vartype group_ids: list[str]
-    :ivar private_endpoint: The private endpoint resource.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar private_link_service_connection_state: A collection of information about the state of the
+    :ivar groupIds: The group ids for the private endpoint resource.
+    :vartype groupIds: list[str]
+    :ivar privateEndpoint: The private endpoint resource.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: A collection of information about the state of the
      connection between service consumer and provider. Required.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionState"
-    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
+    :ivar provisioningState: The provisioning state of the private endpoint connection resource.
      Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
-    :vartype provisioning_state: Union[str, "PrivateEndpointConnectionProvisioningState"]
+    :vartype provisioningState: Union[str, "PrivateEndpointConnectionProvisioningState"]
     """
 
     groupIds: list[str]
@@ -686,9 +686,9 @@ class PrivateEndpointConnectionResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -706,9 +706,9 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     :vartype status: Union[str, "PrivateEndpointServiceConnectionStatus"]
     :ivar description: The reason for approval/rejection of the connection.
     :vartype description: str
-    :ivar actions_required: A message indicating if changes on the service provider require any
+    :ivar actionsRequired: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :vartype actions_required: str
+    :vartype actionsRequired: str
     """
 
     status: Union[str, "PrivateEndpointServiceConnectionStatus"]
@@ -723,9 +723,9 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
 class PromoteReplicaRequest(TypedDict, total=False):
     """Promote replica request properties.
 
-    :ivar promote_option: The promote option to apply to the operation. Required. Known values are:
+    :ivar promoteOption: The promote option to apply to the operation. Required. Known values are:
      "Forced" and "Planned".
-    :vartype promote_option: Union[str, "PromoteOption"]
+    :vartype promoteOption: Union[str, "PromoteOption"]
     :ivar mode: The mode to apply to the promote operation. Value is optional and default value is
      'Switchover'. "Switchover"
     :vartype mode: Union[str, "PromoteMode"]
@@ -740,16 +740,16 @@ class PromoteReplicaRequest(TypedDict, total=False):
 
 
 class ReplicationProperties(TypedDict, total=False):
-    """Replica properties of the mongo cluster.
+    """Replica properties of the DocumentDB cluster.
 
-    :ivar source_resource_id: The resource id the source cluster for the replica cluster.
-    :vartype source_resource_id: str
+    :ivar sourceResourceId: The resource id the source cluster for the replica cluster.
+    :vartype sourceResourceId: str
     :ivar role: The replication role of the cluster. Known values are: "Primary", "AsyncReplica",
      and "GeoAsyncReplica".
     :vartype role: Union[str, "ReplicationRole"]
-    :ivar replication_state: The replication link state of the replica cluster. Known values are:
+    :ivar replicationState: The replication link state of the replica cluster. Known values are:
      "Active", "Catchup", "Provisioning", "Updating", "Broken", and "Reconfiguring".
-    :vartype replication_state: Union[str, "ReplicationState"]
+    :vartype replicationState: Union[str, "ReplicationState"]
     """
 
     sourceResourceId: str
@@ -766,8 +766,8 @@ class ShardingProperties(TypedDict, total=False):
     """The sharding properties of the cluster. This includes the shard count and scaling options for
     the cluster.
 
-    :ivar shard_count: Number of shards to provision on the cluster.
-    :vartype shard_count: int
+    :ivar shardCount: Number of shards to provision on the cluster.
+    :vartype shardCount: int
     """
 
     shardCount: int
@@ -778,8 +778,8 @@ class StorageProperties(TypedDict, total=False):
     """The storage properties of the cluster. This includes the data storage size and scaling applied
     to servers in the cluster.
 
-    :ivar size_gb: The size of the data disk assigned to each server.
-    :vartype size_gb: int
+    :ivar sizeGb: The size of the data disk assigned to each server.
+    :vartype sizeGb: int
     :ivar type: The type of storage to provision the cluster servers with. Known values are:
      "PremiumSSD" and "PremiumSSDv2".
     :vartype type: Union[str, "StorageType"]
@@ -795,20 +795,20 @@ class StorageProperties(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -828,7 +828,7 @@ class SystemData(TypedDict, total=False):
 
 
 class User(ProxyResource):
-    """Represents a Mongo cluster user.
+    """Represents a DocumentDB cluster user.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -838,9 +838,9 @@ class User(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "UserProperties"
     """
@@ -852,10 +852,10 @@ class User(ProxyResource):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -867,11 +867,11 @@ class UserAssignedIdentity(TypedDict, total=False):
 class UserProperties(TypedDict, total=False):
     """Definition of Mongo user resource on a cluster.
 
-    :ivar provisioning_state: The provisioning state of the user. Known values are: "Succeeded",
+    :ivar provisioningState: The provisioning state of the user. Known values are: "Succeeded",
      "Failed", "Canceled", "InProgress", "Updating", and "Dropping".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar identity_provider: The user's identity provider definition.
-    :vartype identity_provider: "IdentityProvider"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar identityProvider: The user's identity provider definition.
+    :vartype identityProvider: "IdentityProvider"
     :ivar roles: Database roles that are assigned to the user.
     :vartype roles: list["DatabaseRole"]
     """

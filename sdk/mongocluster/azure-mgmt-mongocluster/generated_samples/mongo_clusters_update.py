@@ -44,7 +44,7 @@ def main():
                 "publicNetworkAccess": "Enabled",
                 "serverVersion": "5.0",
                 "sharding": {"shardCount": 4},
-                "storage": {"sizeGb": 256, "type": "PremiumSSD"},
+                "storage": {"sizeGb": 256, "type": "PremiumSSDv2"},
             }
         },
     ).result()
