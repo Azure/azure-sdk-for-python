@@ -16,10 +16,7 @@ adapted to build the client with ``_backend="rust"`` and call
 creates a database at 1000 RU/s, reads it back, changes it to 2000, and checks
 the returned object reports 2000.
 
-This is NOT the side-by-side comparison. The comparison tests
-(``replace_database_throughput/sync/test_replace_database_throughput_parity.py``)
-run the same change on both engines and diff the results. This file runs on
-Rust only.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database.
 

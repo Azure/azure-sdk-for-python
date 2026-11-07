@@ -18,10 +18,7 @@ indexing mode and partition key survived the round trip.
 usage through Rust. Every container read is guarded by a binding-operation
 counter and a zero-fallback assertion.
 
-This is NOT the side-by-side comparison. The comparison tests
-(``read_container/sync/test_read_container_parity.py``) run the same call on
-both engines and diff the results. This file runs on Rust only and reuses
-assertions the team already trusts.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
 with any other test. The originals read a shared container named by
@@ -44,7 +41,7 @@ import pytest
 import azure.cosmos.exceptions as exceptions
 import azure.cosmos.documents as documents
 from azure.cosmos import CosmosClient, ContainerProxy
-from common._parity_helpers import run_target_operation
+from common._rust_checks import run_on_rust
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
@@ -69,7 +66,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
         @wraps(original_read)
         def guarded_read(container, *args, **kwargs):
-            return run_target_operation(self.key_client, lambda: original_read(container, *args, **kwargs))
+            return run_on_rust(self.key_client, lambda: original_read(container, *args, **kwargs))
 
         read_patch = patch.object(ContainerProxy, "read", guarded_read)
         read_patch.start()

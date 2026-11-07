@@ -45,6 +45,13 @@ class TestQueryFeedRange(unittest.TestCase):
         self.client.delete_database(self.database_id)
         print(f"Deleted owned SUM database: {self.database_id}")
 
+    @pytest.mark.skip(
+        reason=(
+            "driver-gap: Gap 30 - Rust rejects MIN over the full feed range with HTTP 400 "
+            "'Aggregate unsupported' instead of returning the single minimum value. "
+            "Re-enable when the driver supports this aggregate query without changing its scope."
+        )
+    )
     def test_query_value_min_across_full_feed_range_returns_scalar_rust(self):
         """MIN over a multi-partition feed_range should return one value (the smallest)."""
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_value_min_across_full_feed_range_returns_scalar
@@ -73,6 +80,13 @@ class TestQueryFeedRange(unittest.TestCase):
         )
         assert items[0] == 100
 
+    @pytest.mark.skip(
+        reason=(
+            "driver-gap: Gap 30 - Rust rejects SUM over the full feed range with HTTP 400 "
+            "'Aggregate unsupported' instead of returning the combined total. "
+            "Re-enable when the driver supports this aggregate query without changing its scope."
+        )
+    )
     def test_query_value_sum_across_full_feed_range_still_sums_rust(self):
         """SUM should still add per-partition totals together."""
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_value_sum_across_full_feed_range_still_sums

@@ -53,6 +53,7 @@ def write_manifest(directory, stamp, phase):
             "use_proxy": "WORKLOAD_USE_PROXY", "use_sync": "WORKLOAD_USE_SYNC",
             "gc_freeze": "WORKLOAD_GC_FREEZE", "loop_lag_monitor": "WORKLOAD_LOOP_LAG_MONITOR",
             "workload_mix": "WORKLOAD_MIX", "doc_profile": "WORKLOAD_DOC_PROFILE",
+            "item_namespace": "WORKLOAD_ITEM_NAMESPACE",
             "log_level": "COSMOS_LOG_LEVEL", "diagnostics_logging": "COSMOS_ENABLE_DIAGNOSTICS_LOGGING",
             "report_interval_s": "PERF_REPORT_INTERVAL",
         }),

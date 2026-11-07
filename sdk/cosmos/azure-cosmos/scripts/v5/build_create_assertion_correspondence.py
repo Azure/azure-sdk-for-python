@@ -501,9 +501,6 @@ def disposition(path, symbol, kind, node):
 def annotation_audit(scope, rows):
     """Keep annotation preservation distinct from assertion correspondence."""
     infrastructure = {
-        "tests\\common\\_parity_helpers.py": [
-            "skip_unless_emulator", "skip_unless_rust_binding", "have_emulator_or_account", "have_rust_binding",
-        ],
         "tests\\create_item\\_legacy_variants.py": [
             "_variant_database_fixture", "_make_variant_container_fixture", "observe_native_create",
         ],
@@ -745,8 +742,8 @@ def create_copy_annotation_audit(rows):
             path = f"tests\\fault_injection\\{surface}\\{module}{suffix}.py"
             outside.append((named(f"tests\\test_fault_injection_transport{suffix}.py", leaf + suffix),
                             named(path, leaf + suffix + "_rust")))
-        path = f"tests\\auth\\{surface}\\test_token_credential_parity{suffix}.py"
-        target = "test_async_token_credential_parity_rust" if suffix else "test_create_item_parity_with_token_credential_rust"
+        path = f"tests\\create_item\\{surface}\\test_legacy_contracts.py"
+        target = "test_compact_utf8_item_write_with_aad_rust"
         outside.append((named(f"tests\\test_aad{suffix}.py", "test_aad_credentials" + suffix), named(path, target)))
     helper_pairs = set()
     for row in rows:
@@ -1183,7 +1180,7 @@ def build(discovery=None, reviewed_annotation_refresh=False):
                            "original copies or evidence that legacy assertions were migrated.",
                 "reported_selection": {
                     "module_marks": [
-                        "cosmosEmulator", "asyncio", "skip_unless_emulator()", "skip_unless_rust_binding()",
+                        "cosmosEmulator", "asyncio",
                     ],
                     "fixture_parameters": "sync/async",
                     "verification": "Parent-reported only; this independently owned module remains outside "

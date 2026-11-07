@@ -29,6 +29,14 @@ TEST_ITEM.update(PARTITION_KEY_ITEMS)
 L0 = "Default"
 L1 = settings.TestSettings.WRITE_LOCATION
 L2 = settings.TestSettings.READ_LOCATION
+
+
+@pytest.fixture(scope="class", autouse=True)
+def _require_configured_regions():
+    # Known gap 24: Account information is internal and cannot be returned to Python (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-24). The original discovers regions from the account; this copy needs them configured.
+    if not L1 or not L2:
+        pytest.skip("environment-gap: excluded-locations tests need WRITE_LOCATION and READ_LOCATION set to account "
+                    "regions; Rust cannot discover account regions (known gap 24).")
 L3 = "East US 2"
 
 CLIENT_ONLY_TEST_DATA = [
@@ -51,11 +59,12 @@ CLIENT_AND_REQUEST_TEST_DATA = [
     [[L1, L2], [L1, L2], []],
 ]
 
+# Known gap 33: serving region not visible (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-serving-region-gap). Rust logs and diagnostics do not name the region that served each attempt.
 REGION_NOT_OBSERVABLE = (
     "driver-gap: the Rust upsert_item binding does not report the region of each attempt; "
     "the original read request URLs from a Python logging handler that Rust requests never "
     "reach, and client.client_connection._global_endpoint_manager does not exist on Rust. "
-    "The upsert call above ran with these exclusions and succeeded."
+    "The upsert call above ran with these exclusions and succeeded. See RUST_PARITY_PUSHBACKS.md#client-serving-region-gap."
 )
 
 

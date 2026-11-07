@@ -24,7 +24,7 @@ from azure.core.credentials import AccessToken
 from azure.identity import ClientSecretCredential
 from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
-ENV_KEY = "ACCOUNT_KEY"
+_ACCOUNT_KEY_VARIABLE = "ACCOUNT_KEY"
 # Set all three to run against a real Entra tenant instead of the emulator.
 _AAD_ENV = ("COSMOS_AAD_TENANT_ID", "COSMOS_AAD_CLIENT_ID", "COSMOS_AAD_CLIENT_SECRET")
 
@@ -82,7 +82,7 @@ class SyncTokenCredential:
     """A token credential with a synchronous get_token."""
 
     def get_token(self, *scopes, **kwargs) -> AccessToken:  # noqa: D401
-        return _mint_emulator_token(os.environ[ENV_KEY])
+        return _mint_emulator_token(os.environ[_ACCOUNT_KEY_VARIABLE])
 
 
 class AsyncTokenCredential:
@@ -93,7 +93,7 @@ class AsyncTokenCredential:
     """
 
     async def get_token(self, *scopes, **kwargs) -> AccessToken:  # noqa: D401
-        return _mint_emulator_token(os.environ[ENV_KEY])
+        return _mint_emulator_token(os.environ[_ACCOUNT_KEY_VARIABLE])
 
 
 def make_sync_token_credential():

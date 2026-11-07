@@ -225,7 +225,7 @@ def test_collection_only_is_explicit_not_execution_rust(pytester):
 def test_discovery_covers_unmarked_parity_copies_and_offline_rust(tmp_path):
     paths = [
         "tests/common/test_governance_unit.py",
-        "tests/read_item/sync/test_read_item_parity.py",
+        "tests/binding/test_binding_contract_parity.py",
         "tests/read_item/aio/test_crud.py",
         "tests/read_item/aio/test_read_item_unit.py",
         "tests/auth/test_aad_parity.py",
@@ -256,19 +256,36 @@ def test_discovery_covers_unmarked_parity_copies_and_offline_rust(tmp_path):
     parity = runner.discover_tests(tmp_path, "parity")
     offline = runner.discover_tests(tmp_path, "offline")
     assert {path.relative_to(tmp_path).as_posix() for path in parity} == {
+        paths[1],
         paths[2],
         sync_copy.relative_to(tmp_path).as_posix(),
     }
     assert {path.relative_to(tmp_path).as_posix() for path in offline} == {paths[0], paths[3]}
 
 
+def test_discovery_includes_rust_behavior_modules_by_header_rust(tmp_path):
+    marker = runner.RUST_BEHAVIOR_TEST_MARKER
+    files = {
+        "tests/list_containers/sync/test_list_containers_paging.py": f"{marker}\ndef test_case(): pass\n",
+        "tests/list_containers/aio/test_list_containers_paging_async.py": f"{marker}\ndef test_case(): pass\n",
+        "tests/list_containers/test_list_containers_root.py": f"{marker}\ndef test_case(): pass\n",
+        "tests/list_containers/sync/test_mentions_marker.py": f'"""Mentions {marker} in prose."""\n',
+    }
+    for name, text in files.items():
+        file = tmp_path / name
+        file.parent.mkdir(parents=True, exist_ok=True)
+        file.write_text(text, encoding="utf-8")
+    service = runner.discover_tests(tmp_path, "parity")
+    assert {path.relative_to(tmp_path).as_posix() for path in service} == set(list(files)[:2])
+
+
 def test_required_inventory_matches_default_exclusions_rust():
     for suite in ("offline", "parity", "telemetry"):
         files = runner.discover_tests(PACKAGE, suite)
         assert all(not runner.test_collection.exclude_module(path) for path in files)
-    mixed = PACKAGE / "tests" / "create_item" / "sync" / "test_create_item_parity.py"
+    mixed = PACKAGE / "tests" / "binding" / "test_binding_contract_parity.py"
     assert runner.declared_tests(mixed) == {
-        "test_partitionless_container_rejected_by_rust_binding_rust",
+        "test_binding_rejects_invalid_timeout_with_real_handle",
     }
 
 
@@ -286,7 +303,7 @@ def test_offline_inventory_keeps_shared_backend_contracts_not_legacy_rust():
 
 
 def test_required_guard_allows_only_explicit_legacy_parameter_exclusions_rust(tmp_path):
-    path = PACKAGE / "tests" / "delete_container" / "test_delete_container_parity.py"
+    path = PACKAGE / "tests" / "create_item" / "sync" / "test_legacy_variants.py"
     guard = runner.RequiredCoverage([path], tmp_path)
     legacy = SimpleNamespace(path=path, callspec=SimpleNamespace(params={"backend": "core-python"}))
     rust = SimpleNamespace(path=path, callspec=SimpleNamespace(params={"backend": "rust"}))

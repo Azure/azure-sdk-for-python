@@ -29,6 +29,29 @@ def get_vector_embedding_policy(distance_function, data_type, dimensions):
     }
 
 
+def get_full_text_indexing_policy(path):
+    return {
+        "indexingMode": "consistent",
+        "includedPaths": [{"path": "/*"}],
+        'excludedPaths': [{'path': '/"_etag"/?'}],
+        "fullTextIndexes": [
+            {"path": path}
+        ]
+    }
+
+
+def get_full_text_policy(path):
+    return {
+        "defaultLanguage": "en-US",
+        "fullTextPaths": [
+            {
+                "path": path,
+                "language": "en-US"
+            }
+        ]
+    }
+
+
 class ResponseHookCaller:
     def __init__(self):
         self.count = 0

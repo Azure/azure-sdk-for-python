@@ -8,6 +8,8 @@
 QueryConfig serializes the query body once. Each QueryPageIterator retains
 its own feed cursor and progress. Continuation tokens pass through unchanged:
 service tokens for complete partition keys, driver tokens for broader scopes.
+SDK-produced inclusive point ranges are normalized to the binding's
+min-inclusive, max-exclusive bounds without changing the caller's dictionary.
 """
 
 from __future__ import annotations
@@ -30,6 +32,7 @@ from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosItemPaged
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
+from .._routing.routing_range import Range
 from .._telemetry import trace_operation
 from ._partition_key import query_partition_key_components
 from ._read_all_items import ReadAllConfig, ReadAllPageState
@@ -55,7 +58,7 @@ def reject_rust_continuation_token(kwargs: dict[str, Any]) -> None:
     """Reject Rust-path continuation formats before a legacy query can use them."""
     options = kwargs.get("request_options", kwargs.get("feed_options", {})) or {}
     token = kwargs.get("continuation", options.get("continuation"))
-    if isinstance(token, str) and token.startswith(("q1.", "c1.", "cf1.")):
+    if isinstance(token, str) and token.startswith(("q1.", "c1.", "c2.", "cf1.")):
         raise ValueError("query_items continuation belongs to an incompatible backend.")
 
 
@@ -99,10 +102,15 @@ class QueryConfig(ReadAllConfig):
             if not isinstance(interval, dict) or (
                 not isinstance(interval.get("min"), str)
                 or not isinstance(interval.get("max"), str)
-                or interval["min"] >= interval["max"]
                 or interval.get("isMinInclusive", True) is not True
-                or interval.get("isMaxInclusive", False) is not False
             ):
+                raise ValueError("feed_range requires a nonempty min-inclusive, max-exclusive Range.")
+            if interval["min"] == interval["max"] and interval.get("isMaxInclusive", False) is True:
+                if any(char not in "0123456789abcdefABCDEF" for char in interval["min"]):
+                    raise ValueError("feed_range point bounds must be hexadecimal.")
+                # The public range producer returns a closed point; reuse legacy normalization.
+                interval = Range(interval["min"], interval["max"], True, True).to_normalized_range().to_dict()
+            if interval["min"] >= interval["max"] or interval.get("isMaxInclusive", False) is not False:
                 raise ValueError("feed_range requires a nonempty min-inclusive, max-exclusive Range.")
             interval = [interval["min"], interval["max"]]
         cross = kwargs.pop(
@@ -126,10 +134,9 @@ class QueryConfig(ReadAllConfig):
             if limit:
                 options["responseContinuationTokenLimitInKb"] = limit
         scope = kwargs.pop("full_text_score_scope", options.pop("fullTextScoreScope", None))
-        if scope is not None:
-            if scope not in ("Local", "Global"):
-                raise ValueError("full_text_score_scope must be Local or Global.")
-            raise NotImplementedError("Full-text statistics scope requires driver hybrid processing; no fallback.")
+        if scope is not None and scope not in ("Local", "Global"):
+            raise ValueError("full_text_score_scope must be 'Local' or 'Global'.")
+        self.full_text_score_scope = scope
         options["correlatedActivityId"] = str(uuid4())
         kwargs["request_options"] = options
         super().__init__(proxy, kwargs, operation=OP_QUERY_ITEMS)
@@ -162,6 +169,9 @@ class QueryConfig(ReadAllConfig):
         self.query_body = serialize_body_to_bytes(payload, allow_nan=False)
         self.parameters = freeze_json(self.parameters)
         validate_query_continuation(self.options.get("continuation"))
+        # Parse only after the binding identifies a hybrid plan; other queries
+        # must not observe this setting, including invalid integer values.
+        self.hybrid_search_max_items = os.environ.get(Constants.HS_MAX_ITEMS_CONFIG)
         maximum = os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG)
         self.max_buffered_query_window = int(maximum) if maximum is not None else None
         if self.max_buffered_query_window is not None and not 0 <= self.max_buffered_query_window < 2**64:
@@ -187,6 +197,8 @@ class QueryConfig(ReadAllConfig):
                 query=replace(
                     prepared.settings.query,
                     max_buffered_query_window=self.max_buffered_query_window,
+                    full_text_score_scope=self.full_text_score_scope,
+                    hybrid_search_max_items=self.hybrid_search_max_items,
                 ),
             ),
         )

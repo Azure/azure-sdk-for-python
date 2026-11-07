@@ -18,15 +18,9 @@ path. They set throughput to a fixed 2500 RU/s (as an int and as a
 ``ThroughputProperties``) and confirm ``get_throughput`` reads 2500 back, and they
 confirm that a ``ThroughputProperties`` mixing fixed and autoscale settings raises
 ``KeyError`` before any write (the same client-side guard on both engines). Fixed
-absolute values (not read-then-add) keep the request deterministic so the two-column
-parity audit compares like with like.
+absolute values (not read-then-add) keep the request deterministic.
 
-This is NOT the side-by-side parity comparison. The parity tests
-(``replace_throughput/sync/test_replace_throughput_parity.py``) run the same call on
-both engines and diff the numbers. This file runs on Rust only; the core-python side
-of the contract is guaranteed by the original test in ``tests/``. Together: parity
-catches value drift (wrong RU/s), this catches contract drift (wrong return type or
-a change that doesn't take) by reusing checks the team already trusts.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: builds its own database + container in ``setUp`` and deletes them in
 ``tearDown``. The class name and method names match the source (apart from the method's

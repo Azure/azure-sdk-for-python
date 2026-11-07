@@ -16,10 +16,7 @@ changed in one place -- the client is built with ``_backend="rust"``. The
 helper it calls, ``_check_default_indexing_policy_paths``, is copied with it
 because the test cannot run without it.
 
-This is NOT the side-by-side comparison. The comparison tests
-(``create_container/sync/test_create_container_parity.py``) run the same call
-on both engines and diff the results. This file runs on Rust only and reuses
-assertions the team already trusts.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
 with any other test. The original's first leg reads a shared container named by

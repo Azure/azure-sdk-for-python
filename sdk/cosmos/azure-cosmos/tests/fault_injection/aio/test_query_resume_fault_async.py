@@ -83,7 +83,9 @@ async def test_query_failure_resumes_from_delivered_bookmark_async_rust(
         handle, cursor = calls[0]
         assert pages.state.cursor is cursor
         bookmark = pages.continuation_token
-        assert isinstance(bookmark, str) and bookmark.startswith("q1.")
+        # Save the token unchanged; the checks below prove it resumes correctly,
+        # without assuming how the service or driver formats it.
+        assert isinstance(bookmark, str) and bookmark
         assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
         set_rule(handle, rule_id, True)
         error, second = None, None

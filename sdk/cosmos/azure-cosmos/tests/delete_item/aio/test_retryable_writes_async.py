@@ -130,6 +130,11 @@ class TestRetryableWritesAsync:
             for client in self._clients:
                 await client.close()
 
+    @pytest.mark.skip(
+        reason="accepted-vnext-change: Gap 13 - This copied legacy test expects upsert_item "
+        "to fail without retrying when retry_write is omitted. Rust decides which write "
+        "failures to retry automatically, so omitting retry_write does not disable retries."
+    )
     async def test_retryable_writes_request_level_async_rust(self, setup):
         # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_request_level_async
         container = setup['container']
@@ -285,6 +290,12 @@ class TestRetryableWritesAsync:
             for mock in mocks:
                 await mock.close()
 
+    @pytest.mark.skip(
+        reason="accepted-vnext-change: Gap 13 - This copied legacy test expects patch_item "
+        "to fail without retrying, even when retry_write is set on the client. "
+        "Rust decides which write failures to retry automatically, so it does not "
+        "preserve this legacy no-retry guarantee."
+    )
     async def test_retryable_writes_client_level_write_rust(self, setup):
         # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_client_level_write
         """Test retryable writes for a container with retry_write set at the client level."""
@@ -533,6 +544,12 @@ class TestRetryableWritesAsync:
             for mock in mocks:
                 await mock.close()
 
+    @pytest.mark.skip(
+        reason="accepted-vnext-change: Gap 13 - This copied legacy test expects patch_item "
+        "to fail without retrying, even when retry_write is set on the client. "
+        "Rust decides which write failures to retry automatically, so it does not "
+        "preserve this legacy no-retry guarantee."
+    )
     async def test_retryable_writes_hpk_client_level_async_rust(self, setup):
         # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_hpk_client_level_async
         """Test retryable writes for a container with hierarchical partition keys and retry_write

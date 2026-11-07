@@ -156,6 +156,8 @@ pub(crate) fn _request_settings_schema() -> HashMap<String, Vec<String>> {
         let mut fields: Vec<String> = fields.iter().map(|s| (*s).to_owned()).collect();
         if name == "QuerySettings" {
             fields.push("max_buffered_query_window".to_owned());
+            fields.push("full_text_score_scope".to_owned());
+            fields.push("hybrid_search_max_items".to_owned());
         }
         (name.to_owned(), fields)
     })

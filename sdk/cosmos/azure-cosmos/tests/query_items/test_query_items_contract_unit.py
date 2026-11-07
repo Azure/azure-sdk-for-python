@@ -82,13 +82,66 @@ def test_invalid_vector_buffer_allowance_fails_without_binding_call_rust(query, 
     assert not query.calls
 
 
-@pytest.mark.parametrize("key,epk", [
-    ("customer-501", "11622DAA78F835834610ABE56EFF5CB5"),
-    ("customer-501", "000000000000000000000000000000FF"),
-    (["tenant-1", "West US", "customer-501"], "01" * 48),
+@pytest.mark.parametrize("value", [None, "0", "12", "-1", "invalid", "50_000", str(2**100)])
+def test_hybrid_limit_is_snapshotted_separately_from_vector_limit_rust(query, monkeypatch, value):
+    if value is None:
+        monkeypatch.delenv(Constants.HS_MAX_ITEMS_CONFIG, raising=False)
+    else:
+        monkeypatch.setenv(Constants.HS_MAX_ITEMS_CONFIG, value)
+    monkeypatch.setenv(Constants.MAX_ITEM_BUFFER_VS_CONFIG, "17")
+    pager = query.proxy.query_items(
+        "SELECT TOP 10 c.id FROM c ORDER BY RANK FullTextScore(c.text, 'late')",
+        max_item_count=2,
+    )
+    monkeypatch.setenv(Constants.HS_MAX_ITEMS_CONFIG, "99")
+    query.collect(pager)
+    assert query.calls
+    for prepared, _, _ in query.calls:
+        assert prepared.settings.query.hybrid_search_max_items == value
+        assert prepared.settings.query.max_buffered_query_window == 17
+        assert prepared.settings.query.max_item_count == 2
+        assert not any("hybrid" in key.lower() for key in wire_headers(prepared))
+    query.calls.clear()
+    query.collect(query.proxy.query_items("SELECT * FROM c"))
+    assert all(prepared.settings.query.hybrid_search_max_items == "99" for prepared, _, _ in query.calls)
+
+
+@pytest.mark.parametrize("scope", [None, "Local", "Global"])
+@pytest.mark.parametrize("nested", [False, True])
+def test_full_text_scope_reaches_retained_query_settings_rust(query, scope, nested):
+    options = {"request_options": {"fullTextScoreScope": scope}} if nested else {"full_text_score_scope": scope}
+    pager = query.proxy.query_items(
+        "SELECT TOP 10 c.id FROM c ORDER BY RANK FullTextScore(c.text, 'late')",
+        **options,
+    )
+    assert not query.calls
+    query.collect(pager)
+    assert query.calls
+    for prepared, _, _ in query.calls:
+        assert prepared.settings.query.full_text_score_scope == scope
+        assert not any("fulltext" in name.lower() for name in wire_headers(prepared))
+    assert not query.connection.mock_calls
+
+
+@pytest.mark.parametrize("sql,parameters,rows", [
+    ("SELECT * FROM c", None, [{"id": "selected-order"}]),
+    (
+        'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+        'AND c["_run_marker"] = @run_marker',
+        [{"name": "@run_marker", "value": "point-range-regression"}],
+        [100],
+    ),
 ])
-def test_query_accepts_sdk_point_range_without_mutating_it_rust(query, key, epk):
+@pytest.mark.parametrize("key,epk,expected_max", [
+    ("customer-501", "11622DAA78F835834610ABE56EFF5CB5", "11622DAA78F835834610ABE56EFF5CB6"),
+    ("customer-501", "000000000000000000000000000000FF", "00000000000000000000000000000100"),
+    (["tenant-1", "West US", "customer-501"], "01" * 48, "01" * 47 + "02"),
+    ("customer-501", "00" * 16, "00" * 15 + "01"),
+])
+def test_query_accepts_sdk_point_range_without_mutating_it_rust(query, key, epk, expected_max, sql, parameters, rows):
+    """Prove Python composition and binding inputs, not native query execution."""
     expected_range = FeedRangeInternalEpk(Range(epk, epk, True, True)).get_normalized_range()
+    assert (expected_range.min, expected_range.max) == (epk, expected_max)
     payload = {"Range": {"min": epk, "max": epk, "isMinInclusive": True, "isMaxInclusive": True}}
     result = (200, 0, {}, json.dumps(payload).encode(), None)
     name = "feed_range_from_partition_key" + ("_async" if query.async_mode else "")
@@ -98,17 +151,54 @@ def test_query_accepts_sdk_point_range_without_mutating_it_rust(query, key, epk)
     if query.async_mode:
         point = asyncio.run(point)
     original = deepcopy(point)
-    query.pages = [[{"id": "selected-order"}], None]
-    assert query.collect(query.proxy.query_items("SELECT * FROM c", feed_range=point)) == [
-        {"id": "selected-order"}
-    ]
+    query.pages = [rows, None]
+    pager = query.proxy.query_items(sql, parameters=parameters, feed_range=point)
+    assert not query.calls
+    query.binding._ItemFeedCursor.assert_not_called()
+    assert query.collect(pager) == rows
     assert point == original == payload
     assert query.calls
     assert all(
         prepared.query_scope.feed_range == (expected_range.min, expected_range.max)
         for prepared, _, _ in query.calls
     )
+    expected_body = {"query": sql}
+    if parameters:
+        expected_body["parameters"] = parameters
+    assert all(json.loads(prepared.body_bytes) == expected_body for prepared, _, _ in query.calls)
     producer.assert_called_once()
+    assert not query.connection.mock_calls
+
+
+@pytest.mark.parametrize("interval", [
+    None,
+    [],
+    {},
+    {"min": None, "max": "AA"},
+    {"min": "AA", "max": 1},
+    {"min": "BB", "max": "AA"},
+    {"min": "AA", "max": "AA"},
+    {"min": "AA", "max": "AA", "isMinInclusive": False, "isMaxInclusive": True},
+    {"min": "AA", "max": "AA", "isMinInclusive": 1, "isMaxInclusive": True},
+    {"min": "AA", "max": "AA", "isMaxInclusive": 1},
+    {"min": "AA", "max": "BB", "isMaxInclusive": True},
+    {"min": "", "max": "", "isMaxInclusive": True},
+    {"min": "FF", "max": "FF", "isMaxInclusive": True},
+    {"min": "FFFF", "max": "FFFF", "isMaxInclusive": True},
+    {"min": "A", "max": "A", "isMaxInclusive": True},
+    {"min": "GG", "max": "GG", "isMaxInclusive": True},
+    {"min": "AA  ", "max": "AA  ", "isMaxInclusive": True},
+])
+def test_invalid_query_ranges_still_fail_without_dispatch_rust(query, interval):
+    """Point support must not accept empty, overflowing, or unsupported ranges."""
+    feed_range = {"Range": interval}
+    original = deepcopy(feed_range)
+    with pytest.raises(ValueError):
+        query.proxy.query_items("SELECT * FROM c", feed_range=feed_range)
+    assert feed_range == original
+    assert not query.calls
+    query.binding._ItemFeedCursor.assert_not_called()
+    query.backend._ensure_driver_handle.assert_not_called()
     assert not query.connection.mock_calls
 
 
@@ -637,8 +727,6 @@ def test_query_body_scope_options_and_client_defaults_are_preserved_rust(query):
         ({"max_item_count": True}, ValueError),
         ({"populate_query_metrics": 1}, TypeError),
         ({"full_text_score_scope": "Invalid"}, ValueError),
-        ({"full_text_score_scope": "Local"}, NotImplementedError),
-        ({"full_text_score_scope": "Global"}, NotImplementedError),
         ({"continuation_token_limit": -1}, ValueError),
         ({"continuation_token_limit": True}, ValueError),
         ({"continuation_token_limit": 0.5}, ValueError),
@@ -857,7 +945,8 @@ def test_rust_query_cross_partition_defaults_rust(query, query_options, expected
     assert config.scope.allow_cross_partition is expected
 
 
-def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens_rust(legacy_query):
+@pytest.mark.parametrize("token", ["q1.saved", "c1.saved", "c2.saved", "cf1.saved"])
+def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens_rust(legacy_query, token):
     """On the core-python backend queries run the legacy path and refuse Rust tokens.
 
     With the legacy backend selected, the query returns the legacy iterable
@@ -874,7 +963,7 @@ def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens_rust(l
     assert result is query.connection.QueryItems.return_value
     assert not query.calls
     with pytest.raises(ValueError, match="incompatible"):
-        query.proxy.query_items("SELECT * FROM c", continuation="q1.saved")
+        query.proxy.query_items("SELECT * FROM c", continuation=token)
     iterable = (
         __import__(
             "azure.cosmos.aio._query_iterable_async", fromlist=["QueryIterable"]
@@ -885,7 +974,7 @@ def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens_rust(l
         ).QueryIterable
     )
     with pytest.raises(ValueError, match="incompatible"):
-        iterable(query.connection, "SELECT * FROM c", {}, continuation_token="q1.saved")
+        iterable(query.connection, "SELECT * FROM c", {}, continuation_token=token)
 
 
 def test_query_advice_and_index_headers_are_decoded_before_hooks_rust(query, monkeypatch):

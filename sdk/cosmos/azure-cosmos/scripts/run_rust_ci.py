@@ -19,6 +19,8 @@ from tempfile import TemporaryDirectory
 import pytest
 
 PACKAGE = Path(__file__).resolve().parents[1]
+# Header line that opts a standalone sync/aio Rust test module into the service lane.
+RUST_BEHAVIOR_TEST_MARKER = "# Rust behavior test"
 TOXIPROXY_CASE_COUNTS = {
     "test_toxiproxy_route.py": 32,
     "test_toxiproxy_write.py": 8,
@@ -143,7 +145,8 @@ def discover_tests(root: Path, suite: str) -> list[Path]:
                 or (
                     path.parent.name in ("sync", "aio")
                     and any(
-                        line.lstrip().startswith("# Source:") for line in path.read_text(encoding="utf-8").splitlines()
+                        line.lstrip().startswith(("# Source:", RUST_BEHAVIOR_TEST_MARKER))
+                        for line in path.read_text(encoding="utf-8").splitlines()
                     )
                 )
             )
@@ -381,9 +384,8 @@ def main() -> int:
         importlib.import_module("azure.core.tracing.ext.opentelemetry_span")
     if args.suite == "telemetry":
         importlib.import_module("azure.monitor.opentelemetry.exporter")
-    for variable in ("PYTEST_ADDOPTS", "COSMOS_PARITY_CAPTURE_BACKEND_LABEL"):
-        if os.environ.get(variable):
-            raise RuntimeError(f"Unset {variable}; required coverage cannot accept selection/label overrides.")
+    if os.environ.get("PYTEST_ADDOPTS"):
+        raise RuntimeError("Unset PYTEST_ADDOPTS; required coverage cannot accept selection overrides.")
     if args.toxiproxy_worker:
         if args.suite != "toxiproxy" or sys.stdin.buffer.read(1) != b"1":
             raise RuntimeError("Runner did not establish Toxiproxy process-tree ownership.")

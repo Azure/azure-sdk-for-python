@@ -121,7 +121,7 @@ class TestReadItems(unittest.TestCase):
             self.database.delete_container(container_id)
 
     def test_read_items_fails_with_incomplete_hierarchical_pk_rust(self):
-        """A hierarchical partition key with too few components -> read_items raises ValueError before any network call."""
+        """A hierarchical partition key with too few components makes read_items raise ValueError."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_fails_with_incomplete_hierarchical_pk
         container_id = 'read_items_hpk_incomplete_container_' + str(uuid.uuid4())
         self.database.create_container(
@@ -140,7 +140,7 @@ class TestReadItems(unittest.TestCase):
             items_to_read.append((incomplete_pk_item_id, ["tenant_only"]))
             with self.assertRaises(ValueError) as context:
                 container_hpk.read_items(items=items_to_read)
-            self.assertIn("Number of components in partition key value (1) does not match definition (2)",
+            self.assertIn("read_items requires every component of the container's partition key.",
                           str(context.exception))
         finally:
             self.database.delete_container(container_id)

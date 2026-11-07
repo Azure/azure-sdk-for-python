@@ -4,6 +4,7 @@
 import logging
 import math
 import os
+import re
 
 from azure.identity import DefaultAzureCredential
 from workload_config_helpers import manage_client_lifecycle
@@ -64,6 +65,7 @@ __all__ = [
     "WORKLOAD_MANAGE_CLIENT_LIFECYCLE",
     "WORKLOAD_MIX",
     "WORKLOAD_DOC_PROFILE",
+    "WORKLOAD_ITEM_NAMESPACE",
 ]
 
 
@@ -224,6 +226,12 @@ if PARTITION_KEY not in ("id", "pk"):
     raise ValueError("The seeded workload supports COSMOS_PARTITION_KEY=id or pk")
 if WORKLOAD_DOC_PROFILE == "orders" and PARTITION_KEY != "id":
     raise ValueError("The orders workload requires COSMOS_PARTITION_KEY=id")
+WORKLOAD_ITEM_NAMESPACE = os.environ.get("WORKLOAD_ITEM_NAMESPACE", "")
+if WORKLOAD_ITEM_NAMESPACE and (
+    WORKLOAD_DOC_PROFILE != "orders"
+    or not re.fullmatch(r"[0-9a-f]{32}", WORKLOAD_ITEM_NAMESPACE)
+):
+    raise ValueError("WORKLOAD_ITEM_NAMESPACE requires the orders profile and 32 lowercase hexadecimal characters")
 if WORKLOAD_USE_SYNC and (WORKLOAD_ARRIVAL_RATE or WORKLOAD_NUM_CLIENTS != 1 or not WORKLOAD_MANAGE_CLIENT_LIFECYCLE):
     raise ValueError("Sync workloads require zero arrival rate, one client and explicit cleanup")
 if WORKLOAD_ARRIVAL_RATE:

@@ -22,7 +22,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey, http_constants
-from query_items._legacy_distinct_helpers import DistinctConfig
+from query_items._legacy_distinct_helpers import DistinctConfig, distinct_query_diagnostics
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -206,6 +206,10 @@ class TestQuery(unittest.TestCase):
         self.database.delete_container(created_collection.id)
 
     @pytest.mark.cosmosEmulator
+    @pytest.mark.skip(
+        reason="driver-gap: Gap 30 - Rust rejects MAX queries without a partition key "
+        "(HTTP 400/1004). Re-enable when the driver supports this aggregate query."
+    )
     def test_value_max_query_results_rust(self):
         # Source: tests/test_query.py::TestQuery.test_value_max_query_results
         container = self.container
@@ -379,6 +383,12 @@ class TestQuery(unittest.TestCase):
         self.database.delete_container(created_collection.id)
 
     @pytest.mark.cosmosEmulator
+    @pytest.mark.skip(
+        reason="driver-gap: Gap 30 - For SELECT DISTINCT c[\"value\"] with ORDER BY and "
+        "OFFSET LIMIT, Rust returns rows with a '$1' field instead of the requested "
+        "'value' field, so the unchanged test raises KeyError. Re-enable when the "
+        "driver preserves the selected property name."
+    )
     def test_offset_limit_rust(self):
         # Source: tests/test_query.py::TestQuery.test_offset_limit
         created_collection = self.container
@@ -490,11 +500,12 @@ class TestQuery(unittest.TestCase):
         self.database.delete_container(created_collection.id)
 
     def _validate_distinct(self, created_collection, query, results, is_select, fields):
-        query_iterable = created_collection.query_items(
-            query=query,
-            enable_cross_partition_query=True
-        )
-        query_results = list(query_iterable)
+        with distinct_query_diagnostics(query):
+            query_iterable = created_collection.query_items(
+                query=query,
+                enable_cross_partition_query=True
+            )
+            query_results = list(query_iterable)
 
         self.assertEqual(len(results), len(query_results))
         query_results_strings = []

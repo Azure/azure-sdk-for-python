@@ -3,6 +3,28 @@
 """Self-contained DISTINCT helpers copied from tests/test_config.py."""
 
 import collections
+from contextlib import contextmanager
+import traceback
+
+import pytest
+
+from azure.core.exceptions import AzureError
+from azure.cosmos._backend.errors import UnsupportedQueryError
+
+
+@contextmanager
+def distinct_query_diagnostics(query):
+    """Put the actual query error first so CI cannot hide it behind wrapper frames."""
+    try:
+        yield
+    except (AzureError, UnsupportedQueryError, TimeoutError) as error:
+        pytest.fail(
+            f"DISTINCT query failed: {type(error).__name__}: {error}\n"
+            f"Query: {query}\n"
+            "Partition key: not specified\n\n"
+            f"Original traceback:\n{traceback.format_exc()}",
+            pytrace=False,
+        )
 
 
 class DistinctConfig:

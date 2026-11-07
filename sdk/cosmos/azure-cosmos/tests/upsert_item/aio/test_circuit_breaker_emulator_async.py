@@ -270,7 +270,10 @@ class TestCircuitBreakerEmulatorAsync:
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds) and the identity of the transport-injected "
-                              "exception; the Rust driver owns the circuit breaker and exposes neither. Also needs "
+                              "exception; "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
+                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). "
+                              "Also needs "
                               "an emulator topology rewrite and collection-Delete fault (known gap 10) and Rust "
                               "delete_all_items_by_partition_key support (known gap 19).")
     @pytest.mark.parametrize("error", create_errors())
@@ -319,7 +322,10 @@ class TestCircuitBreakerEmulatorAsync:
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds) and the identity of the transport-injected "
-                              "exception; the Rust driver owns the circuit breaker and exposes neither. Also needs "
+                              "exception; "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
+                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). "
+                              "Also needs "
                               "an emulator topology rewrite and collection-Delete fault (known gap 10) and Rust "
                               "delete_all_items_by_partition_key support (known gap 19).")
     @pytest.mark.parametrize("error", create_errors())

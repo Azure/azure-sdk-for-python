@@ -22,9 +22,30 @@
 #   ./run_latency_matrix.sh [DURATION_SECONDS] [REPEATS]
 #       DURATION_SECONDS  per-run length (default 7200 = 2 h; P99.9 needs hours)
 #       REPEATS           how many times to run the whole matrix (default 2)
+#   Add --restore-orders --confirm-target <endpoint> <database> <container>
+#   to restore a dedicated orders dataset before each sequence and after the
+#   matrix. All workload/results target settings must then be explicit.
 # ---------------------------------------------------------------------------
 set -euo pipefail
 cd "$(dirname "$0")"
+RESTORE_ORDERS=0
+RESTORE_TARGET=()
+if (( $# > 2 )); then
+  if [[ $# -ne 7 || "$3" != --restore-orders || "$4" != --confirm-target ]]; then
+    echo "ERROR: expected duration repeats [--restore-orders --confirm-target endpoint database container]." >&2
+    exit 2
+  fi
+  RESTORE_ORDERS=1
+  RESTORE_TARGET=("${@:4}")
+  for name in COSMOS_URI COSMOS_DATABASE COSMOS_CONTAINER COSMOS_PARTITION_KEY \
+      COSMOS_MAX_ITEM_INDEX WORKLOAD_DOC_PROFILE RESULTS_COSMOS_URI \
+      RESULTS_COSMOS_DATABASE RESULTS_COSMOS_CONTAINER; do
+    if [[ -z "${!name:-}" ]]; then
+      echo "ERROR: order restoration requires explicit ${name}; defaults are not accepted." >&2
+      exit 2
+    fi
+  done
+fi
 source ./perf_drill_defaults.sh
 perf_single_operation_shape
 
@@ -44,6 +65,13 @@ _ns="$(date +%N 2>/dev/null || echo 000000000)"
 STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/latency-${STAMP}"
 perf_create_log_dir "${LOG_DIR}" || exit 2
+if [[ "${RESTORE_ORDERS}" == 1 ]]; then
+  RESTORE_MANIFEST="${LOG_DIR}/restoration.json"
+  WORKLOAD_ITEM_NAMESPACE="$(WORKLOAD_OPERATIONS=read WORKLOAD_ARRIVAL_RATE=0 \
+    python3 profiling_restore_orders.py --initialize \
+    --manifest "${RESTORE_MANIFEST}" "${RESTORE_TARGET[@]}")" || exit 2
+  export WORKLOAD_ITEM_NAMESPACE
+fi
 write_run_manifest "${LOG_DIR}" "${STAMP}" "A-latency-matrix"
 for (( r=1; r<=REPEATS; r++ )); do
   for op in "${OPERATIONS[@]}"; do
@@ -73,13 +101,22 @@ for (( r=1; r<=REPEATS; r++ )); do
       log="${LOG_DIR}/${wid}.log"
       echo ">>> [repeat ${r}/${REPEATS}] op=${op} backend=${bk} arrival_rate=${run_arrival} -> ${wid}"
 
+      if [[ "${RESTORE_ORDERS}" == 1 ]]; then
+        if ! WORKLOAD_OPERATIONS=read WORKLOAD_ARRIVAL_RATE=0 \
+            python3 profiling_restore_orders.py --manifest "${RESTORE_MANIFEST}" \
+            "${RESTORE_TARGET[@]}" >"${LOG_DIR}/${wid}-restoration.log" 2>&1; then
+          echo "ERROR: restoration failed; matrix stopped before ${wid}. See ${LOG_DIR}/${wid}-restoration.log." >&2
+          exit 1
+        fi
+      fi
+
       # timeout sends SIGINT (--signal=INT) so the workload stops the same way a
       # Ctrl-C would, letting the reporter flush one final row on the way out.
       # --kill-after=120s is the safety net: if a cell ever SWALLOWS the SIGINT
       # (e.g. a teardown that blocks while joining an executor thread), timeout
       # escalates to SIGKILL after a 120s grace window so one wedged cell can
       # never stall the whole unattended matrix again. A SIGKILLed cell exits
-      # 137 -> flagged below as a failure (visible) but the loop still continues.
+      # 137 -> flagged below as a failure; restoration mode stops the matrix.
       COSMOS_BACKEND="${bk}" \
       WORKLOAD_OPERATIONS="${op}" \
       WORKLOAD_ARRIVAL_RATE="${run_arrival}" \
@@ -100,7 +137,7 @@ for (( r=1; r<=REPEATS; r++ )); do
       #   137  SIGKILL after the 120s grace -> the cell HUNG on stop (real failure).
       #   124  cannot occur with --preserve-status; if seen, timeout behaved
       #        unexpectedly (e.g. flags changed) -> treat as failure, don't hide it.
-      # The loop always CONTINUES; flagging just makes a bad cell visible.
+      # Without restoration, preserve the original continue-and-flag behavior.
       case "${rc}" in
         0)   ;;  # graceful clean stop, the expected outcome
         130) echo "    !! interrupted; final data is not confirmed; see ${log}" >&2; overall_rc=1 ;;
@@ -108,15 +145,29 @@ for (( r=1; r<=REPEATS; r++ )); do
         124) echo "    !! run exited 124 (unexpected with --preserve-status); see ${log}" >&2; overall_rc=1 ;;
         *)   echo "    !! run exited rc=${rc}; see ${log}" >&2; overall_rc=1 ;;
       esac
+      if [[ "${RESTORE_ORDERS}" == 1 && "${rc}" != 0 ]]; then
+        echo "ERROR: sequence failed; matrix stopped. Retain ${RESTORE_MANIFEST} for scoped recovery after all workload processes stop." >&2
+        exit 1
+      fi
       unset rc
       echo "    done op=${op} backend=${bk}"
     done
   done
 done
 
+if [[ "${RESTORE_ORDERS}" == 1 ]]; then
+  if ! WORKLOAD_OPERATIONS=read WORKLOAD_ARRIVAL_RATE=0 \
+      python3 profiling_restore_orders.py --manifest "${RESTORE_MANIFEST}" \
+      "${RESTORE_TARGET[@]}" >"${LOG_DIR}/final-restoration.log" 2>&1; then
+    echo "ERROR: final restoration failed; see ${LOG_DIR}/final-restoration.log." >&2
+    exit 1
+  fi
+fi
+
 echo
 echo "=== Phase A complete. Read results from ${RESULTS_COSMOS_DATABASE}/${RESULTS_COSMOS_CONTAINER},"
-echo "    filtering workload_id LIKE 'lat-%-${STAMP}' and dropping warmup rows (elapsed_seconds > 600)."
+echo "    filtering workload_id LIKE 'lat-%-${STAMP}'."
+echo "    Retain all measurement intervals for the initial short comparison; no warm-up exclusion."
 echo
 # Integrity gate: before anyone reads a percentile, prove every cell did real,
 # low-error work on both backends, that no reporting window was dropped, and that

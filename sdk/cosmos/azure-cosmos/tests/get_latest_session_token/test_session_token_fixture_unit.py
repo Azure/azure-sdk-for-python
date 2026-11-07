@@ -159,7 +159,6 @@ raise SystemExit(code)
     env["PYTHONPATH"] = os.pathsep.join((str(PACKAGE), str(PACKAGE / "tests")))
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     env.pop("COSMOS_SESSION_TOKEN_REAL_SPLIT", None)
-    env.pop("COSMOS_PARITY_CAPTURE_OP", None)
     env.pop("PYTEST_ADDOPTS", None)
     result = subprocess.run(
         [sys.executable, "-c", script, mode],

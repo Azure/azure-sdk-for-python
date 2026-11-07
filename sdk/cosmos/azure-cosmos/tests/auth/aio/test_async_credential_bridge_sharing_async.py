@@ -12,6 +12,8 @@ inspect native driver identity or count token callbacks.
 
 Runs on the emulator or a real Entra tenant (COSMOS_AAD_*), and only when the
 Rust binding is present. Uses ``asyncio.run`` directly (no pytest-asyncio).
+An ACCOUNT_KEY client provisions and cleans up containers; token clients still
+perform all item writes and reads. The shared parity_db database is retained.
 """
 
 from __future__ import annotations
@@ -27,11 +29,10 @@ import pytest
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey
 
-from common._parity_helpers import skip_unless_emulator, skip_unless_rust_binding
 from auth._token_credentials import make_async_token_credential, skip_unless_token_auth
 
 pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosRustAAD,
-              skip_unless_emulator(), skip_unless_rust_binding(), skip_unless_token_auth()]
+              skip_unless_token_auth()]
 
 # Guard against reintroducing the retired private credential thread.
 _BRIDGE_THREAD_NAME = "cosmos-async-credential"
@@ -71,10 +72,14 @@ def test_shared_async_credential_uses_one_bridge_on_application_loop_rust():
 
             # Read through every client. Cached tokens can serve later requests,
             # so successful reads do not imply one credential callback per client.
-            db = await clients[0].create_database_if_not_exists("parity_db")
+            setup_client = await stack.enter_async_context(
+                CosmosClient(host, os.environ["ACCOUNT_KEY"], _backend="rust")
+            )
+            db = await setup_client.create_database_if_not_exists("parity_db")
             cname = "auth_aio_share_" + uuid.uuid4().hex[:8]
-            cont = await db.create_container(id=cname, partition_key=PartitionKey(path="/pk"))
+            await db.create_container(id=cname, partition_key=PartitionKey(path="/pk"))
             try:
+                cont = clients[0].get_database_client("parity_db").get_container_client(cname)
                 item_id = uuid.uuid4().hex
                 await cont.create_item(body={"id": item_id, "pk": "a", "n": 1})
                 for client in clients:
@@ -115,10 +120,14 @@ def test_distinct_async_credentials_do_not_share_a_bridge_rust():
             assert bridge_a is not bridge_b, "distinct credentials must map to distinct bridges"
 
             assert bridge_a._loop is bridge_b._loop is asyncio.get_running_loop()
-            db = await client_a.create_database_if_not_exists("parity_db")
+            setup_client = await stack.enter_async_context(
+                CosmosClient(host, os.environ["ACCOUNT_KEY"], _backend="rust")
+            )
+            db = await setup_client.create_database_if_not_exists("parity_db")
             cname = "auth_aio_distinct_" + uuid.uuid4().hex[:8]
-            cont = await db.create_container(id=cname, partition_key=PartitionKey(path="/pk"))
+            await db.create_container(id=cname, partition_key=PartitionKey(path="/pk"))
             try:
+                cont = client_a.get_database_client("parity_db").get_container_client(cname)
                 item_id = uuid.uuid4().hex
                 await cont.create_item(body={"id": item_id, "pk": "a", "n": 1})
                 for client in (client_a, client_b):

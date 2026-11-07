@@ -4,6 +4,7 @@
 
 import ast
 from collections import Counter
+from functools import lru_cache
 import importlib.util
 import json
 from pathlib import Path
@@ -127,6 +128,35 @@ def observations(function):
             yield "batch-call", node
 
 
+@lru_cache(maxsize=None)
+def imported_functions(path):
+    aliases = {}
+    tree = ast.parse(REF._read_file(path)[0])
+    for node in tree.body:
+        if (
+            isinstance(node, ast.ImportFrom)
+            and node.module
+            and node.module.startswith("test_")
+        ):
+            target = "tests\\" + node.module.replace(".", "\\") + ".py"
+            if not ROOT.joinpath(*target.split("\\")).exists():
+                continue
+            functions = REF._read_file(target)[1]
+            for alias in node.names:
+                if alias.name in functions:
+                    aliases[alias.asname or alias.name] = (target, alias.name)
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name == "test_config":
+                    target = r"tests\test_config.py"
+                    for symbol in REF._read_file(target)[1]:
+                        aliases[(alias.asname or alias.name) + "." + symbol] = (
+                            target,
+                            symbol,
+                        )
+    return aliases
+
+
 def refs(path, name, contains=None, kinds=("assertion", "assertion-call")):
     text, functions = REF._read_file(path)
     matches = [
@@ -145,7 +175,9 @@ def refs(path, name, contains=None, kinds=("assertion", "assertion-call")):
     return result
 
 
-def disposition(path, symbol, kind, node):  # pylint: disable=too-many-branches,too-many-statements
+def disposition(
+    path, symbol, kind, node
+):  # pylint: disable=too-many-branches,too-many-statements
     name = symbol.rsplit(".", 1)[-1]
     text = ast.unparse(node)
     asynchronous = path.endswith("_async.py")
@@ -241,7 +273,7 @@ def disposition(path, symbol, kind, node):  # pylint: disable=too-many-branches,
                 "Other point-operation headers/LSNs are setup or another API's contract."
             )
     elif "test_partition_key" in path:
-        if name in {"_assert_pk", "_batch_and_assert"}:
+        if name in {"_assert_pk", "_batch_and_assert"} or "_batch_and_assert(" in text:
             selector = None
             if kind != "batch-call":
                 selector = (
@@ -249,7 +281,7 @@ def disposition(path, symbol, kind, node):  # pylint: disable=too-many-branches,
                     if "len(" in text
                     else ("item['pk']" if " is None" in text else "None not in item")
                 )
-                if "_assert_pk(" in text:
+                if "_assert_pk(" in text or "_batch_and_assert(" in text:
                     selector = None
             mapped(
                 "Batch-only projection of the composite: Hash versions 1/2, Python None and null sentinel "
@@ -287,15 +319,87 @@ def disposition(path, symbol, kind, node):  # pylint: disable=too-many-branches,
                 ),
             )
         else:
-            row["rationale"] = (
-                "Session composite includes outgoing token presence/absence, multi-write vectors and other APIs. "
-                "Existing delete_item copies skip unobservable request checks; those are not replacement evidence. "
-                "Removal of raw_request_hook does not retire session correctness."
+            function = REF._read_file(path)[1][symbol]
+            preceding = sorted(
+                (
+                    call
+                    for call in ast.walk(function)
+                    if isinstance(call, ast.Call)
+                    and call.lineno <= node.lineno
+                    and REF._call_name(call)
+                    in {
+                        "execute_item_batch",
+                        "create_item",
+                        "upsert_item",
+                        "read_item",
+                        "replace_item",
+                        "delete_item",
+                        "create_container",
+                        "delete_container",
+                        "read",
+                    }
+                ),
+                key=lambda call: call.lineno,
             )
-            row["remaining"] = [
-                "Native outgoing-token and multi-write assertion correspondence; isolate other-API branches."
-            ]
-    elif "test_item_body_serialization" in path or "test_encoding" in path:
+            if preceding and REF._call_name(preceding[-1]) != "execute_item_batch":
+                other(
+                    "Request/response session assertion outside the batch portion of the composite."
+                )
+            else:
+                row["rationale"] = (
+                    "Outgoing batch session-token presence and the original mixed-operation session vectors "
+                    "are not proved by response-token progression. Existing delete_item copies skip request "
+                    "checks; removing raw_request_hook does not retire session correctness."
+                )
+                row["remaining"] = [
+                    "Native outgoing batch token and multi-write session-vector correspondence."
+                ]
+    elif "test_encoding" in path:
+        function = REF._read_file(path)[1][symbol]
+        calls = sorted(
+            (
+                call
+                for call in ast.walk(function)
+                if isinstance(call, ast.Call)
+                and REF._call_name(call) == "execute_item_batch"
+            ),
+            key=lambda call: call.lineno,
+        )
+        if calls and node.lineno < calls[0].lineno:
+            other(
+                "Create/upsert/replace/patch portion preceding the first batch in the encoding composite."
+            )
+        else:
+            target = "test_batch_unicode_write_read_delete_rust"
+            variables = {
+                child.id for child in ast.walk(node) if isinstance(child, ast.Name)
+            } & {"batch_result", "read_batch_result", "delete_batch_result"}
+            if variables and kind != "batch-call":
+                variable = next(iter(variables))
+                field = (
+                    "['resourceBody']['content']"
+                    if "resourceBody" in text
+                    else "['statusCode']"
+                )
+                mapped(
+                    "Retains the exact Unicode batch service status/content assertion on both public surfaces.",
+                    refs(SHARED, target, variable + "[0]" + field),
+                )
+            elif kind == "batch-call":
+                targets = refs(SHARED, target, kinds=("batch-call",))
+                mapped(
+                    "Original create/read/delete Unicode batch vector executes through the real native export.",
+                    [targets[calls.index(node)]],
+                )
+            else:
+                mapped(
+                    "Original bytes/text/escaping requirement is checked at a wrapped real native batch boundary "
+                    "with the original Japanese/Thai/emoji payload. This is not outgoing HTTP capture.",
+                    refs(SHARED, target, "body"),
+                    partial=True,
+                    remaining=("Actual outgoing-body/Content-Length observation.",),
+                )
+    elif "test_item_body_serialization" in path:
         wire_shape = "wire_shape" in symbol
         target = (
             "test_original_batch_wire_shape_rust"
@@ -330,10 +434,15 @@ def disposition(path, symbol, kind, node):  # pylint: disable=too-many-branches,
             ),
         )
     elif "test_availability_strategy" in path:
-        if "read_operation" in name or name in {
-            "test_custom_thread_pool_executor",
-            "test_max_concurrency",
-        }:
+        if (
+            "_perform_read_operation(" in text
+            or "read_operation" in name
+            or name.removesuffix("_async")
+            in {
+                "test_custom_thread_pool_executor",
+                "test_max_concurrency",
+            }
+        ):
             other(
                 "Read-only helper/test selected through the shared operation-type helper; no batch execution."
             )
@@ -343,7 +452,15 @@ def disposition(path, symbol, kind, node):  # pylint: disable=too-many-branches,
                 "Gap 14 excludes progressive/write "
                 "hedging, not ordinary status propagation, disabled-policy overrides or exclusion correctness. "
                 "No blanket exclusion of this shared assertion is made.",
-                refs(FAILURES, "regional_case", "caught.value.status_code"),
+                refs(
+                    FAILURES,
+                    "regional_case",
+                    (
+                        "_debug_fault_injection_rule_hit_count"
+                        if "uri" in name
+                        else "caught.value.status_code"
+                    ),
+                ),
                 partial=True,
                 remaining=(
                     "Per-vector split of accepted hedging exclusions versus retained URI/status/override assertions.",
@@ -351,21 +468,68 @@ def disposition(path, symbol, kind, node):  # pylint: disable=too-many-branches,
                 ),
             )
     elif "test_per_partition_circuit_breaker_mm" in path:
-        row["rationale"] = (
-            "Ordinary circuit-breaker failover/recovery is not write hedging. Exact consecutive/failure-rate "
-            "thresholds, destination changes and recovery have no established batch replacement. Python health-map "
-            "internals and exception object identity must be separated from retained customer behavior."
-        )
-        row["remaining"] = [
-            "Native threshold/failure-rate/recovery assertions; do not substitute exclusion-routing tests."
-        ]
+        if name == "perform_read_operation":
+            other(
+                "Read/query-only helper reached through a shared policy composite; no batch assertion."
+            )
+        elif "health_info." in text or "exc_info.value == error" in text:
+            row.update(
+                disposition="retired-python-detail",
+                rationale="Exact private Python counter fields/injected Python exception-object identity are "
+                "implementation details. Error type/status and externally visible threshold, partition "
+                "isolation, failover and recovery remain open in the enclosing policy cases.",
+            )
+        else:
+            row["rationale"] = (
+                "Ordinary circuit-breaker failover/recovery is not write hedging. Exact consecutive/failure-rate "
+                "thresholds, destination changes and recovery have no established batch replacement."
+            )
+            row["remaining"] = [
+                "Native threshold/failure-rate/recovery assertions; do not substitute exclusion-routing tests."
+            ]
     elif "test_container_properties_cache" in path:
-        if "len(batch_response)" in text or "e.http_error_message" in text:
+        if "Container Should not Already Exist" in text:
+            other(
+                "Owned-container setup failure sentinel, not a batch response assertion."
+            )
+        elif kind == "batch-call":
+            function = REF._read_file(path)[1][symbol]
+            calls = sorted(
+                (
+                    call
+                    for call in ast.walk(function)
+                    if isinstance(call, ast.Call)
+                    and REF._call_name(call) == "execute_item_batch"
+                ),
+                key=lambda call: call.lineno,
+            )
+            if calls.index(node) < 2:
+                mapped(
+                    "The replacement loop retains both 100-create operations, original property names and key "
+                    "value, while reusing a warm native proxy across same-name container recreation.",
+                    refs(
+                        SHARED,
+                        "test_batch_same_name_container_recreation_rust",
+                        kinds=("batch-call",),
+                    ),
+                )
+            else:
+                row["rationale"] = (
+                    "Original purported negative call has a valid new-key body and no failure sentinel."
+                )
+                row["remaining"] = [
+                    "Establish a nonvacuous negative-case contract rather than inventing a 400 expectation."
+                ]
+        elif "len(batch_response)" in text or "e.http_error_message" in text:
             mapped(
                 "Both 100-create batches are exercised on the same public proxy before/after same-name recreation "
                 "with /PK changed to /partkey. Native metadata remains warm; no Python cache is injected. "
                 "Unexpected batch exceptions fail the replacement directly.",
-                refs(SHARED, "test_batch_same_name_container_recreation_rust", "len(batch_response)"),
+                refs(
+                    SHARED,
+                    "test_batch_same_name_container_recreation_rust",
+                    "len(batch_response)",
+                ),
             )
         else:
             row["rationale"] = (
@@ -374,25 +538,67 @@ def disposition(path, symbol, kind, node):  # pylint: disable=too-many-branches,
                 "sentinel, supplies a valid new key/body, and may never execute. Cold metadata faults are not "
                 "a replacement for this scenario."
             )
-            row["remaining"] = ["Original negative-case validity and batch-call/setup correspondence."]
+            row["remaining"] = [
+                "Original negative-case validity and batch-call/setup correspondence."
+            ]
     elif "test_headers" in path:
         mapped(
             "The original request value 3 overrides client value 2 in a wrapped real native batch call. "
             "The original outgoing HTTP-header assertion remains distinct from this typed-boundary assertion.",
-            refs(SHARED, "test_batch_request_throughput_bucket_rust", "settings.throughput_bucket"),
+            refs(
+                SHARED,
+                "test_batch_request_throughput_bucket_rust",
+                "settings.throughput_bucket",
+            ),
             partial=True,
-            remaining=("Outgoing batch header value 3; service-applied scheduling is separate evidence.",),
+            remaining=(
+                "Outgoing batch header value 3; service-applied scheduling is separate evidence.",
+            ),
         )
     return row
+
+
+def imported_references(path, function, external_helpers):
+    imported = []
+    for call in ast.walk(function):
+        if not isinstance(call, ast.Call):
+            continue
+        dependency = imported_functions(path).get(ast.unparse(call.func))
+        if dependency is None:
+            continue
+        target_path, target_symbol = dependency
+        key = target_path + "::" + target_symbol
+        imported.append(key)
+        if key not in external_helpers:
+            target_text, target_functions = REF._read_file(target_path)
+            target = target_functions[target_symbol]
+            external_helpers[key] = {
+                "source": REF._reference(
+                    target_path, target_symbol, "function", target, target_text
+                ),
+                "observations": [
+                    REF._reference(target_path, target_symbol, kind, node, target_text)
+                    for kind, node in observations(target)
+                ],
+            }
+    return sorted(set(imported))
 
 
 def build():
     records = []
     contexts = {}
+    external_helpers = {}
+    module_contexts = {}
     for path in source_paths():
         text, functions, edges, roots, selected = inventory(path)
+        module_contexts[path] = [
+            REF._reference(path, "<module>", "module-value-or-import", node, text)
+            for node in ast.parse(text).body
+            if isinstance(node, (ast.Assign, ast.AnnAssign, ast.Import, ast.ImportFrom))
+        ]
         for symbol in sorted(selected):
             function = functions[symbol]
+            imported = imported_references(path, function, external_helpers)
             nested = [
                 functions[child]
                 for child in selected
@@ -421,6 +627,7 @@ def build():
                         "batch-or-caller" if symbol in roots else "forward-helper"
                     ),
                     "helpers": sorted(edges[symbol] & selected),
+                    "imported_helpers": imported,
                     "annotation_context": REF._annotation_context(path, symbol),
                     "controls": [
                         REF._reference(path, symbol, kind, node, text)
@@ -435,12 +642,18 @@ def build():
     )
     return {
         "scope": "27 original modules; observations, transitive helpers, controls, annotations "
-                 "and fixture fingerprints",
+        "and fixture fingerprints",
         "not_a_completion_certificate": True,
         "source_modules": source_paths(),
         "counts": dict(sorted(counts.items())),
         "records": records,
+        "module_contexts": module_contexts,
+        "external_helpers": external_helpers,
         "replacement_contexts": contexts,
+        "replacement_modules": {
+            path: REF._fingerprint(ast.parse(REF._read_file(path)[0]))
+            for path in sorted({context["path"] for context in contexts.values()})
+        },
         "fixture_boundary": {
             "path": FAILURES,
             "ast_sha256": REF._fingerprint(ast.parse(REF._read_file(FAILURES)[0])),

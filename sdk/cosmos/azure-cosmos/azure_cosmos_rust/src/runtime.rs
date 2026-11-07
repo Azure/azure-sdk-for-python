@@ -2311,6 +2311,102 @@ class Config:
         });
     }
 
+    fn assert_token_credential_driver_sharing(shared_credential: bool) {
+        use crate::driver_runtime::RuntimeHandle;
+        use azure_data_cosmos_driver::in_memory_emulator::{
+            InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
+        };
+        use std::sync::Arc;
+        use url::Url;
+
+        pyo3::prepare_freethreaded_python();
+        let endpoint = Url::parse(if shared_credential {
+            "https://shared-token-credential.emulator.local"
+        } else {
+            "https://distinct-token-credentials.emulator.local"
+        })
+        .unwrap();
+        let config =
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", endpoint.clone())])
+                .unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
+        let runtime = super::runtime_context()
+            .tokio_rt
+            .block_on(emulator.runtime_builder().build())
+            .unwrap();
+
+        Python::with_gil(|py| {
+            let runtime = Py::new(py, RuntimeHandle::new(runtime)).unwrap();
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+import time
+from types import SimpleNamespace
+class Credential:
+    def get_token(self, *scopes):
+        return SimpleNamespace(token="in-memory-test-token", expires_on=int(time.time()) + 3600)
+first = Credential()
+second = Credential()
+"#,
+                "driver_sharing_test.py",
+                "driver_sharing_test",
+            )
+            .unwrap();
+            let first = module.getattr("first").unwrap();
+            let second = if shared_credential {
+                first.clone()
+            } else {
+                module.getattr("second").unwrap()
+            };
+            let acquire = |credential: &Bound<'_, PyAny>| {
+                super::acquire_driver_handle(
+                    py,
+                    endpoint.as_str(),
+                    None,
+                    None,
+                    Some(credential),
+                    Some(runtime.borrow(py)),
+                )
+                .unwrap()
+            };
+            // Separate acquisitions are not comparable Python identities. Inspect the
+            // actual drivers while both acquisitions and credentials remain alive.
+            let a = acquire(&first);
+            let b = acquire(&second);
+            assert_eq!(Arc::ptr_eq(&a.driver, &b.driver), shared_credential);
+            assert_eq!(
+                super::drivers().read().get(&a.key).unwrap().refcount,
+                if shared_credential { 2 } else { 1 },
+            );
+
+            super::release_driver_handle(&a).unwrap();
+            super::release_driver_handle(&a).unwrap();
+            {
+                let cache = super::drivers().read();
+                let entry = cache
+                    .get(&b.key)
+                    .expect("the second acquisition must remain live");
+                assert!(Arc::ptr_eq(&entry.driver, &b.driver));
+                assert_eq!(entry.refcount, 1);
+                if !shared_credential {
+                    assert!(!cache.contains_key(&a.key));
+                }
+            }
+            super::release_driver_handle(&b).unwrap();
+            assert!(!super::drivers().read().contains_key(&b.key));
+        });
+    }
+
+    #[test]
+    fn same_token_credential_reuses_native_driver() {
+        assert_token_credential_driver_sharing(true);
+    }
+
+    #[test]
+    fn distinct_token_credentials_isolate_native_drivers() {
+        assert_token_credential_driver_sharing(false);
+    }
+
     #[test]
     fn client_overall_deadline_is_distinct_from_connection_settings() {
         pyo3::prepare_freethreaded_python();

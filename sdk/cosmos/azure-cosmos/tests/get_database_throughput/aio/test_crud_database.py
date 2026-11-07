@@ -14,10 +14,7 @@ The CRUD copy checks that get-or-create preserves existing 5000 RU/s despite
 a later 6000 RU/s creation argument. The manual copy reads 1000 RU/s and
 checks a replacement result of 2000 RU/s.
 
-This is NOT the side-by-side comparison. The comparison tests
-(``get_database_throughput/aio/test_get_database_throughput_parity_async.py``)
-run the same call on both engines and diff the numbers. This file runs on Rust
-only.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database. The class name and
 method name match the source (apart from the method's ``_rust`` suffix); the file name

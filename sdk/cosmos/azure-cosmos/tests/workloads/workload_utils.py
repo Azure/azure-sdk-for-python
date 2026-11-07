@@ -186,8 +186,11 @@ def get_existing_random_item():
 
 def create_random_item():
     if WORKLOAD_DOC_PROFILE == "orders":
+        suffix = str(uuid.uuid4())
+        if WORKLOAD_ITEM_NAMESPACE:
+            suffix = f"{WORKLOAD_ITEM_NAMESPACE}-{suffix}"
         return {
-            **_item_keys(uuid.uuid4()), "countryCode": "US",
+            **_item_keys(suffix), "countryCode": "US",
             "quantity": random.randint(1, 10), "status": "Pending",
         }
     # "default" serializes to about 732 bytes of JSON (a single fixed flat shape).

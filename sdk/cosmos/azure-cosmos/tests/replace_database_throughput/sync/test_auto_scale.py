@@ -17,10 +17,7 @@ ceiling and 20% step, reads it back and checks both new values. It then does
 the same change on a container, which is the neighbouring operation that shares
 the offer document format.
 
-This is NOT the side-by-side comparison. The comparison tests
-(``replace_database_throughput/sync/test_replace_database_throughput_parity.py``)
-run the same change on both engines and diff the results. This file runs on
-Rust only.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database and container.
 

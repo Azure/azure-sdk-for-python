@@ -18,9 +18,7 @@ creates a database with a 5000 RU/s ceiling growing in 2% steps, reads the
 setting back and checks both values, then does the same through
 ``create_database_if_not_exists`` with a 9000 ceiling and 11% steps.
 
-This is NOT the side-by-side comparison. The comparison tests
-(``get_database_throughput/sync/test_get_database_throughput_parity.py``) run
-the same call on both engines and diff the numbers. This file runs on Rust only.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own databases.
 

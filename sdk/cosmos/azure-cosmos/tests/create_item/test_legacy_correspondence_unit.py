@@ -4,12 +4,9 @@
 
 import ast
 from pathlib import Path
-from types import SimpleNamespace
-from unittest.mock import Mock
 
 import pytest
 
-from auth.sync import test_token_credential_parity as token_tests
 from common.test_legacy_copy_generator_unit import _gen, _norm
 from common.test_legacy_migration_enforcer_unit import _class_method_exists, _iter_test_functions, _source_ref
 from config.collection import exclude_parameters
@@ -46,35 +43,3 @@ def test_create_source_lineage_and_collection_rust(path):
         cls, method = qualified.split(".")
         original = ast.parse((ROOT / filename).read_text(encoding="utf-8"))
         assert _class_method_exists(original, cls, method), source
-
-
-def test_aad_create_parity_isolates_ids_and_requires_success_rust(monkeypatch):
-    credential = SimpleNamespace(close=Mock())
-    monkeypatch.setattr(token_tests, "make_sync_token_credential", lambda: credential)
-    bodies = []
-
-    def create_item(*, body):
-        assert body["id"] not in {item["id"] for item in bodies}, "Backend creates reused an ID"
-        bodies.append(dict(body))
-        return dict(body)
-
-    container = SimpleNamespace(create_item=create_item)
-    database = SimpleNamespace(get_container_client=lambda _: container)
-    client = SimpleNamespace(get_database_client=lambda _: database)
-    outcomes = SimpleNamespace(
-        core_python=SimpleNamespace(raised=None), rust=SimpleNamespace(raised=None),
-        print_report=Mock(), assert_functional_parity=Mock(),
-    )
-
-    def compare(operation, **_):
-        operation(client)
-        operation(client)
-        return outcomes
-
-    monkeypatch.setattr(token_tests, "run_on_both_backends", compare)
-    token_tests.test_create_item_parity_with_token_credential_rust(SimpleNamespace(id="container"))
-    assert len(bodies) == 2
-    credential.close.assert_called_once()
-    outcomes.rust.raised = RuntimeError("Rust create failed")
-    with pytest.raises(AssertionError):
-        token_tests.test_create_item_parity_with_token_credential_rust(SimpleNamespace(id="container"))

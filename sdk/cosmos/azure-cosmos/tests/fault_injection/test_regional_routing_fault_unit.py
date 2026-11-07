@@ -42,6 +42,36 @@ def test_worker_failure_preserves_child_output_in_assertion_rust(monkeypatch, ex
     run.assert_called_once()
 
 
+@pytest.mark.parametrize("summary_line", [
+    "ERROR test_regional.py::test_routing - RuntimeError: container setup failed",
+    "FAILED test_regional.py::test_routing - AssertionError: wrong destination",
+])
+def test_worker_failure_summary_precedes_long_output_rust(monkeypatch, summary_line):
+    request = SimpleNamespace(
+        config=SimpleNamespace(getoption=lambda option: False),
+        node=SimpleNamespace(path=Path(__file__).resolve(), name="test_worker"),
+    )
+    output = "fixture traceback\n" * 100 + summary_line + "\n"
+    run = Mock(return_value=SimpleNamespace(
+        returncode=1, stdout=output, stderr="worker stderr detail",
+    ))
+    monkeypatch.setattr(_regional_routing.subprocess, "run", run)
+    with pytest.raises(AssertionError) as failure:
+        _regional_routing.isolate(request, ("fault_create_test", SimpleNamespace(id="orders_test")))
+    message = str(failure.value)
+    assert f"--- worker failure summary ---\n{summary_line}\n" in message
+    assert message.index(summary_line) < message.index("--- worker stdout ---")
+    assert output in message
+    assert "worker stderr detail" in message
+    command = run.call_args.args[0]
+    assert "-vv" in command
+    assert "-q" not in command
+    assert "--no-header" in command
+    assert "--tb=short" in command
+    assert "--color=no" in command
+    assert "-rfE" in command
+
+
 def test_worker_success_and_child_branch_remain_unchanged_rust(monkeypatch):
     run = Mock(return_value=SimpleNamespace(returncode=0, stdout="", stderr=""))
     monkeypatch.setattr(_regional_routing.subprocess, "run", run)

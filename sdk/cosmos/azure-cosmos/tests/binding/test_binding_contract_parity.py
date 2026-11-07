@@ -32,10 +32,9 @@ from azure.cosmos._helpers._request_throughput import (
     build_get_throughput_request,
     build_replace_throughput_request,
 )
-from common._parity_helpers import skip_unless_emulator, skip_unless_rust_binding
 from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFoundError
 
-pytestmark = [pytest.mark.cosmosEmulator, skip_unless_emulator(), skip_unless_rust_binding()]
+pytestmark = [pytest.mark.cosmosEmulator]
 
 PAGE_OPERATIONS = (
     "query_items",

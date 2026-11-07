@@ -106,6 +106,12 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.client.close()
 
+    @pytest.mark.skip(
+        reason="accepted-vnext-change: Gap 13 - This copied legacy test expects no retries "
+        "after injected HTTP 502 failures during patch_item and replace_item. Rust owns "
+        "the retry policy and automatically retries eligible failures, so it does not "
+        "preserve this legacy no-retry guarantee."
+    )
     async def test_patch_replace_no_retry_async_rust(self):
         # Source: tests/test_retry_policy_async.py::TestRetryPolicyAsync.test_patch_replace_no_retry_async
         doc = {'id': str(uuid.uuid4()),

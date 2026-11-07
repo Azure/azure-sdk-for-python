@@ -3514,10 +3514,10 @@ checks that the copied test bodies still match the originals.
 
 Run those copies with `COSMOS_BACKEND=core-python`, then with
 `COSMOS_BACKEND=rust`, using `--noconftest`. Their setup creates uniquely named
-databases and deletes only resources it owns. For operation captures, also
-set `COSMOS_PARITY_CAPTURE_OP=execute_item_batch` and load
-`-p common.parity_capture_plugin`. The Rust runs reject calls to legacy
-`Batch`; captures additionally record native binding and fallback counters.
+databases and deletes only resources it owns. The Rust runs reject calls to
+legacy `Batch`. (The operation-capture plugin previously described here was
+retired with the parity framework; see LR-20 in
+`docs/V5/api-review/LEGACY_CODE_RETIREMENT.md`.)
 
 The native extension has been built and its two batch exports loaded.
 Offline routing and result-contract checks passed. **Live functional parity

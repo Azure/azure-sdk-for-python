@@ -5,10 +5,14 @@
 
 use std::sync::Arc;
 
+use azure_core::http::StatusCode;
 use azure_data_cosmos_driver::{
     driver::CosmosDriver,
-    error::CosmosError,
-    models::{ActivityId, CosmosOperation, CosmosResponse, PartitionKey, SessionToken},
+    error::{status_codes, CosmosError, CosmosStatus},
+    models::{
+        ActivityId, CosmosOperation, CosmosResponse, PartitionKey, PartitionKeyDefinition,
+        PartitionKeyKind, SessionToken,
+    },
     options::ContentResponseOnWrite,
 };
 use pyo3::{exceptions::PyValueError, prelude::*, types::PyTuple};
@@ -27,6 +31,7 @@ use super::{
 #[derive(Clone)]
 enum BatchResult {
     ResolutionFailed(CosmosError),
+    Rejected(CosmosError),
     Executed(Result<CosmosResponse, CosmosError>),
 }
 
@@ -37,9 +42,9 @@ fn finish_batch<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     let diagnostics = if include_attempts {
         match &result {
-            BatchResult::ResolutionFailed(error) | BatchResult::Executed(Err(error)) => {
-                error.diagnostics()
-            }
+            BatchResult::ResolutionFailed(error)
+            | BatchResult::Rejected(error)
+            | BatchResult::Executed(Err(error)) => error.diagnostics(),
             BatchResult::Executed(Ok(response)) => Some(response.diagnostics()),
         }
     } else {
@@ -47,6 +52,7 @@ fn finish_batch<'py>(
     };
     let response = match result {
         BatchResult::ResolutionFailed(error) => Err(metadata_error(py, error)),
+        BatchResult::Rejected(error) => tuple_from_result(py, Err(error)),
         BatchResult::Executed(result) => tuple_from_result(py, result),
     };
     if include_attempts {
@@ -60,6 +66,25 @@ fn finish_batch<'py>(
     } else {
         response
     }
+}
+
+fn validate_batch_partition_key(
+    definition: &PartitionKeyDefinition,
+    key: &PartitionKey,
+) -> Result<(), CosmosError> {
+    if definition.kind() == PartitionKeyKind::MultiHash && key.len() != definition.paths().len() {
+        return Err(CosmosError::builder()
+            .with_status(
+                CosmosStatus::new(StatusCode::BadRequest)
+                    .with_sub_status(status_codes::substatus::PARTITION_KEY_MISMATCH.value()),
+            )
+            .with_message(
+                "Partition key provided either doesn't correspond to definition in the collection \
+                 or doesn't match partition key field values specified in the document.",
+            )
+            .build());
+    }
+    Ok(())
 }
 
 struct BatchRequest {
@@ -101,13 +126,31 @@ impl BatchRequest {
                 None,
                 Default::default(),
             );
-            let container = match driver
-                .resolve_container(&self.database, &self.container, resolution)
+            let mut container = match driver
+                .resolve_container(&self.database, &self.container, resolution.clone())
                 .await
             {
                 Ok(container) => container,
                 Err(error) => return BatchResult::ResolutionFailed(error),
             };
+            if let Err(error) =
+                validate_batch_partition_key(container.partition_key_definition(), &self.key)
+            {
+                // A recreated container can have a different key definition.
+                match driver
+                    .refresh_container_if_recreated(&container, resolution)
+                    .await
+                {
+                    Ok(Some(replacement)) => container = replacement,
+                    Ok(None) => return BatchResult::Rejected(error),
+                    Err(error) => return BatchResult::ResolutionFailed(error),
+                }
+                if let Err(error) =
+                    validate_batch_partition_key(container.partition_key_definition(), &self.key)
+                {
+                    return BatchResult::Rejected(error);
+                }
+            }
             let mut operation = CosmosOperation::batch(container, self.key).with_body(self.body);
             if let Some(activity) = self.modifiers.activity_header {
                 operation = operation.with_activity_id(ActivityId::from(activity));
@@ -177,13 +220,98 @@ pub(crate) fn execute_item_batch_async<'py>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use azure_core::http::{StatusCode, Url};
+    use azure_core::http::Url;
     use azure_data_cosmos_driver::{
-        error::{status_codes, CosmosStatus},
         in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
-        models::{AccountReference, ItemReference, PartitionKeyDefinition},
+        models::{AccountReference, ItemReference, PartitionKeyValue, PartitionKeyVersion},
         options::DriverOptions,
     };
+
+    #[test]
+    fn batch_hierarchical_keys_require_all_components() {
+        for arity in [1, 2, 3] {
+            let definition = PartitionKeyDefinition::new(
+                ["/state", "/city", "/zipcode"][..arity]
+                    .iter()
+                    .map(|path| (*path).into())
+                    .collect(),
+            )
+            .with_kind(PartitionKeyKind::MultiHash)
+            .with_version(PartitionKeyVersion::V2);
+            for count in [1, 2, 3] {
+                let key =
+                    PartitionKey::try_from(vec![PartitionKeyValue::from("value"); count]).unwrap();
+                let result = validate_batch_partition_key(&definition, &key);
+                if count == arity {
+                    assert!(result.is_ok());
+                } else {
+                    let error = result.unwrap_err();
+                    assert_eq!(error.status().status_code(), StatusCode::BadRequest);
+                    assert_eq!(
+                        error.status().sub_status(),
+                        Some(status_codes::substatus::PARTITION_KEY_MISMATCH),
+                    );
+                    assert!(error
+                        .to_string()
+                        .contains("Partition key provided either doesn't correspond"));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn batch_key_validation_preserves_null_undefined_and_hash_keys() {
+        let hierarchical = PartitionKeyDefinition::new(vec!["/state".into(), "/city".into()])
+            .with_kind(PartitionKeyKind::MultiHash)
+            .with_version(PartitionKeyVersion::V2);
+        let key =
+            PartitionKey::try_from(vec![PartitionKeyValue::NULL, PartitionKeyValue::UNDEFINED])
+                .unwrap();
+        assert!(validate_batch_partition_key(&hierarchical, &key).is_ok());
+        for version in [PartitionKeyVersion::V1, PartitionKeyVersion::V2] {
+            let hash = PartitionKeyDefinition::from("/pk").with_version(version);
+            for value in [PartitionKeyValue::NULL, PartitionKeyValue::UNDEFINED] {
+                let key = PartitionKey::try_from(vec![value]).unwrap();
+                assert!(validate_batch_partition_key(&hash, &key).is_ok());
+            }
+        }
+    }
+
+    #[test]
+    fn batch_key_rejection_preserves_400_with_and_without_attempts() {
+        pyo3::prepare_freethreaded_python();
+        let definition = PartitionKeyDefinition::new(vec!["/state".into(), "/city".into()])
+            .with_kind(PartitionKeyKind::MultiHash);
+        let error =
+            validate_batch_partition_key(&definition, &PartitionKey::from("WA")).unwrap_err();
+        Python::with_gil(|py| {
+            let result = BatchResult::Rejected(error);
+            let ordinary = finish_batch(py, result.clone(), false).unwrap();
+            assert_eq!(ordinary.get_item(0).unwrap().extract::<u16>().unwrap(), 400);
+            assert_eq!(
+                ordinary.get_item(1).unwrap().extract::<u16>().unwrap(),
+                1001
+            );
+            let headers = ordinary.get_item(2).unwrap();
+            assert_eq!(headers.len().unwrap(), 1);
+            assert_eq!(
+                headers
+                    .get_item("x-ms-substatus")
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+                "1001"
+            );
+            let body = ordinary.get_item(3).unwrap().extract::<Vec<u8>>().unwrap();
+            assert!(String::from_utf8(body).unwrap().contains(
+                "Partition key provided either doesn't correspond to definition in the collection \
+                 or doesn't match partition key field values specified in the document."
+            ));
+            let traced = finish_batch(py, result, true).unwrap();
+            assert!(traced.get_item(0).unwrap().eq(ordinary).unwrap());
+            assert!(traced.get_item(1).unwrap().is_none());
+        });
+    }
 
     // Obtain real diagnostics without relying on an external account.
     async fn response_and_metadata_error() -> (CosmosResponse, CosmosError) {

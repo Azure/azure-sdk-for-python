@@ -14,15 +14,9 @@ import pytest
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from common._parity_helpers import (
-    run_target_operation,
-    run_target_operation_async,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._rust_checks import run_on_rust, run_on_rust_async
 
 
-pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 LEVELS = ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"]
 SOURCES = ["client", "request_options", "feed_options", "initial_headers"]
 
@@ -62,7 +56,7 @@ def test_rust_read_consistency_rust(consistency_order, source, level):
         container = client.get_database_client(database_id).get_container_client("orders")
 
         def read(options):
-            return run_target_operation(
+            return run_on_rust(
                 client,
                 lambda: container.read_item(expected["id"], partition_key=expected["pk"], **options),
             )
@@ -89,7 +83,7 @@ async def test_rust_read_consistency_async_rust(consistency_order, source, level
         container = client.get_database_client(database_id).get_container_client("orders")
 
         async def read(options):
-            return await run_target_operation_async(
+            return await run_on_rust_async(
                 client,
                 lambda: container.read_item(expected["id"], partition_key=expected["pk"], **options),
             )

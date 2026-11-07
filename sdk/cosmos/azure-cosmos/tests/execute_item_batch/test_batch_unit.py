@@ -50,8 +50,8 @@ class AsyncBatchBackend(AsyncCosmosBackend):
         return self.send(prepared, deadline=deadline)
 
 
-@pytest.fixture(params=["sync", "async"])
-def batch_client(request):
+@pytest.fixture(name="batch_client", params=["sync", "async"])
+def _batch_client_fixture(request):
     asynchronous = request.param == "async"
     backend = AsyncBatchBackend() if asynchronous else BatchBackend()
     connection = MagicMock()
@@ -69,7 +69,11 @@ def batch_client(request):
     )
 
     def call(operations=None, partition_key="bank", **kwargs):
-        operations = operations if operations is not None else [("create", ({"id": "a", "pk": "bank"},))]
+        operations = (
+            operations
+            if operations is not None
+            else [("create", ({"id": "a", "pk": "bank"},))]
+        )
         result = container.execute_item_batch(operations, partition_key, **kwargs)
         return asyncio.run(result) if asynchronous else result
 
@@ -103,8 +107,11 @@ def test_conditions_patch_and_caller_snapshot_rust(batch_client):
     operations = [
         ("replace", ("a", {"id": "a"}), {"if_match_etag": "etag"}),
         ("read", ("a",), {"if_none_match_etag": "other"}),
-        ("patch", ("a", [{"op": "incr", "path": "/balance", "value": 1}]),
-         {"filter_predicate": "from c where c.balance = 0"}),
+        (
+            "patch",
+            ("a", [{"op": "incr", "path": "/balance", "value": 1}]),
+            {"filter_predicate": "from c where c.balance = 0"},
+        ),
     ]
     original = deepcopy(operations)
     call(operations, partition_key=["bank", "branch"])
@@ -121,13 +128,21 @@ def test_conditions_patch_and_caller_snapshot_rust(batch_client):
     "operations, escaped",
     [
         ([("read", ("caf\u00e9",)), ("delete", ("caf\u00e9",))], True),
-        ([("read", ("caf\u00e9",)), ("upsert", ({"id": "caf\u00e9", "pk": "bank"},))], False),
+        (
+            [
+                ("read", ("caf\u00e9",)),
+                ("upsert", ({"id": "caf\u00e9", "pk": "bank"},)),
+            ],
+            False,
+        ),
     ],
 )
 def test_compact_utf8_batch_escapes_only_bodyless_batches_rust(operations, escaped):
     """Compact UTF-8 applies only when a batch carries an item body, as in legacy."""
     backend = BatchBackend()
-    context = ItemClientContext(backend, defaults=ItemClientDefaults(enable_compact_utf8_item_writes=True))
+    context = ItemClientContext(
+        backend, defaults=ItemClientDefaults(enable_compact_utf8_item_writes=True)
+    )
     container = ContainerProxy(MagicMock(), "dbs/db", "orders", _item_context=context)
     container.execute_item_batch(operations, "bank")
     body = backend.send.call_args.args[0].body_bytes
@@ -163,6 +178,31 @@ def test_request_error_is_not_replayed_rust(batch_client, status):
     backend.send.assert_called_once()
 
 
+def test_oversized_batch_retains_error_code_and_raw_response_rust(batch_client):
+    call, backend, context = batch_client
+    body = b'{"Errors":["Request size is too large"]}'
+    backend.send.return_value = BackendResponse(
+        413,
+        body=body,
+        headers={"x-ms-activity-id": "batch-too-large", "x-ms-request-charge": "2.5"},
+    )
+    hook = MagicMock()
+    with pytest.raises(CosmosHttpResponseError) as caught:
+        call(response_hook=hook)
+    assert caught.value.status_code == 413
+    assert caught.value.message.startswith("(RequestEntityTooLarge)")
+    assert caught.value.error.code == "RequestEntityTooLarge"
+    assert caught.value.response.body() == body
+    assert caught.value.response.text() == body.decode("utf-8")
+    assert caught.value.http_error_message == body.decode("utf-8")
+    assert (
+        context.response_state.last_response_headers["x-ms-activity-id"]
+        == "batch-too-large"
+    )
+    hook.assert_not_called()
+    backend.send.assert_called_once()
+
+
 def test_hook_failure_is_not_replayed_rust(batch_client):
     call, backend, _ = batch_client
     with pytest.raises(RuntimeError, match="hook failed"):
@@ -170,7 +210,9 @@ def test_hook_failure_is_not_replayed_rust(batch_client):
     backend.send.assert_called_once()
 
 
-@pytest.mark.parametrize("options", [{"retry_write": 2}, {"connection_timeout": 2}, {"timeout": 0}])
+@pytest.mark.parametrize(
+    "options", [{"retry_write": 2}, {"connection_timeout": 2}, {"timeout": 0}]
+)
 def test_unsupported_options_fail_before_dispatch_rust(batch_client, options):
     call, backend, _ = batch_client
     with pytest.raises((NotImplementedError, ValueError)):
@@ -178,7 +220,7 @@ def test_unsupported_options_fail_before_dispatch_rust(batch_client, options):
     backend.send.assert_not_called()
 
 
-@pytest.mark.parametrize("body", [b"{}", b'[{}]', b'[{"statusCode":424}]'])
+@pytest.mark.parametrize("body", [b"{}", b"[{}]", b'[{"statusCode":424}]'])
 def test_invalid_response_is_not_replayed_rust(batch_client, body):
     call, backend, _ = batch_client
     backend.send.return_value = BackendResponse(200, body=body)
@@ -188,7 +230,58 @@ def test_invalid_response_is_not_replayed_rust(batch_client, body):
 
 
 @pytest.mark.parametrize(
-    "surface,filename", [
+    "status",
+    [-1, -400, 0, 100, 199, 600, 999, None, True, False, "201", "-1", 201.5, [], {}],
+)
+@pytest.mark.parametrize("position", [0, 1])
+def test_invalid_operation_status_never_returns_success_rust(
+    batch_client, status, position
+):
+    call, backend, context = batch_client
+    results = [{"statusCode": 201}, {"statusCode": 204}]
+    results[position]["statusCode"] = status
+    backend.send.return_value = BackendResponse(
+        200,
+        body=json.dumps(results).encode(),
+        headers={"x-ms-activity-id": "invalid-batch-status"},
+    )
+    hook = MagicMock()
+    with pytest.raises(
+        BindingProtocolError, match=f"invalid statusCode at index {position}"
+    ):
+        call(response_hook=hook)
+    assert (
+        context.response_state.last_response_headers["x-ms-activity-id"]
+        == "invalid-batch-status"
+    )
+    hook.assert_not_called()
+    backend.send.assert_called_once()
+
+
+def test_invalid_status_is_not_disguised_as_an_operation_error_rust(batch_client):
+    call, backend, _ = batch_client
+    backend.send.return_value = BackendResponse(
+        207, body=b'[{"statusCode":424},{"statusCode":400},{"statusCode":-1}]'
+    )
+    with pytest.raises(BindingProtocolError, match="invalid statusCode at index 2"):
+        call()
+    backend.send.assert_called_once()
+
+
+@pytest.mark.parametrize("status", [200, 201, 204, 304])
+def test_valid_operation_status_preserves_result_and_hook_rust(batch_client, status):
+    call, backend, _ = batch_client
+    results = [{"statusCode": status}]
+    backend.send.return_value = BackendResponse(200, body=json.dumps(results).encode())
+    hook = MagicMock()
+    assert call(response_hook=hook) == results
+    hook.assert_called_once()
+    backend.send.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    "surface,filename",
+    [
         ("sync", "test_transactional_batch.py"),
         ("aio", "test_transactional_batch_async.py"),
     ],
@@ -202,9 +295,12 @@ def test_copied_batch_assertions_match_originals_rust(surface, filename):
 
     def methods(tree):
         return {
-            node.name.removesuffix("_rust"): [ast.dump(statement) for statement in node.body]
+            node.name.removesuffix("_rust"): [
+                ast.dump(statement) for statement in node.body
+            ]
             for node in ast.walk(tree)
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test_")
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name.startswith("test_")
         }
 
     assert len(methods(original)) == 9
@@ -214,6 +310,10 @@ def test_copied_batch_assertions_match_originals_rust(surface, filename):
 def test_telemetry_test_names_have_rust_suffix_rust():
     path = Path(__file__).with_name("test_batch_telemetry_unit.py")
     tree = ast.parse(path.read_text(encoding="utf-8"))
-    names = [node.name for node in tree.body if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")]
+    names = [
+        node.name
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")
+    ]
     assert len(names) == 9
     assert all(name.endswith("_rust") for name in names)

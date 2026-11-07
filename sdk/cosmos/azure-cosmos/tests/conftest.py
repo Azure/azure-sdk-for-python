@@ -7,13 +7,6 @@ import pytest
 
 from config import clients, collection, resources
 
-# Register the in-repo parity-capture pytest plugin. The plugin
-# itself is dormant unless the env var COSMOS_PARITY_CAPTURE_OP is
-# set to a known operation name. Listed here so pytest auto-loads it
-# for every test run without requiring contributors to install
-# anything.
-pytest_plugins = ["common.parity_capture_plugin"]
-
 cosmos_sync_client = None
 _live_resources_initialized = False
 

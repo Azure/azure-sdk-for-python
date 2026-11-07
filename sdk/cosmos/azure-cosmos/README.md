@@ -1372,7 +1372,7 @@ serialization, body marshalling, auto-id) and exercises only:
 
 So a green smoke test means the binding + driver round-trip is wired
 correctly all the way to your Cosmos endpoint. A failure here is below
-the helper layer; a failure in the parity suite on top of a green
+the helper layer; a failure in the Rust test suite on top of a green
 smoke test is in the helper layer or in response translation.
 
 ```powershell
@@ -1407,40 +1407,40 @@ What the smoke test does **not** check (so don't read too much into a
 green run): response-header parity, typed exceptions on 4xx/5xx,
 response-body parsing into a Python dict, or any routing options
 (consistency level, session token, priority, throughput bucket, ...).
-Those are covered by the parity suite below.
+Those are covered by the Rust test suite below.
 
 ---
 
-## Run the parity suite (Rust path vs. Python path)
+## Run the Rust test suite
 
-The parity suite calls `create_item` with the same input twice — once
-through the legacy Python backend, once through the Rust backend — and
-diffs the results. It's how we catch behaviour drift while the Rust
-path is being built out.
+The Rust path is checked by ordinary tests that build their clients with
+`_backend="rust"`. There are two kinds, both under `tests/<operation>/{sync,aio}/`:
+
+- **Copies** of existing v4 tests. Every copied method carries a
+  `# Source: tests/<file>.py::<Class>.<method>` comment, and its assertions
+  stay unchanged so the same contract runs against the Rust path.
+- **Standalone Rust behavior tests** for behavior with no v4 original. These
+  modules start with a `# Rust behavior test` header.
+
+`tests/common/_rust_checks.py` provides `assert_rust_client`, `run_on_rust`
+and `run_on_rust_async`, which check that a call actually went through the
+Rust binding without falling back to Python.
+
+CI runs these through the service lane of `scripts/run_rust_ci.py` (its CLI
+suite name is still `parity`):
 
 ```powershell
-$env:ACCOUNT_URI = "https://localhost:8081"
-$env:ACCOUNT_KEY = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+$env:ACCOUNT_HOST = "https://localhost:8081/"
+$env:ACCOUNT_KEY  = "<emulator-or-account-key>"
+$env:COSMOS_BACKEND = "rust"
 
-pytest tests/create_item/sync/test_create_item_parity.py -v          # only failures show diffs
-pytest tests/create_item/sync/test_create_item_parity.py -v -s -rA   # show diff + every test in the summary
+python scripts\run_rust_ci.py parity --results rust-ci-results
+pytest tests/create_item/sync -v     # or run one operation folder directly
 ```
 
-If you don't set the env vars, the suite skips cleanly. If you set them
-but never built the Rust extension, the suite skips with a "run maturin
-develop" message.
-
-The in-process parity tests above are a CI gate, not an audit-doc
-source. Each test runs both backends inside one pytest process via
-`BackendComparison` and asserts on the diff; a failure prints the full
-`PARITY CALL:` block to the CI log so the contributor sees the
-evidence directly.
-
-A rolling, human-readable per-operation audit doc is produced by a
-separate workflow: two pytest runs against per-op `legacy/` folders
-(one on core-python, one on rust), then `scripts/v5/build_legacy_parity_audit.py`
-pairs the two transcripts and writes the audit markdown. The rendered
-markdown is per-developer-run output and is not checked in.
+The older side-by-side legacy-vs-Rust parity framework (in-process
+comparisons and audit reports) has been retired; see LR-20 in
+`docs/V5/api-review/LEGACY_CODE_RETIREMENT.md`.
 
 Tests marked `@pytest.mark.skip(reason="...")` cover known driver- or
 binding-side gaps; the reason string names the specific limitation in
@@ -1469,8 +1469,7 @@ pytest tests/test_backend_wiring_unit.py `
        tests/test_body_wire_unit.py `
        tests/test_auto_id_unit.py `
        tests/test_options_unit.py `
-       tests/test_container_rid_helper_unit.py `
-       tests/test_create_item_parity.py -q
+       tests/test_container_rid_helper_unit.py -q
 ```
 
 ---

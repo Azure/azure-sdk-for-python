@@ -838,9 +838,9 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self._delete_container_for_test(collection.id)
 
     async def test_get_resource_with_dictionary_and_object_async(self):
-        # Database checks retired to tests/get_database_client/aio/test_crud_async.py.
-        # Retire this mixed method only after its container checks have Rust copies
-        # and parity; its item-only copy already lives under tests/read_item.
+        # Database, container and item checks are copied to tests/get_database_client,
+        # tests/get_container_client and tests/read_item.
+        # Retire this mixed method only after those Rust copies pass.
         created_db = self.database_for_test
 
         created_container = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)

@@ -34,6 +34,7 @@ one customer code most often relies on (`except
 CosmosResourceExistsError` as a cheap idempotency check); locking down it
 here makes that contract impossible to break silently.
 """
+import json
 import unittest
 
 from azure.core.utils import CaseInsensitiveDict
@@ -165,6 +166,112 @@ class TestExceptionMetadataIsCopiedAcross(unittest.TestCase):
         )
         # CosmosHttpResponseError formats as "Status code: NNN\n<message>".
         self.assertIn("duplicate id detected", str(exc))
+
+
+class TestRequestEntityTooLargeFormatting(unittest.TestCase):
+    """Preserve the public error code without replacing the native response body."""
+
+    def test_native_errors_envelope_preserves_413_prefix_and_response_rust(self):
+        body = b'{"Errors":["Request size is too large"]}'
+        response = _make_response(
+            status_code=413,
+            sub_status=1001,
+            body=body,
+            headers={"x-ms-activity-id": "activity", "x-ms-request-charge": "2.5"},
+        )
+        message = extract_message_from_body(body)
+        exc = map_backend_response_to_exception(response, message=message)
+        self.assertEqual(exc.status_code, 413)
+        self.assertEqual(exc.sub_status, 1001)
+        self.assertTrue(exc.message.startswith("(RequestEntityTooLarge)"))
+        self.assertTrue(str(exc).startswith("(RequestEntityTooLarge)"))
+        self.assertEqual(exc.error.code, "RequestEntityTooLarge")
+        self.assertEqual(exc.error.message, "Request size is too large")
+        self.assertEqual(exc.http_error_message, message)
+        self.assertEqual(exc.response.body(), body)
+        self.assertEqual(exc.response.text(), body.decode("utf-8"))
+        self.assertEqual(exc.headers, response.headers)
+        self.assertEqual(response.body, body)
+
+    def test_all_native_errors_and_unicode_are_retained_rust(self):
+        messages = ["Request size is too large", "Payload: caf\u00e9"]
+        body = json.dumps({"Errors": messages}).encode("utf-8")
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=413, body=body)
+        )
+        self.assertEqual(exc.error.message, "\n".join(messages))
+        self.assertEqual(exc.response.body(), body)
+
+    def test_explicit_service_codes_and_messages_are_preserved_rust(self):
+        bodies = [
+            {
+                "code": "SpecificLimit",
+                "message": "Specific server explanation",
+                "Errors": ["detail"],
+            },
+            {
+                "error": {
+                    "code": "SpecificLimit",
+                    "message": "Specific server explanation",
+                },
+                "Errors": ["detail"],
+            },
+        ]
+        for payload in bodies:
+            with self.subTest(payload=payload):
+                body = json.dumps(payload).encode("utf-8")
+                exc = map_backend_response_to_exception(
+                    _make_response(status_code=413, body=body)
+                )
+                self.assertEqual(exc.error.code, "SpecificLimit")
+                self.assertEqual(exc.error.message, "Specific server explanation")
+                self.assertTrue(exc.message.startswith("(SpecificLimit)"))
+                self.assertEqual(exc.response.body(), body)
+
+    def test_native_envelope_retains_explicit_message_rust(self):
+        body = b'{"Errors":["detail"],"message":"Server summary"}'
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=413, body=body)
+        )
+        self.assertEqual(exc.error.code, "RequestEntityTooLarge")
+        self.assertEqual(exc.error.message, "Server summary")
+
+    def test_other_statuses_do_not_acquire_413_code_rust(self):
+        body = b'{"Errors":["Request size is too large"]}'
+        for status in (400, 404, 409, 429, 500):
+            with self.subTest(status=status):
+                exc = map_backend_response_to_exception(
+                    _make_response(status_code=status, body=body),
+                    message=extract_message_from_body(body),
+                )
+                self.assertEqual(exc.status_code, status)
+                self.assertIsNone(exc.error)
+                self.assertFalse(exc.message.startswith("(RequestEntityTooLarge)"))
+
+    def test_unrecognized_bodies_keep_existing_error_format_rust(self):
+        for body in (
+            b"",
+            b"not json",
+            b"\xff",
+            b"[]",
+            b"null",
+            b'{"Errors":[]}',
+            b'{"Errors":"not an array"}',
+            b'{"Errors":[123]}',
+            b'{"message":"Unstructured message"}',
+        ):
+            with self.subTest(body=body):
+                response = _make_response(status_code=413, body=body)
+                message = extract_message_from_body(body)
+                original = CosmosHttpResponseError(
+                    status_code=413,
+                    message=message,
+                    response=_ResponseAdapter(response),
+                )
+                actual = map_backend_response_to_exception(response, message=message)
+                self.assertEqual(actual.message, original.message)
+                self.assertEqual(actual.http_error_message, original.http_error_message)
+                self.assertEqual(actual.response.body(), body)
 
 
 class TestExtractMessageFromBody(unittest.TestCase):

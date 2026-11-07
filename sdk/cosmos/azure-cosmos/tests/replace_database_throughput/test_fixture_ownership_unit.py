@@ -275,10 +275,9 @@ def guard(event, args):
         if os.path.normcase(os.path.abspath(os.fsdecode(args[0]))) in paths:
             raise AssertionError("Read retired test source")
 sys.addaudithook(guard)
-spec = importlib.util.spec_from_file_location("runner", root / "scripts/v5/run_database_throughput_parity.py")
-runner = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(runner)
-targets = [target for path in runner.test_files("replace") for target in runner.test_targets(path, "replace")]
+sys.path[:0] = [str(root), str(root / "tests")]
+from common._throughput_copy_inventory import database_test_files, database_test_targets
+targets = [target for path in database_test_files("replace") for target in database_test_targets(path, "replace")]
 class Counts:
     def pytest_collection_finish(self, session):
         assert len(session.items) == 8
@@ -292,7 +291,6 @@ raise SystemExit(pytest.main([
     env["PYTHONPATH"] = os.pathsep.join((str(ROOT), str(ROOT / "tests")))
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     env.pop("PYTEST_ADDOPTS", None)
-    env.pop("COSMOS_PARITY_CAPTURE_OP", None)
     result = subprocess.run(
         [sys.executable, "-c", script], cwd=ROOT, env=env,
         capture_output=True, text=True, timeout=60, check=False,

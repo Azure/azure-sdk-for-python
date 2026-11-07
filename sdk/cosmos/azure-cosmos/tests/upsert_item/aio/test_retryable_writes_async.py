@@ -160,6 +160,11 @@ class TestRetryableWritesAsync:
             for client in self._clients:
                 await client.close()
 
+    @pytest.mark.skip(
+        reason="accepted-vnext-change: Gap 13 - This copied legacy test expects upsert_item "
+        "to fail without retrying when retry_write is omitted. Rust decides which write "
+        "failures to retry automatically, so omitting retry_write does not disable retries."
+    )
     async def test_retryable_writes_request_level_async_rust(self, setup):
         # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_request_level_async
         container = setup['container']
@@ -173,6 +178,7 @@ class TestRetryableWritesAsync:
             # Test without retry_write for upsert_item
             test_item = {"id": "1", "pk": "test", "data": "retryable write test"}
             # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 itself, so the write may succeed instead of raising.
+            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13).")
             try:
                 await me.container.upsert_item(test_item)
                 pytest.fail("Expected an exception without retry_write")
@@ -315,6 +321,12 @@ class TestRetryableWritesAsync:
             for mock in mocks:
                 await mock.close()
 
+    @pytest.mark.skip(
+        reason="accepted-vnext-change: Gap 13 - This copied legacy test expects patch_item "
+        "to fail without retrying, even when retry_write is set on the client. "
+        "Rust decides which write failures to retry automatically, so it does not "
+        "preserve this legacy no-retry guarantee."
+    )
     async def test_retryable_writes_client_level_write_rust(self, setup):
         # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_client_level_write
         """Test retryable writes for a container with retry_write set at the client level."""
@@ -354,6 +366,7 @@ class TestRetryableWritesAsync:
                 {"op": "add", "path": "/data", "value": "patched retryable write test"}
             ]
             # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
+            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13).")
             try:
                 await me.container.patch_item(item=test_item['id'], partition_key=test_item['pk'],
                                               patch_operations=test_patch_operations)
@@ -421,6 +434,7 @@ class TestRetryableWritesAsync:
             # Test without retry_write for upsert_item
             test_item = {"id": "1", "state": "CA", "city": "San Francisco", "data": "retryable write test"}
             # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 itself, so the write may succeed instead of raising.
+            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13).")
             try:
                 await me.container.upsert_item(test_item)
                 pytest.fail("Expected an exception without retry_write")
@@ -601,6 +615,7 @@ class TestRetryableWritesAsync:
                 {"op": "add", "path": "/data", "value": "patched retryable write test"}
             ]
             # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
+            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13).")
             try:
                 await me.container.patch_item(item=test_item['id'],
                                               partition_key=[test_item['state'], test_item['city']],

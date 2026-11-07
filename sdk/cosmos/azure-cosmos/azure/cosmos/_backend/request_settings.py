@@ -89,6 +89,8 @@ class QuerySettings(_ValidatedSettings):
     version: Optional[str] = None
     continuation_limit_kb: Optional[int] = None
     max_buffered_query_window: Optional[int] = None
+    full_text_score_scope: Optional[Literal["Local", "Global"]] = None
+    hybrid_search_max_items: Optional[str] = None
 
     def __post_init__(self) -> None:
         self._check_type("max_item_count", self.max_item_count, int)
@@ -104,6 +106,10 @@ class QuerySettings(_ValidatedSettings):
         self._check_type("version", self.version, str)
         self._check_type("continuation_limit_kb", self.continuation_limit_kb, int)
         self._check_type("max_buffered_query_window", self.max_buffered_query_window, int)
+        self._check_type("full_text_score_scope", self.full_text_score_scope, str)
+        self._check_type("hybrid_search_max_items", self.hybrid_search_max_items, str)
+        if self.full_text_score_scope is not None and self.full_text_score_scope not in ("Local", "Global"):
+            self._invalid_type("full_text_score_scope")
         if self.max_buffered_query_window is not None and not 0 <= self.max_buffered_query_window < 2**64:
             raise ValueError("max_buffered_query_window must be a nonnegative u64")
 

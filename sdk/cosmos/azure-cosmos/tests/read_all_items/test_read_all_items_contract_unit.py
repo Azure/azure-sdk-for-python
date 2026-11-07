@@ -764,7 +764,8 @@ def test_legacy_remains_lazy_pinned_and_uses_per_pager_bookmarks_rust(legacy_fee
     assert options == {"maxItemCount": 1}
 
 
-def test_legacy_rejects_driver_bookmarks_before_metadata_rust(legacy_feed):
+@pytest.mark.parametrize("token", ["c1.driver", "c2.driver"])
+def test_legacy_rejects_driver_bookmarks_before_metadata_rust(legacy_feed, token):
     """A Rust continuation token cannot be used to resume on the legacy path.
 
     The mirror of the Rust-side check. Resuming with a driver token raises
@@ -772,8 +773,17 @@ def test_legacy_rejects_driver_bookmarks_before_metadata_rust(legacy_feed):
     container metadata lookup -- so a mismatched token costs nothing at all.
     """
     with pytest.raises(ValueError, match="incompatible backend"):
-        legacy_feed.proxy.read_all_items().by_page(continuation_token="c1.driver")
+        legacy_feed.proxy.read_all_items().by_page(continuation_token=token)
     assert legacy_feed.metadata == []
+
+
+@pytest.mark.parametrize("prefix", ["c1.", "c2."])
+def test_read_all_accepts_supported_driver_token_versions_rust(feed, prefix):
+    feed.pages = [(rows, value.replace("c1.", prefix) if value else None) for rows, value in feed.pages]
+    token = prefix + "a"
+    pages = feed.proxy.read_all_items().by_page(continuation_token=token)
+    feed.next_page(pages)
+    assert feed.calls[0][0].settings.query.continuation == token
 
 
 def test_legacy_resume_does_not_use_connection_headers_rust(legacy_feed):

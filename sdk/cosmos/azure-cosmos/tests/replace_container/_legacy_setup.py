@@ -9,7 +9,7 @@ import uuid
 from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 
-from common._parity_helpers import run_target_operation, run_target_operation_async
+from common._rust_checks import run_on_rust, run_on_rust_async
 
 
 class SyncReplacementCase(unittest.TestCase):
@@ -33,7 +33,7 @@ class SyncReplacementCase(unittest.TestCase):
         replacement = self.key_db.replace_container
 
         def guarded_replace(*args, **kwargs):
-            return run_target_operation(self.client, lambda: replacement(*args, **kwargs))
+            return run_on_rust(self.client, lambda: replacement(*args, **kwargs))
 
         self.key_db.replace_container = guarded_replace
         self._initialize_data()
@@ -68,7 +68,7 @@ class AsyncReplacementCase(unittest.IsolatedAsyncioTestCase):
         replacement = self.key_db.replace_container
 
         async def guarded_replace(*args, **kwargs):
-            return await run_target_operation_async(self.client, lambda: replacement(*args, **kwargs))
+            return await run_on_rust_async(self.client, lambda: replacement(*args, **kwargs))
 
         self.key_db.replace_container = guarded_replace
         self._initialize_data()

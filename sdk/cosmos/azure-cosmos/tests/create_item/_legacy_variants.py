@@ -9,6 +9,7 @@ Unicode strings are copied unchanged from test_encoding and test_encoding_async.
 """
 
 import json
+import logging
 import os
 from pathlib import Path
 from unittest.mock import Mock
@@ -16,11 +17,13 @@ import uuid
 
 import pytest
 
-from common._parity_helpers import _observed_backend_name
-from common.parity_provisioning import create_owned_container
+from common._rust_checks import backend_name
+from config.provisioning import create_owned_container
 from common.throughput_fixtures import owned_database
 
 from azure.cosmos import CosmosClient, exceptions
+
+_LOGGER = logging.getLogger(__name__)
 
 CASES = json.loads(Path(__file__).with_name("legacy_partition_key_cases.json").read_text(encoding="utf-8"))
 RESPONSE_MODES = [
@@ -47,7 +50,7 @@ def _variant_database_fixture():
 
 
 @pytest.fixture(name="make_variant_container")
-def _make_variant_container_fixture(variant_database):
+def _make_variant_container_fixture(variant_database, request):
     owned = []
 
     def create(definition, **kwargs):
@@ -67,10 +70,25 @@ def _make_variant_container_fixture(variant_database):
                 variant_database.delete_container(name)
             except exceptions.CosmosResourceNotFoundError:
                 pass
+            except exceptions.CosmosHttpResponseError as error:
+                # Keep the service explanation outside the long SDK traceback.
+                _LOGGER.error(
+                    "Variant container cleanup failed: test=%s database=%s container=%s "
+                    "configured_auth=ACCOUNT_KEY backend=rust status=%s substatus=%s "
+                    "activity_id=%s service_message=%s",
+                    request.node.nodeid,
+                    variant_database.id,
+                    name,
+                    error.status_code,
+                    error.sub_status,
+                    error.headers.get("x-ms-activity-id"),
+                    error.http_error_message,
+                )
+                raise
 
 
 def observe_native_create(monkeypatch, client, backend, *, asynchronous=False):
-    assert _observed_backend_name(client) == backend
+    assert backend_name(client) == backend
     if backend != "rust":
         return None
     from azure.cosmos import _rust

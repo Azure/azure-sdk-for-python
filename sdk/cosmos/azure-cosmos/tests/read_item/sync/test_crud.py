@@ -12,9 +12,14 @@ import os
 import unittest
 import uuid
 
+import pytest
+
 from azure.cosmos import CosmosClient, PartitionKey
 
 
+@pytest.mark.cosmosCircuitBreaker
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADCircuitBreaker
 class TestCRUDOperations(unittest.TestCase):
     def setUp(self):
         self.client = CosmosClient(
@@ -27,6 +32,7 @@ class TestCRUDOperations(unittest.TestCase):
         self.container = self.database.create_container("orders", partition_key=PartitionKey(path="/pk"))
 
     def test_get_resource_with_dictionary_and_object_rust(self):
+        # Source: tests/test_crud.py::TestCRUDOperations.test_get_resource_with_dictionary_and_object
         created_container = self.container
         created_item = created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'})
 

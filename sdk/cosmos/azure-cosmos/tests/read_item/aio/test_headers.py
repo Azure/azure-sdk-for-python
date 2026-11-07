@@ -27,7 +27,7 @@ import uuid
 import pytest
 
 from azure.cosmos.aio import CosmosClient
-from azure.cosmos import PartitionKey, http_constants
+from azure.cosmos import PartitionKey
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -75,7 +75,4 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             )
         self.assertTrue(operation.called)
         for call in operation.call_args_list:
-            self.assertEqual(
-                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
-                str(request_throughput_bucket_number),
-            )
+            self.assertEqual(call.args[1].settings.throughput_bucket, request_throughput_bucket_number)

@@ -10,6 +10,7 @@
 
 use std::{
     future::Future,
+    num::NonZeroU32,
     sync::{
         atomic::{AtomicU8, Ordering},
         Arc,
@@ -22,16 +23,16 @@ use azure_data_cosmos_driver::{
     error::{status_codes, CosmosError},
     models::{
         ActivityId, ChangeFeedStartFrom, ContainerReference, ContinuationToken, CosmosOperation,
-        CosmosResponse, FeedRange, PartitionKey, SessionToken,
+        CosmosResponse, FeedRange, MaxItemCountHint, PartitionKey, ResponseBody, SessionToken,
     },
-    options::PlanOptions,
+    options::{FullTextScoreScope, OperationOptions, PlanOptions},
 };
 use pyo3::{
     exceptions::{
         PyNotImplementedError, PyRuntimeError, PyTimeoutError, PyTypeError, PyValueError,
     },
     prelude::*,
-    types::{PyDict, PyTuple},
+    types::{PyDict, PyInt, PyTuple},
 };
 use serde::Deserialize;
 use tokio::sync::Mutex;
@@ -76,6 +77,98 @@ struct QueryRequest {
     allow_cross_partition: bool,
     continuation_limit_kb: Option<i64>,
     max_buffered_query_window: Option<u64>,
+    full_text_score_scope: FullTextScoreScope,
+    max_item_count: Option<MaxItemCountHint>,
+    hybrid_search_max_items: Option<String>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct HybridLimitPlan {
+    hybrid_search_query_info: Option<HybridLimitWindow>,
+}
+
+#[derive(Deserialize)]
+struct HybridLimitWindow {
+    skip: Option<u64>,
+    take: Option<u64>,
+}
+
+impl HybridLimitWindow {
+    fn admitted_window(&self, maximum: &str) -> PyResult<u64> {
+        let take = self.take.filter(|take| *take != 0).ok_or_else(|| {
+            PyValueError::new_err(
+                "Executing a hybrid search query without TOP or LIMIT can consume many \
+                 RUs very fast and have long runtimes. Please ensure you are using one \
+                 of the two filters with your hybrid search query.",
+            )
+        })?;
+        Python::with_gil(|py| {
+            let maximum = py.get_type_bound::<PyInt>().call1((maximum,))?;
+            if maximum.lt(take)? {
+                return Err(PyValueError::new_err(
+                    "Executing a hybrid search query with more items than the max is not allowed. \
+                     Please ensure you are using a limit smaller than the max, or change the max.",
+                ));
+            }
+            Ok(())
+        })?;
+        self.skip
+            .unwrap_or(0)
+            .checked_add(take)
+            .ok_or_else(|| PyValueError::new_err("Hybrid search OFFSET plus take exceeds u64."))
+    }
+}
+
+fn decode_hybrid_limit_plan(body: &[u8]) -> Result<Option<HybridLimitWindow>, CosmosError> {
+    serde_json::from_slice::<HybridLimitPlan>(body)
+        .map(|plan| plan.hybrid_search_query_info)
+        .map_err(|error| {
+            CosmosError::builder()
+                .with_status(status_codes::SERIALIZATION_RESPONSE_BODY_INVALID)
+                .with_message("Invalid query plan while checking the hybrid search limit")
+                .with_source(error)
+                .build()
+        })
+}
+
+async fn hybrid_limit_plan(
+    driver: &CosmosDriver,
+    container: ContainerReference,
+    operation: &CosmosOperation,
+    options: &OperationOptions,
+) -> Result<Option<HybridLimitWindow>, CosmosError> {
+    // Match the pinned driver's production feature set. The public driver
+    // interface does not expose the resolved plan's hybrid metadata.
+    let plan_operation = CosmosOperation::query_plan(
+        container,
+        std::borrow::Cow::Borrowed(
+            "Distinct,HybridSearch,MultipleOrderBy,NonStreamingOrderBy,OffsetAndLimit,OrderBy,Top,WeightedRankFusion",
+        ),
+    )
+    .with_body(operation.body().unwrap_or_default().to_vec());
+    let response = driver
+        .execute_operation(plan_operation, options.clone())
+        .await?;
+    match response.as_ref().map(CosmosResponse::body) {
+        Some(ResponseBody::Bytes(body)) => decode_hybrid_limit_plan(body),
+        _ => Err(CosmosError::builder()
+            .with_status(status_codes::SERIALIZATION_RESPONSE_BODY_INVALID)
+            .with_message("Missing query plan body while checking the hybrid search limit")
+            .build()),
+    }
+}
+
+fn query_page_size(value: Option<i64>) -> PyResult<Option<MaxItemCountHint>> {
+    match value {
+        None => Ok(None),
+        Some(-1) => Ok(Some(MaxItemCountHint::ServerDecides)),
+        Some(value) => u32::try_from(value)
+            .ok()
+            .and_then(NonZeroU32::new)
+            .map(|count| Some(MaxItemCountHint::Limit(count)))
+            .ok_or_else(|| PyValueError::new_err("max_item_count must be -1 or a positive u32.")),
+    }
 }
 
 fn query_planning_error(error: CosmosError, maximum: Option<u64>) -> PyResult<CosmosError> {
@@ -117,8 +210,11 @@ impl QueryRequest {
                 ))
             }
         };
-        let operation =
+        let mut operation =
             CosmosOperation::query_items(container, Some(range)).with_body(self.body.clone());
+        if let Some(count) = self.max_item_count {
+            operation = operation.with_max_item_count(count);
+        }
         if self.continuation_limit_kb.is_some_and(|limit| limit > 0) && !operation.is_trivial() {
             return Err(PyNotImplementedError::new_err(
                 "continuation_token_limit requires a complete partition_key; \
@@ -399,13 +495,36 @@ async fn next_plan_page(
         }
         let service_continuation =
             matches!(request, FeedRequest::Query(_)) && operation.is_trivial();
-        let maximum = match &request {
+        let mut maximum = match &request {
             FeedRequest::Query(query) => query.max_buffered_query_window,
             _ => None,
         };
+        let mut hybrid_limit_applied = false;
+        if let FeedRequest::Query(query) = &request {
+            if let Some(limit) = query
+                .hybrid_search_max_items
+                .as_deref()
+                .filter(|_| !operation.is_trivial())
+            {
+                match hybrid_limit_plan(&driver, container.clone(), &operation, &options).await {
+                    Ok(Some(window)) => {
+                        maximum = Some(window.admitted_window(limit)?);
+                        hybrid_limit_applied = true;
+                    }
+                    Ok(None) => {}
+                    Err(error) => return Ok((Err(error), None, false)),
+                }
+            }
+        }
         let plan_options = match maximum {
             Some(maximum) => plan_options.with_max_buffered_query_window(maximum),
             None => plan_options,
+        };
+        let plan_options = match &request {
+            FeedRequest::Query(query) => {
+                plan_options.with_full_text_score_scope(query.full_text_score_scope)
+            }
+            _ => plan_options,
         };
         let token = continuation.map(ContinuationToken::from_string);
         let plan = match driver
@@ -413,7 +532,14 @@ async fn next_plan_page(
             .await
         {
             Ok(plan) => plan,
-            Err(error) => return Ok((Err(query_planning_error(error, maximum)?), None, false)),
+            Err(error) => {
+                let vector_maximum = if hybrid_limit_applied { None } else { maximum };
+                return Ok((
+                    Err(query_planning_error(error, vector_maximum)?),
+                    None,
+                    false,
+                ));
+            }
         };
         Progress {
             plan,
@@ -448,12 +574,11 @@ async fn next_plan_page(
         };
         ChangeFeedRequest::validate_width(width)?;
     }
-    let token = if progress.service_continuation {
-        response
-            .as_ref()
-            .and_then(|page| page.headers().continuation.clone())
-    } else if response.is_some() && !state.continuation_unsupported {
+    let token = if response.is_some() && !state.continuation_unsupported {
         match progress.plan.to_continuation_token() {
+            Ok(_) if progress.service_continuation => response
+                .as_ref()
+                .and_then(|page| page.headers().continuation.clone()),
             Ok(token) => Some(token.as_str().to_owned()),
             Err(error)
                 if matches!(progress.request, FeedRequest::Query(_))
@@ -461,6 +586,8 @@ async fn next_plan_page(
                         == status_codes::CLIENT_BUFFERED_QUERY_CONTINUATION_UNSUPPORTED =>
             {
                 state.continuation_unsupported = true;
+                // Ranked queries can buffer results even with a complete partition key.
+                progress.service_continuation = false;
                 None
             }
             Err(error) => return Ok((Err(error), None, false)),
@@ -514,6 +641,20 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyRes
                 "Retained queries require typed query_scope",
             ));
         }
+        let query_settings = prepared.getattr("settings")?.getattr("query")?;
+        let full_text_score_scope = match query_settings
+            .getattr("full_text_score_scope")?
+            .extract::<Option<String>>()?
+            .as_deref()
+        {
+            None | Some("Global") => FullTextScoreScope::Global,
+            Some("Local") => FullTextScoreScope::Local,
+            _ => {
+                return Err(PyValueError::new_err(
+                    "full_text_score_scope must be 'Local' or 'Global'.",
+                ))
+            }
+        };
         return Ok(FeedRequest::Query(QueryRequest {
             body,
             partition_key: key,
@@ -528,6 +669,11 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyRes
                 .getattr("settings")?
                 .getattr("query")?
                 .getattr("max_buffered_query_window")?
+                .extract()?,
+            full_text_score_scope,
+            max_item_count: query_page_size(query_settings.getattr("max_item_count")?.extract()?)?,
+            hybrid_search_max_items: query_settings
+                .getattr("hybrid_search_max_items")?
                 .extract()?,
         }));
     }
@@ -599,7 +745,7 @@ fn inputs(
     if op != "query_items"
         && continuation
             .as_ref()
-            .is_some_and(|token| !token.starts_with("c1."))
+            .is_some_and(|token| !token.starts_with("c1.") && !token.starts_with("c2."))
     {
         return Err(PyValueError::new_err(
             "read_all_items requires a Rust driver continuation token, not a legacy bookmark",
@@ -1182,6 +1328,9 @@ mod tests {
             allow_cross_partition: true,
             continuation_limit_kb: None,
             max_buffered_query_window: None,
+            full_text_score_scope: FullTextScoreScope::Global,
+            max_item_count: None,
+            hybrid_search_max_items: None,
         })
     }
 
@@ -1218,6 +1367,178 @@ mod tests {
     }
 
     #[test]
+    fn hybrid_limit_uses_plan_metadata_and_legacy_take_not_offset_window() {
+        pyo3::prepare_freethreaded_python();
+        for body in [
+            br#"{"queryInfo":{"top":1}}"#.as_slice(),
+            br#"{"queryInfo":{"top":1,"hasNonStreamingOrderBy":true}}"#,
+            br#"{"hybridSearchQueryInfo":null}"#,
+        ] {
+            assert!(decode_hybrid_limit_plan(body).unwrap().is_none());
+        }
+        let plan = decode_hybrid_limit_plan(br#"{"hybridSearchQueryInfo":{"skip":1000,"take":5}}"#)
+            .unwrap()
+            .unwrap();
+        for maximum in ["5", "  +5 ", "5_000", "1267650600228229401496703205376"] {
+            assert_eq!(plan.admitted_window(maximum).unwrap(), 1005);
+        }
+        for maximum in ["0", "4", "-1"] {
+            let error = plan.admitted_window(maximum).unwrap_err();
+            Python::with_gil(|py| {
+                assert!(error.is_instance_of::<PyValueError>(py));
+                assert_eq!(
+                    error
+                        .value_bound(py)
+                        .getattr("args")
+                        .unwrap()
+                        .get_item(0)
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                    "Executing a hybrid search query with more items than the max is not allowed. \
+                     Please ensure you are using a limit smaller than the max, or change the max."
+                );
+            });
+        }
+        for maximum in ["", "invalid", "1.5"] {
+            let error = plan.admitted_window(maximum).unwrap_err();
+            Python::with_gil(|py| assert!(error.is_instance_of::<PyValueError>(py)));
+        }
+        for take in [None, Some(0)] {
+            let error = HybridLimitWindow { skip: None, take }
+                .admitted_window("10")
+                .unwrap_err();
+            assert!(error.to_string().contains("without TOP or LIMIT"));
+        }
+        assert!(HybridLimitWindow {
+            skip: Some(u64::MAX),
+            take: Some(1)
+        }
+        .admitted_window("1")
+        .unwrap_err()
+        .to_string()
+        .contains("exceeds u64"));
+        for body in [
+            b"not json".as_slice(),
+            br#"{"hybridSearchQueryInfo":{"take":"5"}}"#,
+        ] {
+            assert_eq!(
+                decode_hybrid_limit_plan(body).err().unwrap().status(),
+                status_codes::SERIALIZATION_RESPONSE_BODY_INVALID,
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn hybrid_limit_does_not_restrict_other_queries_or_replace_their_buffer_guard() {
+        let (_emulator, driver) = setup(12).await;
+        for maximum in ["0", "invalid"] {
+            let mut request = query_request("SELECT * FROM c");
+            if let FeedRequest::Query(ref mut query) = request {
+                query.hybrid_search_max_items = Some(maximum.into());
+            }
+            assert_eq!(query_drain(&driver, &request, None).await.len(), 12);
+        }
+        let mut request = query_request("SELECT TOP 2 c.pk FROM c ORDER BY c.pk");
+        if let FeedRequest::Query(ref mut query) = request {
+            query.hybrid_search_max_items = Some("0".into());
+        }
+        assert_eq!(query_drain(&driver, &request, None).await.len(), 2);
+
+        let mut request = query_request("SELECT DISTINCT TOP 2 c.pk FROM c");
+        if let FeedRequest::Query(ref mut query) = request {
+            query.hybrid_search_max_items = Some("invalid".into());
+            query.max_buffered_query_window = Some(1);
+        }
+        let error = next_plan_page(
+            driver,
+            Arc::new(Mutex::new(CursorState::default())),
+            ("test".into(), "dbs/db/colls/c".into()),
+            None,
+            modifiers(),
+            request,
+            PlanOptions::default(),
+        )
+        .await
+        .unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("Executing a vector search query with more items"));
+    }
+
+    #[tokio::test]
+    async fn complete_key_bypasses_hybrid_limit_metadata_request() {
+        let (driver, rule) = setup_fault("MetadataQueryPlan", Duration::ZERO).await;
+        let mut request = query_request("SELECT * FROM c");
+        if let FeedRequest::Query(ref mut query) = request {
+            query.partition_key = Some(PartitionKey::from("customer-501"));
+            query.hybrid_search_max_items = Some("0".into());
+        }
+        let (result, _, _) = next_plan_page(
+            driver,
+            Arc::new(Mutex::new(CursorState::default())),
+            ("test".into(), "dbs/db/colls/c".into()),
+            None,
+            modifiers(),
+            request,
+            PlanOptions::default(),
+        )
+        .await
+        .unwrap();
+        assert!(result.is_ok());
+        assert_eq!(rule.hit_count(), 0);
+    }
+
+    #[tokio::test]
+    async fn hybrid_limit_plan_failure_is_not_ignored_and_can_retry_setup() {
+        let (driver, rule) = setup_fault("MetadataQueryPlan", Duration::ZERO).await;
+        let cursor = ItemFeedCursor::default();
+        let mut request = query_request("SELECT * FROM c");
+        if let FeedRequest::Query(ref mut query) = request {
+            query.hybrid_search_max_items = Some("0".into());
+        }
+        let (result, token, complete) = next_plan_page(
+            driver.clone(),
+            cursor.state.clone(),
+            ("test".into(), "dbs/db/colls/c".into()),
+            None,
+            modifiers(),
+            request.clone(),
+            PlanOptions::default(),
+        )
+        .await
+        .unwrap();
+        assert!(result.is_err());
+        assert!(token.is_none());
+        assert!(!complete);
+        assert!(rule.hit_count() > 0);
+        assert!(cursor.can_retry_setup());
+        rule.disable();
+        assert!(query_page(&driver, &cursor.state, &request, None)
+            .await
+            .0
+            .unwrap()
+            .is_empty());
+    }
+
+    #[test]
+    fn query_page_size_preserves_server_choice_and_checks_typed_limit() {
+        pyo3::prepare_freethreaded_python();
+        assert_eq!(query_page_size(None).unwrap(), None);
+        assert_eq!(
+            query_page_size(Some(-1)).unwrap(),
+            Some(MaxItemCountHint::ServerDecides)
+        );
+        assert_eq!(
+            query_page_size(Some(5)).unwrap(),
+            Some(MaxItemCountHint::Limit(NonZeroU32::new(5).unwrap()))
+        );
+        for value in [0, -2, i64::from(u32::MAX) + 1] {
+            assert!(query_page_size(Some(value)).is_err());
+        }
+    }
+
+    #[test]
     fn query_inputs_preserve_body_bytes_and_read_scope_separately() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
@@ -1240,6 +1561,21 @@ mod tests {
                 .unwrap()
                 .setattr("max_buffered_query_window", 1u64)
                 .unwrap();
+            settings
+                .getattr("query")
+                .unwrap()
+                .setattr("full_text_score_scope", "Local")
+                .unwrap();
+            settings
+                .getattr("query")
+                .unwrap()
+                .setattr("hybrid_search_max_items", "0")
+                .unwrap();
+            settings
+                .getattr("query")
+                .unwrap()
+                .setattr("max_item_count", 5)
+                .unwrap();
             prepared.setattr("settings", settings).unwrap();
             scope.setattr("feed_range", ("00", "AA")).unwrap();
             scope.setattr("allow_cross_partition", false).unwrap();
@@ -1253,6 +1589,12 @@ mod tests {
             assert!(!query.allow_cross_partition);
             assert!(query.partition_key.is_none());
             assert_eq!(query.max_buffered_query_window, Some(1));
+            assert_eq!(query.full_text_score_scope, FullTextScoreScope::Local);
+            assert_eq!(query.hybrid_search_max_items.as_deref(), Some("0"));
+            assert_eq!(
+                query.max_item_count,
+                Some(MaxItemCountHint::Limit(NonZeroU32::new(5).unwrap()))
+            );
 
             prepared.setattr("query_scope", py.None()).unwrap();
             let error = match feed_inputs(&prepared, BindingPartitionKey::CrossPartition) {
@@ -1273,6 +1615,9 @@ mod tests {
             "feed_range",
             "allow_cross_partition",
             "partition_key",
+            "full_text_score_scope",
+            "max_item_count",
+            "hybrid_search_max_items",
         ] {
             let state = Arc::new(Mutex::new(CursorState::default()));
             let (page, token) = query_page(&driver, &state, &original, None).await;
@@ -1286,6 +1631,9 @@ mod tests {
                 "feed_range" => query.feed_range = Some(("00".into(), "AA".into())),
                 "allow_cross_partition" => query.allow_cross_partition = false,
                 "partition_key" => query.partition_key = Some(PartitionKey::from("key-5")),
+                "full_text_score_scope" => query.full_text_score_scope = FullTextScoreScope::Local,
+                "hybrid_search_max_items" => query.hybrid_search_max_items = Some("0".into()),
+                "max_item_count" => query.max_item_count = Some(MaxItemCountHint::ServerDecides),
                 _ => unreachable!(),
             }
             let error = next_plan_page(
@@ -1470,6 +1818,9 @@ mod tests {
             allow_cross_partition: true,
             continuation_limit_kb: Some(1),
             max_buffered_query_window: None,
+            full_text_score_scope: FullTextScoreScope::Global,
+            max_item_count: None,
+            hybrid_search_max_items: None,
         });
         let mut options = modifiers();
         options.custom_headers.insert(
@@ -1491,7 +1842,7 @@ mod tests {
         let response = response.unwrap().unwrap();
         assert_eq!(token, response.headers().continuation);
         let token = token.unwrap();
-        assert!(!token.starts_with("c1."));
+        assert!(!token.starts_with("c1.") && !token.starts_with("c2."));
         assert!(token.len() <= 1024);
         let first = match response.body().clone() {
             azure_data_cosmos_driver::models::ResponseBody::Bytes(bytes) => {
@@ -1523,8 +1874,19 @@ mod tests {
             allow_cross_partition: false,
             continuation_limit_kb: None,
             max_buffered_query_window: None,
+            full_text_score_scope: FullTextScoreScope::Global,
+            max_item_count: Some(MaxItemCountHint::Limit(NonZeroU32::new(5).unwrap())),
+            hybrid_search_max_items: None,
         };
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
+        assert_eq!(
+            request
+                .operation(container.clone())
+                .unwrap()
+                .request_headers()
+                .max_item_count,
+            request.max_item_count
+        );
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0]["id"], "5");
         request.partition_key = None;
@@ -1622,6 +1984,9 @@ mod tests {
             allow_cross_partition: true,
             continuation_limit_kb: None,
             max_buffered_query_window: None,
+            full_text_score_scope: FullTextScoreScope::Global,
+            max_item_count: None,
+            hybrid_search_max_items: None,
         };
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
         assert_eq!(rows.len(), 9);
@@ -1839,7 +2204,7 @@ mod tests {
         );
         assert!(checkpoints.len() > 3);
         for (offset, token) in checkpoints {
-            assert!(token.as_ref().unwrap().starts_with("c1."));
+            assert!(token.as_ref().unwrap().starts_with("c2."));
             let resumed = Arc::new(Mutex::new(CursorState::default()));
             assert_eq!(drain(&driver, &resumed, token).await, all[offset..]);
         }

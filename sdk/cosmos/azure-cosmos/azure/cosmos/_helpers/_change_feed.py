@@ -250,10 +250,13 @@ class ChangeFeedConfig(ReadAllConfig):
             if "range_id" in settings:
                 values["partition_key_range_id"] = settings["range_id"]
             normalized = _settings(values, rust=self.rust)
-            if self.rust and not inner.startswith("c1.") or not self.rust and inner.startswith(("c1.", _PREFIX)):
+            if (
+                self.rust and not inner.startswith(("c1.", "c2."))
+                or not self.rust and inner.startswith(("c1.", "c2.", _PREFIX))
+            ):
                 raise ValueError("change-feed continuation belongs to an incompatible backend.")
             return normalized, inner
-        if self.rust or token.startswith("c1."):
+        if self.rust or token.startswith(("c1.", "c2.")):
             raise ValueError("change-feed continuation belongs to an incompatible backend or operation.")
         if token.strip('"').isdigit():
             values = dict(self.requested)

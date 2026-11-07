@@ -397,7 +397,6 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
 
         env = dict(os.environ)
         env["PYTHONPATH"] = str(_PKG_ROOT / "tests") + os.pathsep + env.get("PYTHONPATH", "")
-        env.pop("COSMOS_PARITY_CAPTURE_OP", None)
         env.pop("PYTEST_ADDOPTS", None)
 
         def collect(extra_args):

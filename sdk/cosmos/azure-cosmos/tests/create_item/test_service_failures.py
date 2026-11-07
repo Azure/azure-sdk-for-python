@@ -19,7 +19,6 @@ import pytest_asyncio
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import CosmosClient, PartitionKey, exceptions
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
-from common._parity_helpers import skip_unless_emulator, skip_unless_rust_binding
 from create_item._legacy_variants import assert_fields, observe_native_create
 from create_item._legacy_variants import (  # pylint: disable=unused-import
     _make_variant_container_fixture,
@@ -30,8 +29,6 @@ from fault_injection._query_resume import set_rule
 pytestmark = [
     pytest.mark.cosmosEmulator,
     pytest.mark.asyncio,
-    skip_unless_emulator(),
-    skip_unless_rust_binding(),
 ]
 
 
@@ -212,8 +209,14 @@ async def test_service_applies_create_indexing_directive_rust(
     native = observe_native_create(monkeypatch, client, "rust", asynchronous=asynchronous)
     marker = uuid.uuid4().hex
     bodies = [{"id": mode, "pk": marker, "marker": marker} for mode in ("default", "include", "exclude")]
+    create_diagnostics = {}
     for body, options in zip(bodies, ({}, {"indexing_directive": "Include"}, {"indexing_directive": "Exclude"})):
-        assert_fields(await invoke(container.create_item, body, **options), body)
+        created = await invoke(container.create_item, body, **options)
+        # Save the create's transport evidence before the observer performs a read.
+        create_diagnostics[body["id"]] = created.get_response_headers().get(
+            "x-ms-cosmos-sdk-diagnostics", "<missing create diagnostics; transport unconfirmed>"
+        )
+        assert_fields(created, body)
         assert_fields(await invoke(observer.read_item, body["id"], partition_key=marker), body)
     assert native.call_count == 3
     assert [call.args[1].settings.item.indexing_directive for call in native.call_args_list] == [
@@ -232,8 +235,13 @@ async def test_service_applies_create_indexing_directive_rust(
             )
         }
 
+    # data_plane/gateway_v2 identifies Gateway 2.0; metadata/gateway does not.
+    transport_evidence = "Create diagnostics (use data_plane entries, not metadata):\n" + "\n".join(
+        f"{mode}: {create_diagnostics[mode]}" for mode in ("exclude", "include", "default")
+    )
+    print(transport_evidence)
     actual = await asyncio.to_thread(indexed_ids)
     assert actual == {
         "default",
         "include",
-    }, "Exclude reached native create but the service query still returns the item"
+    }, f"Exclude reached native create but the service query still returns the item\n{transport_evidence}"

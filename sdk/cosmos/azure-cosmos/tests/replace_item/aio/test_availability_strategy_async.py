@@ -185,7 +185,7 @@ def availability_strategy_resources(request):
     # The originals use conftest-provisioned shared containers; the copy owns its database.
     write_locations, read_locations = _configured_regions()
     if not write_locations or _select_primary_and_failover_region(write_locations, read_locations)[1] is None:
-        raise RuntimeError("Availability strategy tests require at least two distinct account regions.")
+        pytest.skip("environment-gap: availability strategy tests need two distinct regions in WRITE_LOCATION/READ_LOCATION; Rust cannot discover account regions (known gap 24).")
     setup_client = create_setup_client(_backend="rust")
     database = setup_client.create_database("availability_strategy_async_rust_" + uuid.uuid4().hex)
     try:
@@ -215,7 +215,7 @@ async def setup(availability_strategy_resources):
     if region_2 is None:
         await test_client.close()
         logger.removeHandler(TestAsyncAvailabilityStrategy.MOCK_HANDLER)
-        raise RuntimeError("Availability strategy tests require at least two distinct account regions.")
+        pytest.skip("environment-gap: availability strategy tests need two distinct regions in WRITE_LOCATION/READ_LOCATION; Rust cannot discover account regions (known gap 24).")
 
     # Use first writable location as primary region and second as failover
     account_location_with_client = {

@@ -49,7 +49,7 @@ def validate_read_all_continuation_token(token: Optional[str], rust: bool) -> No
         return
     if not isinstance(token, str) or not token:
         raise ValueError("read_all_items continuation must be a nonempty string or None.")
-    if token.startswith("c1.") != rust:
+    if token.startswith(("c1.", "c2.")) != rust:
         raise ValueError("read_all_items continuation belongs to an incompatible backend.")
 
 

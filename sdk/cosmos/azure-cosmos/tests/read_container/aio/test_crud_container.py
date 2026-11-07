@@ -20,10 +20,7 @@ partition key on a container created with throughput.
 and quota usage through Rust. Every container read is guarded by a binding-operation
 counter and a zero-fallback assertion.
 
-This is NOT the side-by-side comparison. The comparison tests
-(``read_container/aio/test_read_container_parity_async.py``) run the same call
-on both engines and diff the results. This file runs on Rust only and reuses
-assertions the team already trusts.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
 with any other test. The originals read a shared container named by
@@ -49,7 +46,7 @@ import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.aio import CosmosClient, ContainerProxy
-from common._parity_helpers import run_target_operation_async
+from common._rust_checks import run_on_rust_async
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
@@ -81,7 +78,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         @wraps(original_read)
         async def guarded_read(container, *args, **kwargs):
-            return await run_target_operation_async(
+            return await run_on_rust_async(
                 self.key_client, lambda: original_read(container, *args, **kwargs)
             )
 

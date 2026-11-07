@@ -12,9 +12,7 @@ What it does: the real legacy async tests copied verbatim from
 ``tests/test_crud_container_async.py``, changed in exactly one place -- the client is
 built with ``_backend="rust"`` -- so the same assertions run against the Rust path.
 
-This is NOT the side-by-side parity comparison; that lives in
-``replace_throughput/aio/test_replace_throughput_parity_async.py``. This file runs on
-Rust only and reuses checks the team already trusts.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: builds its own database + container in ``asyncSetUp`` and deletes
 them in ``asyncTearDown``. The class name and method names match the source (apart from

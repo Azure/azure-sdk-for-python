@@ -23,7 +23,9 @@ a complete ``HttpResponse`` implementation or a guarantee of execution-path pari
 from __future__ import annotations
 
 import json
-from typing import Mapping, Optional
+from typing import Any, Mapping, Optional
+
+from azure.core.exceptions import ODataV4Format
 
 from .._backend.contracts import BackendResponse
 from ..exceptions import (
@@ -84,6 +86,33 @@ _STATUS_TO_EXCEPTION = {
 }
 
 
+class _RequestEntityTooLargeFormat(ODataV4Format):
+    """Restore the 413 error code for native Errors envelopes without altering the response.
+
+    :param json_object: Decoded error body.
+    :type json_object: Mapping[str, Any]
+    """
+
+    def __init__(self, json_object: Mapping[str, Any]) -> None:
+        if (
+            isinstance(json_object, Mapping)
+            and "error" not in json_object
+            and not json_object.get("code")
+        ):
+            errors = json_object.get("Errors")
+            if (
+                isinstance(errors, list)
+                and errors
+                and all(isinstance(error, str) for error in errors)
+            ):
+                json_object = {
+                    **json_object,
+                    "code": "RequestEntityTooLarge",
+                    "message": json_object.get("message") or "\n".join(errors),
+                }
+        super().__init__(json_object)
+
+
 def map_backend_response_to_exception(
     response: BackendResponse,
     *,
@@ -92,30 +121,35 @@ def map_backend_response_to_exception(
     """Build the typed ``CosmosHttpResponseError`` subclass for an error response.
 
     Returns the exception instance; the caller decides when to ``raise``
-    it. This function does not invoke a response hook.
+    it. Native 413 ``Errors`` envelopes retain the ``RequestEntityTooLarge``
+    code in the formatted exception without rewriting its raw response or
+    overriding an explicit service code. This function does not invoke a response hook.
 
     :param response: The ``BackendResponse`` the caller has classified as an error.
     :type response: BackendResponse
-    :param message: Server-provided error message text.
-    :type message: str
+    :keyword str message: Server-provided error message text.
     :returns: An instance of the typed subclass for the status code, or
         ``CosmosHttpResponseError`` for unmapped codes.
     :rtype: CosmosHttpResponseError
     """
-    exception_class = _STATUS_TO_EXCEPTION.get(response.status_code, CosmosHttpResponseError)
+    exception_class = _STATUS_TO_EXCEPTION.get(
+        response.status_code, CosmosHttpResponseError
+    )
     response_adapter = _ResponseAdapter(response)
 
     # Pass sub_status via kwargs only when set, in case the backend
     # surfaces it as a typed field without writing it into headers.
-    sub_status_kwarg: dict = {}
+    exception_kwargs: dict = {}
     if response.sub_status:
-        sub_status_kwarg["sub_status"] = response.sub_status
+        exception_kwargs["sub_status"] = response.sub_status
+    if response.status_code == 413:
+        exception_kwargs["error_format"] = _RequestEntityTooLargeFormat
 
     return exception_class(
         status_code=response.status_code,
         message=message,
         response=response_adapter,
-        **sub_status_kwarg,
+        **exception_kwargs,
     )
 
 

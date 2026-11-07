@@ -18,10 +18,7 @@ a fresh id, so it takes the create leg.
 same fixed id, so the second call takes the read leg, and checks that call's
 headers are not empty.
 
-This is NOT the side-by-side comparison. The comparison tests
-(``create_container_if_not_exists/sync/test_create_container_if_not_exists_parity.py``)
-run the same call on both engines and diff the results. This file runs on Rust
-only and reuses assertions the team already trusts.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so the fixed id
 ``responses_test`` cannot collide with a container another test left behind.

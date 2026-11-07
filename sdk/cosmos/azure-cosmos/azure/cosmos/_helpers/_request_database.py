@@ -53,6 +53,8 @@ from ._wire_encoding import serialize_body_to_bytes
 _RUST_READ_DATABASE_SUPPORTED_KWARGS = frozenset({
     Constants.Kwargs.TIMEOUT,
     "response_hook",
+    # Metadata preload forwards this internal timestamp; it is not a wire setting.
+    Constants.OperationStartTime,
     # Azure Core handles these controls; they are not driver settings.
     "tracing_options",
     "tracing_attributes",

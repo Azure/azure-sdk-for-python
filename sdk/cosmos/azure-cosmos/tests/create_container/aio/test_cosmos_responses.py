@@ -18,10 +18,7 @@ for properties and checks the headers are not empty.
 ``test_create_container_returns_container_proxy_async`` does not ask, and
 checks a ``ContainerProxy`` came back.
 
-This is NOT the side-by-side comparison. The comparison tests
-(``create_container/aio/test_create_container_parity_async.py``) run the same
-call on both engines and diff the results. This file runs on Rust only and
-reuses assertions the team already trusts.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
 with any other test. The class name and method names match the source (apart from the

@@ -356,7 +356,9 @@ class TestPerPartitionCircuitBreakerMM:
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds) and the identity of the transport-injected "
-                              "exception; the Rust driver owns the circuit breaker and exposes neither. Also "
+                              "exception; "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
+                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). Also "
                               "requires a multi-region multi-write account.")
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     def test_write_consecutive_failure_threshold_rust(self, write_operation, error):
@@ -415,7 +417,9 @@ class TestPerPartitionCircuitBreakerMM:
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds) and the identity of the transport-injected "
-                              "exception; the Rust driver owns the circuit breaker and exposes neither. Also "
+                              "exception; "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
+                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). Also "
                               "requires a multi-region multi-write account.")
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     def test_write_failure_rate_threshold_rust(self, write_operation, error):
@@ -455,8 +459,10 @@ class TestPerPartitionCircuitBreakerMM:
 
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
-                              "_partition_health_tracker thresholds); the Rust driver owns the circuit breaker "
-                              "and does not expose it. Also requires a multi-region account.")
+                              "_partition_health_tracker thresholds); "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
+                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). "
+                              "Also requires a multi-region account.")
     @pytest.mark.cosmosCircuitBreakerMultiRegion
     @pytest.mark.parametrize("read_operation, error", read_operations_and_errors())
     def test_read_failure_rate_threshold_rust(self, read_operation, error):
@@ -497,7 +503,9 @@ class TestPerPartitionCircuitBreakerMM:
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds) and the identity of the transport-injected "
-                              "exception; the Rust driver owns the circuit breaker and exposes neither. Also "
+                              "exception; "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
+                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). Also "
                               "requires a multi-region multi-write account.")
     def test_stat_reset_rust(self):
         # Source: tests/test_per_partition_circuit_breaker_mm.py::TestPerPartitionCircuitBreakerMM.test_stat_reset
@@ -546,7 +554,9 @@ class TestPerPartitionCircuitBreakerMM:
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds) and the identity of the transport-injected "
-                              "exception; the Rust driver owns the circuit breaker and exposes neither. Also "
+                              "exception; "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
+                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). Also "
                               "requires a multi-region multi-write account.")
     @pytest.mark.parametrize("read_operation, write_operation", operations())
     def test_service_request_error_rust(self, read_operation, write_operation):

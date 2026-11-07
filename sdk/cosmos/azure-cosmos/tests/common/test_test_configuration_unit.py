@@ -264,7 +264,7 @@ assert TestSettings.TEST_DATABASE_ID
     ], ("test_config",)),
     (["tests/fault_injection", "tests/toxiproxy"], (
         "test_config", "_client_transport", "_fault_injection_transport",
-        "common._parity_helpers", "common.parity_provisioning", "common.fault_resources",
+        "common.fault_resources",
     )),
 ])
 def test_maintained_copies_collect_without_legacy_configuration_rust(tmp_path, selections, blocked):
@@ -287,7 +287,6 @@ assert not set({blocked!r}).intersection(sys.modules)
 raise SystemExit(result)
 """
     environment = dict(os.environ, PYTHONPATH=str(ROOT / "tests") + os.pathsep + str(ROOT))
-    environment.pop("COSMOS_PARITY_CAPTURE_OP", None)
     result = subprocess.run(
         [sys.executable, "-c", code], cwd=ROOT, env=environment,
         capture_output=True, text=True, timeout=90, check=False,

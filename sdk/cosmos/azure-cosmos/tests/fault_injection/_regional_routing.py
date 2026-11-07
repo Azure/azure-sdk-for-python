@@ -198,7 +198,12 @@ async def wait_topology_async(client, rule_id, target_guard):
 
 
 def isolate(request, target):
-    """Parent owns resources even when a child times out or fails."""
+    """Parent owns resources even when a child times out or fails.
+
+    Put the child's failure summary first so the pipeline shows the reason
+    even when it truncates the longer worker output that follows.
+    Use short tracebacks but full summaries; quiet mode can cut off the error.
+    """
     if request.config.getoption("--f02-worker"):
         return False
     database_id, container = target
@@ -210,16 +215,23 @@ def isolate(request, target):
     # Existing driver E2E control: wait for observed topology, never a fixed sleep.
     environment["AZURE_COSMOS_E2E_BACKGROUND_ACCOUNT_REFRESH_INTERVAL_MS"] = "100"
     command = [
-        sys.executable, "-m", "pytest", "-q", "-s", "-o", "pythonpath=tests",
+        sys.executable, "-m", "pytest", "-vv", "-s", "-o", "pythonpath=tests",
+        "--no-header", "--tb=short", "--color=no", "-rfE",
         "--confcutdir=tests\\fault_injection", "--f02-worker", node,
     ]
     result = subprocess.run(command, cwd=root, env=environment, capture_output=True, text=True, timeout=150)
     print(result.stdout, end="")
     if result.stderr:
         print(result.stderr, end="", file=sys.stderr)
+    summary = "\n".join(
+        line for line in result.stdout.splitlines()
+        if line.startswith(("ERROR ", "FAILED "))
+    )
+    summary_section = f"--- worker failure summary ---\n{summary}\n" if summary else ""
     assert result.returncode == 0, (
         f"Isolated F02 worker failed with exit {result.returncode}\n"
         f"Test: {node}\n"
+        f"{summary_section}"
         f"--- worker stdout ---\n{result.stdout}\n"
         f"--- worker stderr ---\n{result.stderr}"
     )

@@ -28,7 +28,7 @@ import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey, http_constants
+from azure.cosmos import CosmosClient, PartitionKey
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -78,10 +78,7 @@ class TestHeaders(unittest.TestCase):
             )
         self.assertTrue(operation.called)
         for call in operation.call_args_list:
-            self.assertEqual(
-                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
-                str(request_throughput_bucket_number),
-            )
+            self.assertEqual(call.args[1].settings.throughput_bucket, request_throughput_bucket_number)
 
     def test_negative_max_integrated_cache_staleness_rust(self):
         """If the negative-staleness call raises, require a ValueError.

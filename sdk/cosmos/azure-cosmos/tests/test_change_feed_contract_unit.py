@@ -104,7 +104,9 @@ def test_first_execution_service_error_still_invalidates(feed):
     assert len(feed.calls) == 1
 
 
-def test_caught_up_page_publishes_bookmark_and_new_pager_polls_again(feed):
+@pytest.mark.parametrize("prefix", ["c1.", "c2."])
+def test_caught_up_page_publishes_bookmark_and_new_pager_polls_again(feed, prefix):
+    feed.pages = [(rows, token.replace("c1.", prefix)) for rows, token in feed.pages]
     calls = []
     pager = feed.proxy.query_items_change_feed(
         response_hook=lambda h, b: calls.append((h, b))
@@ -125,7 +127,7 @@ def test_caught_up_page_publishes_bookmark_and_new_pager_polls_again(feed):
     feed.status = 200
     resumed = feed.proxy.query_items_change_feed(continuation=caught_up).by_page()
     assert feed.next_page(resumed) == [{"id": "b"}]
-    assert feed.calls[-1][0].settings.query.continuation == "c1.b"
+    assert feed.calls[-1][0].settings.query.continuation == prefix + "b"
     assert feed.calls[0][1] is feed.calls[1][1]
     assert feed.calls[0][1] is not feed.calls[2][1]
 

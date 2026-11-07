@@ -13,10 +13,15 @@ import os
 import unittest
 import uuid
 
+import pytest
+
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
 
 
+@pytest.mark.cosmosCircuitBreaker
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADCircuitBreaker
 class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(
@@ -30,6 +35,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         self.container = await self.database.create_container("orders", partition_key=PartitionKey(path="/pk"))
 
     async def test_get_resource_with_dictionary_and_object_async_rust(self):
+        # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_get_resource_with_dictionary_and_object_async
         created_container = self.container
         created_item = await created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'})
         await sleep(5)

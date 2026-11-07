@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 """Generate migrated Rust test copies from a compact per-file spec.
 
-The parity workflow copies each in-scope v4 test into a
+The Rust migration workflow copies each in-scope v4 test into a
 ``tests/<op>/<surface>/`` folder, pins the client to ``_backend="rust"``,
 and adds a ``# Source:`` comment to every method;
 ``tests/common/test_legacy_migration_enforcer_unit.py`` (the enforcer) checks

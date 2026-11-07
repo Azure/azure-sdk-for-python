@@ -113,6 +113,12 @@ class TestRetryPolicy(unittest.TestCase):
         except exceptions.CosmosHttpResponseError:
             pass
 
+    @pytest.mark.skip(
+        reason="accepted-vnext-change: Gap 13 - This copied legacy test expects no retries "
+        "after injected HTTP 502 failures during patch_item and replace_item. Rust owns "
+        "the retry policy and automatically retries eligible failures, so it does not "
+        "preserve this legacy no-retry guarantee."
+    )
     def test_patch_replace_no_retry_rust(self):
         # Source: tests/test_retry_policy.py::TestRetryPolicy.test_patch_replace_no_retry
         doc = {'id': str(uuid.uuid4()),

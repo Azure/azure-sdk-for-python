@@ -8,6 +8,7 @@ import ast
 import copy
 import inspect
 import json
+import time
 import warnings
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
@@ -24,6 +25,7 @@ from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
+from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
 from .test_delete_container_backend_unit import delete_case
 
 
@@ -84,6 +86,87 @@ def _assert_no_dispatch(case):
     case.backend.execute.assert_not_called()
     case.connection.ReadContainer.assert_not_called()
     case.connection._set_container_properties_cache.assert_not_called()
+
+
+@pytest.fixture
+def metadata_read_case(read_case):
+    cache = {}
+    read_case.connection._container_properties_cache = cache
+    read_case.connection._set_container_properties_cache.side_effect = cache.__setitem__
+    return read_case
+
+
+@pytest.mark.parametrize("with_deadline", [False, True])
+def test_metadata_preload_accepts_internal_start_time_and_preserves_budget_rust(metadata_read_case, with_deadline):
+    """Internal timing must not block a cold metadata read or become a wire header."""
+    case = metadata_read_case
+    deadline = time.monotonic() + 30 if with_deadline else None
+    options = {Constants.OperationStartTime: time.time() - 1, "excludedLocations": ["West US"], "timeout": 20}
+    if deadline is not None:
+        options["_item_operation_deadline"] = deadline
+    original = copy.deepcopy(options)
+
+    def properties():
+        result = case.container._get_properties_with_options(options)
+        return asyncio.run(result) if inspect.isawaitable(result) else result
+
+    assert properties()["_rid"] == "rid1"
+    assert properties()["_rid"] == "rid1"
+    assert options == original
+    case.connection._set_container_properties_cache.assert_called_once()
+    if case.legacy:
+        case.backend.execute.assert_not_called()
+        case.connection.ReadContainer.assert_called_once()
+        call = case.connection.ReadContainer.call_args
+        assert call.kwargs["options"]["excludedLocations"] == ["West US"]
+        if deadline is None:
+            assert call.kwargs[Constants.OperationStartTime] == original[Constants.OperationStartTime]
+        else:
+            assert call.kwargs["options"]["_item_operation_deadline"] == deadline
+    else:
+        case.connection.ReadContainer.assert_not_called()
+        case.backend.execute.assert_called_once()
+        call = case.backend.execute.call_args
+        assert call.kwargs["deadline"] == deadline
+        prepared = call.args[0]
+        assert prepared.op == OP_READ_CONTAINER
+        assert prepared.settings.excluded_locations == ("West US",)
+        assert prepared.settings.timeout_seconds == 20
+        assert "operationstarttime" not in {name.lower() for name in wire_headers(prepared)}
+
+
+@pytest.mark.parametrize("partition_key", [None, NonePartitionKeyValue, NullPartitionKeyValue])
+def test_read_items_null_or_absent_key_reaches_read_after_cold_metadata_rust(metadata_read_case, partition_key):
+    """Exercise the reported preload path; the grouped read itself is a stand-in."""
+    case = metadata_read_case
+    mock = AsyncMock if case.is_async else MagicMock
+    case.connection.read_items = mock(return_value=[])
+    items = [("item", partition_key)]
+    result = case.container.read_items(items, timeout=20)
+    assert (asyncio.run(result) if inspect.isawaitable(result) else result) == []
+    case.connection.read_items.assert_called_once()
+    assert case.connection.read_items.call_args.kwargs["items"] == items
+    case.connection._set_container_properties_cache.assert_called_once()
+    if case.legacy:
+        case.connection.ReadContainer.assert_called_once()
+        case.backend.execute.assert_not_called()
+    else:
+        case.backend.execute.assert_called_once()
+        case.connection.ReadContainer.assert_not_called()
+
+
+def test_expired_metadata_preload_budget_prevents_dispatch_rust(metadata_read_case):
+    case = metadata_read_case
+    options = {
+        Constants.OperationStartTime: time.time(),
+        "_item_operation_deadline": time.monotonic() - 1,
+        "timeout": 20,
+    }
+    with pytest.raises(exceptions.CosmosClientTimeoutError):
+        result = case.container._get_properties_with_options(options)
+        if inspect.isawaitable(result):
+            asyncio.run(result)
+    _assert_no_dispatch(case)
 
 
 def test_sync_async_read_parameter_contracts_match_rust():
@@ -303,6 +386,7 @@ def test_supported_timeout_rust(read_case, timeout):
     {"timeout": 0.5}, {"timeout": False}, {"timeout": float("nan")},
     {"timeout": float("inf")}, {"timeout": "10"},
     {"connection_timeout": 2},
+    {Constants.OperationStartTime: 123, "unsupported_option": True},
     {"initial_headers": {"User-Agent": "custom"}},
 ])
 def test_unsupported_rust_settings_never_replay_rust(read_case, kwargs):

@@ -78,19 +78,11 @@ def test_factory_copy_replaces_only_approved_original_rust(surface, original_fil
     elif "forwards_option" in method_name:
         expected_assertion = "self.assertTrue(init.call_args.kwargs['enable_compact_utf8_item_writes'])"
     else:
-        expected_assertion = None
-    if expected_assertion is not None:
-        assert [ast.dump(node) for node in assertions] == [
-            ast.dump(ast.parse(expected_assertion, mode="eval").body)
-        ]
-
-    if "user_agent_overwrite" in original_file:
-        for helper in ("_smoke_data_plane_call", "_assert_user_agent_headers", "setUpClass"):
-            assert ast.dump(_method(copied[class_name], helper)) == ast.dump(
-                _method(original[class_name], helper)
-            )
-        transport = "_AsyncUserAgentCaptureTransport" if surface == "aio" else "_UserAgentCaptureTransport"
-        assert ast.dump(copied[transport]) == ast.dump(original[transport])
+        # User-Agent prefix and overwrite are excluded from Rust by design.
+        expected_assertion = 'self.assertRaisesRegex(TypeError, "user_agent is not supported by Rust-backed APIs")'
+    assert [ast.dump(node) for node in assertions] == [
+        ast.dump(ast.parse(expected_assertion, mode="eval").body)
+    ]
 
 
 def test_exactly_five_factory_sources_are_retired_rust():

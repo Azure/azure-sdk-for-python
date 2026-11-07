@@ -172,98 +172,18 @@ LEGACY_MODULES = frozenset({
 })
 
 LOCAL_COMPARISON_MODULES = frozenset({
-    "auth/aio/test_token_credential_parity_async.py",
-    "auth/sync/test_token_credential_parity.py",
     "binding/test_binding_contract_parity.py",
     "common/test_write_session_token_emulator.py",
-    "create_container/aio/test_create_container_parity_async.py",
-    "create_container/sync/test_create_container_parity.py",
-    "create_container_if_not_exists/aio/test_create_container_if_not_exists_parity_async.py",
-    "create_container_if_not_exists/sync/test_create_container_if_not_exists_parity.py",
-    "create_database/aio/test_create_database_parity_async.py",
-    "create_database/sync/test_create_database_parity.py",
-    "create_item/aio/test_create_item_parity_async.py",
-    "create_item/sync/test_create_item_parity.py",
-    "delete_item/aio/test_delete_item_parity_async.py",
-    "delete_item/sync/test_delete_item_parity.py",
-    "feed_range_from_partition_key/aio/test_feed_range_from_partition_key_parity_async.py",
-    "feed_range_from_partition_key/sync/test_feed_range_from_partition_key_parity.py",
-    "get_container_throughput/aio/test_get_throughput_parity_async.py",
-    "get_container_throughput/sync/test_get_throughput_parity.py",
-    "get_container_throughput/test_container_throughput_parity.py",
-    "get_database_throughput/aio/test_get_database_throughput_parity_async.py",
-    "get_database_throughput/sync/test_get_database_throughput_parity.py",
-    "get_latest_session_token/test_session_token_backend_parity.py",
-    "is_feed_range_subset/aio/test_is_feed_range_subset_parity_async.py",
-    "is_feed_range_subset/sync/test_is_feed_range_subset_parity.py",
-    "list_containers/aio/test_list_containers_parity_async.py",
-    "list_containers/sync/test_list_containers_parity.py",
-    "list_databases/aio/test_list_databases_parity_async.py",
-    "list_databases/sync/test_list_databases_parity.py",
-    "patch_item/aio/test_patch_item_parity_async.py",
-    "patch_item/sync/test_patch_item_parity.py",
-    "query_containers/aio/test_query_containers_parity_async.py",
-    "query_containers/sync/test_query_containers_parity.py",
-    "query_databases/aio/test_query_databases_parity_async.py",
-    "query_databases/sync/test_query_databases_parity.py",
-    "query_items/aio/test_query_items_parity_async.py",
-    "query_items/sync/test_query_items_parity.py",
-    "read_all_items/aio/test_read_all_items_parity_async.py",
-    "read_all_items/sync/test_read_all_items_parity.py",
-    "read_container/aio/test_read_container_parity_async.py",
-    "read_container/sync/test_read_container_parity.py",
-    "read_database/aio/test_read_database_parity_async.py",
-    "read_database/sync/test_read_database_parity.py",
-    "read_feed_ranges/aio/test_read_feed_ranges_parity_async.py",
-    "read_feed_ranges/sync/test_read_feed_ranges_parity.py",
-    "read_item/aio/test_read_item_parity_async.py",
-    "read_item/sync/test_read_item_parity.py",
-    "read_item/test_read_item_address_parity.py",
-    "read_items/aio/test_read_items_parity_async.py",
-    "read_items/sync/test_read_items_parity.py",
-    "replace_database_throughput/aio/test_replace_database_throughput_parity_async.py",
-    "replace_database_throughput/sync/test_replace_database_throughput_parity.py",
-    "replace_item/aio/test_replace_item_parity_async.py",
-    "replace_item/sync/test_replace_item_parity.py",
-    "replace_throughput/aio/test_replace_throughput_parity_async.py",
-    "replace_throughput/sync/test_replace_throughput_parity.py",
-    "replace_throughput/test_container_throughput_parity.py",
-    "upsert_item/aio/test_upsert_item_parity_async.py",
-    "upsert_item/sync/test_upsert_item_parity.py",
 })
 
 # These existing files mix local comparisons with independently useful Rust
 # checks. Keep the latter without moving or editing their assertion bodies.
 RETAINED_COMPARISON_TESTS = {
-    "auth/sync/test_token_credential_parity.py": frozenset({
-        "test_engine_shared_for_one_credential_object_rust",
-        "test_engine_multiplied_for_distinct_credential_objects_rust",
-    }),
     "binding/test_binding_contract_parity.py": frozenset({
         "test_binding_rejects_invalid_timeout_with_real_handle",
     }),
     "common/test_write_session_token_emulator.py": frozenset({
         "test_future_token_is_enforced_on_a_read_rust",
-    }),
-    "create_item/sync/test_create_item_parity.py": frozenset({
-        "test_partitionless_container_rejected_by_rust_binding_rust",
-    }),
-    "get_container_throughput/test_container_throughput_parity.py": frozenset({
-        "test_unsupported_input_never_enters_binding_or_legacy_rust",
-    }),
-    "get_database_throughput/aio/test_get_database_throughput_parity_async.py": frozenset({
-        "test_rust_database_read_rejects_unsupported_inputs_async_rust",
-    }),
-    "get_database_throughput/sync/test_get_database_throughput_parity.py": frozenset({
-        "test_rust_database_read_rejects_unsupported_inputs_rust",
-    }),
-    "is_feed_range_subset/aio/test_is_feed_range_subset_parity_async.py": frozenset({
-        "test_L6_is_feed_range_subset_leaves_last_response_headers_untouched_rust",
-        "test_L7_is_feed_range_subset_inverted_range_contract_rust",
-    }),
-    "is_feed_range_subset/sync/test_is_feed_range_subset_parity.py": frozenset({
-        "test_L6_is_feed_range_subset_leaves_last_response_headers_untouched_rust",
-        "test_L7_is_feed_range_subset_inverted_range_contract_rust",
     }),
 }
 
@@ -275,10 +195,6 @@ ADAPTER_PARAMETER_MODULES = frozenset({
     "create_item/aio/test_legacy_variants.py",
     "create_item/sync/test_legacy_contracts.py",
     "create_item/sync/test_legacy_variants.py",
-    "delete_container/test_delete_container_parity.py",
-    "replace_container/test_replace_container_parity.py",
-    "is_feed_range_subset/aio/test_is_feed_range_subset_parity_async.py",
-    "is_feed_range_subset/sync/test_is_feed_range_subset_parity.py",
 })
 
 

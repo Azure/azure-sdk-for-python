@@ -2204,6 +2204,295 @@ def test_order_config_requires_id_partition_key_rust(modules, monkeypatch, parti
         assert runpy.run_path(str(WORKLOADS / "workload_configs.py"))["WORKLOAD_DOC_PROFILE"] == "orders"
 
 
+@pytest.fixture
+def order_restoration(modules, monkeypatch):
+    utils = modules["workload_utils"]
+    monkeypatch.setattr(utils, "WORKLOAD_DOC_PROFILE", "orders")
+    monkeypatch.setattr(utils, "PARTITION_KEY", "id")
+    monkeypatch.setattr(utils, "WORKLOAD_ITEM_NAMESPACE", "a" * 32)
+    restoration = importlib.import_module("profiling_restore_orders")
+    manifest = {
+        "target": restoration.target("https://test.invalid/", "db", "items"),
+        "max_item_index": 2, "profile": "orders", "partition_key": "/id", "namespace": "a" * 32,
+    }
+    return utils, restoration, manifest
+
+
+class RestorationContainer:
+    def __init__(self, items, *, failure=None):
+        self.items = {item["id"]: dict(item) for item in items}
+        self.writes = []
+        self.scans = 0
+        self.failure = failure
+        self.properties = {"partitionKey": {"paths": ["/id"]}}
+
+    def read(self):
+        return self.properties
+
+    def query_items(self, *args, **kwargs):
+        self.scans += 1
+        if self.failure == "scan":
+            raise RuntimeError("inventory unavailable")
+        rows = [dict(item) for item in self.items.values()]
+        if self.scans == 2 and self.failure == "body":
+            rows[0]["quantity"] = 99
+        if self.scans == 2 and self.failure == "identity":
+            rows[0]["id"] = "foreign"
+        return rows
+
+    def delete_item(self, item_id, *, partition_key, etag, match_condition):
+        from azure.core import MatchConditions
+        assert partition_key == item_id
+        assert etag == self.items[item_id]["_etag"]
+        assert match_condition == MatchConditions.IfNotModified
+        if self.failure == "delete":
+            raise RuntimeError("conditional delete failed")
+        self.writes.append(("delete", item_id))
+        del self.items[item_id]
+
+    def upsert_item(self, body):
+        if self.failure == "upsert":
+            raise RuntimeError("upsert failed")
+        self.writes.append(("upsert", body["id"]))
+        self.items[body["id"]] = {**body, "_etag": "new"}
+
+
+def test_order_restoration_repairs_bodies_missing_orders_and_owned_extras_rust(order_restoration):
+    utils, restoration, manifest = order_restoration
+    extra = {**utils.create_random_item(), "_etag": "original"}
+    container = RestorationContainer([
+        {**utils.create_seed_item(0), "quantity": 7, "unexpected_field": True},
+        utils.create_seed_item(2), extra,
+    ])
+    result = restoration.restore_orders(container, manifest)
+    assert result == {"status": "verified", "restored_orders": 3, "removed_owned_items": 1}
+    assert container.writes[0] == ("delete", extra["id"])
+    assert container.items == {
+        f"order-{index}": {**utils.create_seed_item(index), "_etag": "new"} for index in range(3)
+    }
+    assert restoration.restore_orders(container, manifest)["removed_owned_items"] == 0
+
+
+@pytest.mark.parametrize("unexpected", [
+    "customer-data", "order-3", "order-00", "order-" + "b" * 32 + "-12345678-1234-1234-1234-123456789012",
+    "order-" + "a" * 32 + "-not-a-uuid",
+])
+def test_order_restoration_refuses_unknown_items_before_any_write_rust(order_restoration, unexpected):
+    utils, restoration, manifest = order_restoration
+    owned = {**utils.create_random_item(), "_etag": "old"}
+    container = RestorationContainer([owned, {"id": unexpected}])
+    with pytest.raises(ValueError, match="Unexpected item"):
+        restoration.restore_orders(container, manifest)
+    assert not container.writes
+
+
+@pytest.mark.parametrize("field,value", [("customerId", "other"), ("_etag", None)])
+def test_order_restoration_requires_matching_identity_and_etag_rust(order_restoration, field, value):
+    utils, restoration, manifest = order_restoration
+    item = {**utils.create_random_item(), "_etag": "old", field: value}
+    container = RestorationContainer([item])
+    with pytest.raises(ValueError, match="safely identify"):
+        restoration.restore_orders(container, manifest)
+    assert not container.writes
+
+
+@pytest.mark.parametrize("failure", ["scan", "delete", "upsert", "body", "identity"])
+def test_order_restoration_surfaces_failures_rust(order_restoration, failure):
+    utils, restoration, manifest = order_restoration
+    container = RestorationContainer([{**utils.create_random_item(), "_etag": "old"}], failure=failure)
+    with pytest.raises((RuntimeError, ValueError)):
+        restoration.restore_orders(container, manifest)
+    if failure in {"scan", "delete"}:
+        assert not container.writes
+
+
+@pytest.mark.parametrize("properties", [
+    {"partitionKey": {"paths": ["/pk"]}},
+    {"partitionKey": {"paths": ["/id"]}, "defaultTtl": 60},
+])
+def test_order_restoration_validates_actual_container_before_writes_rust(order_restoration, properties):
+    _, restoration, manifest = order_restoration
+    container = RestorationContainer([])
+    container.properties = properties
+    with pytest.raises(ValueError):
+        restoration.restore_orders(container, manifest)
+    assert not container.writes and not container.scans
+
+
+def test_order_restoration_target_and_manifest_guards_rust(order_restoration, tmp_path):
+    _, restoration, manifest = order_restoration
+    env = {
+        "COSMOS_URI": "https://test.invalid/", "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
+        "COSMOS_PARTITION_KEY": "id", "COSMOS_MAX_ITEM_INDEX": "2", "WORKLOAD_DOC_PROFILE": "orders",
+        "RESULTS_COSMOS_URI": "https://test.invalid:443",
+        "RESULTS_COSMOS_DATABASE": "results", "RESULTS_COSMOS_CONTAINER": "measurements",
+    }
+    confirmation = ("https://test.invalid:443", "db", "items")
+    config = restoration.restoration_config(env, confirmation)
+    path = tmp_path / "restoration.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    assert restoration.load_manifest(path, config) == manifest
+    with pytest.raises(ValueError, match="Confirmed target"):
+        restoration.restoration_config(env, ("https://wrong.invalid/", "db", "items"))
+    with pytest.raises(ValueError, match="results container"):
+        restoration.restoration_config(
+            {**env, "RESULTS_COSMOS_DATABASE": "db", "RESULTS_COSMOS_CONTAINER": "items"}, confirmation,
+        )
+    for field in env:
+        missing = dict(env)
+        missing.pop(field)
+        with pytest.raises(ValueError, match="requires explicit"):
+            restoration.restoration_config(missing, confirmation)
+    for field, changed in (("namespace", ".*"), ("max_item_index", 3), ("target", {})):
+        path.write_text(json.dumps({**manifest, field: changed}), encoding="utf-8")
+        with pytest.raises(ValueError):
+            restoration.load_manifest(path, config)
+
+
+def test_order_namespace_affects_only_fresh_identities_rust(order_restoration, monkeypatch):
+    utils, _, manifest = order_restoration
+    monkeypatch.setattr(utils, "MAX_ITEM_INDEX", 2)
+    for body in (utils.create_random_item(), utils.create_random_item()):
+        assert body["id"].startswith(f"order-{manifest['namespace']}-")
+        assert body["customerId"] == "customer-" + body["id"].removeprefix("order-")
+    assert utils.create_seed_item(0)["id"] == "order-0"
+    assert utils.get_existing_random_item()["id"] in {"order-0", "order-1", "order-2"}
+    monkeypatch.setattr(utils.random, "random", lambda: 0)
+    assert utils._get_upsert_item()["id"].startswith(f"order-{manifest['namespace']}-")
+    monkeypatch.setattr(utils.random, "random", lambda: 0.5)
+    assert utils._get_upsert_item()["id"] in {"order-0", "order-1", "order-2"}
+    monkeypatch.setattr(utils, "WORKLOAD_ITEM_NAMESPACE", "")
+    assert len(utils.create_random_item()["id"]) == len("order-") + 36
+
+
+def test_order_restoration_cli_initializes_once_and_uses_only_workload_target_rust(
+    order_restoration, monkeypatch, tmp_path, capsys,
+):
+    _, restoration, _ = order_restoration
+    env = {
+        "COSMOS_URI": "https://test.invalid/", "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
+        "COSMOS_PARTITION_KEY": "id", "COSMOS_MAX_ITEM_INDEX": "2", "WORKLOAD_DOC_PROFILE": "orders",
+        "RESULTS_COSMOS_URI": "https://test.invalid/",
+        "RESULTS_COSMOS_DATABASE": "results", "RESULTS_COSMOS_CONTAINER": "measurements",
+        "COSMOS_KEY": "offline-placeholder",
+    }
+    for name, value in env.items():
+        monkeypatch.setenv(name, value)
+    monkeypatch.delenv("WORKLOAD_ITEM_NAMESPACE", raising=False)
+    path = tmp_path / "restoration.json"
+    args = ["restore", "--manifest", str(path), "--confirm-target", env["COSMOS_URI"], "db", "items"]
+    import azure.cosmos
+    calls = []
+    container = RestorationContainer([])
+
+    class Client:
+        def __init__(self, uri, key, **kwargs):
+            calls.append((uri, key, kwargs))
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            pass
+
+        def get_database_client(self, database):
+            assert database == "db"
+            return self
+
+        def get_container_client(self, name):
+            assert name == "items"
+            return container
+
+    monkeypatch.setattr(azure.cosmos, "CosmosClient", Client)
+    monkeypatch.setattr(sys, "argv", [*args, "--initialize"])
+    restoration.main()
+    saved = path.read_text(encoding="utf-8")
+    assert not calls and "offline-placeholder" not in saved
+    assert capsys.readouterr().out.strip() == json.loads(saved)["namespace"]
+    with pytest.raises(FileExistsError):
+        restoration.main()
+    assert path.read_text(encoding="utf-8") == saved
+    monkeypatch.setattr(sys, "argv", args)
+    restoration.main()
+    assert calls == [(env["COSMOS_URI"], "offline-placeholder", {"_backend": "core-python"})]
+    assert json.loads(capsys.readouterr().out)["restored_orders"] == 3
+
+
+@pytest.mark.parametrize("namespace,profile", [("bad-prefix", "orders"), ("a" * 32, "default")])
+def test_order_namespace_config_rejects_invalid_scope_rust(modules, monkeypatch, namespace, profile):
+    monkeypatch.setenv("WORKLOAD_ITEM_NAMESPACE", namespace)
+    monkeypatch.setenv("WORKLOAD_DOC_PROFILE", profile)
+    monkeypatch.setenv("COSMOS_PARTITION_KEY", "id")
+    with pytest.raises(ValueError, match="WORKLOAD_ITEM_NAMESPACE"):
+        runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+
+
+@pytest.mark.parametrize("restore,fail_restore,fail_sequence", [
+    (True, 0, False), (True, 1, False), (True, 2, False),
+    (True, 25, False), (True, 0, True), (False, 0, False),
+])
+def test_latency_matrix_restores_outside_sequences_and_stops_on_failure_rust(
+    tmp_path, restore, fail_restore, fail_sequence,
+):
+    script = "run_latency_matrix.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "perf_drill_defaults.sh").write_text(
+        'perf_single_operation_shape() { :; }\n'
+        'perf_require_positive() { :; }\n'
+        'perf_create_log_dir() { mkdir -p "$1"; }\n'
+        'write_run_manifest() { :; }\n'
+        'perf_check_run() { echo gate >> calls.txt; }\n'
+        'python3() {\n'
+        '  [[ "$WORKLOAD_OPERATIONS" == read && "$WORKLOAD_ARRIVAL_RATE" == 0 ]] || return 2\n'
+        '  if [[ "$2" == --initialize ]]; then echo initialize >> calls.txt; printf "%032d\\n" 1; return; fi\n'
+        '  echo restore >> calls.txt\n'
+        '  local count; count=$(grep -c "^restore$" calls.txt)\n'
+        '  [[ "$count" != "$FAIL_RESTORE" ]]\n'
+        '}\n'
+        'timeout() {\n'
+        '  echo "sequence:$WORKLOAD_OPERATIONS:$COSMOS_BACKEND:${WORKLOAD_ITEM_NAMESPACE:-}" >> calls.txt\n'
+        '  [[ "$FAIL_SEQUENCE" != true ]]\n'
+        '}\n',
+        encoding="utf-8",
+    )
+    env = {
+        **os.environ, "COSMOS_URI": "https://test.invalid/", "COSMOS_DATABASE": "db",
+        "COSMOS_CONTAINER": "items", "COSMOS_PARTITION_KEY": "id", "COSMOS_MAX_ITEM_INDEX": "2",
+        "WORKLOAD_DOC_PROFILE": "orders", "WORKLOAD_ARRIVAL_RATE": "10",
+        "RESULTS_COSMOS_URI": "https://test.invalid/", "RESULTS_COSMOS_DATABASE": "results",
+        "RESULTS_COSMOS_CONTAINER": "measurements", "FAIL_RESTORE": str(fail_restore),
+        "FAIL_SEQUENCE": str(fail_sequence).lower(),
+    }
+    env.pop("WORKLOAD_ITEM_NAMESPACE", None)
+    args = ["1", "2"]
+    if restore:
+        args += ["--restore-orders", "--confirm-target", "https://test.invalid/", "db", "items"]
+    result = subprocess.run(
+        [bash_executable(), script, *args], cwd=tmp_path, env=env,
+        text=True, capture_output=True, timeout=30,
+    )
+    events = (tmp_path / "calls.txt").read_text(encoding="utf-8").splitlines()
+    failed = fail_restore or fail_sequence
+    assert (result.returncode != 0) == bool(failed), result.stderr
+    sequences = [event for event in events if event.startswith("sequence:")]
+    if fail_restore:
+        assert len(sequences) == fail_restore - 1
+        assert events[-1] == "restore"
+    elif fail_sequence:
+        assert len(sequences) == 1 and events[-1].startswith("sequence:")
+    else:
+        assert len(sequences) == 24 and events[-1] == "gate"
+    if restore:
+        for index, event in enumerate(events):
+            if event.startswith("sequence:"):
+                assert events[index - 1] == "restore"
+                assert event.endswith("0" * 31 + "1")
+        if not failed:
+            assert events[-2] == "restore"
+    else:
+        assert "restore" not in events and "initialize" not in events
+
+
 def test_fixed_rate_keeps_lateness_over_five_seconds_rust(modules, monkeypatch):
     utils = modules["workload_utils"]
     monkeypatch.setattr(utils, "WORKLOAD_MIX", {})

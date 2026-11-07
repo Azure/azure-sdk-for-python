@@ -78,13 +78,28 @@ def complete_batch(
         not isinstance(result, dict) or "statusCode" not in result for result in results
     ):
         raise BindingProtocolError("Transactional batch response must contain per-operation status codes.")
-    failed = [i for i, result in enumerate(results) if int(result["statusCode"]) >= 400]
+    statuses = []
+    for index, result in enumerate(results):
+        status = result["statusCode"]
+        if (
+            not isinstance(status, int)
+            or isinstance(status, bool)
+            or not 200 <= status < 600
+        ):
+            raise BindingProtocolError(
+                f"Transactional batch response has an invalid statusCode at index {index}; "
+                "expected an integer HTTP status from 200 to 599."
+            )
+        statuses.append(status)
+    failed = [i for i, status in enumerate(statuses) if status >= 400]
     if failed:
-        causes = [i for i in failed if int(results[i]["statusCode"]) != 424]
+        causes = [i for i in failed if statuses[i] != 424]
         if not causes:
-            raise BindingProtocolError("Transactional batch failed without a causal operation status.")
+            raise BindingProtocolError(
+                "Transactional batch failed without a causal operation status."
+            )
         index = causes[-1]
-        status = int(results[index]["statusCode"])
+        status = statuses[index]
         raise CosmosBatchOperationError(
             index,
             headers=headers,

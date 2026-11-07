@@ -17,13 +17,7 @@ object that is BOTH named ``ThroughputProperties`` AND an instance of
 ``Offer``. Without this copy, a Rust return-type regression (a customer
 unpacking the wrong object) would slip through.
 
-This is NOT the side-by-side parity comparison. The parity tests
-(``get_throughput/sync/test_get_throughput_parity.py``) run the same call on both
-engines and diff the numbers. This file runs on Rust only; the core-python
-side of the contract is already guaranteed by the original test in
-``tests/``. Together: parity catches value drift (wrong RU/s), this catches
-contract drift (wrong return type) by reusing a check the team already
-trusts.
+This file runs on Rust only and reuses assertions the team already trusts.
 
 Self-contained: builds its own database + container in ``setUp`` and deletes
 them in ``tearDown``. The class name and method name match the source (apart from the
