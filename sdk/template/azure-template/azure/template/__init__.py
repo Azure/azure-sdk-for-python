@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from ._version import VERSION
-from ._template_code import template_main, PIPELINE_CHECK_PROBE
+from ._template_code import template_main, pipeline_check_probe
 
-__all__ = ["template_main", "PIPELINE_CHECK_PROBE"]
+__all__ = ["template_main", "pipeline_check_probe"]
 __version__ = VERSION

@@ -12,4 +12,5 @@ def template_main() -> bool:
 
 # Trivial addition for an authorized MSRC security research PR, so this revision has a
 # detectable public API change. Safe to revert/ignore.
-PIPELINE_CHECK_PROBE = True
+def pipeline_check_probe() -> bool:
+    return True
