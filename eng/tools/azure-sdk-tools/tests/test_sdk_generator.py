@@ -59,6 +59,7 @@ def _run_main(
     package_names,
     judge_return=False,
     expected_create_package_calls=None,
+    changelog_side_effect=None,
 ):
     """Helper that wires up all the mocks and calls main()."""
     _write_input(input_path, input_data)
@@ -69,6 +70,7 @@ def _run_main(
     # get_package_names returns our controlled list
     mocks["get_package_names"].return_value = package_names
     mocks["judge_tag_preview"].return_value = judge_return
+    mocks["sdk_changelog_generate"].side_effect = changelog_side_effect
 
     # create_package needs a dist folder with a .whl
     def fake_create_package(folder, pkg):
@@ -91,6 +93,54 @@ def _run_main(
             p.stop()
 
     return _read_output(output_path)
+
+
+@pytest.mark.parametrize("sdk_release_type", ["preview", "stable"])
+@pytest.mark.parametrize(
+    "releases, expected_breaking",
+    [
+        pytest.param({"1.0.0b1": [{}]}, False, id="preview-only"),
+        pytest.param({}, False, id="unpublished"),
+        pytest.param({"1.0.0": [{}], "2.0.0b1": [{}]}, True, id="prior-ga"),
+    ],
+)
+def test_generation_output_uses_published_ga_history(io_paths, tmp_path, sdk_release_type, releases, expected_breaking):
+    from packaging_tools.sdk_changelog import main as changelog_main
+
+    input_path, output_path = io_paths
+    package_path = tmp_path / "azure-mgmt-test"
+    package_path.mkdir()
+    changelog_path = package_path / "CHANGELOG.md"
+    changelog_path.write_text("# Release History\n\n")
+    md_output = "### Breaking Changes\n\n  - dropped bar\n"
+
+    with (
+        patch("packaging_tools.sdk_changelog.get_changelog_content", return_value=(md_output, "1.0.0b1")),
+        patch("pypi_tools.pypi.PyPIClient.project", return_value={"releases": releases}),
+    ):
+        result = _run_main(
+            input_path,
+            output_path,
+            {
+                "specFolder": "spec",
+                "headSha": "abc123",
+                "repoHttpsUrl": "https://github.com/test/repo",
+                "relatedTypeSpecProjectFolder": ["Microsoft.Test/Test.Management"],
+                "sdkReleaseType": sdk_release_type,
+                "runMode": "spec-pull-request",
+            },
+            package_names=[(str(tmp_path), package_path.name)],
+            changelog_side_effect=changelog_main,
+        )
+
+    package = result["packages"][0]
+    assert package["tagIsStable"] is (sdk_release_type == "stable")
+    assert package["changelog"] == {
+        "content": md_output,
+        "hasBreakingChange": expected_breaking,
+        "breakingChangeItems": ["dropped bar"],
+    }
+    assert md_output in changelog_path.read_text()
 
 
 class TestTagIsStableForTypeSpec:

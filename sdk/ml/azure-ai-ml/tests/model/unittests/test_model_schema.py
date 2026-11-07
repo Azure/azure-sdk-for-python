@@ -53,6 +53,78 @@ class TestModelSchema:
         assert model_version_resource.properties.system_metadata["publisher"] == "Contoso"
         assert model_version_resource.properties.system_metadata["license"] == "MIT License"
 
+    @pytest.mark.parametrize("wire_key", ["system_metadata", "systemMetadata"])
+    def test_system_metadata_from_rest_object(self, wire_key: str) -> None:
+        rest_model = {
+            "id": "azureml://registries/fake_registry/models/fake_model/versions/1",
+            "name": "fake_model",
+            "type": "models",
+            "properties": {
+                "description": "a description",
+                "tags": {},
+                "properties": {},
+                "isArchived": False,
+                "isAnonymous": False,
+                "flavors": {},
+                "modelType": "custom_model",
+                "modelUri": "azureml://datastore/fake_datastore/paths/fake_model_uri",
+                wire_key: {
+                    "publisher": "Contoso",
+                    "modelCapabilities": ["agentsV2"],
+                    "deprecation": {"date": "2026-01-01"},
+                },
+            },
+            "systemData": {},
+        }
+
+        # The registry data-plane api-version returns system_metadata snake_case; newer api-versions use camelCase.
+        # Neither is a typed attribute on the arm hybrid model, so it must be read from the raw mapping.
+        from_rest_model = Model._from_rest_object(ModelVersion._deserialize(rest_model, []))
+
+        assert from_rest_model._system_metadata == {
+            "publisher": "Contoso",
+            "modelCapabilities": ["agentsV2"],
+            "deprecation": {"date": "2026-01-01"},
+        }
+
+    @pytest.mark.parametrize("wire_key", ["system_metadata", "systemMetadata"])
+    def test_system_metadata_from_rest_object_empty_mapping(self, wire_key: str) -> None:
+        rest_model = {
+            "id": "azureml://registries/fake_registry/models/fake_model/versions/1",
+            "name": "fake_model",
+            "type": "models",
+            "properties": {
+                "description": "a description",
+                "flavors": {},
+                "modelType": "custom_model",
+                "modelUri": "azureml://datastore/fake_datastore/paths/fake_model_uri",
+                wire_key: {},
+            },
+            "systemData": {},
+        }
+
+        from_rest_model = Model._from_rest_object(ModelVersion._deserialize(rest_model, []))
+
+        assert from_rest_model._system_metadata == {}
+
+    def test_system_metadata_from_rest_object_absent(self) -> None:
+        rest_model = {
+            "id": "azureml://registries/fake_registry/models/fake_model/versions/1",
+            "name": "fake_model",
+            "type": "models",
+            "properties": {
+                "description": "a description",
+                "flavors": {},
+                "modelType": "custom_model",
+                "modelUri": "azureml://datastore/fake_datastore/paths/fake_model_uri",
+            },
+            "systemData": {},
+        }
+
+        from_rest_model = Model._from_rest_object(ModelVersion._deserialize(rest_model, []))
+
+        assert from_rest_model._system_metadata is None
+
     def test_ipp_model(self) -> None:
         rest_ipp_model = {
             "id": "azureml://registries/fake_registry/models/fake_ipp_model/versions/611575",

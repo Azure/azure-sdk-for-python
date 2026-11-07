@@ -6,30 +6,56 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
+
 import pytest
 from dotenv import load_dotenv
 from devtools_testutils import (
     test_proxy,
-    add_general_regex_sanitizer,
     add_body_key_sanitizer,
+    add_general_regex_sanitizer,
+    add_general_string_sanitizer,
     add_header_regex_sanitizer,
+    remove_batch_sanitizers,
 )
+
+from edgeactions_test_settings import POLLING_QUERY_SECRET_REGEX, TRACE_HEADERS
 
 load_dotenv()
 
 
-# For security, please avoid record sensitive identity information in recordings
-@pytest.fixture(scope="session", autouse=True)
-def add_sanitizers(test_proxy):
-    cdn_subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    cdn_tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    cdn_client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    cdn_client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=cdn_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=cdn_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=cdn_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=cdn_client_secret, value="00000000-0000-0000-0000-000000000000")
+def register_sanitizers():
+    # Preserve LRO URLs and resource identity, as in the Network and other ARM SDK tests.
+    # Shared Python setup already removes AZSDK2030 (operation-location).
+    remove_batch_sanitizers(["AZSDK2003", "AZSDK3430", "AZSDK3493"])
+
+    for variable in (
+        "AZURE_SUBSCRIPTION_ID",
+        "AZURE_TENANT_ID",
+        "AZURE_CLIENT_ID",
+        "AZURE_CLIENT_SECRET",
+    ):
+        value = os.environ.get(variable)
+        if value:
+            add_general_string_sanitizer(target=value, value="00000000-0000-0000-0000-000000000000")
+
+    add_general_regex_sanitizer(regex=POLLING_QUERY_SECRET_REGEX, value="Sanitized")
+    for header in TRACE_HEADERS:
+        add_header_regex_sanitizer(key=header, value="Sanitized")
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
-    add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    for token in ("access_token", "refresh_token", "id_token"):
+        add_body_key_sanitizer(json_path=f"$..{token}", value=token)
+    for field in ("createdBy", "lastModifiedBy"):
+        add_body_key_sanitizer(json_path=f"$..systemData.{field}", value="Sanitized")
+
+
+@pytest.fixture(scope="session")
+def add_sanitizers(test_proxy, patch_sleep, patch_async_sleep):
+    register_sanitizers()
+
+
+@pytest.fixture
+def sanitizer_configuration():
+    """Expose sanitizer registration without importing a conftest module."""
+    return register_sanitizers

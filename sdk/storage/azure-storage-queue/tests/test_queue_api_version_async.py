@@ -11,7 +11,6 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 from azure.storage.queue._shared.constants import X_MS_VERSION
 
-
 # ------------------------------------------------------------------------------
 
 

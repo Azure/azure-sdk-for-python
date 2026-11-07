@@ -128,7 +128,7 @@ class TestFoundryFeaturesHeaderOnDataGenerationJobs(FoundryFeaturesHeaderTestBas
                 super().__init__()
                 polling_kwargs.update(kwargs)
 
-        monkeypatch.setattr(_patch_datasets, "LROBasePolling", _RecordingPolling)
+        monkeypatch.setattr(_patch_datasets, "AIProjectsLROBasePolling", _RecordingPolling)
 
         operation = DatasetsOperations.__new__(DatasetsOperations)
         operation._client = MagicMock()  # pylint: disable=protected-access

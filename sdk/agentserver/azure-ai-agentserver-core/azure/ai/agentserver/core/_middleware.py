@@ -20,11 +20,62 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Any, MutableMapping
+from typing import Any, Callable, MutableMapping
 
 from starlette.types import ASGIApp, Receive, Scope, Send
+from starlette.middleware import Middleware
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+
+class _TaskManagerMiddleware:
+    """Scope task access to the host and protocol serving this request."""
+
+    def __init__(self, app: ASGIApp, *, get_manager: Callable[[], Any]) -> None:
+        self.app = app
+        self._get_manager = get_manager
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        from .tasks._manager import _task_manager_scope  # pylint: disable=import-outside-toplevel
+
+        with _task_manager_scope(self._get_manager):
+            await self.app(scope, receive, send)
+
+
+def _task_access_middleware(host: Any, enabled: Callable[[], bool]) -> list[Middleware]:
+    """Scope task access to this host only when its protocol is enabled.
+
+    :param host: The owning protocol host.
+    :type host: Any
+    :param enabled: Whether the protocol permits task execution.
+    :type enabled: Callable[[], bool]
+    :return: Protocol-scoped task middleware.
+    :rtype: list[~starlette.middleware.Middleware]
+    """
+    return [
+        Middleware(
+            _TaskManagerMiddleware,
+            get_manager=lambda: host._task_manager if enabled() else None,  # pylint: disable=protected-access
+        )
+    ]
+
+
+def _task_runtime_middleware(host: Any, kwargs: dict[str, Any], enabled: Callable[[], bool]) -> list[Middleware]:
+    """Register protocol activation and scope its routes to the host's runtime.
+
+    :param host: The protocol host being constructed.
+    :type host: Any
+    :param kwargs: Cooperative host-constructor arguments.
+    :type kwargs: dict[str, Any]
+    :param enabled: Whether this protocol requests task execution.
+    :type enabled: Callable[[], bool]
+    :return: Middleware for this protocol's routes.
+    :rtype: list[~starlette.middleware.Middleware]
+    """
+    requirements = list(kwargs.pop("_task_manager_requirements", []))
+    requirements.append(enabled)
+    kwargs["_task_manager_requirements"] = requirements
+    return _task_access_middleware(host, enabled)
 
 
 def _extract_header(headers: list[tuple[bytes, bytes]], name: bytes) -> str | None:
@@ -147,7 +198,10 @@ class InboundRequestLoggingMiddleware:
             elapsed_ms = (time.monotonic() - start) * 1000
             logger.warning(
                 "Inbound %s %s failed with status 500 in %.1fms%s",
-                method, path, elapsed_ms, extra_str,
+                method,
+                path,
+                elapsed_ms,
+                extra_str,
             )
             raise
 
@@ -156,10 +210,18 @@ class InboundRequestLoggingMiddleware:
         if status_code is not None and status_code >= 400:
             logger.warning(
                 "Inbound %s %s completed with status %d in %.1fms%s",
-                method, path, status_code, elapsed_ms, extra_str,
+                method,
+                path,
+                status_code,
+                elapsed_ms,
+                extra_str,
             )
         else:
             logger.info(
                 "Inbound %s %s completed with status %s in %.1fms%s",
-                method, path, status_code, elapsed_ms, extra_str,
+                method,
+                path,
+                status_code,
+                elapsed_ms,
+                extra_str,
             )

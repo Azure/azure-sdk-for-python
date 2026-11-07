@@ -198,6 +198,9 @@ class AIProjectInstrumentor:
         # and have a parameter that specifies the version to use.
         self._impl = _AIAgentsInstrumentorPreview()
         self._responses_impl = _ResponsesInstrumentorPreview()
+        from ._voice_agents_instrumentor import _VoiceAgentsInstrumentor  # pylint: disable=import-outside-toplevel
+
+        self._voice_agents_impl = _VoiceAgentsInstrumentor(self._impl, self._responses_impl)
 
     def instrument(
         self,
@@ -229,7 +232,8 @@ class AIProjectInstrumentor:
           called without uninstrument being called in between the instrument calls.
         :type enable_content_recording: bool, optional
         :param enable_trace_context_propagation: Whether to enable automatic trace context propagation
-          to OpenAI SDK HTTP requests. When enabled, traceparent and tracestate headers will be injected
+          to OpenAI SDK HTTP requests and Voice Agents WebSocket handshakes. When enabled,
+          traceparent and tracestate headers will be injected
           into requests made by OpenAI clients obtained via get_openai_client(), allowing server-side
           spans to be correlated with client-side spans. `True` will enable it, `False` will
           disable it. If no value is provided, then the value read from environment variable
@@ -237,6 +241,7 @@ class AIProjectInstrumentor:
           variable is not found, then the value will default to `True`.
           Note: Changing this value only affects OpenAI clients obtained via get_openai_client() after
           the change; previously acquired clients are unaffected.
+          Voice Agents evaluate this setting when each realtime connection is opened.
         :type enable_trace_context_propagation: bool, optional
         :param enable_baggage_propagation: Whether to include baggage headers in trace context propagation.
           Only applies when enable_trace_context_propagation is True. `True` will enable baggage propagation,
@@ -248,6 +253,8 @@ class AIProjectInstrumentor:
           context propagation hook registered at acquisition time (i.e. clients obtained via
           get_openai_client() while enable_trace_context_propagation was True). Clients acquired when
           trace context propagation was disabled will never propagate baggage regardless of this value.
+          For Voice Agents, baggage is evaluated when the WebSocket handshake is sent; existing
+          connections are unaffected.
         :type enable_baggage_propagation: bool, optional
 
         """
@@ -262,6 +269,7 @@ class AIProjectInstrumentor:
 
         self._impl.instrument(enable_content_recording, enable_trace_context_propagation, enable_baggage_propagation)
         self._responses_impl.instrument(enable_content_recording)
+        self._voice_agents_impl.instrument()
 
     def uninstrument(self) -> None:
         """
@@ -270,6 +278,7 @@ class AIProjectInstrumentor:
         This method removes any active instrumentation, stopping the tracing
         of AIProjectClient methods.
         """
+        self._voice_agents_impl.uninstrument()
         self._impl.uninstrument()
         self._responses_impl.uninstrument()
 

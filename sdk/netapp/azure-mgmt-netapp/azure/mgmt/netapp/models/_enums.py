@@ -64,6 +64,15 @@ class ApplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ORACLE."""
 
 
+class AsyncDirectoryDeleteStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether Async Directory Delete is enabled for the volume."""
+
+    ENABLED = "Enabled"
+    """Async Directory Delete is enabled."""
+    DISABLED = "Disabled"
+    """Async Directory Delete is disabled."""
+
+
 class AvsDataStore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies whether the volume is enabled for Azure VMware Solution (AVS) datastore purpose."""
 
@@ -252,6 +261,18 @@ class CifsChangeNotifyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CIFS change notification is enabled."""
 
 
+class ClusterPeerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster Peer status enum."""
+
+    ACTIVE = "Active"
+    """Active peering."""
+    ERROR = "Error"
+    """Error state, an error occurred during peering, the error details can be seen by running this
+    command on the external ONTAP cluster for more details (command: cluster peer show)."""
+    PENDING = "Pending"
+    """Pending state, the peering needs to be accepted on your cluster."""
+
+
 class CoolAccessRetrievalPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
     storage based on the read pattern for cool access enabled volumes. The possible values for this
@@ -299,9 +320,9 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CredentialsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The bucket credentials status. There states:
 
-    "NoCredentialsSet": Access and Secret key pair have not been generated.
-    "CredentialsExpired": Access and Secret key pair have expired.
-    "Active": The certificate has been installed and credentials are unexpired.
+    \"NoCredentialsSet\": Access and Secret key pair have not been generated.
+    \"CredentialsExpired\": Access and Secret key pair have expired.
+    \"Active\": The certificate has been installed and credentials are unexpired.
     """
 
     NO_CREDENTIALS_SET = "NoCredentialsSet"
@@ -549,6 +570,52 @@ class Exclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """'Deleted' excludes deleted replications."""
 
 
+class ExternalCacheConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the status of an external cache connection."""
+
+    PENDING = "Pending"
+    """The cache connection is pending."""
+    CONNECTED = "Connected"
+    """The cache is connected."""
+    DISCONNECTED = "Disconnected"
+    """The cache is disconnected."""
+    UNKNOWN = "Unknown"
+    """The cache status is unknown. This is a transient state and should change to either connected or
+    disconnected."""
+    UNSUPPORTED = "Unsupported"
+    """The cache was discovered on-premises but has no corresponding ExternalCacheConnection resource."""
+
+
+class ExternalCacheState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of a remote cache volume on an external ONTAP system."""
+
+    ERROR = "error"
+    """The remote cache volume is in an error state."""
+    MIXED = "mixed"
+    """The remote cache volume is in a mixed state."""
+    OFFLINE = "offline"
+    """The remote cache volume is offline."""
+    ONLINE = "online"
+    """The remote cache volume is online."""
+    PENDING = "pending"
+    """The remote cache volume is in a pending state."""
+    UNSUPPORTED = "unsupported"
+    """The remote cache volume is in an unsupported state."""
+
+
+class ExternalConnectionSetupState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provides a machine-readable value for the status of the external connection setup."""
+
+    CLUSTER_PEER_PENDING = "ClusterPeerPending"
+    """The peering needs to be accepted on your cluster before the setup can proceed. see the command
+    in 'SetupInformation.command' property."""
+    V_SERVER_PEER_REQUIRED = "VServerPeerRequired"
+    """Need to accept the returned 'vserver peer accept' command on your cluster to finish SVM
+    peering. See the command in 'SetupInformation.command' property."""
+    NO_ACTION_REQUIRED = "NoActionRequired"
+    """External cache connection setup is complete."""
+
+
 class ExternalReplicationSetupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Property that only applies to external replications. Provides a machine-readable value for the
     status of the external replication setup.
@@ -713,6 +780,12 @@ class MultiAdStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class NetAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status of the VolumeQuotaRule at the time the operation was called."""
 
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
     ACCEPTED = "Accepted"
     """Resource has been Accepted."""
     CREATING = "Creating"
@@ -725,10 +798,6 @@ class NetAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource is being Deleted."""
     MOVING = "Moving"
     """Resource is being Moved."""
-    FAILED = "Failed"
-    """Resource has Failed."""
-    SUCCEEDED = "Succeeded"
-    """Resource has Succeeded."""
 
 
 class NetworkFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -774,6 +843,15 @@ class OnCertificateConflictAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAIL = "Fail"
     """Fail the operation if a conflict occurs, meaning the bucket operation will fail, and the
     existing certificate will continue to be in use."""
+
+
+class OriginVolume(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether a volume is designated as an origin for cache volumes."""
+
+    DISABLED = "Disabled"
+    """This volume is not designated as an origin for cache volumes."""
+    ENABLED = "Enabled"
+    """This volume is designated as an origin for one or more cache volumes."""
 
 
 class PolicyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -969,6 +1047,17 @@ class SmbNonBrowsable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """smbNonBrowsable share setting is enabled."""
 
 
+class SmbOplocks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SMB opportunistic-lock setting shared by volume and cache resources. Omit the property when
+    unspecified.
+    """
+
+    DISABLED = "Disabled"
+    """SMB opportunistic locks share setting is disabled."""
+    ENABLED = "Enabled"
+    """SMB opportunistic locks share setting is enabled."""
+
+
 class SnapshotDirectoryVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Controls the visibility of the Elastic Volume's read-only snapshot directory, which provides
     access to each of the volume's snapshots.
@@ -987,6 +1076,26 @@ class SnapshotUsage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Value indicating an existing snapshot is used."""
     CREATE_NEW_SNAPSHOT = "CreateNewSnapshot"
     """Value indicating a new snapshot is created."""
+
+
+class SvmPeerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SVM Peer status enum."""
+
+    ACTIVE = "Active"
+    """Active peering."""
+    ERROR = "Error"
+    """Error state, use command on your cluster for more details(command: vserver peer show)."""
+    PENDING = "Pending"
+    """Pending state, the peering needs to be accepted on your SVM (command: vserver peer accept)."""
+
+
+class SvmPeerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SVM peer relationship type enum."""
+
+    REPLICATION = "Replication"
+    """Replication peer."""
+    CACHE = "Cache"
+    """Cache peer."""
 
 
 class VolumeBackupRelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
