@@ -57,8 +57,8 @@ def decision_skip_reason(
     if probability >= cutoff:
         return None
     return (
-        f"Status completion probability {probability:.4f} is below {cutoff:.4f}; "
-        "evaluation skipped. No model rationale is available."
+        f"the judge model's applicability probability {probability:.4f} is below the {cutoff:.4f} cutoff, "
+        "so the evaluator was skipped. No model rationale is available."
     )
 
 
@@ -74,7 +74,9 @@ def decision_token_counts(response: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _label(result_key: str) -> str:
-    return result_key.replace("_", " ")
+    # A caller can namespace a question key, as in "grade/confirm_details"; the label names only the question.
+    leaf = result_key.rsplit("/", 1)[-1]
+    return (leaf or result_key).replace("_", " ")
 
 
 def _digest(question: Dict[str, Any]) -> str:
