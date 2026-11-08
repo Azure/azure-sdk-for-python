@@ -41,6 +41,7 @@ def create_agent(project_client: AIProjectClient, name_prefix: str) -> AgentVers
         agent_name=agent_name,
         definition=ExternalAgentDefinition(otel_agent_id=agent_name),
         description="Temporary external agent with fictional Agent Insights sample traces.",
+        headers={"Foundry-Features": "ExternalAgents=V1Preview"},
     )
 
 

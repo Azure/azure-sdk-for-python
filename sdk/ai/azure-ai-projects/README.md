@@ -198,6 +198,11 @@ The table below lists the operation groups supported by the client library, with
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
 | Voice agents (preview) | | `samples/agents/voice/` |
 
+Agent Insights samples use GA API `v1` without a client-wide preview opt-in.
+Set `FOUNDRY_PROJECT_ENDPOINT` to a project in a GA-enabled region and
+`FOUNDRY_MODEL_NAME` to a GPT deployment with generation 5 or later.
+Only temporary external-agent creation sends `ExternalAgents=V1Preview`.
+
 ### Voice Agent realtime transport (preview)
 
 Use `project_client.beta.voice_agents.realtime` for agents created with `VoiceAgentDefinition`.

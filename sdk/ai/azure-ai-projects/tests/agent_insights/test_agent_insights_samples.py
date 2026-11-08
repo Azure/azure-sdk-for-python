@@ -2,17 +2,22 @@
 # Licensed under the MIT License.
 # cspell:ignore capsys
 
+import io
+import json
 from pathlib import Path
 import runpy
 from types import SimpleNamespace
 from unittest.mock import MagicMock, call
 
 import pytest
+import requests
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from opentelemetry.trace import get_tracer_provider
+from urllib3.response import HTTPResponse
 
 from agent_insights.sample_test_helpers import assert_agent_insights_output
 
+from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentInsight,
     AgentInsightPrioritiesRead,
@@ -22,7 +27,9 @@ from azure.ai.projects.models import (
     AgentInsightStatus,
 )
 from azure.ai.projects.operations import AgentInsightMonitorsOperations
+from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceExistsError
+from azure.core.pipeline import transport
 from azure.monitor.query import LogsQueryStatus
 
 
@@ -65,6 +72,42 @@ def test_longest_agent_prefix_fits_service_limit(on_demand_sample):
     assert len(creation["agent_name"]) == 63
     assert creation["agent_name"].startswith("a" * 30 + "-")
     assert creation["definition"].otel_agent_id == creation["agent_name"]
+
+
+def test_external_agent_preview_is_scoped_to_creation(on_demand_sample):
+    responses = []
+    for status_code, payload in (
+        (200, {"name": "test-agent", "version": "1"}),
+        (201, {"id": "monitor-test", "agent_name": "test-agent", "enabled": False}),
+    ):
+        response = requests.Response()
+        response.status_code = status_code
+        response.headers["content-type"] = "application/json"
+        content = json.dumps(payload).encode()
+        response.raw = HTTPResponse(body=io.BytesIO(content), preload_content=False)
+        response._content = content
+        response._content_consumed = True
+        responses.append(response)
+    session = MagicMock()
+    session.request.side_effect = responses
+    credential = MagicMock(spec=["get_token"])
+    credential.get_token.return_value = AccessToken("test-token", 4102444800)
+
+    with AIProjectClient(
+        endpoint="https://example.test",
+        credential=credential,
+        transport=transport.RequestsTransport(session=session),
+    ) as client:
+        agent = on_demand_sample["create_agent"](client, "test-agent")
+        client.agent_insight_monitors.create(agent_name=agent.name, model_deployment_name="test-model", enabled=False)
+
+    agent_request, monitor_request = session.request.call_args_list
+    agent_headers = {key.lower(): value for key, value in agent_request.kwargs["headers"].items()}
+    monitor_headers = {key.lower(): value for key, value in monitor_request.kwargs["headers"].items()}
+    assert agent_headers["foundry-features"] == "ExternalAgents=V1Preview"
+    assert "foundry-features" not in monitor_headers
+    monitor_url = monitor_request.args[1] if len(monitor_request.args) > 1 else monitor_request.kwargs["url"]
+    assert "api-version=v1" in monitor_url
 
 
 def test_cleanup_cancels_active_run(cleanup_sample):
@@ -420,7 +463,9 @@ def test_partial_setup_cleans_up_only_owned_agent(request, sample_fixture, name_
     creation = project.agents.create_version.call_args.kwargs
     assert creation["agent_name"].startswith(f"{name_prefix or 'agent-insights-sample'}-")
     assert creation["definition"].otel_agent_id == creation["agent_name"]
-    assert main.__globals__["AIProjectClient"].call_args.kwargs["allow_preview"] is True
+    assert creation["headers"] == {"Foundry-Features": "ExternalAgents=V1Preview"}
+    assert main.__globals__["AIProjectClient"].call_args.kwargs.get("allow_preview", False) is False
+    assert main.__globals__["AIProjectClient"].call_args.kwargs["api_version"] == "v1"
     project.agents.delete.assert_called_once_with("test-agent", force=True)
     operations.create.assert_not_called()
     operations.delete.assert_not_called()
