@@ -498,6 +498,48 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(token.encode('utf-8')) <= 1024
 
     @pytest.mark.cosmosEmulator
+    async def test_continuation_token_limit_preserves_broad_scope_and_resume_async_rust(
+        self,
+    ):
+        """Forward the service limit without imposing a size cap on the SDK token."""
+        container = await self._create_multi_partition_container()
+        ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        self.assertGreater(len(ranges), 1)
+        expected = {f"token-limit-{i}" for i in range(7)}
+        for i in range(7):
+            await container.create_item(
+                {"id": f"token-limit-{i}", "pk": f"customer-{i % 3}"}
+            )
+        full_range = {
+            "Range": {
+                "min": "",
+                "max": "FF",
+                "isMinInclusive": True,
+                "isMaxInclusive": False,
+            }
+        }
+        for scope in ({}, {"feed_range": full_range}):
+            with self.subTest(scope=scope):
+                options = dict(
+                    query="SELECT * FROM c",
+                    max_item_count=1,
+                    continuation_token_limit=1,
+                    enable_cross_partition_query=True,
+                    **scope,
+                )
+                pages = container.query_items(**options).by_page()
+                first = [row async for row in await pages.__anext__()]
+                token = pages.continuation_token
+                self.assertTrue(first)
+                self.assertTrue(token)
+                resumed = container.query_items(**options).by_page(
+                    continuation_token=token
+                )
+                rows = first + [row async for page in resumed async for row in page]
+                self.assertEqual(len(rows), len(expected))
+                self.assertEqual({row["id"] for row in rows}, expected)
+
+    @pytest.mark.cosmosEmulator
     async def test_cross_partition_query_with_continuation_token_async_rust(self):
         """Original async cross-partition replay, without an explicit enable flag."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_cross_partition_query_with_continuation_token_async

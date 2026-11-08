@@ -22,7 +22,7 @@ PACKAGE = Path(__file__).resolve().parents[1]
 # Header line that opts a standalone sync/aio Rust test module into the service lane.
 RUST_BEHAVIOR_TEST_MARKER = "# Rust behavior test"
 TOXIPROXY_CASE_COUNTS = {
-    "test_toxiproxy_route.py": 32,
+    "test_toxiproxy_read.py": 32,
     "test_toxiproxy_write.py": 8,
     "test_toxiproxy_reset_socket.py": 6,
 }

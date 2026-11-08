@@ -650,6 +650,43 @@ class TestQuery(unittest.TestCase):
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
 
     @pytest.mark.cosmosEmulator
+    def test_continuation_token_limit_preserves_broad_scope_and_resume_rust(self):
+        """Forward the service limit without imposing a size cap on the SDK token."""
+        container = self._create_multi_partition_container()
+        self.assertGreater(len(list(container.read_feed_ranges())), 1)
+        expected = {f"token-limit-{i}" for i in range(7)}
+        for i in range(7):
+            container.create_item({"id": f"token-limit-{i}", "pk": f"customer-{i % 3}"})
+        full_range = {
+            "Range": {
+                "min": "",
+                "max": "FF",
+                "isMinInclusive": True,
+                "isMaxInclusive": False,
+            }
+        }
+        for scope in ({}, {"feed_range": full_range}):
+            with self.subTest(scope=scope):
+                options = dict(
+                    query="SELECT * FROM c",
+                    max_item_count=1,
+                    continuation_token_limit=1,
+                    enable_cross_partition_query=True,
+                    **scope,
+                )
+                pages = container.query_items(**options).by_page()
+                first = list(next(pages))
+                token = pages.continuation_token
+                self.assertTrue(first)
+                self.assertTrue(token)
+                resumed = container.query_items(**options).by_page(
+                    continuation_token=token
+                )
+                rows = first + [row for page in resumed for row in page]
+                self.assertEqual(len(rows), len(expected))
+                self.assertEqual({row["id"] for row in rows}, expected)
+
+    @pytest.mark.cosmosEmulator
     def test_cross_partition_query_with_continuation_token_rust(self):
         """Original cross-partition continuation replay, using this test's isolated container."""
         # Source: tests/test_query.py::TestQuery.test_cross_partition_query_with_continuation_token

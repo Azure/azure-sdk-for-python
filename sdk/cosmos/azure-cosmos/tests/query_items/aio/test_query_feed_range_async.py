@@ -264,11 +264,6 @@ class TestQueryFeedRangeAsyncRust:
     async def test_query_with_both_feed_range_and_partition_key_async_rust(self, container_id):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_feed_range_async.py::TestQueryFeedRangeAsync.test_query_with_both_feed_range_and_partition_key_async
-        # Known gap 30 item 11: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
-        pytest.skip(
-            "driver-gap: Rust rejects this input with a different exception type or message than legacy "
-            "(known gap 30 item 11, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-error-contract)."
-        )
         container = self.get_container(container_id)
 
         expected_error_message = "'feed_range' and 'partition_key' are exclusive parameters, please only set one of them."
@@ -314,11 +309,6 @@ class TestQueryFeedRangeAsyncRust:
         """AVG over a feed_range spanning multiple partitions must raise."""
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_feed_range_async.py::TestQueryFeedRangeAsync.test_query_with_avg_aggregate_across_full_feed_range_raises_async
-        # Known gap 30 item 11: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
-        pytest.skip(
-            "driver-gap: Rust rejects this input with a different exception type or message than legacy "
-            "(known gap 30 item 11, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-error-contract)."
-        )
         container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
         query = (
             f'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
@@ -344,6 +334,15 @@ class TestQueryFeedRangeAsyncRust:
         message = str(excinfo.value)
         assert "Unsupported query shape for range-scoped pagination" in message
         assert "SELECT VALUE AVG" in message
+        assert message == (
+            "Unsupported query shape for range-scoped pagination: "
+            "SELECT VALUE AVG(...) cannot be merged client-side when the query "
+            "scope spans multiple physical partitions."
+        )
+        assert [item async for item in container.query_items(
+            query=query, partition_key=PK_VALUES[0],
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        )] == [100]
 
     async def test_query_value_numeric_field_across_full_feed_range_returns_list_async_rust(self):
         """Numeric VALUE projections should return one row per document, not a sum."""

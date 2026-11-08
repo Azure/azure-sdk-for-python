@@ -1614,6 +1614,7 @@ def test_sync_public_create_database_returns_proxy_and_properties_rust():
     headers and the created database."""
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(last_response_headers={})
+    client._inference_client = MagicMock()
     client._adapter = _BindingAdapter()
     from azure.cosmos._helpers._item_context import ItemClientContext
     client._item_context = ItemClientContext(client._adapter)
@@ -1627,6 +1628,7 @@ def test_sync_public_create_database_returns_proxy_and_properties_rust():
     )
 
     assert proxy.id == "db1"
+    assert proxy._inference_client is client._inference_client
     assert properties["_rid"] == "rid1"
     assert hook_calls[0][1]["id"] == "db1"
 
@@ -1637,6 +1639,7 @@ def test_sync_public_create_database_preserves_zero_autoscale_increment_rust():
     value, not treated as "unset" and dropped."""
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(last_response_headers={})
+    client._inference_client = None
     backend = _BindingAdapter()
     client._adapter = backend
     from azure.cosmos._helpers._item_context import ItemClientContext
@@ -1663,6 +1666,7 @@ def test_async_public_create_database_returns_proxy_and_properties_rust():
         """Call the public async ``create_database`` and verify the proxy, properties, and hook payload are correct."""
         client = object.__new__(AsyncCosmosClient)
         client.client_connection = SimpleNamespace(last_response_headers={})
+        client._inference_client = MagicMock()
         client._adapter = _AsyncBindingAdapter()
         from azure.cosmos._helpers._item_context import ItemClientContext
         client._item_context = ItemClientContext(client._adapter)
@@ -1676,6 +1680,7 @@ def test_async_public_create_database_returns_proxy_and_properties_rust():
         )
 
         assert proxy.id == "db1"
+        assert proxy._inference_client is client._inference_client
         assert properties["_rid"] == "rid1"
         assert hook_calls == [
             (
@@ -1692,6 +1697,7 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
     ``return_properties=True`` the customer gets back the ``DatabaseProxy`` handle plus
     the final database properties while orchestration remains in Python."""
     sync_client = object.__new__(CosmosClient)
+    sync_client._inference_client = MagicMock()
     sync_client.client_connection = SimpleNamespace(
         ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
         CreateDatabase=MagicMock(),
@@ -1713,12 +1719,14 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
         return_properties=True,
     )
     assert proxy.id == "db1"
+    assert proxy._inference_client is sync_client._inference_client
     assert properties["_rid"] == "existing"
     assert sync_backend.prepared.op == OP_READ_DATABASE
 
     async def run():
         """Call the public async ``create_database_if_not_exists`` with an existing database and verify Rust serves the read."""
         async_client = object.__new__(AsyncCosmosClient)
+        async_client._inference_client = MagicMock()
         async_client.client_connection = SimpleNamespace(
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             CreateDatabase=AsyncMock(),
@@ -1738,6 +1746,7 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
             return_properties=True,
         )
         assert async_proxy.id == "db1"
+        assert async_proxy._inference_client is async_client._inference_client
         assert async_properties["_rid"] == "existing"
         assert async_backend.prepared.op == OP_READ_DATABASE
 
@@ -1757,6 +1766,7 @@ def create_database_client(request):
     """
     client_type = AsyncCosmosClient if request.param else CosmosClient
     client = object.__new__(client_type)
+    client._inference_client = MagicMock()
     client.client_connection = SimpleNamespace(
         last_response_headers={},
         CreateDatabase=MagicMock(side_effect=AssertionError("legacy create called")),

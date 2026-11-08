@@ -126,6 +126,63 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         finally:
             os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "1000"
 
+    def test_hybrid_search_default_limit_rust(self):
+        item_vector = self.test_container.read_item("50", "1")["vector"]
+        missing_limit = (
+            "Executing a hybrid search query without TOP or LIMIT can consume many"
+            " RUs very fast and have long runtimes. Please ensure you are using one"
+            " of the two filters with your hybrid search query."
+        )
+        oversized_limit = (
+            "Executing a hybrid search query with more items than the max is not allowed. "
+            "Please ensure you are using a limit smaller than the max, or change the max."
+        )
+        with patch.dict(os.environ):
+            os.environ.pop("AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS", None)
+            os.environ.pop("AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH", None)
+            for ranking in (
+                "FullTextScore(c.text, 'United States')",
+                f"RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {item_vector}))",
+            ):
+                for top, window, expected_count, expected_error in (
+                    ("TOP 1001 ", "", None, oversized_limit),
+                    ("", "", None, missing_limit),
+                    ("", " OFFSET 500 LIMIT 600", 0, None),
+                    ("TOP 5 ", "", 5, None),
+                    (
+                        "TOP 1000 ",
+                        "",
+                        len(hybrid_search_data.get_hybrid_search_items()["items"]),
+                        None,
+                    ),
+                ):
+                    with self.subTest(ranking=ranking, top=top, window=window):
+                        query = f"SELECT {top}c.index, c.title FROM c ORDER BY RANK {ranking}{window}"
+                        results = self.test_container.query_items(
+                            query, enable_cross_partition_query=True
+                        )
+                        if expected_error is not None:
+                            with pytest.raises(ValueError) as error:
+                                list(results)
+                            assert error.value.args == (expected_error,)
+                        else:
+                            assert len(list(results)) == expected_count
+
+            os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "1200"
+            os.environ["AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"] = "1"
+            query = (
+                "SELECT TOP 1001 c.index, c.title FROM c "
+                "ORDER BY RANK FullTextScore(c.text, 'United States')"
+            )
+            results = list(
+                self.test_container.query_items(
+                    query, enable_cross_partition_query=True
+                )
+            )
+            assert len(results) == len(
+                hybrid_search_data.get_hybrid_search_items()["items"]
+            )
+
     def test_hybrid_search_queries_rust(self):
         # Source: tests/test_query_hybrid_search.py::TestFullTextHybridSearchQuery.test_hybrid_search_queries
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \

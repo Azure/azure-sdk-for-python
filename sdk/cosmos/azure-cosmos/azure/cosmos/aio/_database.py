@@ -74,7 +74,10 @@ from .._helpers._database_throughput import (
 from .._global_secondary_index import GlobalSecondaryIndexDefinition, _normalize_gsi_container_properties
 
 if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._helpers._item_context import ItemClientContext
+    from .._inference_client import InferenceClient
+    from ._inference_service_async import _InferenceService
     from ._backend.cosmos_backend import AsyncCosmosBackend
 
 __all__ = ("DatabaseProxy",)
@@ -123,6 +126,7 @@ class DatabaseProxy(object):
         properties: Optional[dict[str, Any]] = None,
         *,
         _item_context: "Optional[ItemClientContext[AsyncCosmosBackend]]" = None,
+        _inference_client: "Optional[InferenceClient[AsyncTokenCredential, _InferenceService]]" = None,
     ) -> None:
         """
         :param client_connection: Connection owned by the client creating this proxy.
@@ -131,6 +135,7 @@ class DatabaseProxy(object):
         """
         self.client_connection = client_connection
         self._item_context = _item_context
+        self._inference_client = _inference_client
         self.id = id
         self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
@@ -527,9 +532,9 @@ class DatabaseProxy(object):
         _normalize_gsi_container_properties(data)
         if not return_properties:
             return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data,
-                                  _item_context=self._item_context)
+                                  _item_context=self._item_context, _inference_client=self._inference_client)
         return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data,
-                              _item_context=self._item_context), data
+                              _item_context=self._item_context, _inference_client=self._inference_client), data
 
     @overload
     async def create_container_if_not_exists(
@@ -856,7 +861,8 @@ class DatabaseProxy(object):
             id_value = container.id
         else:
             id_value = str(container['id'])
-        return ContainerProxy(self.client_connection, self.database_link, id_value, _item_context=self._item_context)
+        return ContainerProxy(self.client_connection, self.database_link, id_value, _item_context=self._item_context,
+                              _inference_client=self._inference_client)
 
     async def _resolve_gsi_definition(
         self,
@@ -1250,12 +1256,14 @@ class DatabaseProxy(object):
         if not return_properties:
             return ContainerProxy(
                 self.client_connection, self.database_link, container_properties["id"],
-                properties=container_properties, _item_context=self._item_context)
+                properties=container_properties, _item_context=self._item_context,
+                _inference_client=self._inference_client)
         return ContainerProxy(
             self.client_connection,
             self.database_link,
             container_properties["id"],
-            properties=container_properties, _item_context=self._item_context), container_properties
+            properties=container_properties, _item_context=self._item_context,
+            _inference_client=self._inference_client), container_properties
 
     @trace_operation_async(binding_operation="delete_container")
     async def delete_container(

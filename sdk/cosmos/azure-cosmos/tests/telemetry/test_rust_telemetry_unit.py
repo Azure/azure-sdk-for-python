@@ -4979,6 +4979,7 @@ def database_create_harness(item_runtime):
     client = object.__new__(client_type)
     client._adapter = item_runtime.backend
     client._item_context = item_runtime.container._item_context
+    client._inference_client = None
     client.client_connection = item_runtime.connection
     item_runtime.client = client
     item_runtime.create_database = lambda **kwargs: item_runtime.invoke(client.create_database, "sales", **kwargs)

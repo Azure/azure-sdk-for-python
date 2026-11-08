@@ -29,7 +29,7 @@ SELECTIONS = {
     "sockets": ["test_toxiproxy_reset_socket.py", "test_toxiproxy_local_unit.py"],
     "full": [
         "test_connect_tunnel_unit.py",
-        "test_toxiproxy_route.py",
+        "test_toxiproxy_read.py",
         "test_toxiproxy_write.py",
         "test_toxiproxy_reset_socket.py",
         "test_toxiproxy_unit.py",
@@ -37,7 +37,7 @@ SELECTIONS = {
         "test_toxiproxy_local_unit.py",
     ],
     "no-opt-in": [
-        "test_toxiproxy_route.py",
+        "test_toxiproxy_read.py",
         "test_toxiproxy_write.py",
         "test_toxiproxy_reset_socket.py",
     ],

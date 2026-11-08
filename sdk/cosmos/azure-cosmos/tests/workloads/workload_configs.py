@@ -66,6 +66,7 @@ __all__ = [
     "WORKLOAD_MIX",
     "WORKLOAD_DOC_PROFILE",
     "WORKLOAD_ITEM_NAMESPACE",
+    "WORKLOAD_READ_MEASUREMENT_SECONDS",
 ]
 
 
@@ -159,6 +160,9 @@ WORKLOAD_LOOP_LAG_MONITOR = (
 
 # Manage both client entry setup and exit cleanup unless explicitly disabled.
 WORKLOAD_MANAGE_CLIENT_LIFECYCLE = manage_client_lifecycle()
+WORKLOAD_READ_MEASUREMENT_SECONDS = _safe_float(
+    os.environ.get("WORKLOAD_READ_MEASUREMENT_SECONDS", "0"), 0.0
+)
 
 # Blended traffic. WORKLOAD_MIX="read=70,create=10,upsert=10,replace=5,patch=5"
 # makes one process issue a weighted BLEND of operations (a realistic app mix)
@@ -238,6 +242,17 @@ if WORKLOAD_ARRIVAL_RATE:
     _paced_ops = set(WORKLOAD_MIX) if WORKLOAD_MIX else WORKLOAD_OPERATIONS
     if not _paced_ops <= {"read", "upsert", "replace", "patch"}:
         raise ValueError("Fixed-rate workloads support only read, upsert, replace and patch")
+if WORKLOAD_READ_MEASUREMENT_SECONDS < 0:
+    raise ValueError("WORKLOAD_READ_MEASUREMENT_SECONDS must be nonnegative")
+if WORKLOAD_READ_MEASUREMENT_SECONDS and (
+    WORKLOAD_OPERATIONS != {"read"} or WORKLOAD_MIX or WORKLOAD_USE_SYNC
+    or WORKLOAD_USE_PROXY or WORKLOAD_NUM_CLIENTS != 1 or CONCURRENT_REQUESTS != 1
+    or WORKLOAD_ARRIVAL_RATE or not WORKLOAD_MANAGE_CLIENT_LIFECYCLE
+):
+    raise ValueError(
+        "Bounded read measurements require async read-only, one client, one concurrent request, "
+        "zero arrival rate, no proxy/mix, and managed client lifecycle"
+    )
 for _name in ("WORKLOAD_USE_SYNC", "WORKLOAD_USE_PROXY",
               "WORKLOAD_GC_FREEZE", "WORKLOAD_LOOP_LAG_MONITOR",
               "COSMOS_ENABLE_DIAGNOSTICS_LOGGING", "COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS"):

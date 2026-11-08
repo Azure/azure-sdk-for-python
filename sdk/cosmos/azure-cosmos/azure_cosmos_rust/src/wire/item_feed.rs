@@ -84,8 +84,30 @@ struct QueryRequest {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct HybridLimitPlan {
+struct QueryAdmissionPlan {
     hybrid_search_query_info: Option<HybridLimitWindow>,
+    query_info: Option<QueryAggregateInfo>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct QueryAggregateInfo {
+    #[serde(default)]
+    has_select_value: bool,
+    #[serde(default)]
+    aggregates: Vec<String>,
+    #[serde(default)]
+    group_by_expressions: Vec<String>,
+}
+
+impl QueryAdmissionPlan {
+    fn is_value_average(&self) -> bool {
+        self.query_info.as_ref().is_some_and(|info| {
+            info.has_select_value
+                && matches!(info.aggregates.as_slice(), [aggregate] if aggregate == "Average" || aggregate == "Avg")
+                && info.group_by_expressions.is_empty()
+        })
+    }
 }
 
 #[derive(Deserialize)]
@@ -120,24 +142,22 @@ impl HybridLimitWindow {
     }
 }
 
-fn decode_hybrid_limit_plan(body: &[u8]) -> Result<Option<HybridLimitWindow>, CosmosError> {
-    serde_json::from_slice::<HybridLimitPlan>(body)
-        .map(|plan| plan.hybrid_search_query_info)
-        .map_err(|error| {
-            CosmosError::builder()
-                .with_status(status_codes::SERIALIZATION_RESPONSE_BODY_INVALID)
-                .with_message("Invalid query plan while checking the hybrid search limit")
-                .with_source(error)
-                .build()
-        })
+fn decode_query_admission_plan(body: &[u8]) -> Result<QueryAdmissionPlan, CosmosError> {
+    serde_json::from_slice::<QueryAdmissionPlan>(body).map_err(|error| {
+        CosmosError::builder()
+            .with_status(status_codes::SERIALIZATION_RESPONSE_BODY_INVALID)
+            .with_message("Invalid query plan while checking query admission")
+            .with_source(error)
+            .build()
+    })
 }
 
-async fn hybrid_limit_plan(
+async fn query_admission_plan(
     driver: &CosmosDriver,
     container: ContainerReference,
     operation: &CosmosOperation,
     options: &OperationOptions,
-) -> Result<Option<HybridLimitWindow>, CosmosError> {
+) -> Result<QueryAdmissionPlan, CosmosError> {
     // Match the pinned driver's production feature set. The public driver
     // interface does not expose the resolved plan's hybrid metadata.
     let plan_operation = CosmosOperation::query_plan(
@@ -151,10 +171,10 @@ async fn hybrid_limit_plan(
         .execute_operation(plan_operation, options.clone())
         .await?;
     match response.as_ref().map(CosmosResponse::body) {
-        Some(ResponseBody::Bytes(body)) => decode_hybrid_limit_plan(body),
+        Some(ResponseBody::Bytes(body)) => decode_query_admission_plan(body),
         _ => Err(CosmosError::builder()
             .with_status(status_codes::SERIALIZATION_RESPONSE_BODY_INVALID)
-            .with_message("Missing query plan body while checking the hybrid search limit")
+            .with_message("Missing query plan body while checking query admission")
             .build()),
     }
 }
@@ -214,12 +234,6 @@ impl QueryRequest {
             CosmosOperation::query_items(container, Some(range)).with_body(self.body.clone());
         if let Some(count) = self.max_item_count {
             operation = operation.with_max_item_count(count);
-        }
-        if self.continuation_limit_kb.is_some_and(|limit| limit > 0) && !operation.is_trivial() {
-            return Err(PyNotImplementedError::new_err(
-                "continuation_token_limit requires a complete partition_key; \
-                 the driver cannot bound combined query progress. No fallback was performed.",
-            ));
         }
         if !self.allow_cross_partition && !operation.is_trivial() {
             return Err(PyNotImplementedError::new_err(
@@ -500,19 +514,25 @@ async fn next_plan_page(
             _ => None,
         };
         let mut hybrid_limit_applied = false;
+        let mut range_average = false;
         if let FeedRequest::Query(query) = &request {
-            if let Some(limit) = query
-                .hybrid_search_max_items
-                .as_deref()
-                .filter(|_| !operation.is_trivial())
+            if !operation.is_trivial()
+                && (query.hybrid_search_max_items.is_some() || query.feed_range.is_some())
             {
-                match hybrid_limit_plan(&driver, container.clone(), &operation, &options).await {
-                    Ok(Some(window)) => {
-                        maximum = Some(window.admitted_window(limit)?);
-                        hybrid_limit_applied = true;
-                    }
-                    Ok(None) => {}
-                    Err(error) => return Ok((Err(error), None, false)),
+                let admission =
+                    match query_admission_plan(&driver, container.clone(), &operation, &options)
+                        .await
+                    {
+                        Ok(plan) => plan,
+                        Err(error) => return Ok((Err(error), None, false)),
+                    };
+                range_average = query.feed_range.is_some() && admission.is_value_average();
+                if let (Some(window), Some(limit)) = (
+                    admission.hybrid_search_query_info,
+                    query.hybrid_search_max_items.as_deref(),
+                ) {
+                    maximum = Some(window.admitted_window(limit)?);
+                    hybrid_limit_applied = true;
                 }
             }
         }
@@ -533,6 +553,41 @@ async fn next_plan_page(
         {
             Ok(plan) => plan,
             Err(error) => {
+                if range_average && error.status() == status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE
+                {
+                    if let FeedRequest::Query(query) = &request {
+                        if let Some((min, max)) = &query.feed_range {
+                            let scope = feed_range_from_bounds(min, max)
+                                .map_err(|error| PyValueError::new_err(error.to_string()))?;
+                            let ranges = match driver
+                                .resolve_all_partition_key_ranges(&container, false)
+                                .await
+                            {
+                                Ok(Some(ranges)) => ranges,
+                                Ok(None) => {
+                                    return Err(PyRuntimeError::new_err(
+                                        "Could not resolve the query scope",
+                                    ))
+                                }
+                                Err(error) => return Ok((Err(error), None, false)),
+                            };
+                            let width = ranges
+                                .iter()
+                                .filter(|range| {
+                                    range.max_exclusive > *scope.min_inclusive()
+                                        && range.min_inclusive < *scope.max_exclusive()
+                                })
+                                .count();
+                            if width > 1 {
+                                return Err(PyValueError::new_err(
+                                    "Unsupported query shape for range-scoped pagination: \
+                                     SELECT VALUE AVG(...) cannot be merged client-side when the query \
+                                     scope spans multiple physical partitions.",
+                                ));
+                            }
+                        }
+                    }
+                }
                 let vector_maximum = if hybrid_limit_applied { None } else { maximum };
                 return Ok((
                     Err(query_planning_error(error, vector_maximum)?),
@@ -595,15 +650,6 @@ async fn next_plan_page(
     } else {
         None
     };
-    if let (FeedRequest::Query(request), Some(token)) = (&progress.request, &token) {
-        if let Some(limit) = request.continuation_limit_kb.filter(|limit| *limit > 0) {
-            if token.len() as u128 > limit as u128 * 1024 {
-                return Err(PyRuntimeError::new_err(
-                    "The service returned a continuation token exceeding continuation_token_limit.",
-                ));
-            }
-        }
-    }
     progress.continuation = token.clone();
     state.has_more = response.is_some() && (!progress.service_continuation || token.is_some());
     state.progress = if response.is_some() {
@@ -1367,6 +1413,90 @@ mod tests {
     }
 
     #[test]
+    fn range_average_uses_plan_shape_not_sql_text() {
+        let average = decode_query_admission_plan(
+            br#"{"queryInfo":{"hasSelectValue":true,"aggregates":["Average"],"groupByExpressions":[]}}"#,
+        ).unwrap();
+        assert!(average.is_value_average());
+        assert!(decode_query_admission_plan(
+            br#"{"queryInfo":{"hasSelectValue":true,"aggregates":["Avg"]}}"#,
+        )
+        .unwrap()
+        .is_value_average());
+        for body in [
+            br#"{"queryInfo":{"hasSelectValue":true,"aggregates":["Count"]}}"#.as_slice(),
+            br#"{"queryInfo":{"hasSelectValue":false,"aggregates":["Average"]}}"#,
+            br#"{"queryInfo":{"hasSelectValue":true,"aggregates":["Average","Sum"]}}"#,
+            br#"{"queryInfo":{"hasSelectValue":true,"aggregates":["Average"],"groupByExpressions":["c.pk"]}}"#,
+            br#"{"queryInfo":{"hasSelectValue":true,"aggregates":[]}}"#,
+            br#"{}"#,
+        ] {
+            assert!(!decode_query_admission_plan(body).unwrap().is_value_average());
+        }
+    }
+
+    #[tokio::test]
+    async fn average_error_contract_is_limited_to_multi_partition_feed_ranges() {
+        let (_emulator, driver) = setup(12).await;
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        let ranges = driver
+            .resolve_all_partition_key_ranges(&container, false)
+            .await
+            .unwrap()
+            .unwrap();
+        let single = &ranges[0];
+        for (scope, sql, legacy_error) in [
+            (
+                Some(("".into(), "FF".into())),
+                "SELECT VALUE AVG(c.value) FROM c",
+                true,
+            ),
+            (
+                Some((single.min_inclusive.to_hex(), single.max_exclusive.to_hex())),
+                "SELECT VALUE AVG(c.value) FROM c",
+                false,
+            ),
+            (None, "SELECT VALUE AVG(c.value) FROM c", false),
+            (
+                Some(("".into(), "FF".into())),
+                "SELECT VALUE SUM(c.value) FROM c",
+                false,
+            ),
+        ] {
+            let mut request = query_request(sql);
+            if let FeedRequest::Query(ref mut query) = request {
+                query.feed_range = scope;
+            }
+            let result = next_plan_page(
+                driver.clone(),
+                Arc::new(Mutex::new(CursorState::default())),
+                ("test".into(), "dbs/db/colls/c".into()),
+                None,
+                modifiers(),
+                request,
+                PlanOptions::default(),
+            )
+            .await;
+            if legacy_error {
+                let error = result.unwrap_err();
+                Python::with_gil(|py| assert!(error.is_instance_of::<PyValueError>(py)));
+                assert!(error
+                    .to_string()
+                    .contains("SELECT VALUE AVG(...) cannot be merged"));
+            } else {
+                let (result, _, _) = result.unwrap();
+                assert_eq!(
+                    result.unwrap_err().status(),
+                    status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE
+                );
+            }
+        }
+    }
+
+    #[test]
     fn hybrid_limit_uses_plan_metadata_and_legacy_take_not_offset_window() {
         pyo3::prepare_freethreaded_python();
         for body in [
@@ -1374,11 +1504,16 @@ mod tests {
             br#"{"queryInfo":{"top":1,"hasNonStreamingOrderBy":true}}"#,
             br#"{"hybridSearchQueryInfo":null}"#,
         ] {
-            assert!(decode_hybrid_limit_plan(body).unwrap().is_none());
+            assert!(decode_query_admission_plan(body)
+                .unwrap()
+                .hybrid_search_query_info
+                .is_none());
         }
-        let plan = decode_hybrid_limit_plan(br#"{"hybridSearchQueryInfo":{"skip":1000,"take":5}}"#)
-            .unwrap()
-            .unwrap();
+        let plan =
+            decode_query_admission_plan(br#"{"hybridSearchQueryInfo":{"skip":1000,"take":5}}"#)
+                .unwrap()
+                .hybrid_search_query_info
+                .unwrap();
         for maximum in ["5", "  +5 ", "5_000", "1267650600228229401496703205376"] {
             assert_eq!(plan.admitted_window(maximum).unwrap(), 1005);
         }
@@ -1423,7 +1558,7 @@ mod tests {
             br#"{"hybridSearchQueryInfo":{"take":"5"}}"#,
         ] {
             assert_eq!(
-                decode_hybrid_limit_plan(body).err().unwrap().status(),
+                decode_query_admission_plan(body).err().unwrap().status(),
                 status_codes::SERIALIZATION_RESPONSE_BODY_INVALID,
             );
         }
@@ -1678,12 +1813,21 @@ mod tests {
         request: &FeedRequest,
         token: Option<String>,
     ) -> (Option<Vec<serde_json::Value>>, Option<String>) {
+        let mut options = modifiers();
+        if let FeedRequest::Query(query) = request {
+            if let Some(limit) = query.continuation_limit_kb.filter(|limit| *limit > 0) {
+                options.custom_headers.insert(
+                    HeaderName::from_static("x-ms-documentdb-responsecontinuationtokenlimitinkb"),
+                    HeaderValue::from(limit.to_string()),
+                );
+            }
+        }
         let (response, token, _) = next_plan_page(
             driver.clone(),
             state.clone(),
             ("query-test".into(), "dbs/db/colls/c".into()),
             token,
-            modifiers(),
+            options,
             request.clone(),
             PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly),
         )
@@ -1861,6 +2005,53 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn query_preserves_service_token_larger_than_requested_limit() {
+        let expected_token = "opaque-service-token-".repeat(100);
+        let rule = Arc::new(
+            FaultInjectionRuleBuilder::new(
+                "oversized-query-token",
+                FaultInjectionResultBuilder::new()
+                    .with_custom_response(
+                        CustomResponseBuilder::new(azure_core::http::StatusCode::Ok)
+                            .with_header("x-ms-continuation", expected_token.clone())
+                            .with_header("content-type", "application/json")
+                            .with_body(br#"{"Documents":[{"id":"order-1"}],"_count":1}"#.to_vec())
+                            .build(),
+                    )
+                    .build(),
+            )
+            .with_condition(
+                FaultInjectionConditionBuilder::new()
+                    .with_operation_type("QueryItem".parse().unwrap())
+                    .build(),
+            )
+            .build(),
+        );
+        let (_emulator, driver) = setup_with_fault_rules(
+            0,
+            PartitionKeyDefinition::new(vec![Cow::Borrowed("/pk")]),
+            vec![rule.clone()],
+        )
+        .await;
+        let mut request = query_request("SELECT * FROM c");
+        if let FeedRequest::Query(ref mut query) = request {
+            query.partition_key = Some(PartitionKey::from("customer-501"));
+            query.continuation_limit_kb = Some(1);
+        }
+        let (rows, token) = query_page(
+            &driver,
+            &Arc::new(Mutex::new(CursorState::default())),
+            &request,
+            None,
+        )
+        .await;
+        assert!(expected_token.len() > 1024);
+        assert_eq!(token.as_deref(), Some(expected_token.as_str()));
+        assert_eq!(rows.unwrap(), vec![serde_json::json!({"id":"order-1"})]);
+        assert_eq!(rule.hit_count(), 1);
+    }
+
+    #[tokio::test]
     async fn query_scopes_and_disabled_cross_partition_are_not_ignored() {
         let (_emulator, driver) = setup(12).await;
         let container = driver
@@ -1893,18 +2084,11 @@ mod tests {
         assert!(request.operation(container.clone()).is_err());
         request.allow_cross_partition = true;
         request.continuation_limit_kb = Some(1);
-        assert!(request
-            .operation(container.clone())
-            .unwrap_err()
-            .to_string()
-            .contains("continuation_token_limit requires a complete partition_key"));
+        let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
+        assert_eq!(rows.len(), 12);
         request.feed_range = Some(("".into(), "FF".into()));
-        assert!(request
-            .operation(container.clone())
-            .unwrap_err()
-            .to_string()
-            .contains("continuation_token_limit requires a complete partition_key"));
-        request.continuation_limit_kb = None;
+        let ranged_rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
+        assert_eq!(ranged_rows, rows);
         let ranges = driver
             .resolve_all_partition_key_ranges(&container, false)
             .await
@@ -1991,16 +2175,9 @@ mod tests {
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
         assert_eq!(rows.len(), 9);
         assert!(rows.iter().all(|row| row["tenant"] == "tenant-1"));
-        let container = driver
-            .resolve_container("db", "c", Default::default())
-            .await
-            .unwrap();
         request.continuation_limit_kb = Some(1);
-        assert!(request
-            .operation(container)
-            .unwrap_err()
-            .to_string()
-            .contains("continuation_token_limit requires a complete partition_key"));
+        let limited_rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
+        assert_eq!(limited_rows, rows);
         request.partition_key =
             Some(legacy_partition_key_header(r#"["tenant-1","key-5"]"#).unwrap());
         request.allow_cross_partition = false;

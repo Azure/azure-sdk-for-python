@@ -26,6 +26,7 @@ from urllib.parse import urlparse
 from urllib3.util.retry import Retry
 
 from azure.core import AsyncPipelineClient
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (AsyncHTTPPolicy, ContentDecodePolicy,
                                           DistributedTracingPolicy, HeadersPolicy,
@@ -39,6 +40,7 @@ from .. import exceptions
 from .._constants import _Constants as Constants
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._cosmos_responses import CosmosDict
+from .._inference_client import InferenceClientSettings
 from .._response_decoding import decode_response_body_for_status
 from ..http_constants import HttpHeaders
 
@@ -56,14 +58,10 @@ class _InferenceService:
     RETRY_BACKOFF_FACTOR = 0.8
     inference_service_default_scope = Constants.INFERENCE_SERVICE_DEFAULT_SCOPE
 
-    def __init__(self, cosmos_client_connection):
-        """Initialize inference service with credentials and endpoint information.
-
-        :param cosmos_client_connection: Optional reference to cosmos client connection for accessing settings
-        :type cosmos_client_connection: Optional[CosmosClientConnection]
-        """
-        self._client_connection = cosmos_client_connection
-        self._aad_credentials = self._client_connection.aad_credentials
+    def __init__(self, settings: InferenceClientSettings[AsyncTokenCredential]):
+        """Initialize the separate inference pipeline from client-owned settings."""
+        self._settings = settings
+        self._aad_credentials = settings.aad_credentials
         self._token_scope = self.inference_service_default_scope
 
         semantic_reranking_inference_endpoint = os.environ.get(Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT)
@@ -74,7 +72,7 @@ class _InferenceService:
             )
 
         self._inference_endpoint = f"{semantic_reranking_inference_endpoint}/inference/semanticReranking"
-        self._inference_request_timeout = self._client_connection.connection_policy.InferenceRequestTimeout
+        self._inference_request_timeout = settings.request_timeout
         self._inference_pipeline_client = self._create_inference_pipeline_client()
 
     def _create_inference_pipeline_client(self) -> AsyncPipelineClient:
@@ -84,44 +82,46 @@ class _InferenceService:
         :rtype: ~azure.core.AsyncPipelineClient
         """
         access_token = self._aad_credentials
+        if access_token is None:
+            raise ValueError("Semantic reranking requires AAD credentials.")
         auth_policy = AsyncInferenceServiceBearerTokenPolicy(access_token, self._token_scope)
 
-        connection_policy = self._client_connection.connection_policy
+        retry_configuration = self._settings.retry_configuration
 
         retry_policy = None
-        if isinstance(connection_policy.ConnectionRetryConfiguration, AsyncHTTPPolicy):
+        if isinstance(retry_configuration, AsyncHTTPPolicy):
 
             retry_policy = _ConnectionRetryPolicy(
-                retry_total=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_total',
+                retry_total=getattr(retry_configuration, 'retry_total',
                                     self.TOTAL_RETRIES),
-                retry_connect=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_connect', None),
-                retry_read=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_read', None),
-                retry_status=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_status', None),
-                retry_backoff_max=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_max',
+                retry_connect=getattr(retry_configuration, 'retry_connect', None),
+                retry_read=getattr(retry_configuration, 'retry_read', None),
+                retry_status=getattr(retry_configuration, 'retry_status', None),
+                retry_backoff_max=getattr(retry_configuration, 'retry_backoff_max',
                                           self.RETRY_BACKOFF_MAX),
-                retry_on_status_codes=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_on_status_codes',
+                retry_on_status_codes=getattr(retry_configuration, 'retry_on_status_codes',
                                               self.RETRY_AFTER_STATUS_CODES),
-                retry_backoff_factor=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_factor',
+                retry_backoff_factor=getattr(retry_configuration, 'retry_backoff_factor',
                                              self.RETRY_BACKOFF_FACTOR)
             )
-        elif isinstance(connection_policy.ConnectionRetryConfiguration, int):
-            retry_policy = _ConnectionRetryPolicy(total=connection_policy.ConnectionRetryConfiguration)
-        elif isinstance(connection_policy.ConnectionRetryConfiguration, Retry):
+        elif isinstance(retry_configuration, int):
+            retry_policy = _ConnectionRetryPolicy(total=retry_configuration)
+        elif isinstance(retry_configuration, Retry):
             # Convert a urllib3 retry policy to a Pipeline policy
             retry_policy = _ConnectionRetryPolicy(
-                retry_total=connection_policy.ConnectionRetryConfiguration.total,
-                retry_connect=connection_policy.ConnectionRetryConfiguration.connect,
-                retry_read=connection_policy.ConnectionRetryConfiguration.read,
-                retry_status=connection_policy.ConnectionRetryConfiguration.status,
-                retry_backoff_max=connection_policy.ConnectionRetryConfiguration.DEFAULT_BACKOFF_MAX,
-                retry_on_status_codes=list(connection_policy.ConnectionRetryConfiguration.status_forcelist),
-                retry_backoff_factor=connection_policy.ConnectionRetryConfiguration.backoff_factor
+                retry_total=retry_configuration.total,
+                retry_connect=retry_configuration.connect,
+                retry_read=retry_configuration.read,
+                retry_status=retry_configuration.status,
+                retry_backoff_max=retry_configuration.DEFAULT_BACKOFF_MAX,
+                retry_on_status_codes=list(retry_configuration.status_forcelist),
+                retry_backoff_factor=retry_configuration.backoff_factor
             )
         else:
             raise TypeError(
                 "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
-        self._user_agent: str = self._client_connection._user_agent
+        self._user_agent: str = self._settings.user_agent
 
         policies = [
             HeadersPolicy(),
@@ -132,7 +132,7 @@ class _InferenceService:
             NetworkTraceLoggingPolicy(),
             DistributedTracingPolicy(),
             CosmosHttpLoggingPolicy(
-                enable_diagnostics_logging=self._client_connection._enable_diagnostics_logging,
+                enable_diagnostics_logging=self._settings.enable_diagnostics_logging,
             ),
         ]
 
@@ -147,9 +147,7 @@ class _InferenceService:
         :returns: User agent string.
         :rtype: str
         """
-        if self._client_connection and hasattr(self._client_connection, '_user_agent'):
-            return self._client_connection._user_agent + "_inference"
-        return "azure-cosmos-python-sdk-inference"
+        return self._user_agent + "_inference"
 
     def _get_ssl_verification_setting(self) -> bool:
         """Determine whether SSL verification should be enabled for inference endpoint.

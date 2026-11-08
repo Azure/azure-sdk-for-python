@@ -14,6 +14,7 @@ min-inclusive, max-exclusive bounds without changing the caller's dictionary.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from copy import deepcopy
 from dataclasses import replace
 import os
@@ -34,6 +35,7 @@ from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._routing.routing_range import Range
 from .._telemetry import trace_operation
+from ..exceptions import CosmosHttpResponseError
 from ._partition_key import query_partition_key_components
 from ._read_all_items import ReadAllConfig, ReadAllPageState
 from ._read_items import partition_key_components
@@ -88,10 +90,10 @@ class QueryConfig(ReadAllConfig):
                 raise TypeError(f"{public} must be a bool or None.")
         key = kwargs.pop("partition_key", options.pop("partitionKey", None))
         feed = kwargs.pop("feed_range", None)
-        if key is not None and feed is not None:
-            raise ValueError("partition_key and feed_range are exclusive.")
+        _utils.verify_exclusive_arguments(["feed_range", "partition_key"], feed_range=feed, partition_key=key)
+        empty_key = isinstance(key, Sequence) and not isinstance(key, (str, bytes, bytearray)) and not key
         partition = None
-        if key is not None:
+        if key is not None and not empty_key:
             components = partition_key_components(key)
             if len(components) > 3:
                 raise ValueError("Query partition keys support at most three components.")
@@ -119,6 +121,15 @@ class QueryConfig(ReadAllConfig):
         )
         if cross is not None and not isinstance(cross, bool):
             raise TypeError("enable_cross_partition_query must be a bool or None.")
+        if empty_key and cross is not True:
+            raise CosmosHttpResponseError(
+                status_code=400,
+                message=(
+                    "Cross partition query is required but disabled. Please set "
+                    "x-ms-documentdb-query-enablecrosspartition to true, specify "
+                    "x-ms-documentdb-partitionkey, or revise your query to avoid this exception."
+                ),
+            )
         self.partition_key = partition or BindingPartitionKey("cross_partition")
         self.scope = QueryScope(
             feed_range=(interval[0], interval[1]) if interval is not None else None,
@@ -171,7 +182,9 @@ class QueryConfig(ReadAllConfig):
         validate_query_continuation(self.options.get("continuation"))
         # Parse only after the binding identifies a hybrid plan; other queries
         # must not observe this setting, including invalid integer values.
-        self.hybrid_search_max_items = os.environ.get(Constants.HS_MAX_ITEMS_CONFIG)
+        self.hybrid_search_max_items = os.environ.get(
+            Constants.HS_MAX_ITEMS_CONFIG, str(Constants.HS_MAX_ITEMS_CONFIG_DEFAULT)
+        )
         maximum = os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG)
         self.max_buffered_query_window = int(maximum) if maximum is not None else None
         if self.max_buffered_query_window is not None and not 0 <= self.max_buffered_query_window < 2**64:

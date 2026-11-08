@@ -70,7 +70,9 @@ from .._diagnostic_logging import DiagnosticLogging
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ._backend.cosmos_backend import AsyncCosmosBackend
 from .._helpers._item_context import ItemClientContext, ItemClientDefaults
-from .._utils import _validate_enable_compact_utf8_item_writes
+from .._utils import _validate_enable_compact_utf8_item_writes, get_user_agent_async
+from .._inference_client import InferenceClient, InferenceClientSettings
+from ._inference_service_async import _InferenceService
 from ._backend.factory import make_async_backend
 from .._backend.factory import resolve_backend_name
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
@@ -377,6 +379,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         auth = _build_auth(credential)
         enable_compact_utf8_item_writes = kwargs.pop("enable_compact_utf8_item_writes", False)
         connection_policy = _build_connection_policy(kwargs)
+        self._inference_client = InferenceClient(
+            InferenceClientSettings(
+                aad_credentials=auth.get("clientSecretCredential"),
+                request_timeout=connection_policy.InferenceRequestTimeout,
+                retry_configuration=connection_policy.ConnectionRetryConfiguration,
+                user_agent=get_user_agent_async(kwargs.get("user_agent_suffix")),
+                enable_diagnostics_logging=kwargs.get("enable_diagnostics_logging", False),
+            ),
+            _InferenceService,
+        )
         self.client_connection = CosmosClientConnection(
             _response_state=self._item_context.response_state,
             _defer_pipeline=is_rust_backend(self._adapter),
@@ -651,9 +663,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result,
-                                 _item_context=self._item_context)
+                                 _item_context=self._item_context, _inference_client=self._inference_client)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result,
-                             _item_context=self._item_context), result
+                             _item_context=self._item_context, _inference_client=self._inference_client), result
 
     @overload
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
@@ -821,7 +833,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             deadline=deadline,
         )
         database_proxy = DatabaseProxy(self.client_connection, id=result["id"], properties=result,
-                                       _item_context=self._item_context)
+                                       _item_context=self._item_context, _inference_client=self._inference_client)
         if return_properties:
             return database_proxy, result
         return database_proxy
@@ -848,7 +860,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             id_value = database.id
         else:
             id_value = str(database['id'])
-        return DatabaseProxy(self.client_connection, id_value, _item_context=self._item_context)
+        return DatabaseProxy(self.client_connection, id_value, _item_context=self._item_context,
+                             _inference_client=self._inference_client)
 
     @distributed_trace
     def list_databases(

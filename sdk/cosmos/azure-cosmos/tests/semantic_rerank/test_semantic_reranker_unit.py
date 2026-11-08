@@ -3,25 +3,22 @@
 # cspell:ignore rerank reranker reranking
 """Original semantic reranker inference-service unit tests, kept with the new tests.
 
-Source: ``tests/test_semantic_reranker_unit.py``. Bodies are unchanged. These
-tests exercise the Python inference-service wrapper with mocked connections;
+Source: ``tests/test_semantic_reranker_unit.py``. These tests now supply
+client-owned inference settings rather than mocked connections;
 ``semantic_rerank`` has no Rust implementation, so no backend is selected.
 """
 import asyncio
 import json
 import os
-import threading
+from dataclasses import replace
 import unittest
 from unittest.mock import MagicMock, patch
 
 from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos._cosmos_client_connection import CosmosClientConnection as _SyncCosmosClientConnection
+from azure.cosmos._inference_client import InferenceClient, InferenceClientSettings
 from azure.cosmos._inference_service import _InferenceService as _SyncInferenceService
-from azure.cosmos.aio._cosmos_client_connection_async import (
-    CosmosClientConnection as _AsyncCosmosClientConnection,
-)
 from azure.cosmos.aio._inference_service_async import _InferenceService as _AsyncInferenceService
 from azure.cosmos.documents import ConnectionPolicy
 
@@ -50,21 +47,21 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         else:
             os.environ.pop(_MALFORMED_INPUT_ENV_VAR, None)
 
-    def _create_mock_connection(self, inference_request_timeout=5):
-        """Create a mock cosmos client connection with configurable inference timeout."""
-        mock_connection = MagicMock()
-        mock_connection.aad_credentials = MagicMock()
-        mock_connection.connection_policy.InferenceRequestTimeout = inference_request_timeout
-        mock_connection.connection_policy.ConnectionRetryConfiguration = 3
-        mock_connection._user_agent = "test-agent"
-        mock_connection._enable_diagnostics_logging = False
-        return mock_connection
+    def _create_settings(self, inference_request_timeout=5):
+        """Create inference settings with a mock credential and configurable timeout."""
+        return InferenceClientSettings(
+            aad_credentials=MagicMock(),
+            request_timeout=inference_request_timeout,
+            retry_configuration=3,
+            user_agent="test-agent",
+            enable_diagnostics_logging=False,
+        )
 
     def test_sync_inference_timeout_raises_408_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_inference_timeout_raises_408
         """Test that sync inference service converts ServiceRequestError to 408."""
-        mock_connection = self._create_mock_connection()
-        service = _SyncInferenceService(mock_connection)
+        settings = self._create_settings()
+        service = _SyncInferenceService(settings)
 
         with patch.object(
             service._inference_pipeline_client._pipeline, "run",
@@ -82,8 +79,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_inference_timeout_raises_408
         """Test that async inference service converts ServiceRequestError to 408."""
         async def run_test():
-            mock_connection = self._create_mock_connection()
-            service = _AsyncInferenceService(mock_connection)
+            settings = self._create_settings()
+            service = _AsyncInferenceService(settings)
 
             with patch.object(
                 service._inference_pipeline_client._pipeline, "run",
@@ -101,25 +98,25 @@ class TestInferenceServiceTimeout(unittest.TestCase):
 
     def test_sync_inference_timeout_value_from_connection_policy_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_inference_timeout_value_from_connection_policy
-        """Test that sync inference service reads timeout from connection policy."""
-        mock_connection = self._create_mock_connection(inference_request_timeout=10)
-        service = _SyncInferenceService(mock_connection)
+        """Test that sync inference service reads timeout from client settings."""
+        settings = self._create_settings(inference_request_timeout=10)
+        service = _SyncInferenceService(settings)
 
         self.assertEqual(service._inference_request_timeout, 10)
 
     def test_async_inference_timeout_value_from_connection_policy_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_inference_timeout_value_from_connection_policy
-        """Test that async inference service reads timeout from connection policy."""
-        mock_connection = self._create_mock_connection(inference_request_timeout=15)
-        service = _AsyncInferenceService(mock_connection)
+        """Test that async inference service reads timeout from client settings."""
+        settings = self._create_settings(inference_request_timeout=15)
+        service = _AsyncInferenceService(settings)
 
         self.assertEqual(service._inference_request_timeout, 15)
 
     def test_sync_inference_passes_timeout_to_pipeline_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_inference_passes_timeout_to_pipeline
         """Test that sync inference service passes timeout kwargs to pipeline.run()."""
-        mock_connection = self._create_mock_connection(inference_request_timeout=7)
-        service = _SyncInferenceService(mock_connection)
+        settings = self._create_settings(inference_request_timeout=7)
+        service = _SyncInferenceService(settings)
 
         mock_response = MagicMock()
         mock_response.http_response.status_code = 200
@@ -142,8 +139,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_inference_passes_timeout_to_pipeline
         """Test that async inference service passes timeout kwargs to pipeline.run()."""
         async def run_test():
-            mock_connection = self._create_mock_connection(inference_request_timeout=12)
-            service = _AsyncInferenceService(mock_connection)
+            settings = self._create_settings(inference_request_timeout=12)
+            service = _AsyncInferenceService(settings)
 
             mock_response = MagicMock()
             mock_response.http_response.status_code = 200
@@ -168,8 +165,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_inference_uses_shared_response_decoder
         """Checks the sync inference service decodes response bytes
         through the shared decode helper, not an inline decode call."""
-        mock_connection = self._create_mock_connection()
-        service = _SyncInferenceService(mock_connection)
+        settings = self._create_settings()
+        service = _SyncInferenceService(settings)
 
         raw_response_data = b'{"Scores": []}'
         mock_response = MagicMock()
@@ -194,8 +191,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_inference_uses_shared_response_decoder
         """Async version of the wiring check above."""
         async def run_test():
-            mock_connection = self._create_mock_connection()
-            service = _AsyncInferenceService(mock_connection)
+            settings = self._create_settings()
+            service = _AsyncInferenceService(settings)
 
             raw_response_data = b'{"Scores": []}'
             mock_response = MagicMock()
@@ -222,8 +219,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_inference_2xx_with_invalid_utf8_raises_decode_error
         """A 200 inference response with invalid bytes should come
         out as DecodeError, keeping the real status and original cause."""
-        mock_connection = self._create_mock_connection()
-        service = _SyncInferenceService(mock_connection)
+        settings = self._create_settings()
+        service = _SyncInferenceService(settings)
 
         invalid_utf8 = b'{"Scores": "caf\xc3\x28"}'
         mock_response = MagicMock()
@@ -248,8 +245,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_inference_2xx_with_invalid_utf8_raises_decode_error
         """Async version of the 2xx invalid-bytes check above."""
         async def run_test():
-            mock_connection = self._create_mock_connection()
-            service = _AsyncInferenceService(mock_connection)
+            settings = self._create_settings()
+            service = _AsyncInferenceService(settings)
 
             invalid_utf8 = b'{"Scores": "caf\xc3\x28"}'
             mock_response = MagicMock()
@@ -281,8 +278,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_inference_replace_env_var_lets_2xx_with_invalid_utf8_succeed
         """With REPLACE set, a 200 response containing invalid UTF-8
         in a string value should parse successfully and not raise."""
-        mock_connection = self._create_mock_connection()
-        service = _SyncInferenceService(mock_connection)
+        settings = self._create_settings()
+        service = _SyncInferenceService(settings)
 
         # Valid JSON envelope; the bad byte sits inside a string value.
         invalid_utf8 = b'{"Scores":[{"index":0,"score":0.5,"label":"caf\xc3\x28"}]}'
@@ -321,8 +318,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_inference_replace_env_var_lets_2xx_with_invalid_utf8_succeed
         """Async version of the REPLACE check above."""
         async def run_test():
-            mock_connection = self._create_mock_connection()
-            service = _AsyncInferenceService(mock_connection)
+            settings = self._create_settings()
+            service = _AsyncInferenceService(settings)
 
             invalid_utf8 = b'{"Scores":[{"index":0,"score":0.5,"label":"caf\xc3\x28"}]}'
             mock_response = MagicMock()
@@ -358,8 +355,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_inference_ignore_env_var_lets_2xx_with_invalid_utf8_succeed
         """With IGNORE set, the bad byte is dropped and the response
         still parses cleanly."""
-        mock_connection = self._create_mock_connection()
-        service = _SyncInferenceService(mock_connection)
+        settings = self._create_settings()
+        service = _SyncInferenceService(settings)
 
         invalid_utf8 = b'{"Scores":[{"index":0,"score":0.5,"label":"caf\xc3\x28"}]}'
         mock_response = MagicMock()
@@ -395,8 +392,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         """Async equivalent of the sync IGNORE test above: with IGNORE set, the
         bad byte is dropped from the async inference response and parsing succeeds."""
         async def run_test():
-            mock_connection = self._create_mock_connection()
-            service = _AsyncInferenceService(mock_connection)
+            settings = self._create_settings()
+            service = _AsyncInferenceService(settings)
 
             invalid_utf8 = b'{"Scores":[{"index":0,"score":0.5,"label":"caf\xc3\x28"}]}'
             mock_response = MagicMock()
@@ -427,8 +424,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
     def test_sync_inference_response_timeout_raises_408_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_inference_response_timeout_raises_408
         """Test that sync inference service converts ServiceResponseError to 408."""
-        mock_connection = self._create_mock_connection()
-        service = _SyncInferenceService(mock_connection)
+        settings = self._create_settings()
+        service = _SyncInferenceService(settings)
 
         with patch.object(
             service._inference_pipeline_client._pipeline, "run",
@@ -446,8 +443,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_inference_response_timeout_raises_408
         """Test that async inference service converts ServiceResponseError to 408."""
         async def run_test():
-            mock_connection = self._create_mock_connection()
-            service = _AsyncInferenceService(mock_connection)
+            settings = self._create_settings()
+            service = _AsyncInferenceService(settings)
 
             with patch.object(
                 service._inference_pipeline_client._pipeline, "run",
@@ -481,9 +478,9 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         """Test that _InferenceService raises ValueError when env var is missing.
         With lazy init, this error is deferred from client construction to first use."""
         os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
-        mock_connection = self._create_mock_connection()
+        settings = self._create_settings()
         with self.assertRaises(ValueError) as ctx:
-            _SyncInferenceService(mock_connection)
+            _SyncInferenceService(settings)
         self.assertIn(_INFERENCE_ENDPOINT_ENV_VAR, str(ctx.exception))
 
     def test_async_lazy_init_raises_error_without_env_var_rust(self):
@@ -491,120 +488,114 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         """Test that async _InferenceService raises ValueError when env var is missing.
         With lazy init, this error is deferred from client construction to first use."""
         os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
-        mock_connection = self._create_mock_connection()
+        settings = self._create_settings()
         with self.assertRaises(ValueError) as ctx:
-            _AsyncInferenceService(mock_connection)
+            _AsyncInferenceService(settings)
         self.assertIn(_INFERENCE_ENDPOINT_ENV_VAR, str(ctx.exception))
 
     def test_sync_inference_service_created_with_env_var_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_inference_service_created_with_env_var
         """Test that sync _InferenceService can be created when env var is set."""
-        mock_connection = self._create_mock_connection()
-        service = _SyncInferenceService(mock_connection)
+        settings = self._create_settings()
+        service = _SyncInferenceService(settings)
         self.assertIsNotNone(service)
 
     def test_async_inference_service_created_with_env_var_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_inference_service_created_with_env_var
         """Test that async _InferenceService can be created when env var is set."""
-        mock_connection = self._create_mock_connection()
-        service = _AsyncInferenceService(mock_connection)
+        settings = self._create_settings()
+        service = _AsyncInferenceService(settings)
         self.assertIsNotNone(service)
 
-    # ── _get_inference_service() direct call tests ──
+    # ── InferenceClient.get_service() direct call tests ──
 
     def test_sync_get_inference_service_returns_service_with_aad_and_env_var_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_get_inference_service_returns_service_with_aad_and_env_var
-        """Test that _get_inference_service() returns an _InferenceService when AAD
+        """Test that InferenceClient.get_service() returns an _InferenceService when AAD
         credentials are present and the env var is set."""
-        mock_conn = self._create_mock_connection()
-        mock_conn._inference_service = None
-        mock_conn._inference_service_lock = threading.Lock()
+        settings = self._create_settings()
+        client = InferenceClient(settings, _SyncInferenceService)
 
-        result = _SyncCosmosClientConnection._get_inference_service(mock_conn)
+        result = client.get_service()
         self.assertIsNotNone(result)
 
     def test_async_get_inference_service_returns_service_with_aad_and_env_var_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_get_inference_service_returns_service_with_aad_and_env_var
-        """Test that async _get_inference_service() returns an _InferenceService when AAD
+        """Test that async InferenceClient.get_service() returns an _InferenceService when AAD
         credentials are present and the env var is set."""
-        mock_conn = self._create_mock_connection()
-        mock_conn._inference_service = None
+        settings = self._create_settings()
+        client = InferenceClient(settings, _AsyncInferenceService)
 
-        result = _AsyncCosmosClientConnection._get_inference_service(mock_conn)
+        result = client.get_service()
         self.assertIsNotNone(result)
 
     def test_sync_get_inference_service_raises_error_without_env_var_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_get_inference_service_raises_error_without_env_var
-        """Test that _get_inference_service() wraps ValueError into CosmosHttpResponseError
+        """Test that InferenceClient.get_service() wraps ValueError into CosmosHttpResponseError
         when the env var is missing."""
         os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
-        mock_conn = self._create_mock_connection()
-        mock_conn._inference_service = None
-        mock_conn._inference_service_lock = threading.Lock()
+        settings = self._create_settings()
+        client = InferenceClient(settings, _SyncInferenceService)
 
         with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
-            _SyncCosmosClientConnection._get_inference_service(mock_conn)
+            client.get_service()
         self.assertEqual(ctx.exception.status_code, 400)
         self.assertIn("Failed to initialize inference service", str(ctx.exception))
 
     def test_async_get_inference_service_raises_error_without_env_var_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_get_inference_service_raises_error_without_env_var
-        """Test that async _get_inference_service() wraps ValueError into CosmosHttpResponseError
+        """Test that async InferenceClient.get_service() wraps ValueError into CosmosHttpResponseError
         when the env var is missing."""
         os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
-        mock_conn = self._create_mock_connection()
-        mock_conn._inference_service = None
+        settings = self._create_settings()
+        client = InferenceClient(settings, _AsyncInferenceService)
 
         with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
-            _AsyncCosmosClientConnection._get_inference_service(mock_conn)
+            client.get_service()
         self.assertEqual(ctx.exception.status_code, 400)
         self.assertIn("Failed to initialize inference service", str(ctx.exception))
 
     def test_sync_get_inference_service_returns_none_without_aad_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_get_inference_service_returns_none_without_aad
-        """Test that _get_inference_service() returns None when no AAD credentials
+        """Test that InferenceClient.get_service() returns None when no AAD credentials
         are present (master key auth)."""
-        mock_conn = self._create_mock_connection()
-        mock_conn.aad_credentials = None
-        mock_conn._inference_service = None
-        mock_conn._inference_service_lock = threading.Lock()
+        settings = replace(self._create_settings(), aad_credentials=None)
+        client = InferenceClient(settings, _SyncInferenceService)
 
-        result = _SyncCosmosClientConnection._get_inference_service(mock_conn)
+        result = client.get_service()
         self.assertIsNone(result)
 
     def test_async_get_inference_service_returns_none_without_aad_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_get_inference_service_returns_none_without_aad
-        """Test that async _get_inference_service() returns None when no AAD credentials
+        """Test that async InferenceClient.get_service() returns None when no AAD credentials
         are present (master key auth)."""
-        mock_conn = self._create_mock_connection()
-        mock_conn.aad_credentials = None
-        mock_conn._inference_service = None
+        settings = replace(self._create_settings(), aad_credentials=None)
+        client = InferenceClient(settings, _AsyncInferenceService)
 
-        result = _AsyncCosmosClientConnection._get_inference_service(mock_conn)
+        result = client.get_service()
         self.assertIsNone(result)
 
     def test_sync_get_inference_service_caches_instance_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_sync_get_inference_service_caches_instance
-        """Test that _get_inference_service() returns the same cached instance on
+        """Test that InferenceClient.get_service() returns the same cached instance on
         repeated calls."""
-        mock_conn = self._create_mock_connection()
-        mock_conn._inference_service = None
-        mock_conn._inference_service_lock = threading.Lock()
+        settings = self._create_settings()
+        client = InferenceClient(settings, _SyncInferenceService)
 
-        first = _SyncCosmosClientConnection._get_inference_service(mock_conn)
-        second = _SyncCosmosClientConnection._get_inference_service(mock_conn)
+        first = client.get_service()
+        second = client.get_service()
         self.assertIsNotNone(first)
         self.assertIs(first, second)
 
     def test_async_get_inference_service_caches_instance_rust(self):
         # Source: tests/test_semantic_reranker_unit.py::TestInferenceServiceTimeout.test_async_get_inference_service_caches_instance
-        """Test that async _get_inference_service() returns the same cached instance on
+        """Test that async InferenceClient.get_service() returns the same cached instance on
         repeated calls."""
-        mock_conn = self._create_mock_connection()
-        mock_conn._inference_service = None
+        settings = self._create_settings()
+        client = InferenceClient(settings, _AsyncInferenceService)
 
-        first = _AsyncCosmosClientConnection._get_inference_service(mock_conn)
-        second = _AsyncCosmosClientConnection._get_inference_service(mock_conn)
+        first = client.get_service()
+        second = client.get_service()
         self.assertIsNotNone(first)
         self.assertIs(first, second)
 

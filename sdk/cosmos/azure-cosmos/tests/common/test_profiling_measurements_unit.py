@@ -153,6 +153,192 @@ def test_reporter_interval_numbers_and_execution_completion_rust(modules):
     assert ok
 
 
+def test_deferred_reporter_freezes_measurement_before_publication_rust(modules, monkeypatch):
+    module = modules["perf_reporter"]
+    stats = modules["perf_stats"].Stats()
+    clock, calls, cpu = [0.0], [0], [0.0]
+    monkeypatch.setattr(module.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(module, "_get_cpu_times", lambda process: (cpu[0], 0.0))
+    for name in ("execute_count", "binding_operation_count", "binding_attempt_count"):
+        monkeypatch.setattr(module.backend_counters, name, lambda: calls[0])
+    reporter = module.PerfReporter(stats, {
+        "report_interval": 15, "workload_id": f"baseline-read-rust-{STAMP}",
+        "commit_sha": "x", "driver_commit": "y",
+        "report_after_load": True, "measurement_seconds": 60,
+    })
+    reporter.start()
+    assert reporter._thread is None and reporter._client is None
+    clock[0], calls[0], cpu[0] = 10.0, 3, 1.0
+    reporter.begin_measurement([120.0, 12.0, 3.0])
+    stats.record("ReadItem", 2)
+    stats.record("ReadItem", 3)
+    clock[0], calls[0], cpu[0] = 70.0, 5, 1.25
+    reporter.finish_measurement()
+    clock[0], calls[0], cpu[0] = 1000.0, 500, 9.0
+    rows = Rows()
+
+    def connect():
+        reporter._container = rows
+        clock[0] += 30
+        cpu[0] += 2
+    monkeypatch.setattr(reporter, "_ensure_container", connect)
+    reporter.stop()
+    row, done = rows.rows
+    assert row["count"] == done["total_count"] == 2
+    assert row["interval_duration_seconds"] == row["elapsed_seconds"] == 60
+    assert row["cpu_seconds"] == 0.25
+    assert row["rust_execute_calls"] == row["binding_calls"] == row["attempt_calls"] == 2
+    assert row["max_ms"] == 3 and row["warmup_read_ms"] == [120.0, 12.0, 3.0]
+    assert row["cold_first_ms"] == 120 and row["measured_first_n_ms"] == [2, 3]
+    assert row["latency_population"] == "post_warmup"
+    assert done["record_type"] == "completion" and done["interval_count"] == 1
+    assert modules["perf_validate"].check_completion(rows, "baseline-", STAMP)[0]
+
+
+def test_deferred_reporter_does_not_publish_incomplete_run_rust(modules, monkeypatch):
+    reporter = modules["perf_reporter"].PerfReporter(modules["perf_stats"].Stats(), {
+        "report_after_load": True,
+    })
+    monkeypatch.setattr(reporter, "_ensure_container",
+                        lambda: pytest.fail("Incomplete run reached results storage"))
+    reporter.start()
+    with pytest.raises(RuntimeError, match="Incomplete read measurement"):
+        reporter.stop()
+
+
+def test_bounded_read_start_reporter_defers_thread_and_results_client_rust(modules, monkeypatch):
+    workload = importlib.import_module("workload")
+    monkeypatch.setattr(workload, "WORKLOAD_READ_MEASUREMENT_SECONDS", 60)
+    monkeypatch.setenv("PERF_ENABLED", "true")
+    monkeypatch.setattr(workload, "get_perf_config", lambda: {
+        "enabled": True, "results_endpoint": "https://unused.invalid",
+    })
+    stats, reporter = workload._start_reporter()
+    assert reporter._stats is stats
+    assert reporter._after_load and reporter._config["measurement_seconds"] == 60
+    assert reporter._thread is None and reporter._client is None
+    monkeypatch.setenv("PERF_ENABLED", "false")
+    with pytest.raises(ValueError, match="require PERF_ENABLED"):
+        workload._start_reporter()
+
+
+@pytest.mark.parametrize("failure", [None, "warmup", "interrupt", "cleanup"])
+def test_bounded_read_lifecycle_keeps_same_client_and_reports_after_load_rust(modules, monkeypatch, failure):
+    from unittest.mock import Mock
+
+    workload = importlib.import_module("workload")
+    events, stop, deadline = [], [], []
+    stats = modules["perf_stats"].Stats()
+    reporter = modules["perf_reporter"].PerfReporter(stats, {
+        "report_interval": 15, "workload_id": f"baseline-read-rust-{STAMP}",
+        "commit_sha": "x", "driver_commit": "y",
+        "report_after_load": True, "measurement_seconds": 60,
+    })
+    rows = Rows()
+    reporter.start()
+
+    def connect():
+        assert events[-1] == "exit"
+        reporter._container = rows
+        events.append("report")
+    monkeypatch.setattr(reporter, "_ensure_container", connect)
+
+    class Client:
+        def __init__(self, *args, **kwargs):
+            events.append("construct")
+            self.reads = 0
+
+        async def __aenter__(self):
+            events.append("enter")
+            return self
+
+        async def __aexit__(self, *args):
+            events.append("exit")
+            if failure == "cleanup":
+                raise RuntimeError("cleanup failed")
+
+        def get_database_client(self, name):
+            return self
+
+        def get_container_client(self, name):
+            return self
+
+        async def read_item(self, *args, **kwargs):
+            self.reads += 1
+            events.append("read")
+            assert reporter._client is None and reporter._thread is None and not rows.rows
+            if failure == "warmup":
+                raise RuntimeError("warmup failed")
+            if self.reads <= 3:
+                assert not deadline
+            else:
+                assert self.reads == 4 and len(reporter._warmup_ms) == 3
+                if failure == "interrupt":
+                    stop[0].set()
+                # Completion of the in-flight call must still be awaited.
+                deadline[0]()
+            return {}
+
+    for name, value in {
+        "AsyncClient": Client, "WORKLOAD_READ_MEASUREMENT_SECONDS": 60,
+        "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": True, "WORKLOAD_USE_PROXY": False,
+        "WORKLOAD_LOOP_LAG_MONITOR": False, "_start_reporter": lambda: (stats, reporter),
+        "_install_async_stop": lambda event: stop.append(event),
+        "_wrap_backend_for_counting": lambda *args, **kwargs: None,
+        "_maybe_freeze_gc": lambda logger: None,
+    }.items():
+        monkeypatch.setattr(workload, name, value)
+    original_sleep = asyncio.sleep
+
+    async def skip_setup_sleep(delay):
+        assert delay == 1
+        await original_sleep(0)
+    monkeypatch.setattr(workload.asyncio, "sleep", skip_setup_sleep)
+
+    async def run():
+        loop = asyncio.get_running_loop()
+        def schedule(seconds, callback):
+            assert seconds == 60 and events.count("read") == 3
+            deadline.append(callback)
+            return Mock()
+        monkeypatch.setattr(loop, "call_later", schedule)
+        await workload.run_workload_async("test", Mock())
+    if failure:
+        with pytest.raises(RuntimeError, match="warm-up failed|interrupted|cleanup failed"):
+            asyncio.run(run())
+        assert not rows.rows and "report" not in events
+    else:
+        asyncio.run(run())
+        assert events == ["construct", "enter", "read", "read", "read", "read", "exit", "report"]
+        row, done = rows.rows
+        assert row["count"] == done["total_count"] == 1
+        assert row["warmup_read_count"] == 3 and len(row["cold_first_n_ms"]) == 3
+
+
+@pytest.mark.parametrize("changes", [
+    {"WORKLOAD_READ_MEASUREMENT_SECONDS": "-1"},
+    {"WORKLOAD_READ_MEASUREMENT_SECONDS": "nan"},
+    {"WORKLOAD_OPERATIONS": "read,create"},
+    {"COSMOS_CONCURRENT_REQUESTS": "2"},
+    {"WORKLOAD_NUM_CLIENTS": "2"},
+    {"WORKLOAD_ARRIVAL_RATE": "1"},
+    {"WORKLOAD_USE_SYNC": "true"},
+    {"WORKLOAD_USE_PROXY": "true"},
+    {"WORKLOAD_MANAGE_CLIENT_LIFECYCLE": "false"},
+])
+def test_bounded_read_configuration_rejects_unsupported_modes_rust(modules, monkeypatch, changes):
+    for name, value in {
+        "WORKLOAD_READ_MEASUREMENT_SECONDS": "60", "WORKLOAD_OPERATIONS": "read",
+        "COSMOS_CONCURRENT_REQUESTS": "1", "WORKLOAD_NUM_CLIENTS": "1",
+        "WORKLOAD_ARRIVAL_RATE": "0", "WORKLOAD_USE_SYNC": "false",
+        "WORKLOAD_USE_PROXY": "false", "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": "true",
+        "WORKLOAD_MIX": "", **changes,
+    }.items():
+        monkeypatch.setenv(name, value)
+    with pytest.raises(ValueError):
+        runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+
+
 def test_terminal_throttles_not_limited_by_error_detail_buffer_rust(modules):
     stats = modules["perf_stats"].Stats()
     for _ in range(2005):

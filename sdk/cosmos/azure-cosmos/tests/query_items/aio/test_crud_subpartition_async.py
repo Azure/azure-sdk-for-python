@@ -277,12 +277,6 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
                                                                                        , partition_key=[0xFF, 0xFF])]
         assert 0 == len(document_list)
 
-        # Known gap 30 item 11: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
-        await self.key_database.delete_container(created_collection_ref.id)
-        pytest.skip(
-            "driver-gap: Rust rejects this input with a different exception type or message than legacy "
-            "(known gap 30 item 11, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-error-contract)."
-        )
         # Negative Test, prefix query should not work if no partition is given (empty list is given)
         try:
             document_list = [document async for document in created_collection.query_items(query='Select * from c'
@@ -291,6 +285,17 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
             assert "Cross partition query is required but disabled" in error.message
+
+        with pytest.raises(exceptions.CosmosHttpResponseError) as caught:
+            _ = [document async for document in created_collection.query_items(
+                query='Select * from c', partition_key=[], enable_cross_partition_query=False
+            )]
+        assert caught.value.status_code == StatusCodes.BAD_REQUEST
+        assert "Cross partition query is required but disabled" in caught.value.message
+        document_list = [document async for document in created_collection.query_items(
+            query='Select * from c', partition_key=[], enable_cross_partition_query=True
+        )]
+        assert len(document_list) == len(document_definitions)
 
         await self.key_database.delete_container(created_collection_ref.id)
 

@@ -267,7 +267,7 @@ def test_runner_records_timeout_without_success_fallback_rust(tmp_path, monkeypa
         binary.parent.mkdir(parents=True)
         binary.write_bytes(b"test binary")
     sources = [
-        Path("tests") / "toxiproxy" / "test_toxiproxy_route.py",
+        Path("tests") / "toxiproxy" / "test_toxiproxy_read.py",
         Path("tests") / "fault_injection" / "_regional_routing.py",
         Path("tests") / "config" / "fault_resources.py",
         Path("tests") / "config" / "clients.py",

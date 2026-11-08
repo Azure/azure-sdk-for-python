@@ -100,6 +100,10 @@ class PerfReporter:
         self._client = None
         self._container = None
         self._failure = None
+        self._after_load = config.get("report_after_load", False)
+        self._measurement_started = False
+        self._measurement_end = None
+        self._warmup_ms = []
         self._process_id = str(uuid.uuid4())
         self._interval_number = 0
         self._summary_count = 0
@@ -135,6 +139,8 @@ class PerfReporter:
 
     def start(self):
         """Start the background reporting thread (daemon)."""
+        if self._after_load:
+            return
         self._thread = threading.Thread(
             target=self._run, daemon=True, name="perf-reporter"
         )
@@ -147,6 +153,8 @@ class PerfReporter:
 
     def stop(self):
         """Stop the reporter and flush final results."""
+        if self._after_load and self._measurement_end is None:
+            raise RuntimeError("Incomplete read measurement; no results will be published")
         self._stop_event.set()
         if self._thread and self._thread.is_alive():
             self._thread.join(timeout=30)
@@ -172,6 +180,47 @@ class PerfReporter:
             raise RuntimeError("PerfReporter failed; this run is incomplete") from self._failure
         logger.info("PerfReporter stopped")
 
+    def begin_measurement(self, warmup_ms):
+        if not self._after_load or self._measurement_started:
+            raise RuntimeError("Deferred measurement can only begin once")
+        self._warmup_ms = list(warmup_ms)
+        self._reset_baselines()
+        self._measurement_started = True
+
+    def finish_measurement(self):
+        if not self._measurement_started or self._measurement_end is not None:
+            raise RuntimeError("Deferred measurement is not running")
+        # Freeze the boundary before client cleanup, histogram encoding or results setup.
+        self._measurement_end = {
+            "monotonic": time.monotonic(),
+            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "cpu_times": _get_cpu_times(self._process),
+            "gc": _get_gc_stats(),
+            "execute": backend_counters.execute_count(),
+            "binding": backend_counters.binding_operation_count(),
+            "attempt": backend_counters.binding_attempt_count(),
+            "retry": backend_counters.binding_retry_count(),
+            "cpu": _get_cpu_percent(self._process),
+            "memory": _get_memory_bytes(self._process),
+            "threads": _get_thread_count(self._process),
+            "system_cpu": _get_system_cpu_percent(),
+            "system_memory": _get_system_memory(),
+        }
+
+    def _metric(self, name, read):
+        return self._measurement_end[name] if self._measurement_end is not None else read()
+
+    def _measurement_metadata(self):
+        if not self._after_load:
+            return {}
+        return {
+            "reporting_mode": "after_load",
+            "latency_population": "post_warmup",
+            "measurement_target_seconds": self._config["measurement_seconds"],
+            "warmup_read_count": len(self._warmup_ms),
+            "warmup_read_ms": self._warmup_ms,
+        }
+
     def _run(self):
         try:
             self._run_reporting()
@@ -186,7 +235,18 @@ class PerfReporter:
         account that is briefly unreachable at startup does not stop the
         reporter for the whole run -- it just retries next interval.
         """
-        # Warm up the psutil CPU counters; the first call always returns 0.
+        self._reset_baselines()
+        while not self._stop_event.wait(timeout=self._config["report_interval"]):
+            try:
+                with self._flush_lock:
+                    self._ensure_container()
+                    self._flush()
+            except Exception as e:
+                self._failure = e
+                logger.warning("PerfReporter flush failed: %s", e)
+
+    def _reset_baselines(self):
+        # Prime counters; this does not warm SDK reads.
         _get_cpu_percent(self._process)
         _get_system_cpu_percent()
 
@@ -208,15 +268,6 @@ class PerfReporter:
         self._last_attempt_calls = backend_counters.binding_attempt_count() or 0
         self._last_retry_calls = backend_counters.binding_retry_count() or 0
 
-        while not self._stop_event.wait(timeout=self._config["report_interval"]):
-            try:
-                with self._flush_lock:
-                    self._ensure_container()
-                    self._flush()
-            except Exception as e:
-                self._failure = e
-                logger.warning("PerfReporter flush failed: %s", e)
-
     def _write_completion(self):
         if self._failure is not None:
             raise RuntimeError("Earlier reporting failure prevents completion") from self._failure
@@ -231,6 +282,7 @@ class PerfReporter:
             "total_count": self._total_count,
             "total_errors": self._total_errors,
             "fixed_rate_schedules": self._stats.schedule_snapshot(),
+            **self._measurement_metadata(),
         })
 
     def _ensure_container(self):
@@ -259,12 +311,12 @@ class PerfReporter:
         if self._container is None:
             return
 
-        now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-        cpu = _get_cpu_percent(self._process)
-        mem = _get_memory_bytes(self._process)
-        threads = _get_thread_count(self._process)
-        sys_cpu = _get_system_cpu_percent()
-        sys_total, sys_used = _get_system_memory()
+        now = self._metric("timestamp", lambda: datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
+        cpu = self._metric("cpu", lambda: _get_cpu_percent(self._process))
+        mem = self._metric("memory", lambda: _get_memory_bytes(self._process))
+        threads = self._metric("threads", lambda: _get_thread_count(self._process))
+        sys_cpu = self._metric("system_cpu", _get_system_cpu_percent)
+        sys_total, sys_used = self._metric("system_memory", _get_system_memory)
 
         concurrency = _safe_int_env("COSMOS_CONCURRENT_REQUESTS", 100)
         target_database = os.environ.get("COSMOS_DATABASE", "")
@@ -317,7 +369,7 @@ class PerfReporter:
         # The drain is when these counts stop accumulating, so measure the window
         # here. It is normally the configured interval, but longer when a previous
         # flush was skipped; storing it keeps count / interval_duration_seconds accurate.
-        now_monotonic = time.monotonic()
+        now_monotonic = self._metric("monotonic", time.monotonic)
         interval_duration_seconds = now_monotonic - self._last_flush_monotonic
         self._last_flush_monotonic = now_monotonic
         # Seconds since the (post-warmup) reporter start, so a query can drop
@@ -325,14 +377,14 @@ class PerfReporter:
         elapsed_seconds = now_monotonic - self._start_monotonic
         # Process CPU-time delta, including reporter and other concurrent work.
         # Per-operation attribution requires a suitable isolated workload.
-        cur_cpu_user, cur_cpu_system = _get_cpu_times(self._process)
+        cur_cpu_user, cur_cpu_system = self._metric("cpu_times", lambda: _get_cpu_times(self._process))
         cpu_user_seconds = round(max(0.0, cur_cpu_user - self._last_cpu_user), 4)
         cpu_system_seconds = round(max(0.0, cur_cpu_system - self._last_cpu_system), 4)
         cpu_seconds = round(cpu_user_seconds + cpu_system_seconds, 4)
         self._last_cpu_user, self._last_cpu_system = cur_cpu_user, cur_cpu_system
         # Process-wide GC activity. Correlation with a latency tail does not
         # establish causation or predict how the backends compare.
-        cur_gc_collections, cur_gc_collected, cur_gc_uncollectable = _get_gc_stats()
+        cur_gc_collections, cur_gc_collected, cur_gc_uncollectable = self._metric("gc", _get_gc_stats)
         gc_collections = max(0, cur_gc_collections - self._last_gc_collections)
         gc_collected = max(0, cur_gc_collected - self._last_gc_collected)
         gc_uncollectable = max(0, cur_gc_uncollectable - self._last_gc_uncollectable)
@@ -345,10 +397,10 @@ class PerfReporter:
         # Process-wide counter deltas: normal Python execute returns and
         # instrumented binding entries (-1 when unavailable). Window boundaries
         # and unrelated calls limit attribution to the measured operations.
-        cur_execute_calls = backend_counters.execute_count()
+        cur_execute_calls = self._metric("execute", backend_counters.execute_count)
         rust_execute_calls = max(0, cur_execute_calls - self._last_execute_calls)
         self._last_execute_calls = cur_execute_calls
-        cur_binding_raw = backend_counters.binding_operation_count()
+        cur_binding_raw = self._metric("binding", backend_counters.binding_operation_count)
         if cur_binding_raw is None:
             binding_calls = -1
         else:
@@ -357,13 +409,13 @@ class PerfReporter:
         # Diagnostics-counter deltas (-1 when unavailable). Only recorded
         # contexts contribute; retry counting also depends on retained records.
         # They do not establish fixed per-operation round-trip counts.
-        cur_attempt_raw = backend_counters.binding_attempt_count()
+        cur_attempt_raw = self._metric("attempt", backend_counters.binding_attempt_count)
         if cur_attempt_raw is None:
             attempt_calls = -1
         else:
             attempt_calls = max(0, cur_attempt_raw - self._last_attempt_calls)
             self._last_attempt_calls = cur_attempt_raw
-        cur_retry_raw = backend_counters.binding_retry_count()
+        cur_retry_raw = self._metric("retry", backend_counters.binding_retry_count)
         if cur_retry_raw is None:
             retry_calls = -1
         else:
@@ -374,6 +426,7 @@ class PerfReporter:
         # a cold-start analyzer can pool the first calls across processes. Same for
         # every summary row of this flush; keyed per op below.
         for s in summaries:
+            cold_samples = self._warmup_ms if self._after_load else s["cold_first_n_ms"]
             doc = {
                 "id": str(uuid.uuid4()),
                 "partition_key": str(uuid.uuid4()),
@@ -419,11 +472,10 @@ class PerfReporter:
                 # does not bloat every result document (the analyzer only needs the
                 # first several points to see where latency settles).
                 "cold_first_ms": (
-                    round(s["cold_first_n_ms"][0], 3)
-                    if s["cold_first_n_ms"] else None
+                    round(cold_samples[0], 3) if cold_samples else None
                 ),
                 "cold_first_n_ms": [
-                    round(v, 3) for v in s["cold_first_n_ms"]
+                    round(v, 3) for v in cold_samples
                 ],
                 # Mean of captured request-charge samples. Matching means alone
                 # do not establish identical backend work or complete accounting.
@@ -487,7 +539,10 @@ class PerfReporter:
                 "config_multi_write_enabled": multi_write,
                 "config_proxy_enabled": proxy_enabled,
                 "config_skip_close": skip_close,
+                **self._measurement_metadata(),
             }
+            if self._after_load:
+                doc["measured_first_n_ms"] = s["cold_first_n_ms"]
             try:
                 self._container.upsert_item(doc)
             except Exception as e:

@@ -82,8 +82,12 @@ def test_invalid_vector_buffer_allowance_fails_without_binding_call_rust(query, 
     assert not query.calls
 
 
-@pytest.mark.parametrize("value", [None, "0", "12", "-1", "invalid", "50_000", str(2**100)])
-def test_hybrid_limit_is_snapshotted_separately_from_vector_limit_rust(query, monkeypatch, value):
+@pytest.mark.parametrize(
+    "value", [None, "", "0", "12", "-1", "invalid", "50_000", str(2**100)]
+)
+def test_hybrid_limit_is_snapshotted_separately_from_vector_limit_rust(
+    query, monkeypatch, value
+):
     if value is None:
         monkeypatch.delenv(Constants.HS_MAX_ITEMS_CONFIG, raising=False)
     else:
@@ -97,13 +101,19 @@ def test_hybrid_limit_is_snapshotted_separately_from_vector_limit_rust(query, mo
     query.collect(pager)
     assert query.calls
     for prepared, _, _ in query.calls:
-        assert prepared.settings.query.hybrid_search_max_items == value
+        expected = (
+            str(Constants.HS_MAX_ITEMS_CONFIG_DEFAULT) if value is None else value
+        )
+        assert prepared.settings.query.hybrid_search_max_items == expected
         assert prepared.settings.query.max_buffered_query_window == 17
         assert prepared.settings.query.max_item_count == 2
         assert not any("hybrid" in key.lower() for key in wire_headers(prepared))
     query.calls.clear()
     query.collect(query.proxy.query_items("SELECT * FROM c"))
-    assert all(prepared.settings.query.hybrid_search_max_items == "99" for prepared, _, _ in query.calls)
+    assert all(
+        prepared.settings.query.hybrid_search_max_items == "99"
+        for prepared, _, _ in query.calls
+    )
 
 
 @pytest.mark.parametrize("scope", [None, "Local", "Global"])
@@ -550,17 +560,44 @@ def test_partition_scope_normalization_rust(query, key, expected):
 
 
 @pytest.mark.parametrize("limit", [None, 0, 1, 2])
-def test_continuation_size_limit_is_forwarded_without_changing_the_token_rust(query, limit):
-    query.token_prefix = "service-"
+@pytest.mark.parametrize(
+    "scope",
+    [
+        {},
+        {"partition_key": "customer-501"},
+        {"partition_key": ["CA"]},
+        {
+            "feed_range": {
+                "Range": {
+                    "min": "",
+                    "max": "FF",
+                    "isMinInclusive": True,
+                    "isMaxInclusive": False,
+                }
+            }
+        },
+    ],
+    ids=["unscoped", "complete-key", "prefix", "feed-range"],
+)
+@pytest.mark.parametrize(
+    "token_prefix", ["service-", "service-" + "x" * 2048], ids=["short", "oversized"]
+)
+def test_continuation_size_limit_is_forwarded_without_changing_the_token_rust(
+    query, limit, scope, token_prefix
+):
+    query.token_prefix = token_prefix
     pages = query.proxy.query_items(
-        "SELECT * FROM c", partition_key="customer-501", continuation_token_limit=limit
+        "SELECT * FROM c", continuation_token_limit=limit, **scope
     ).by_page()
     query.next_page(pages)
     token = pages.continuation_token
-    assert token == "service-1"
+    assert token == token_prefix + "1"
     assert query.calls[0][0].settings.query.continuation_limit_kb == (limit or None)
+    assert wire_headers(query.calls[0][0]).get(
+        "x-ms-documentdb-responsecontinuationtokenlimitinkb"
+    ) == (str(limit) if limit else None)
     resumed = query.proxy.query_items(
-        "SELECT * FROM c", partition_key="customer-501", continuation_token_limit=limit
+        "SELECT * FROM c", continuation_token_limit=limit, **scope
     ).by_page(continuation_token=token)
     assert query.next_page(resumed) == [7, None, ["value"], "text"]
     assert wire_headers(query.calls[1][0])["x-ms-continuation"] == token
@@ -714,7 +751,6 @@ def test_query_body_scope_options_and_client_defaults_are_preserved_rust(query):
         ({"query": ""}, ValueError),
         ({"parameters": [{"name": "bad", "value": 1}]}, ValueError),
         ({"parameters": [{"name": "@p", "value": float("nan")}]}, ValueError),
-        ({"partition_key": []}, ValueError),
         ({"partition_key": float("inf")}, ValueError),
         (
             {"partition_key": "a", "feed_range": {"Range": {"min": "", "max": "FF"}}},
@@ -745,7 +781,7 @@ def test_invalid_or_unsupported_arguments_fail_without_dispatch_rust(query, kwar
 
     ``ValueError`` covers right-typed but unusable values: an empty or missing
     query, a parameter name without ``@``, values that are not representable
-    in JSON, an empty partition key, a partition key and feed range given
+    in JSON, a partition key and feed range given
     together (they are two ways to say the same thing), a sub-second timeout,
     and a page size of zero or a bool.
 
@@ -764,6 +800,48 @@ def test_invalid_or_unsupported_arguments_fail_without_dispatch_rust(query, kwar
     values = {"query": "SELECT * FROM c", **kwargs}
     with pytest.raises(error):
         query.proxy.query_items(**values)
+    assert not query.calls
+    query.connection.QueryItems.assert_not_called()
+
+
+@pytest.mark.parametrize("key", [[], ()])
+@pytest.mark.parametrize("cross", [None, False, True])
+@pytest.mark.parametrize("nested", [False, True])
+def test_empty_partition_key_error_contract_rust(query, key, cross, nested):
+    from azure.cosmos.exceptions import CosmosHttpResponseError
+
+    options = (
+        {"request_options": {"partitionKey": key, "enableCrossPartitionQuery": cross}}
+        if nested else {"partition_key": key, "enable_cross_partition_query": cross}
+    )
+    if cross is True:
+        query.collect(query.proxy.query_items("SELECT * FROM c", **options))
+        assert query.calls
+        assert all(prepared.partition_key.kind == "cross_partition" for prepared, _, _ in query.calls)
+    else:
+        with pytest.raises(CosmosHttpResponseError) as caught:
+            query.proxy.query_items("SELECT * FROM c", **options)
+        assert caught.value.status_code == 400
+        assert caught.value.message == (
+            "Status code: 400\n"
+            "Cross partition query is required but disabled. Please set "
+            "x-ms-documentdb-query-enablecrosspartition to true, specify "
+            "x-ms-documentdb-partitionkey, or revise your query to avoid this exception."
+        )
+        assert not query.calls
+    query.connection.QueryItems.assert_not_called()
+
+
+@pytest.mark.parametrize("key", ["customer-501", [], [None]])
+def test_exclusive_scope_error_contract_rust(query, key):
+    with pytest.raises(ValueError) as caught:
+        query.proxy.query_items(
+            "SELECT * FROM c", partition_key=key,
+            feed_range={"Range": {"min": "", "max": "FF"}},
+        )
+    assert str(caught.value) == (
+        "'feed_range' and 'partition_key' are exclusive parameters, please only set one of them."
+    )
     assert not query.calls
     query.connection.QueryItems.assert_not_called()
 

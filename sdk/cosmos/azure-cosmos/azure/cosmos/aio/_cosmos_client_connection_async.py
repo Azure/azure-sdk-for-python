@@ -115,7 +115,6 @@ from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
 from .._routing.aio.routing_map_provider import SmartRoutingMapProvider
-from ._inference_service_async import _InferenceService
 from ._retry_utility_async import _ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
@@ -302,8 +301,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if not _defer_pipeline:
             _ = self.pipeline_client
 
-        self._inference_service: Optional[_InferenceService] = None
-
         self._setup_kwargs: dict[str, Any] = kwargs
         self._setup_complete = False
         self._setup_lock = asyncio.Lock()
@@ -351,19 +348,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.__container_properties_cache[properties["_rid"]] = properties
         else:
             self.__container_properties_cache[container_link] = {}
-
-    def _get_inference_service(self) -> Optional[_InferenceService]:
-        """Get async inference service instance, lazily initializing on first access."""
-        if self._inference_service is None and self.aad_credentials:
-            try:
-                self._inference_service = _InferenceService(self)
-            except ValueError as e:
-                raise exceptions.CosmosHttpResponseError(
-                    message=f"Failed to initialize inference service: {e}",
-                    response=None,
-                    status_code=http_constants.StatusCodes.BAD_REQUEST
-                ) from e
-        return self._inference_service
 
     @property
     def _Session(self) -> Optional[_session.Session]:

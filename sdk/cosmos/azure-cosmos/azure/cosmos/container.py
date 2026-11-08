@@ -78,9 +78,12 @@ from .partition_key import (_build_partition_key_from_properties, PartitionKeyTy
 from ._backend.capabilities import prepare_operation_kwargs
 
 if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
     from ._backend.cosmos_backend import CosmosBackend
     from ._helpers._item_context import ItemClientContext
     from ._helpers._legacy_item_operations import LegacyItemHelper
+    from ._inference_client import InferenceClient
+    from ._inference_service import _InferenceService
 
 __all__ = ("ContainerProxy",)
 
@@ -118,11 +121,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         properties: Optional[dict[str, Any]] = None,
         *,
         _item_context: "Optional[ItemClientContext[CosmosBackend]]" = None,
+        _inference_client: "Optional[InferenceClient[TokenCredential, _InferenceService]]" = None,
     ) -> None:
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
         self._item_context = _item_context
+        self._inference_client = _inference_client
         self._item_helper_cache: "Optional[tuple[ItemClientContext[CosmosBackend], ItemHelper]]" = None
         self.container_cache_lock = threading.Lock()
         if properties and client_connection is not None:
@@ -999,8 +1004,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         with the same query, parameters and scope. Complete partition-key
         queries return service continuation tokens unchanged; broader queries
         use driver continuation tokens, which cannot resume on legacy Python.
-        A positive ``continuation_token_limit`` requires a complete partition
-        key; for example, ``1`` requests at most 1,024 bytes from the service.
+        ``continuation_token_limit`` is forwarded to the service; for example,
+        ``1`` requests a 1,024-byte service token limit. It does not bound the
+        complete driver token for broader queries. The SDK does not truncate
+        tokens or reject them based on their returned size.
         The retired Python ``q1.`` token format is not accepted. Supported query
         shapes without driver snapshot support can still be fully enumerated,
         but accessing their page iterator's continuation token raises
@@ -1206,7 +1213,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
         """
 
-        inference_service = self.client_connection._get_inference_service()
+        inference_service = self._inference_client.get_service() if self._inference_client is not None else None
         if inference_service is None:
             raise CosmosHttpResponseError(
                 message="Semantic reranking requires AAD credentials (inference service not initialized).",

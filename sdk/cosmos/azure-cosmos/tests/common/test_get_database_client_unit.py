@@ -50,10 +50,12 @@ def client_and_proxy_type(request):
     client.client_connection = MagicMock()
     client.client_connection.url_connection = "https://example.invalid"
     client._item_context = ItemClientContext(MagicMock())
+    client._inference_client = MagicMock()
     yield client, proxy_type
 
     assert client.client_connection.mock_calls == []
     assert client._item_context.adapter.mock_calls == []
+    assert client._inference_client.mock_calls == []
 
 
 @pytest.mark.parametrize("mapping_type", [dict, UserDict, MappingProxyType])
@@ -146,6 +148,7 @@ def test_existing_proxy_creates_new_proxy_on_calling_client_rust(client_and_prox
     assert database.id == original.id
     assert database.client_connection is client.client_connection
     assert database._item_context is client._item_context
+    assert database._inference_client is client._inference_client
     assert database._properties is None
     assert original.client_connection is original_connection
     assert original._item_context is original_context
@@ -201,6 +204,8 @@ def test_calling_client_context_reaches_container_rust(client_and_proxy_type, in
     assert not inspect.isawaitable(container)
     assert database._item_context is client._item_context
     assert container._item_context is client._item_context
+    assert database._inference_client is client._inference_client
+    assert container._inference_client is client._inference_client
     assert container.client_connection is client.client_connection
 
 
