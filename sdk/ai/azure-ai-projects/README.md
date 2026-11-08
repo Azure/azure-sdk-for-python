@@ -201,6 +201,7 @@ The table below lists the operation groups supported by the client library, with
 Agent Insights samples use GA API `v1` without a client-wide preview opt-in.
 Set `FOUNDRY_PROJECT_ENDPOINT` to a project in a GA-enabled region and
 `FOUNDRY_MODEL_NAME` to a GPT deployment with generation 5 or later.
+The project identity needs model-deployment read, model-inference, and trace-content access.
 Only temporary external-agent creation sends `ExternalAgents=V1Preview`.
 
 ### Voice Agent realtime transport (preview)

@@ -22,7 +22,7 @@ DESCRIPTION:
     Use an existing project, connected Application Insights resource, and a
     GPT analysis-model deployment with generation 5 or later. Your identity
     needs agent/monitor management and telemetry query access. The project
-    identity needs model and trace-content access.
+    identity needs model-deployment read, model-inference, and trace-content access.
     Protected trace content also requires Privileged Monitoring Data Reader on
     the connected Application Insights resource for the project identity.
 
