@@ -36,6 +36,7 @@ These options are available for all perf tests:
 ### MonitorExporter Test options
 These options are available for all monitor exporter perf tests:
 - `--num-spans` Number of spans to be exported. Defaults to 10.
+- `--gen-ai-message-size` Length of the `gen_ai.input.messages` and `gen_ai.output.messages` attributes on each span (e.g. `4194304` for the 4 MiB limit, which requires setting `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES=gen_ai_input_output_limit_increase`). Defaults to 0 (attributes not set).
 
 ### T2 Tests
 The tests currently written for the T2 SDK:

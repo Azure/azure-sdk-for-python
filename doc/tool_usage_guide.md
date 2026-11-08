@@ -33,6 +33,9 @@ The following checks are available via the `azpysdk` entrypoint.
 |`optional`| Invokes 'optional' requirements for a given package. | `azpysdk optional .` |
 |`devtest`| Tests a package against dependencies installed from a dev index. | `azpysdk devtest .` |
 |`update_snippet`| Updates README code snippets from sample files. | `azpysdk update_snippet .` |
+|`mindependency`| Runs the test suite against the oldest published version of each declared Azure SDK dependency that satisfies the requirement range. | `azpysdk mindependency .` |
+|`latestdependency`| Runs the test suite against the latest published version of each declared Azure SDK dependency that satisfies the requirement range. | `azpysdk latestdependency .` |
+|`changelog`| Manages changelogs with Chronus (`add`, `verify`, `create`, `status` subcommands). | `azpysdk changelog add <package>` |
 
 ## Common arguments
 

@@ -1,6 +1,10 @@
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.3.1 (2026-10-23)
+
+### Bugs Fixed
+
+- WebSocket connections now reject HTTP redirects to prevent forwarding authentication headers to redirected endpoints.
 
 ### Other Changes
 

@@ -91,18 +91,31 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
-        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        the blob will be uploaded in chunks. Defaults to 4*1024*1024, or 4MB.
     :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
         algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
     :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
     :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
-        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 4*1024*1024, or 4MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this container.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided TokenCredential. Only supported with a TokenCredential;
+        ValueError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.blob.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
     .. admonition:: Example:
 
@@ -383,6 +396,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
+
+        When a container is deleted, a container with the same name can't be created
+        for at least 30 seconds.  The container might not be available for more than
+        30 seconds if the service is still processing the request.  While the container
+        is being deleted, attempts to create a container of the same name fail with
+        status code 409 (Conflict).  The service indicates that the container is being
+        deleted.  Operations on blobs within the container, including reads and writes,
+        may continue to succeed for up to 30 seconds after the delete request is
+        accepted.  After this period, all operations on the container and its blobs
+        fail with status code 404 (Not Found).
 
         :keyword lease:
             If specified, delete_container only succeeds if the
@@ -814,10 +837,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         :keyword response_format:
             The format used to return and parse the List Blobs response.
             Possible values are "auto", "xml", and "arrow".
-            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
-
-            .. note::
-                The use of "arrow" requires `nanoarrow` to be installed.
+            Choose "auto" to let the SDK choose the best algorithm, currently "arrow".
         :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
@@ -853,18 +873,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
 
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
-        response_format = kwargs.pop("response_format", "xml")
-        use_arrow = response_format == "arrow"
+        response_format = kwargs.pop("response_format", "auto")
+        use_arrow = response_format in ("auto", "arrow")
         if kwargs.get("end_before") is not None and not use_arrow:
             raise ValueError("'end_before' is only supported when using arrow response format.")
-        if use_arrow:
-            try:
-                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
-            except ImportError as e:
-                raise ValueError(
-                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
-                    "Please install nanoarrow and try again."
-                ) from e
 
         command = functools.partial(
             (
@@ -905,10 +917,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         :keyword response_format:
             The format used to return and parse the List Blobs response.
             Possible values are "auto", "xml", and "arrow".
-            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
-
-            .. note::
-                The use of "arrow" requires `nanoarrow` to be installed.
+            Choose "auto" to let the SDK choose the best algorithm, currently "arrow".
         :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
@@ -933,18 +942,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         name_starts_with = kwargs.pop("name_starts_with", None)
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
-        response_format = kwargs.pop("response_format", "xml")
-        use_arrow = response_format == "arrow"
+        response_format = kwargs.pop("response_format", "auto")
+        use_arrow = response_format in ("auto", "arrow")
         if kwargs.get("end_before") is not None and not use_arrow:
             raise ValueError("'end_before' is only supported when using arrow response format.")
-        if use_arrow:
-            try:
-                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
-            except ImportError as e:
-                raise ValueError(
-                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
-                    "Please install nanoarrow and try again."
-                ) from e
 
         # For listing only names we need to create a one-off generated client.
         client = self._build_generated_client()
@@ -1000,10 +1001,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         :keyword response_format:
             The format used to return and parse the List Blobs response.
             Possible values are "auto", "xml", and "arrow".
-            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
-
-            .. note::
-                The use of "arrow" requires `nanoarrow` to be installed.
+            Choose "auto" to let the SDK choose the best algorithm, currently "arrow".
         :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
@@ -1029,18 +1027,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
 
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
-        response_format = kwargs.pop("response_format", "xml")
-        use_arrow = response_format == "arrow"
+        response_format = kwargs.pop("response_format", "auto")
+        use_arrow = response_format in ("auto", "arrow")
         if kwargs.get("end_before") is not None and not use_arrow:
             raise ValueError("'end_before' is only supported when using arrow response format.")
         if use_arrow:
-            try:
-                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
-            except ImportError as e:
-                raise ValueError(
-                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
-                    "Please install nanoarrow and try again."
-                ) from e
             command = functools.partial(
                 self._client.container.list_blob_hierarchy_segment_apache_arrow,
                 delimiter=delimiter,
@@ -1192,7 +1183,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
         :keyword int max_concurrency:
             Maximum number of parallel connections to use when the blob size exceeds
-            64MB.
+            max_single_put_size.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.

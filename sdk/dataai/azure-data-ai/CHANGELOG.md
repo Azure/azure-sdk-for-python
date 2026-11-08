@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2026-10-30)
+
+### Features Added
+
+- General availability of the Azure Data AI semantic reranking client.
+
 ## 1.0.0b1 (2026-09-29)
 
 ### Features Added

@@ -2,22 +2,30 @@
 # Licensed under the MIT License.
 import getpass
 import logging
+import math
 import os
 import tempfile
 import time
 import sys
+import threading
+from contextlib import ExitStack
 from pathlib import Path
 from enum import Enum
-from typing import Dict, List, Optional, Any
+from threading import Lock
+from typing import Dict, FrozenSet, List, Optional, Any
 from urllib.parse import urlparse
 import psutil
+
+from opentelemetry.context import _SUPPRESS_INSTRUMENTATION_KEY, attach, detach, set_value
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     HttpLoggingPolicy,
+    HTTPPolicy,
     RedirectPolicy,
     RequestIdPolicy,
+    SansIOHTTPPolicy,
 )
 from azure.identity import ManagedIdentityCredential
 from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorClient
@@ -31,6 +39,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
+    _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
     _INVALID_STATUS_CODES,
     _REACHED_INGESTION_STATUS_CODES,
     _REDIRECT_STATUS_CODES,
@@ -43,6 +52,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
     _ONE_SETTINGS_FEATURE_LOCAL_STORAGE,
+    _SUPPORTED_EXPERIMENTAL_FEATURES,
     DropCode,
     _exception_categories,
 )
@@ -57,6 +67,7 @@ from azure.monitor.opentelemetry.exporter._configuration._utils import (
     evaluate_feature,
 )
 from azure.monitor.opentelemetry.exporter._utils import (
+    PeriodicTask,
     _get_auth_policy,
     _get_sha256_hash,
     _get_retry_delay_from_headers,
@@ -94,6 +105,19 @@ logger = logging.getLogger(__name__)
 _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
+_MAX_ROUTE_STORAGE_PARTITIONS = 64
+_MAX_CACHED_ROUTE_EXPORTERS = _MAX_ROUTE_STORAGE_PARTITIONS
+_ROUTING_REUSED_NAMED_POLICY_OPTIONS = (
+    "headers_policy",
+    "user_agent_policy",
+    "proxy_policy",
+    "custom_hook_policy",
+    "logging_policy",
+    "http_logging_policy",
+)
+
+_enabled_experimental_features: Optional[FrozenSet[str]] = None
+_experimental_features_lock = Lock()
 
 
 class ExportResult(Enum):
@@ -113,14 +137,44 @@ class BaseExporter:
         """Azure Monitor base exporter for OpenTelemetry.
 
         :keyword str api_version: The service API version used. Defaults to latest.
-        :keyword str connection_string: The connection string used for your Application Insights resource.
+        :keyword str connection_string: The connection string used for your Application Insights resource. Optional when multi-endpoint routing is enabled.
         :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
         :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
         :keyword int max_envelopes_per_second: Maximum number of telemetry envelopes sent per second. Acts as a client-side safety cap to prevent overloading shared ingestion infrastructure during telemetry bursts. Defaults to 10000. Set to 0 to disable rate limiting.
         :rtype: None
         """
-        parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
+        route: Optional[tuple[str, bool]] = kwargs.pop("_route", None)
+        connection_string_parser: Optional[ConnectionStringParser] = kwargs.pop("_connection_string_parser", None)
+        self._enable_multi_endpoint_routing = (
+            self._is_experimental_feature_enabled("multi_endpoint_routing")
+            and not self._is_stats_exporter()
+            and not self._is_customer_sdkstats_exporter()
+        )
+        if self._enable_multi_endpoint_routing and kwargs.get("pipeline") is not None:
+            raise ValueError(
+                "Custom pipelines are not supported with multi-endpoint routing. Pass a custom transport instead."
+            )
+        if self._enable_multi_endpoint_routing and kwargs.get("retry_policy") is not None:
+            raise ValueError(
+                "Custom retry policies are not supported with multi-endpoint routing. "
+                "Configure retries with retry options instead."
+            )
+        if self._enable_multi_endpoint_routing:
+            _validate_routing_policy_options(kwargs)
+        self._route = route
+        self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
+        self._route_lock = threading.RLock()
+        self._transmit_lock = threading.Lock()
+        self._routing_shutdown = False
+        self._route_retry_task: Optional[PeriodicTask] = None
+        self._route_options = kwargs.copy()
+        self._routes_share_http_state = any(kwargs.get(name) is not None for name in ("transport", "session"))
+        self._local_storage_enabled: Optional[bool] = None
+        parsed_connection_string = connection_string_parser or ConnectionStringParser(
+            kwargs.get("connection_string"), _allow_missing=self._enable_multi_endpoint_routing
+        )
+        self._connection_string_parser = parsed_connection_string
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         # We do not need to use entra Id if this is a sdkStats exporter
@@ -132,7 +186,7 @@ class BaseExporter:
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._connection_string = parsed_connection_string._connection_string
-        self._endpoint = parsed_connection_string.endpoint
+        self._endpoint = route[0].rstrip("/") if route is not None else parsed_connection_string.endpoint
         self._region = parsed_connection_string.region
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._aad_audience = parsed_connection_string.aad_audience
@@ -172,6 +226,7 @@ class BaseExporter:
         # specifies whether current exporter is used for collection of instrumentation metrics
         self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
         self._retry_after_delay_seconds: Optional[int] = None
+        self._route_retry_at = 0.0
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
@@ -215,9 +270,10 @@ class BaseExporter:
         # get_configuration_manager() returns None when the control plane is disabled via env var,
         # in which case OneSettings is skipped entirely and storage keeps its statically configured
         # state.
-        if not self._is_stats_exporter():
+        if not self._is_stats_exporter() and self._route is None:
             config_manager = get_configuration_manager()
             if config_manager:
+                is_hostless_routing = self._enable_multi_endpoint_routing and self._instrumentation_key is None
                 # Start the control-plane worker (idempotent) and describe this process to OneSettings
                 # so feature flags can be targeted (os/rp/attach/component/version/region/ikey).
                 config_manager.initialize(
@@ -226,8 +282,8 @@ class BaseExporter:
                     attach=_get_attach_type_name(),
                     component="ext",
                     version=ext_version,
-                    region=self._region,
-                    ikey=self._instrumentation_key,
+                    region="" if is_hostless_routing else self._region,
+                    ikey="" if is_hostless_routing else self._instrumentation_key,
                 )
                 # register_callback also replays any already-cached configuration to this callback,
                 # so a late-created exporter immediately honors an existing kill-switch. The replay is
@@ -256,6 +312,142 @@ class BaseExporter:
 
             # Collect customer sdkstats metrics
             collect_customer_sdkstats(self)
+
+    def _is_experimental_feature_enabled(self, feature_name: str) -> bool:
+        # Return whether the named experimental feature was explicitly enabled at startup.
+        return feature_name.strip().lower() in _get_experimental_features()
+
+    def _get_route_exporter(self, endpoint: str, is_aad: bool) -> tuple["BaseExporter", bool]:
+        # pylint: disable=protected-access
+        key = endpoint, is_aad
+        if key in self._route_exporters:
+            return self._route_exporters[key], False
+        if is_aad and self._credential is None:
+            raise ValueError("An AAD route requires an exporter credential.")
+        temporary = len(self._route_exporters) >= _MAX_CACHED_ROUTE_EXPORTERS
+        options = {
+            **self._route_options,
+            "connection_string": self._connection_string,
+            "credential": self._credential if is_aad else None,
+            "authentication_policy": None,
+            "max_envelopes_per_second": 0,
+        }
+        if temporary:
+            options["disable_offline_storage"] = True
+            if not self._disable_offline_storage:
+                logger.warning(
+                    "The %s cached route and offline storage partition limit has been reached. "
+                    "This destination will transmit with a short-lived client and without offline storage.",
+                    _MAX_CACHED_ROUTE_EXPORTERS,
+                )
+        elif not self._disable_offline_storage:
+            if self._storage_directory is None:
+                self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+            options["storage_directory"] = os.path.join(
+                os.path.abspath(self._storage_directory) + "-routes",
+                _get_sha256_hash(f"{endpoint}|{is_aad}"),
+            )
+        exporter = BaseExporter(_route=key, _connection_string_parser=self._connection_string_parser, **options)
+        exporter._rate_limiter = self._rate_limiter
+        if self._local_storage_enabled is False:
+            exporter._disable_local_storage()
+        if not temporary:
+            self._route_exporters[key] = exporter
+            if self._route_retry_task is None and exporter.storage and exporter.storage._enabled:
+                self._route_retry_task = PeriodicTask(
+                    interval=self._storage_maintenance_period,
+                    function=self._transmit_routes_from_storage,
+                    name="{} Routed Retry".format(self.__class__.__name__),
+                )
+                self._route_retry_task.daemon = True
+                self._route_retry_task.start()
+        return exporter, temporary
+
+    def _close_temporary_route_exporter(self, exporter: "BaseExporter") -> None:
+        if not any(self._route_options.get(name) is not None for name in ("transport", "session")):
+            exporter.client.close()
+
+    def _transmit_routes_from_storage(self) -> None:
+        # pylint: disable=protected-access,consider-using-with
+        # Do not wait on the lock: shutdown holds it while joining this worker.
+        if not self._route_lock.acquire(blocking=False):
+            return
+        try:
+            if self._routing_shutdown:
+                return
+            exporters = tuple(self._route_exporters.values())
+        finally:
+            self._route_lock.release()
+        token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
+        try:
+            for exporter in exporters:
+                with ExitStack() as locks:
+                    if self._routes_share_http_state:
+                        locks.enter_context(self._transmit_lock)
+                    locks.enter_context(exporter._transmit_lock)
+                    if self._routing_shutdown:
+                        return
+                    if not exporter.storage or exporter._route_retry_at > time.monotonic():
+                        continue
+                    try:
+                        exporter._transmit_from_storage()
+                    except Exception:  # pylint: disable=broad-except
+                        logger.exception("Exception occurred while retrying routed telemetry.")  # pylint: disable=C4769
+        finally:
+            detach(token)
+
+    def _transmit_routed(self, groups: Dict[tuple[str, bool], List[TelemetryItem]]) -> ExportResult:
+        # pylint: disable=protected-access
+        result = ExportResult.SUCCESS
+        routes = []
+        with self._route_lock:
+            if self._routing_shutdown:
+                logger.error("Cannot export routed telemetry after shutdown.")
+                return ExportResult.FAILED_NOT_RETRYABLE
+            for (endpoint, is_aad), envelopes in groups.items():
+                try:
+                    exporter, temporary = self._get_route_exporter(endpoint, is_aad)
+                    routes.append((exporter, envelopes, temporary))
+                except ValueError as error:
+                    logger.error("Cannot initialize a routed exporter: %s", error)
+                    result = ExportResult.FAILED_NOT_RETRYABLE
+        for exporter, envelopes, temporary in routes:
+            try:
+                with ExitStack() as locks:
+                    if temporary or self._routes_share_http_state:
+                        locks.enter_context(self._transmit_lock)
+                    locks.enter_context(exporter._transmit_lock)
+                    if self._routing_shutdown:
+                        logger.error("Cannot export routed telemetry after shutdown.")
+                        result = ExportResult.FAILED_NOT_RETRYABLE
+                        continue
+                    route_result = exporter._transmit(envelopes)
+                    exporter._handle_transmit_from_storage(envelopes, route_result)
+                    if route_result != ExportResult.SUCCESS:
+                        result = ExportResult.FAILED_NOT_RETRYABLE
+            finally:
+                if temporary:
+                    self._close_temporary_route_exporter(exporter)
+        return result
+
+    def _shutdown_route_exporters(self) -> None:
+        # pylint: disable=protected-access
+        with self._route_lock:
+            if self._routing_shutdown:
+                return
+            self._routing_shutdown = True
+            if self._route_retry_task is not None:
+                self._route_retry_task.cancel()
+                self._route_retry_task.join()
+            with ExitStack() as cleanup:
+                cleanup.enter_context(self._transmit_lock)
+                cleanup.callback(self.client.close)
+                for exporter in self._route_exporters.values():
+                    cleanup.enter_context(exporter._transmit_lock)
+                    cleanup.callback(exporter.client.close)
+                    if exporter.storage:
+                        cleanup.callback(exporter.storage.close)
+                self._route_exporters.clear()
 
     # Maximum number of blobs to drain from storage per invocation.
     # Prevents a retry storm when many blobs have accumulated during
@@ -322,6 +514,7 @@ class BaseExporter:
     # pylint: disable=too-many-statements
     # pylint: disable=too-many-locals
     def _transmit(self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False) -> ExportResult:
+        # pylint: disable=protected-access
         """
         Transmit the data envelopes to the ingestion service.
 
@@ -335,6 +528,12 @@ class BaseExporter:
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
         if len(envelopes) > 0:
+            if self._route is not None and self.storage and self.storage._enabled and self.storage._active:
+                remaining = self._route_retry_at - time.monotonic()
+                if remaining > 0:
+                    self._retry_after_delay_seconds = math.ceil(remaining)
+                    logger.debug("Deferring routed telemetry to offline storage during destination backoff.")
+                    return ExportResult.FAILED_RETRYABLE
             # Client-side rate limiting: cap send rate to protect shared ingestion infrastructure.
             # Stats exporters bypass rate limiting to ensure observability data is not lost.
             # Skip rate limiting on recursive calls (e.g. 307/308 redirects) to avoid
@@ -383,6 +582,7 @@ class BaseExporter:
             start_time = time.time()
             final_result = None
             retry_after_delay_seconds = None
+            resend_envelopes: List[TelemetryItem] = []
             try:
                 track_result = self.client.track(
                     envelopes,
@@ -414,7 +614,6 @@ class BaseExporter:
                         track_successful_items(envelopes)
                 else:  # 206
                     reach_ingestion = True
-                    resend_envelopes = []
                     for error in track_response.errors:
                         # Check for sampling rejection - these should not be retried
                         # because the server will always reject them based on sampling rules
@@ -523,11 +722,13 @@ class BaseExporter:
                             redirect_has_headers = False
                         if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
                             current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
-                            # Refuse cross-origin redirects so an attacker-controlled
-                            # `Location` header cannot cause the auth policy to attach
-                            # a freshly-signed Authorization header for a foreign host
-                            # on the recursive _transmit call.
-                            if not self._is_same_registered_domain(current_url.netloc, url.netloc):
+                            is_insecure_routed_redirect = self._route is not None and url.scheme.lower() != "https"
+                            is_cross_origin_redirect = not self._is_same_registered_domain(
+                                current_url.netloc, url.netloc
+                            )
+                            # Routed endpoints are HTTPS-only. Also refuse cross-origin
+                            # redirects so auth is never attached for a foreign host.
+                            if is_insecure_routed_redirect or is_cross_origin_redirect:
                                 if not self._is_stats_exporter():
                                     if self._should_collect_customer_sdkstats():
                                         track_dropped_items(
@@ -536,7 +737,8 @@ class BaseExporter:
                                             _exception_categories.CLIENT_EXCEPTION.value,
                                         )
                                     logger.error(
-                                        "Refusing cross-origin redirect to %s://%s.",
+                                        "Refusing %s redirect to %s://%s.",
+                                        "non-HTTPS routed" if is_insecure_routed_redirect else "cross-origin",
                                         url.scheme,
                                         url.netloc,
                                     )
@@ -548,6 +750,8 @@ class BaseExporter:
                                 )  # pylint: disable=W0212
                                 # Attempt to export again
                                 result = self._transmit(envelopes, _skip_rate_limit=True)
+                                if self._route is not None:
+                                    retry_after_delay_seconds = self._retry_after_delay_seconds
                         else:
                             if not self._is_stats_exporter():
                                 if self._should_collect_customer_sdkstats():
@@ -591,7 +795,7 @@ class BaseExporter:
                         # Track dropped items in customer sdkstats, non-retryable scenario
                         if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
                             track_dropped_items(envelopes, response_error.status_code)
-                        if _is_invalid_code(response_error.status_code):
+                        if _is_invalid_code(response_error.status_code) and self._route is None:
                             # Shutdown statsbeat on invalid code from customer endpoint
                             # Import here to avoid circular dependencies
                             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
@@ -675,6 +879,16 @@ class BaseExporter:
 
                 if final_result is None:
                     final_result = result
+                if self._route is not None:
+                    if final_result == ExportResult.FAILED_RETRYABLE or resend_envelopes:
+                        delay = (
+                            retry_after_delay_seconds
+                            if retry_after_delay_seconds is not None
+                            else self._storage_min_retry_interval
+                        )
+                        self._route_retry_at = max(self._route_retry_at, time.monotonic() + delay)
+                    elif final_result == ExportResult.SUCCESS:
+                        self._route_retry_at = 0.0
                 if final_result == ExportResult.FAILED_RETRYABLE:
                     self._retry_after_delay_seconds = retry_after_delay_seconds
                 else:
@@ -687,6 +901,7 @@ class BaseExporter:
 
     # OneSettings configuration-change callback: toggles local (offline) storage.
     def _local_storage_configuration_callback(self, settings: Dict[str, str]) -> None:
+        # pylint: disable=protected-access
         """Toggle local (offline) storage in response to a OneSettings configuration change.
 
         OneSettings acts as a remote kill-switch via the FEATURE_LOCAL_STORAGE feature flag:
@@ -704,12 +919,19 @@ class BaseExporter:
         # None means the flag is absent/invalid; leave the current storage state unchanged.
         if local_storage_enabled is None:
             return
-        if local_storage_enabled:
-            self._enable_local_storage()
-        else:
-            self._disable_local_storage()
+        with self._route_lock:
+            self._local_storage_enabled = local_storage_enabled
+            if local_storage_enabled:
+                self._enable_local_storage()
+            else:
+                self._disable_local_storage()
+            for exporter in self._route_exporters.values():
+                with exporter._transmit_lock:
+                    exporter._local_storage_configuration_callback(settings)
 
     def _enable_local_storage(self) -> None:
+        if self._route is None and self._instrumentation_key is None:
+            return
         # Construct the local file storage once (on first enable / exporter init), then keep the
         # instance for the exporter's lifetime. A remote re-enable just flips the toggle back on
         # rather than recreating storage or its maintenance thread.
@@ -718,6 +940,9 @@ class BaseExporter:
             return
         if self._storage_directory is None:
             self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+        storage_options: Dict[str, Any] = {}
+        if self._route is not None:
+            storage_options["capacity_path"] = os.path.dirname(self._storage_directory)
         self.storage = LocalFileStorage(  # pyright: ignore
             path=self._storage_directory,  # type: ignore
             max_size=self._storage_max_size,
@@ -725,6 +950,7 @@ class BaseExporter:
             retention_period=self._storage_retention_period,
             name="{} Storage".format(self.__class__.__name__),
             lease_period=self._storage_min_retry_interval,
+            **storage_options,
         )
 
     def _disable_local_storage(self) -> None:
@@ -737,7 +963,9 @@ class BaseExporter:
     # check to see whether its the case of stats collection
     def _should_collect_stats(self):
         return (
-            is_statsbeat_enabled()
+            self._route is None
+            and self._instrumentation_key is not None
+            and is_statsbeat_enabled()
             and not get_statsbeat_shutdown()
             and not self._is_stats_exporter()
             and not self._is_customer_sdkstats_exporter()
@@ -748,7 +976,9 @@ class BaseExporter:
     def _should_collect_customer_sdkstats(self):
         manager = get_customer_stats_manager()
         return (
-            manager.is_enabled
+            self._route is None
+            and self._instrumentation_key is not None
+            and manager.is_enabled
             and not manager.is_shutdown
             and not self._is_stats_exporter()
             and not self._is_customer_sdkstats_exporter()
@@ -903,6 +1133,32 @@ def _get_authentication_credential(
     return None
 
 
+def _validate_routing_policy_options(options: Dict[str, Any]) -> None:
+    for name in _ROUTING_REUSED_NAMED_POLICY_OPTIONS:
+        if isinstance(options.get(name), HTTPPolicy):
+            raise ValueError(
+                f"HTTPPolicy instances are not supported for {name} with multi-endpoint routing. "
+                "Use a SansIOHTTPPolicy instance instead."
+            )
+    for name in ("per_call_policies", "per_retry_policies"):
+        value = options.get(name)
+        if value is None or isinstance(value, SansIOHTTPPolicy):
+            continue
+        if isinstance(value, HTTPPolicy):
+            policies = (value,)
+        else:
+            try:
+                policies = tuple(value)
+            except TypeError:
+                continue
+            options[name] = policies
+        if any(isinstance(policy, HTTPPolicy) for policy in policies):
+            raise ValueError(
+                "HTTPPolicy instances in per_call_policies or per_retry_policies are not supported "
+                "with multi-endpoint routing. Use SansIOHTTPPolicy instances instead."
+            )
+
+
 def _get_storage_directory(instrumentation_key: str) -> str:
     """Return the deterministic local storage path for a given instrumentation key.
 
@@ -962,3 +1218,25 @@ def _get_storage_directory(instrumentation_key: str) -> str:
         _TEMPDIR_PREFIX + instrumentation_key,
     )
     return storage_directory
+
+
+def _get_experimental_features() -> FrozenSet[str]:
+    """Read and freeze the enabled features on the first internal lookup or exporter construction."""
+    global _enabled_experimental_features  # pylint: disable=global-statement
+    if _enabled_experimental_features is None:
+        with _experimental_features_lock:
+            if _enabled_experimental_features is None:
+                requested_features = frozenset(
+                    name.strip().lower()
+                    for name in os.environ.get(_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES, "").split(",")
+                    if name.strip()
+                )
+                unknown_features = requested_features - _SUPPORTED_EXPERIMENTAL_FEATURES
+                if unknown_features:
+                    logger.warning(
+                        "Ignoring unknown experimental features in %s: %s",
+                        _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
+                        ", ".join(sorted(unknown_features)),
+                    )
+                _enabled_experimental_features = requested_features & _SUPPORTED_EXPERIMENTAL_FEATURES
+    return _enabled_experimental_features

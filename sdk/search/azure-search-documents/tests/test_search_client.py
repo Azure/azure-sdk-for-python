@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+import base64
+import json
 from unittest import mock
 
 import pytest
@@ -14,12 +16,14 @@ from azure.core.paging import ItemPaged
 
 from azure.search.documents import (
     ApiVersion,
+    DEFAULT_VERSION,
     IndexDocumentsBatch,
     RequestEntityTooLargeError,
     SearchClient,
 )
-from azure.search.documents._operations._patch import SearchPageIterator
+from azure.search.documents._operations._patch import SearchPageIterator, _build_search_request
 from azure.search.documents.models import FacetResult, IndexingResult, SearchResult
+from azure.search.documents.models import QueryAnswerType, QueryCaptionType
 
 from _capabilities import require_capability
 
@@ -98,16 +102,128 @@ class TestSearchClientConstructor:
 
         assert client._config.api_version == ApiVersion.V2020_06_30
 
-    def test_api_version_enum_includes_2026_08_01_preview(self):
-        assert ApiVersion.V2026_08_01_PREVIEW == "2026-08-01-preview"
+    def test_constructor_defaults_to_2026_10_01_ga(self):
+        client = create_search_client()
 
-    def test_constructor_accepts_2026_08_01_preview_api_version_enum(self):
-        client = create_search_client(api_version=ApiVersion.V2026_08_01_PREVIEW)
+        assert DEFAULT_VERSION == ApiVersion.V2026_10_01
+        assert client._config.api_version == "2026-10-01"
 
-        assert client._config.api_version == "2026-08-01-preview"
+    def test_constructor_accepts_2026_10_01_api_version_enum(self):
+        client = create_search_client(api_version=ApiVersion.V2026_10_01)
+
+        assert client._config.api_version == "2026-10-01"
 
 
 class TestSearchRequestBuilding:
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_accepts_wire_shaped_vector_queries(self, send):
+        from azure.search.documents.models import VectorQueryKind, VectorizedQuery
+        from azure.search.documents.types import VectorizedQuery as VectorizedQueryInput
+
+        query: VectorizedQueryInput = {
+            "kind": VectorQueryKind.VECTOR,
+            "vector": [0.1, 0.2],
+            "k": 2,
+            "fields": "embedding",
+        }
+        send.return_value = create_search_documents_result()
+        with create_search_client() as client:
+            list(client.search(vector_queries=[query]))
+        request = send.call_args.kwargs["body"]
+        assert isinstance(request.vector_queries[0], VectorizedQuery)
+        assert request.as_dict()["vectorQueries"] == [query]
+
+    @pytest.mark.parametrize("as_enum", [False, True])
+    @pytest.mark.parametrize("count", [None, 3])
+    def test_search_semantic_options_use_wire_values_and_separators(self, as_enum, count):
+        request = _build_search_request(
+            query_answer=QueryAnswerType.EXTRACTIVE if as_enum else "extractive",
+            query_caption=QueryCaptionType.EXTRACTIVE if as_enum else "extractive",
+            query_answer_count=count,
+            query_answer_threshold=0.8,
+            query_caption_highlight_enabled=False,
+        )
+
+        expected = "extractive|threshold-0.8" if count is None else "extractive|count-3,threshold-0.8"
+        assert request.as_dict()["answers"] == expected
+        assert request.as_dict()["captions"] == "extractive|highlight-false"
+
+    @pytest.mark.parametrize("when", ["before", "during", "after"])
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_metadata_preserves_all_pages_without_repeated_requests(self, send, when):
+        first = create_search_documents_result({"HotelId": "1"}, {"HotelId": "2"})
+        first.count = 3
+        first.coverage = 95.0
+        first.answers = [mock.Mock(key="answer")]
+        first.facets = {"Category": [FacetResult({"count": 3})]}
+        first.next_link = SEARCH_ENDPOINT
+        first.next_page_parameters = _build_search_request(skip=2)
+        second = create_search_documents_result({"HotelId": "3"})
+        send.side_effect = [first, second]
+
+        def metadata(result):
+            assert result.get_count() == 3
+            assert result.get_coverage() == 95.0
+            assert result.get_answers() == first.answers
+            assert result.get_facets() == {"Category": [{"count": 3}]}
+
+        with create_search_client() as client:
+            results = client.search(include_total_count=True)
+            if when == "before":
+                metadata(results)
+                documents = list(results)
+            elif when == "during":
+                documents = [next(results)]
+                metadata(results)
+                documents.extend(results)
+            else:
+                documents = list(results)
+                metadata(results)
+
+        assert [document["HotelId"] for document in documents] == ["1", "2", "3"]
+        assert send.call_count == 2
+        assert send.call_args.kwargs["body"].skip == 2
+
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_serializes_more_like_this_in_request_body(self, mock_search_post):
+        mock_search_post.return_value = create_search_documents_result()
+        client = create_search_client()
+
+        next(client.search(more_like_this=DOCUMENT_KEY))
+
+        search_request = get_search_request(mock_search_post)
+        assert search_request.more_like_this == DOCUMENT_KEY
+        assert search_request.as_dict()["moreLikeThis"] == DOCUMENT_KEY
+        assert "more_like_this" not in mock_search_post.call_args.kwargs
+
+    @pytest.mark.parametrize("api_version", [ApiVersion.V2026_10_01, ApiVersion.V2025_09_01])
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_continuation_token_uses_configured_api_version(self, mock_search_post, api_version):
+        search_result = create_search_documents_result()
+        search_result.next_page_parameters = _build_search_request(search_text=SEARCH_TEXT, skip=1)
+        search_result.next_link = SEARCH_ENDPOINT
+        mock_search_post.return_value = search_result
+        client = create_search_client(api_version=api_version)
+        pages = client.search(search_text=SEARCH_TEXT).by_page()
+
+        list(next(pages))
+
+        token = json.loads(base64.b64decode(pages.continuation_token))
+        assert token["apiVersion"] == api_version.value
+        assert token["nextPageParameters"]["skip"] == 1
+
+    @pytest.mark.parametrize(
+        "keyword", ["query_language", "speller", "query_rewrites", "semantic_fields", "hybrid_search"]
+    )
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_rejects_preview_only_keywords_before_sending(self, mock_search_post, keyword):
+        client = create_search_client()
+
+        with pytest.raises(TypeError, match=keyword):
+            client.search(search_text=SEARCH_TEXT, **{keyword: None})
+
+        mock_search_post.assert_not_called()
+
     @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
     def test_search_returns_lazy_pager_and_builds_search_request(self, mock_search_post):
         mock_search_post.return_value = create_search_documents_result()
@@ -271,7 +387,7 @@ class TestSearchRequestBuilding:
         assert document["@search.document_debug_info"] is not None
 
     @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
-    def test_search_metadata_accessors_fetch_first_page_once_and_clear_continuation(self, mock_search_post):
+    def test_search_metadata_accessors_fetch_first_page_once_and_preserve_continuation(self, mock_search_post):
         search_result = create_search_documents_result()
         search_result.count = 12
         search_result.coverage = 98.5
@@ -289,7 +405,7 @@ class TestSearchRequestBuilding:
         assert result.get_coverage() == 98.5
         assert result.get_answers() == search_result.answers
         assert result.get_facets() == {"Category": [{"count": 4}]}
-        assert result._first_page_iterator_instance.continuation_token is None
+        assert result._first_page_iterator_instance.continuation_token == CONTINUATION_TOKEN
         mock_search_post.assert_called_once()
 
     @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
@@ -405,6 +521,28 @@ class TestSearchSuggestionRequests:
 
 
 class TestSearchDocumentIndexing:
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._index")
+    def test_index_documents_normalizes_mapping_and_preserves_error_map_on_split(self, send):
+        from azure.core.exceptions import ResourceNotFoundError
+
+        body = {"value": [{"@search.action": "upload", "HotelId": "1"}, {"@search.action": "upload", "HotelId": "2"}]}
+        first = create_indexing_result("1")
+        second = create_indexing_result("2")
+        send.side_effect = [
+            RequestEntityTooLargeError("too large"),
+            mock.Mock(results=[first]),
+            mock.Mock(results=[second]),
+        ]
+        error_map = {404: ResourceNotFoundError}
+        with create_search_client() as client:
+            assert client.index_documents(body, error_map=error_map) == [first, second]
+        assert [len(call.kwargs["batch"].actions) for call in send.call_args_list] == [2, 1, 1]
+        assert error_map == {404: ResourceNotFoundError}
+        for call in send.call_args_list:
+            assert call.kwargs["error_map"][404] is ResourceNotFoundError
+            assert call.kwargs["error_map"][413] is RequestEntityTooLargeError
+            assert all(action["HotelId"] in ("1", "2") for action in call.kwargs["batch"].actions)
+
     @pytest.mark.parametrize("method_name", DOCUMENT_METHODS)
     def test_document_action_helpers_create_batch_and_forward_options(self, method_name):
         documents = [

@@ -20,6 +20,7 @@ from ._lifecycle import AgentSessionContext
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_context import (
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     get_request_context,
     reset_request_context,
     set_request_context,
@@ -48,6 +49,7 @@ __all__ = [
     "StreamContent",
     "InboundRequestLoggingMiddleware",
     "FoundryAgentRequestContext",
+    "FoundryOriginalSubject",
     "RequestIdMiddleware",
     "build_server_version",
     "configure_observability",

@@ -62,6 +62,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection  # pylint: disable=no-name-in-module
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
+    RealtimeAudioFormatsAudioPcm,
     RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
     RealtimeServerEventInputAudioBufferSpeechStarted,
     RealtimeServerEventResponseAudioDelta,
@@ -71,8 +72,11 @@ from azure.ai.projects.models import (
     RealtimeServerEventSessionCreated,
     RealtimeServerEventError,
     VoiceAgentAudioConfig,
+    VoiceAgentAudioInputConfig,
     VoiceAgentAudioOutputConfig,
     VoiceAgentDefinition,
+    VoiceAgentInputTranscription,
+    VoiceAgentInputTranscriptionModel,
     VoiceModelType,
     VoiceOutputModality,
     VoiceType,
@@ -149,8 +153,7 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
         # Bounds capture backpressure to a single in-flight send (see start_capture).
         self._pending_send: "Optional[concurrent.futures.Future[None]]" = None
         self._dropped_frames = 0
-        # Only counts bytes actually handed to input_audio_buffer.append() -- frames dropped
-        # above due to backpressure are never sent, so they must not be counted here.
+        # Count only successfully sent payloads, not captured or queued frames.
         self._input_bytes = 0
 
         self._input_stream = None
@@ -175,10 +178,7 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
             if self._pending_send is not None and not self._pending_send.done():
                 self._dropped_frames += 1
                 return (None, pyaudio.paContinue)
-            self._input_bytes += len(in_data)
-            self._pending_send = asyncio.run_coroutine_threadsafe(
-                self._conn.input_audio_buffer.append(audio=in_data), self._loop
-            )
+            self._pending_send = asyncio.run_coroutine_threadsafe(self._append_input_audio(in_data), self._loop)
             return (None, pyaudio.paContinue)
 
         self._input_stream = self._audio.open(
@@ -189,6 +189,26 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
             frames_per_buffer=_CHUNK_SAMPLES,
             stream_callback=_capture_callback,
         )
+
+    async def _append_input_audio(self, pcm: bytes) -> None:
+        """Send a PCM payload and count it only after the send succeeds.
+
+        :param bytes pcm: The captured PCM16 audio payload.
+        """
+        await self._conn.input_audio_buffer.append(audio=pcm)
+        self._input_bytes += len(pcm)
+
+    async def stop_capture(self) -> None:
+        """Stop the microphone and finish the last queued send before reporting its size."""
+        if self._input_stream is not None:
+            self._input_stream.stop_stream()
+            self._input_stream.close()
+            self._input_stream = None
+        if self._pending_send is not None:
+            await asyncio.wrap_future(self._pending_send)
+            self._pending_send = None
+        if self._dropped_frames:
+            print(f"(dropped {self._dropped_frames} mic frame(s) while a send was still in flight)")
 
     # -- playback ------------------------------------------------------------
 
@@ -371,19 +391,22 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
             # Ctrl-C ends the session; read back whatever was persisted so far.
             print("\n(ending session...)")
         finally:
-            input_bytes = ap.input_bytes_sent
-            output_bytes = ap.output_bytes_received
-            print(f"(received {ap.seconds:.2f}s of reply audio this session)")
-            print(
-                f"Input audio (mic -> service): format=PCM16, sample_rate={_SAMPLE_RATE} Hz, channels=1, "
-                f"duration={ap.input_seconds:.2f}s, size={_format_size(input_bytes)}"
-            )
-            print(
-                f"Output audio (service -> speakers): format=PCM16, sample_rate={_SAMPLE_RATE} Hz, channels=1, "
-                f"duration={ap.seconds:.2f}s, size={_format_size(output_bytes)}"
-            )
-            print(f"Total audio transferred: size={_format_size(input_bytes + output_bytes)}")
-            ap.shutdown()
+            try:
+                await ap.stop_capture()
+            finally:
+                input_bytes = ap.input_bytes_sent
+                output_bytes = ap.output_bytes_received
+                print(f"(received {ap.seconds:.2f}s of reply audio this session)")
+                print(
+                    f"Input audio (mic -> service): format=PCM16, sample_rate={_SAMPLE_RATE} Hz, channels=1, "
+                    f"duration={ap.input_seconds:.2f}s, size={_format_size(input_bytes)}"
+                )
+                print(
+                    f"Output audio (service -> speakers): format=PCM16, sample_rate={_SAMPLE_RATE} Hz, channels=1, "
+                    f"duration={ap.seconds:.2f}s, size={_format_size(output_bytes)}"
+                )
+                print(f"Total audio transferred: size={_format_size(input_bytes + output_bytes)}")
+                ap.shutdown()
 
     return conversation_id
 
@@ -432,6 +455,10 @@ async def audio_conversation() -> None:
                 model=model,
                 instructions="You are a friendly voice assistant. Keep replies short and natural.",
                 audio=VoiceAgentAudioConfig(
+                    input=VoiceAgentAudioInputConfig(
+                        format=RealtimeAudioFormatsAudioPcm(rate=_SAMPLE_RATE),
+                        transcription=VoiceAgentInputTranscription(model=VoiceAgentInputTranscriptionModel.WHISPER1),
+                    ),
                     output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
                 ),
                 output_modalities=[VoiceOutputModality.AUDIO],

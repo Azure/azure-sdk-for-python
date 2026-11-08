@@ -7,6 +7,7 @@ import uuid
 import pytest
 
 from _split_test_utils import (
+    assert_change_feed_ids,
     assert_no_stage_failures,
     create_item,
     snapshot_split_routing_map,
@@ -149,10 +150,7 @@ class TestPartitionSplitScenariosAsync(unittest.IsolatedAsyncioTestCase):
                 await created_collection.create_item(body=document)
             query_iterable = created_collection.query_items_change_feed(continuation=continuation)
             actual_ids = [item['id'] async for item in query_iterable]
-            diagnostics.update(
-                expected_count=len(expected_ids), actual_count=len(actual_ids), ids_match=actual_ids == expected_ids
-            )
-            assert actual_ids == expected_ids
+            assert_change_feed_ids(actual_ids, expected_ids, diagnostics)
 
         with split_stage("logical_session_token_after", failures) as diagnostics:
             restore_routing_map()
@@ -265,6 +263,7 @@ class TestPartitionSplitScenariosAsync(unittest.IsolatedAsyncioTestCase):
             feed_ranges_and_session_tokens.append((curr_feed_range, session_token))
 
         return target_session_token, target_feed_range, previous_session_token
+
 
 if __name__ == '__main__':
     unittest.main()

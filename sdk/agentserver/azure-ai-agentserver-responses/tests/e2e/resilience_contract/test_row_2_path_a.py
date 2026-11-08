@@ -31,6 +31,7 @@ async def test_row_2_path_a(make_harness: Callable[..., CrashHarness], stream: b
     """Row 2 Path A: non-resilient+bg handler completes naturally within grace."""
     harness = make_harness(
         resilient_background=False,
+        steerable_conversations=True,
         handler_sleep_ms=50,
         shutdown_grace_seconds=LONG_GRACE_S,
     )
