@@ -92,12 +92,26 @@ struct QueryAdmissionPlan {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct QueryAggregateInfo {
-    #[serde(default)]
+    #[serde(default, deserialize_with = "query_plan_bool")]
     has_select_value: bool,
     #[serde(default)]
     aggregates: Vec<String>,
     #[serde(default)]
     group_by_expressions: Vec<String>,
+}
+
+fn query_plan_bool<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<bool, D::Error> {
+    // Gateway plans use booleans; native query-plan metadata uses 0/1.
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum Value {
+        Bool(bool),
+        Integer(i64),
+    }
+    Ok(match Value::deserialize(deserializer)? {
+        Value::Bool(value) => value,
+        Value::Integer(value) => value != 0,
+    })
 }
 
 impl QueryAdmissionPlan {
@@ -1419,6 +1433,9 @@ mod tests {
         ).unwrap();
         assert!(average.is_value_average());
         assert!(decode_query_admission_plan(
+            br#"{"queryInfo":{"hasSelectValue":1,"aggregates":["Average"],"groupByExpressions":[]}}"#,
+        ).unwrap().is_value_average());
+        assert!(decode_query_admission_plan(
             br#"{"queryInfo":{"hasSelectValue":true,"aggregates":["Avg"]}}"#,
         )
         .unwrap()
@@ -1426,6 +1443,7 @@ mod tests {
         for body in [
             br#"{"queryInfo":{"hasSelectValue":true,"aggregates":["Count"]}}"#.as_slice(),
             br#"{"queryInfo":{"hasSelectValue":false,"aggregates":["Average"]}}"#,
+            br#"{"queryInfo":{"hasSelectValue":0,"aggregates":["Average"]}}"#,
             br#"{"queryInfo":{"hasSelectValue":true,"aggregates":["Average","Sum"]}}"#,
             br#"{"queryInfo":{"hasSelectValue":true,"aggregates":["Average"],"groupByExpressions":["c.pk"]}}"#,
             br#"{"queryInfo":{"hasSelectValue":true,"aggregates":[]}}"#,

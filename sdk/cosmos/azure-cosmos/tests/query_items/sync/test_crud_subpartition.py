@@ -294,22 +294,37 @@ class TestSubpartitionCrud(unittest.TestCase):
 
         # Negative Test, prefix query should not work if no partition is given (empty list is given)
         try:
-            document_list = list(created_collection.query_items(query='Select * from c', partition_key=[]))
+            document_list = list(
+                created_collection.query_items(
+                    query="Select * from c", partition_key=[]
+                )
+            )
             self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
-            self.assertTrue("Cross partition query is required but disabled"
-                            in error.message)
+            self.assertTrue(
+                "Cross partition query is required but disabled" in error.message
+            )
 
         with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
-            list(created_collection.query_items(
-                query='Select * from c', partition_key=[], enable_cross_partition_query=False
-            ))
+            list(
+                created_collection.query_items(
+                    query="Select * from c",
+                    partition_key=[],
+                    enable_cross_partition_query=False,
+                )
+            )
         self.assertEqual(caught.exception.status_code, StatusCodes.BAD_REQUEST)
-        self.assertIn("Cross partition query is required but disabled", caught.exception.message)
-        document_list = list(created_collection.query_items(
-            query='Select * from c', partition_key=[], enable_cross_partition_query=True
-        ))
+        self.assertIn(
+            "Cross partition query is required but disabled", caught.exception.message
+        )
+        document_list = list(
+            created_collection.query_items(
+                query="Select * from c",
+                partition_key=[],
+                enable_cross_partition_query=True,
+            )
+        )
         self.assertEqual(len(document_list), len(document_definitions))
 
     def test_partitioned_collection_full_partition_key_pagination_resume_subpartition_rust(self):

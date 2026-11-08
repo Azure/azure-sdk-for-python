@@ -31,6 +31,7 @@ from .._backend._immutable import freeze_json
 from .._backend.operations import OP_QUERY_ITEMS
 from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosItemPaged
+from .._operation_deadline import remaining_timeout
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._routing.routing_range import Range
@@ -82,21 +83,35 @@ class QueryConfig(ReadAllConfig):
             kwargs.pop("parameters", None),
             operation="query_items",
         )
-        options = deepcopy(kwargs.pop("request_options", kwargs.pop("feed_options", {})) or {})
+        options = deepcopy(
+            kwargs.pop("request_options", kwargs.pop("feed_options", {})) or {}
+        )
         for public, internal in _QUERY_OPTIONS.items():
             if public in kwargs:
                 options[internal] = kwargs.pop(public)
-            if internal in options and options[internal] is not None and not isinstance(options[internal], bool):
+            if (
+                internal in options
+                and options[internal] is not None
+                and not isinstance(options[internal], bool)
+            ):
                 raise TypeError(f"{public} must be a bool or None.")
         key = kwargs.pop("partition_key", options.pop("partitionKey", None))
         feed = kwargs.pop("feed_range", None)
-        _utils.verify_exclusive_arguments(["feed_range", "partition_key"], feed_range=feed, partition_key=key)
-        empty_key = isinstance(key, Sequence) and not isinstance(key, (str, bytes, bytearray)) and not key
+        _utils.verify_exclusive_arguments(
+            ["feed_range", "partition_key"], feed_range=feed, partition_key=key
+        )
+        empty_key = (
+            isinstance(key, Sequence)
+            and not isinstance(key, (str, bytes, bytearray))
+            and not key
+        )
         partition = None
         if key is not None and not empty_key:
             components = partition_key_components(key)
             if len(components) > 3:
-                raise ValueError("Query partition keys support at most three components.")
+                raise ValueError(
+                    "Query partition keys support at most three components."
+                )
             partition = query_partition_key_components(components)
         interval = None
         if feed is not None:
@@ -106,14 +121,30 @@ class QueryConfig(ReadAllConfig):
                 or not isinstance(interval.get("max"), str)
                 or interval.get("isMinInclusive", True) is not True
             ):
-                raise ValueError("feed_range requires a nonempty min-inclusive, max-exclusive Range.")
-            if interval["min"] == interval["max"] and interval.get("isMaxInclusive", False) is True:
-                if any(char not in "0123456789abcdefABCDEF" for char in interval["min"]):
+                raise ValueError(
+                    "feed_range requires a nonempty min-inclusive, max-exclusive Range."
+                )
+            if (
+                interval["min"] == interval["max"]
+                and interval.get("isMaxInclusive", False) is True
+            ):
+                if any(
+                    char not in "0123456789abcdefABCDEF" for char in interval["min"]
+                ):
                     raise ValueError("feed_range point bounds must be hexadecimal.")
                 # The public range producer returns a closed point; reuse legacy normalization.
-                interval = Range(interval["min"], interval["max"], True, True).to_normalized_range().to_dict()
-            if interval["min"] >= interval["max"] or interval.get("isMaxInclusive", False) is not False:
-                raise ValueError("feed_range requires a nonempty min-inclusive, max-exclusive Range.")
+                interval = (
+                    Range(interval["min"], interval["max"], True, True)
+                    .to_normalized_range()
+                    .to_dict()
+                )
+            if (
+                interval["min"] >= interval["max"]
+                or interval.get("isMaxInclusive", False) is not False
+            ):
+                raise ValueError(
+                    "feed_range requires a nonempty min-inclusive, max-exclusive Range."
+                )
             interval = [interval["min"], interval["max"]]
         cross = kwargs.pop(
             "enable_cross_partition_query",
@@ -141,7 +172,9 @@ class QueryConfig(ReadAllConfig):
         )
         if limit is not None:
             if isinstance(limit, bool) or not isinstance(limit, int) or limit < 0:
-                raise ValueError("continuation_token_limit must be a nonnegative integer.")
+                raise ValueError(
+                    "continuation_token_limit must be a nonnegative integer."
+                )
             if limit:
                 options["responseContinuationTokenLimitInKb"] = limit
         scope = kwargs.pop("full_text_score_scope", options.pop("fullTextScoreScope", None))
@@ -161,12 +194,25 @@ class QueryConfig(ReadAllConfig):
                     strategy = {"threshold_ms": threshold}
             self.options["availabilityStrategy"] = _validate_request_hedging_strategy(strategy)
         initial = self.options.get("initialHeaders") or {}
+        # Like legacy, a raw page-size header applies only when max_item_count is unset.
+        raw_counts = [name for name in initial if name.lower() == "x-ms-max-item-count"]
+        if raw_counts:
+            raw_count = initial[raw_counts[-1]]
+            initial = {name: value for name, value in initial.items() if name not in raw_counts}
+            self.options["initialHeaders"] = initial
+            if self.options.get("maxItemCount") is None:
+                try:
+                    count = int(raw_count)
+                except (TypeError, ValueError) as error:
+                    raise ValueError("x-ms-max-item-count must be an integer.") from error
+                if count == 0 or count < -1:
+                    raise ValueError("x-ms-max-item-count must be a positive integer or -1.")
+                self.options["maxItemCount"] = count
         if any(
             name.lower()
             in {
                 "x-ms-start-epk",
                 "x-ms-end-epk",
-                "x-ms-max-item-count",
                 "x-ms-cosmos-supported-query-features",
                 "x-ms-cosmos-query-version",
                 "x-ms-documentdb-responsecontinuationtokenlimitinkb",
@@ -221,8 +267,9 @@ class QueryPageState(ReadAllPageState):
     """Track pending progress separately from the last delivered continuation token.
 
     A fetch may advance self.token through empty pages. Only accept() publishes
-    that progress as last_delivered_continuation_token after the response hook
-    succeeds. The feed cursor remains a separate binding object.
+    that progress as last_delivered_continuation_token after the response hooks
+    succeed. Each exposed response, including empty ones, notifies the hook
+    separately. The feed cursor remains a separate binding object.
     """
 
     config: QueryConfig
@@ -232,6 +279,7 @@ class QueryPageState(ReadAllPageState):
         super().__init__(config, headers, token)
         self.more = True
         self.resumable = True
+        self.response_pending = False
         self.last_delivered_continuation_token = token
 
     def capture(self, headers: Any, body: Any) -> None:
@@ -246,8 +294,10 @@ class QueryPageState(ReadAllPageState):
             if headers.get(name) is not None:
                 headers[name] = decode(headers[name])
         super().capture(headers, body)
+        self.response_pending = True
 
     def parse(self, page: BackendPage) -> list[Any]:
+        self.response_pending = False
         if page.has_more is None:
             raise RuntimeError("Rust query page omitted retained cursor progress.")
         self.more = page.has_more
@@ -264,11 +314,21 @@ class QueryPageState(ReadAllPageState):
         return not self.more
 
     def accept(self, rows: list[Any], deadline: Optional[float]) -> list[Any]:
-        self.finish(rows, deadline)
+        self.finish(rows, deadline, notify_hook=False)
         self.last_delivered_continuation_token = self.token
         if self.config.response_state is not None and self.responses:
             self.config.response_state.last_response_headers = deepcopy(self.headers)
         return rows
+
+    def finish_response(
+        self, rows: list[Any], previous: Optional[str], deadline: Optional[float]
+    ) -> Optional[list[Any]]:
+        deliver = self.should_deliver(rows, previous)
+        remaining_timeout(deadline)
+        if self.response_pending:
+            self.notify_response(self.captured, self.envelope)
+            self.response_pending = False
+        return self.accept(rows, deadline) if deliver else None
 
     def invalidate(self, error: BaseException) -> None:
         if isinstance(error, AzureError) and not error.continuation_token:
@@ -313,7 +373,7 @@ def _fetch_rust_page(
     finally:
         pages.close()
     rows = state.parse(page)
-    return state.accept(rows, deadline) if state.should_deliver(rows, previous) else None
+    return state.finish_response(rows, previous, deadline)
 
 
 class QueryPageIterator(Iterator[Iterator[Any]]):

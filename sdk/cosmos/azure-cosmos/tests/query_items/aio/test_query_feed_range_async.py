@@ -305,7 +305,9 @@ class TestQueryFeedRangeAsyncRust:
         await add_all_pk_values_to_set_async(items, actual_pk_values)
         assert expected_pk_values.issubset(actual_pk_values)
 
-    async def test_query_with_avg_aggregate_across_full_feed_range_raises_async_rust(self):
+    async def test_query_with_avg_aggregate_across_full_feed_range_raises_async_rust(
+        self,
+    ):
         """AVG over a feed_range spanning multiple partitions must raise."""
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_feed_range_async.py::TestQueryFeedRangeAsync.test_query_with_avg_aggregate_across_full_feed_range_raises_async
@@ -325,11 +327,14 @@ class TestQueryFeedRangeAsyncRust:
         feed_range = test_config.create_feed_range_in_dict(full_range)
 
         with pytest.raises(ValueError) as excinfo:
-            _ = [item async for item in container.query_items(
-                query=query,
-                feed_range=feed_range,
-                parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
-            )]
+            _ = [
+                item
+                async for item in container.query_items(
+                    query=query,
+                    feed_range=feed_range,
+                    parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+                )
+            ]
 
         message = str(excinfo.value)
         assert "Unsupported query shape for range-scoped pagination" in message
@@ -339,10 +344,14 @@ class TestQueryFeedRangeAsyncRust:
             "SELECT VALUE AVG(...) cannot be merged client-side when the query "
             "scope spans multiple physical partitions."
         )
-        assert [item async for item in container.query_items(
-            query=query, partition_key=PK_VALUES[0],
-            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
-        )] == [100]
+        assert [
+            item
+            async for item in container.query_items(
+                query=query,
+                partition_key=PK_VALUES[0],
+                parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+            )
+        ] == [100]
 
     async def test_query_value_numeric_field_across_full_feed_range_returns_list_async_rust(self):
         """Numeric VALUE projections should return one row per document, not a sum."""
@@ -757,10 +766,11 @@ class TestQueryFeedRangeAsyncRust:
     async def test_query_with_static_continuation_async_rust(self):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_feed_range_async.py::TestQueryFeedRangeAsync.test_query_with_static_continuation_async
-        # Known gap 30 item 12: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
+        # Known gap 30 item 7: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-feed-range-continuation
+        # The legacy original passes without checking anything: its made-up token returns no pages.
         pytest.skip(
-            "driver-gap: Rust sends the static continuation keyword on a feed-range query and the service "
-            "rejects it with 400/20116; legacy ignores it (known gap 30 item 12, "
+            "driver-gap: on a feed-range query the Rust driver rejects a service continuation token "
+            "with 400/20116, while legacy resumes from it (known gap 30 item 7, "
             "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-feed-range-continuation)."
         )
         container = self.get_container(SINGLE_PARTITION_CONTAINER_ID)

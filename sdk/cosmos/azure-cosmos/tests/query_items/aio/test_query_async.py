@@ -166,7 +166,15 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.database.delete_container(container_id)
 
     @pytest.mark.cosmosEmulator
-    @pytest.mark.skip(reason="environment-gap: Emulator does not support query advisor yet")
+    # Known gap 36: query advice is dropped by the driver's response headers on both transports (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header).
+    @pytest.mark.skip(
+        reason=(
+            "driver-gap: the x-ms-cosmos-query-advice response header never reaches Python, with "
+            "Gateway V2 on or off (known gap 36, "
+            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header). "
+            "The original skip cites the emulator; the legacy test passes on a live account."
+        )
+    )
     async def test_populate_query_advice_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_populate_query_advice_async
         container_id = self._container_id

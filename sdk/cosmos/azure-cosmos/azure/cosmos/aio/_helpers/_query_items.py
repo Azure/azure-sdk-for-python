@@ -47,7 +47,7 @@ async def _fetch_rust_page(
         return state.parse(page)
 
     rows = await run_with_deadline(fetch_one, deadline)
-    return state.accept(rows, deadline) if state.should_deliver(rows, previous) else None
+    return state.finish_response(rows, previous, deadline)
 
 
 class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
@@ -79,7 +79,7 @@ class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
 
         Empty pages share the same deadline. The shared state checks has_more
         and token progress; this method does not infer completion from a missing
-        token alone. state.accept() runs the response hook before publishing
+        token alone. Each exposed response notifies the hook before publishing
         the last delivered continuation token.
         """
         state = self.state

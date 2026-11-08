@@ -139,7 +139,15 @@ class TestQuery(unittest.TestCase):
         self.database.delete_container(created_collection.id)
 
     @pytest.mark.cosmosEmulator
-    @pytest.mark.skip(reason="environment-gap: Emulator does not support query advisor yet")
+    # Known gap 36: query advice is dropped by the driver's response headers on both transports (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header).
+    @pytest.mark.skip(
+        reason=(
+            "driver-gap: the x-ms-cosmos-query-advice response header never reaches Python, with "
+            "Gateway V2 on or off (known gap 36, "
+            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header). "
+            "The original skip cites the emulator; the legacy test passes on a live account."
+        )
+    )
     def test_populate_query_advice_rust(self):
         # Source: tests/test_query.py::TestQuery.test_populate_query_advice
         created_collection = self.container

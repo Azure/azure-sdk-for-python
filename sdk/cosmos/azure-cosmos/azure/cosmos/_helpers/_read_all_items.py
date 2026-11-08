@@ -256,11 +256,23 @@ class ReadAllPageState:
             self.captured["x-ms-continuation"] = self.token
         return rows
 
+    def notify_response(self, headers: Mapping[str, Any], body: Mapping[str, Any]) -> None:
+        hook = self.config.hook
+        if hook is not None:
+            try:
+                hook(
+                    CaseInsensitiveDict(deepcopy(headers)),
+                    CosmosDict(deepcopy(body), response_headers=CaseInsensitiveDict(deepcopy(headers))),
+                )
+            except (StopIteration, StopAsyncIteration) as error:
+                raise RuntimeError(
+                    f"{self.config.operation} response_hook raised an iteration-stop exception."
+                ) from error
+
     def finish(
-        self, rows: list[dict[str, Any]], deadline: Optional[float]
+        self, rows: list[dict[str, Any]], deadline: Optional[float], *, notify_hook: bool = True
     ) -> tuple[Optional[str], list[dict[str, Any]]]:
         remaining_timeout(deadline)
-        hook = self.config.hook
         headers = CaseInsensitiveDict(self.accumulated.headers if self.responses else self.headers)
         if self.responses and not self.has_charge:
             headers.pop("x-ms-request-charge", None)
@@ -268,20 +280,12 @@ class ReadAllPageState:
             headers.pop("x-ms-continuation", None)
         else:
             headers["x-ms-continuation"] = self.token
-        if hook is not None and self.responses:
-            body = deepcopy(self.envelope)
-            body["Documents"] = deepcopy(rows)
+        if notify_hook and self.responses:
+            body = dict(self.envelope)
+            body["Documents"] = rows
             if "_count" in body:
                 body["_count"] = len(rows)
-            try:
-                hook(
-                    CaseInsensitiveDict(headers),
-                    CosmosDict(body, response_headers=CaseInsensitiveDict(headers)),
-                )
-            except (StopIteration, StopAsyncIteration) as error:
-                raise RuntimeError(
-                    f"{self.config.operation} response_hook raised an iteration-stop exception."
-                ) from error
+            self.notify_response(headers, body)
         self.headers.clear()
         self.headers.update(headers)
         self.done = self.is_done()

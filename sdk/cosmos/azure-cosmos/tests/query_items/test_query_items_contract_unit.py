@@ -776,7 +776,9 @@ def test_query_body_scope_options_and_client_defaults_are_preserved_rust(query):
         ({"continuation": "cf1.feed"}, ValueError),
     ],
 )
-def test_invalid_or_unsupported_arguments_fail_without_dispatch_rust(query, kwargs, error):
+def test_invalid_or_unsupported_arguments_fail_without_dispatch_rust(
+    query, kwargs, error
+):
     """Bad or unsupported arguments fail at the call, before anything is sent.
 
     ``ValueError`` covers right-typed but unusable values: an empty or missing
@@ -804,6 +806,36 @@ def test_invalid_or_unsupported_arguments_fail_without_dispatch_rust(query, kwar
     query.connection.QueryItems.assert_not_called()
 
 
+@pytest.mark.parametrize(
+    "kwargs,expected",
+    [
+        ({"initial_headers": {"X-MS-MAX-ITEM-COUNT": "1"}}, 1),
+        ({"initial_headers": {"x-ms-max-item-count": "-1"}}, -1),
+        ({"initial_headers": {"x-ms-max-item-count": "1"}, "max_item_count": 3}, 3),
+    ],
+)
+def test_raw_page_size_header_becomes_typed_page_size_rust(query, kwargs, expected):
+    """A raw ``x-ms-max-item-count`` header sets the page size, as on legacy.
+
+    The page size travels as the typed setting, so the driver sees one value.
+    When ``max_item_count`` is also given, it wins, matching legacy.
+    """
+    headers = dict(kwargs["initial_headers"])
+    query.collect(query.proxy.query_items("SELECT * FROM c", **kwargs))
+    prepared = query.calls[0][0]
+    assert prepared.settings.query.max_item_count == expected
+    wire = {name.lower(): value for name, value in wire_headers(prepared).items()}
+    assert wire["x-ms-max-item-count"] == str(expected)
+    assert kwargs["initial_headers"] == headers
+
+
+@pytest.mark.parametrize("count", ["", "two", "2.5", "0", "-2"])
+def test_invalid_raw_page_size_header_fails_without_dispatch_rust(query, count):
+    with pytest.raises(ValueError, match="x-ms-max-item-count"):
+        query.proxy.query_items("SELECT * FROM c", initial_headers={"x-ms-max-item-count": count})
+    assert not query.calls
+
+
 @pytest.mark.parametrize("key", [[], ()])
 @pytest.mark.parametrize("cross", [None, False, True])
 @pytest.mark.parametrize("nested", [False, True])
@@ -812,12 +844,16 @@ def test_empty_partition_key_error_contract_rust(query, key, cross, nested):
 
     options = (
         {"request_options": {"partitionKey": key, "enableCrossPartitionQuery": cross}}
-        if nested else {"partition_key": key, "enable_cross_partition_query": cross}
+        if nested
+        else {"partition_key": key, "enable_cross_partition_query": cross}
     )
     if cross is True:
         query.collect(query.proxy.query_items("SELECT * FROM c", **options))
         assert query.calls
-        assert all(prepared.partition_key.kind == "cross_partition" for prepared, _, _ in query.calls)
+        assert all(
+            prepared.partition_key.kind == "cross_partition"
+            for prepared, _, _ in query.calls
+        )
     else:
         with pytest.raises(CosmosHttpResponseError) as caught:
             query.proxy.query_items("SELECT * FROM c", **options)
@@ -836,7 +872,8 @@ def test_empty_partition_key_error_contract_rust(query, key, cross, nested):
 def test_exclusive_scope_error_contract_rust(query, key):
     with pytest.raises(ValueError) as caught:
         query.proxy.query_items(
-            "SELECT * FROM c", partition_key=key,
+            "SELECT * FROM c",
+            partition_key=key,
             feed_range={"Range": {"min": "", "max": "FF"}},
         )
     assert str(caught.value) == (
@@ -851,11 +888,11 @@ def test_empty_pages_share_deadline_and_preserve_hook_accounting_rust(query):
 
     The first page is empty, so it is skipped internally -- but it still cost
     time and money. The second fetch gets the remaining 0.7 seconds rather
-    than a fresh second, and the hook reports a total charge of 4 covering
-    both fetches.
+    than a fresh second. Each response notifies the hook with its own charge;
+    the public page headers still report the combined charge.
 
-    The hook is falsey and must still be called, once, for the one page the
-    caller actually sees. Its attempts to rewrite the continuation header and
+    The hook is falsey and must still be called for both responses. Its
+    attempts to rewrite the continuation header and
     clear the rows have no effect: the item is returned and the token is a
     unchanged driver token. An unrecognised header survives untouched.
     """
@@ -868,17 +905,63 @@ def test_empty_pages_share_deadline_and_preserve_hook_accounting_rust(query):
             return False
 
         def __call__(self, headers, body):
-            calls.append((dict(headers), dict(body)))
+            calls.append((deepcopy(dict(headers)), deepcopy(dict(body))))
             headers["x-ms-continuation"] = "corrupt"
             body["Documents"].clear()
 
     pager = query.proxy.query_items("SELECT * FROM c", timeout=1, response_hook=Hook())
     assert query.collect(pager) == [{"id": "a"}]
-    assert len(calls) == 1
-    assert calls[0][0]["x-ms-request-charge"] == "4.0"
-    assert calls[0][0]["x-custom"] == "preserved"
-    assert calls[0][0]["x-ms-continuation"] == "c1.2"
+    assert len(calls) == 2
+    assert [float(headers["x-ms-request-charge"]) for headers, _ in calls] == [2, 2]
+    assert all(headers["x-custom"] == "preserved" for headers, _ in calls)
+    assert [headers["x-ms-continuation"] for headers, _ in calls] == ["c1.1", "c1.2"]
+    assert [body["Documents"] for _, body in calls] == [[], [{"id": "a"}]]
+    assert float(pager.get_response_headers()["x-ms-request-charge"]) == 4
+    assert "x-ms-continuation" not in pager.get_response_headers()
     assert query.calls[1][2] == pytest.approx(0.7)
+
+
+@pytest.mark.parametrize("resumable", [False, True])
+@pytest.mark.parametrize("rows", [[[], [], None], [[], [7, None, ["value"]], [], None]])
+def test_each_exposed_query_response_notifies_hook_without_terminal_callback_rust(query, resumable, rows):
+    query.pages = rows
+    query.resumable = resumable
+    calls = []
+    pager = query.proxy.query_items(
+        "SELECT VALUE c.result FROM c",
+        response_hook=lambda headers, body: calls.append((dict(headers), deepcopy(dict(body)))),
+    )
+    assert query.collect(pager) == [item for page in rows if page is not None for item in page]
+    assert [body["Documents"] for _, body in calls] == rows[:-1]
+    assert [float(headers["x-ms-request-charge"]) for headers, _ in calls] == [2] * (len(rows) - 1)
+    assert len(query.calls) == len(rows)
+    query.connection.QueryItems.assert_not_called()
+
+
+@pytest.mark.parametrize("failure_call", [2, 3])
+@pytest.mark.parametrize("error_type", [ValueError, StopIteration, StopAsyncIteration])
+def test_empty_response_hook_failure_preserves_delivered_bookmark_rust(query, failure_call, error_type):
+    query.pages = [[{"id": "previous"}], [], [{"id": "next"}], None]
+    calls = []
+
+    def hook(headers, body):
+        calls.append(deepcopy(body["Documents"]))
+        if len(calls) == failure_call:
+            raise error_type("hook failed")
+
+    pages = query.proxy.query_items("SELECT * FROM c", response_hook=hook).by_page()
+    assert query.next_page(pages) == [{"id": "previous"}]
+    bookmark = pages.continuation_token
+    expected_error = ValueError if error_type is ValueError else RuntimeError
+    with pytest.raises(expected_error, match="hook"):
+        query.next_page(pages)
+    assert pages.continuation_token == bookmark == "c1.1"
+    assert calls[1] == []
+    assert len(query.calls) == failure_call
+    with pytest.raises(RuntimeError, match="failed"):
+        query.next_page(pages)
+    assert len(query.calls) == failure_call
+    query.connection.QueryItems.assert_not_called()
 
 
 def test_errors_do_not_replay_and_keep_last_delivered_bookmark_rust(query):

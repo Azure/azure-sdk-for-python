@@ -158,7 +158,15 @@ class TestCrossPartitionQuery(unittest.TestCase):
             for idx in candidate_indexes
         ))
 
-    @pytest.mark.skip(reason="environment-gap: Emulator does not support query advisor yet")
+    # Known gap 36: query advice is dropped by the driver's response headers on both transports (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header).
+    @pytest.mark.skip(
+        reason=(
+            "driver-gap: the x-ms-cosmos-query-advice response header never reaches Python, with "
+            "Gateway V2 on or off (known gap 36, "
+            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header). "
+            "The original skip cites the emulator; the legacy test passes on a live account."
+        )
+    )
     def test_populate_query_advice_rust(self):
         # Source: tests/test_query_cross_partition.py::TestCrossPartitionQuery.test_populate_query_advice
         doc_id = 'MyId' + str(uuid.uuid4())
@@ -436,12 +444,6 @@ class TestCrossPartitionQuery(unittest.TestCase):
 
     def test_cross_partition_query_response_hook_rust(self):
         # Source: tests/test_query_cross_partition.py::TestCrossPartitionQuery.test_cross_partition_query_response_hook
-        # Known gap 30 item 13: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
-        pytest.skip(
-            "driver-gap: Rust calls response_hook once per merged cross-partition page, not once per "
-            "partition response as legacy does (known gap 30 item 13, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-cross-partition-hook-count)."
-        )
         created_collection_ref = self.key_db.create_container_if_not_exists(
             id="query_response_hook_test" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk"),

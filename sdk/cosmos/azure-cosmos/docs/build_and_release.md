@@ -2507,9 +2507,9 @@ that the required checks actually run against the right wheel and that their
 failures are visible. This note records the work for Central; it does not ask
 the SDK team to make more root or pipeline changes.
 
-Spelling fixes follow the same boundary. The package keeps its technical
+The package keeps its technical
 terms in `sdk/cosmos/azure-cosmos/cspell.json`, without changing the root
-dictionary. The draft `rust-tests.yml` and `toxiproxy-tests.yml` files still
-need spelling annotations for their tool names and command-line flags.
-Central should add those annotations when it takes over the pipeline changes;
-the package dictionary does not cover files outside the package.
+dictionary. The draft `rust-tests.yml` and `toxiproxy-tests.yml` files now
+contain file-local spelling annotations for their tool names and command-line
+flags. These comments do not change pipeline behavior. The package dictionary
+does not cover files outside the package.

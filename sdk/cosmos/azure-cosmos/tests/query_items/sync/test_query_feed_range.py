@@ -322,11 +322,13 @@ class TestQueryFeedRange:
         feed_range = test_config.create_feed_range_in_dict(full_range)
 
         with pytest.raises(ValueError) as excinfo:
-            list(container.query_items(
-                query=query,
-                feed_range=feed_range,
-                parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
-            ))
+            list(
+                container.query_items(
+                    query=query,
+                    feed_range=feed_range,
+                    parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+                )
+            )
 
         message = str(excinfo.value)
         assert "Unsupported query shape for range-scoped pagination" in message
@@ -336,10 +338,13 @@ class TestQueryFeedRange:
             "SELECT VALUE AVG(...) cannot be merged client-side when the query "
             "scope spans multiple physical partitions."
         )
-        assert list(container.query_items(
-            query=query, partition_key=PK_VALUES[0],
-            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
-        )) == [100]
+        assert list(
+            container.query_items(
+                query=query,
+                partition_key=PK_VALUES[0],
+                parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+            )
+        ) == [100]
 
     @pytest.mark.cosmosQuery
     @pytest.mark.cosmosAADSplit
@@ -722,10 +727,11 @@ class TestQueryFeedRange:
     @pytest.mark.cosmosAADSplit
     def test_query_with_static_continuation_rust(self, setup):
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_with_static_continuation
-        # Known gap 30 item 12: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
+        # Known gap 30 item 7: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-feed-range-continuation
+        # The legacy original passes without checking anything: its made-up token returns no pages.
         pytest.skip(
-            "driver-gap: Rust sends the static continuation keyword on a feed-range query and the service "
-            "rejects it with 400/20116; legacy ignores it (known gap 30 item 12, "
+            "driver-gap: on a feed-range query the Rust driver rejects a service continuation token "
+            "with 400/20116, while legacy resumes from it (known gap 30 item 7, "
             "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-feed-range-continuation)."
         )
         container = get_container(setup, SINGLE_PARTITION_CONTAINER_ID)

@@ -279,22 +279,36 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
 
         # Negative Test, prefix query should not work if no partition is given (empty list is given)
         try:
-            document_list = [document async for document in created_collection.query_items(query='Select * from c'
-                                                                                           , partition_key=[])]
+            document_list = [
+                document
+                async for document in created_collection.query_items(
+                    query="Select * from c", partition_key=[]
+                )
+            ]
             self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
             assert "Cross partition query is required but disabled" in error.message
 
         with pytest.raises(exceptions.CosmosHttpResponseError) as caught:
-            _ = [document async for document in created_collection.query_items(
-                query='Select * from c', partition_key=[], enable_cross_partition_query=False
-            )]
+            _ = [
+                document
+                async for document in created_collection.query_items(
+                    query="Select * from c",
+                    partition_key=[],
+                    enable_cross_partition_query=False,
+                )
+            ]
         assert caught.value.status_code == StatusCodes.BAD_REQUEST
         assert "Cross partition query is required but disabled" in caught.value.message
-        document_list = [document async for document in created_collection.query_items(
-            query='Select * from c', partition_key=[], enable_cross_partition_query=True
-        )]
+        document_list = [
+            document
+            async for document in created_collection.query_items(
+                query="Select * from c",
+                partition_key=[],
+                enable_cross_partition_query=True,
+            )
+        ]
         assert len(document_list) == len(document_definitions)
 
         await self.key_database.delete_container(created_collection_ref.id)

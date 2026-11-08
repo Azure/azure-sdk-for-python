@@ -169,13 +169,13 @@ def test_each_internal_fetch_owns_query_progress_and_final_hook(
     else:
         with pytest.raises(NotImplementedError, match="cannot bookmark"):
             _ = pages.continuation_token
-    assert [count for _, count in hooks] == [1, 3]
-    assert [float(headers["x-ms-request-charge"]) for headers, _ in hooks] == [2, 4]
+    assert [count for _, count in hooks] == [1, 2, 3]
+    assert [float(headers["x-ms-request-charge"]) for headers, _ in hooks] == [2, 2, 2]
     with trace.get_tracer("customer").start_as_current_span("exhaust") as consumer:
         with pytest.raises(StopAsyncIteration if f.async_mode else StopIteration):
             f.next_page(pages)
         parents.append(consumer.get_span_context().span_id)
-    assert len(h.calls) == 4 and len(hooks) == 2
+    assert len(h.calls) == 4 and len(hooks) == 3
     assert pages.state.done and pages.state.cursor is None
     with pytest.raises(StopAsyncIteration if f.async_mode else StopIteration):
         f.next_page(pages)
