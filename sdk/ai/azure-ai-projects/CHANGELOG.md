@@ -51,8 +51,6 @@ Breaking changes in beta classes:
 * Constructor argument `timestamp_type` on `VoiceAgentServerEventResponseAudioTimestampDelta` is now required; use `VoiceAgentAudioTimestampType.WORD`.
 * Constructor arguments `left` and `right` on `VoiceRecordingChannelLayout` are now required; use `VoiceAudioRole.USER` and `VoiceAudioRole.AGENT`, respectively.
 
-### Bugs Fixed
-
 ### Sample updates
 
 * Agent Insights samples use GA API `v1` without a client-wide preview opt-in and demonstrate analysis priorities, instructions, and plural status filters. Only temporary external-agent creation opts in to Preview.
