@@ -30,6 +30,7 @@ words:
   - iscontinuationexpected
   - isquery
   - llsn
+  - msrust
   - mycoll
   - mycontainer
   - mydb
@@ -38,6 +39,8 @@ words:
   - mytext
   - myval
   - noconftest
+  - noexplorer
+  - noui
   - opqrs
   - paas
   - perfdb
@@ -61,6 +64,9 @@ words:
   - testdb
   - toctou
   - Tohost
+  - Toxiproxy
+  - TOXIPROXY
+  - toxiproxy
   - ufffd
   - unconfigure
   - undoc
