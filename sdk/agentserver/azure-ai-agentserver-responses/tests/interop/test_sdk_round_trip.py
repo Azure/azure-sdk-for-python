@@ -18,6 +18,7 @@ When a test fails, FIX THE SERVICE — do not change the test.
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import pytest
@@ -26,6 +27,7 @@ from starlette.testclient import TestClient
 openai = pytest.importorskip("openai", reason="openai SDK required for round-trip tests")
 
 from openai.types.responses import (  # noqa: E402
+    Response,
     ResponseCodeInterpreterToolCall,
     ResponseFileSearchToolCall,
     ResponseFunctionToolCall,
@@ -43,6 +45,7 @@ from azure.ai.agentserver.responses import (  # noqa: E402
     ResponseEventStream,
     ResponsesAgentServerHost,
 )
+from azure.ai.agentserver.responses.streaming._sse import encode_sse_event  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -793,3 +796,90 @@ class TestStreamingRoundTrip:
         # Multiple output_item.added events (one per item)
         added_count = events_seen.count("response.output_item.added")
         assert added_count == 3, f"expected 3 output_item.added, got {added_count}"
+
+
+@pytest.mark.parametrize("terminal_status", ["completed", "failed", "incomplete"])
+@pytest.mark.parametrize("streaming", [False, True])
+@pytest.mark.parametrize("configured", [False, True])
+def test_strict_sdk_response_tool_configuration(terminal_status, streaming, configured):
+    configuration = (
+        {
+            "tools": [{"type": "function", "name": "lookup", "parameters": {}, "strict": False}],
+            "tool_choice": "none",
+        }
+        if configured
+        else {}
+    )
+
+    async def handler(request, context, cancellation_signal):
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
+        yield stream.emit_created()
+        yield stream.emit_in_progress()
+        if terminal_status == "failed":
+            yield stream.emit_failed()
+        elif terminal_status == "incomplete":
+            yield stream.emit_incomplete(reason="max_output_tokens")
+        else:
+            yield stream.emit_completed()
+
+    app = ResponsesAgentServerHost()
+    app.response_handler(handler)
+    with TestClient(app) as transport:
+        with openai.OpenAI(
+            api_key="test-key",
+            base_url="http://testserver",
+            http_client=transport,
+            _strict_response_validation=True,
+        ) as client:
+            result = client.responses.create(model="test", input="hello", stream=streaming, **configuration)
+            if streaming:
+                with result:
+                    events = list(result)
+                assert [event.type for event in events] == [
+                    "response.created",
+                    "response.in_progress",
+                    f"response.{terminal_status}",
+                ]
+                responses = [event.response for event in events]
+            else:
+                responses = [result]
+
+            for response in responses:
+                validated = Response.model_validate(response.model_dump(mode="json"), strict=True)
+                assert validated.model == "test"
+                tool_definitions = [tool.model_dump(exclude_none=True) for tool in validated.tools]
+                assert tool_definitions == configuration.get("tools", [])
+                assert validated.tool_choice == configuration.get("tool_choice", "auto")
+            assert responses[-1].status == terminal_status
+
+
+@pytest.mark.parametrize("terminal_status", ["completed", "failed", "incomplete"])
+@pytest.mark.parametrize("configured", [False, True])
+def test_strict_sdk_recovered_response_tool_configuration(terminal_status, configured):
+    seed = {
+        "id": "resp_recovered_tools",
+        "created_at": 1,
+        "status": "in_progress",
+        "model": "test",
+        "output": [],
+    }
+    if configured:
+        seed.update(
+            tools=[{"type": "function", "name": "lookup", "parameters": {}, "strict": False}],
+            tool_choice={"type": "function", "name": "lookup"},
+        )
+    stream = ResponseEventStream(response=seed)
+    events = [stream.emit_created(), stream.emit_in_progress()]
+    if terminal_status == "failed":
+        events.append(stream.emit_failed())
+    elif terminal_status == "incomplete":
+        events.append(stream.emit_incomplete(reason="max_output_tokens"))
+    else:
+        events.append(stream.emit_completed())
+
+    for event in events:
+        payload = json.loads(encode_sse_event(event).split("data: ", 1)[1])
+        response = Response.model_validate(payload["response"], strict=True)
+        assert [tool.model_dump(exclude_none=True) for tool in response.tools] == seed.get("tools", [])
+        choice = response.tool_choice
+        assert (choice if isinstance(choice, str) else choice.model_dump()) == seed.get("tool_choice", "auto")
