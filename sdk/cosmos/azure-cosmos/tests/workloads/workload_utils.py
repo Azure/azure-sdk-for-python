@@ -133,12 +133,13 @@ def _timed_call(op_name, stats, fn, *args, **kwargs):
         return None
 
 
-async def _timed_call_async(op_name, stats, fn, *args, **kwargs):
+async def _timed_call_async(op_name, stats, fn, *args, _return_outcome=False, **kwargs):
     """Await ``fn(*args, **kwargs)``, timing it and recording the result.
 
     Takes the callable plus its args (not a pre-built coroutine) so it can inject
     the RU-capturing ``response_hook``. On success it records the latency and RU
     charge; on failure it records the error and returns None instead of raising.
+    Ownership tracking can request an explicit success flag, including for no-content responses.
     """
     _with_ru_hook(op_name, stats, kwargs)
     start = time.perf_counter_ns()
@@ -146,10 +147,10 @@ async def _timed_call_async(op_name, stats, fn, *args, **kwargs):
         result = await fn(*args, **kwargs)
         if stats:
             stats.record(op_name, (time.perf_counter_ns() - start) / 1_000_000)
-        return result
+        return (True, result) if _return_outcome else result
     except Exception as e:
         _record_error(stats, op_name, e)
-        return None
+        return (False, None) if _return_outcome else None
 
 
 # ---------------------------------------------------------------------------
@@ -239,9 +240,9 @@ def create_random_item():
     return item
 
 
-def _get_upsert_item():
+def _get_upsert_item(existing_item=None):
     # 10 percent of the time, create a new item instead of updating an existing one
-    return create_random_item() if random.random() < 0.1 else get_existing_random_item()
+    return create_random_item() if random.random() < 0.1 else (existing_item or get_existing_random_item)()
 
 
 def _patch_operations():

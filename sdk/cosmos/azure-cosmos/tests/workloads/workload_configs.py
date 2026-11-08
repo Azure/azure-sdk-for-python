@@ -67,6 +67,9 @@ __all__ = [
     "WORKLOAD_DOC_PROFILE",
     "WORKLOAD_ITEM_NAMESPACE",
     "WORKLOAD_READ_MEASUREMENT_SECONDS",
+    "WORKLOAD_MEASUREMENT_SECONDS",
+    "WORKLOAD_MEASUREMENT_MANIFEST",
+    "WORKLOAD_DELETE_ITEM_COUNT",
 ]
 
 
@@ -163,6 +166,11 @@ WORKLOAD_MANAGE_CLIENT_LIFECYCLE = manage_client_lifecycle()
 WORKLOAD_READ_MEASUREMENT_SECONDS = _safe_float(
     os.environ.get("WORKLOAD_READ_MEASUREMENT_SECONDS", "0"), 0.0
 )
+WORKLOAD_MEASUREMENT_SECONDS = _safe_float(
+    os.environ.get("WORKLOAD_MEASUREMENT_SECONDS", "0"), 0.0
+)
+WORKLOAD_MEASUREMENT_MANIFEST = os.environ.get("WORKLOAD_MEASUREMENT_MANIFEST", "")
+WORKLOAD_DELETE_ITEM_COUNT = int(os.environ.get("WORKLOAD_DELETE_ITEM_COUNT", "0"))
 
 # Blended traffic. WORKLOAD_MIX="read=70,create=10,upsert=10,replace=5,patch=5"
 # makes one process issue a weighted BLEND of operations (a realistic app mix)
@@ -253,6 +261,28 @@ if WORKLOAD_READ_MEASUREMENT_SECONDS and (
         "Bounded read measurements require async read-only, one client, one concurrent request, "
         "zero arrival rate, no proxy/mix, and managed client lifecycle"
     )
+if WORKLOAD_MEASUREMENT_SECONDS < 0 or WORKLOAD_DELETE_ITEM_COUNT < 0:
+    raise ValueError("Measurement duration and delete item count must be nonnegative")
+if WORKLOAD_MEASUREMENT_SECONDS:
+    if WORKLOAD_READ_MEASUREMENT_SECONDS:
+        raise ValueError("Select WORKLOAD_MEASUREMENT_SECONDS or the read-only duration, not both")
+    if (
+        len(WORKLOAD_OPERATIONS) != 1 or not WORKLOAD_OPERATIONS <= _VALID_OPERATIONS - {"query"}
+        or WORKLOAD_MIX or WORKLOAD_USE_SYNC or WORKLOAD_USE_PROXY
+        or WORKLOAD_NUM_CLIENTS != 1 or CONCURRENT_REQUESTS != 1
+        or WORKLOAD_ARRIVAL_RATE or not WORKLOAD_MANAGE_CLIENT_LIFECYCLE
+    ):
+        raise ValueError(
+            "Bounded measurements require one async point operation, one client, one concurrent request, "
+            "zero arrival rate, no proxy/mix, and managed client lifecycle"
+        )
+    if WORKLOAD_OPERATIONS != {"read"} and (
+        WORKLOAD_DOC_PROFILE != "orders" or not WORKLOAD_ITEM_NAMESPACE
+        or not WORKLOAD_MEASUREMENT_MANIFEST
+    ):
+        raise ValueError("Bounded writes require the orders profile, an ownership namespace and its saved manifest")
+    if WORKLOAD_OPERATIONS == {"delete"} and WORKLOAD_DELETE_ITEM_COUNT <= 3:
+        raise ValueError("WORKLOAD_DELETE_ITEM_COUNT must cover three warm-up deletes and the measured sequence")
 for _name in ("WORKLOAD_USE_SYNC", "WORKLOAD_USE_PROXY",
               "WORKLOAD_GC_FREEZE", "WORKLOAD_LOOP_LAG_MONITOR",
               "COSMOS_ENABLE_DIAGNOSTICS_LOGGING", "COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS"):

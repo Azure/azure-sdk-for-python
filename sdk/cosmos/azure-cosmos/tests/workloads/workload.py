@@ -9,6 +9,11 @@ Environment variables:
   WORKLOAD_USE_SYNC    use the sync client instead of async (default: false)
   WORKLOAD_READ_MEASUREMENT_SECONDS  opt-in serial async read duration after 3
                                     warm-up reads; report only after load (default: 0)
+  WORKLOAD_MEASUREMENT_SECONDS  equivalent mode for any single point operation;
+                               writes require a saved ownership manifest (default: 0)
+  WORKLOAD_MEASUREMENT_MANIFEST  ownership file created by profiling_restore_orders.py --initialize
+  WORKLOAD_ITEM_NAMESPACE  namespace from that manifest; must be empty before a bounded write run
+  WORKLOAD_DELETE_ITEM_COUNT  items prepared before bounded deletes, including warm-up (required for delete)
 """
 
 import asyncio
@@ -45,6 +50,7 @@ from workload_configs import (
     WORKLOAD_OPERATIONS,
     WORKLOAD_MANAGE_CLIENT_LIFECYCLE,
     WORKLOAD_READ_MEASUREMENT_SECONDS,
+    WORKLOAD_MEASUREMENT_SECONDS,
     WORKLOAD_USE_PROXY,
     WORKLOAD_USE_SYNC,
 )
@@ -86,22 +92,31 @@ except ImportError as exc:
 _gc_frozen = False
 
 
+def _measurement_seconds():
+    return WORKLOAD_MEASUREMENT_SECONDS or WORKLOAD_READ_MEASUREMENT_SECONDS
+
+
+def _measurement_operation():
+    return "read" if WORKLOAD_READ_MEASUREMENT_SECONDS else next(iter(WORKLOAD_OPERATIONS))
+
+
 def _start_reporter():
     """Return a started (Stats, PerfReporter) pair, or (None, None).
 
     Returns (None, None) when the optional perf dependencies are missing or when
     reporting is disabled or has no results endpoint configured.
     """
-    if WORKLOAD_READ_MEASUREMENT_SECONDS and os.environ.get("PERF_ENABLED", "true").lower() != "true":
-        raise ValueError("Bounded read measurements require PERF_ENABLED=true")
+    if _measurement_seconds() and os.environ.get("PERF_ENABLED", "true").lower() != "true":
+        raise ValueError("Bounded measurements require PERF_ENABLED=true")
     if get_perf_config is None:
         if os.environ.get("PERF_ENABLED", "true").lower() == "true":
             raise RuntimeError("Performance reporting dependencies are missing") from _PERF_IMPORT_ERROR
         return None, None
     perf_reporting_config = get_perf_config()
-    if WORKLOAD_READ_MEASUREMENT_SECONDS:
+    if _measurement_seconds():
         perf_reporting_config.update(
-            report_after_load=True, measurement_seconds=WORKLOAD_READ_MEASUREMENT_SECONDS
+            report_after_load=True, measurement_seconds=_measurement_seconds(),
+            measurement_operation=_measurement_operation(),
         )
     if perf_reporting_config["enabled"] and perf_reporting_config["results_endpoint"]:
         stats = Stats()
@@ -110,8 +125,8 @@ def _start_reporter():
         return stats, reporter
     if perf_reporting_config["enabled"]:
         raise ValueError("PERF_ENABLED=true requires RESULTS_COSMOS_URI")
-    if WORKLOAD_READ_MEASUREMENT_SECONDS:
-        raise ValueError("Bounded read measurements require PERF_ENABLED=true")
+    if _measurement_seconds():
+        raise ValueError("Bounded measurements require PERF_ENABLED=true")
     return None, None
 
 
@@ -199,33 +214,34 @@ def _install_async_stop(stop_event):
     return installed
 
 
-async def _run_bounded_reads(cont, stats, reporter, stop_event, client_logger):
+async def _run_bounded_operations(point, stats, reporter, stop_event, client_logger):
+    name = point.operation.capitalize()
     warmup = Stats()
     for _ in range(3):
         if stop_event.is_set():
-            raise RuntimeError("Read measurement interrupted during warm-up")
-        await read_item_concurrently(cont, REQUEST_EXCLUDED_LOCATIONS, 1, warmup)
+            raise RuntimeError(f"{name} measurement interrupted during warm-up")
+        await point.run(warmup)
     summaries, errors = warmup.drain_all()
     if (errors or len(summaries) != 1 or summaries[0]["errors"]
             or summaries[0]["count"] != 3):
-        raise RuntimeError("Read warm-up failed; refusing to start measurement")
+        raise RuntimeError(f"{name} warm-up failed; refusing to start measurement")
     if stop_event.is_set():
-        raise RuntimeError("Read measurement interrupted during warm-up")
+        raise RuntimeError(f"{name} measurement interrupted during warm-up")
     _maybe_freeze_gc(client_logger)
-    reporter.begin_measurement(warmup.first_ms_snapshot()["ReadItem"])
+    reporter.begin_measurement(warmup.first_ms_snapshot()[point.label])
     duration_elapsed = False
 
     def end_load():
         nonlocal duration_elapsed
         duration_elapsed = True
 
-    timer = asyncio.get_running_loop().call_later(WORKLOAD_READ_MEASUREMENT_SECONDS, end_load)
+    timer = asyncio.get_running_loop().call_later(_measurement_seconds(), end_load)
     monitor = asyncio.create_task(_loop_lag_monitor(stats)) if WORKLOAD_LOOP_LAG_MONITOR else None
     try:
         while not stop_event.is_set() and not duration_elapsed:
-            await read_item_concurrently(cont, REQUEST_EXCLUDED_LOCATIONS, 1, stats)
+            await point.run(stats)
         if stop_event.is_set():
-            raise RuntimeError("Read measurement interrupted; discard this run and restart")
+            raise RuntimeError(f"{name} measurement interrupted; discard this run and restart")
         reporter.finish_measurement()
     finally:
         timer.cancel()
@@ -284,19 +300,25 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             cont = db.get_container_client(COSMOS_CONTAINER)
             await asyncio.sleep(1)
             _wrap_backend_for_counting(client, is_async=True, client_logger=client_logger)
-            if not WORKLOAD_READ_MEASUREMENT_SECONDS:
+            if not _measurement_seconds():
                 _maybe_freeze_gc(client_logger)
 
             # One loop-lag monitor per process. Only the single-client path starts
             # it here; multi-client mode starts one in run_multi_client_async.
             monitor_task = None
             if (owns_reporter and WORKLOAD_LOOP_LAG_MONITOR and stats is not None
-                    and not WORKLOAD_READ_MEASUREMENT_SECONDS):
+                    and not _measurement_seconds()):
                 monitor_task = asyncio.create_task(_loop_lag_monitor(stats))
 
             try:
-                if WORKLOAD_READ_MEASUREMENT_SECONDS:
-                    await _run_bounded_reads(cont, stats, reporter, stop_event, client_logger)
+                if _measurement_seconds():
+                    from workload_isolation import PointMeasurement
+                    point = PointMeasurement(cont, _measurement_operation())
+                    try:
+                        await point.prepare(stop_event)
+                        await _run_bounded_operations(point, stats, reporter, stop_event, client_logger)
+                    finally:
+                        await point.cleanup()
                 elif WORKLOAD_ARRIVAL_RATE > 0:
                     # Fixed-rate load at WORKLOAD_ARRIVAL_RATE ops/sec per client. It
                     # does not wait between waves and times each op from its intended
@@ -374,7 +396,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
         measurement_finished = True
     finally:
         try:
-            if reporter and owns_reporter and (not WORKLOAD_READ_MEASUREMENT_SECONDS or measurement_finished):
+            if reporter and owns_reporter and (not _measurement_seconds() or measurement_finished):
                 reporter.stop()
         finally:
             if session:

@@ -222,6 +222,23 @@ def test_bounded_read_start_reporter_defers_thread_and_results_client_rust(modul
         workload._start_reporter()
 
 
+@pytest.mark.parametrize("operation", ["read", "create", "upsert", "replace", "delete", "patch"])
+def test_bounded_point_start_reporter_defers_thread_and_results_client_rust(modules, monkeypatch, operation):
+    workload = importlib.import_module("workload")
+    monkeypatch.setattr(workload, "WORKLOAD_MEASUREMENT_SECONDS", 60)
+    monkeypatch.setattr(workload, "WORKLOAD_READ_MEASUREMENT_SECONDS", 0)
+    monkeypatch.setattr(workload, "WORKLOAD_OPERATIONS", {operation})
+    monkeypatch.setenv("PERF_ENABLED", "true")
+    monkeypatch.setattr(workload, "get_perf_config", lambda: {
+        "enabled": True, "results_endpoint": "https://unused.invalid",
+    })
+    stats, reporter = workload._start_reporter()
+    assert reporter._stats is stats and reporter._after_load
+    assert reporter._config["measurement_operation"] == operation
+    assert reporter._config["measurement_seconds"] == 60
+    assert reporter._thread is None and reporter._client is None
+
+
 @pytest.mark.parametrize("failure", [None, "warmup", "interrupt", "cleanup"])
 def test_bounded_read_lifecycle_keeps_same_client_and_reports_after_load_rust(modules, monkeypatch, failure):
     from unittest.mock import Mock
@@ -333,6 +350,241 @@ def test_bounded_read_configuration_rejects_unsupported_modes_rust(modules, monk
         "WORKLOAD_ARRIVAL_RATE": "0", "WORKLOAD_USE_SYNC": "false",
         "WORKLOAD_USE_PROXY": "false", "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": "true",
         "WORKLOAD_MIX": "", **changes,
+    }.items():
+        monkeypatch.setenv(name, value)
+    with pytest.raises(ValueError):
+        runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+
+
+@pytest.mark.parametrize("operation,failure,new_upsert", [
+    ("read", None, False), ("create", None, False), ("upsert", None, False),
+    ("upsert", None, True), ("replace", None, False), ("delete", None, False),
+    ("patch", None, False), ("create", "warmup", False),
+    ("create", "interrupt", False), ("create", "cleanup", False),
+    ("create", "inventory", False), ("create", "foreign", False),
+    ("replace", "prepare", False), ("delete", "pool", False),
+    ("create", "existing_namespace", False), ("create", "manifest", False),
+])
+def test_bounded_point_lifecycle_isolates_service_work_rust(
+    modules, monkeypatch, tmp_path, operation, failure, new_upsert,
+):
+    from unittest.mock import Mock
+    from azure.core import MatchConditions
+
+    workload = importlib.import_module("workload")
+    isolation = importlib.import_module("workload_isolation")
+    restoration = importlib.import_module("profiling_restore_orders")
+    config, utils = isolation.config, isolation.utils
+    namespace = "a" * 32
+    manifest_path = tmp_path / "ownership.json"
+    environment = {
+        "COSMOS_URI": "https://unused.invalid:443/", "COSMOS_DATABASE": "orders-db",
+        "COSMOS_CONTAINER": "orders", "COSMOS_PARTITION_KEY": "id", "COSMOS_MAX_ITEM_INDEX": "1",
+        "RESULTS_COSMOS_URI": "https://unused.invalid:443/", "RESULTS_COSMOS_DATABASE": "results-db",
+        "RESULTS_COSMOS_CONTAINER": "results", "WORKLOAD_DOC_PROFILE": "orders",
+        "WORKLOAD_ITEM_NAMESPACE": namespace, "WORKLOAD_MEASUREMENT_MANIFEST": str(manifest_path),
+    }
+    for key, value in environment.items():
+        monkeypatch.setenv(key, value)
+    selected = restoration.restoration_config(os.environ, (
+        environment["COSMOS_URI"], environment["COSMOS_DATABASE"], environment["COSMOS_CONTAINER"],
+    ))
+    manifest_path.write_text(json.dumps({
+        **selected, "namespace": "b" * 32 if failure == "manifest" else namespace,
+    }), encoding="utf-8")
+    for key, value in {
+        "COSMOS_URI": environment["COSMOS_URI"], "COSMOS_DATABASE": "orders-db",
+        "COSMOS_CONTAINER": "orders", "COSMOS_CREDENTIAL": "unused",
+        "WORKLOAD_ITEM_NAMESPACE": namespace, "WORKLOAD_MEASUREMENT_MANIFEST": str(manifest_path),
+        "MAX_ITEM_INDEX": 1, "WORKLOAD_DELETE_ITEM_COUNT": 4 if failure == "pool" else 5,
+    }.items():
+        monkeypatch.setattr(config, key, value)
+    for key, value in {"WORKLOAD_DOC_PROFILE": "orders", "WORKLOAD_ITEM_NAMESPACE": namespace,
+                       "PARTITION_KEY": "id", "MAX_ITEM_INDEX": 1}.items():
+        monkeypatch.setattr(utils, key, value)
+    monkeypatch.setattr(utils.random, "random", lambda: 0.0 if new_upsert else 0.5)
+    stats = modules["perf_stats"].Stats()
+    reporter = modules["perf_reporter"].PerfReporter(stats, {
+        "report_interval": 15, "workload_id": f"baseline-{operation}-rust-{STAMP}",
+        "commit_sha": "x", "driver_commit": "y", "report_after_load": True,
+        "measurement_seconds": 60, "measurement_operation": operation,
+    })
+    rows, events, stop, deadline, calls = Rows(), [], [], [], [0]
+    original = {f"order-{index}": utils.create_seed_item(index) for index in range(2)}
+    stored = {key: {**value, "_etag": "original"} for key, value in original.items()}
+    if failure == "existing_namespace":
+        item = utils.create_random_item()
+        stored[item["id"]] = {**item, "_etag": "already-owned"}
+    main_calls = []
+    for name in ("execute_count", "binding_operation_count", "binding_attempt_count"):
+        monkeypatch.setattr(modules["perf_reporter"].backend_counters, name, lambda: calls[0])
+
+    def connect():
+        assert events[-1] == "main-exit"
+        reporter._container = rows
+        events.append("report")
+    monkeypatch.setattr(reporter, "_ensure_container", connect)
+
+    class Client:
+        def __init__(self, *args, **kwargs):
+            self.maintenance = kwargs.get("_backend") == "core-python"
+            self.kind = "maintenance" if self.maintenance else "main"
+
+        async def __aenter__(self):
+            events.append(self.kind + "-enter")
+            return self
+
+        async def __aexit__(self, *args):
+            events.append(self.kind + "-exit")
+
+        def get_database_client(self, name):
+            return self
+
+        def get_container_client(self, name):
+            return self
+
+        async def read(self, **kwargs):
+            return {"partitionKey": {"paths": ["/id"]}}
+
+        def query_items(self, query, **kwargs):
+            assert self.maintenance
+            assert not deadline or reporter._measurement_end is not None or failure
+            prefix = kwargs["parameters"][0]["value"]
+            values = [dict(item) for key, item in stored.items() if key.startswith(prefix)]
+            if main_calls and failure == "inventory":
+                values = []
+            if main_calls and failure == "foreign":
+                values.append(dict(stored["order-0"]))
+            async def iterate():
+                for item in values:
+                    yield item
+            return iterate()
+
+        async def perform(self, name, *args, **kwargs):
+            calls[0] += 1
+            if not self.maintenance:
+                main_calls.append((self, name))
+                assert name == operation
+                assert reporter._client is None and reporter._thread is None and not rows.rows
+                if failure == "warmup":
+                    raise RuntimeError("warmup failed")
+                if len(main_calls) <= 3:
+                    assert not deadline
+                elif failure != "pool":
+                    assert len(main_calls) == 4 and len(reporter._warmup_ms) == 3
+                    if failure == "interrupt":
+                        stop[0].set()
+                    deadline[0]()
+            elif name == "delete":
+                assert reporter._measurement_end is not None or failure
+                assert args[0].startswith(f"order-{namespace}-")
+                assert kwargs["etag"] == stored[args[0]]["_etag"]
+                assert kwargs["match_condition"] == MatchConditions.IfNotModified
+                if failure == "cleanup":
+                    raise RuntimeError("cleanup failed")
+            elif name == "create":
+                assert not deadline and not main_calls
+            else:
+                pytest.fail("Unexpected maintenance operation")
+            if name in ("create", "upsert", "replace"):
+                item = args[1] if name == "replace" else args[0]
+                if name == "create":
+                    assert item["id"] not in stored
+                stored[item["id"]] = {**item, "_etag": "owned"}
+                if self.maintenance and failure == "prepare":
+                    raise RuntimeError("preparation response lost after commit")
+            elif name == "delete":
+                del stored[args[0]]
+            elif name == "patch":
+                stored[args[0]]["quantity"] = args[2][0]["value"]
+            hook = kwargs.get("response_hook")
+            if hook:
+                hook({"x-ms-request-charge": "1"}, None)
+            # Successful writes/deletes may return no content; ownership still advances.
+            return None
+
+    def sdk_method(name):
+        async def invoke(self, *args, **kwargs):
+            return await self.perform(name, *args, **kwargs)
+        return invoke
+    for name in ("read", "create", "upsert", "replace", "delete", "patch"):
+        setattr(Client, name + "_item", sdk_method(name))
+    for name, value in {
+        "AsyncClient": Client, "WORKLOAD_MEASUREMENT_SECONDS": 60,
+        "WORKLOAD_READ_MEASUREMENT_SECONDS": 0, "WORKLOAD_OPERATIONS": {operation},
+        "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": True, "WORKLOAD_USE_PROXY": False,
+        "WORKLOAD_LOOP_LAG_MONITOR": False, "_start_reporter": lambda: (stats, reporter),
+        "_install_async_stop": lambda event: stop.append(event),
+        "_wrap_backend_for_counting": lambda *args, **kwargs: None,
+        "_maybe_freeze_gc": lambda logger: None,
+    }.items():
+        monkeypatch.setattr(workload, name, value)
+    monkeypatch.setattr(isolation, "CosmosClient", Client)
+    original_sleep = asyncio.sleep
+    async def skip_setup_sleep(delay):
+        await original_sleep(0)
+    monkeypatch.setattr(workload.asyncio, "sleep", skip_setup_sleep)
+
+    async def run():
+        loop = asyncio.get_running_loop()
+        def schedule(seconds, callback):
+            assert seconds == 60 and len(main_calls) == 3
+            assert not any(event == "report" for event in events)
+            assert events.count("maintenance-enter") == events.count("maintenance-exit")
+            deadline.append(callback)
+            return Mock()
+        monkeypatch.setattr(loop, "call_later", schedule)
+        await workload.run_workload_async("test", Mock())
+    if failure:
+        reason = {
+            "warmup": "warm-up failed", "interrupt": "interrupted", "cleanup": "cleanup failed",
+            "inventory": "inventory did not cover", "foreign": "Unexpected item",
+            "prepare": "preparation response lost", "pool": "delete pool exhausted",
+            "existing_namespace": "namespace is not empty", "manifest": "namespace differs",
+        }[failure]
+        with pytest.raises((RuntimeError, ValueError), match=reason):
+            asyncio.run(run())
+        assert not rows.rows
+    else:
+        asyncio.run(run())
+        row, done = rows.rows
+        assert row["count"] == done["total_count"] == 1
+        assert row["binding_calls"] == row["rust_execute_calls"] == row["attempt_calls"] == 1
+        assert row["warmup_operation"] == operation and row["warmup_count"] == 3
+        assert len(row["warmup_ms"]) == 3 and row["operation"] == isolation.OPERATIONS[operation]
+        assert ("warmup_read_count" in row) == (operation == "read")
+        if operation != "read":
+            assert row["measurement_item_namespace"] == namespace
+        assert len({id(client) for client, _ in main_calls}) == 1
+    for key, value in original.items():
+        assert {field: data for field, data in stored[key].items() if field != "_etag"} == value
+    if failure not in ("cleanup", "inventory", "foreign", "existing_namespace"):
+        assert set(stored) == set(original)
+    if failure == "foreign":
+        assert len(stored) == len(original) + 4
+    if failure == "existing_namespace":
+        assert not main_calls and len(stored) == len(original) + 1
+
+
+@pytest.mark.parametrize("changes", [
+    {"WORKLOAD_MEASUREMENT_SECONDS": "-1"}, {"WORKLOAD_MEASUREMENT_SECONDS": "nan"},
+    {"WORKLOAD_READ_MEASUREMENT_SECONDS": "60", "WORKLOAD_OPERATIONS": "read"},
+    {"WORKLOAD_OPERATIONS": "read,create"}, {"WORKLOAD_OPERATIONS": "query"},
+    {"COSMOS_CONCURRENT_REQUESTS": "2"}, {"WORKLOAD_NUM_CLIENTS": "2"},
+    {"WORKLOAD_USE_SYNC": "true"}, {"WORKLOAD_USE_PROXY": "true"},
+    {"WORKLOAD_MANAGE_CLIENT_LIFECYCLE": "false"}, {"WORKLOAD_ARRIVAL_RATE": "1"},
+    {"WORKLOAD_MIX": "create=1"}, {"WORKLOAD_ITEM_NAMESPACE": ""},
+    {"WORKLOAD_MEASUREMENT_MANIFEST": ""}, {"WORKLOAD_DOC_PROFILE": "default"},
+    {"WORKLOAD_OPERATIONS": "delete", "WORKLOAD_DELETE_ITEM_COUNT": "3"},
+])
+def test_bounded_point_configuration_rejects_unsafe_modes_rust(modules, monkeypatch, changes):
+    for name, value in {
+        "WORKLOAD_MEASUREMENT_SECONDS": "60", "WORKLOAD_READ_MEASUREMENT_SECONDS": "0",
+        "WORKLOAD_OPERATIONS": "create", "COSMOS_CONCURRENT_REQUESTS": "1", "WORKLOAD_NUM_CLIENTS": "1",
+        "WORKLOAD_ARRIVAL_RATE": "0", "WORKLOAD_USE_SYNC": "false", "WORKLOAD_USE_PROXY": "false",
+        "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": "true", "WORKLOAD_MIX": "",
+        "WORKLOAD_DOC_PROFILE": "orders", "WORKLOAD_ITEM_NAMESPACE": "a" * 32,
+        "WORKLOAD_MEASUREMENT_MANIFEST": "ownership.json", **changes,
     }.items():
         monkeypatch.setenv(name, value)
     with pytest.raises(ValueError):

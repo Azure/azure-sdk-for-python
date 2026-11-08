@@ -133,6 +133,41 @@ class TestFeedRangeMultiPartitionAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await db.delete_container(created_container.id)
 
+    async def test_prefix_partition_key_query_cross_partition_disabled_async_rust(self):
+        """A prefix query with cross-partition disabled returns the prefix items, as on legacy."""
+        db = self.database
+        created_container = await db.create_container_if_not_exists(
+            id="FeedRangeMultiPartitionAsyncPrefixPKDisabled-" + str(uuid.uuid4()),
+            partition_key=PartitionKey(
+                path=['/state', '/city', '/zipcode'],
+                kind=documents.PartitionKind.MultiHash),
+            offer_throughput=400,
+        )
+        try:
+            for i in range(30):
+                await created_container.upsert_item({
+                    'id': f'ca-doc-async-{i:03d}',
+                    'state': 'CA',
+                    'city': f'city-{i % 5}',
+                    'zipcode': f'zip-{i:03d}',
+                })
+            for i in range(6):
+                await created_container.upsert_item({
+                    'id': f'wa-doc-async-{i:03d}',
+                    'state': 'WA',
+                    'city': f'city-{i % 2}',
+                    'zipcode': f'zip-{i:03d}',
+                })
+
+            ids = sorted([item['id'] async for item in created_container.query_items(
+                query='SELECT c.id FROM c',
+                partition_key=['CA'],
+                enable_cross_partition_query=False,
+            )])
+            assert ids == [f'ca-doc-async-{i:03d}' for i in range(30)]
+        finally:
+            await db.delete_container(created_container.id)
+
 
 # ---------------------------------------------------------------------------
 # Rust-path copies of tests/test_query_feed_range_multipartition_async.py

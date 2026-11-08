@@ -154,7 +154,8 @@ class PerfReporter:
     def stop(self):
         """Stop the reporter and flush final results."""
         if self._after_load and self._measurement_end is None:
-            raise RuntimeError("Incomplete read measurement; no results will be published")
+            operation = self._config.get("measurement_operation", "read")
+            raise RuntimeError(f"Incomplete {operation} measurement; no results will be published")
         self._stop_event.set()
         if self._thread and self._thread.is_alive():
             self._thread.join(timeout=30)
@@ -213,13 +214,20 @@ class PerfReporter:
     def _measurement_metadata(self):
         if not self._after_load:
             return {}
-        return {
+        operation = self._config.get("measurement_operation", "read")
+        metadata = {
             "reporting_mode": "after_load",
             "latency_population": "post_warmup",
             "measurement_target_seconds": self._config["measurement_seconds"],
-            "warmup_read_count": len(self._warmup_ms),
-            "warmup_read_ms": self._warmup_ms,
+            "warmup_operation": operation,
+            "warmup_count": len(self._warmup_ms),
+            "warmup_ms": self._warmup_ms,
         }
+        if operation == "read":
+            metadata.update(warmup_read_count=len(self._warmup_ms), warmup_read_ms=self._warmup_ms)
+        else:
+            metadata["measurement_item_namespace"] = os.environ["WORKLOAD_ITEM_NAMESPACE"]
+        return metadata
 
     def _run(self):
         try:

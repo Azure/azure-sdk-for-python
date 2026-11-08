@@ -109,6 +109,20 @@ def inventory(container):
     return rows
 
 
+def validate_owned_order(item, namespace):
+    if not isinstance(namespace, str) or not re.fullmatch(r"[0-9a-f]{32}", namespace):
+        raise ValueError("Invalid restoration namespace")
+    pattern = re.compile(
+        rf"order-{namespace}-[0-9a-f]{{8}}-[0-9a-f]{{4}}-"
+        rf"[0-9a-f]{{4}}-[0-9a-f]{{4}}-[0-9a-f]{{12}}"
+    )
+    item_id = item["id"]
+    if not pattern.fullmatch(item_id):
+        raise ValueError(f"Unexpected item; no restoration writes performed: {item_id}")
+    if item.get("customerId") != "customer-" + item_id.removeprefix("order-") or not item.get("_etag"):
+        raise ValueError(f"Cannot safely identify workload-created item: {item_id}")
+
+
 def restore_orders(container, manifest):
     properties = container.read()
     if properties.get("partitionKey", {}).get("paths") != ["/id"]:
@@ -128,22 +142,11 @@ def restore_orders(container, manifest):
         expected[body["id"]] = body
 
     before = inventory(container)
-    owned_pattern = re.compile(
-        rf"order-{manifest['namespace']}-[0-9a-f]{{8}}-[0-9a-f]{{4}}-"
-        rf"[0-9a-f]{{4}}-[0-9a-f]{{4}}-[0-9a-f]{{12}}"
-    )
     extras = []
     for item_id, item in before.items():
         if item_id in expected:
             continue
-        if not owned_pattern.fullmatch(item_id):
-            raise ValueError(
-                f"Unexpected item; no restoration writes performed: {item_id}"
-            )
-        if item.get("customerId") != "customer-" + item_id.removeprefix(
-            "order-"
-        ) or not item.get("_etag"):
-            raise ValueError(f"Cannot safely identify workload-created item: {item_id}")
+        validate_owned_order(item, manifest["namespace"])
         extras.append(item)
 
     # Finish inventory validation before writing; never infer ownership from an

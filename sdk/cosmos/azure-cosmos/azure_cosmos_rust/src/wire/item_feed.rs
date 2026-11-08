@@ -556,7 +556,10 @@ async fn next_plan_page(
         };
         let plan_options = match &request {
             FeedRequest::Query(query) => {
-                plan_options.with_full_text_score_scope(query.full_text_score_scope)
+                // Legacy Python has no query fan-out cap; keep that policy in the binding.
+                plan_options
+                    .with_max_fan_out(u32::MAX)
+                    .with_full_text_score_scope(query.full_text_score_scope)
             }
             _ => plan_options,
         };
@@ -955,6 +958,15 @@ mod tests {
         definition: PartitionKeyDefinition,
         rules: Vec<Arc<FaultInjectionRule>>,
     ) -> (Arc<InMemoryEmulatorHttpClient>, Arc<CosmosDriver>) {
+        setup_with_partition_count(count, definition, rules, 3).await
+    }
+
+    async fn setup_with_partition_count(
+        count: usize,
+        definition: PartitionKeyDefinition,
+        rules: Vec<Arc<FaultInjectionRule>>,
+        partition_count: u32,
+    ) -> (Arc<InMemoryEmulatorHttpClient>, Arc<CosmosDriver>) {
         pyo3::prepare_freethreaded_python();
         let url = Url::parse("https://read-all.emulator.local").unwrap();
         let config =
@@ -967,7 +979,7 @@ mod tests {
                 name,
                 definition.clone(),
                 ContainerConfig::new()
-                    .with_partition_count(3)
+                    .with_partition_count(partition_count)
                     .build()
                     .unwrap(),
             );
@@ -1392,6 +1404,107 @@ mod tests {
             max_item_count: None,
             hybrid_search_max_items: None,
         })
+    }
+
+    #[tokio::test]
+    async fn queries_cover_more_than_one_hundred_partitions() {
+        let expected: BTreeSet<_> = (0..150).map(|i| i.to_string()).collect();
+        for partition_count in [100, 101, 150] {
+            let (_emulator, driver) = setup_with_partition_count(
+                expected.len(),
+                PartitionKeyDefinition::new(vec![Cow::Borrowed("/pk")]),
+                Vec::new(),
+                partition_count,
+            )
+            .await;
+            let container = driver
+                .resolve_container("db", "c", Default::default())
+                .await
+                .unwrap();
+            let ranges = driver
+                .resolve_all_partition_key_ranges(&container, false)
+                .await
+                .unwrap()
+                .unwrap();
+            assert_eq!(ranges.len(), partition_count as usize);
+            let plan_options =
+                PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly);
+            let direct = driver
+                .plan_operation(
+                    CosmosOperation::query_items(container, Some(FeedRange::full()))
+                        .with_body(br#"{"query":"SELECT * FROM c"}"#.to_vec()),
+                    &Default::default(),
+                    None,
+                    &plan_options,
+                )
+                .await;
+            if partition_count == 100 {
+                assert!(direct.is_ok());
+            } else {
+                assert_eq!(
+                    direct
+                        .err()
+                        .expect("driver default must retain its cap")
+                        .status(),
+                    status_codes::CLIENT_CROSS_PARTITION_FAN_OUT_EXCEEDED,
+                );
+                let (response, _, _) = next_plan_page(
+                    driver.clone(),
+                    Arc::new(Mutex::new(CursorState::default())),
+                    ("test".into(), "dbs/db/colls/c".into()),
+                    None,
+                    modifiers(),
+                    FeedRequest::ReadAll,
+                    plan_options,
+                )
+                .await
+                .unwrap();
+                assert_eq!(
+                    response.unwrap_err().status(),
+                    status_codes::CLIENT_CROSS_PARTITION_FAN_OUT_EXCEEDED,
+                    "the query override must not change read-all policy",
+                );
+            }
+
+            for explicit_range in [false, true] {
+                let mut request = query_request("SELECT * FROM c");
+                if let FeedRequest::Query(ref mut query) = request {
+                    if explicit_range {
+                        query.feed_range = Some(("".into(), "FF".into()));
+                    }
+                }
+                let mut state = Arc::new(Mutex::new(CursorState::default()));
+                let mut token = None;
+                let mut ids = Vec::new();
+                let mut responses = 0;
+                let mut exhausted = false;
+                for _ in 0..partition_count as usize + expected.len() + 1 {
+                    let (rows, next) = query_page(&driver, &state, &request, token).await;
+                    token = next;
+                    let Some(rows) = rows else {
+                        exhausted = true;
+                        assert!(!state.lock().await.has_more);
+                        break;
+                    };
+                    responses += 1;
+                    ids.extend(
+                        rows.iter()
+                            .map(|row| row["id"].as_str().unwrap().to_owned()),
+                    );
+                    if explicit_range && responses == 10 {
+                        assert!(token.is_some(), "resuming must not restart the query");
+                        state = Arc::new(Mutex::new(CursorState::default()));
+                    }
+                }
+                assert!(
+                    exhausted,
+                    "{partition_count}, explicit_range={explicit_range}"
+                );
+                assert!(responses >= partition_count as usize);
+                assert_eq!(ids.len(), expected.len(), "no missing or duplicate items");
+                assert_eq!(ids.into_iter().collect::<BTreeSet<_>>(), expected);
+            }
+        }
     }
 
     #[test]

@@ -115,8 +115,41 @@ class TestFeedRangeMultiPartition(unittest.TestCase):
         finally:
             db.delete_container(created_container.id)
 
+    def test_prefix_partition_key_query_cross_partition_disabled_rust(self):
+        """A prefix query with cross-partition disabled returns the prefix items, as on legacy."""
+        db = self.database
+        created_container = db.create_container_if_not_exists(
+            id="FeedRangeMultiPartitionPrefixPKDisabled-" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash),
+            offer_throughput=400,
+        )
+        try:
+            for i in range(30):
+                created_container.upsert_item({
+                    'id': f'ca-doc-{i:03d}',
+                    'state': 'CA',
+                    'city': f'city-{i % 5}',
+                    'zipcode': f'zip-{i:03d}',
+                })
+            for i in range(6):
+                created_container.upsert_item({
+                    'id': f'wa-doc-{i:03d}',
+                    'state': 'WA',
+                    'city': f'city-{i % 2}',
+                    'zipcode': f'zip-{i:03d}',
+                })
 
-DATABASE_ID = unique_database_id("query-feed-range-mp")
+            ids = sorted(item['id'] for item in created_container.query_items(
+                query='SELECT c.id FROM c',
+                partition_key=['CA'],
+                enable_cross_partition_query=False,
+            ))
+            assert ids == [f'ca-doc-{i:03d}' for i in range(30)]
+        finally:
+            db.delete_container(created_container.id)
+
+
+DATABASE_ID =  unique_database_id("query-feed-range-mp")
 
 # Dedicated container for these tests. Throughput is chosen so the
 # container has multiple physical partitions out of the box (no split needed
