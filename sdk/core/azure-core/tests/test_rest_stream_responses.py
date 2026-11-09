@@ -4,7 +4,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from unittest import mock
+
 import pytest
+import requests
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -59,9 +62,11 @@ def test_iter_with_error(client):
     assert response.is_closed
 
     request = HttpRequest("GET", "http://doesNotExist")
-    with pytest.raises(ServiceRequestError):
-        with client.send_request(request, stream=True) as response:
-            raise ValueError("Should error before entering")
+    # A proxy can turn a DNS failure into an HTTP response instead of a connection error.
+    with mock.patch("requests.Session.request", side_effect=requests.exceptions.ConnectionError("Connection failed")):
+        with pytest.raises(ServiceRequestError):
+            with client.send_request(request, stream=True) as response:
+                raise ValueError("Should error before entering")
     assert response.is_closed
 
 
