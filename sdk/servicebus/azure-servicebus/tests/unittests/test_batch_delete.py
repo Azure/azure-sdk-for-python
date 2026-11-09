@@ -37,9 +37,10 @@ from azure.servicebus.exceptions import OperationTimeoutError, ServiceBusConnect
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("is_async", [False, True])
-async def test_default_open_with_timeout_forwards_budget(is_async):
-    handler = object.__new__(AsyncBaseHandler if is_async else BaseHandler)
+@pytest.mark.parametrize("handler_type", [BaseHandler, AsyncBaseHandler, ServiceBusReceiver, AsyncServiceBusReceiver])
+async def test_default_open_with_timeout_forwards_budget(handler_type):
+    is_async = handler_type in (AsyncBaseHandler, AsyncServiceBusReceiver)
+    handler = object.__new__(handler_type)
     handler._open = AsyncMock() if is_async else MagicMock()
     if is_async:
         await handler._open_with_timeout(1.5)

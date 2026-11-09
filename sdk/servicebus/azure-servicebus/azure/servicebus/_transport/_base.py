@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Union, TYPE_CHECKING, Dict, Any, Callable
+from typing import Union, TYPE_CHECKING, Dict, Any, Callable, Optional
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
@@ -386,12 +386,12 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def mgmt_client_setup(mgmt_client, *, node, timeout):
+    def mgmt_client_setup(mgmt_client, *, node: Union[str, bytes], timeout: Optional[float]) -> None:
         """Open the management link without dispatching a request.
 
         :param AMQPClient mgmt_client: Client used to open the management link.
-        :keyword bytes node: Management target.
-        :keyword int timeout: Timeout in seconds.
+        :keyword str or bytes node: Management target.
+        :keyword float or None timeout: Timeout in seconds, or None for no timeout.
         """
 
     @staticmethod

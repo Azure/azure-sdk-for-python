@@ -6,10 +6,7 @@
 
 
 class DeleteMessagesResult:
-    """The result of a batch delete operation.
-
-    :ivar int deleted_message_count: The number of messages deleted by the service.
-    """
+    """The result of a batch delete operation."""
 
     def __init__(self, deleted_message_count: int) -> None:
         self._deleted_message_count = deleted_message_count
@@ -24,7 +21,4 @@ class DeleteMessagesResult:
 
 
 class PurgeMessagesResult(DeleteMessagesResult):
-    """The result of a purge operation.
-
-    :ivar int deleted_message_count: The total number of messages deleted by the service.
-    """
+    """The result of a purge operation, reporting the total number of messages deleted."""

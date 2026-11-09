@@ -387,10 +387,10 @@ class AMQPClientAsync(AMQPClientSync):
         )
         return status, description, response
 
-    async def open_mgmt_link_async(self, node: str = "$management", timeout: float = 0, **kwargs):
+    async def open_mgmt_link_async(self, node: Union[str, bytes] = "$management", timeout: float = 0, **kwargs):
         """Open and wait for a management link without dispatching a request.
 
-        :param str node: Management target.
+        :param str or bytes node: Management target.
         :param float timeout: Timeout in seconds.
         :returns: The opened management link.
         :rtype: ~pyamqp.aio.management_link_async.ManagementOperation

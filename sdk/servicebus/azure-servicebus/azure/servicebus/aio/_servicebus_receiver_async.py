@@ -451,9 +451,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if self._auto_lock_renewer and self._session:
             self._auto_lock_renewer.register(self, self.session)
 
-    async def _open_with_timeout(self, timeout: float):
-        return await self._open(timeout=timeout)
-
     async def _receive(
         self, max_message_count: Optional[int] = None, timeout: Optional[float] = None
     ) -> List[ServiceBusReceivedMessage]:

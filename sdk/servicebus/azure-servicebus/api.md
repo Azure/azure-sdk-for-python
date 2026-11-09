@@ -27,14 +27,12 @@ namespace azure.servicebus
 
     class azure.servicebus.DeleteMessagesResult:
         property deleted_message_count: int    # Read-only
-        deleted_message_count: int
 
         def __init__(self, deleted_message_count: int) -> None: ...
 
 
     class azure.servicebus.PurgeMessagesResult(DeleteMessagesResult):
         property deleted_message_count: int    # Read-only
-        deleted_message_count: int
 
         def __init__(self, deleted_message_count: int) -> None: ...
 

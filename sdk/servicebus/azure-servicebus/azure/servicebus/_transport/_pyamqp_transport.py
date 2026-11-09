@@ -1110,12 +1110,12 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return callback(status, response, description, amqp_transport=PyamqpTransport)
 
     @staticmethod
-    def mgmt_client_setup(mgmt_client: "AMQPClient", *, node: str, timeout: int) -> None:
+    def mgmt_client_setup(mgmt_client: "AMQPClient", *, node: Union[str, bytes], timeout: Optional[float]) -> None:
         """Open the pyamqp management link without dispatching a request.
 
         :param ~pyamqp.AMQPClient mgmt_client: Client used for management requests.
-        :keyword str node: Management target.
-        :keyword int timeout: Timeout in seconds.
+        :keyword str or bytes node: Management target.
+        :keyword float or None timeout: Timeout in seconds, or None for no timeout.
         """
         try:
             mgmt_client.open_mgmt_link(node=node, timeout=timeout or 0)
