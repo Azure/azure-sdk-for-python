@@ -120,3 +120,20 @@ def test_invalid_json_document_errors_are_service_errors(respond, transport, jso
     assert caught.value.response.headers["x-ms-error-code"] == "InvalidRequestBody"
     assert json.loads(transport.send.call_args.args[0].content) == payload
     transport.send.assert_called_once()
+
+
+def test_target_paths_list_is_sent_as_comma_separated_string(respond, transport, json_credential):
+    request = SemanticRerankingInferenceContent(
+        query="text",
+        documents=[json.dumps({"title": "Azure Cosmos DB", "description": "Globally distributed data."})],
+        document_type="json",
+        target_paths=["title", "description"],
+    )
+    respond((200, {"scores": []}, {}))
+    with InferenceClient(
+        "https://example.inference.azure.com", json_credential, transport=transport, retry_total=0
+    ) as client:
+        client.semantic_rerank(request)
+    assert json.loads(transport.send.call_args.args[0].content)["targetPaths"] == "title,description"
+    assert request.target_paths == ["title", "description"]
+    assert SemanticRerankingInferenceContent({"targetPaths": "meta.content,id"}).target_paths == ["meta.content", "id"]

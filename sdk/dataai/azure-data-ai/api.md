@@ -195,7 +195,7 @@ namespace azure.data.ai.models
         return_documents: Optional[bool]
         return_sentence_score: Optional[bool]
         sort: Optional[bool]
-        target_paths: Optional[str]
+        target_paths: Optional[list[str]]
         top_k: Optional[int]
 
         @overload
@@ -210,7 +210,7 @@ namespace azure.data.ai.models
                 return_documents: Optional[bool] = ..., 
                 return_sentence_score: Optional[bool] = ..., 
                 sort: Optional[bool] = ..., 
-                target_paths: Optional[str] = ..., 
+                target_paths: Optional[list[str]] = ..., 
                 top_k: Optional[int] = ...
             ) -> None: ...
 
@@ -329,7 +329,6 @@ namespace azure.data.ai.types
         key "returnDocuments": bool
         key "returnSentenceScore": bool
         key "sort": bool
-        key "targetPaths": str
         key "topK": int
         batchSize: int
         documentType: Union[str, SemanticRerankingDocumentType]
@@ -339,7 +338,7 @@ namespace azure.data.ai.types
         returnDocuments: bool
         returnSentenceScore: bool
         sort: bool
-        targetPaths: str
+        targetPaths: list[str]
         topK: int
 
 
