@@ -3091,14 +3091,12 @@ class VoiceAgentLiveDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input audio noise reduction mode.
 
-    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local
-    voice activity detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio.
-    Enhances detection audio without changing the audio used for recognition. The mode is not
-    restricted to headset devices.
-    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice
-    activity detection. Starts with headset suppression and personalizes detection after automatic
-    speaker enrollment. Recognition audio is unchanged; headset suppression remains active when
-    personalization is unavailable.
+    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local voice activity
+      detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
+      changing the audio used for recognition. The mode is not restricted to headset devices.
+    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice activity detection.
+      Starts with headset suppression and personalizes detection after automatic speaker enrollment. Recognition audio
+      is unchanged; headset suppression remains active when personalization is unavailable.
     """
 
     NEAR_FIELD = "near_field"
@@ -3413,13 +3411,10 @@ class VoiceConversationEngineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle status of a persisted voice conversation:
 
-    * `in_progress`: the live session is active, or post-session persistence finalization is
-    pending.
-    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
-    max-duration `1001`
-    close, or a client or network disconnect that the service can still finalize.
-    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
-    finalization.
+    * `in_progress`: the live session is active, or post-session persistence finalization is pending.
+    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a max-duration `1001` close,
+      or a client or network disconnect that the service can still finalize.
+    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented finalization.
     """
 
     IN_PROGRESS = "in_progress"
