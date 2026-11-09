@@ -127,9 +127,21 @@ class TestAsyncRealtimeConnectionManagerEnter:
         assert _args[0].startswith("wss://my-account.services.ai.azure.com")
         assert kwargs["params"]["api-version"] == "v1"
         assert kwargs["headers"]["Authorization"] == "Bearer fake-token"
-        assert kwargs["headers"]["Foundry-Features"] == "VoiceAgents=V1Preview"
+        assert "Foundry-Features" not in kwargs["headers"]
+        assert "foundry_features" not in kwargs["params"]
         assert "Sec-WebSocket-Protocol" not in kwargs["headers"]
         assert kwargs["protocols"] == ("realtime",)
+
+    @pytest.mark.parametrize("extra_headers", [{}, {"foundry-features": "Custom=V1Preview"}])
+    async def test_enter_preserves_preview_opt_in(self, extra_headers):
+        patcher, fake_session = _patch_client_session(_make_fake_ws())
+        with patcher:
+            async with _make_manager(allow_preview=True, extra_headers=extra_headers):
+                pass
+
+        headers = fake_session.ws_connect.call_args.kwargs["headers"]
+        feature_headers = {key.lower(): value for key, value in headers.items() if key.lower() == "foundry-features"}
+        assert feature_headers == {"foundry-features": extra_headers.get("foundry-features", "VoiceAgents=V1Preview")}
 
     async def test_enter_identifies_sdk_via_user_agent_and_query(self):
         # The generated HTTP surface gets SDK identification for free from the core pipeline's

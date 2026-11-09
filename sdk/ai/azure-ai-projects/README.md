@@ -4,7 +4,7 @@ The AI Projects client library is part of the Microsoft Foundry SDK, and provide
 resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents**, which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
-* **Build and run Voice Agents (preview)** for real-time, speech-to-speech conversational AI, reachable over a WebSocket (`.beta.voice_agents.realtime`) or telephony (`.beta.voice_agents.telephony`), with persisted conversation transcripts and audio through `.beta.voice_agents.conversations`.
+* **Build and run Voice Agents** for real-time, speech-to-speech conversational AI, reachable over a WebSocket (`.voice_agents.realtime`) or telephony (`.voice_agents.telephony`), with persisted conversation transcripts and audio through `.voice_agents.conversations`. Generate agents from a prompt with `.agents.create_from_prompt()`. These generally available features do not require preview opt-in.
 * **Enhance Agents with specialized tools and toolbox tools** such as:
   * Agent-to-Agent (A2A)
   * Azure AI Search
@@ -44,6 +44,8 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
 
 **Important:** This stable package includes Preview features. Preview features available through stable methods require setting `allow_preview=True` when constructing the client, while Preview features exposed via the .beta sub-clients do not. Preview features may change or be removed in future versions and are not recommended for production use.
+
+GPT Live sessions and stored Live conversations remain under `.beta.voice_agents.live` and `.beta.voice_agents.live_conversations`; outbound campaigns remain under `.beta.voice_agents.campaigns`. GPT Live definitions, inline subagent handoff, SIP telephony, and post-call delivery remain in preview. Set `allow_preview=True` when creating definitions or using these conditional preview features through `.voice_agents`.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
@@ -195,17 +197,17 @@ The table below lists the operation groups supported by the client library, with
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
 | Skills (preview) | | `samples/skills/` |
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
-| Voice agents (preview) | | `samples/agents/voice/` |
+| Voice agents | | `samples/agents/voice/` |
 
-### Voice Agent realtime transport (preview)
+### Voice Agent realtime transport
 
-Use `project_client.beta.voice_agents.realtime` for agents created with `VoiceAgentDefinition`.
+Use `project_client.voice_agents.realtime` for agents created with `VoiceAgentDefinition`.
 Connections use WebSocket by default. You can also select the transport explicitly:
 
 ```python
 from azure.ai.projects.models import VoiceAgentTransport
 
-with project_client.beta.voice_agents.realtime.connect(
+with project_client.voice_agents.realtime.connect(
     agent_name="my-voice-agent",
     transport=VoiceAgentTransport.WEBSOCKET,
 ) as connection:
@@ -215,7 +217,7 @@ with project_client.beta.voice_agents.realtime.connect(
 The asynchronous client uses the same keyword:
 
 ```python
-async with async_project_client.beta.voice_agents.realtime.connect(
+async with async_project_client.voice_agents.realtime.connect(
     agent_name="my-voice-agent",
     transport=VoiceAgentTransport.WEBSOCKET,
 ) as connection:

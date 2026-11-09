@@ -153,7 +153,7 @@ async def test_async_samples_delete_only_the_owned_version_on_failure(monkeypatc
     connection.session.close.assert_awaited_once()
     connection.session.start.assert_not_called()
     connection.response.cancel.assert_not_called()
-    client.beta.voice_agents.realtime.connect.assert_not_called()
+    client.voice_agents.realtime.connect.assert_not_called()
     client.beta.voice_agents.live.connect.return_value.__aexit__.assert_awaited_once()
 
 
@@ -1140,7 +1140,7 @@ def test_live_rest_sample_downloads_to_user_temp_without_modifying_resources(
     operations.delete.assert_not_called()
     assert not rest_sample.client.agents.mock_calls
     rest_sample.client.beta.voice_agents.live.connect.assert_not_called()
-    rest_sample.client.beta.voice_agents.conversations.get.assert_not_called()
+    rest_sample.client.voice_agents.conversations.get.assert_not_called()
     rest_sample.output_factory.assert_called_once_with(prefix="voice-agent-live-")
     output_directory = rest_sample.directories[0]
     assert output_directory.parent == tmp_path
@@ -1179,7 +1179,7 @@ def test_live_rest_sample_surfaces_service_failures_without_fallback_or_deletion
 
     assert caught.value is failure
     rest_sample.operations.delete.assert_not_called()
-    assert not rest_sample.client.beta.voice_agents.conversations.mock_calls
+    assert not rest_sample.client.voice_agents.conversations.mock_calls
     assert f"HTTP {status}" in capsys.readouterr().out
     rest_sample.output_factory.assert_not_called()
     rest_sample.client.__exit__.assert_called_once()
@@ -1341,7 +1341,7 @@ async def test_microphone_mode_does_not_require_a_wav_and_preserves_live_lifecyc
     setup.client.agents.delete_version.assert_awaited_once()
     setup.connection.session.start.assert_not_called()
     setup.connection.response.cancel.assert_not_called()
-    setup.client.beta.voice_agents.realtime.connect.assert_not_called()
+    setup.client.voice_agents.realtime.connect.assert_not_called()
     assert "Speak now" in capsys.readouterr().out
 
 

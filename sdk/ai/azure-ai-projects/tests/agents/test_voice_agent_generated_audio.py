@@ -29,7 +29,7 @@ class TestVoiceAgentGeneratedAudio(TestBase):
         if is_live():
             add_interruption_sanitizers(fixture)
         with self.create_client(allow_preview=True, **kwargs) as client:
-            conversations = client.beta.voice_agents.conversations
+            conversations = client.voice_agents.conversations
             try:
                 metadata = conversations.get_generated_audio_item(
                     fixture.agent_name,

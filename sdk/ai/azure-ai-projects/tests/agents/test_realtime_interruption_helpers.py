@@ -221,7 +221,7 @@ def test_playback_never_creates_resources_or_loads_websocket_setup(monkeypatch):
 @pytest.mark.asyncio
 async def test_recording_cleanup_still_deletes_owned_agent_after_conversation_failure():
     client = MagicMock()
-    client.beta.voice_agents.conversations.delete = AsyncMock(side_effect=RuntimeError("cleanup failed"))
+    client.voice_agents.conversations.delete = AsyncMock(side_effect=RuntimeError("cleanup failed"))
     client.agents.delete = AsyncMock()
     fixture = recording_helpers.RealtimeInterruptionFixture("owned-agent", "conversation-test", "item-test")
     with pytest.raises(RuntimeError, match="cleanup failed"):
@@ -248,7 +248,7 @@ async def test_failed_recording_creation_does_not_delete_an_unacknowledged_name(
         await preparer._create_fixture("owned-agent", "realtime-deployment-test")
 
     client.agents.delete.assert_not_called()
-    client.beta.voice_agents.conversations.delete.assert_not_called()
+    client.voice_agents.conversations.delete.assert_not_called()
 
 
 def test_interruption_sanitizers_preserve_cross_request_references(monkeypatch):

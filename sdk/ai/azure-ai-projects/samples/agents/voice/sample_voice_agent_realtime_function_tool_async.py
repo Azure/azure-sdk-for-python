@@ -85,7 +85,7 @@ async def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, 
     :type agent_name: str
     :type prompt: str
     """
-    async with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+    async with client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
         await conn.conversation.item.create(
             item=RealtimeConversationItemMessageUser(
                 type=RealtimeConversationItemType.MESSAGE,
@@ -166,7 +166,7 @@ async def main() -> None:
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
         created_version = None
         try:

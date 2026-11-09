@@ -61,7 +61,7 @@ def _run_conversation(project_client: AIProjectClient, agent_name: str) -> None:
     :param agent_name: The sample's voice agent name.
     :type agent_name: str
     """
-    with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as connection:
+    with project_client.voice_agents.realtime.connect(agent_name=agent_name) as connection:
         connection.conversation.item.create(
             item=RealtimeConversationItemMessageUser(
                 type=RealtimeConversationItemType.MESSAGE,
@@ -99,7 +99,7 @@ def main() -> None:
     try:
         with (
             DefaultAzureCredential() as credential,
-            AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+            AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         ):
             created_version = None
             try:

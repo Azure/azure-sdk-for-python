@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 """Synchronous Realtime voice-agent client.
 
-Use ``client.beta.voice_agents.realtime.connect(...)`` as a context manager.
+Use ``client.voice_agents.realtime.connect(...)`` as a context manager.
 Send text or audio through the connection and receive model events.
 Install ``azure-ai-projects[voice]`` for the optional WebSocket dependencies.
 """
@@ -45,7 +45,7 @@ from ._realtime_utils import _normalize_transport, _without_transport_query
 
 _LOGGER = logging.getLogger("azure.ai.projects.realtime")
 
-# Voice-agent WebSocket requests need the same preview header as REST requests.
+# Preview voice features use the same opt-in for WebSocket and REST requests.
 _VOICE_AGENT_FEATURE_HEADER: str = _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value
 
 # The WebSocket handshake does not use the HTTP pipeline, so identify the SDK explicitly.
@@ -678,7 +678,7 @@ class BetaRealtimeConnection(
     Iterate to receive events. Use ``conversation``, ``response``, and the audio
     buffers to send messages and control replies::
 
-        with client.beta.voice_agents.realtime.connect(agent_name="my-agent") as conn:
+        with client.voice_agents.realtime.connect(agent_name="my-agent") as conn:
             for event in conn:
                 if event.type == RealtimeServerEventType.RESPONSE_DONE:
                     break
@@ -759,7 +759,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
     """Context manager that opens a :class:`BetaRealtimeConnection`.
 
     Returned by :meth:`BetaRealtime.connect`; you normally use it as
-    ``with client.beta.voice_agents.realtime.connect(...) as conn:``.
+    ``with client.voice_agents.realtime.connect(...) as conn:``.
 
     :keyword str endpoint: The Foundry project endpoint.
     :keyword credential: The credential used for the WebSocket handshake.
@@ -768,6 +768,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
     :paramtype credential_scopes: list[str]
     :keyword str api_version: The API version for the handshake.
     :keyword str agent_name: The name of the voice agent.
+    :keyword bool allow_preview: Enable preview voice features. Default is False.
     :keyword agent_session_id: An optional session correlation identifier.
     :paramtype agent_session_id: str or None
     :keyword transport: The optional connection transport. The SDK encodes its wire value internally.
@@ -790,6 +791,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
         credential_scopes: List[str],
         api_version: str,
         agent_name: str,
+        allow_preview: bool = False,
         agent_session_id: Optional[str] = None,
         transport: Optional[Union[str, "_models.VoiceAgentTransport"]] = None,
         structured_inputs: Optional[Mapping[str, Any]] = None,
@@ -803,6 +805,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
         self._credential_scopes = credential_scopes
         self._api_version = api_version
         self._agent_name = agent_name
+        self._allow_preview = allow_preview
         self._agent_session_id = agent_session_id
         self._transport = _normalize_transport(transport)
         self._structured_inputs = structured_inputs
@@ -815,6 +818,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
     _logger = _LOGGER
     _subprotocol: Optional[str] = "realtime"
     _protocol_name = "realtime"
+    _requires_preview = False
 
     def __enter__(self) -> _ConnectionT:
         return self.enter()
@@ -862,9 +866,12 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
         token = self._credential.get_token(*self._credential_scopes)
         headers: Dict[str, str] = {
             "Authorization": "Bearer " + token.token,
-            _FOUNDRY_FEATURES_HEADER_NAME: _VOICE_AGENT_FEATURE_HEADER,
         }
         headers.update(self._extra_headers)
+        if (self._requires_preview or self._allow_preview) and not _has_header_case_insensitive(
+            headers, _FOUNDRY_FEATURES_HEADER_NAME
+        ):
+            headers[_FOUNDRY_FEATURES_HEADER_NAME] = _VOICE_AGENT_FEATURE_HEADER
         if not _has_header_case_insensitive(headers, "User-Agent"):
             headers["User-Agent"] = _USER_AGENT
 
@@ -932,7 +939,7 @@ class BetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[BetaRealtime
 
 
 class BetaRealtime:  # pylint: disable=too-few-public-methods
-    """Connect to a voice agent through ``client.beta.voice_agents.realtime``.
+    """Connect to a voice agent through ``client.voice_agents.realtime``.
 
     Open a connection with :meth:`connect`::
 
@@ -940,7 +947,7 @@ class BetaRealtime:  # pylint: disable=too-few-public-methods
         from azure.identity import DefaultAzureCredential
 
         client = AIProjectClient(endpoint, DefaultAzureCredential())
-        with client.beta.voice_agents.realtime.connect(agent_name="my-agent") as conn:
+        with client.voice_agents.realtime.connect(agent_name="my-agent") as conn:
             conn.input_audio_buffer.append(audio=chunk)
             conn.input_audio_buffer.commit()
             conn.response.create()
@@ -949,7 +956,7 @@ class BetaRealtime:  # pylint: disable=too-few-public-methods
                     break
 
     :param client: The voice-agent client that supplies the project endpoint and credential.
-    :type client: ~azure.ai.projects.operations.BetaVoiceAgentsOperations
+    :type client: ~azure.ai.projects.operations.VoiceAgentsOperations
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -994,9 +1001,9 @@ class BetaRealtime:  # pylint: disable=too-few-public-methods
         :paramtype credential_scopes: list[str] or None
         :keyword extra_query: Additional query-string parameters for the handshake.
         :paramtype extra_query: Mapping[str, str] or None
-        :keyword extra_headers: Additional headers for the handshake. Pass
-         ``{"Foundry-Features": "..."}`` here to override the ``VoiceAgents=V1Preview`` value
-         this method always sends by default.
+        :keyword extra_headers: Additional headers for the handshake. Preview voice features
+         require ``allow_preview=True`` on the project client or an explicit
+         ``{"Foundry-Features": "VoiceAgents=V1Preview"}`` header. GA voice sessions need no opt-in.
         :paramtype extra_headers: Mapping[str, str] or None
         :return: A context manager yielding a :class:`BetaRealtimeConnection`.
         :rtype: ~azure.ai.projects.BetaRealtimeConnectionManager
@@ -1008,6 +1015,7 @@ class BetaRealtime:  # pylint: disable=too-few-public-methods
             credential_scopes=credential_scopes or self._config.credential_scopes,
             api_version=api_version or self._config.api_version,
             agent_name=agent_name,
+            allow_preview=bool(self._config.allow_preview),
             agent_session_id=agent_session_id,
             transport=transport,
             structured_inputs=structured_inputs,

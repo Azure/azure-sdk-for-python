@@ -43,7 +43,7 @@ def make_definition(instructions: str) -> VoiceAgentDefinition:
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     created_versions = []
     try:

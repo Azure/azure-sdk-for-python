@@ -247,7 +247,7 @@ class TestFoundryFeaturesHeaderOnBetaOperationsAsync(FoundryFeaturesHeaderTestBa
             label, self._make_fake_call(method, extra_kwargs=extra_kwargs), expected_header_value
         )
 
-    @pytest.mark.parametrize("subclient_name", ["conversations", "telephony"])
+    @pytest.mark.parametrize("subclient_name", ["live_conversations", "campaigns"])
     @pytest.mark.asyncio
     async def test_foundry_features_header_on_voice_agent_subclients_async(
         self, async_client: AsyncAIProjectClient, subclient_name: str

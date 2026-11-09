@@ -71,21 +71,21 @@ class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An access boundary for the activity protocol."""
 
-    READ1_ON1_DEVELOPERS = "read.1on1.developers"
+    READ_1_ON1_DEVELOPERS = "read.1on1.developers"
     """Allows read access to one-on-one developer conversations."""
-    READ1_ON1_MANAGER = "read.1on1.manager"
+    READ_1_ON1_MANAGER = "read.1on1.manager"
     """Allows read access to one-on-one manager conversations."""
-    READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+    READ_1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
     """Allows read access to allowlisted one-on-one conversations."""
-    READ1_ON1_TENANT = "read.1on1.tenant"
+    READ_1_ON1_TENANT = "read.1on1.tenant"
     """Allows read access to tenant-wide one-on-one conversations."""
-    WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+    WRITE_1_ON1_DEVELOPERS = "write.1on1.developers"
     """Allows write access to one-on-one developer conversations."""
-    WRITE1_ON1_MANAGER = "write.1on1.manager"
+    WRITE_1_ON1_MANAGER = "write.1on1.manager"
     """Allows write access to one-on-one manager conversations."""
-    WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+    WRITE_1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
     """Allows write access to allowlisted one-on-one conversations."""
-    WRITE1_ON1_TENANT = "write.1on1.tenant"
+    WRITE_1_ON1_TENANT = "write.1on1.tenant"
     """Allows write access to tenant-wide one-on-one conversations."""
     READ_GROUP_DEVELOPERS = "read.group.developers"
     """Allows read access to developer group conversations."""
@@ -1418,8 +1418,8 @@ class ModelIdsLive(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     URL query parameter.
     """
 
-    GPT_LIVE1 = "gpt-live-1"
-    """GPT_LIVE1."""
+    GPT_LIVE_1 = "gpt-live-1"
+    """GPT_LIVE_1."""
 
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2109,7 +2109,8 @@ class TelephonyAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A Microsoft Teams identity. Source addresses require a nonempty resource-account object GUID;
     transfer destinations also support 28:orgid:{guid}."""
     SIP = "sip"
-    """A SIP or SIPS destination for transfer."""
+    """A SIP or SIPS destination for transfer. SIP is in preview and requires the
+    ``VoiceAgents=V1Preview`` opt-in."""
 
 
 class TelephonyCallDurationBasis(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2541,7 +2542,8 @@ class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TWILIO = "twilio"
     """Twilio Programmable Voice."""
     SIP = "sip"
-    """Session Initiation Protocol."""
+    """Session Initiation Protocol. SIP is in preview and requires the ``VoiceAgents=V1Preview``
+    opt-in."""
 
 
 class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2995,15 +2997,15 @@ class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnum
     added over time.
     """
 
-    WHISPER1 = "whisper-1"
+    WHISPER_1 = "whisper-1"
     """OpenAI Whisper."""
     GPT_REALTIME_WHISPER = "gpt-realtime-whisper"
     """OpenAI GPT Realtime Whisper."""
-    GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
+    GPT_4_O_TRANSCRIBE = "gpt-4o-transcribe"
     """OpenAI GPT-4o transcribe."""
-    GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
+    GPT_4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
     """OpenAI GPT-4o mini transcribe."""
-    GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
+    GPT_4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
     """OpenAI GPT-4o transcribe with speaker diarization."""
     GPT_TRANSCRIBE = "gpt-transcribe"
     """OpenAI GPT Transcribe."""
@@ -3089,12 +3091,14 @@ class VoiceAgentLiveDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input audio noise reduction mode.
 
-    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local voice activity
-      detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
-      changing the audio used for recognition. The mode is not restricted to headset devices.
-    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice activity detection.
-      Starts with headset suppression and personalizes detection after automatic speaker enrollment. Recognition audio
-      is unchanged; headset suppression remains active when personalization is unavailable.
+    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local
+    voice activity detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio.
+    Enhances detection audio without changing the audio used for recognition. The mode is not
+    restricted to headset devices.
+    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice
+    activity detection. Starts with headset suppression and personalizes detection after automatic
+    speaker enrollment. Recognition audio is unchanged; headset suppression remains active when
+    personalization is unavailable.
     """
 
     NEAR_FIELD = "near_field"
@@ -3126,8 +3130,7 @@ class VoiceAgentPostCallIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Content that can be included in a post-call delivery."""
 
     AUDIO = "audio"
-    """A URL to the merged call recording. Not supported in this preview: the service rejects
-    ``audio`` when the agent version is saved."""
+    """A URL to the merged call recording."""
 
 
 class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3332,7 +3335,7 @@ class VoiceAgentTransferDestinationType(str, Enum, metaclass=CaseInsensitiveEnum
     TEAMS = "teams"
     """A Microsoft Teams user or resource-account identifier."""
     SIP = "sip"
-    """A SIP or SIPS URI."""
+    """A SIP or SIPS URI. SIP is in preview and requires the ``VoiceAgents=V1Preview`` opt-in."""
 
 
 class VoiceAgentTransferStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3410,10 +3413,13 @@ class VoiceConversationEngineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle status of a persisted voice conversation:
 
-    * `in_progress`: the live session is active, or post-session persistence finalization is pending.
-    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a max-duration `1001` close,
-      or a client or network disconnect that the service can still finalize.
-    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented finalization.
+    * `in_progress`: the live session is active, or post-session persistence finalization is
+    pending.
+    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
+    max-duration `1001`
+    close, or a client or network disconnect that the service can still finalize.
+    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
+    finalization.
     """
 
     IN_PROGRESS = "in_progress"

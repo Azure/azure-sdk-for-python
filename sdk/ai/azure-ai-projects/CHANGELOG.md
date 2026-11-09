@@ -4,12 +4,13 @@
 
 ### Features Added
 
+* Voice agents are generally available without preview opt-in for Realtime sessions, stored Realtime conversations, agent generation, and Teams Phone Extensibility/Twilio telephony and call jobs. Use `.voice_agents.realtime`, `.voice_agents.conversations`, `.voice_agents.telephony`, and `.agents.create_from_prompt()`. GPT Live, inline subagent handoff, SIP, post-call delivery, and campaigns remain in preview.
 * Added preview `.beta.voice_agents.live.connect()` and `VoiceAgentLiveDefinition` for synchronous and asynchronous GPT Live sessions, with typed client and server events, session updates, text and audio input, and Responses backend function-tool support.
 * Added Live delegation models for Responses backends, application-managed work, and same-project prompt agents: `VoiceAgentLiveResponsesDelegation`, `VoiceAgentLiveClientDelegation`, and `VoiceAgentLiveManagedAgentDelegation`.
 * Added `.beta.voice_agents.live_conversations` for listing, retrieving, and deleting stored Live conversations, retrieving conversation items, and retrieving or downloading item-level and conversation-level audio.
-* Added optional `VoiceAgentDefinition.post_call` with `VoiceAgentPostCallConfig`, `VoiceAgentEventGridPostCallDestination`, and `VoiceAgentRoutinePostCallDestination` for post-call transcript delivery to Event Grid connections and routines. Audio delivery is not supported in this preview.
+* Added optional preview `VoiceAgentDefinition.post_call` with `VoiceAgentPostCallConfig`, `VoiceAgentEventGridPostCallDestination`, and `VoiceAgentRoutinePostCallDestination` for post-call transcript and audio delivery to Event Grid connections and routines.
 * Added SIP telephony provider support through `TelephonyProvider.SIP`, `SipTelephonyBinding`, and `SipTelephonyBindingListItem`. Added optional `UpdateTelephonyBindingRequest.allowed_calling_numbers` for incoming caller restrictions.
-* Added `.beta.voice_agents.telephony.list_call_jobs()` for listing outbound call jobs with optional status and campaign filters, and `.beta.voice_agents.telephony.delete_call_job()` for deleting a call job.
+* Added `.voice_agents.telephony.list_call_jobs()` for listing outbound call jobs with optional status and campaign filters, and `.voice_agents.telephony.delete_call_job()` for deleting a call job.
 * Added `.beta.voice_agents.campaigns` for managing outbound campaigns, including long-running creation, cancellation, and deletion, campaign retrieval and listing, validation errors, and operation status. Campaign mutations support ETag match conditions.
 * Added campaign configuration, scheduling, and progress models, including `TelephonyCampaign`, `TelephonyRecipient`, `ImmediateSchedule`, `AtTimeSchedule`, `PerRecipientSchedule`, and `TelephonyCampaignProgress`. `TelephonyCampaignDatasetReference` supports an optional version that pins the latest dataset version during campaign preparation when omitted. Added optional read-only `TelephonyCallJob.campaign_name`.
 * Added inline Voice Agent subagents and handoff configuration through `VoiceAgentInlineSubagentConfig`, `InlineVoiceSubagent`, and `VoiceAgentHandoffPolicy`, with handoff lifecycle events and optional `VoiceAgentSessionResponseConfig.handoff`.
@@ -27,6 +28,7 @@ All breaking changes affect preview APIs.
 
 Breaking changes in beta methods:
 
+* Moved `.beta.agents.create_from_prompt()` to `.agents.create_from_prompt()`, and `.beta.voice_agents.realtime`, `.beta.voice_agents.conversations`, and `.beta.voice_agents.telephony` to `.voice_agents`. GPT Live and campaigns remain under `.beta.voice_agents`.
 * Argument `telephony_binding` in `.beta.voice_agents.telephony.create_binding()` renamed to `binding`; the typed body now accepts `TelephonyBinding` instead of `CreateTelephonyBindingRequest`.
 * Argument `body` in `.beta.voice_agents.telephony.create_call_job()` renamed to `job`; the typed body now accepts `TelephonyCallJobCreate` instead of `CreateTelephonyCallJobRequest`.
 * Removed the `status` filter from `.beta.voice_agents.telephony.list_bindings()`.
@@ -50,6 +52,7 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
+* Updated Voice Agent samples to use the GA operation paths without `allow_preview=True`; GPT Live samples retain preview opt-in.
 * Added Live voice-agent samples under `samples/agents/voice/` for session lifecycle, text and audio conversations, local function tools, and same-project managed-agent delegation.
 * Added `sample_voice_agent_live_read_conversation.py` demonstrating stored Live conversation, transcript, and audio retrieval, with an optional temporary greeting session.
 * Added `sample_voice_agent_read_generated_audio.py` demonstrating retrieval of generated, unheard audio from an interrupted Realtime reply.

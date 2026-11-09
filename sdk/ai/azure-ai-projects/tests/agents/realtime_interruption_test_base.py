@@ -58,7 +58,7 @@ async def _delete_fixture(client: AIProjectClient, fixture: RealtimeInterruption
     async def delete_conversation() -> None:
         if fixture.conversation_id:
             try:
-                await client.beta.voice_agents.conversations.delete(fixture.agent_name, fixture.conversation_id)
+                await client.voice_agents.conversations.delete(fixture.agent_name, fixture.conversation_id)
             except ResourceNotFoundError:
                 _LOGGER.info("Owned interrupted conversation was not persisted or was already deleted.")
 
@@ -105,10 +105,10 @@ class RealtimeInterruptionPreparer(AbstractPreparer):
                 agent = await client.agents.create_version(
                     agent_name=agent_name, definition=helpers["interruption_definition"](model)
                 )
-                async with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as connection:
+                async with client.voice_agents.realtime.connect(agent_name=agent_name) as connection:
                     await helpers["interrupt_reply_async"](connection, turn)
                 deadline = time.monotonic() + helpers["RECORDING_TIMEOUT"]
-                conversations = client.beta.voice_agents.conversations
+                conversations = client.voice_agents.conversations
                 while not turn.stored_item_id:
                     try:
                         conversation = await conversations.get(agent_name, turn.conversation_id)

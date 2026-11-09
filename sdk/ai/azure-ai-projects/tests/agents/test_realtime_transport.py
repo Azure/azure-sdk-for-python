@@ -191,13 +191,13 @@ async def test_public_project_client_exposes_typed_transport_selection(is_async:
     manager: Union[BetaRealtimeConnectionManager, AsyncBetaRealtimeConnectionManager]
     if is_async:
         async with AsyncAIProjectClient(endpoint=_ENDPOINT, credential=credential, allow_preview=True) as async_client:
-            manager = async_client.beta.voice_agents.realtime.connect(
+            manager = async_client.voice_agents.realtime.connect(
                 agent_name="agent-test", transport=VoiceAgentTransport.WEBRTC
             )
             url, kwargs = await _capture_handshake(manager)
     else:
         with AIProjectClient(endpoint=_ENDPOINT, credential=credential, allow_preview=True) as client:
-            manager = client.beta.voice_agents.realtime.connect(
+            manager = client.voice_agents.realtime.connect(
                 agent_name="agent-test", transport=VoiceAgentTransport.WEBRTC
             )
             url, kwargs = await _capture_handshake(manager)

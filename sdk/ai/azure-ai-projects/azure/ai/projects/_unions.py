@@ -11,12 +11,12 @@ from typing import Literal, TYPE_CHECKING, TypeAlias, Union
 if TYPE_CHECKING:
     from . import models as _models
 Filters: TypeAlias = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
+RoutineRunStatus: TypeAlias = str
 VoiceAgentToolChoice: TypeAlias = Union[
     Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
 ]
 VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
 VoiceAgentHandoffMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
-RoutineRunStatus: TypeAlias = str
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
 RealtimeResponseInputItem: TypeAlias = Union[
     "_models.RealtimeResponseInputMessage",
