@@ -28,7 +28,7 @@ class TestVoiceAgentGeneratedAudio(TestBase):
         fixture = interrupted_audio_fixture
         if is_live():
             add_interruption_sanitizers(fixture)
-        with self.create_client(allow_preview=True, **kwargs) as client:
+        with self.create_client(**kwargs) as client:
             conversations = client.voice_agents.conversations
             try:
                 metadata = conversations.get_generated_audio_item(

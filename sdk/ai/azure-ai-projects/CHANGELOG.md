@@ -51,6 +51,7 @@ Breaking changes in beta classes:
 ### Bugs Fixed
 
 * Fixed synchronous and asynchronous client imports and campaign polling customizations after the generated campaign operation group moved to `.beta.voice_agents.telephony`.
+* Corrected the package development-status classifier for the stable release.
 
 ### Sample updates
 

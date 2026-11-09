@@ -27,7 +27,9 @@ _PUBLIC_METHODS = [
 ]
 
 
-def _make_realtime(is_async: bool) -> tuple[Union[BetaRealtime, AsyncBetaRealtime], MagicMock]:
+def _make_realtime(
+    is_async: bool, *, allow_preview: bool = False
+) -> tuple[Union[BetaRealtime, AsyncBetaRealtime], MagicMock]:
     credential = MagicMock()
     token = AccessToken("fake-token", 9_999_999_999)
     credential.get_token = AsyncMock(return_value=token) if is_async else MagicMock(return_value=token)
@@ -37,6 +39,7 @@ def _make_realtime(is_async: bool) -> tuple[Union[BetaRealtime, AsyncBetaRealtim
             credential=credential,
             credential_scopes=["https://ai.azure.com/.default"],
             api_version="v1",
+            allow_preview=allow_preview,
         )
     )
     return (AsyncBetaRealtime(client) if is_async else BetaRealtime(client)), credential
@@ -182,6 +185,21 @@ async def test_transport_selection_is_connection_scoped(is_async: bool) -> None:
 
     assert _handshake_query(first_url, first_kwargs)["transport"] == ["webrtc"]
     assert "transport" not in _handshake_query(second_url, second_kwargs)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("allow_preview", [False, True])
+async def test_transport_handshake_respects_preview_opt_in(is_async: bool, allow_preview: bool) -> None:
+    realtime, _ = _make_realtime(is_async, allow_preview=allow_preview)
+    manager = realtime.connect(agent_name="agent-test", transport=VoiceAgentTransport.WEBSOCKET)
+    _, kwargs = await _capture_handshake(manager)
+
+    headers = kwargs["headers" if is_async else "additional_headers"]
+    if allow_preview:
+        assert headers["Foundry-Features"] == "VoiceAgents=V1Preview"
+    else:
+        assert "Foundry-Features" not in headers
 
 
 @pytest.mark.asyncio
