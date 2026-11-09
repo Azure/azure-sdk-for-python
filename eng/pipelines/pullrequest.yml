@@ -29,6 +29,12 @@ extends:
     BuildTargetingString: "*"
     TestProxy: true
     TestTimeOutInMinutes: 180
+    # This storage feature branch needs the same native toolchain as sdk/storage/ci.yml.
+    # The generic PR pipeline does not inherit that service pipeline's parameters.
+    InstallMsRustToolchain: true
+    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/storage/azure-storage-extensions-transfer
+    MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
+    MsRustAdditionalTargets: aarch64-pc-windows-msvc
     # we still exclude cosmos, because of the implicit dependency on the cosmos emulator. Within a pullrequest pipeline we do not
     # currently have the ability to inject steps from a different ci.yml, which is required to start the cosmos emulator.
     # As such, the pullrequest pipeline itself will not invoke the cosmos tests, but the triggered `python - cosmos - ci` public build WILL.

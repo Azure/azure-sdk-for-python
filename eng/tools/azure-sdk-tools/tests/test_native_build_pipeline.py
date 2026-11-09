@@ -63,6 +63,15 @@ def test_storage_tests_use_the_same_rust_feed_as_wheel_builds():
     assert (Path(directory) / "rust-toolchain.toml").is_file()
 
 
+def test_storage_feature_pr_builds_use_the_service_rust_configuration():
+    pullrequest = yaml.safe_load((REPO_ROOT / "eng" / "pipelines" / "pullrequest.yml").read_text())
+    storage = yaml.safe_load((REPO_ROOT / "sdk" / "storage" / "ci.yml").read_text())
+    parameters = pullrequest["extends"]["parameters"]
+    assert parameters["InstallMsRustToolchain"] is True
+    for name in RUST_PARAMETERS:
+        assert parameters[name] == storage["extends"]["parameters"][name]
+
+
 def test_rust_support_is_disabled_by_default_and_forwarded():
     archetype = load_template("stages/archetype-sdk-client.yml")
     jobs = load_template("jobs/ci.yml")
