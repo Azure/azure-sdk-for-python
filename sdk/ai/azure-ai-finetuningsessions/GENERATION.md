@@ -29,7 +29,12 @@ version remains `v1`, with the same required preview header and contract.
 Independent emissions preserve all 32 SDK runtime files; only the generated
 APIView source checksum changes alongside the source pin and provenance.
 
-The shared SDK toolchain uses Python emitter 0.63.10, Python generator 0.39.0,
+The latest-main merge also refreshes the archived shared generator inputs.
+Fresh emission with that toolchain corrects documentation type references in
+three generated modules; their executable ASTs and public signatures are
+unchanged. The reviewed public TypeSpec source pin remains unchanged.
+
+The shared SDK toolchain uses Python emitter 0.63.11, Python generator 0.40.0,
 and TypeSpec compiler 1.17.0. The central SDK manifest/lock remain authoritative;
 the package archives exact copies for independent verification.
 
