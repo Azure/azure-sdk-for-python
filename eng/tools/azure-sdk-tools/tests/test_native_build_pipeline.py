@@ -52,6 +52,17 @@ def test_analysis_checkout_has_history_for_api_comparison():
     }
 
 
+def test_storage_tests_use_the_same_rust_feed_as_wheel_builds():
+    storage = REPO_ROOT / "sdk" / "storage"
+    tests = yaml.safe_load((storage / "tests.yml").read_text())["extends"]["parameters"]
+    build = yaml.safe_load((storage / "ci.yml").read_text())["extends"]["parameters"]
+    for name in RUST_PARAMETERS[:3]:
+        assert tests[name] == build[name]
+    assert tests["InstallMsRustToolchain"] is True
+    directory = tests["MsRustWorkingDirectory"].replace("$(Build.SourcesDirectory)", str(REPO_ROOT))
+    assert (Path(directory) / "rust-toolchain.toml").is_file()
+
+
 def test_rust_support_is_disabled_by_default_and_forwarded():
     archetype = load_template("stages/archetype-sdk-client.yml")
     jobs = load_template("jobs/ci.yml")
