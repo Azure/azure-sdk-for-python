@@ -390,6 +390,8 @@ class AMQPClientAsync(AMQPClientSync):
     async def open_mgmt_link_async(self, node: Union[str, bytes] = "$management", timeout: float = 0, **kwargs):
         """Open and wait for a management link without dispatching a request.
 
+        Failure cleanup has a separate one-second budget, even after the setup timeout expires.
+
         :param str or bytes node: Management target.
         :param float timeout: Timeout in seconds.
         :returns: The opened management link.
@@ -427,10 +429,7 @@ class AMQPClientAsync(AMQPClientSync):
                 try:
                     close_result = mgmt_link.close()
                     if inspect.isawaitable(close_result):
-                        remaining = _MGMT_LINK_CLEANUP_TIMEOUT
-                        if timeout and timeout > 0:
-                            remaining = min(remaining, max(0, timeout - (time.monotonic() - start_time)))
-                        await asyncio.wait_for(close_result, timeout=remaining)
+                        await asyncio.wait_for(close_result, timeout=_MGMT_LINK_CLEANUP_TIMEOUT)
                 except BaseException:  # pylint: disable=broad-except
                     _logger.warning("Management link cleanup failed; preserving the original error.", exc_info=True)
             raise

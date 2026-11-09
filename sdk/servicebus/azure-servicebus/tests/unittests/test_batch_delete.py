@@ -390,6 +390,46 @@ async def test_unbounded_async_setup_does_not_stall_on_cleanup(timeout, cancel_s
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("slow_close", [False, True])
+@pytest.mark.parametrize("setup_error", [RuntimeError("attach failed after deadline"), asyncio.CancelledError()])
+async def test_batch_delete_expired_setup_attempts_bounded_link_cleanup(slow_close, setup_error):
+    client = object.__new__(AMQPClientAsync)
+    client._mgmt_links = {}
+    client._mgmt_link_lock_async = asyncio.Lock()
+    client._session = MagicMock()
+    cleanup_finished = asyncio.Event()
+
+    async def close_link():
+        try:
+            if slow_close:
+                await asyncio.Event().wait()
+        finally:
+            cleanup_finished.set()
+
+    link = MagicMock(open=AsyncMock(side_effect=setup_error), close=AsyncMock(side_effect=close_link))
+    with patch("azure.servicebus._pyamqp.aio._client_async.ManagementOperation", return_value=link), patch(
+        "azure.servicebus._pyamqp.aio._client_async.time",
+        MagicMock(monotonic=MagicMock(side_effect=[0, 2])),
+    ), patch("azure.servicebus._pyamqp.aio._client_async.asyncio.wait_for", wraps=asyncio.wait_for) as wait_for:
+        task = asyncio.create_task(client.open_mgmt_link_async(timeout=1))
+        done, _ = await asyncio.wait({task}, timeout=2)
+        try:
+            assert task in done, "Cleanup must not outlive its separate one-second grace."
+            with pytest.raises(type(setup_error)) as caught:
+                await task
+            assert caught.value is setup_error
+            assert client._mgmt_links == {}
+            link.close.assert_awaited_once()
+            assert cleanup_finished.is_set()
+            assert wait_for.call_args.kwargs["timeout"] == 1
+        finally:
+            if not task.done():
+                task.cancel()
+                with pytest.raises((RuntimeError, asyncio.CancelledError)):
+                    await task
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("client_type", [ServiceBusClient, AsyncServiceBusClient])
 @pytest.mark.parametrize("subscription", [False, True])
 @pytest.mark.parametrize("operation", ["delete_messages", "purge_messages"])
@@ -479,7 +519,7 @@ async def test_async_management_setup_deadline_prevents_dispatch(phase):
     try:
         with patch("azure.servicebus._pyamqp.aio._client_async.ManagementOperation", return_value=link):
             with pytest.raises(OperationTimeoutError):
-                await asyncio.wait_for(receiver.delete_messages(1, timeout=0.05), timeout=1)
+                await asyncio.wait_for(receiver.delete_messages(1, timeout=0.05), timeout=2)
         receiver._mgmt_request_response.assert_not_awaited()
         if phase == "lock":
             assert client._mgmt_links == {"$management": link}

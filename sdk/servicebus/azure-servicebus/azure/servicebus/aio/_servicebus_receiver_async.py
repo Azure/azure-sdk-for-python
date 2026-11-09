@@ -895,6 +895,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         scheduled messages are not eligible. Currently, batch delete is not supported when partitioning is
         enabled. A dispatched request is not automatically retried; an error, cancellation, or timeout leaves
         an unknown deletion outcome.
+        After management-link setup fails, error-path cleanup can take up to one additional second.
 
         :param int message_count: The positive 32-bit maximum number of messages to delete. The service limit
          is 500 for Basic and Standard and 4,000 for Premium.
@@ -973,6 +974,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         remain. Currently, purge is not supported when partitioning is enabled.
         If an error, cancellation, or timeout occurs after dispatch, the purge can be partial and its exact
         deletion outcome is unknown.
+        After management-link setup fails, error-path cleanup can take up to one additional second.
 
         :keyword Optional[datetime.datetime] before_enqueued_time: Only messages enqueued before this UTC time
          can be deleted. The purge start time is used when omitted.
