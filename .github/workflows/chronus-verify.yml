@@ -1,0 +1,102 @@
+name: Chronus Verify
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "sdk/*/*/**"
+
+concurrency:
+  group: chronus-verify-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  chronus-verify:
+    name: Verify Chronus Change Descriptions
+    if: github.event.pull_request.user.login != 'azure-sdk'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0  # needed so chronus can diff against base branch
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: .github/chronus/package-lock.json
+
+      - name: Install pinned dependencies
+        run: npm ci
+        working-directory: .github/chronus
+
+      - name: Run chronus verify
+        id: verify
+        run: npm exec --no --prefix .github/chronus/ -- chronus verify
+
+      # Sticky comment is only post-able when GITHUB_TOKEN has write scope —
+      # i.e. PRs from the main repo. Fork PRs see only the error annotation below.
+      - name: Post sticky fix-instructions PR comment on failure
+        if: failure() && steps.verify.conclusion == 'failure' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const HEADER = '<!-- chronus-verify-sticky -->';
+            const body = [
+              HEADER,
+              '### 📝 Missing changelog entry',
+              '',
+              'This PR touches package source under `sdk/*/*/**` but no Chronus',
+              'change description was found. CI requires every user-affecting',
+              'change to have one.',
+              '',
+              '#### How to fix',
+              '',
+              'Run the following from the repo root (or from within the package',
+              'directory) and push the new `.chronus/changes/*.md` file:',
+              '',
+              '```bash',
+              'azpysdk changelog add',
+              '```',
+              '',
+              'This adds a change entry for each modified package. If your change',
+              'is not user-facing (e.g. tests or docs only), choose the `internal`',
+              'kind to satisfy the check without bumping the version.',
+              '',
+              '> 💡 You can also ask **GitHub Copilot** to fix this failing check',
+              '> for you directly from the PR\'s *Checks* tab.',
+              '',
+              'See [`doc/dev/changelog_updates.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md) for full instructions.',
+            ].join('\n');
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            const existing = comments.find(c => c.body && c.body.startsWith(HEADER));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body,
+              });
+            }
+
+      - name: Emit annotation on failure
+        if: failure() && steps.verify.conclusion == 'failure'
+        run: |
+          echo "::error::Chronus verification failed. Run 'azpysdk changelog add' locally and push the new .chronus/changes/*.md file, or ask GitHub Copilot to fix this check from the PR's Checks tab."
+          echo "::error::See https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md for instructions."
