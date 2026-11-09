@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdministratorProperties(_Model):
+class AdministratorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The local administrator login properties.
 
     :ivar user_name: The administrator user name.
@@ -51,8 +51,8 @@ class AdministratorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthConfigProperties(_Model):
-    """The authentication configuration for the Mongo cluster.
+class AuthConfigProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The authentication configuration for the DocumentDB cluster.
 
     :ivar allowed_modes: Allowed authentication modes for data access on the cluster.
     :vartype allowed_modes: list[str or ~azure.mgmt.mongocluster.models.AuthenticationMode]
@@ -93,7 +93,7 @@ class BackupProperties(_Model):
     """Earliest restore timestamp in UTC ISO8601 format."""
 
 
-class CheckNameAvailabilityRequest(_Model):
+class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability request body.
 
     :ivar name: The name of the resource for which availability needs to be checked.
@@ -126,7 +126,7 @@ class CheckNameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResponse(_Model):
+class CheckNameAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability result.
 
     :ivar name_available: Indicates if the resource name is available.
@@ -170,7 +170,7 @@ class CheckNameAvailabilityResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComputeProperties(_Model):
+class ComputeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The compute properties of the cluster. This includes the virtual-cores/memory and scaling
     options applied to servers in the cluster.
 
@@ -202,7 +202,7 @@ class ComputeProperties(_Model):
 
 
 class ConnectionString(_Model):
-    """Connection string for the mongo cluster.
+    """Connection string for the DocumentDB cluster.
 
     :ivar connection_string: Value of the connection string.
     :vartype connection_string: str
@@ -220,7 +220,7 @@ class ConnectionString(_Model):
     """Name of the connection string."""
 
 
-class CustomerManagedKeyEncryptionProperties(_Model):
+class CustomerManagedKeyEncryptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customer managed key encryption settings.
 
     :ivar key_encryption_key_identity: The identity used to access the key encryption key.
@@ -257,7 +257,7 @@ class CustomerManagedKeyEncryptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataApiProperties(_Model):
+class DataApiProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data API properties.
 
     :ivar mode: The mode to indicate whether the Mongo Data API is enabled for a cluster. Known
@@ -289,7 +289,7 @@ class DataApiProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseRole(_Model):
+class DatabaseRole(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database role definition that is assigned to a user.
 
     :ivar db: Database scope that the role is assigned to. Required.
@@ -322,8 +322,8 @@ class DatabaseRole(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionProperties(_Model):
-    """The encryption configuration for the mongo cluster.
+class EncryptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The encryption configuration for the DocumentDB cluster.
 
     :ivar customer_managed_key_encryption: Customer managed key encryption settings.
     :vartype customer_managed_key_encryption:
@@ -353,7 +353,7 @@ class EncryptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProvider(_Model):
+class IdentityProvider(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a user's identity provider definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -386,7 +386,9 @@ class IdentityProvider(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntraIdentityProvider(IdentityProvider, discriminator="MicrosoftEntraID"):
+class EntraIdentityProvider(
+    IdentityProvider, discriminator="MicrosoftEntraID"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a Microsoft Entra ID Mongo user.
 
     :ivar type: The type of identity provider that the user belongs to. Required. Microsoft Entra
@@ -422,7 +424,7 @@ class EntraIdentityProvider(IdentityProvider, discriminator="MicrosoftEntraID"):
         self.type = IdentityProviderType.MICROSOFT_ENTRA_ID  # type: ignore
 
 
-class EntraIdentityProviderProperties(_Model):
+class EntraIdentityProviderProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Entra ID provider properties.
 
     :ivar principal_type: The principal type of the user. Required. Known values are: "user" and
@@ -497,7 +499,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -570,8 +572,8 @@ class ProxyResource(Resource):
     """
 
 
-class FirewallRule(ProxyResource):
-    """Represents a mongo cluster firewall rule.
+class FirewallRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a DocumentDB cluster firewall rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -611,16 +613,16 @@ class FirewallRule(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class FirewallRuleProperties(_Model):
-    """The properties of a mongo cluster firewall rule.
+class FirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a DocumentDB cluster firewall rule.
 
     :ivar provisioning_state: The provisioning state of the firewall rule. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", "Updating", and "Dropping".
     :vartype provisioning_state: str or ~azure.mgmt.mongocluster.models.ProvisioningState
-    :ivar start_ip_address: The start IP address of the mongo cluster firewall rule. Must be IPv4
-     format. Required.
+    :ivar start_ip_address: The start IP address of the DocumentDB cluster firewall rule. Must be
+     IPv4 format. Required.
     :vartype start_ip_address: str
-    :ivar end_ip_address: The end IP address of the mongo cluster firewall rule. Must be IPv4
+    :ivar end_ip_address: The end IP address of the DocumentDB cluster firewall rule. Must be IPv4
      format. Required.
     :vartype end_ip_address: str
     """
@@ -633,9 +635,9 @@ class FirewallRuleProperties(_Model):
     start_ip_address: str = rest_field(
         name="startIpAddress", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The start IP address of the mongo cluster firewall rule. Must be IPv4 format. Required."""
+    """The start IP address of the DocumentDB cluster firewall rule. Must be IPv4 format. Required."""
     end_ip_address: str = rest_field(name="endIpAddress", visibility=["read", "create", "update", "delete", "query"])
-    """The end IP address of the mongo cluster firewall rule. Must be IPv4 format. Required."""
+    """The end IP address of the DocumentDB cluster firewall rule. Must be IPv4 format. Required."""
 
     @overload
     def __init__(
@@ -656,7 +658,7 @@ class FirewallRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HighAvailabilityProperties(_Model):
+class HighAvailabilityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The high availability properties of the cluster.
 
     :ivar target_mode: The target high availability mode requested for the cluster. Known values
@@ -688,7 +690,7 @@ class HighAvailabilityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyEncryptionKeyIdentity(_Model):
+class KeyEncryptionKeyIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identity used for key encryption key.
 
     :ivar identity_type: The type of identity. Only 'UserAssignedIdentity' is supported.
@@ -727,19 +729,20 @@ class KeyEncryptionKeyIdentity(_Model):
 
 
 class ListConnectionStringsResult(_Model):
-    """The connection strings for the given mongo cluster.
+    """The connection strings for the given DocumentDB cluster.
 
-    :ivar connection_strings: An array that contains the connection strings for a mongo cluster.
+    :ivar connection_strings: An array that contains the connection strings for a DocumentDB
+     cluster.
     :vartype connection_strings: list[~azure.mgmt.mongocluster.models.ConnectionString]
     """
 
     connection_strings: Optional[list["_models.ConnectionString"]] = rest_field(
         name="connectionStrings", visibility=["read"]
     )
-    """An array that contains the connection strings for a mongo cluster."""
+    """An array that contains the connection strings for a DocumentDB cluster."""
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -791,7 +794,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -835,8 +838,8 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class MongoCluster(TrackedResource):
-    """Represents a mongo cluster resource.
+class MongoCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a DocumentDB cluster resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -889,50 +892,50 @@ class MongoCluster(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class MongoClusterProperties(_Model):
-    """The properties of a mongo cluster.
+class MongoClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a DocumentDB cluster.
 
-    :ivar create_mode: The mode to create a mongo cluster. Known values are: "Default",
+    :ivar create_mode: The mode to create a DocumentDB cluster. Known values are: "Default",
      "PointInTimeRestore", "GeoReplica", and "Replica".
     :vartype create_mode: str or ~azure.mgmt.mongocluster.models.CreateMode
-    :ivar restore_parameters: The parameters to create a point-in-time restore mongo cluster.
+    :ivar restore_parameters: The parameters to create a point-in-time restore DocumentDB cluster.
     :vartype restore_parameters: ~azure.mgmt.mongocluster.models.MongoClusterRestoreParameters
-    :ivar replica_parameters: The parameters to create a replica mongo cluster.
+    :ivar replica_parameters: The parameters to create a replica DocumentDB cluster.
     :vartype replica_parameters: ~azure.mgmt.mongocluster.models.MongoClusterReplicaParameters
-    :ivar administrator: The local administrator properties for the mongo cluster.
+    :ivar administrator: The local administrator properties for the DocumentDB cluster.
     :vartype administrator: ~azure.mgmt.mongocluster.models.AdministratorProperties
     :ivar server_version: The Mongo DB server version. Defaults to the latest available version if
      not specified.
     :vartype server_version: str
     :ivar connection_string: The default mongo connection string for the cluster.
     :vartype connection_string: str
-    :ivar provisioning_state: The provisioning state of the mongo cluster. Known values are:
+    :ivar provisioning_state: The provisioning state of the DocumentDB cluster. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", "Updating", and "Dropping".
     :vartype provisioning_state: str or ~azure.mgmt.mongocluster.models.ProvisioningState
-    :ivar cluster_status: The status of the mongo cluster. Known values are: "Ready",
+    :ivar cluster_status: The status of the DocumentDB cluster. Known values are: "Ready",
      "Provisioning", "Updating", "Starting", "Stopping", "Stopped", and "Dropping".
     :vartype cluster_status: str or ~azure.mgmt.mongocluster.models.MongoClusterStatus
-    :ivar public_network_access: Whether or not public endpoint access is allowed for this mongo
-     cluster. Known values are: "Enabled" and "Disabled".
+    :ivar public_network_access: Whether or not public endpoint access is allowed for this
+     DocumentDB cluster. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.mongocluster.models.PublicNetworkAccess
-    :ivar high_availability: The high availability properties of the mongo cluster.
+    :ivar high_availability: The high availability properties of the DocumentDB cluster.
     :vartype high_availability: ~azure.mgmt.mongocluster.models.HighAvailabilityProperties
-    :ivar storage: The storage properties of the mongo cluster.
+    :ivar storage: The storage properties of the DocumentDB cluster.
     :vartype storage: ~azure.mgmt.mongocluster.models.StorageProperties
-    :ivar sharding: The sharding properties of the mongo cluster.
+    :ivar sharding: The sharding properties of the DocumentDB cluster.
     :vartype sharding: ~azure.mgmt.mongocluster.models.ShardingProperties
-    :ivar compute: The compute properties of the mongo cluster.
+    :ivar compute: The compute properties of the DocumentDB cluster.
     :vartype compute: ~azure.mgmt.mongocluster.models.ComputeProperties
-    :ivar backup: The backup properties of the mongo cluster.
+    :ivar backup: The backup properties of the DocumentDB cluster.
     :vartype backup: ~azure.mgmt.mongocluster.models.BackupProperties
-    :ivar data_api: The Data API properties of the mongo cluster.
+    :ivar data_api: The Data API properties of the DocumentDB cluster.
     :vartype data_api: ~azure.mgmt.mongocluster.models.DataApiProperties
     :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.mongocluster.models.PrivateEndpointConnection]
     :ivar preview_features: List of private endpoint connections.
     :vartype preview_features: list[str or ~azure.mgmt.mongocluster.models.PreviewFeature]
-    :ivar replica: The replication properties for the mongo cluster.
+    :ivar replica: The replication properties for the DocumentDB cluster.
     :vartype replica: ~azure.mgmt.mongocluster.models.ReplicationProperties
     :ivar infrastructure_version: The infrastructure version the cluster is provisioned on.
     :vartype infrastructure_version: str
@@ -942,7 +945,7 @@ class MongoClusterProperties(_Model):
      configured.
     :vartype encryption: ~azure.mgmt.mongocluster.models.EncryptionProperties
     :ivar network_bypass_mode: The network bypass mode for the cluster. Setting to 'AzureCosmosDB'
-     allows Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
+     allows the Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
      "AzureCosmosDB".
     :vartype network_bypass_mode: str or ~azure.mgmt.mongocluster.models.NetworkBypassMode
     """
@@ -950,20 +953,20 @@ class MongoClusterProperties(_Model):
     create_mode: Optional[Union[str, "_models.CreateMode"]] = rest_field(
         name="createMode", visibility=["read", "create"]
     )
-    """The mode to create a mongo cluster. Known values are: \"Default\", \"PointInTimeRestore\",
+    """The mode to create a DocumentDB cluster. Known values are: \"Default\", \"PointInTimeRestore\",
      \"GeoReplica\", and \"Replica\"."""
     restore_parameters: Optional["_models.MongoClusterRestoreParameters"] = rest_field(
         name="restoreParameters", visibility=["read", "create"]
     )
-    """The parameters to create a point-in-time restore mongo cluster."""
+    """The parameters to create a point-in-time restore DocumentDB cluster."""
     replica_parameters: Optional["_models.MongoClusterReplicaParameters"] = rest_field(
         name="replicaParameters", visibility=["read", "create"]
     )
-    """The parameters to create a replica mongo cluster."""
+    """The parameters to create a replica DocumentDB cluster."""
     administrator: Optional["_models.AdministratorProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The local administrator properties for the mongo cluster."""
+    """The local administrator properties for the DocumentDB cluster."""
     server_version: Optional[str] = rest_field(
         name="serverVersion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -973,42 +976,42 @@ class MongoClusterProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The provisioning state of the mongo cluster. Known values are: \"Succeeded\", \"Failed\",
+    """The provisioning state of the DocumentDB cluster. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"InProgress\", \"Updating\", and \"Dropping\"."""
     cluster_status: Optional[Union[str, "_models.MongoClusterStatus"]] = rest_field(
         name="clusterStatus", visibility=["read"]
     )
-    """The status of the mongo cluster. Known values are: \"Ready\", \"Provisioning\", \"Updating\",
-     \"Starting\", \"Stopping\", \"Stopped\", and \"Dropping\"."""
+    """The status of the DocumentDB cluster. Known values are: \"Ready\", \"Provisioning\",
+     \"Updating\", \"Starting\", \"Stopping\", \"Stopped\", and \"Dropping\"."""
     public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
         name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether or not public endpoint access is allowed for this mongo cluster. Known values are:
+    """Whether or not public endpoint access is allowed for this DocumentDB cluster. Known values are:
      \"Enabled\" and \"Disabled\"."""
     high_availability: Optional["_models.HighAvailabilityProperties"] = rest_field(
         name="highAvailability", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The high availability properties of the mongo cluster."""
+    """The high availability properties of the DocumentDB cluster."""
     storage: Optional["_models.StorageProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The storage properties of the mongo cluster."""
+    """The storage properties of the DocumentDB cluster."""
     sharding: Optional["_models.ShardingProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The sharding properties of the mongo cluster."""
+    """The sharding properties of the DocumentDB cluster."""
     compute: Optional["_models.ComputeProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The compute properties of the mongo cluster."""
+    """The compute properties of the DocumentDB cluster."""
     backup: Optional["_models.BackupProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The backup properties of the mongo cluster."""
+    """The backup properties of the DocumentDB cluster."""
     data_api: Optional["_models.DataApiProperties"] = rest_field(
         name="dataApi", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The Data API properties of the mongo cluster."""
+    """The Data API properties of the DocumentDB cluster."""
     private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
@@ -1018,7 +1021,7 @@ class MongoClusterProperties(_Model):
     )
     """List of private endpoint connections."""
     replica: Optional["_models.ReplicationProperties"] = rest_field(visibility=["read"])
-    """The replication properties for the mongo cluster."""
+    """The replication properties for the DocumentDB cluster."""
     infrastructure_version: Optional[str] = rest_field(name="infrastructureVersion", visibility=["read"])
     """The infrastructure version the cluster is provisioned on."""
     auth_config: Optional["_models.AuthConfigProperties"] = rest_field(
@@ -1032,7 +1035,7 @@ class MongoClusterProperties(_Model):
     network_bypass_mode: Optional[Union[str, "_models.NetworkBypassMode"]] = rest_field(
         name="networkBypassMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows Azure Cosmos DB
+    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows the Azure Cosmos DB
      service to bypass network restrictions. Known values are: \"None\" and \"AzureCosmosDB\"."""
 
     @overload
@@ -1068,7 +1071,7 @@ class MongoClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoClusterReplicaParameters(_Model):
+class MongoClusterReplicaParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters used for replica operations.
 
     :ivar source_resource_id: The id of the replication source cluster. Required.
@@ -1103,10 +1106,10 @@ class MongoClusterReplicaParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoClusterRestoreParameters(_Model):
+class MongoClusterRestoreParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters used for restore operations.
 
-    :ivar point_in_time_utc: UTC point in time to restore a mongo cluster.
+    :ivar point_in_time_utc: UTC point in time to restore a DocumentDB cluster.
     :vartype point_in_time_utc: ~datetime.datetime
     :ivar source_resource_id: Resource ID to locate the source cluster to restore.
     :vartype source_resource_id: str
@@ -1115,7 +1118,7 @@ class MongoClusterRestoreParameters(_Model):
     point_in_time_utc: Optional[datetime.datetime] = rest_field(
         name="pointInTimeUTC", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
-    """UTC point in time to restore a mongo cluster."""
+    """UTC point in time to restore a DocumentDB cluster."""
     source_resource_id: Optional[str] = rest_field(
         name="sourceResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1140,7 +1143,7 @@ class MongoClusterRestoreParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoClusterUpdate(_Model):
+class MongoClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the MongoCluster.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -1182,28 +1185,28 @@ class MongoClusterUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoClusterUpdateProperties(_Model):
+class MongoClusterUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the MongoCluster.
 
-    :ivar administrator: The local administrator properties for the mongo cluster.
+    :ivar administrator: The local administrator properties for the DocumentDB cluster.
     :vartype administrator: ~azure.mgmt.mongocluster.models.AdministratorProperties
     :ivar server_version: The Mongo DB server version. Defaults to the latest available version if
      not specified.
     :vartype server_version: str
-    :ivar public_network_access: Whether or not public endpoint access is allowed for this mongo
-     cluster. Known values are: "Enabled" and "Disabled".
+    :ivar public_network_access: Whether or not public endpoint access is allowed for this
+     DocumentDB cluster. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.mongocluster.models.PublicNetworkAccess
-    :ivar high_availability: The high availability properties of the mongo cluster.
+    :ivar high_availability: The high availability properties of the DocumentDB cluster.
     :vartype high_availability: ~azure.mgmt.mongocluster.models.HighAvailabilityProperties
-    :ivar storage: The storage properties of the mongo cluster.
+    :ivar storage: The storage properties of the DocumentDB cluster.
     :vartype storage: ~azure.mgmt.mongocluster.models.StorageProperties
-    :ivar sharding: The sharding properties of the mongo cluster.
+    :ivar sharding: The sharding properties of the DocumentDB cluster.
     :vartype sharding: ~azure.mgmt.mongocluster.models.ShardingProperties
-    :ivar compute: The compute properties of the mongo cluster.
+    :ivar compute: The compute properties of the DocumentDB cluster.
     :vartype compute: ~azure.mgmt.mongocluster.models.ComputeProperties
-    :ivar backup: The backup properties of the mongo cluster.
+    :ivar backup: The backup properties of the DocumentDB cluster.
     :vartype backup: ~azure.mgmt.mongocluster.models.BackupProperties
-    :ivar data_api: The Data API properties of the mongo cluster.
+    :ivar data_api: The Data API properties of the DocumentDB cluster.
     :vartype data_api: ~azure.mgmt.mongocluster.models.DataApiProperties
     :ivar preview_features: List of private endpoint connections.
     :vartype preview_features: list[str or ~azure.mgmt.mongocluster.models.PreviewFeature]
@@ -1213,7 +1216,7 @@ class MongoClusterUpdateProperties(_Model):
      configured.
     :vartype encryption: ~azure.mgmt.mongocluster.models.EncryptionProperties
     :ivar network_bypass_mode: The network bypass mode for the cluster. Setting to 'AzureCosmosDB'
-     allows Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
+     allows the Azure Cosmos DB service to bypass network restrictions. Known values are: "None" and
      "AzureCosmosDB".
     :vartype network_bypass_mode: str or ~azure.mgmt.mongocluster.models.NetworkBypassMode
     """
@@ -1221,7 +1224,7 @@ class MongoClusterUpdateProperties(_Model):
     administrator: Optional["_models.AdministratorProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The local administrator properties for the mongo cluster."""
+    """The local administrator properties for the DocumentDB cluster."""
     server_version: Optional[str] = rest_field(
         name="serverVersion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1229,32 +1232,32 @@ class MongoClusterUpdateProperties(_Model):
     public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
         name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether or not public endpoint access is allowed for this mongo cluster. Known values are:
+    """Whether or not public endpoint access is allowed for this DocumentDB cluster. Known values are:
      \"Enabled\" and \"Disabled\"."""
     high_availability: Optional["_models.HighAvailabilityProperties"] = rest_field(
         name="highAvailability", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The high availability properties of the mongo cluster."""
+    """The high availability properties of the DocumentDB cluster."""
     storage: Optional["_models.StorageProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The storage properties of the mongo cluster."""
+    """The storage properties of the DocumentDB cluster."""
     sharding: Optional["_models.ShardingProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The sharding properties of the mongo cluster."""
+    """The sharding properties of the DocumentDB cluster."""
     compute: Optional["_models.ComputeProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The compute properties of the mongo cluster."""
+    """The compute properties of the DocumentDB cluster."""
     backup: Optional["_models.BackupProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The backup properties of the mongo cluster."""
+    """The backup properties of the DocumentDB cluster."""
     data_api: Optional["_models.DataApiProperties"] = rest_field(
         name="dataApi", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The Data API properties of the mongo cluster."""
+    """The Data API properties of the DocumentDB cluster."""
     preview_features: Optional[list[Union[str, "_models.PreviewFeature"]]] = rest_field(
         name="previewFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1270,7 +1273,7 @@ class MongoClusterUpdateProperties(_Model):
     network_bypass_mode: Optional[Union[str, "_models.NetworkBypassMode"]] = rest_field(
         name="networkBypassMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows Azure Cosmos DB
+    """The network bypass mode for the cluster. Setting to 'AzureCosmosDB' allows the Azure Cosmos DB
      service to bypass network restrictions. Known values are: \"None\" and \"AzureCosmosDB\"."""
 
     @overload
@@ -1303,7 +1306,7 @@ class MongoClusterUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1402,7 +1405,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1443,7 +1446,7 @@ class PrivateEndpointConnection(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -1496,7 +1499,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionResource(ProxyResource):
+class PrivateEndpointConnectionResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -1538,7 +1541,7 @@ class PrivateEndpointConnectionResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -1580,7 +1583,7 @@ class PrivateLinkResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -1618,7 +1621,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -1664,7 +1667,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PromoteReplicaRequest(_Model):
+class PromoteReplicaRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Promote replica request properties.
 
     :ivar promote_option: The promote option to apply to the operation. Required. Known values are:
@@ -1705,8 +1708,8 @@ class PromoteReplicaRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Replica(ProxyResource):
-    """Represents a mongo cluster replica.
+class Replica(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a DocumentDB cluster replica.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1747,7 +1750,7 @@ class Replica(ProxyResource):
 
 
 class ReplicationProperties(_Model):
-    """Replica properties of the mongo cluster.
+    """Replica properties of the DocumentDB cluster.
 
     :ivar source_resource_id: The resource id the source cluster for the replica cluster.
     :vartype source_resource_id: str
@@ -1771,7 +1774,7 @@ class ReplicationProperties(_Model):
      \"Provisioning\", \"Updating\", \"Broken\", and \"Reconfiguring\"."""
 
 
-class ShardingProperties(_Model):
+class ShardingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The sharding properties of the cluster. This includes the shard count and scaling options for
     the cluster.
 
@@ -1802,7 +1805,7 @@ class ShardingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageProperties(_Model):
+class StorageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The storage properties of the cluster. This includes the data storage size and scaling applied
     to servers in the cluster.
 
@@ -1840,7 +1843,7 @@ class StorageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1907,8 +1910,8 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class User(ProxyResource):
-    """Represents a Mongo cluster user.
+class User(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a DocumentDB cluster user.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1963,7 +1966,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserProperties(_Model):
+class UserProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of Mongo user resource on a cluster.
 
     :ivar provisioning_state: The provisioning state of the user. Known values are: "Succeeded",

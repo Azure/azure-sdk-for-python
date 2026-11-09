@@ -70,7 +70,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -180,7 +180,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MongoClustersOperations:
+class MongoClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -199,12 +199,12 @@ class MongoClustersOperations:
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any) -> _models.MongoCluster:
-        """Gets information about a mongo cluster.
+        """Gets information about a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: MongoCluster. The MongoCluster is compatible with MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.MongoCluster
@@ -365,13 +365,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
-        """Create or update a mongo cluster. Update overwrites all properties for the resource. To only
-        modify some of the properties, use PATCH.
+        """Create or update a DocumentDB cluster. Update overwrites all properties for the resource. To
+        only modify some of the properties, use PATCH.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.mongocluster.models.MongoCluster
@@ -394,13 +394,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
-        """Create or update a mongo cluster. Update overwrites all properties for the resource. To only
-        modify some of the properties, use PATCH.
+        """Create or update a DocumentDB cluster. Update overwrites all properties for the resource. To
+        only modify some of the properties, use PATCH.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.mongocluster.types.MongoCluster
@@ -423,13 +423,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
-        """Create or update a mongo cluster. Update overwrites all properties for the resource. To only
-        modify some of the properties, use PATCH.
+        """Create or update a DocumentDB cluster. Update overwrites all properties for the resource. To
+        only modify some of the properties, use PATCH.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -464,13 +464,13 @@ class MongoClustersOperations:
         resource: Union[_models.MongoCluster, _types.MongoCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
-        """Create or update a mongo cluster. Update overwrites all properties for the resource. To only
-        modify some of the properties, use PATCH.
+        """Create or update a DocumentDB cluster. Update overwrites all properties for the resource. To
+        only modify some of the properties, use PATCH.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param resource: Resource create parameters. Is either a MongoCluster type or a IO[bytes] type.
          Required.
@@ -618,13 +618,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
-        """Updates an existing mongo cluster. The request body can contain one to many of the properties
-        present in the normal mongo cluster definition.
+        """Updates an existing DocumentDB cluster. The request body can contain one to many of the
+        properties present in the normal DocumentDB cluster definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdate
@@ -647,13 +647,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
-        """Updates an existing mongo cluster. The request body can contain one to many of the properties
-        present in the normal mongo cluster definition.
+        """Updates an existing DocumentDB cluster. The request body can contain one to many of the
+        properties present in the normal DocumentDB cluster definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: ~azure.mgmt.mongocluster.types.MongoClusterUpdate
@@ -676,13 +676,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
-        """Updates an existing mongo cluster. The request body can contain one to many of the properties
-        present in the normal mongo cluster definition.
+        """Updates an existing DocumentDB cluster. The request body can contain one to many of the
+        properties present in the normal DocumentDB cluster definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
@@ -703,13 +703,13 @@ class MongoClustersOperations:
         properties: Union[_models.MongoClusterUpdate, _types.MongoClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
-        """Updates an existing mongo cluster. The request body can contain one to many of the properties
-        present in the normal mongo cluster definition.
+        """Updates an existing DocumentDB cluster. The request body can contain one to many of the
+        properties present in the normal DocumentDB cluster definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Is either a MongoClusterUpdate type
          or a IO[bytes] type. Required.
@@ -837,12 +837,12 @@ class MongoClustersOperations:
     async def begin_delete(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes a mongo cluster.
+        """Deletes a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -894,7 +894,7 @@ class MongoClustersOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.MongoCluster"]:
-        """List all the mongo clusters in a given resource group.
+        """List all the DocumentDB clusters in a given resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -991,7 +991,7 @@ class MongoClustersOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.MongoCluster"]:
-        """List all the mongo clusters in a given subscription.
+        """List all the DocumentDB clusters in a given subscription.
 
         :return: An iterator like instance of MongoCluster
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mongocluster.models.MongoCluster]
@@ -1086,13 +1086,13 @@ class MongoClustersOperations:
     async def list_connection_strings(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> _models.ListConnectionStringsResult:
-        """List mongo cluster connection strings. This includes the default connection string using
+        """List DocumentDB cluster connection strings. This includes the default connection string using
         SCRAM-SHA-256, as well as other connection strings supported by the cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: ListConnectionStringsResult. The ListConnectionStringsResult is compatible with
          MutableMapping
@@ -1165,7 +1165,7 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Check if mongo cluster name is available for use.
+        """Check if DocumentDB cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1189,7 +1189,7 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Check if mongo cluster name is available for use.
+        """Check if DocumentDB cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1208,7 +1208,7 @@ class MongoClustersOperations:
     async def check_name_availability(
         self, location: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Check if mongo cluster name is available for use.
+        """Check if DocumentDB cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1230,7 +1230,7 @@ class MongoClustersOperations:
         body: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Check if mongo cluster name is available for use.
+        """Check if DocumentDB cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1417,12 +1417,12 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Promotes a replica mongo cluster to a primary role.
+        """Promotes a replica DocumentDB cluster to a primary role.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.mongocluster.models.PromoteReplicaRequest
@@ -1444,12 +1444,12 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Promotes a replica mongo cluster to a primary role.
+        """Promotes a replica DocumentDB cluster to a primary role.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.mongocluster.types.PromoteReplicaRequest
@@ -1471,12 +1471,12 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Promotes a replica mongo cluster to a primary role.
+        """Promotes a replica DocumentDB cluster to a primary role.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param body: The content of the action request. Required.
         :type body: IO[bytes]
@@ -1520,12 +1520,12 @@ class MongoClustersOperations:
         body: Union[_models.PromoteReplicaRequest, _types.PromoteReplicaRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Promotes a replica mongo cluster to a primary role.
+        """Promotes a replica DocumentDB cluster to a primary role.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param body: The content of the action request. Is either a PromoteReplicaRequest type or a
          IO[bytes] type. Required.
@@ -1583,7 +1583,7 @@ class MongoClustersOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class FirewallRulesOperations:
+class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1604,14 +1604,14 @@ class FirewallRulesOperations:
     async def get(
         self, resource_group_name: str, mongo_cluster_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> _models.FirewallRule:
-        """Gets information about a mongo cluster firewall rule.
+        """Gets information about a DocumentDB cluster firewall rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :return: FirewallRule. The FirewallRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.FirewallRule
@@ -1763,14 +1763,14 @@ class FirewallRulesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FirewallRule]:
-        """Creates a new firewall rule or updates an existing firewall rule on a mongo cluster.
+        """Creates a new firewall rule or updates an existing firewall rule on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.mongocluster.models.FirewallRule
@@ -1794,14 +1794,14 @@ class FirewallRulesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FirewallRule]:
-        """Creates a new firewall rule or updates an existing firewall rule on a mongo cluster.
+        """Creates a new firewall rule or updates an existing firewall rule on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.mongocluster.types.FirewallRule
@@ -1825,14 +1825,14 @@ class FirewallRulesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FirewallRule]:
-        """Creates a new firewall rule or updates an existing firewall rule on a mongo cluster.
+        """Creates a new firewall rule or updates an existing firewall rule on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -1854,14 +1854,14 @@ class FirewallRulesOperations:
         resource: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FirewallRule]:
-        """Creates a new firewall rule or updates an existing firewall rule on a mongo cluster.
+        """Creates a new firewall rule or updates an existing firewall rule on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Is either a FirewallRule type or a IO[bytes] type.
          Required.
@@ -1991,14 +1991,14 @@ class FirewallRulesOperations:
     async def begin_delete(
         self, resource_group_name: str, mongo_cluster_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes a mongo cluster firewall rule.
+        """Deletes a DocumentDB cluster firewall rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -2053,12 +2053,12 @@ class FirewallRulesOperations:
     def list_by_mongo_cluster(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.FirewallRule"]:
-        """List all the firewall rules in a given mongo cluster.
+        """List all the firewall rules in a given DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of FirewallRule
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mongocluster.models.FirewallRule]
@@ -2152,7 +2152,7 @@ class FirewallRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2178,7 +2178,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of PrivateEndpointConnectionResource
         :rtype:
@@ -2281,7 +2281,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -2442,7 +2442,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -2475,7 +2475,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -2508,7 +2508,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -2539,7 +2539,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -2682,7 +2682,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -2737,7 +2737,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PrivateLinksOperations:
+class PrivateLinksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2763,7 +2763,7 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of PrivateLinkResource
         :rtype:
@@ -2858,7 +2858,7 @@ class PrivateLinksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ReplicasOperations:
+class ReplicasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2903,12 +2903,12 @@ class ReplicasOperations:
     def list_by_parent(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Replica"]:
-        """List all the replicas for the mongo cluster.
+        """List all the replicas for the DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of Replica
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mongocluster.models.Replica]
@@ -3002,7 +3002,7 @@ class ReplicasOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class UsersOperations:
+class UsersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3045,14 +3045,14 @@ class UsersOperations:
     async def get(
         self, resource_group_name: str, mongo_cluster_name: str, user_name: str, **kwargs: Any
     ) -> _models.User:
-        """Gets the defintion of a Mongo cluster user.
+        """Gets the defintion of a DocumentDB cluster user.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :return: User. The User is compatible with MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.User
@@ -3226,14 +3226,14 @@ class UsersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.User]:
-        """Creates a new user or updates an existing user on a mongo cluster.
+        """Creates a new user or updates an existing user on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.mongocluster.models.User
@@ -3257,14 +3257,14 @@ class UsersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.User]:
-        """Creates a new user or updates an existing user on a mongo cluster.
+        """Creates a new user or updates an existing user on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.mongocluster.types.User
@@ -3288,14 +3288,14 @@ class UsersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.User]:
-        """Creates a new user or updates an existing user on a mongo cluster.
+        """Creates a new user or updates an existing user on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -3340,14 +3340,14 @@ class UsersOperations:
         resource: Union[_models.User, _types.User, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.User]:
-        """Creates a new user or updates an existing user on a mongo cluster.
+        """Creates a new user or updates an existing user on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :param resource: Resource create parameters. Is either a User type or a IO[bytes] type.
          Required.
@@ -3519,14 +3519,14 @@ class UsersOperations:
     async def begin_delete(
         self, resource_group_name: str, mongo_cluster_name: str, user_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes a mongo cluster user.
+        """Deletes a DocumentDB cluster user.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -3602,12 +3602,12 @@ class UsersOperations:
     def list_by_mongo_cluster(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.User"]:
-        """List all the users on a mongo cluster.
+        """List all the users on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of User
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mongocluster.models.User]
