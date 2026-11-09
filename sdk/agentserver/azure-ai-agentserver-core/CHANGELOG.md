@@ -74,6 +74,17 @@
 - Keep the lease instance stable on same-restore retries, retain worker and
   lease handles until workers finish, and defer steering execution during
   rollback while keeping queued input eligible for recovery.
+- Close internally created hosted task providers and their credentials before
+  discarding a stopped TaskManager after failed restores or inactive provider
+  replacement, keeping the manager for a cleanup retry if the close fails.
+  Ordinary host shutdown closes after cancelled workers finish. Injected
+  providers remain caller-owned.
+- Let handlers start during the ordinary shutdown grace period so they can defer
+  with `ctx.exit_for_recovery()`, instead of cancelling retried or accepted work
+  before dispatch and deleting one-shot records. Rollback cleanup still retains
+  that work without dispatching it.
+- Release the lease of a steering input staged during ordinary shutdown, making
+  it recoverable without waiting for lease expiry.
 
 ## 2.3.1b1 (2026-11-02)
 

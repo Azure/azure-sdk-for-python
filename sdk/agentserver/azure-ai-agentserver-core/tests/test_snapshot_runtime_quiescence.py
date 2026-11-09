@@ -6,12 +6,12 @@ from __future__ import annotations
 
 import asyncio
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.tasks import TaskConflictError, TaskContext, multi_turn_task, task
+from azure.ai.agentserver.core.tasks import RetryPolicy, TaskConflictError, TaskContext, multi_turn_task, task
 from azure.ai.agentserver.core.tasks import _manager
 from azure.ai.agentserver.core.tasks._exceptions import TaskDeferred
 from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
@@ -1311,3 +1311,175 @@ async def test_rollback_waits_for_inflight_submission_before_restoring_config(pr
             if not request.done():
                 request.cancel()
             await asyncio.gather(request, *submissions, return_exceptions=True)
+
+
+@pytest.mark.asyncio
+async def test_ordinary_shutdown_retry_lets_handler_defer_for_recovery(provider_factory):
+    provider, _ = provider_factory
+    manager = TaskManager(config=host().config, provider=provider, shutdown_grace_seconds=5)
+    _manager.set_task_manager(manager)
+    first_attempt, fail = asyncio.Event(), asyncio.Event()
+    attempts = []
+
+    @task(
+        name="ordinary_retry_deferral",
+        retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False),
+    )
+    async def flaky(ctx: TaskContext[str]) -> str:
+        attempts.append(ctx.retry_attempt)
+        if len(attempts) == 1:
+            first_attempt.set()
+            await fail.wait()
+            raise RuntimeError("Transient failure during the shutdown grace period")
+        await ctx.shutdown.wait()
+        return await ctx.exit_for_recovery()
+
+    run = await flaky.start(task_id="ordinary-retry", input="saved")
+    shutdown = None
+    try:
+        await asyncio.wait_for(first_attempt.wait(), 2)
+        shutdown = asyncio.create_task(manager.shutdown())
+        await asyncio.wait_for(manager._shutdown_event.wait(), 2)
+        fail.set()
+        with pytest.raises(TaskDeferred):
+            await asyncio.wait_for(run.result(), 5)
+        await asyncio.wait_for(shutdown, 5)
+        assert attempts == [0, 1]
+        stored = await provider.get("ordinary-retry")
+        assert stored.status == "in_progress"
+        assert stored.payload["input"] == "saved"
+        assert datetime.fromisoformat(stored.lease.expires_at) <= datetime.now(timezone.utc)
+    finally:
+        fail.set()
+        if shutdown is not None:
+            await asyncio.gather(shutdown, return_exceptions=True)
+        await manager.shutdown(wait_for_workers=True)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("preserve", [False, True], ids=["ordinary", "rollback"])
+async def test_shutdown_dispatch_of_accepted_work_depends_on_rollback(provider_factory, monkeypatch, preserve):
+    provider, _ = provider_factory
+    manager = TaskManager(config=host().config, provider=provider, shutdown_grace_seconds=5)
+    _manager.set_task_manager(manager)
+    entered, release = asyncio.Event(), asyncio.Event()
+    observed, watchdogs = [], []
+    original_remaining = manager._compute_remaining_for_watchdog
+    original_watchdog = manager._timeout_watchdog
+
+    async def remaining(task_id, timeout_seconds, ctx):
+        entered.set()
+        await release.wait()
+        return await original_remaining(task_id, timeout_seconds, ctx)
+
+    def watchdog(**kwargs):
+        # Record arming synchronously: a watchdog cancelled before its first step never runs its body.
+        watchdogs.append(kwargs["ctx"].task_id)
+        return original_watchdog(**kwargs)
+
+    monkeypatch.setattr(manager, "_compute_remaining_for_watchdog", remaining)
+    monkeypatch.setattr(manager, "_timeout_watchdog", watchdog)
+
+    @task(name="grace_accepted_deferral")
+    async def accepted(ctx: TaskContext[str]) -> str:
+        observed.append(ctx.entry_mode)
+        await ctx.shutdown.wait()
+        return await ctx.exit_for_recovery()
+
+    run = await accepted.start(task_id="grace-accepted", input="saved")
+    shutdown = None
+    try:
+        await asyncio.wait_for(entered.wait(), 2)
+        shutdown = asyncio.create_task(manager.shutdown(wait_for_workers=preserve, preserve_recoverable_tasks=preserve))
+        await asyncio.wait_for(manager._shutdown_event.wait(), 2)
+        release.set()
+        with pytest.raises(TaskDeferred):
+            await asyncio.wait_for(run.result(), 5)
+        await asyncio.wait_for(shutdown, 5)
+        # Rollback retains accepted work without a handler; ordinary grace lets the handler defer it.
+        assert observed == ([] if preserve else ["fresh"])
+        assert watchdogs == ([] if preserve else ["grace-accepted"])
+        # A watchdog armed during ordinary grace is cancelled with its worker rather than orphaned.
+        await asyncio.wait_for(asyncio.gather(*list(manager._owned_workers), return_exceptions=True), 2)
+        assert not manager._has_live_workers
+        stored = await provider.get("grace-accepted")
+        assert stored.status == "in_progress"
+        assert stored.payload["input"] == "saved"
+        assert datetime.fromisoformat(stored.lease.expires_at) <= datetime.now(timezone.utc)
+    finally:
+        release.set()
+        if shutdown is not None:
+            await asyncio.gather(shutdown, return_exceptions=True)
+        await manager.shutdown(wait_for_workers=True)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("reclaimed", [False, True], ids=["owned", "reclaimed-elsewhere"])
+async def test_ordinary_shutdown_releases_only_owned_staged_steering_lease(provider_factory, monkeypatch, reclaimed):
+    provider, _ = provider_factory
+    config = host().config
+    manager = TaskManager(config=config, provider=provider, shutdown_grace_seconds=5)
+    _manager.set_task_manager(manager)
+    running, finish_turn, recovered = asyncio.Event(), asyncio.Event(), asyncio.Event()
+    observed = []
+
+    @multi_turn_task(name="ordinary_staged_steering", steerable=True)
+    async def step(ctx: TaskContext[str]) -> str:
+        observed.append((ctx.input, ctx.entry_mode))
+        if ctx.input == "first":
+            running.set()
+            await finish_turn.wait()
+        else:
+            recovered.set()
+        return ctx.input
+
+    if reclaimed:
+        original_release = manager._release_staged_lease
+
+        async def reclaim_then_release(task_id):
+            # Another instance takes the lease after staging; release must not expire its newer generation.
+            await provider.update(
+                task_id,
+                TaskPatchRequest(
+                    lease_owner=manager._lease_owner, lease_instance_id="other-instance", lease_duration_seconds=60
+                ),
+            )
+            await original_release(task_id)
+
+        monkeypatch.setattr(manager, "_release_staged_lease", reclaim_then_release)
+
+    first = await step.start(task_id="staged-steering", input="first")
+    await asyncio.wait_for(running.wait(), 2)
+    staged_generation = (await provider.get("staged-steering")).lease.generation
+    queued = await step.start(task_id="staged-steering", input="next")
+    shutdown = asyncio.create_task(manager.shutdown())
+    successor = None
+    try:
+        await asyncio.wait_for(manager._shutdown_event.wait(), 2)
+        finish_turn.set()
+        assert await asyncio.wait_for(first.result(), 2) == "first"
+        with pytest.raises(TaskDeferred):
+            await asyncio.wait_for(queued.result(), 2)
+        await asyncio.wait_for(shutdown, 5)
+        assert observed == [("first", "fresh")]
+        stored = await provider.get("staged-steering")
+        assert stored.status == "in_progress"
+        assert stored.payload["input"] == "next"
+        assert stored.payload["steering"]["pending_inputs"] == []
+        if reclaimed:
+            assert stored.lease.instance_id == "other-instance"
+            assert stored.lease.generation == staged_generation + 1
+            assert datetime.fromisoformat(stored.lease.expires_at) > datetime.now(timezone.utc)
+            return
+        assert (stored.lease.owner, stored.lease.instance_id) == (manager._lease_owner, manager._instance_id)
+        assert datetime.fromisoformat(stored.lease.expires_at) <= datetime.now(timezone.utc)
+        successor = TaskManager(config=config, provider=provider, shutdown_grace_seconds=0)
+        _manager.set_task_manager(successor)
+        await successor.startup()
+        await asyncio.wait_for(recovered.wait(), 2)
+        assert observed == [("first", "fresh"), ("next", "recovered")]
+    finally:
+        finish_turn.set()
+        await asyncio.gather(shutdown, return_exceptions=True)
+        if successor is not None:
+            await successor.shutdown(wait_for_workers=True)

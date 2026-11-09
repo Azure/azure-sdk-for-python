@@ -11,6 +11,7 @@ module-level ``get_task_manager()`` function.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import inspect
 import logging
 import os
 import traceback
@@ -68,6 +69,9 @@ _TAG_TASK_NAME = "task_name"
 #: ``lease_duration_seconds`` knob was demoted (no developer use case justified
 #: exposing it on ``@task``). This constant is the framework's choice.
 _DEFAULT_LEASE_SECONDS = 60
+
+#: Deferred provider closes for stopped managers, referenced until each finishes.
+_PROVIDER_CLOSERS: set[asyncio.Task[None]] = set()
 
 #: Pre-computed server version segment for source stamps.
 _SOURCE_SERVER_VERSION = _build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
@@ -500,7 +504,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         shutdown_grace_seconds: float = 25.0,
     ) -> None:
         self._config = config
-        self._provider = provider or self._create_provider(config)
+        # A provider created here is owned and closed by this manager; an injected provider is not.
+        self._owns_provider = provider is None
+        self._provider = self._create_provider(config) if provider is None else provider
+        self._provider_closed = False
+        self._provider_closer: asyncio.Task[None] | None = None
         self._provider_binding = self._provider_configuration()
         self._active_tasks: dict[str, _ActiveTask] = {}
         self._owned_workers: set[asyncio.Task[None]] = set()
@@ -712,10 +720,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 ) from exc
 
             logger.info("Hosted environment detected; using HostedTaskProvider")
-            return HostedTaskProvider(
+            credential = DefaultAzureCredential()
+            provider = HostedTaskProvider(
                 project_endpoint=config.project_endpoint,
-                credential=DefaultAzureCredential(),
+                credential=credential,
             )
+            provider._owned_credential = credential  # pylint: disable=protected-access
+            return provider
 
         from ._local_provider import (  # pylint: disable=import-outside-toplevel
             LocalFileTaskProvider,
@@ -937,6 +948,18 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             self._periodic_recovery_task is not None and not self._periodic_recovery_task.done()
         )
 
+    @property
+    def _dispatch_closed(self) -> bool:
+        """Whether rollback cleanup forbids starting another handler turn or watchdog.
+
+        Ordinary shutdown keeps dispatching during its grace period, so handlers can
+        observe ``ctx.shutdown`` and defer through ``ctx.exit_for_recovery()``.
+
+        :return: True once restore rollback cleanup has begun.
+        :rtype: bool
+        """
+        return self._shutdown_event.is_set() and self._preserve_recoverable_tasks_on_shutdown
+
     def _create_worker_task(self, coroutine: Coroutine[Any, Any, None]) -> asyncio.Task[None]:
         worker = asyncio.create_task(coroutine)
         self._owned_workers.add(worker)
@@ -1125,6 +1148,54 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     def _signal_shutdown(self) -> None:
         """Interrupt blocked recovery reads without waiting for serialized cleanup."""
         self._shutdown_event.set()
+
+    async def _close_owned_provider(self) -> None:
+        """Close the provider this manager created; injected providers remain caller-owned.
+
+        A failed or cancelled close leaves the provider owned so cleanup can retry it.
+        """
+        if not self._owns_provider or self._provider_closed:
+            return
+        close = getattr(self._provider, "close", None)
+        if close is not None:
+            result = close()
+            if inspect.isawaitable(result):
+                await result
+        self._provider_closed = True
+
+    async def _close_owned_provider_logged(self) -> None:
+        try:
+            await self._close_owned_provider()
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.error("The owned task provider remains open after a failed close", exc_info=True)
+
+    async def _close_owned_provider_after_workers(self) -> None:
+        current = asyncio.current_task()
+        while True:
+            workers = [worker for worker in self._owned_workers if worker is not current and not worker.done()]
+            if not workers:
+                break
+            await asyncio.gather(*workers, return_exceptions=True)
+        await self._close_owned_provider_logged()
+
+    async def _close_owned_provider_after_shutdown(self) -> None:
+        """Close the owned provider after ordinary shutdown without joining its workers.
+
+        Ordinary shutdown cancels workers without waiting for them, and their cleanup
+        may still write through the provider, so the close waits for them in the
+        background. A failed close is logged and leaves the provider open.
+        """
+        if not self._owns_provider or self._provider_closed:
+            return
+        if self._provider_closer is not None and not self._provider_closer.done():
+            return
+        if any(not worker.done() for worker in self._owned_workers):
+            closer = asyncio.create_task(self._close_owned_provider_after_workers())
+            _PROVIDER_CLOSERS.add(closer)
+            closer.add_done_callback(_PROVIDER_CLOSERS.discard)
+            self._provider_closer = closer
+            return
+        await self._close_owned_provider_logged()
 
     async def shutdown(self, *, wait_for_workers: bool = False, preserve_recoverable_tasks: bool = False) -> None:
         """Signal shutdown on all active tasks and force-expire leases.
@@ -2101,7 +2172,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype ctx: TaskContext[Any]
         """
         await self._cancel_watchdog_for_turn(task_id)
-        if self._shutdown_event.is_set():
+        if self._dispatch_closed:
             return
         # Spec 037 #8 — an unset timeout defaults to a 1-day per-turn budget
         # (was previously "no watchdog"). The value is validated + capped at
@@ -2109,7 +2180,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         effective_timeout = _resolve_effective_timeout(opts.timeout)
         timeout_seconds = effective_timeout.total_seconds()
         remaining = await self._compute_remaining_for_watchdog(task_id, timeout_seconds, ctx)
-        if self._shutdown_event.is_set():
+        if self._dispatch_closed:
             return
         self._timeout_watchdogs[task_id] = self._create_worker_task(
             self._timeout_watchdog(
@@ -2234,7 +2305,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         while True:
             ctx.retry_attempt = attempt
             try:
-                if self._shutdown_event.is_set():
+                if self._dispatch_closed:
                     raise asyncio.CancelledError
                 ambient_request_context = get_request_context()
                 request_context_token = set_request_context(
@@ -2833,6 +2904,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         if self._shutdown_event.is_set():
             # Persist the next input as recoverable without dispatching during shutdown.
+            await self._release_staged_lease(task_id)
             return None
 
         # Pop and bind the next pending steering future (if any)
@@ -2915,6 +2987,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             logger.debug("Failed to clear drain_in_progress for %s", task_id)
 
         if self._shutdown_event.is_set():
+            await self._release_staged_lease(task_id)
             return None
 
         logger.info(
@@ -2922,6 +2995,52 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             task_id,
         )
         return new_ctx
+
+    async def _release_staged_lease(self, task_id: str) -> None:
+        """Make a steering input staged during ordinary shutdown reclaimable now.
+
+        The drain PATCH renewed this instance's lease, and ordinary shutdown only
+        expires leases of tasks still running after its grace period. Rollback
+        cleanup instead expires its retained handles after joining their workers.
+
+        After accepted producers drain, a stopping manager admits none, so while this
+        worker's handle stays registered this instance cannot start another execution
+        of the task. Renewal stops first so no heartbeat re-extends the lease. The
+        owner and instance checks and the tracked ETag fence other writers.
+
+        :param task_id: The task whose next input was staged without dispatch.
+        :type task_id: str
+        """
+        active = self._active_tasks.get(task_id)
+        if self._preserve_recoverable_tasks_on_shutdown or active is None:
+            return
+        await self._admissions_drained.wait()
+        renewal = active.renewal_task
+        if renewal is not None and renewal is not asyncio.current_task() and not renewal.done():
+            renewal.cancel()
+            await asyncio.gather(renewal, return_exceptions=True)
+        try:
+            async with self._get_task_write_lock(task_id):
+                stored = await self._provider_get_tracked(task_id)
+                lease = getattr(stored, "lease", None)
+                owned = lease is not None and (lease.owner, lease.instance_id) == (self._lease_owner, self._instance_id)
+                if (
+                    not owned
+                    or stored is None
+                    or stored.status != "in_progress"
+                    or self._active_tasks.get(task_id) is not active
+                ):
+                    return
+                await self._provider_update_lock_held(
+                    task_id,
+                    TaskPatchRequest(
+                        lease_owner=self._lease_owner,
+                        lease_instance_id=self._instance_id,
+                        lease_duration_seconds=0,
+                    ),
+                )
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning("Failed to release staged steering lease for %s; it will expire", task_id, exc_info=True)
 
     async def _handle_multi_turn_success(  # pylint: disable=unused-argument
         self,

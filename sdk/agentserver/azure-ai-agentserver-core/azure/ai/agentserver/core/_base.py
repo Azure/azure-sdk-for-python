@@ -557,12 +557,15 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             if installed is not None and installed is not self._task_manager:
                 raise RuntimeError("TaskManager is already owned by another host")
             if self._task_manager is not None and (
-                self._task_manager_binding != binding
+                self._task_manager._shutdown_event.is_set()  # pylint: disable=protected-access
+                or self._task_manager_binding != binding
                 or not self._task_manager._provider_configuration_matches()  # pylint: disable=protected-access
             ):
                 if self._task_manager._has_live_workers:  # pylint: disable=protected-access
                     raise RuntimeError("Cannot change task runtime binding while workers are running")
                 await self._task_manager.shutdown(wait_for_workers=True)
+                # Close before discarding; a failed close keeps the stopped manager for retry.
+                await self._task_manager._close_owned_provider()  # pylint: disable=protected-access
                 self._task_manager = None
                 self._task_manager_binding = None
             if self._task_manager is None:
@@ -599,13 +602,18 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 )  # pylint: disable=import-outside-toplevel
 
                 manager = self._task_manager
-                if preserve_recoverable_tasks or self._lifecycle.pending_rollback is not None:
+                joined = preserve_recoverable_tasks or self._lifecycle.pending_rollback is not None
+                if joined:
                     await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
+                    # Workers are joined; a failed close keeps this manager for a cleanup retry.
+                    await manager._close_owned_provider()  # pylint: disable=protected-access
                 else:
                     await manager.shutdown()
                 _clear_task_manager(manager)
                 self._task_manager = None
                 self._task_manager_binding = None
+                if not joined:
+                    await manager._close_owned_provider_after_shutdown()  # pylint: disable=protected-access
                 logger.info("TaskManager shut down")
 
     async def _quiesce_tasks_before_rollback(self, previous_session_id: str, previous_session_guid: str) -> bool:

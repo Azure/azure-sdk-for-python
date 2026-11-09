@@ -1609,3 +1609,274 @@ async def test_http_timeout_continues_activation_and_retry_deduplicates(
     finally:
         stop.set()
         await asyncio.wait_for(server, 5)
+
+
+class _OwnedCredential:
+    """Async credential double recording close attempts by its owner."""
+
+    def __init__(self) -> None:
+        self.closed = 0
+        self.close_failures: list[BaseException] = []
+
+    async def get_token(self, *_scopes: str, **_kwargs: Any) -> Any:
+        raise AssertionError("Hosted task requests are routed to a local store")
+
+    async def close(self) -> None:
+        if self.close_failures:
+            raise self.close_failures.pop(0)
+        self.closed += 1
+
+
+async def open_pipeline_session(provider: Any) -> Any:
+    """Open the provider's real aiohttp session without sending a request."""
+    transport = provider._client._pipeline._transport
+    await transport.open()
+    return transport.session
+
+
+def hosted_runtime(
+    monkeypatch: pytest.MonkeyPatch, store: LocalFileTaskProvider
+) -> tuple[list[_OwnedCredential], list[tuple[str, Any]]]:
+    """Create real owned hosted providers whose task requests use a local store."""
+    import azure.identity.aio as identity
+
+    from azure.ai.agentserver.core.tasks._client import HostedTaskProvider
+
+    credentials: list[_OwnedCredential] = []
+    events: list[tuple[str, Any]] = []
+
+    def create_credential() -> _OwnedCredential:
+        credentials.append(_OwnedCredential())
+        return credentials[-1]
+
+    monkeypatch.setattr(identity, "DefaultAzureCredential", create_credential)
+    for method in ("create", "get", "update", "delete", "list"):
+
+        async def delegate(_provider: Any, *args: Any, _method: str = method, **kwargs: Any) -> Any:
+            return await getattr(store, _method)(*args, **kwargs)
+
+        monkeypatch.setattr(HostedTaskProvider, method, delegate)
+    original_close = HostedTaskProvider.close
+
+    async def close(provider: Any) -> None:
+        events.append(("close", provider))
+        await original_close(provider)
+
+    monkeypatch.setattr(HostedTaskProvider, "close", close)
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "hosted")
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example.invalid/project")
+    return credentials, events
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "failure", [RuntimeError("credential close failed"), asyncio.CancelledError()], ids=["exception", "cancel"]
+)
+async def test_owned_credential_close_failure_is_retained_for_retry(failure: BaseException) -> None:
+    from azure.ai.agentserver.core.tasks._client import HostedTaskProvider
+
+    credential = _OwnedCredential()
+    credential.close_failures.append(failure)
+    provider = HostedTaskProvider(project_endpoint="https://owned.example.invalid/project", credential=credential)
+    provider._owned_credential = credential
+    session = await open_pipeline_session(provider)
+    with pytest.raises(type(failure)):
+        await provider.close()
+    assert session.closed
+    assert provider._owned_credential is credential and credential.closed == 0
+    await provider.close()
+    assert provider._owned_credential is None and credential.closed == 1
+
+
+@pytest.mark.asyncio
+async def test_repeated_failed_restores_close_owned_hosted_providers_after_workers(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    credentials, events = hosted_runtime(monkeypatch, LocalFileTaskProvider(tmp_path / "tasks"))
+    running = asyncio.Event()
+    managers: list[TaskManager] = []
+    sessions: list[Any] = []
+    app = host()
+
+    @task(name="owned_provider_work")
+    async def work(ctx: TaskContext[str]) -> str:
+        provider = get_task_manager().provider
+        running.set()
+        try:
+            await asyncio.Event().wait()
+            return ctx.input
+        finally:
+            events.append(("finally", provider))
+
+    @app.after_restore_handler
+    async def initialize(context: AgentSessionContext) -> None:
+        managers.append(get_task_manager())
+        sessions.append(await open_pipeline_session(managers[-1].provider))
+        running.clear()
+        await work.start(task_id=f"owned-work-{len(managers)}", input=context.session_id)
+        await asyncio.wait_for(running.wait(), 2)
+        raise RuntimeError("Fail restore while owned work is running")
+
+    async with app.router.lifespan_context(app), client(app) as http:
+        for _ in range(3):
+            response = await http.post("/_agent/after-restore", json=payload())
+            assert response.status_code == 500, response.text
+            assert app._task_manager is None
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
+        providers = [manager.provider for manager in managers]
+        assert len({id(provider) for provider in providers}) == 3
+        # Each provider closes once, after its worker's cleanup and before it is discarded.
+        assert events == [event for provider in providers for event in (("finally", provider), ("close", provider))]
+        assert all(session.closed for session in sessions)
+        assert [credential.closed for credential in credentials] == [1, 1, 1]
+        assert all(not manager._has_live_workers for manager in managers)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failure", ["exception", "cancel"])
+async def test_failed_owned_close_retains_rollback_runtime_until_retry(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure: str
+) -> None:
+    credentials, _ = hosted_runtime(monkeypatch, LocalFileTaskProvider(tmp_path / "tasks"))
+    managers: list[TaskManager] = []
+    app = host()
+
+    @app.after_restore_handler
+    async def initialize(context: AgentSessionContext) -> None:
+        managers.append(get_task_manager())
+        if len(managers) == 1:
+            credentials[0].close_failures.append(
+                RuntimeError("credential close failed") if failure == "exception" else asyncio.CancelledError()
+            )
+            raise RuntimeError("Fail restore before cleanup")
+
+    async with app.router.lifespan_context(app), client(app) as http:
+        assert (await http.post("/_agent/after-restore", json=payload())).status_code == 500
+        stale = managers[0]
+        assert app._task_manager is stale
+        assert app._lifecycle.pending_rollback is not None
+        assert stale._shutdown_event.is_set() and not stale._provider_closed
+        assert stale.provider._owned_credential is credentials[0]
+        assert credentials[0].closed == 0
+        response = await http.post("/_agent/after-restore", json=payload())
+        assert response.status_code == 200, response.text
+        assert credentials[0].closed == 1
+        assert stale._provider_closed and stale.provider._owned_credential is None
+        assert get_task_manager() is managers[1] and managers[1] is not stale
+        assert app._lifecycle.pending_rollback is None
+
+
+@pytest.mark.asyncio
+async def test_ordinary_shutdown_closes_owned_provider_after_cancelled_worker_cleanup(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "false")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "cold-session")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
+    credentials, events = hosted_runtime(monkeypatch, LocalFileTaskProvider(tmp_path / "tasks"))
+    running, release = asyncio.Event(), asyncio.Event()
+    app = host()
+
+    @task(name="ordinary_owned_cleanup")
+    async def work(ctx: TaskContext[str]) -> str:
+        provider = get_task_manager().provider
+        running.set()
+        try:
+            await asyncio.Event().wait()
+            return ctx.input
+        except asyncio.CancelledError:
+            await release.wait()
+            await provider.get(ctx.task_id)
+            events.append(("cleanup", provider))
+            raise
+
+    async with app.router.lifespan_context(app):
+        manager = get_task_manager()
+        session = await open_pipeline_session(manager.provider)
+        await work.start(task_id="ordinary-owned-cleanup", input="saved")
+        await asyncio.wait_for(running.wait(), 2)
+    # Ordinary shutdown returned without joining the cancelled worker or closing its provider.
+    assert app._task_manager is None
+    assert manager._has_live_task_work
+    assert events == [] and not session.closed
+    release.set()
+    assert manager._provider_closer is not None
+    await asyncio.wait_for(asyncio.shield(manager._provider_closer), 2)
+    assert events == [("cleanup", manager.provider), ("close", manager.provider)]
+    assert session.closed and credentials[0].closed == 1
+
+
+@pytest.mark.asyncio
+async def test_injected_hosted_provider_and_credential_remain_caller_owned() -> None:
+    from azure.ai.agentserver.core.tasks._client import HostedTaskProvider
+
+    credential = _OwnedCredential()
+    provider = HostedTaskProvider(project_endpoint="https://caller.example.invalid/project", credential=credential)
+    session = await open_pipeline_session(provider)
+    manager = TaskManager(config=host().config, provider=provider, shutdown_grace_seconds=0)
+    await manager.shutdown(wait_for_workers=True)
+    await manager._close_owned_provider()
+    await manager._close_owned_provider_after_shutdown()
+    assert not session.closed
+    await provider.close()
+    assert session.closed and credential.closed == 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("close_fails", [False, True])
+async def test_inactive_replacement_closes_old_owned_provider_before_publishing_new(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, close_fails: bool
+) -> None:
+    from azure.ai.agentserver.core.tasks._client import HostedTaskProvider
+
+    captured = "https://captured.example.invalid/project"
+    replacement_endpoint = "https://replacement.example.invalid/project"
+    credentials, _ = hosted_runtime(monkeypatch, LocalFileTaskProvider(tmp_path / "tasks"))
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
+    original_recovery = TaskManager._recover_stale_tasks
+    scans = 0
+
+    async def recovery(manager: TaskManager) -> None:
+        nonlocal scans
+        scans += 1
+        if scans == 1:
+            raise RuntimeError("Interrupted essential initialization")
+        await original_recovery(manager)
+
+    monkeypatch.setattr(TaskManager, "_recover_stale_tasks", recovery)
+    app = host()
+    closing: list[tuple[Any, Any, Any]] = []
+    patched_close = HostedTaskProvider.close
+
+    async def close(provider: Any) -> None:
+        closing.append((provider, app._task_manager, _manager._manager))
+        await patched_close(provider)
+
+    monkeypatch.setattr(HostedTaskProvider, "close", close)
+    changed = payload()
+    changed["session_context"]["session_env_overrides"]["FOUNDRY_PROJECT_ENDPOINT"] = replacement_endpoint
+    async with app.router.lifespan_context(app), client(app) as http:
+        assert (await http.post("/_agent/after-restore", json=payload())).status_code == 500
+        stale = app._task_manager
+        assert stale is not None and not stale._has_live_workers
+        retry = changed
+        if close_fails:
+            credentials[0].close_failures.append(RuntimeError("credential close failed"))
+            assert (await http.post("/_agent/after-restore", json=changed)).status_code == 500
+            # The stopped manager stays referenced for retry, and no replacement was published.
+            assert app._task_manager is stale and stale._shutdown_event.is_set()
+            assert stale.provider._owned_credential is credentials[0] and len(credentials) == 1
+            # A compatible retry must still dispose of the stopped manager instead of reusing it.
+            retry = payload()
+        response = await http.post("/_agent/after-restore", json=retry)
+        assert response.status_code == 200, response.text
+        replacement = get_task_manager()
+        assert replacement is app._task_manager and replacement is not stale
+        endpoint = captured if close_fails else replacement_endpoint
+        assert replacement.provider._base_url == f"{endpoint}/tasks"
+        assert closing == [(stale.provider, stale, None)] * (2 if close_fails else 1)
+        assert [credential.closed for credential in credentials] == [1, 0]
+    assert closing[-1] == (replacement.provider, None, None)
+    assert [credential.closed for credential in credentials] == [1, 1]

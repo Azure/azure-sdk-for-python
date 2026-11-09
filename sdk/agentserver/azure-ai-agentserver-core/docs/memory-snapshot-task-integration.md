@@ -242,7 +242,10 @@ inventing a platform restore event.
 - Runtime identity includes agent name as well as session ID/GUID. Live
   agent-name and session-GUID changes are rejected before environment,
   configuration, or lease-instance mutation; incompatible inactive runtimes
-  are rebuilt.
+  are rebuilt. Inactive means the manager owns no workers, including the
+  periodic recovery scanner: a prepared runtime that has not started, or one
+  stopped by rollback cleanup. A started runtime keeps its scanner bound to its
+  provider and lease owner, so it rejects these changes instead of rebuilding.
 - Local provider comparison uses `resolve_state_subdir("tasks")`, including
   the default home directory when the root variable is unset or empty.
 - A new restore ID with compatible session/provider identity preserves the lease
@@ -303,14 +306,31 @@ claims and other mutations still settle before worker/lease cleanup.
 The gate applies only once TaskManager shutdown begins, not as a new HTTP
 admission policy or a capture-time launch queue. Explicit cancellation of an
 individual task keeps its normal behavior.
+A manager closes the task provider it created, and the credential created for
+that provider, only after its workers stop. Rollback cleanup and inactive-runtime
+replacement join workers and close before discarding the stopped manager. A
+failed or cancelled close keeps that manager, and any pending rollback, for a
+cleanup retry; no replacement is published until the close succeeds, and a
+retained stopped manager is never reused. Ordinary shutdown stays non-joining:
+it unpublishes the manager and closes after cancelled workers finish, logging
+a failed close that leaves the provider open. Injected providers and
+caller-supplied credentials remain caller-owned.
 The manager owns execution, renewal, scanner and watchdog workers until they
 finish, independently of active task records. Rollback joins those workers,
 including renewals whose handlers completed before cleanup began.
 No new steering turn executes during cleanup. If the current turn finishes
 normally, the next queued input is durably staged as `in_progress` for recovery,
 without invoking its handler; the next activation resumes that input.
-Shutdown is checked after awaited steering bookkeeping and immediately before
-handler dispatch, including after watchdog setup. Before disposing a manager,
+During ordinary shutdown, once accepted producers drain, the worker stops that
+task's renewal and releases the lease that staging renewed while its handle is
+still registered, so another instance can recover the input without waiting
+for expiry. Owner and instance checks and the tracked ETag fence other writers.
+Rollback cleanup checks shutdown immediately before handler dispatch, including
+after watchdog setup, so accepted, retried and recovered work is retained without
+starting a handler. Ordinary shutdown keeps dispatching during its grace period,
+so handlers can observe `ctx.shutdown` and defer with `ctx.exit_for_recovery()`;
+explicit and post-grace cancellation keep their existing behavior.
+Before disposing a manager,
 unfinished queued and promoted steering futures receive `TaskDeferred`; their
 in-memory registrations are cleared, not their persisted inputs. Existing
 completed or cancelled futures retain their outcomes.
