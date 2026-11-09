@@ -2127,5 +2127,5 @@
         "azure.mgmt.web.WebSiteManagementClient.list_source_controls": "Microsoft.Web.SourceControls.listSourceControls",
         "azure.mgmt.web.aio.WebSiteManagementClient.list_source_controls": "Microsoft.Web.SourceControls.listSourceControls"
     },
-    "CrossLanguageVersion": "98b35515a9cc"
+    "CrossLanguageVersion": "60eefa26628b"
 }
