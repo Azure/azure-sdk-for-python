@@ -65,18 +65,6 @@ def port():
     return os.environ["FLASK_PORT"]
 
 
-@pytest.fixture
-def connection_error_url(monkeypatch):
-    """Reserve a non-listening loopback port so connection failure is deterministic."""
-    import socket
-
-    monkeypatch.setenv("NO_PROXY", "localhost,127.0.0.1")
-    monkeypatch.setenv("no_proxy", "localhost,127.0.0.1")
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.bind(("127.0.0.1", 0))
-        yield "http://127.0.0.1:{}".format(sock.getsockname()[1])
-
-
 def start_testserver():
     port = get_port()
     os.environ["FLASK_APP"] = "coretestserver"
