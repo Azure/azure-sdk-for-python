@@ -37,7 +37,7 @@ USAGE:
 import os
 import time
 from dotenv import load_dotenv
-from util import create_version_with_endpoint
+from tool_util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects import AIProjectClient

@@ -29,7 +29,7 @@ from typing import Any, cast
 from pathlib import Path
 import jsonref
 from dotenv import load_dotenv
-from util import create_version_with_endpoint
+from tool_util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (

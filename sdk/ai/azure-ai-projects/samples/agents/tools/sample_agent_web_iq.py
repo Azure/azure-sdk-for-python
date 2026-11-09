@@ -29,7 +29,7 @@ USAGE:
 import os
 
 from dotenv import load_dotenv
-from util import create_version_with_endpoint
+from tool_util import create_version_with_endpoint
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, WebIQPreviewTool

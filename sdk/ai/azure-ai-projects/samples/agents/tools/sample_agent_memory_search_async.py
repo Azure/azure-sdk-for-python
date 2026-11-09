@@ -37,7 +37,7 @@ USAGE:
 import asyncio
 import os
 from dotenv import load_dotenv
-from util import create_version_with_endpoint_async
+from tool_util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.aio import AIProjectClient

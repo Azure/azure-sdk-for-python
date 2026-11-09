@@ -32,7 +32,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
-from util import create_version_with_endpoint
+from tool_util import create_version_with_endpoint
 
 # Import shared helper functions
 from computer_use_util import (  # pylint: disable=import-error

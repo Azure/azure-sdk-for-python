@@ -27,7 +27,7 @@ USAGE:
 import asyncio
 import os
 from dotenv import load_dotenv
-from util import create_version_with_endpoint_async
+from tool_util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool

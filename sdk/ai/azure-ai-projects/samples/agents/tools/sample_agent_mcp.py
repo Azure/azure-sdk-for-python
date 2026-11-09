@@ -27,7 +27,7 @@ USAGE:
 import os
 from dotenv import load_dotenv
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
-from util import create_version_with_endpoint
+from tool_util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, MCPTool
