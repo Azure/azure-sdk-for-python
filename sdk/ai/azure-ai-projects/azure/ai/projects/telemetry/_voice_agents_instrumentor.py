@@ -994,11 +994,11 @@ class _VoiceAgentsInstrumentor:
                 setattr(cls, method, self._rest(original, operation, voice_only))
         for module, prefix in (("azure.ai.projects._realtime", ""), ("azure.ai.projects.aio._realtime", "Async")):
             realtime = importlib.import_module(module)
-            manager = getattr(realtime, prefix + "BetaRealtimeConnectionManager")
+            manager = getattr(realtime, prefix + "RealtimeConnectionManager")
             original = manager.enter
             _ORIGINALS[(manager, "enter")] = original
             manager.enter = self._enter(original)
-            connection = getattr(realtime, prefix + "BetaRealtimeConnection")
+            connection = getattr(realtime, prefix + "RealtimeConnection")
             exit_method = "__aexit__" if prefix else "__exit__"
             for cls in (manager, connection):
                 original = getattr(cls, exit_method)

@@ -45,7 +45,25 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
 **Important:** This stable package includes Preview features. Preview features available through stable methods require setting `allow_preview=True` when constructing the client, while Preview features exposed via the .beta sub-clients do not. Preview features may change or be removed in future versions and are not recommended for production use.
 
-GPT Live sessions and stored Live conversations remain under `.beta.voice_agents.live` and `.beta.voice_agents.live_conversations`; outbound campaigns are available under `.beta.voice_agents.telephony`. Campaign operations automatically include the required preview header, while GA telephony bindings and call jobs use `.voice_agents.telephony`. GPT Live definitions, inline subagent handoff, SIP telephony, and post-call delivery remain in preview. Set `allow_preview=True` when creating definitions or using these conditional preview features through `.voice_agents`.
+Voice Agents includes both generally available APIs and preview features:
+
+| Voice Agents feature | Scope and client path |
+|---|---|
+| Realtime sessions and stored conversation/audio readback | GA: `.voice_agents.realtime` and `.voice_agents.conversations`; no preview opt-in |
+| Generate a voice agent from a prompt | GA: `.agents.create_from_prompt()`; no automatic preview header |
+| Teams Phone Extensibility and Twilio telephony | GA: `.voice_agents.telephony`; no preview opt-in |
+| SIP, inline subagent handoff, and post-call delivery | Preview options on GA operations; set `allow_preview=True` |
+| GPT-Live sessions and stored Live conversations | Preview: `.beta.voice_agents.live` and `.beta.voice_agents.live_conversations`; creating a GPT-Live definition also requires `allow_preview=True` |
+| Outbound campaigns | Preview: `.beta.voice_agents.telephony`; operations automatically include the required preview header |
+
+GA generation, conversation operations, and telephony reads do not automatically send preview headers,
+even when the client has `allow_preview=True`. That setting enables opt-in on conditional telephony
+writes for SIP; caller-supplied headers are preserved.
+
+Realtime uses `Realtime`, `RealtimeConnection`, and `RealtimeConnectionManager` from
+`azure.ai.projects.operations`. Their asynchronous counterparts are `AsyncRealtime`,
+`AsyncRealtimeConnection`, and `AsyncRealtimeConnectionManager` from `azure.ai.projects.aio.operations`.
+These GA types do not have `Beta` aliases.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
@@ -197,7 +215,7 @@ The table below lists the operation groups supported by the client library, with
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
 | Skills (preview) | | `samples/skills/` |
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
-| Voice agents | | `samples/agents/voice/` |
+| Voice agents | | [Voice Agents samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agents/voice) |
 
 ### Voice Agent realtime transport
 
@@ -238,9 +256,9 @@ The separate [sync REST example](https://github.com/Azure/azure-sdk-for-python/b
 reads an existing generated-audio artifact and optionally saves it to a new output file.
 It requires the stored item ID from REST and a deployment that persists unheard audio.
 
-### Voice Agent GPT Live (preview)
+### Voice Agent GPT-Live (preview)
 
-Use `.beta.voice_agents.live` for GPT Live sessions and `.beta.voice_agents.live_conversations`
+Use `.beta.voice_agents.live` for GPT-Live sessions and `.beta.voice_agents.live_conversations`
 for their stored conversations. Realtime uses separate clients and agent definitions.
 
 **Get started**
@@ -252,7 +270,7 @@ pip install "azure-ai-projects[voice]" azure-identity python-dotenv
 ```
 
 2. Set `FOUNDRY_PROJECT_ENDPOINT` and `FOUNDRY_VOICE_AGENT_MODEL` in your environment or `.env`.
-   The model value must be your GPT Live **deployment name**, not a model catalog ID.
+   The model value must be your GPT-Live **deployment name**, not a model catalog ID.
 3. Choose an example below and follow its `USAGE` instructions. Samples authenticate with
    `DefaultAzureCredential` and opt in to preview features.
 

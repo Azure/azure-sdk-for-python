@@ -706,7 +706,7 @@ namespace azure.ai.projects.aio.operations
         async def enter(self) -> AsyncBetaLiveConnection: ...
 
 
-    class azure.ai.projects.aio.operations.AsyncBetaRealtime:
+    class azure.ai.projects.aio.operations.AsyncRealtime:
 
         def __init__(
                 self, 
@@ -727,10 +727,10 @@ namespace azure.ai.projects.aio.operations
                 structured_inputs: Optional[Mapping[str, Any]] = ..., 
                 transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
                 **kwargs: Any
-            ) -> AsyncBetaRealtimeConnectionManager: ...
+            ) -> AsyncRealtimeConnectionManager: ...
 
 
-    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnection(_BaseWebSocketConnection[ServerEvent, ClientEvent]): implements AsyncContextManager 
+    class azure.ai.projects.aio.operations.AsyncRealtimeConnection(_BaseWebSocketConnection[ServerEvent, ClientEvent]): implements AsyncContextManager 
         property closed: bool    # Read-only
 
         def __aiter__(self) -> AsyncIterator[ServerEvent]: ...
@@ -755,7 +755,7 @@ namespace azure.ai.projects.aio.operations
         async def send(self, event: ClientEvent) -> None: ...
 
 
-    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaRealtimeConnection]): implements AsyncContextManager 
+    class azure.ai.projects.aio.operations.AsyncRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncRealtimeConnection]): implements AsyncContextManager 
 
         def __init__(
                 self, 
@@ -775,7 +775,7 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> None: ...
 
-        async def enter(self) -> AsyncBetaRealtimeConnection: ...
+        async def enter(self) -> AsyncRealtimeConnection: ...
 
 
     class azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
@@ -3137,7 +3137,7 @@ namespace azure.ai.projects.aio.operations
 
     class azure.ai.projects.aio.operations.VoiceAgentsOperations(GeneratedVoiceAgentsOperations):
         conversations: VoiceAgentsConversationsOperations
-        realtime: AsyncBetaRealtime
+        realtime: AsyncRealtime
         telephony: VoiceAgentsTelephonyOperations
 
         def __init__(
@@ -23762,78 +23762,6 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
 
-    class azure.ai.projects.operations.BetaRealtime:
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def connect(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                api_version: Optional[str] = ..., 
-                connection_url: Optional[str] = ..., 
-                credential_scopes: Optional[List[str]] = ..., 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
-                **kwargs: Any
-            ) -> BetaRealtimeConnectionManager: ...
-
-
-    class azure.ai.projects.operations.BetaRealtimeConnection(_BaseWebSocketConnection[ServerEvent, ClientEvent]): implements ContextManager 
-        property closed: bool    # Read-only
-
-        def __init__(self, connection: ClientConnection) -> None: ...
-
-        def __iter__(self) -> Iterator[ServerEvent]: ...
-
-        def __repr__(self) -> str: ...
-
-        def close(
-                self, 
-                *, 
-                code: int = 1000, 
-                reason: str = ""
-            ) -> None: ...
-
-        def recv(
-                self, 
-                *, 
-                timeout: Optional[float] = ...
-            ) -> ServerEvent: ...
-
-        def send(self, event: ClientEvent) -> None: ...
-
-
-    class azure.ai.projects.operations.BetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[BetaRealtimeConnection]): implements ContextManager 
-
-        def __init__(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                allow_preview: bool = False, 
-                api_version: str, 
-                connection_url: Optional[str] = ..., 
-                credential: TokenCredential, 
-                credential_scopes: List[str], 
-                endpoint: str, 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-        def enter(self) -> BetaRealtimeConnection: ...
-
-
     class azure.ai.projects.operations.BetaRedTeamsOperations:
 
         def __init__(
@@ -25008,6 +24936,78 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[Index]: ...
 
 
+    class azure.ai.projects.operations.Realtime:
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+        def connect(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_session_id: Optional[str] = ..., 
+                api_version: Optional[str] = ..., 
+                connection_url: Optional[str] = ..., 
+                credential_scopes: Optional[List[str]] = ..., 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
+                **kwargs: Any
+            ) -> RealtimeConnectionManager: ...
+
+
+    class azure.ai.projects.operations.RealtimeConnection(_BaseWebSocketConnection[ServerEvent, ClientEvent]): implements ContextManager 
+        property closed: bool    # Read-only
+
+        def __init__(self, connection: ClientConnection) -> None: ...
+
+        def __iter__(self) -> Iterator[ServerEvent]: ...
+
+        def __repr__(self) -> str: ...
+
+        def close(
+                self, 
+                *, 
+                code: int = 1000, 
+                reason: str = ""
+            ) -> None: ...
+
+        def recv(
+                self, 
+                *, 
+                timeout: Optional[float] = ...
+            ) -> ServerEvent: ...
+
+        def send(self, event: ClientEvent) -> None: ...
+
+
+    class azure.ai.projects.operations.RealtimeConnectionManager(_BaseWebSocketConnectionManager[RealtimeConnection]): implements ContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_session_id: Optional[str] = ..., 
+                allow_preview: bool = False, 
+                api_version: str, 
+                connection_url: Optional[str] = ..., 
+                credential: TokenCredential, 
+                credential_scopes: List[str], 
+                endpoint: str, 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        def enter(self) -> RealtimeConnection: ...
+
+
     class azure.ai.projects.operations.TelemetryOperations:
 
         def __init__(self, outer_instance: AIProjectClient) -> None: ...
@@ -25293,7 +25293,7 @@ namespace azure.ai.projects.operations
 
     class azure.ai.projects.operations.VoiceAgentsOperations(GeneratedVoiceAgentsOperations):
         conversations: VoiceAgentsConversationsOperations
-        realtime: BetaRealtime
+        realtime: Realtime
         telephony: VoiceAgentsTelephonyOperations
 
         def __init__(

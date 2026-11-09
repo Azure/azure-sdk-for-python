@@ -9,6 +9,8 @@ DESCRIPTION:
     Create published and draft versions of a voice agent, list them, and read
     their settings. Each create_version call makes a new version rather than
     changing an existing one.
+    Published versioning is GA. Only the draft creation call opts in to the
+    separate Draft Agents preview; it does not enable Voice Agents preview.
 
 USAGE:
     python sample_voice_agent_versions.py
@@ -71,6 +73,7 @@ with (
             definition=make_definition("You are a helpful voice assistant. Experimental draft persona."),
             description="Candidate persona under review.",
             draft=True,
+            headers={"Foundry-Features": "DraftAgents=V1Preview"},
         )
         created_versions.append(draft_version)
         print(f"Created draft version: {draft_version.version}")

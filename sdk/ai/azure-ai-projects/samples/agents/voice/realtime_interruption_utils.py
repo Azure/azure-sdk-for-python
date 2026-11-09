@@ -22,8 +22,8 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 if TYPE_CHECKING:
     from azure.ai.projects import AIProjectClient
     from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
-    from azure.ai.projects.operations import BetaRealtimeConnection
-    from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection
+    from azure.ai.projects.operations import RealtimeConnection
+    from azure.ai.projects.aio.operations import AsyncRealtimeConnection
 
 
 TURN_TIMEOUT = 45.0
@@ -136,7 +136,7 @@ _PROMPT = {
 }
 
 
-def interrupt_reply(connection: BetaRealtimeConnection, turn: InterruptedTurn) -> None:
+def interrupt_reply(connection: RealtimeConnection, turn: InterruptedTurn) -> None:
     """Cancel a speaking response and report that none of its audio was played."""
     deadline = time.monotonic() + TURN_TIMEOUT
     while not turn.conversation_id:
@@ -152,7 +152,7 @@ def interrupt_reply(connection: BetaRealtimeConnection, turn: InterruptedTurn) -
             connection.conversation.item.truncate(item_id=turn.item_id, content_index=0, audio_end_ms=0)
 
 
-async def interrupt_reply_async(connection: AsyncBetaRealtimeConnection, turn: InterruptedTurn) -> None:
+async def interrupt_reply_async(connection: AsyncRealtimeConnection, turn: InterruptedTurn) -> None:
     """Asynchronously cancel a speaking response without using audio devices."""
     deadline = time.monotonic() + TURN_TIMEOUT
     while not turn.conversation_id:

@@ -291,12 +291,12 @@ for path in python_files(package_root):
 # connection, and the memory update result is consumed by a custom polling method.
 # Verify protocol/custom transport evidence before changing these mappings.
 runtime_operation_owners = {
-    "RealtimeClientEvent": "azure/ai/projects/_realtime.py::BetaRealtime.connect",
-    "RealtimeServerEvent": "azure/ai/projects/_realtime.py::BetaRealtime.connect",
-    "RealtimeServerEventError": "azure/ai/projects/_realtime.py::BetaRealtime.connect",
-    "VoiceAgentClientEventSessionUpdate": "azure/ai/projects/_realtime.py::BetaRealtime.connect",
-    "VoiceAgentSessionResponseConfig": "azure/ai/projects/_realtime.py::BetaRealtime.connect",
-    "VoiceAgentSessionUpdateConfig": "azure/ai/projects/_realtime.py::BetaRealtime.connect",
+    "RealtimeClientEvent": "azure/ai/projects/_realtime.py::Realtime.connect",
+    "RealtimeServerEvent": "azure/ai/projects/_realtime.py::Realtime.connect",
+    "RealtimeServerEventError": "azure/ai/projects/_realtime.py::Realtime.connect",
+    "VoiceAgentClientEventSessionUpdate": "azure/ai/projects/_realtime.py::Realtime.connect",
+    "VoiceAgentSessionResponseConfig": "azure/ai/projects/_realtime.py::Realtime.connect",
+    "VoiceAgentSessionUpdateConfig": "azure/ai/projects/_realtime.py::Realtime.connect",
     "MemoryStoreUpdateResult": "azure/ai/projects/operations/_patch_memories.py::BetaMemoryStoresOperations.begin_update_memories",
     "UpdateToolboxRequest": "azure/ai/projects/operations/_operations.py::ToolboxesOperations.update",
 }

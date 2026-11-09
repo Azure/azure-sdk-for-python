@@ -41,7 +41,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
 # This public re-export is not recognized by Pylint's import resolver.
-from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection  # pylint: disable=no-name-in-module
+from azure.ai.projects.aio.operations import AsyncRealtimeConnection  # pylint: disable=no-name-in-module
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeConversationItemMessageUser,
@@ -176,7 +176,7 @@ class _CancellationNotConfirmed(Exception):
     ``_RESPONSE_TIMEOUT``, leaving the stream in an unknown state."""
 
 
-async def _drain_cancelled_response(conn: "AsyncBetaRealtimeConnection", response_id: Optional[str]) -> None:
+async def _drain_cancelled_response(conn: "AsyncRealtimeConnection", response_id: Optional[str]) -> None:
     """Wait (bounded) for a just-cancelled response's terminal event, discarding it and any of
     its trailing content events, so the next turn's ``pump()`` doesn't mistake this stale
     completion for its own.
@@ -185,7 +185,7 @@ async def _drain_cancelled_response(conn: "AsyncBetaRealtimeConnection", respons
     :param response_id: The id of the response that was just cancelled, if it was captured from
      that response's ``response.created`` event. If None, the first terminal event seen is
      accepted, since there is nothing more specific to correlate against.
-    :type conn: ~azure.ai.projects.aio.AsyncBetaRealtimeConnection
+    :type conn: ~azure.ai.projects.aio.operations.AsyncRealtimeConnection
     :type response_id: str or None
     :raises _CancellationNotConfirmed: If no matching terminal event arrives in time.
     """
