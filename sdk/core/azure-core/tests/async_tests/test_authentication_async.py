@@ -82,6 +82,26 @@ async def test_bearer_policy_authorize_request(http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_bearer_policy_rejects_backslash_authority(http_request):
+    """A backslash in the URL authority must be rejected before a bearer token is attached"""
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", 42)))
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+
+    for url in ("https://good-host\\@attacker.example/path", "https://attacker.example\\.good-host/path"):
+        request = PipelineRequest(http_request("GET", url), PipelineContext(None))
+        with pytest.raises(ValueError):
+            await policy.on_request(request)
+        # authorize_request attaches a token directly, so it must reject the authority too
+        request = PipelineRequest(http_request("GET", url), PipelineContext(None))
+        with pytest.raises(ValueError):
+            await policy.authorize_request(request, "scope")
+        assert "Authorization" not in request.http_request.headers
+
+    credential.get_token.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_bearer_policy_adds_header_access_token_info(http_request):
     """The bearer token policy should also add an auth header when an AccessTokenInfo is returned."""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
