@@ -40,7 +40,7 @@ def websocket_sample(monkeypatch):
     client.__aexit__ = AsyncMock(return_value=False)
     client.agents.create_version = AsyncMock(return_value=SimpleNamespace(version="owned-version"))
     client.agents.delete_version = AsyncMock()
-    client.beta.voice_agents.conversations.delete = AsyncMock()
+    client.voice_agents.conversations.delete = AsyncMock()
     connection = MagicMock()
     connection.recv = AsyncMock(
         side_effect=[
@@ -60,7 +60,7 @@ def websocket_sample(monkeypatch):
     connection.response.cancel = AsyncMock()
     connection.conversation.item.create = AsyncMock()
     connection.conversation.item.truncate = AsyncMock()
-    manager = client.beta.voice_agents.realtime.connect.return_value
+    manager = client.voice_agents.realtime.connect.return_value
     manager.__aenter__ = AsyncMock(return_value=connection)
     manager.__aexit__ = AsyncMock(return_value=False)
     monkeypatch.setattr("azure.identity.aio.DefaultAzureCredential", MagicMock(return_value=credential))
@@ -78,9 +78,9 @@ async def test_async_interruption_confirms_control_events_and_cleans_owned_resou
     env.connection.conversation.item.truncate.assert_awaited_once_with(
         item_id="item-test", content_index=0, audio_end_ms=0
     )
-    env.client.beta.voice_agents.conversations.delete.assert_awaited_once_with(name, "conversation-test")
+    env.client.voice_agents.conversations.delete.assert_awaited_once_with(name, "conversation-test")
     env.client.agents.delete_version.assert_awaited_once_with(agent_name=name, agent_version="owned-version")
-    env.client.beta.voice_agents.conversations.download_generated_audio_item.assert_not_called()
+    env.client.voice_agents.conversations.download_generated_audio_item.assert_not_called()
 
 
 @pytest.mark.asyncio
@@ -90,7 +90,7 @@ async def test_async_interruption_create_failure_cannot_delete_existing_resource
     with pytest.raises(RuntimeError, match="create failed"):
         await env.sample["main"]()
     env.client.agents.delete_version.assert_not_called()
-    env.client.beta.voice_agents.conversations.delete.assert_not_called()
+    env.client.voice_agents.conversations.delete.assert_not_called()
 
 
 @pytest.mark.asyncio
@@ -103,7 +103,7 @@ async def test_async_interruption_stream_failure_still_cleans_its_owned_resource
     with pytest.raises(RuntimeError, match="synthetic failure"):
         await env.sample["main"]()
     name = env.client.agents.create_version.call_args.kwargs["agent_name"]
-    env.client.beta.voice_agents.conversations.delete.assert_awaited_once_with(name, "conversation-test")
+    env.client.voice_agents.conversations.delete.assert_awaited_once_with(name, "conversation-test")
     env.client.agents.delete_version.assert_awaited_once_with(agent_name=name, agent_version="owned-version")
 
 
@@ -117,7 +117,7 @@ def rest_sample(monkeypatch):
     credential.__enter__.return_value = credential
     client = MagicMock()
     client.__enter__.return_value = client
-    conversations = client.beta.voice_agents.conversations
+    conversations = client.voice_agents.conversations
     conversations.get_generated_audio_item.return_value = models.VoiceGeneratedAudioItem(
         conversation_id="conversation-test", item_id="stored-item-test", format="wav"
     )
@@ -143,7 +143,7 @@ def test_sync_rest_sample_only_reads_existing_resources(rest_sample):
     )
     env.client.agents.create_version.assert_not_called()
     env.conversations.delete.assert_not_called()
-    env.client.beta.voice_agents.realtime.connect.assert_not_called()
+    env.client.voice_agents.realtime.connect.assert_not_called()
     env.client.beta.voice_agents.live.connect.assert_not_called()
 
 

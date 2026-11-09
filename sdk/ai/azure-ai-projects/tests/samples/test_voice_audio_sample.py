@@ -107,7 +107,7 @@ async def test_audio_conversation_handles_output_events_and_barge_in_without_har
     client = MagicMock()
     connection = MagicMock()
     connection.response.cancel = AsyncMock()
-    manager = client.beta.voice_agents.realtime.connect.return_value
+    manager = client.voice_agents.realtime.connect.return_value
     manager.__aenter__.return_value = connection
     manager.__aexit__.return_value = False
     processor = sample["_AudioProcessor"](connection)
@@ -163,7 +163,7 @@ async def test_audio_conversation_handles_output_events_and_barge_in_without_har
     conversation_id = await run_conversation(client, "agent-offline")
 
     assert conversation_id == "conversation-offline"
-    client.beta.voice_agents.realtime.connect.assert_called_once_with(agent_name="agent-offline")
+    client.voice_agents.realtime.connect.assert_called_once_with(agent_name="agent-offline")
     client.beta.voice_agents.live.connect.assert_not_called()
     connection.response.cancel.assert_awaited_once_with()
     processor.start_playback.assert_called_once_with()
@@ -210,7 +210,7 @@ def test_read_conversation_handles_optional_response_id(monkeypatch, capsys, res
     monkeypatch.setattr("azure.identity.DefaultAzureCredential", MagicMock())
     client = MagicMock()
     monkeypatch.setattr("azure.ai.projects.AIProjectClient", MagicMock(return_value=client))
-    conversations = client.__enter__.return_value.beta.voice_agents.conversations
+    conversations = client.__enter__.return_value.voice_agents.conversations
     conversations.list_responses.return_value = [VoiceResponse(id=response_id, status="completed")]
     helper = ModuleType("voice_sample_util")
     setattr(helper, "hold_sample_conversation", MagicMock())

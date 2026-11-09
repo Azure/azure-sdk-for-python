@@ -48,9 +48,9 @@ def main() -> None:
 
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as client,
     ):
-        conversations = client.beta.voice_agents.conversations
+        conversations = client.voice_agents.conversations
         metadata = conversations.get_generated_audio_item(agent_name, conversation_id, item_id)
         print(f"Generated audio metadata: format={metadata.format}, duration={metadata.duration_ms}.")
         if metadata.blob_uri:

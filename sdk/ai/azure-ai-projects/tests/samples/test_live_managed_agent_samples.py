@@ -293,7 +293,7 @@ def _assert_no_client_delegation(environment):
     connection.session.start.assert_not_called()
     connection.session.update.assert_not_called()
     connection.send.assert_not_called()
-    environment.client.beta.voice_agents.realtime.connect.assert_not_called()
+    environment.client.voice_agents.realtime.connect.assert_not_called()
 
 
 @pytest.mark.asyncio

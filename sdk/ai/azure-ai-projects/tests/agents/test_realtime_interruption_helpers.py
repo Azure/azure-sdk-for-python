@@ -14,6 +14,7 @@ import pytest
 
 from azure.ai.projects import models
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.rest import HttpRequest
 import realtime_interruption_test_base as recording_helpers
 
 
@@ -221,7 +222,7 @@ def test_playback_never_creates_resources_or_loads_websocket_setup(monkeypatch):
 @pytest.mark.asyncio
 async def test_recording_cleanup_still_deletes_owned_agent_after_conversation_failure():
     client = MagicMock()
-    client.beta.voice_agents.conversations.delete = AsyncMock(side_effect=RuntimeError("cleanup failed"))
+    client.voice_agents.conversations.delete = AsyncMock(side_effect=RuntimeError("cleanup failed"))
     client.agents.delete = AsyncMock()
     fixture = recording_helpers.RealtimeInterruptionFixture("owned-agent", "conversation-test", "item-test")
     with pytest.raises(RuntimeError, match="cleanup failed"):
@@ -248,7 +249,7 @@ async def test_failed_recording_creation_does_not_delete_an_unacknowledged_name(
         await preparer._create_fixture("owned-agent", "realtime-deployment-test")
 
     client.agents.delete.assert_not_called()
-    client.beta.voice_agents.conversations.delete.assert_not_called()
+    client.voice_agents.conversations.delete.assert_not_called()
 
 
 def test_interruption_sanitizers_preserve_cross_request_references(monkeypatch):
@@ -261,6 +262,33 @@ def test_interruption_sanitizers_preserve_cross_request_references(monkeypatch):
         "sanitized-interrupted-conversation",
         "sanitized-interrupted-item",
     ]
+
+
+@pytest.mark.parametrize("deleted", [False, True])
+@pytest.mark.parametrize("header_name", [None, "Foundry-Features", "foundry-features"])
+def test_ga_audio_response_hooks_reject_preview_headers(deleted, header_name):
+    path = "/agents/owned-agent/protocols/voice/conversations/conversation-test"
+    if not deleted:
+        path += "/items/item-test/audio/generated"
+    response = SimpleNamespace(
+        http_response=SimpleNamespace(status_code=204 if deleted else 200),
+        http_request=HttpRequest(
+            "DELETE" if deleted else "GET",
+            f"https://example.invalid{path}",
+            headers={header_name: "VoiceAgents=V1Preview"} if header_name else {},
+        ),
+    )
+    verify = (
+        recording_helpers.assert_conversation_deleted
+        if deleted
+        else recording_helpers.assert_generated_status((200, 404))
+    )
+
+    if header_name:
+        with pytest.raises(AssertionError):
+            verify(response)
+    else:
+        verify(response)
 
 
 def test_stored_item_lookup_uses_response_correlation_not_websocket_item_id(helpers):

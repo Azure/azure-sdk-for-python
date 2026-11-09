@@ -166,7 +166,18 @@ class TestRealtimeConnectionManagerEnter:
         assert called_url.startswith("wss://my-account.services.ai.azure.com")
         assert "api-version=v1" in called_url
         assert kwargs["additional_headers"]["Authorization"] == "Bearer fake-token"
-        assert kwargs["additional_headers"]["Foundry-Features"] == "VoiceAgents=V1Preview"
+        assert "Foundry-Features" not in kwargs["additional_headers"]
+        assert "foundry_features" not in parse_qs(urlparse(called_url).query)
+
+    @pytest.mark.parametrize("extra_headers", [{}, {"foundry-features": "Custom=V1Preview"}])
+    def test_enter_preserves_preview_opt_in(self, extra_headers):
+        with patch("websockets.sync.client.connect", return_value=MagicMock()) as mock_connect:
+            with _make_manager(allow_preview=True, extra_headers=extra_headers):
+                pass
+
+        headers = mock_connect.call_args.kwargs["additional_headers"]
+        feature_headers = {key.lower(): value for key, value in headers.items() if key.lower() == "foundry-features"}
+        assert feature_headers == {"foundry-features": extra_headers.get("foundry-features", "VoiceAgents=V1Preview")}
 
     def test_enter_identifies_sdk_via_user_agent_and_query(self):
         # The generated HTTP surface gets SDK identification for free from the core pipeline's

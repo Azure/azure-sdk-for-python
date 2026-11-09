@@ -981,10 +981,10 @@ class _VoiceAgentsInstrumentor:
             operations = importlib.import_module(module)
             targets = [
                 ("AgentsOperations", "create_version", "create_agent", True),
-                ("BetaAgentsOperations", "create_from_prompt", "create_agent", False),
-                ("BetaVoiceAgentsConversationsOperations", "delete", "voice_agents.conversations.delete", False),
+                ("AgentsOperations", "create_from_prompt", "create_agent", False),
+                ("VoiceAgentsConversationsOperations", "delete", "voice_agents.conversations.delete", False),
             ] + [
-                ("BetaVoiceAgentsTelephonyOperations", method, "voice_agents.telephony." + method, False)
+                ("VoiceAgentsTelephonyOperations", method, "voice_agents.telephony." + method, False)
                 for method in mutations
             ]
             for class_name, method, operation, voice_only in targets:
