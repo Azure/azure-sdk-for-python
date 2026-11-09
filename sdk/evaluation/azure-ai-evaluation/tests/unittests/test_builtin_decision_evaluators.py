@@ -49,7 +49,7 @@ from azure.ai.evaluation._evaluators._common._decision_rubric import decode_mess
 from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
 from azure.ai.evaluation._evaluators._tool_input_accuracy import _ToolInputAccuracyEvaluator
 from azure.ai.evaluation._evaluators._tool_selection import _ToolSelectionEvaluator
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, EvaluationException
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 pytestmark = pytest.mark.unittest
 
@@ -186,7 +186,7 @@ BINARY_CASES = [
         "task_adherence.decision.yaml",
         {"query": QUERY, "response": RESPONSE},
         {"system_message": "", "query": QUERY, "response": RESPONSE, "tool_calls": ""},
-        0,
+        1,
     ),
     (
         _TaskCompletionEvaluator,
@@ -554,8 +554,8 @@ def test_status_false_is_not_applicable(service, evaluator_type, key, rubric, in
         f"{key}_score": None,
         f"{key}_passed": None,
         f"{key}_result": "not_applicable",
-        f"{key}_reason": "Not applicable: Status completion probability 0.2000 is below 0.5000; evaluation skipped. "
-        "No model rationale is available.",
+        f"{key}_reason": "Not applicable: the judge model's applicability probability 0.2000 is below the 0.5000 "
+        "cutoff, so the evaluator was skipped. No model rationale is available.",
         f"{key}_status": "skipped",
         f"{key}_threshold": threshold,
         f"{key}_prompt_tokens": 40,
@@ -581,11 +581,54 @@ def test_construction_selects_the_strategy_from_the_model_type(service, evaluato
     assert decision._decision.timeout == 120 and decision._decision.threshold == decision._threshold
 
 
-@pytest.mark.parametrize("evaluator_type", [TaskAdherenceEvaluator, _TaskCompletionEvaluator])
-def test_a_requested_threshold_is_reported_on_decision_models(service, evaluator_type):
-    decision = _decision(evaluator_type, threshold=2)
+@pytest.mark.parametrize("requested", [0, 2])
+@pytest.mark.parametrize(
+    "evaluator_type,key", [(TaskAdherenceEvaluator, "task_adherence"), (_TaskCompletionEvaluator, "task_completion")]
+)
+def test_a_requested_threshold_is_reported_on_decision_models(service, evaluator_type, key, requested):
+    decision = _decision(evaluator_type, threshold=requested)
 
-    assert decision._threshold == decision._decision.threshold == 2
+    assert decision._threshold == decision._decision.threshold == requested
+    result = decision(query=QUERY, response=RESPONSE)
+    assert result[f"{key}_threshold"] == requested and result[f"{key}_passed"] is True
+
+
+def test_task_adherence_chat_threshold_is_unchanged():
+    with patch.object(_model_runners.AsyncPrompty, "load"):
+        chat = TaskAdherenceEvaluator(deepcopy(CHAT_CONFIG))
+
+    assert chat._threshold == 3.0 and chat.threshold == 1
+
+
+@pytest.mark.parametrize(
+    "result_key,label",
+    [
+        ("grade/confirm_details", "confirm details"),
+        ("a/b/c_d", "c d"),
+        ("task_completion", "task completion"),
+        ("grade/", "grade/"),
+        ("/", "/"),
+        ("", ""),
+    ],
+)
+def test_a_namespaced_question_key_is_labelled_by_its_question(result_key, label):
+    noul = {"answers": {result_key: {"type": "noul", "noul": 0.1645}}}
+    scored = {
+        "answers": {
+            result_key: {
+                "type": "score",
+                "score": sum(level * value for level, value in enumerate(LEVELS)),
+                "confidence": max(LEVELS),
+                "probabilities": {str(level): value for level, value in enumerate(LEVELS)},
+            }
+        }
+    }
+
+    _, binary_reason, _ = BinaryScoring(0.75).interpret(noul, result_key, ErrorTarget.EVALUATE)
+    _, likert_reason, _ = LikertScoring(5, minimum=1).interpret(scored, result_key, ErrorTarget.EVALUATE)
+
+    assert binary_reason == f"{label.capitalize()} probability 0.1645 is below the 0.7500 cutoff."
+    assert likert_reason == f"Selected {label} level 4 from the highest-probability level."
 
 
 def test_groundedness_chat_construction_has_no_decision_strategies():
