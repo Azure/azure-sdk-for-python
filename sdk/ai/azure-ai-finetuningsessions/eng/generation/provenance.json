@@ -15,10 +15,10 @@
   "typespec": {
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
-    "base_commit": "e4f4ef32fd1048584b106c0eeb07fd1e0a5286b5",
-    "commit": "f1c718e39ecbbe53b4ff3841d082ca1b207941a1",
+    "base_commit": "f1c718e39ecbbe53b4ff3841d082ca1b207941a1",
+    "commit": "8903470b04812f0a4379091ac74290c660168a73",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "c5dc20d1db76bd4b68f7c51d58dde676b5b9ab5e4c341e54b02a7d3796802bb5",
+    "source_fingerprint_sha256": "3f22ca6aa9c1a937178f853ba39a5f6947dd6cef05f63052e75dcf4cc512ba71",
     "client_sha256": "a974c5c1b8bb6649f9baaeba925a24b9e3439c1e80c9c92dd2ded2e2bd286694",
     "models_path": "specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp",
     "models_sha256": "bee9a1c4f4b8d80315f98212e378c28aef552d28eee3d6ec2327f1b30a0cbec3",
@@ -41,7 +41,7 @@
   },
   "assembly": {
     "generated_inventory_entries": 21,
-    "generated_inventory_fingerprint_sha256": "9fa0d11f93ad81df9cd2168d8acc4a41d3c36a92ddda9940d408566c5005014d",
+    "generated_inventory_fingerprint_sha256": "41eeed88c95190d19dc04bb6806af09c04baf23f4ebff3493397fe1b1617b547",
     "runtime_files": 32,
     "runtime_python_modules": 31,
     "baseline_runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
@@ -352,6 +352,29 @@
       "validated_runtime_wheel_sha256": "00c4e6a008a3766b94cdaa18c5e20c83eb877f4922dd92b3b183339fd32e72fd",
       "tooling_limitations": "MCP hit Windows cleanup failure and overwrote packaging metadata despite generate-packaging-files=false; original pyproject/MANIFEST restored exactly, strict isolated emission and clean artifact validation used.",
       "typespec_suppression_approval_required": true
+    },
+    "preview_metadata_review_20261109": {
+      "spec_commit": "8903470b04812f0a4379091ac74290c660168a73",
+      "previous_sdk_source_commit": "f1c718e39ecbbe53b4ff3841d082ca1b207941a1",
+      "previous_pr_commit": "2b07ef7f135dd426c32cfc585629f72766f5bc26",
+      "marker": "x-ms-foundry-meta.required_previews",
+      "required_preview": "FineTuningSessions=V1Preview",
+      "rest_projections": [
+        "v1",
+        "virtual-public-preview"
+      ],
+      "preview_operations_per_projection": 17,
+      "wire_contract_unchanged": true,
+      "required_header_unchanged": true,
+      "independent_emissions": 2,
+      "generated_delta": "Only apiview-properties.json CrossLanguageVersion changed.",
+      "api_view_cross_language_version": "6fce459b4f00",
+      "runtime_files_unchanged": 32,
+      "mirror_workflow_tests_passed": 39,
+      "typespec_validation_mcp_passed": true,
+      "strict_compilation_passed": true,
+      "client_configuration_changed": false,
+      "live_service_tested": false
     },
     "beta2_review_20261105": {
       "loom_master": "a644d00f44c0153e58790830297dbd23e0f3c2f8",

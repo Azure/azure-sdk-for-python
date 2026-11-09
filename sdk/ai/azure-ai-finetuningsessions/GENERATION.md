@@ -23,6 +23,12 @@ M365 pool default while preserving an omitted training tier on the wire and
 explicit caller choices. No client routing, authorization, checkpoint delivery,
 or service-default selection logic is added to the SDK.
 
+The preview-metadata review marks all 17 fine-tuning operations with
+`x-ms-foundry-meta.required_previews` in both REST projections. The wire API
+version remains `v1`, with the same required preview header and contract.
+Independent emissions preserve all 32 SDK runtime files; only the generated
+APIView source checksum changes alongside the source pin and provenance.
+
 The shared SDK toolchain uses Python emitter 0.63.10, Python generator 0.39.0,
 and TypeSpec compiler 1.17.0. The central SDK manifest/lock remain authoritative;
 the package archives exact copies for independent verification.

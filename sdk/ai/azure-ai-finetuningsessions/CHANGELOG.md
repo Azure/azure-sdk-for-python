@@ -19,6 +19,7 @@
 
 ### Other Changes
 
+- Pin the TypeSpec correction that explicitly marks all fine-tuning operations as preview. The wire API version remains `v1`, and the SDK API and runtime are unchanged.
 - Clarify service-side training-tier selection: an omitted tier uses `DatazoneStandard` for the effective M365 worker pool and the `GlobalStandard` baseline for other pools. The SDK still sends no tier when omitted and preserves explicit choices.
 - Use absolute repository links in package generation documentation to satisfy Azure SDK link guidance.
 
