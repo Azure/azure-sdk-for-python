@@ -45,7 +45,7 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
 **Important:** This stable package includes Preview features. Preview features available through stable methods require setting `allow_preview=True` when constructing the client, while Preview features exposed via the .beta sub-clients do not. Preview features may change or be removed in future versions and are not recommended for production use.
 
-GPT Live sessions and stored Live conversations remain under `.beta.voice_agents.live` and `.beta.voice_agents.live_conversations`; outbound campaigns remain under `.beta.voice_agents.campaigns`. GPT Live definitions, inline subagent handoff, SIP telephony, and post-call delivery remain in preview. Set `allow_preview=True` when creating definitions or using these conditional preview features through `.voice_agents`.
+GPT Live sessions and stored Live conversations remain under `.beta.voice_agents.live` and `.beta.voice_agents.live_conversations`; outbound campaigns are available under `.beta.voice_agents.telephony`. Campaign operations automatically include the required preview header, while GA telephony bindings and call jobs use `.voice_agents.telephony`. GPT Live definitions, inline subagent handoff, SIP telephony, and post-call delivery remain in preview. Set `allow_preview=True` when creating definitions or using these conditional preview features through `.voice_agents`.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 

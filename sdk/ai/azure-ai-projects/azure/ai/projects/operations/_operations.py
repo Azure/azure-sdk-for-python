@@ -5478,7 +5478,7 @@ def build_beta_voice_agents_live_conversations_download_audio_request(  # pylint
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_campaigns_create_request(  # pylint: disable=name-too-long
+def build_beta_voice_agents_telephony_create_request(  # pylint: disable=name-too-long
     agent_name: str,
     campaign_name: str,
     *,
@@ -5522,7 +5522,7 @@ def build_beta_voice_agents_campaigns_create_request(  # pylint: disable=name-to
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_campaigns_get_request(  # pylint: disable=name-too-long
+def build_beta_voice_agents_telephony_get_request(  # pylint: disable=name-too-long
     agent_name: str, campaign_name: str, *, operation_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5551,7 +5551,7 @@ def build_beta_voice_agents_campaigns_get_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_campaigns_list_request(  # pylint: disable=name-too-long
+def build_beta_voice_agents_telephony_list_request(  # pylint: disable=name-too-long
     agent_name: str,
     *,
     limit: Optional[int] = None,
@@ -5594,7 +5594,7 @@ def build_beta_voice_agents_campaigns_list_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_campaigns_cancel_request(  # pylint: disable=name-too-long
+def build_beta_voice_agents_telephony_cancel_request(  # pylint: disable=name-too-long
     agent_name: str,
     campaign_name: str,
     *,
@@ -5635,7 +5635,7 @@ def build_beta_voice_agents_campaigns_cancel_request(  # pylint: disable=name-to
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_campaigns_delete_request(  # pylint: disable=name-too-long
+def build_beta_voice_agents_telephony_delete_request(  # pylint: disable=name-too-long
     agent_name: str,
     campaign_name: str,
     *,
@@ -5673,7 +5673,7 @@ def build_beta_voice_agents_campaigns_delete_request(  # pylint: disable=name-to
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_campaigns_list_validation_errors_request(  # pylint: disable=name-too-long
+def build_beta_voice_agents_telephony_list_validation_errors_request(  # pylint: disable=name-too-long
     agent_name: str,
     campaign_name: str,
     *,
@@ -5715,7 +5715,7 @@ def build_beta_voice_agents_campaigns_list_validation_errors_request(  # pylint:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_campaigns_get_operation_request(  # pylint: disable=name-too-long
+def build_beta_voice_agents_telephony_get_operation_request(  # pylint: disable=name-too-long
     agent_name: str, campaign_name: str, operation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -14589,7 +14589,7 @@ class BetaVoiceAgentsOperations:  # pylint: disable=docstring-missing-param
         self.live_conversations = BetaVoiceAgentsLiveConversationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.campaigns = BetaVoiceAgentsCampaignsOperations(
+        self.telephony = BetaVoiceAgentsTelephonyOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
@@ -26517,14 +26517,14 @@ class BetaVoiceAgentsLiveConversationsOperations:  # pylint: disable=docstring-m
         return deserialized  # type: ignore
 
 
-class BetaVoiceAgentsCampaignsOperations:  # pylint: disable=docstring-missing-param
+class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`campaigns` attribute.
+        :attr:`telephony` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -26572,7 +26572,7 @@ class BetaVoiceAgentsCampaignsOperations:  # pylint: disable=docstring-missing-p
         else:
             _content = json.dumps(campaign, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_voice_agents_campaigns_create_request(
+        _request = build_beta_voice_agents_telephony_create_request(
             agent_name=agent_name,
             campaign_name=campaign_name,
             operation_id=operation_id,
@@ -26900,7 +26900,7 @@ class BetaVoiceAgentsCampaignsOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_campaigns_get_request(
+        _request = build_beta_voice_agents_telephony_get_request(
             agent_name=agent_name,
             campaign_name=campaign_name,
             operation_id=operation_id,
@@ -26997,7 +26997,7 @@ class BetaVoiceAgentsCampaignsOperations:  # pylint: disable=docstring-missing-p
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_voice_agents_campaigns_list_request(
+            _request = build_beta_voice_agents_telephony_list_request(
                 agent_name=agent_name,
                 limit=limit,
                 order=order,
@@ -27074,7 +27074,7 @@ class BetaVoiceAgentsCampaignsOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_campaigns_cancel_request(
+        _request = build_beta_voice_agents_telephony_cancel_request(
             agent_name=agent_name,
             campaign_name=campaign_name,
             etag=etag,
@@ -27244,7 +27244,7 @@ class BetaVoiceAgentsCampaignsOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_campaigns_delete_request(
+        _request = build_beta_voice_agents_telephony_delete_request(
             agent_name=agent_name,
             campaign_name=campaign_name,
             etag=etag,
@@ -27427,7 +27427,7 @@ class BetaVoiceAgentsCampaignsOperations:  # pylint: disable=docstring-missing-p
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_voice_agents_campaigns_list_validation_errors_request(
+            _request = build_beta_voice_agents_telephony_list_validation_errors_request(
                 agent_name=agent_name,
                 campaign_name=campaign_name,
                 limit=limit,
@@ -27509,7 +27509,7 @@ class BetaVoiceAgentsCampaignsOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[_models.TelephonyCampaignOperation] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_campaigns_get_operation_request(
+        _request = build_beta_voice_agents_telephony_get_operation_request(
             agent_name=agent_name,
             campaign_name=campaign_name,
             operation_id=operation_id,

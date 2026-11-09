@@ -11,7 +11,7 @@
 * Added optional preview `VoiceAgentDefinition.post_call` with `VoiceAgentPostCallConfig`, `VoiceAgentEventGridPostCallDestination`, and `VoiceAgentRoutinePostCallDestination` for post-call transcript and audio delivery to Event Grid connections and routines.
 * Added SIP telephony provider support through `TelephonyProvider.SIP`, `SipTelephonyBinding`, and `SipTelephonyBindingListItem`. Added optional `UpdateTelephonyBindingRequest.allowed_calling_numbers` for incoming caller restrictions.
 * Added `.voice_agents.telephony.list_call_jobs()` for listing outbound call jobs with optional status and campaign filters, and `.voice_agents.telephony.delete_call_job()` for deleting a call job.
-* Added `.beta.voice_agents.campaigns` for managing outbound campaigns, including long-running creation, cancellation, and deletion, campaign retrieval and listing, validation errors, and operation status. Campaign mutations support ETag match conditions.
+* Added `.beta.voice_agents.telephony` for managing outbound campaigns, including long-running creation, cancellation, and deletion, campaign retrieval and listing, validation errors, and operation status. Campaign mutations support ETag match conditions.
 * Added campaign configuration, scheduling, and progress models, including `TelephonyCampaign`, `TelephonyRecipient`, `ImmediateSchedule`, `AtTimeSchedule`, `PerRecipientSchedule`, and `TelephonyCampaignProgress`. `TelephonyCampaignDatasetReference` supports an optional version that pins the latest dataset version during campaign preparation when omitted. Added optional read-only `TelephonyCallJob.campaign_name`.
 * Added inline Voice Agent subagents and handoff configuration through `VoiceAgentInlineSubagentConfig`, `InlineVoiceSubagent`, and `VoiceAgentHandoffPolicy`, with handoff lifecycle events and optional `VoiceAgentSessionResponseConfig.handoff`.
 * Added Voice Agent system tools `VoiceAgentTransferSystemTool`, `VoiceAgentSendDtmfSystemTool`, `VoiceAgentSendSmsSystemTool`, `VoiceAgentCollectDtmfSystemTool`, `VoiceAgentCollectSmsSystemTool`, `VoiceAgentDigitRecognitionSystemTool`, and `VoiceAgentLanguageDetectionSystemTool`.
@@ -49,6 +49,8 @@ Breaking changes in beta classes:
 * Constructor arguments `left` and `right` on `VoiceRecordingChannelLayout` are now required; use `VoiceAudioRole.USER` and `VoiceAudioRole.AGENT`, respectively.
 
 ### Bugs Fixed
+
+* Fixed synchronous and asynchronous client imports and campaign polling customizations after the generated campaign operation group moved to `.beta.voice_agents.telephony`.
 
 ### Sample updates
 

@@ -43,9 +43,9 @@ There are a total of 211 unique public methods:
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
 | `beta.skills` | BetaSkillsOperations | 11 |
-| `beta.voice_agents.campaigns` | BetaVoiceAgentsCampaignsOperations | 7 |
 | `beta.voice_agents.live` | BetaLive | 1 |
 | `beta.voice_agents.live_conversations` | BetaVoiceAgentsLiveConversationsOperations | 9 |
+| `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 7 |
 
 ## Stable methods on the client
 
@@ -281,14 +281,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.skills.list_versions
 .beta.skills.update
 
-.beta.voice_agents.campaigns.begin_cancel*
-.beta.voice_agents.campaigns.begin_create*
-.beta.voice_agents.campaigns.begin_delete*
-.beta.voice_agents.campaigns.get
-.beta.voice_agents.campaigns.get_operation
-.beta.voice_agents.campaigns.list
-.beta.voice_agents.campaigns.list_validation_errors
-
 .beta.voice_agents.live.connect*
 
 .beta.voice_agents.live_conversations.delete
@@ -300,4 +292,12 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.voice_agents.live_conversations.get_item
 .beta.voice_agents.live_conversations.list
 .beta.voice_agents.live_conversations.list_items
+
+.beta.voice_agents.telephony.begin_cancel*
+.beta.voice_agents.telephony.begin_create*
+.beta.voice_agents.telephony.begin_delete*
+.beta.voice_agents.telephony.get
+.beta.voice_agents.telephony.get_operation
+.beta.voice_agents.telephony.list
+.beta.voice_agents.telephony.list_validation_errors
 ```

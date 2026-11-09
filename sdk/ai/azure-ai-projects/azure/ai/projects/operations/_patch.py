@@ -30,7 +30,7 @@ from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
-from ._patch_campaigns import BetaVoiceAgentsCampaignsOperations
+from ._patch_campaigns import BetaVoiceAgentsTelephonyOperations
 
 # Nested operation groups are re-exported here rather than in the generated package exports.
 from ._operations import (
@@ -70,9 +70,9 @@ class _OperationMethodHeaderProxy:
     def __init__(self, operation: Any, foundry_features_value: str):
         """Wrap an operation and its nested operation groups with the same header value.
 
-        For example, ``.beta.voice_agents`` stores ``live_conversations`` and ``campaigns`` as nested
+        For example, ``.beta.voice_agents`` stores ``live_conversations`` and ``telephony`` as nested
         operation groups. Wrapping them with the parent proxy ensures every call under
-        ``.beta.voice_agents.live_conversations`` and ``.beta.voice_agents.campaigns`` receives the
+        ``.beta.voice_agents.live_conversations`` and ``.beta.voice_agents.telephony`` receives the
         ``Foundry-Features: VoiceAgents=V1Preview`` header.
         """
         object.__setattr__(self, "_operation", operation)
@@ -163,8 +163,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         :attr:`~azure.ai.projects.operations.BetaOperations.voice_agents` attribute.
     """
 
-    campaigns: BetaVoiceAgentsCampaignsOperations
-    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsCampaignsOperations` operations"""
+    telephony: BetaVoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations` operations"""
     live_conversations: BetaVoiceAgentsLiveConversationsOperations
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
     live: BetaLive
@@ -172,7 +172,7 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.campaigns = BetaVoiceAgentsCampaignsOperations(
+        self.telephony = BetaVoiceAgentsTelephonyOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.live = BetaLive(self)
@@ -242,7 +242,7 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
-    "BetaVoiceAgentsCampaignsOperations",
+    "BetaVoiceAgentsTelephonyOperations",
     "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
     "VoiceAgentsConversationsOperations",
