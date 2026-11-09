@@ -183,6 +183,23 @@ def _receiver(receiver_type, session_id=None):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("operation", ["delete_messages", "purge_messages"])
+@pytest.mark.parametrize("cutoff", [False, 0, 0.0, "", [], {}, "2026-01-02"])
+async def test_batch_delete_rejects_invalid_cutoff_before_open(is_async, operation, cutoff):
+    receiver = _receiver(AsyncServiceBusReceiver if is_async else ServiceBusReceiver)
+    receiver._mgmt_request_response = AsyncMock(return_value=0) if is_async else MagicMock(return_value=0)
+    args = (1,) if operation == "delete_messages" else ()
+    with pytest.raises(TypeError, match="before_enqueued_time"):
+        result = getattr(receiver, operation)(*args, before_enqueued_time=cutoff)
+        if is_async:
+            await result
+    receiver._open_with_retry.assert_not_called()
+    receiver._open_mgmt_link_with_retry.assert_not_called()
+    receiver._mgmt_request_response.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
 @pytest.mark.parametrize("timeout", [None, 300, 2])
 async def test_batch_delete_dispatch_honors_try_timeout(is_async, timeout):
     receiver = _receiver(AsyncServiceBusReceiver if is_async else ServiceBusReceiver)

@@ -913,7 +913,11 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        cutoff = before_enqueued_time or datetime.datetime.now(datetime.timezone.utc)
+        if before_enqueued_time is not None and not isinstance(before_enqueued_time, datetime.datetime):
+            raise TypeError("The before_enqueued_time must be a datetime.")
+        cutoff = (
+            datetime.datetime.now(datetime.timezone.utc) if before_enqueued_time is None else before_enqueued_time
+        )
         message = {
             MGMT_REQUEST_MESSAGE_COUNT: self._amqp_transport.AMQP_INT_VALUE(
                 message_count
@@ -991,7 +995,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        cutoff = before_enqueued_time or datetime.datetime.now(datetime.timezone.utc)
+        cutoff = (
+            datetime.datetime.now(datetime.timezone.utc) if before_enqueued_time is None else before_enqueued_time
+        )
         deadline = None if timeout is None else time.monotonic() + timeout
         deleted_count = 0
         while True:
