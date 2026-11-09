@@ -4,6 +4,7 @@
         "azure.mgmt.containerregistry.models.ActivationProperties": "Microsoft.ContainerRegistry.ActivationProperties",
         "azure.mgmt.containerregistry.models.Actor": "Microsoft.ContainerRegistry.Actor",
         "azure.mgmt.containerregistry.models.AdditionalAuthenticationProperties": "Microsoft.ContainerRegistry.AdditionalAuthenticationProperties",
+        "azure.mgmt.containerregistry.models.AdditionalAuthenticationUpdateProperties": "Microsoft.ContainerRegistry.AdditionalAuthenticationUpdateProperties",
         "azure.mgmt.containerregistry.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.containerregistry.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
         "azure.mgmt.containerregistry.models.Archive": "Microsoft.ContainerRegistry.Archive",
@@ -29,7 +30,11 @@
         "azure.mgmt.containerregistry.models.CredentialSetProperties": "Microsoft.ContainerRegistry.CredentialSetProperties",
         "azure.mgmt.containerregistry.models.CredentialSetUpdateParameters": "Microsoft.ContainerRegistry.CredentialSetUpdateParameters",
         "azure.mgmt.containerregistry.models.CredentialSetUpdateProperties": "Microsoft.ContainerRegistry.CredentialSetUpdateProperties",
+        "azure.mgmt.containerregistry.models.EcrAuthenticationProperties": "Microsoft.ContainerRegistry.EcrAuthenticationProperties",
+        "azure.mgmt.containerregistry.models.EcrAuthenticationUpdateProperties": "Microsoft.ContainerRegistry.EcrAuthenticationUpdateProperties",
         "azure.mgmt.containerregistry.models.EncryptionProperty": "Microsoft.ContainerRegistry.EncryptionProperty",
+        "azure.mgmt.containerregistry.models.EntraFederatedIdentityCredentialAuthenticationProperties": "Microsoft.ContainerRegistry.EntraFederatedIdentityCredentialAuthenticationProperties",
+        "azure.mgmt.containerregistry.models.EntraFederatedIdentityCredentialAuthenticationUpdateProperties": "Microsoft.ContainerRegistry.EntraFederatedIdentityCredentialAuthenticationUpdateProperties",
         "azure.mgmt.containerregistry.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
         "azure.mgmt.containerregistry.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.containerregistry.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
@@ -43,6 +48,7 @@
         "azure.mgmt.containerregistry.models.ExportPipelineTargetProperties": "Microsoft.ContainerRegistry.ExportPipelineTargetProperties",
         "azure.mgmt.containerregistry.models.ExportPolicy": "Microsoft.ContainerRegistry.ExportPolicy",
         "azure.mgmt.containerregistry.models.GarAuthenticationProperties": "Microsoft.ContainerRegistry.GarAuthenticationProperties",
+        "azure.mgmt.containerregistry.models.GarAuthenticationUpdateProperties": "Microsoft.ContainerRegistry.GarAuthenticationUpdateProperties",
         "azure.mgmt.containerregistry.models.GarbageCollectionProperties": "Microsoft.ContainerRegistry.GarbageCollectionProperties",
         "azure.mgmt.containerregistry.models.GenerateCredentialsParameters": "Microsoft.ContainerRegistry.GenerateCredentialsParameters",
         "azure.mgmt.containerregistry.models.GenerateCredentialsResult": "Microsoft.ContainerRegistry.GenerateCredentialsResult",
@@ -350,5 +356,5 @@
         "azure.mgmt.containerregistry.operations.WebhooksOperations.get_callback_config": "Microsoft.ContainerRegistry.Webhooks.getCallbackConfig",
         "azure.mgmt.containerregistry.aio.operations.WebhooksOperations.get_callback_config": "Microsoft.ContainerRegistry.Webhooks.getCallbackConfig"
     },
-    "CrossLanguageVersion": "9e79c32c7f25"
+    "CrossLanguageVersion": "217aa3792612"
 }
