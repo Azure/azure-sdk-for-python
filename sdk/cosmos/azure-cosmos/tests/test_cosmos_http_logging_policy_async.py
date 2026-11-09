@@ -18,7 +18,7 @@ from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_fault_injection_transport_async import TestFaultInjectionTransportAsync
 
 from test_cosmos_http_logging_policy import create_logger, L1, L2, CONFIG, \
-    get_locations_list, FilterStatusCode
+    get_locations_list, FilterStatusCode, assert_activity_id_logs
 
 try:
     from unittest.mock import Mock
@@ -298,20 +298,17 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
             item_body = {"id": item_id, "pk": item_id}
             await container.upsert_item(body=item_body)
 
-            # Verify that the request activity ID matches the response activity ID
-            log_record_request = self.mock_handler_activity_id.messages[0]
-            log_record_response = self.mock_handler_activity_id.messages[1]
-            assert log_record_request.activity_id == log_record_response.activity_id
+            assert_activity_id_logs(self.mock_handler_activity_id.messages, container_id)
 
             # Upsert another item with the custom activity ID in the initial headers
+            self.mock_handler_activity_id.reset()
             headers = {"x-ms-activity-id": custom_activity_id}
             item_id_2 = str(uuid.uuid4())
             item_body_2 = {"id": item_id_2, "pk": item_id_2}
             await container.upsert_item(body=item_body_2, initial_headers=headers)
 
             # Verify that the custom activity ID does not match the request activity ID from the log record
-            log_record_request_2 = self.mock_handler_activity_id.messages[2]
-            assert log_record_request_2.activity_id != custom_activity_id
+            assert_activity_id_logs(self.mock_handler_activity_id.messages, container_id, custom_activity_id)
 
         finally:
             # Clean up by deleting the database

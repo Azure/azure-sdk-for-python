@@ -57,6 +57,71 @@ def get_locations_list(msg: str) -> List[str]:
     msg = msg[start:end]
     return msg.split(',')
 
+
+def assert_activity_id_logs(messages, container_id, custom_activity_id=None):
+    # Metadata reads and background health checks can interleave with the upsert.
+    records = [
+        record for record in messages
+        if getattr(record, "resource_type", None) == "docs"
+        and getattr(record, "operation_type", None) == "Upsert"
+        and getattr(record, "collection_name", None) == container_id
+    ]
+    requests = [record for record in records if record.is_request]
+    responses = [record for record in records if not record.is_request]
+    assert requests, "No upsert request was logged"
+    assert len(requests) == len(responses), "Missing upsert request/response log records"
+    for request, response in zip(requests, responses):
+        assert request.activity_id
+        assert request.activity_id == response.activity_id
+        assert request.activity_id != custom_activity_id
+        assert "Response Activity ID: {}".format(request.activity_id) in response.message
+    assert responses[-1].status_code == 201
+
+
+@pytest.mark.cosmosEmulator
+class TestActivityIdLogAssertions:
+    @staticmethod
+    def record(is_request, activity_id, **kwargs):
+        return logging.makeLogRecord({
+            "resource_type": "docs",
+            "operation_type": "Upsert",
+            "collection_name": "container",
+            "is_request": is_request,
+            "activity_id": activity_id,
+            "status_code": None if is_request else 201,
+            "message": "Response Activity ID: {}".format(activity_id),
+            **kwargs,
+        })
+
+    def test_interleaved_metadata_logs(self):
+        records = [
+            self.record(True, "health", resource_type="databaseaccount", operation_type="Read"),
+            self.record(True, "generated"),
+            self.record(False, "health", resource_type="databaseaccount", operation_type="Read"),
+            self.record(False, "generated"),
+        ]
+        assert records[0].activity_id != records[1].activity_id
+        assert_activity_id_logs(records, "container", "custom")
+
+    @pytest.mark.parametrize("is_request", [True, False])
+    def test_missing_upsert_pair_fails(self, is_request):
+        with pytest.raises(AssertionError):
+            assert_activity_id_logs([self.record(is_request, "generated")], "container")
+
+    @pytest.mark.parametrize(
+        "request_id,response_id,wire_id",
+        [("", "", ""), ("generated", "different", "generated"),
+         ("custom", "custom", "custom"), ("generated", "generated", "different")],
+    )
+    def test_invalid_activity_id_fails(self, request_id, response_id, wire_id):
+        records = [
+            self.record(True, request_id),
+            self.record(False, response_id, message="Response Activity ID: {}".format(wire_id)),
+        ]
+        with pytest.raises(AssertionError):
+            assert_activity_id_logs(records, "container", "custom")
+
+
 @pytest.mark.cosmosEmulator
 class TestCosmosHttpLogger(unittest.TestCase):
     mock_handler_diagnostic = None
@@ -298,6 +363,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Create a mock handler and logger for the new client
         self.mock_handler_activity_id = test_config.MockHandler()
         self.logger_activity_id = create_logger("test_logger_activity_id", self.mock_handler_activity_id)
+        self.addCleanup(self.logger_activity_id.removeHandler, self.mock_handler_activity_id)
 
         # Create a new client with the logger and enable diagnostics logging
         self.client_activity_id = cosmos_client.CosmosClient(
@@ -308,6 +374,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
             logger=self.logger_activity_id,
             enable_diagnostics_logging=True
         )
+        self.addCleanup(self.client_activity_id.close)
 
         # Generate a custom activity ID
         custom_activity_id = str(uuid.uuid4())
@@ -316,6 +383,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         database_id = test_config.unique_database_id("logging-activity-id")
         container_id = "container_test_activity_id_" + str(uuid.uuid4())
         database = self.client_activity_id.create_database(id=database_id)
+        self.addCleanup(self.client_activity_id.delete_database, database_id)
         container = database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
         # Reset the mock handler to clear previous messages
         self.mock_handler_activity_id.reset()
@@ -325,14 +393,10 @@ class TestCosmosHttpLogger(unittest.TestCase):
         item_body = {"id": item_id, "pk": item_id}
         container.upsert_item(body=item_body)
 
-        # Verify that the request activity ID matches the response activity ID
-        # Having the Request Activity confirms we generated one from SDK
-        # Having it match the response means it was passed successfully
-        log_record_request = self.mock_handler_activity_id.messages[0]
-        log_record_response = self.mock_handler_activity_id.messages[1]
-        assert log_record_request.activity_id == log_record_response.activity_id
+        assert_activity_id_logs(self.mock_handler_activity_id.messages, container_id)
 
         # Upsert another item with the custom activity ID in the initial headers
+        self.mock_handler_activity_id.reset()
         headers = {"x-ms-activity-id": custom_activity_id}
         item_id_2 = str(uuid.uuid4())
         item_body_2 = {"id": item_id_2, "pk": item_id_2}
@@ -340,12 +404,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
         # Verify that the custom activity ID does not match the request activity ID from the log record
         # Users should not be able to pass in their own activity ID.
-        log_record_request_2 = self.mock_handler_activity_id.messages[2]
-        assert log_record_request_2.activity_id != custom_activity_id
-
-        # Clean up by deleting the database
-        self.client_activity_id.delete_database(database_id)
-        self.mock_handler_activity_id.reset()
+        assert_activity_id_logs(self.mock_handler_activity_id.messages, container_id, custom_activity_id)
 
     def test_logging_exceptions_with_no_response(self):
         # Create a mock handler and logger for capturing logs
