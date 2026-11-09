@@ -62,6 +62,19 @@ steps:
 
   - ${{ parameters.BeforeTestSteps }}
 
+  - task: NuGetAuthenticate@1
+    displayName: 'Authenticate to NuGet feed'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+      $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+      Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+      Write-Host "##vso[task.setvariable variable=AZURESDK_PYTHON_NUGET_FEED]$feed"
+    displayName: 'Pre-provision CPython for cibuildwheel'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
       displayName: Run Tests (AzurePowerShell@5)
