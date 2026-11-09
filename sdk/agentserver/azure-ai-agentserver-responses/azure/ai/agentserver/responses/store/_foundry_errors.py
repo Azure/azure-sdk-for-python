@@ -47,6 +47,20 @@ class FoundryApiError(FoundryStorageError):
     """Raised for all other non-success HTTP responses."""
 
 
+class _FoundryAccessError(FoundryApiError):
+    """A client-visible Foundry storage authentication or authorization rejection."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        status_code: int,
+        response_body: dict[str, Any] | None = None,
+    ) -> None:
+        super().__init__(message, response_body=response_body)
+        self.status_code = status_code
+
+
 def raise_for_storage_error(response: "HttpResponse") -> None:
     """Raise an appropriate :class:`FoundryStorageError` subclass if *response* is not successful.
 
@@ -62,6 +76,8 @@ def raise_for_storage_error(response: "HttpResponse") -> None:
 
     message, body = _extract_error_message(response, status)
 
+    if status in (401, 403):
+        raise _FoundryAccessError(message, status_code=status, response_body=body)
     if status == 404:
         raise FoundryResourceNotFoundError(message, response_body=body)
     if status in (400, 409):

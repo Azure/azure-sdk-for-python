@@ -54,6 +54,7 @@ from ..models.runtime import (
     _resolve_failed_response,
 )
 from ..store._base import ResponseAlreadyExistsError, ResponseProviderProtocol
+from ..store._foundry_errors import _FoundryAccessError
 from ..streaming._checkpoint import ResponseCheckpointEvent
 from ..streaming._helpers import (
     _apply_stream_event_defaults,
@@ -722,7 +723,8 @@ async def _bg_persist_at_created(
     except Exception as persist_exc:  # pylint: disable=broad-exception-caught
         # §3.3: Phase 1 create failure — mark persistence failed so the terminal
         # update knows not to attempt update_response.
-        setattr(persist_exc, PLATFORM_ERROR_TAG, True)
+        if not isinstance(persist_exc, _FoundryAccessError):
+            setattr(persist_exc, PLATFORM_ERROR_TAG, True)
         logger.error(
             "Phase 1 create_response failed for bg non-stream (response_id=%s): %s",
             response_id,
@@ -905,7 +907,8 @@ async def _bg_persist_terminal(
             _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
             await provider.create_response(record.response, _resolved_items, _history_ids, context=_context)
     except Exception as persist_exc:  # pylint: disable=broad-exception-caught
-        setattr(persist_exc, PLATFORM_ERROR_TAG, True)
+        if not isinstance(persist_exc, _FoundryAccessError):
+            setattr(persist_exc, PLATFORM_ERROR_TAG, True)
         logger.error(
             "Persistence failed at bg non-stream finalization (response_id=%s): %s",
             response_id,
@@ -1074,6 +1077,8 @@ async def _bg_drain_handler_events(
                     conversation_id=conversation_id,
                     history_limit=history_limit,
                 )
+                if isinstance(record.persistence_exception, _FoundryAccessError):
+                    return True
             else:
                 st.output_item_count = _bg_track_output_count(normalized, st.output_item_count)
     except asyncio.CancelledError:
@@ -1888,7 +1893,8 @@ class _ResponseOrchestrator:
             a ``storage_error`` failed event.
         :paramtype replace_terminal: bool
         """
-        setattr(exc, PLATFORM_ERROR_TAG, True)
+        if not isinstance(exc, _FoundryAccessError):
+            setattr(exc, PLATFORM_ERROR_TAG, True)
         record.persistence_failed = True
         record.persistence_exception = exc
         if replace_terminal:
@@ -3802,6 +3808,8 @@ class _ResponseOrchestrator:
         # `_run_sync_inner` raised the same way; this preserves the behaviour.
         if getattr(record, "persistence_failed", False):
             persist_exc = getattr(record, "persistence_exception", None) or RuntimeError("Persistence failed")
+            if isinstance(persist_exc, _FoundryAccessError):
+                await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
             ctx.span.end(persist_exc)
             raise _HandlerError(persist_exc) from persist_exc
 
@@ -4100,6 +4108,13 @@ class _ResponseOrchestrator:
 
         # Wait for handler to emit response.created (or fail).
         await record.response_created_signal.wait()
+
+        if isinstance(record.persistence_exception, _FoundryAccessError):
+            if record.execution_task is not None:
+                await record.execution_task
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
+            ctx.span.end(record.persistence_exception)
+            raise record.persistence_exception
 
         # If input was queued on an already-active steerable task,
         # return the acceptance hook response (status: queued).

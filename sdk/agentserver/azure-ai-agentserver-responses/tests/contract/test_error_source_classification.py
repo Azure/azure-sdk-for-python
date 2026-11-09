@@ -9,8 +9,12 @@ responses, matching the container image spec §8 error source classification.
 
 from __future__ import annotations
 
+import asyncio
+import json
 from typing import Any, AsyncIterator
+from unittest.mock import AsyncMock, MagicMock
 
+import pytest
 from azure.ai.agentserver.core._platform_headers import (
     ERROR_DETAIL,
     ERROR_SOURCE,
@@ -19,6 +23,9 @@ from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses.store._foundry_provider import FoundryStorageProvider
+from azure.ai.agentserver.responses.store._foundry_settings import FoundryStorageSettings
 
 
 async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> AsyncIterator[Any]:
@@ -150,3 +157,77 @@ class TestErrorSourceOnDraining:
         resp = service_unavailable_response("shutting down", {})
         assert resp.status_code == 503
         assert resp.headers[ERROR_SOURCE] == "platform"
+
+
+@pytest.mark.parametrize("status", [401, 403])
+@pytest.mark.parametrize(
+    "route",
+    [
+        "create",
+        "create_update",
+        "create_background",
+        "create_history",
+        "create_history_stream",
+        "get",
+        "get_stream",
+        "cancel",
+        "delete",
+        "delete_after_lookup",
+        "input_items",
+    ],
+)
+def test_foundry_access_errors_preserve_status_and_message(status: int, route: str) -> None:
+    body = {"error": {"code": "AccessDenied", "message": "Public network access is disabled."}}
+    storage_response = MagicMock()
+    storage_response.status_code = status
+    storage_response.text.return_value = json.dumps(body)
+    provider = FoundryStorageProvider(
+        credential=AsyncMock(),
+        settings=FoundryStorageSettings(storage_base_url="https://foundry.example.com/storage/"),
+    )
+    provider._client.send_request = AsyncMock(return_value=storage_response)
+    app = ResponsesAgentServerHost(store=provider)
+
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> AsyncIterator[Any]:
+        async def events() -> AsyncIterator[Any]:
+            stream = ResponseEventStream(response_id=context.response_id, model="test")
+            yield stream.emit_created()
+            yield stream.emit_completed()
+
+        return events()
+
+    app.response_handler(handler)
+    client = TestClient(app)
+    response_id = IdGenerator.new_response_id()
+    if route in {"create_update", "delete_after_lookup"}:
+        success = MagicMock()
+        success.status_code = 200
+        success.text.return_value = json.dumps(
+            {"id": response_id, "status": "completed", "model": "test", "output": []}
+        )
+        provider._client.send_request.side_effect = [success, storage_response]
+
+    if route.startswith("create"):
+        payload: dict[str, Any] = {"response_id": response_id, "model": "test", "input": "hello", "store": True}
+        if route == "create_background":
+            payload["background"] = True
+        if route.startswith("create_history"):
+            payload["previous_response_id"] = response_id
+            payload["stream"] = route.endswith("_stream")
+        response = client.post("/responses", json=payload)
+    elif route == "cancel":
+        response = client.post(f"/responses/{response_id}/cancel")
+    elif route.startswith("delete"):
+        response = client.delete(f"/responses/{response_id}")
+    else:
+        suffix = {"get": "", "get_stream": "?stream=true", "input_items": "/input_items"}[route]
+        response = client.get(f"/responses/{response_id}{suffix}")
+
+    assert response.status_code == status
+    assert response.json() == body
+    assert response.headers[ERROR_SOURCE] == "user"
+    assert ERROR_DETAIL not in response.headers
+    if route in {"create", "create_background", "create_update"}:
+        provider._client.send_request.side_effect = None
+        followup = client.get(f"/responses/{response_id}")
+        assert followup.status_code == status
