@@ -412,10 +412,9 @@ class TestToolCallAccuracyEvaluator:
         assert f"{key}_properties" in result
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
+        """No calls produce an unscored skip without invoking the judge."""
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
-        # Test with no tool calls provided
-        # Test with no tool calls provided
         query = "Where is the Eiffel Tower?"
         tool_calls = []
         tool_definitions = [
@@ -434,10 +433,12 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        with pytest.raises(EvaluationException) as exc_info:
-            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-
-        assert "No tool calls found in response or provided tool_calls." in str(exc_info.value)
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        assert result["tool_call_accuracy"] is None
+        assert result["tool_call_accuracy_status"] == "skipped"
+        assert result["tool_call_accuracy_result"] == "not_applicable"
+        assert "No tool calls" in result["tool_call_accuracy_reason"]
+        evaluator._flow.assert_not_called()
 
     def test_evaluate_bing_custom_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
