@@ -3,6 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from unittest import mock
+
+import aiohttp
 import pytest
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -51,9 +54,15 @@ async def test_iter_with_error(client):
     assert response.is_closed
 
     request = HttpRequest("GET", "http://doesNotExist")
-    with pytest.raises(ServiceRequestError):
-        async with await client.send_request(request, stream=True):
-            raise ValueError("Should error before entering")
+    # A proxy can turn a DNS failure into an HTTP response instead of a connection error.
+    with mock.patch(
+        "aiohttp.ClientSession.request",
+        new_callable=mock.AsyncMock,
+        side_effect=aiohttp.ClientConnectionError("Connection failed"),
+    ):
+        with pytest.raises(ServiceRequestError):
+            async with await client.send_request(request, stream=True):
+                raise ValueError("Should error before entering")
     assert response.is_closed
 
 
