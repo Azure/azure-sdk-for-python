@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-09-30/ProtectionGroups_StopBackup_MaximumSet_Gen.json
+# x-ms-original-file: 2026-11-03/ProtectionGroups_StopBackup_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

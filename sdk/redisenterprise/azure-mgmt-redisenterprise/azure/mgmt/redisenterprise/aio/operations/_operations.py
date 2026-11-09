@@ -36,11 +36,13 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_access_policy_assignment_create_update_request,
     build_access_policy_assignment_delete_request,
     build_access_policy_assignment_get_request,
     build_access_policy_assignment_list_request,
+    build_clusters_unlink_migrated_endpoint_request,
     build_databases_create_request,
     build_databases_delete_request,
     build_databases_export_request,
@@ -54,10 +56,11 @@ from ...operations._operations import (
     build_databases_regenerate_key_request,
     build_databases_update_request,
     build_databases_upgrade_db_redis_version_request,
-    build_migrations_cancel_request,
     build_migrations_get_request,
     build_migrations_list_request,
     build_migrations_start_request,
+    build_migrations_undo_request,
+    build_migrations_unlink_migrated_endpoint_request,
     build_migrations_validate_request,
     build_operations_list_request,
     build_operations_status_get_request,
@@ -81,7 +84,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -193,7 +196,162 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabasesOperations:  # pylint: disable=too-many-public-methods
+class ClustersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.redisenterprise.aio.RedisEnterpriseManagementClient`'s
+        :attr:`clusters` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: RedisEnterpriseManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
+        api_versions_list=["2026-09-01"],
+    )
+    async def _unlink_migrated_endpoint_initial(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_clusters_unlink_migrated_endpoint_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
+        api_versions_list=["2026-09-01"],
+    )
+    async def begin_unlink_migrated_endpoint(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Unlinks the migrated endpoint from an Azure Managed Redis cluster that was migrated from Azure
+        Cache for Redis Enterprise, removing the source cache endpoint that was redirected to this
+        cluster during migration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._unlink_migrated_endpoint_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class DatabasesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2789,7 +2947,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3395,7 +3553,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MigrationsOperations:
+class MigrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3846,7 +4004,274 @@ class MigrationsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    async def _cancel_initial(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    @api_version_validation(
+        params_added_on={"2026-09-01": ["content_type"]},
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01-preview",
+            "2026-09-01",
+        ],
+    )
+    async def _undo_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[Union[_models.MigrationUndoRequest, _types.MigrationUndoRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_migrations_undo_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_undo(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[_models.MigrationUndoRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param body: Parameters supplied to undo a migration operation. Default value is None.
+        :type body: ~azure.mgmt.redisenterprise.models.MigrationUndoRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_undo(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[_types.MigrationUndoRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param body: Parameters supplied to undo a migration operation. Default value is None.
+        :type body: ~azure.mgmt.redisenterprise.types.MigrationUndoRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_undo(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param body: Parameters supplied to undo a migration operation. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-09-01": ["content_type"]},
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01-preview",
+            "2026-09-01",
+        ],
+    )
+    async def begin_undo(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[Union[_models.MigrationUndoRequest, _types.MigrationUndoRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param body: Parameters supplied to undo a migration operation. Is either a
+         MigrationUndoRequest type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.redisenterprise.models.MigrationUndoRequest or
+         ~azure.mgmt.redisenterprise.types.MigrationUndoRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._undo_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
+        api_versions_list=["2026-09-01"],
+    )
+    async def _unlink_migrated_endpoint_initial(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3860,7 +4285,7 @@ class MigrationsOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_migrations_cancel_request(
+        _request = build_migrations_unlink_migrated_endpoint_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
@@ -3907,8 +4332,17 @@ class MigrationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_cancel(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
-        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
+        api_versions_list=["2026-09-01"],
+    )
+    async def begin_unlink_migrated_endpoint(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Unlinks the migrated endpoint from the Azure Managed Redis cluster that was migrated from Azure
+        Cache for Redis, removing the source cache endpoint that was redirected to this cluster during
+        migration.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3929,7 +4363,7 @@ class MigrationsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._cancel_initial(
+            raw_result = await self._unlink_migrated_endpoint_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 cls=lambda x, y, z: x,
@@ -4153,7 +4587,7 @@ class MigrationsOperations:
         return deserialized  # type: ignore
 
 
-class RedisEnterpriseOperations:
+class RedisEnterpriseOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5121,7 +5555,7 @@ class RedisEnterpriseOperations:
         return deserialized  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5246,7 +5680,7 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AccessPolicyAssignmentOperations:
+class AccessPolicyAssignmentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5890,7 +6324,7 @@ class AccessPolicyAssignmentOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OperationsStatusOperations:
+class OperationsStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
