@@ -24,12 +24,13 @@ from azure.servicebus._common.constants import (
     _X_OPT_SCHEDULED_ENQUEUE_TIME,
     _X_OPT_ENQUEUED_TIME,
 )
+from azure.servicebus.exceptions import MessageSizeExceededError
 from azure.servicebus._common.utils import (
     CE_ZERO_SECONDS,
     transform_outbound_messages,
 )
 from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType, AmqpMessageProperties, AmqpMessageHeader
-from azure.servicebus._pyamqp.message import Message
+from azure.servicebus._pyamqp.message import BatchMessage, Message
 from azure.servicebus._pyamqp._message_backcompat import LegacyBatchMessage
 from azure.servicebus._pyamqp._encode import encode_payload
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
@@ -209,7 +210,7 @@ def test_servicebus_message_batch(uamqp_transport):
     else:
         amqp_transport = PyamqpTransport
 
-    batch = ServiceBusMessageBatch(max_size_in_bytes=240, partition_key="par", amqp_transport=amqp_transport)
+    batch = ServiceBusMessageBatch(max_size_in_bytes=320, partition_key="par", amqp_transport=amqp_transport)
     batch.add_message(
         ServiceBusMessage(
             "A",
@@ -227,10 +228,11 @@ def test_servicebus_message_batch(uamqp_transport):
             reply_to_session_id="reply_to_session_id",
         )
     )
-    assert str(batch) == "ServiceBusMessageBatch(max_size_in_bytes=240, message_count=1)"
-    assert repr(batch) == "ServiceBusMessageBatch(max_size_in_bytes=240, message_count=1)"
+    assert str(batch) == "ServiceBusMessageBatch(max_size_in_bytes=320, message_count=1)"
+    assert repr(batch) == "ServiceBusMessageBatch(max_size_in_bytes=320, message_count=1)"
 
-    assert batch.size_in_bytes == 238 and len(batch) == 1
+    # Includes the message_id/session_id/partition_key that are copied onto the batch envelope.
+    assert batch.size_in_bytes == (316 if uamqp_transport else 318) and len(batch) == 1
 
     # The batch envelope must capture the first message's message_id/session_id/partition_key so the
     # broker can route the batch. Under uamqp_transport this previously raised
@@ -248,6 +250,45 @@ def test_servicebus_message_batch(uamqp_transport):
         batch.add_message(ServiceBusMessage("A"))
 
     assert batch.message
+
+
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+@pytest.mark.parametrize(
+    "identifiers",
+    [
+        {},
+        {"session_id": "s1"},
+        {"partition_key": "p1"},
+        {"message_id": "\u00e9" * 128, "session_id": "\U0001d11e" * 128, "partition_key": "\U0001d11e" * 128},
+    ],
+    ids=["default", "session_id", "partition_key", "long_non_ascii"],
+)
+def test_message_batch_size_includes_envelope_properties(uamqp_transport, identifiers):
+    # The first message's message_id/session_id/partition_key are copied onto the batch envelope, so
+    # size_in_bytes and the max_size_in_bytes check must include them.
+    amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
+
+    def encoded_size(batch):
+        if uamqp_transport:
+            return amqp_transport.get_batch_message_encoded_size(batch._message)
+        output = bytearray()
+        encode_payload(output, BatchMessage(*batch._message))
+        return len(output)
+
+    batch = ServiceBusMessageBatch(amqp_transport=amqp_transport)
+    for _ in range(3):
+        batch.add_message(ServiceBusMessage("x" * 1000, **identifiers))
+        assert batch.size_in_bytes == encoded_size(batch)
+
+    # A first message that fits only when the envelope properties are left out is rejected,
+    # and the batch is left empty.
+    single = ServiceBusMessageBatch(amqp_transport=amqp_transport)
+    single.add_message(ServiceBusMessage("x" * 1000, **identifiers))
+    batch = ServiceBusMessageBatch(max_size_in_bytes=single.size_in_bytes - 1, amqp_transport=amqp_transport)
+    with pytest.raises(MessageSizeExceededError):
+        batch.add_message(ServiceBusMessage("x" * 1000, **identifiers))
+    assert len(batch) == 0
+    assert batch.size_in_bytes == ServiceBusMessageBatch(amqp_transport=amqp_transport).size_in_bytes
 
 
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
