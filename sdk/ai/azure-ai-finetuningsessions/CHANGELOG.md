@@ -19,6 +19,7 @@
 
 ### Other Changes
 
+- Pin extensible TypeSpec response unions for completion metadata and checkpoint preparation states. Known labels, Python API, safety validation, and preparation-state handling remain unchanged.
 - Pin the discriminated TypeSpec tool-call hierarchy while preserving the function-only payload, Python API, and runtime. Add sync/async regression coverage rejecting unsupported call kinds.
 - Refresh generation with main's shared Python emitter 0.63.11 and generator 0.40.0, correcting generated documentation type references without changing executable code or public signatures.
 - Pin the TypeSpec correction that explicitly marks all fine-tuning operations as preview. The wire API version remains `v1`, and the SDK API and runtime are unchanged.

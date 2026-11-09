@@ -15,10 +15,10 @@
   "typespec": {
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
-    "base_commit": "8903470b04812f0a4379091ac74290c660168a73",
-    "commit": "140214c5bb57f12d848f0b72c0dd33e0686efdcd",
+    "base_commit": "140214c5bb57f12d848f0b72c0dd33e0686efdcd",
+    "commit": "cc9a3869d6dd2e27667a1b1ac4ae0844ef6b1f1b",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "c93fc2bfb51dcc7a6c187435d3689608835b0526dd3ed7c55a6f938f956ac008",
+    "source_fingerprint_sha256": "34c69f90542fa03904fa1a856a8f2db67bbc103ebf3aae478842aa8d7d8c0342",
     "client_sha256": "a974c5c1b8bb6649f9baaeba925a24b9e3439c1e80c9c92dd2ded2e2bd286694",
     "models_path": "specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp",
     "models_sha256": "bee9a1c4f4b8d80315f98212e378c28aef552d28eee3d6ec2327f1b30a0cbec3",
@@ -41,7 +41,7 @@
   },
   "assembly": {
     "generated_inventory_entries": 21,
-    "generated_inventory_fingerprint_sha256": "bfab78952f444636174d6d03a04a639a5f83eac7e05bf7b28de28d45daa4c248",
+    "generated_inventory_fingerprint_sha256": "60d11b30e307d268d4ab627aaf644198c14549bd52a682152344adac8d995853",
     "runtime_files": 32,
     "runtime_python_modules": 31,
     "baseline_runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
@@ -352,6 +352,42 @@
       "validated_runtime_wheel_sha256": "00c4e6a008a3766b94cdaa18c5e20c83eb877f4922dd92b3b183339fd32e72fd",
       "tooling_limitations": "MCP hit Windows cleanup failure and overwrote packaging metadata despite generate-packaging-files=false; original pyproject/MANIFEST restored exactly, strict isolated emission and clean artifact validation used.",
       "typespec_suppression_approval_required": true
+    },
+    "extensible_response_enums_20261109": {
+      "review_comment_ids": [
+        4517464041,
+        4517472121,
+        4517474002,
+        4517659336
+      ],
+      "spec_commit": "cc9a3869d6dd2e27667a1b1ac4ae0844ef6b1f1b",
+      "previous_spec_commit": "140214c5bb57f12d848f0b72c0dd33e0686efdcd",
+      "extensible_response_unions": [
+        "FineTuningTextOnlyFinishReason",
+        "FineTuningTextOnlyInvalidReason",
+        "FineTuningTextOnlyInvalidFinishReason",
+        "FineTuningCheckpointDownloadStatus"
+      ],
+      "lint_suppressions_removed": 4,
+      "known_labels_and_other_contract_elements_preserved": true,
+      "input_unions_unchanged": true,
+      "independent_emissions": 2,
+      "generated_entries": 21,
+      "generated_delta": "Only apiview-properties.json CrossLanguageVersion changed.",
+      "api_view_cross_language_version": "41774af0e737",
+      "runtime_files_unchanged": 32,
+      "public_python_api_unchanged": true,
+      "maintained_parser_and_preparation_handling_unchanged": true,
+      "python_310_relevant_tests_passed": 402,
+      "python_310_relevant_tests_skipped": 72,
+      "python_313_relevant_tests_passed": 402,
+      "python_313_relevant_tests_skipped": 72,
+      "mirror_workflow_tests_passed": 39,
+      "typespec_validation_mcp_passed": true,
+      "strict_compilation_passed": true,
+      "client_configuration_changed": false,
+      "live_service_tested": false,
+      "validation_scope": "Exact runtime equality and focused text-only/checkpoint regressions. Schema openness does not change maintained Python acceptance of unknown labels or states."
     },
     "tool_call_hierarchy_review_20261109": {
       "review_comment_id": 4517434198,

@@ -40,6 +40,13 @@ Current message arrays remain function-only. Two independent emissions retain
 all 32 Python runtime files exactly; only the generated APIView source checksum
 changes. Sync/async regressions also confirm that other call kinds are rejected.
 
+The response-enum review makes completion finish reasons, invalid-output
+classifications, and checkpoint preparation statuses extensible in TypeSpec.
+Known labels are retained and only their four lint suppressions are removed.
+Python generation again preserves all runtime files; this source-pin update
+does not relax the maintained parser or change preparation-state handling.
+Unknown labels and states therefore retain the SDK's existing explicit errors.
+
 The shared SDK toolchain uses Python emitter 0.63.11, Python generator 0.40.0,
 and TypeSpec compiler 1.17.0. The central SDK manifest/lock remain authoritative;
 the package archives exact copies for independent verification.
