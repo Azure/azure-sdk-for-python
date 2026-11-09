@@ -14,7 +14,7 @@ you have already retrieved; it doesn't generate vectors.
 
 The reranking package uses the `2026-10-30` service API. Embedding examples require
 an embedding-enabled preview SDK and endpoint; reranking-only releases don't
-provide `multi_modal_embed` or its request models.
+provide `multi_modal_embed`.
 
 ## Getting started
 
@@ -123,31 +123,30 @@ The client requests tokens for `https://dbinference.azure.com/.default`.
 
 ## Key concepts
 
-`InferenceClient` is the entry point. Call `client.multi_modal_embed(request)`
+`InferenceClient` is the entry point. Call `client.multi_modal_embed(...)`
 for embedding generation or `client.semantic_rerank(request)` for reranking.
 There is no intermediate inference subclient. The embedding examples use
 Microsoft Entra authentication.
 
 ### Embedding generation
 
-Pass a `MultimodalEmbeddingInferenceContent` model to `multi_modal_embed`.
-Build inputs with `EmbeddingContentItem` and put them in the request's `contents`
-list. Use `type="text"` for document text, `type="query"` for retrieval queries,
-and `type="image"` for blob images. Text and query items use `content`;
-image items use separate `url` and `sas_token` attributes. Don't use `embed`
-or an `inputs` keyword argument.
+Call `multi_modal_embed` with keyword arguments and pass plain dictionaries in
+the `inputs` list. No request or input-item wrapper objects are needed. Set
+`"type": "text"` for document text, `"type": "query"` for retrieval queries,
+and `"type": "image"` for blob images. Text and query items use `content`;
+image items use separate `url` and `sas_token` keys. Don't use `embed`.
 
-| Request attribute | Meaning |
+| Keyword argument | Meaning |
 | --- | --- |
-| `model` | Use `microsoft-embedding-1-large` for Microsoft Embedding 1. |
-| `model_version` | Optional released date-version identifier. Defaults to the latest version; the selected version is echoed in the response. Pin the same released version for documents and queries in an index. |
-| `contents` | Required list of content items. An optional item `id` associates each result with its input. Use separate calls for separate text documents; two text items in one request are invalid. |
+| `model` | Required. Use `microsoft-embedding-1-large` for Microsoft Embedding 1. |
+| `model_version` | Required released date-version identifier, echoed in the response. Pin the same released version for documents and queries in an index. |
+| `inputs` | Required list of dictionaries. An optional item `id` associates each result with its input. Use separate calls for separate text documents; two text items in one request are invalid. |
 | `vector_type` | `dense` (default), `multi`, or `both`. Multi-vectors require a compatible late-interaction retrieval strategy. |
-| `dimensions` | Integer vector width supported by the model and vector type. The dense examples request `1536`. |
+| `dimensions` | Optional vector width as a string, such as `"1536"` or `"2560"`. Defaults to the model's native width. The dense examples request `"1536"`. |
 | `max_num_vectors` | Limits token-level vectors for `multi` or `both` output. |
 | `delivery` | `inline` (default) returns vectors in `data`; `link` returns a results-file reference in `output` and an empty `data` list. |
 
-Set these attributes on the request model, not as operation keyword arguments.
+Pass these options directly as operation keyword arguments.
 With inline dense output, each `MultimodalDenseEmbedding` in `response.data`
 contains `embedding` and the input's `id`. With `vector_type="both"`,
 `MultimodalDenseAndMultiVectorEmbedding` contains `embedding`, `multi_embedding`,
@@ -235,24 +234,20 @@ Cosmos DB container.
 import os
 
 from azure.data.ai import InferenceClient
-from azure.data.ai.models import (
-    EmbeddingContentItem,
-    MultimodalDenseEmbedding,
-    MultimodalEmbeddingInferenceContent,
-)
+from azure.data.ai.models import MultimodalDenseEmbedding
 from azure.identity import DefaultAzureCredential
 
 items = [
-    EmbeddingContentItem(
-        id="camera-guide",
-        type="text",
-        content="Use a tripod and a longer exposure to photograph the night sky.",
-    ),
-    EmbeddingContentItem(
-        id="photography-question",
-        type="query",
-        content="What equipment helps with photographs of stars?",
-    ),
+    {
+        "id": "camera-guide",
+        "type": "text",
+        "content": "Use a tripod and a longer exposure to photograph the night sky.",
+    },
+    {
+        "id": "photography-question",
+        "type": "query",
+        "content": "What equipment helps with photographs of stars?",
+    },
 ]
 
 with DefaultAzureCredential() as credential:
@@ -262,21 +257,19 @@ with DefaultAzureCredential() as credential:
     ) as client:
         for item in items:
             response = client.multi_modal_embed(
-                MultimodalEmbeddingInferenceContent(
-                    model="microsoft-embedding-1-large",
-                    model_version=os.environ["AZURE_DATA_AI_MODEL_VERSION"],
-                    contents=[item],
-                    vector_type="dense",
-                    dimensions=1536,
-                    delivery="inline",
-                )
+                model="microsoft-embedding-1-large",
+                model_version=os.environ["AZURE_DATA_AI_MODEL_VERSION"],
+                dimensions="1536",
+                inputs=[item],
+                vector_type="dense",
+                delivery="inline",
             )
             if len(response.data) != 1:
                 raise ValueError("Expected one embedding for the input.")
             result = response.data[0]
             if not isinstance(result, MultimodalDenseEmbedding):
                 raise ValueError("Expected an inline dense embedding.")
-            if result.id != item.id or len(result.embedding) != 1536:
+            if result.id != item["id"] or len(result.embedding) != 1536:
                 raise ValueError("The embedding doesn't match the input.")
             print(result.id, len(result.embedding), response.model_version)
 ```
@@ -299,11 +292,7 @@ import os
 from datetime import datetime, timedelta, timezone
 
 from azure.data.ai import InferenceClient
-from azure.data.ai.models import (
-    EmbeddingContentItem,
-    MultimodalDenseEmbedding,
-    MultimodalEmbeddingInferenceContent,
-)
+from azure.data.ai.models import MultimodalDenseEmbedding
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import (
     BlobSasPermissions,
@@ -339,26 +328,24 @@ with DefaultAzureCredential() as credential:
         credential=credential,
     ) as client:
         response = client.multi_modal_embed(
-            MultimodalEmbeddingInferenceContent(
-                model="microsoft-embedding-1-large",
-                model_version=os.environ["AZURE_DATA_AI_MODEL_VERSION"],
-                contents=[
-                    EmbeddingContentItem(
-                        id="scene-question",
-                        type="query",
-                        content="A wooden footbridge crossing a forest stream.",
-                    ),
-                    EmbeddingContentItem(
-                        id="catalog-photo",
-                        type="image",
-                        url=image_url,
-                        sas_token=image_sas,
-                    ),
-                ],
-                vector_type="dense",
-                dimensions=1536,
-                delivery="inline",
-            )
+            model="microsoft-embedding-1-large",
+            model_version=os.environ["AZURE_DATA_AI_MODEL_VERSION"],
+            dimensions="1536",
+            inputs=[
+                {
+                    "id": "scene-question",
+                    "type": "query",
+                    "content": "A wooden footbridge crossing a forest stream.",
+                },
+                {
+                    "id": "catalog-photo",
+                    "type": "image",
+                    "url": image_url,
+                    "sas_token": image_sas,
+                },
+            ],
+            vector_type="dense",
+            delivery="inline",
         )
 
 if len(response.data) != 2 or {item.id for item in response.data} != {
@@ -373,8 +360,8 @@ for result in response.data:
     print(result.id, len(result.embedding))
 ```
 
-The SDK attributes `url` and `sas_token` serialize as the separate JSON fields
-`url` and `sasToken`. Keep the blob URL free of SAS query parameters, and don't
+Set `url` and `sas_token` as separate keys in the Python image-input dictionary.
+Keep the blob URL free of SAS query parameters, and don't
 send inline base64 image content. A SAS is a credential: don't print the token,
 serialize the image request to logs, or enable HTTP body logging for it.
 Generate a fresh token if it expires before a retry.
