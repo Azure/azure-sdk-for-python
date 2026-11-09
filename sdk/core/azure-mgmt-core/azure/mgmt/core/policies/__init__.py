@@ -35,6 +35,9 @@ from ._authentication_async import (
     AsyncAuxiliaryAuthenticationPolicy,
 )
 from ._base_async import AsyncARMAutoResourceProviderRegistrationPolicy
+from ._external_evaluation import ExternalEvaluationPolicy, PolicyTokenRequestContext
+from ._external_evaluation_async import AsyncExternalEvaluationPolicy
+from ._policy_token_provider import create_policy_token_provider, create_async_policy_token_provider
 
 
 class ARMHttpLoggingPolicy(HttpLoggingPolicy):
@@ -66,4 +69,9 @@ __all__ = [
     "AsyncARMChallengeAuthenticationPolicy",
     "AuxiliaryAuthenticationPolicy",
     "AsyncAuxiliaryAuthenticationPolicy",
+    "ExternalEvaluationPolicy",
+    "AsyncExternalEvaluationPolicy",
+    "PolicyTokenRequestContext",
+    "create_policy_token_provider",
+    "create_async_policy_token_provider",
 ]
