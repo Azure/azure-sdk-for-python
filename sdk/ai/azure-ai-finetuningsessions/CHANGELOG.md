@@ -19,6 +19,7 @@
 
 ### Other Changes
 
+- Pin the discriminated TypeSpec tool-call hierarchy while preserving the function-only payload, Python API, and runtime. Add sync/async regression coverage rejecting unsupported call kinds.
 - Refresh generation with main's shared Python emitter 0.63.11 and generator 0.40.0, correcting generated documentation type references without changing executable code or public signatures.
 - Pin the TypeSpec correction that explicitly marks all fine-tuning operations as preview. The wire API version remains `v1`, and the SDK API and runtime are unchanged.
 - Clarify service-side training-tier selection: an omitted tier uses `DatazoneStandard` for the effective M365 worker pool and the `GlobalStandard` baseline for other pools. The SDK still sends no tier when omitted and preserves explicit choices.

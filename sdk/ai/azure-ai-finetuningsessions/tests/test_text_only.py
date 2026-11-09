@@ -558,6 +558,14 @@ async def test_text_sampling_rejects_incompatible_options(asynchronous, extra):
         {"messages": [{"role": "user", "content": [{"type": "text", "text": "no"}]}]},
         {"messages": [{"role": "user", "content": "text", "tokens": [1]}]},
         {"messages": [{"role": "assistant", "content": "text", "thinking": "private"}]},
+        {
+            "messages": [
+                {
+                    "role": "assistant",
+                    "tool_calls": [{"id": "c", "type": "custom", "function": {"name": "f", "arguments": "{}"}}],
+                }
+            ]
+        },
         {"messages": [{"role": "tool", "tool_call_id": "orphan", "content": "needs name"}]},
         {
             "messages": [

@@ -34,6 +34,12 @@ Fresh emission with that toolchain corrects documentation type references in
 three generated modules; their executable ASTs and public signatures are
 unchanged. The reviewed public TypeSpec source pin remains unchanged.
 
+The tool-call hierarchy review adds a `type`-discriminated TypeSpec base while
+retaining the existing function-specific model name and payload requirements.
+Current message arrays remain function-only. Two independent emissions retain
+all 32 Python runtime files exactly; only the generated APIView source checksum
+changes. Sync/async regressions also confirm that other call kinds are rejected.
+
 The shared SDK toolchain uses Python emitter 0.63.11, Python generator 0.40.0,
 and TypeSpec compiler 1.17.0. The central SDK manifest/lock remain authoritative;
 the package archives exact copies for independent verification.
