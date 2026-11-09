@@ -60,7 +60,6 @@ import asyncio
 import os
 
 from azure.ai.agentserver.core.storage import FoundryStateStore
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -74,12 +73,6 @@ options = ResponsesServerOptions(
     steerable_conversations=True,
 )
 app = ResponsesAgentServerHost(options=options)
-
-# Explicitly opt into resilient-task startup recovery, for parity with the
-# invocations resilient samples. The Responses framework already registers its
-# internal durable tasks at host construction (so recovery runs regardless);
-# this call just makes the opt-in intent explicit.
-set_resilient_tasks_enabled(True)
 
 _SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
 
@@ -136,11 +129,7 @@ async def handler(
     )
     async with store:
         item = await store.get_item("state")
-        state = (
-            dict(item.value)
-            if item is not None and isinstance(item.value, dict)
-            else {}
-        )
+        state = dict(item.value) if item is not None and isinstance(item.value, dict) else {}
         if state.get("last_response_id") == context.response_id:
             turn_count = int(state.get("turn_count", 1))
         else:

@@ -30,7 +30,6 @@ from .operations import (
     CapturedLogsOperations,
     ConfigurationsOperations,
     DatabasesOperations,
-    DbAgentsOperations,
     FirewallRulesOperations,
     MaintenanceEventsOperations,
     MajorVersionUpgradePrecheckOperations,
@@ -94,8 +93,6 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
     :ivar major_version_upgrade_precheck: MajorVersionUpgradePrecheckOperations operations
     :vartype major_version_upgrade_precheck:
      azure.mgmt.postgresqlflexibleservers.aio.operations.MajorVersionUpgradePrecheckOperations
-    :ivar db_agents: DbAgentsOperations operations
-    :vartype db_agents: azure.mgmt.postgresqlflexibleservers.aio.operations.DbAgentsOperations
     :ivar administrators_microsoft_entra: AdministratorsMicrosoftEntraOperations operations
     :vartype administrators_microsoft_entra:
      azure.mgmt.postgresqlflexibleservers.aio.operations.AdministratorsMicrosoftEntraOperations
@@ -147,10 +144,9 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-07-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-10-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -226,7 +222,6 @@ class PostgreSQLManagementClient:  # pylint: disable=too-many-instance-attribute
         self.major_version_upgrade_precheck = MajorVersionUpgradePrecheckOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.db_agents = DbAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.administrators_microsoft_entra = AdministratorsMicrosoftEntraOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

@@ -33,7 +33,7 @@ from azure.ai.agentserver.core.tasks import (
     set_resilient_tasks_enabled,
 )
 from azure.ai.agentserver.core.tasks._manager import get_task_manager, set_task_manager
-from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as _ro
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
@@ -70,8 +70,8 @@ async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio
     return _events()
 
 
-def _build_client(handler: Any = None) -> TestClient:
-    app = ResponsesAgentServerHost()
+def _build_client(handler: Any = None, *, task_runtime: bool = False) -> TestClient:
+    app = ResponsesAgentServerHost(options=ResponsesServerOptions(steerable_conversations=task_runtime))
     app.response_handler(handler or _noop_handler)
     return TestClient(app)
 
@@ -110,7 +110,7 @@ class TestTaskStartFailureSurfacesPlatform:
     """Manager present + task start fails → fail immediately, platform source."""
 
     def test_background_start_failure_returns_platform_500(self, _start_fails: None) -> None:
-        with _build_client() as client:  # lifespan installs a real TaskManager
+        with _build_client(task_runtime=True) as client:  # lifespan installs a real TaskManager
             resp = client.post(
                 "/responses",
                 json={"model": "test", "input": "hi", "stream": False, "store": True, "background": True},
@@ -122,7 +122,7 @@ class TestTaskStartFailureSurfacesPlatform:
         assert "in_progress" not in resp.text
 
     def test_sync_start_failure_returns_platform_500(self, _start_fails: None) -> None:
-        with _build_client() as client:
+        with _build_client(task_runtime=True) as client:
             resp = client.post(
                 "/responses",
                 json={"model": "test", "input": "hi", "stream": False, "store": True, "background": False},
@@ -132,7 +132,7 @@ class TestTaskStartFailureSurfacesPlatform:
         assert ERROR_DETAIL in resp.headers
 
     def test_streaming_start_failure_emits_standalone_error_event(self, _start_fails: None) -> None:
-        with _build_client() as client:
+        with _build_client(task_runtime=True) as client:
             resp = client.post(
                 "/responses",
                 json={"model": "test", "input": "hi", "stream": True, "store": True, "background": True},

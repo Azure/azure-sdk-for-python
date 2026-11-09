@@ -164,5 +164,5 @@
         "azure.mgmt.cloudhealth.operations.DiscoveryRulesOperations.list_by_health_model": "Microsoft.CloudHealth.DiscoveryRules.listByHealthModel",
         "azure.mgmt.cloudhealth.aio.operations.DiscoveryRulesOperations.list_by_health_model": "Microsoft.CloudHealth.DiscoveryRules.listByHealthModel"
     },
-    "CrossLanguageVersion": "8abc309e1be4"
+    "CrossLanguageVersion": "720e8e1cbe68"
 }

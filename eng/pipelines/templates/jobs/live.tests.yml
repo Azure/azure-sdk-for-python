@@ -69,6 +69,9 @@ parameters:
   - name: PersistOidcToken
     type: boolean
     default: false
+  - name: DisableAzureResourceCreation
+    type: boolean
+    default: false
 
 jobs:
   - job:
@@ -125,29 +128,30 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - template: /eng/common/TestResources/build-test-resource-config.yml
-        parameters:
-          SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
-          SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
-          ${{ if parameters.UseFederatedAuth }}:
-            SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
-          EnvVars:
-            Pool: $(Pool)
-            ${{ insert }}: ${{ parameters.EnvVars }}
-
-      - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
-        - template: /eng/common/TestResources/deploy-test-resources.yml
+      - ${{ if not(parameters.DisableAzureResourceCreation) }}:
+        - template: /eng/common/TestResources/build-test-resource-config.yml
           parameters:
-            Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
-            ServiceDirectory: '${{ directory }}'
-            SubscriptionConfiguration: $(SubscriptionConfiguration)
-            ArmTemplateParameters: $(ArmTemplateParameters)
-            UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
-            PersistOidcToken: ${{ parameters.PersistOidcToken }}
-            ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+            SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+            SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
+            ${{ if parameters.UseFederatedAuth }}:
+              SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
             EnvVars:
               Pool: $(Pool)
               ${{ insert }}: ${{ parameters.EnvVars }}
+
+        - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
+          - template: /eng/common/TestResources/deploy-test-resources.yml
+            parameters:
+              Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
+              ServiceDirectory: '${{ directory }}'
+              SubscriptionConfiguration: $(SubscriptionConfiguration)
+              ArmTemplateParameters: $(ArmTemplateParameters)
+              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+              PersistOidcToken: ${{ parameters.PersistOidcToken }}
+              ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+              EnvVars:
+                Pool: $(Pool)
+                ${{ insert }}: ${{ parameters.EnvVars }}
 
       # This is a heuristic to detect compiled requirements in the service 
       # directory. If compiled requirements are found, install dependencies for
@@ -181,9 +185,8 @@ jobs:
         displayName: 'Configure cibuildwheel for dev requirement builds'
         condition: and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
 
-      # Windows has no cp310 interpreter on the agent and cibuildwheel fetches one from api.nuget.org,
-      # which is blocked. Pre-provision it from the Azure DevOps feed into the cibuildwheel cache.
-      # Mirrors steps/build-package-artifacts.yml, minus pythonarm64 (CIBW_ARCHS=native drops win_arm64).
+      # Download the Python versions selected by cibuildwheel from the approved feed.
+      # This test job builds only for the current machine's architecture, not ARM64.
       - task: NuGetAuthenticate@1
         displayName: 'Authenticate to NuGet feed'
         condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
@@ -191,17 +194,9 @@ jobs:
       - pwsh: |
           $ErrorActionPreference = 'Stop'
           $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
-          $version = "3.10.11"
           $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
-          $nugetCpython = Join-Path $cache "nuget-cpython"
-          New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
-          $nuget = (Get-Command nuget).Source
-          & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
-          if ($LASTEXITCODE) {
-            Write-Error "Failed to download python $version"
-            exit 1
-          }
           Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+          Write-Host "##vso[task.setvariable variable=AZURESDK_PYTHON_NUGET_FEED]$feed"
         displayName: 'Pre-provision CPython for cibuildwheel'
         condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
 
@@ -224,12 +219,13 @@ jobs:
           UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
           ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
 
-      - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
-        - template: /eng/common/TestResources/remove-test-resources.yml
-          parameters:
-            ServiceDirectory: '${{ directory }}'
-            SubscriptionConfiguration: $(SubscriptionConfiguration)
-            UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
-            ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+      - ${{ if not(parameters.DisableAzureResourceCreation) }}:
+        - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
+          - template: /eng/common/TestResources/remove-test-resources.yml
+            parameters:
+              ServiceDirectory: '${{ directory }}'
+              SubscriptionConfiguration: $(SubscriptionConfiguration)
+              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+              ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
 
       - ${{ parameters.PostSteps }}

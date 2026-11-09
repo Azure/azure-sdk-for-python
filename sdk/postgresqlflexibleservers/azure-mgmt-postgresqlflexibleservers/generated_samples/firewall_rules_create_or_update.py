@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01-preview/FirewallRulesCreateOrUpdate.json
+# x-ms-original-file: 2026-10-01/FirewallRulesCreateOrUpdate.json
 if __name__ == "__main__":
     main()

@@ -11,7 +11,7 @@ pip==26.2.2
 typing-extensions==4.12.2; python_version < "3.15"
 typing-extensions==4.14.0; python_version >= "3.15"
 pyproject-api==1.8.0
-cibuildwheel==2.23.3
+cibuildwheel
 importlib-metadata==8.5.0
 build==1.2.2.post1
 

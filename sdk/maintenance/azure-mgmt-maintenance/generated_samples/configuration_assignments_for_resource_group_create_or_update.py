@@ -54,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2023-10-01-preview/ConfigurationAssignmentsForResourceGroup_CreateOrUpdate.json
+# x-ms-original-file: 2025-10-01-preview/ConfigurationAssignmentsForResourceGroup_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

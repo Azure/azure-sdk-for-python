@@ -28,6 +28,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GITHUB_COPILOT_V1_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
+    MICROSOFT_COPILOT_V1_PREVIEW = "MicrosoftCopilot=V1Preview"
+    """The Microsoft Copilot V1 preview feature opt-in."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -55,6 +57,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODELS_V1_PREVIEW."""
     MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
     """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
+    FINETUNING_SESSIONS_V1_PREVIEW = "FineTuningSessions=V1Preview"
+    """FINETUNING_SESSIONS_V1_PREVIEW."""
 
 
 class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -142,6 +146,9 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VOICE."""
     INVOCATIONS_WS = "invocations_ws"
     """WebSocket-based protocol for hosted voice and real-time streaming agents."""
+    VOICE_CONVERSATION_ENGINE = "voice_conversation_engine"
+    """Text conversation protocol for a hosted agent used by Voice Live Bridge. Declare version
+    ``1.0.0``; audio transport remains outside this protocol."""
 
 
 class AgentIdentityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -899,7 +906,9 @@ class GenerationWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class GitHubCopilotBuiltInTool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A customer-configurable GitHub Copilot built-in tool."""
+    """The legacy GitHub Copilot built-in tool names retained for compatibility. Use
+    ``MicrosoftCopilotBuiltInTool`` for new integrations.
+    """
 
     FILESYSTEM_READ = "filesystem_read"
     """Read and search files in the harness workspace."""
@@ -1060,6 +1069,21 @@ class Microsoft365PublishScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Publish the app tenant-wide."""
 
 
+class MicrosoftCopilotBuiltInTool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A customer-configurable Microsoft Copilot built-in tool."""
+
+    FILESYSTEM_READ = "filesystem_read"
+    """Read and search files in the harness workspace."""
+    FILESYSTEM_WRITE = "filesystem_write"
+    """Create and modify files in the harness workspace."""
+    SHELL = "shell"
+    """Execute operating-system commands."""
+    WEB = "web"
+    """Fetch content and search external network resources."""
+    SUBAGENTS = "subagents"
+    """Delegate work to additional agents."""
+
+
 class MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of MisalignmentErrorType."""
 
@@ -1115,9 +1139,9 @@ class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of PageOrder."""
 
     ASC = "asc"
-    """ASC."""
+    """Return items in ascending creation-time order."""
     DESC = "desc"
-    """DESC."""
+    """Return items in descending creation-time order."""
 
 
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2010,8 +2034,8 @@ class TelephonyCallLifecycleEventSource(str, Enum, metaclass=CaseInsensitiveEnum
 
     GATEWAY = "gateway"
     """The Foundry telephony gateway supplied the observation."""
-    TEAMS_PHONE_EXTENSION = "teams_phone_extension"
-    """Microsoft Teams Phone Extension supplied the observation."""
+    TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
+    """Microsoft Teams Phone extensibility supplied the observation."""
     TWILIO = "twilio"
     """Twilio supplied the observation."""
     VOICE_AGENT = "voice_agent"
@@ -2115,8 +2139,8 @@ class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     may be added over time.
     """
 
-    TEAMS_PHONE_EXTENSION = "teams_phone_extension"
-    """Microsoft Teams Phone Extension."""
+    TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
+    """Microsoft Teams Phone extensibility."""
     TWILIO = "twilio"
     """Twilio Programmable Voice."""
 
@@ -2310,6 +2334,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CAPTURE_STRUCTURED_OUTPUTS."""
     OPENAPI = "openapi"
     """OPENAPI."""
+    MICROSOFT_COPILOT_TOOLSET_PREVIEW = "microsoft_copilot_toolset_preview"
+    """MICROSOFT_COPILOT_TOOLSET_PREVIEW."""
 
 
 class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2443,7 +2469,10 @@ class VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiv
 class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input-audio transcription model identifier. This is a model name, not a Foundry deployment
     name. Mirrors the transcription models supported by the managed voice backend, covering the
-    OpenAI Realtime transcription models plus the Azure and MAI models. Additional values may be
+    OpenAI Realtime transcription models plus the Azure and MAI models. ``azure-speech-streaming``
+    is supported for cascaded text-model conversations only (not realtime speech-to-speech models),
+    requires a nonempty ``language`` such as ``en-US`` (comma-separated locales are supported), and
+    supports ``custom_speech``, ``phrase_list``, and ``profanity_filter``. Additional values may be
     added over time.
     """
 
@@ -2465,6 +2494,11 @@ class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnum
     """MAI transcription."""
     AZURE_SPEECH = "azure-speech"
     """Azure AI Speech to text."""
+    AZURE_SPEECH_STREAMING = "azure-speech-streaming"
+    """Azure AI Speech streaming transcription for cascaded text-model conversations only. Requires a
+    nonempty ``language``, such as ``en-US``; comma-separated locales are supported. Supports
+    ``custom_speech``, ``phrase_list``, and ``profanity_filter``. Not supported with realtime
+    speech-to-speech models."""
 
 
 class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2477,7 +2511,15 @@ class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumM
 
 
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The input audio noise reduction mode."""
+    """The input audio noise reduction mode.
+
+    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local voice activity
+      detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
+      changing the audio used for recognition. The mode is not restricted to headset devices.
+    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice activity detection.
+      Starts with headset suppression and personalizes detection after automatic speaker enrollment. Recognition audio
+      is unchanged; headset suppression remains active when personalization is unavailable.
+    """
 
     NEAR_FIELD = "near_field"
     """NEAR_FIELD."""
@@ -2485,6 +2527,25 @@ class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """FAR_FIELD."""
     AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
     """Azure deep noise suppression."""
+    AZURE_DEEP_NOISE_SUPPRESSION_HEADSET = "azure_deep_noise_suppression_headset"
+    """Azure headset-optimized noise suppression for local voice activity detection. Optimized for
+    low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
+    changing the audio used for recognition. The mode is not restricted to headset devices."""
+    AZURE_PERSONAL_NOISE_SUPPRESSION = "azure_personal_noise_suppression"
+    """Azure personalized noise suppression for local voice activity detection. Starts with headset
+    suppression and personalizes detection after automatic speaker enrollment. Recognition audio is
+    unchanged; headset suppression remains active when personalization is unavailable."""
+
+
+class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported input-transcript profanity filtering modes."""
+
+    MASKED = "masked"
+    """Masks recognized profanity in the transcript."""
+    UNFILTERED = "unfiltered"
+    """Includes recognized profanity in the transcript, subject to mandatory service masking policies."""
+    REMOVED = "removed"
+    """Removes recognized profanity from the transcript."""
 
 
 class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2496,6 +2557,25 @@ class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMet
     """INPUT_AUDIO_TRANSCRIPTION_PHRASES."""
     FILE_SEARCH_CALL_RESULTS = "file_search_call.results"
     """FILE_SEARCH_CALL_RESULTS."""
+
+
+class VoiceAgentSoundscapeSound(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The packaged sounds accepted by a built-in soundscape source."""
+
+    OFFICE = "office"
+    """Quiet office ambience."""
+    CALL_CENTER = "call_center"
+    """Busy call-center ambience."""
+    BUSY_STREET = "busy_street"
+    """Busy street ambience."""
+    PEOPLE_TALKING = "people_talking"
+    """Crowd conversation ambience."""
+    STREET_AND_METRO_STATION = "street_and_metro_station"
+    """Street and metro-station ambience."""
+    DING1 = "ding1"
+    """The first notification tone."""
+    DING2 = "ding2"
+    """The second notification tone."""
 
 
 class VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2535,6 +2615,15 @@ class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumM
     """Interrupt the active response and create a follow-up response."""
     SKIP_IF_BUSY = "skip_if_busy"
     """Create a follow-up response only when no response is active."""
+
+
+class VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport used for a voice-agent connection."""
+
+    WEBSOCKET = "websocket"
+    """Signaling and audio are exchanged as JSON events over the WebSocket. This is the default."""
+    WEBRTC = "webrtc"
+    """WebRTC: the WebSocket carries only SDP signaling; media and the data channel are peer-to-peer."""
 
 
 class VoiceAgentTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

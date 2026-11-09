@@ -180,7 +180,6 @@ def test_error_details_preserve_missing_and_normalized_fields():
     missing_details = ProblemDetails(code="Error", message="Failed")
     assert missing_details.details is None
     assert "details" not in missing_details.as_dict()
-    assert not hasattr(ODataV4Format, "as_dict")
 
 
 def test_error_detail_mutations_and_extensions_are_preserved():

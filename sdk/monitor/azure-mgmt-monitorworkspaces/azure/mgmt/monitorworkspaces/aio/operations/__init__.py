@@ -16,6 +16,12 @@ from ._operations import Operations  # type: ignore
 from ._operations import AzureMonitorWorkspacesOperations  # type: ignore
 from ._operations import IssueOperations  # type: ignore
 from ._operations import MetricsContainersOperations  # type: ignore
+from ._operations import MetricNamespacesOperations  # type: ignore
+from ._operations import MetricConfigurationsOperations  # type: ignore
+from ._operations import TraceContainersOperations  # type: ignore
+from ._operations import TraceAssociationsAtResourceGroupOperations  # type: ignore
+from ._operations import TraceAssociationsAtSubscriptionOperations  # type: ignore
+from ._operations import TraceAssociationsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -26,6 +32,12 @@ __all__ = [
     "AzureMonitorWorkspacesOperations",
     "IssueOperations",
     "MetricsContainersOperations",
+    "MetricNamespacesOperations",
+    "MetricConfigurationsOperations",
+    "TraceContainersOperations",
+    "TraceAssociationsAtResourceGroupOperations",
+    "TraceAssociationsAtSubscriptionOperations",
+    "TraceAssociationsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
