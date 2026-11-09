@@ -75,7 +75,7 @@ All build definitions allow choice at queue time as to which checks actually run
 3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `ChecksOverride`. The value should be a comma separated list of checks that you want to run in the test phase.
 4. Once it's set, run the build!
 
-The screenshot above narrows the default PR build set (`whl`, `sdist`, `mindependency`) to a specific subset.
+The screenshot above narrows the default PR build set (`whl`, `sdist`) to a specific subset.
 
 ![res/queue_time_variable.png](res/queue_time_variable.png)
 
@@ -167,7 +167,7 @@ After it is implemented, the `relative_cov` key will enable the prevention of **
 
 <a name="analyze-python-version"></a>
 
-By default, the analyze checks (mypy, pylint, pyright, etc.) run against an agreed minimum Python version (currently 3.10). A package can request a different Python version for its analyze checks by setting `analyze_python_version` in its `pyproject.toml`:
+By default, the analyze checks (mypy, pylint, pyright, etc.) run against an agreed minimum Python version (currently 3.11). A package can request a different Python version for its analyze checks by setting `analyze_python_version` in its `pyproject.toml`:
 
 ```toml
 [tool.azure-sdk-build]
@@ -240,14 +240,14 @@ The canonical definition of which install-and-test checks run in each mode lives
 |---|---|---|---|
 | `whl` | ✓ | ✓ | ✓ |
 | `sdist` | ✓ | ✓ | ✓ |
-| `mindependency` | ✓ | ✓ | ✓ |
+| `mindependency` | — (disabled, see [issue #48346](https://github.com/Azure/azure-sdk-for-python/issues/48346)) | — (disabled, see [issue #48346](https://github.com/Azure/azure-sdk-for-python/issues/48346)) | — (disabled, see [issue #48346](https://github.com/Azure/azure-sdk-for-python/issues/48346)) |
 | `import_all` | — | ✓ | ✓ |
 | `whl_no_aio` | — | ✓ | ✓ |
 | `latestdependency` | — | ✓ | ✓ |
 | `devtest` | — | ✓ | — |
 | `regression` | — | ✓ | — |
 
-Static analysis checks always run against **Python 3.10** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
+Static analysis checks always run against **Python 3.11** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
 
 The install-and-test checks run across the Python version and platform matrix defined in [`platform-matrix.json`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/pipelines/templates/stages/platform-matrix.json).
 
@@ -259,7 +259,7 @@ Static analysis runs on every changed package in every PR and every nightly buil
 
 <a name="mypy"></a>
 
-[`MyPy`](https://pypi.org/project/mypy/) performs static type checking across the package, flagging annotation inconsistencies and type mismatches that would cause runtime errors. It runs against Python 3.10 by default and respects `py.typed` markers and stub files.
+[`MyPy`](https://pypi.org/project/mypy/) performs static type checking across the package, flagging annotation inconsistencies and type mismatches that would cause runtime errors. It runs against Python 3.11 by default and respects `py.typed` markers and stub files.
 
 To run locally:
 
@@ -295,7 +295,7 @@ azpysdk verifytypes .
 
 <a name="pylint"></a>
 
-[`Pylint`](https://pypi.org/project/pylint/) enforces the Azure SDK [custom lint rules](https://github.com/Azure/azure-sdk-tools/tree/main/tools/pylint-extensions/azure-pylint-guidelines-checker) on top of standard Python style guidelines. In CI it runs using the Python version configured for analyze checks (3.10 by default, or the value of `analyze_python_version` if set), so that version must be available locally to reproduce the check.
+[`Pylint`](https://pypi.org/project/pylint/) enforces the Azure SDK [custom lint rules](https://github.com/Azure/azure-sdk-tools/tree/main/tools/pylint-extensions/azure-pylint-guidelines-checker) on top of standard Python style guidelines. In CI it runs using the Python version configured for analyze checks (3.11 by default, or the value of `analyze_python_version` if set), so that version must be available locally to reproduce the check.
 
 To run locally:
 
