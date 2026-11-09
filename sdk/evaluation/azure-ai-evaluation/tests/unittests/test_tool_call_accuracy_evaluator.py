@@ -1,8 +1,31 @@
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from azure.ai.evaluation import ToolCallAccuracyEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorTarget
+
+
+@pytest.mark.unittest
+class TestToolCallAccuracyEmptyCalls:
+    @pytest.mark.parametrize("decision", [False, True], ids=["chat", "decision"])
+    @pytest.mark.parametrize("response", [None, [], ""])
+    def test_empty_calls_are_unscored_without_a_judge_request(self, decision, response):
+        model = {
+            "azure_endpoint": "https://example.openai.azure.com",
+            "azure_deployment": "judge",
+            "api_key": "test-only",
+        }
+        if decision:
+            model["type"] = "decision"
+        evaluator = ToolCallAccuracyEvaluator(model_config=model)
+        evaluator._do_eval = AsyncMock(side_effect=AssertionError("No calls to judge"))
+        result = evaluator(
+            query="Find a flight.", response=response, tool_definitions=[{"name": "search", "parameters": {}}]
+        )
+        assert result["tool_call_accuracy"] is None
+        assert result["tool_call_accuracy_status"] == "skipped"
+        assert result["tool_call_accuracy_result"] == "not_applicable"
+        evaluator._do_eval.assert_not_called()
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),

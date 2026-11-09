@@ -109,6 +109,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
             check_for_unsupported_tools=False,
         )
+        self._validator.allow_empty_calls = True
 
         super().__init__(
             model_config=model_config,
