@@ -1,5 +1,13 @@
 # Release History
 
+## 2.3.1b1 (2026-11-02)
+
+### Bugs Fixed
+
+- Preserve explicit Agent Card name and version attributes on spans emitted
+  by the `Azure.AI.AgentServer.A2A` instrumentation scope. Other spans retain
+  the existing Foundry deployment identity enrichment.
+
 ## 2.3.0 (2026-10-29)
 
 ### Features Added
