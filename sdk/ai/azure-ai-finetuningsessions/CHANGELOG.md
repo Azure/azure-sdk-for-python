@@ -19,6 +19,7 @@
 
 ### Other Changes
 
+- Pin the removal of an unused TypeSpec training-result declaration, retaining its scalar-result documentation on the generic polling field without changing the Python API or safety validation.
 - Pin extensible TypeSpec response unions for completion metadata and checkpoint preparation states. Known labels, Python API, safety validation, and preparation-state handling remain unchanged.
 - Pin the discriminated TypeSpec tool-call hierarchy while preserving the function-only payload, Python API, and runtime. Add sync/async regression coverage rejecting unsupported call kinds.
 - Refresh generation with main's shared Python emitter 0.63.11 and generator 0.40.0, correcting generated documentation type references without changing executable code or public signatures.

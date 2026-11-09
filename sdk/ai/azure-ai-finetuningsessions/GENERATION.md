@@ -47,6 +47,11 @@ Python generation again preserves all runtime files; this source-pin update
 does not relax the maintained parser or change preparation-state handling.
 Unknown labels and states therefore retain the SDK's existing explicit errors.
 
+The unused standalone TypeSpec training-result declaration is removed.
+The existing generic polling-result field now documents the scalar training
+payload and empty per-token output array. Service behavior, Python result
+validation, and every Python runtime file remain unchanged.
+
 The shared SDK toolchain uses Python emitter 0.63.11, Python generator 0.40.0,
 and TypeSpec compiler 1.17.0. The central SDK manifest/lock remain authoritative;
 the package archives exact copies for independent verification.
