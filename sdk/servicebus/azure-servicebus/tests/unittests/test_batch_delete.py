@@ -29,10 +29,11 @@ from azure.servicebus._base_handler import BaseHandler
 from azure.servicebus.aio._base_handler_async import BaseHandler as AsyncBaseHandler
 from azure.servicebus._pyamqp._encode import encode_payload
 from azure.servicebus._pyamqp.client import AMQPClient
+from azure.servicebus._pyamqp.error import AMQPConnectionError
 from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus.aio._transport._pyamqp_transport_async import PyamqpTransportAsync
-from azure.servicebus.exceptions import OperationTimeoutError
+from azure.servicebus.exceptions import OperationTimeoutError, ServiceBusConnectionError
 
 
 @pytest.mark.asyncio
@@ -159,6 +160,11 @@ def _receiver(receiver_type, session_id=None):
     receiver._session_id = session_id
     receiver._session = object() if session_id else None
     receiver._handler = MagicMock()
+    receiver._config = MagicMock(try_timeout=None, custom_endpoint_address=None)
+    receiver._handle_exception = (
+        AsyncMock(side_effect=lambda error: error)
+        if receiver_type is AsyncServiceBusReceiver else MagicMock(side_effect=lambda error: error)
+    )
     receiver._amqp_transport = MagicMock()
     receiver._amqp_transport.AMQP_INT_VALUE = lambda value: value
     receiver._amqp_transport.AMQP_TIMESTAMP_VALUE = lambda value: value
@@ -172,6 +178,58 @@ def _receiver(receiver_type, session_id=None):
         side_effect=AssertionError("destructive requests must not be retried")
     )
     return receiver
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("timeout", [None, 300, 2])
+async def test_batch_delete_dispatch_honors_try_timeout(is_async, timeout):
+    receiver = _receiver(AsyncServiceBusReceiver if is_async else ServiceBusReceiver)
+    receiver._config.try_timeout = 5
+    dispatch = AsyncMock(return_value=1) if is_async else MagicMock(return_value=1)
+    receiver._mgmt_request_response = dispatch
+    if is_async:
+        await receiver.delete_messages(1, timeout=timeout)
+    else:
+        receiver.delete_messages(1, timeout=timeout)
+    budget = dispatch.call_args.kwargs["timeout"]
+    assert 0 < budget <= (2 if timeout == 2 else 5)
+    if timeout != 2:
+        assert budget == 5
+    dispatch.assert_called_once()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("session", [False, True])
+@pytest.mark.parametrize("uamqp_transport", [False, True])
+async def test_batch_delete_dispatch_translates_connection_failure(is_async, session, uamqp_transport):
+    receiver = _receiver(AsyncServiceBusReceiver if is_async else ServiceBusReceiver)
+    handler = AsyncBaseHandler if is_async else BaseHandler
+    receiver._handle_exception = handler._handle_exception.__get__(receiver)
+    error = AMQPConnectionError(condition=b"amqp:connection:forced")
+    transport = PyamqpTransportAsync if is_async else PyamqpTransport
+    if uamqp_transport:
+        uamqp = pytest.importorskip("uamqp")
+        from azure.servicebus._transport._uamqp_transport import UamqpTransport
+        error = uamqp.errors.AMQPConnectionError("connection lost")
+        transport = UamqpTransport
+    receiver._amqp_transport.create_servicebus_exception = transport.create_servicebus_exception
+    receiver._session = MagicMock(_lock_lost=False) if session else None
+    receiver._running = True
+    receiver._close_handler = AsyncMock() if is_async else MagicMock()
+    dispatch = AsyncMock(side_effect=error) if is_async else MagicMock(side_effect=error)
+    receiver._mgmt_request_response = dispatch
+    with pytest.raises(ServiceBusConnectionError):
+        if is_async:
+            await receiver.delete_messages(1)
+        else:
+            receiver.delete_messages(1)
+    dispatch.assert_called_once()
+    receiver._close_handler.assert_called_once()
+    if session:
+        assert receiver._session._lock_lost is True
+    receiver._mgmt_request_response_with_retry.assert_not_called()
 
 
 @pytest.mark.parametrize("cleanup_error", [None, RuntimeError("close failed")])

@@ -938,14 +938,17 @@ class ServiceBusReceiver(
         if remaining_timeout is not None and remaining_timeout <= 0:
             raise OperationTimeoutError()
         self._populate_message_properties(message)
-        deleted_count = self._mgmt_request_response(
-            REQUEST_RESPONSE_BATCH_DELETE_MESSAGES_OPERATION,
-            message,
-            functools.partial(
-                mgmt_handlers.batch_delete_op, max_message_count=message_count
-            ),
-            timeout=remaining_timeout,
-        )
+        try:
+            deleted_count = self._mgmt_request_response(
+                REQUEST_RESPONSE_BATCH_DELETE_MESSAGES_OPERATION,
+                message,
+                functools.partial(
+                    mgmt_handlers.batch_delete_op, max_message_count=message_count
+                ),
+                timeout=get_attempt_timeout(remaining_timeout, self._config.try_timeout),
+            )
+        except Exception as exception:  # pylint: disable=broad-except
+            raise self._handle_exception(exception) from exception
         return DeleteMessagesResult(cast(int, deleted_count))
 
     def purge_messages(
