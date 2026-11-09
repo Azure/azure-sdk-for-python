@@ -108,7 +108,7 @@ parameters:
   - name: MsRustToolchainFeed
     type: string
     default: ''
-  # Space-separated Windows target triples; keep aligned with the package's wheel recipe.
+  # Space-separated Windows target triplets; keep aligned with the package's wheel recipe.
   - name: MsRustAdditionalTargets
     type: string
     default: ''
