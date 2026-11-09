@@ -116,9 +116,15 @@ class AccessPolicyAssignmentProperties(TypedDict, total=False):
     :ivar provisioningState: Current provisioning status of the access policy assignment. Known
      values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioningState: Union[str, "ProvisioningState"]
-    :ivar accessPolicyName: Name of access policy under specific access policy assignment. Only
-     "default" policy is supported for now. Required.
+    :ivar accessPolicyName: **Deprecated.** This property always returns "default". Use
+     ``accessString`` to configure custom Redis ACL permissions instead.
     :vartype accessPolicyName: str
+    :ivar accessString: The Redis ACL permissions string applied to this assignment, for example
+     ``+@read ~cache:*``. Defaults to ``+@all ~*`` if not specified.
+    :vartype accessString: str
+    :ivar provisioningError: Provisioning error details when the access string failed to apply
+     (e.g., invalid ACL syntax). Null when provisioning succeeded.
+    :vartype provisioningError: "AccessPolicyAssignmentProvisioningError"
     :ivar user: The user associated with the access policy. Required.
     :vartype user: "AccessPolicyAssignmentPropertiesUser"
     """
@@ -126,9 +132,15 @@ class AccessPolicyAssignmentProperties(TypedDict, total=False):
     provisioningState: Union[str, "ProvisioningState"]
     """Current provisioning status of the access policy assignment. Known values are: \"Succeeded\",
      \"Failed\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
-    accessPolicyName: Required[str]
-    """Name of access policy under specific access policy assignment. Only \"default\" policy is
-     supported for now. Required."""
+    accessPolicyName: str
+    """**Deprecated.** This property always returns \"default\". Use ``accessString`` to configure
+     custom Redis ACL permissions instead."""
+    accessString: str
+    """The Redis ACL permissions string applied to this assignment, for example ``+@read ~cache:*``.
+     Defaults to ``+@all ~*`` if not specified."""
+    provisioningError: "AccessPolicyAssignmentProvisioningError"
+    """Provisioning error details when the access string failed to apply (e.g., invalid ACL syntax).
+     Null when provisioning succeeded."""
     user: Required["AccessPolicyAssignmentPropertiesUser"]
     """The user associated with the access policy. Required."""
 
@@ -142,6 +154,25 @@ class AccessPolicyAssignmentPropertiesUser(TypedDict, total=False):
 
     objectId: str
     """The object ID of the user."""
+
+
+class AccessPolicyAssignmentProvisioningError(TypedDict, total=False):
+    """Error details for access policy assignment provisioning failures.
+
+    :ivar code: Machine-readable error code (e.g., "InvalidAccessString"). Required.
+    :vartype code: str
+    :ivar message: Human-readable error message describing the failure. Required.
+    :vartype message: str
+    :ivar target: The property that caused the error (e.g., "properties.accessString").
+    :vartype target: str
+    """
+
+    code: Required[str]
+    """Machine-readable error code (e.g., \"InvalidAccessString\"). Required."""
+    message: Required[str]
+    """Human-readable error message describing the failure. Required."""
+    target: str
+    """The property that caused the error (e.g., \"properties.accessString\")."""
 
 
 class AzureCacheForRedisMigrationProperties(TypedDict, total=False):
@@ -308,6 +339,22 @@ class ClusterProperties(TypedDict, total=False):
     :vartype encryption: "ClusterPropertiesEncryption"
     :ivar maintenanceConfiguration: Cluster-level maintenance configuration.
     :vartype maintenanceConfiguration: "MaintenanceConfiguration"
+    :ivar firewallRules: The complete set of firewall rules for an Azure Managed Redis (AMR)
+     cluster. At most 250 rules are supported, and non-empty rules require publicNetworkAccess to be
+     Enabled.
+
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request.
+    :vartype firewallRules: list["FirewallRule"]
     :ivar hostName: DNS name of the cluster endpoint.
     :vartype hostName: str
     :ivar provisioningState: Current provisioning status of the cluster. Known values are:
@@ -344,6 +391,21 @@ class ClusterProperties(TypedDict, total=False):
     """Encryption-at-rest configuration for the cluster."""
     maintenanceConfiguration: "MaintenanceConfiguration"
     """Cluster-level maintenance configuration."""
+    firewallRules: list["FirewallRule"]
+    """The complete set of firewall rules for an Azure Managed Redis (AMR) cluster. At most 250 rules
+     are supported, and non-empty rules require publicNetworkAccess to be Enabled.
+     
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+     
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+     
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+     
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request."""
     hostName: str
     """DNS name of the cluster endpoint."""
     provisioningState: Union[str, "ProvisioningState"]
@@ -382,6 +444,22 @@ class ClusterCreateProperties(ClusterProperties):
     :vartype encryption: "ClusterPropertiesEncryption"
     :ivar maintenanceConfiguration: Cluster-level maintenance configuration.
     :vartype maintenanceConfiguration: "MaintenanceConfiguration"
+    :ivar firewallRules: The complete set of firewall rules for an Azure Managed Redis (AMR)
+     cluster. At most 250 rules are supported, and non-empty rules require publicNetworkAccess to be
+     Enabled.
+
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request.
+    :vartype firewallRules: list["FirewallRule"]
     :ivar hostName: DNS name of the cluster endpoint.
     :vartype hostName: str
     :ivar provisioningState: Current provisioning status of the cluster. Known values are:
@@ -518,6 +596,22 @@ class ClusterUpdateProperties(ClusterProperties):
     :vartype encryption: "ClusterPropertiesEncryption"
     :ivar maintenanceConfiguration: Cluster-level maintenance configuration.
     :vartype maintenanceConfiguration: "MaintenanceConfiguration"
+    :ivar firewallRules: The complete set of firewall rules for an Azure Managed Redis (AMR)
+     cluster. At most 250 rules are supported, and non-empty rules require publicNetworkAccess to be
+     Enabled.
+
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request.
+    :vartype firewallRules: list["FirewallRule"]
     :ivar hostName: DNS name of the cluster endpoint.
     :vartype hostName: str
     :ivar provisioningState: Current provisioning status of the cluster. Known values are:
@@ -822,6 +916,27 @@ class ExportClusterParameters(TypedDict, total=False):
 
     sasUri: Required[str]
     """SAS URI for the target directory to export to. Required."""
+
+
+class FirewallRule(TypedDict, total=False):
+    """A firewall rule associated with the cluster.
+
+    :ivar name: The name of the firewall rule, unique within the cluster ignoring case. Must be
+     1-80 characters and contain only letters, numbers, hyphens, or underscores. Required.
+    :vartype name: str
+    :ivar sourceAddressPrefix: An IPv4 address (for example, "203.0.113.1"), IPv4 CIDR prefix (for
+     example, "203.0.113.0/24"), or Azure service tag (for example, "AzureCloud"). IPv6 addresses
+     are not supported. Required.
+    :vartype sourceAddressPrefix: str
+    """
+
+    name: Required[str]
+    """The name of the firewall rule, unique within the cluster ignoring case. Must be 1-80 characters
+     and contain only letters, numbers, hyphens, or underscores. Required."""
+    sourceAddressPrefix: Required[str]
+    """An IPv4 address (for example, \"203.0.113.1\"), IPv4 CIDR prefix (for example,
+     \"203.0.113.0/24\"), or Azure service tag (for example, \"AzureCloud\"). IPv6 addresses are not
+     supported. Required."""
 
 
 class FlushParameters(TypedDict, total=False):
