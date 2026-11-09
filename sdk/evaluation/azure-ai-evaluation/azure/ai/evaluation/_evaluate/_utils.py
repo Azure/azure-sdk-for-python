@@ -504,7 +504,10 @@ class JSONLDataFileLoader:
         self.filename = filename
 
     def load(self) -> pd.DataFrame:
-        return pd.read_json(self.filename, lines=True, dtype=object)
+        # convert_dates=False keeps the values as written. By default pandas turns columns with
+        # date-like names (such as "timestamp", "date" or names ending in "_at") into Timestamp
+        # objects, which change pass-through input values and cannot be written as JSON.
+        return pd.read_json(self.filename, lines=True, dtype=object, convert_dates=False)
 
 
 class CSVDataFileLoader:

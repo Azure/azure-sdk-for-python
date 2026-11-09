@@ -595,6 +595,27 @@ class TestEvaluate:
             data_from_file = json.loads(content)
             assert result["metrics"] == data_from_file["metrics"]
 
+    def test_evaluate_keeps_date_like_columns_as_written(self, tmpdir):
+        # pandas converts columns with date-like names to Timestamp by default, which broke writing the output.
+        data_path = os.path.join(tmpdir, "date_like_columns.jsonl")
+        rows = [
+            {"response": "4", "ground_truth": "4", "timestamp": "2026-06-26T17:28:48Z", "created_at": "2026-06-26"},
+            {"response": "five", "ground_truth": "5", "timestamp": "2026-06-27T08:00:00Z", "created_at": "2026-06-27"},
+        ]
+        with open(data_path, "w", encoding="utf-8") as f:
+            for row in rows:
+                f.write(json.dumps(row) + "\n")
+        output_path = os.path.join(tmpdir, "eval_test_results.json")
+
+        result = evaluate(data=data_path, evaluators={"f1": F1ScoreEvaluator()}, output_path=output_path)
+
+        for result_row, row in zip(result["rows"], rows):
+            assert result_row["inputs.timestamp"] == row["timestamp"]
+            assert result_row["inputs.created_at"] == row["created_at"]
+        with open(output_path, "r", encoding="utf-8") as f:
+            data_from_file = json.load(f)
+        assert [r["inputs.timestamp"] for r in data_from_file["rows"]] == [r["timestamp"] for r in rows]
+
     def test_evaluate_with_errors(self):
         """Test evaluate_handle_errors"""
         data = _get_file("yeti_questions.jsonl")
