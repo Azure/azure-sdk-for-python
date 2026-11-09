@@ -56,14 +56,20 @@ async def sample_batching_client_async():
     async with SearchIndexingBufferedSender(service_endpoint, index_name, AzureKeyCredential(key)) as buffered_sender:
         # add upload actions
         await buffered_sender.upload_documents(documents=[document])
+        if await buffered_sender.flush():
+            raise RuntimeError("Uploading the document failed.")
         print(f"Uploaded: document {document['HotelId']}")
 
         # add merge actions
         await buffered_sender.merge_documents(documents=[{"HotelId": "100", "Rating": 4.5}])
+        if await buffered_sender.flush():
+            raise RuntimeError("Merging the document failed.")
         print(f"Merged: document {document['HotelId']}")
 
         # add delete actions
         await buffered_sender.delete_documents(documents=[{"HotelId": "100"}])
+        if await buffered_sender.flush():
+            raise RuntimeError("Deleting the document failed.")
         print(f"Deleted: document {document['HotelId']}")
     # [END sample_batching_client_async]
 
