@@ -38,7 +38,7 @@ async def suggest_query_async():
         print("Results: suggestions for 'coffee'")
         for result in results:
             hotel = await search_client.get_document(key=result["HotelId"])
-            print(f"  Text: {result['text']!r}, HotelName: {hotel['HotelName']}")
+            print(f"  Text: {result.text!r}, HotelName: {hotel['HotelName']}")
     # [END suggest_query_async]
 
 
