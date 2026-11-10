@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
+# cspell:ignore EADDRINUSE
 """Self-tests for the crash-injection harness (T-052).
 
 Exercises the harness against a trivial built-in HTTP server (not against any
@@ -13,7 +14,9 @@ behaves as advertised.
 
 from __future__ import annotations
 
+import errno
 import platform
+import socket
 import textwrap
 from pathlib import Path
 
@@ -26,18 +29,23 @@ _ECHO_SERVER_SOURCE = textwrap.dedent(
     \"\"\"Minimal echo HTTP server used by crash-harness self-tests.\"\"\"
     import os
     import sys
-    from http.server import BaseHTTPRequestHandler, HTTPServer
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
     class _EchoHandler(BaseHTTPRequestHandler):
+        # Keep-alive: clients close first, so the server port never enters TIME_WAIT.
+        protocol_version = "HTTP/1.1"
+
         def do_GET(self):
             if self.path == "/health/live":
                 self.send_response(200)
                 self.send_header("Content-Type", "text/plain")
+                self.send_header("Content-Length", "2")
                 self.end_headers()
                 self.wfile.write(b"OK")
                 return
             self.send_response(404)
+            self.send_header("Content-Length", "0")
             self.end_headers()
 
         def log_message(self, format, *args):
@@ -46,7 +54,7 @@ _ECHO_SERVER_SOURCE = textwrap.dedent(
 
     def main():
         port = int(os.environ.get("PORT", "0") or "0")
-        server = HTTPServer(("127.0.0.1", port), _EchoHandler)
+        server = ThreadingHTTPServer(("127.0.0.1", port), _EchoHandler)
         server.serve_forever()
 
 
@@ -88,9 +96,12 @@ async def test_harness_kill_terminates_subprocess(tmp_path: Path, echo_server_pa
     harness = CrashHarness(sample_module=echo_server_path, tmp_path=tmp_path)
     await harness.start()
     pid = harness.pid
-    assert pid is not None
-    await harness.kill()
-    assert harness.pid is None
+    try:
+        assert pid is not None
+        await harness.kill()
+        assert harness.pid is None
+    finally:
+        await harness.close()
 
 
 @pytest.mark.asyncio
@@ -139,3 +150,36 @@ async def test_harness_close_is_idempotent(tmp_path: Path, echo_server_path: Pat
     await harness.start()
     await harness.close()
     await harness.close()  # second close is a no-op
+
+
+@pytest.mark.asyncio
+async def test_harness_reserves_auto_picked_port_across_restart(tmp_path: Path, echo_server_path: Path) -> None:
+    """Other pickers cannot take the auto-picked port before spawn or between lifetimes.
+
+    CI runs wheel and sdist legs concurrently; an unreserved port let a second
+    harness lose the bind race and probe the other leg's server as its own.
+    """
+    harness = CrashHarness(sample_module=echo_server_path, tmp_path=tmp_path)
+
+    def _bind_exclusive() -> None:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.bind(("127.0.0.1", harness.port))
+
+    try:
+        with pytest.raises(OSError) as before_spawn:
+            _bind_exclusive()
+        assert before_spawn.value.errno == errno.EADDRINUSE
+        await harness.start()
+        await harness.kill()
+        with pytest.raises(OSError) as between_lifetimes:
+            _bind_exclusive()
+        assert between_lifetimes.value.errno == errno.EADDRINUSE
+        await harness.restart()
+        response = await harness.client.get("/health/live")
+        assert response.status_code == 200
+        await harness.kill()
+        with pytest.raises(OSError) as after_restart:
+            _bind_exclusive()
+        assert after_restart.value.errno == errno.EADDRINUSE
+    finally:
+        await harness.close()

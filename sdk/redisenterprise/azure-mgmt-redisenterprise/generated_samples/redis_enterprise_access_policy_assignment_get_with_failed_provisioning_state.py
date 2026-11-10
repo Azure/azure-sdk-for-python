@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.chaos import ChaosManagementClient
+from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-chaos
+    pip install azure-mgmt-redisenterprise
 # USAGE
-    python private_accesses_list.py
+    python redis_enterprise_access_policy_assignment_get_with_failed_provisioning_state.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,18 +25,20 @@ from azure.mgmt.chaos import ChaosManagementClient
 
 
 def main():
-    client = ChaosManagementClient(
+    client = RedisEnterpriseManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_accesses.list(
-        resource_group_name="myResourceGroup",
+    response = client.access_policy_assignment.get(
+        resource_group_name="rg1",
+        cluster_name="cache1",
+        database_name="default",
+        access_policy_assignment_name="accessPolicyAssignmentName1",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/PrivateAccesses_List.json
+# x-ms-original-file: 2026-10-01-preview/RedisEnterpriseAccessPolicyAssignmentGetWithFailedProvisioningState.json
 if __name__ == "__main__":
     main()
