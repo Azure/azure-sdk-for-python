@@ -240,7 +240,7 @@ It requires the stored item ID from REST and a deployment that persists unheard 
 
 ### Voice Agent campaigns (preview)
 
-The [campaign sample](samples/agents/voice/sample_voice_agent_campaign.py)
+The [campaign sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_campaign.py)
 create an outbound campaign scheduled for the next day, wait for preparation, then cancel
 and delete the sample campaign. They use `.beta.voice_agents.telephony` and the SDK's
 automatic long-running-operation polling, including operation-guarded final reads and
