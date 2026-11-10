@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.7b1
+python install_rle_sdk.py --version 2.7.8b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -208,3 +208,37 @@ The registry selects `2.7.7b1` as `latest`, preserving all seven earlier
 versions and checksums. This is an RLE preview distribution, not a PyPI
 publication. Backend deployment, live gateway/training qualification and
 consumer image rebuilds are separate work.
+
+## Version 2.7.8b1
+
+This preview adds model/renderer and harness preflight validation before HTTP
+or WebSocket rollout submission. Validation uses the shared public
+[CLI release-branch model catalog](https://raw.githubusercontent.com/Azure/azure-dev/rle-releases/cli/azd/extensions/azure.ai.rle/models.json),
+not a duplicated production configuration. Offline regression coverage checks
+the exact six-model catalog for typed and mapping policies, including both
+MAI 1.1 renderers, `mai_harmony` and `mai_harmony_internal`. Legacy model names,
+aliases and mismatched renderers are rejected before transport. The companion
+catalog change, [Azure/azure-dev#10896](https://github.com/Azure/azure-dev/pull/10896),
+is merged; the SDK reads the shared catalog dynamically.
+
+V4 remains the default for asynchronous rollout sessions, with authenticated
+full-result retrieval and the configurable 32 MiB download budget. Sampling
+defaults, explicit V3/legacy selections and one-shot HTTP defaults are preserved.
+
+The wheel is built from merged SDK source
+`2638fe824e2b3cc72c962c4c109679e430969702` in
+`sujit-kamireddy/azure-sdk-for-python`, including
+[source PR #17](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/17).
+Only the staged package version is overridden from
+`2.7.0b7.dev20261104+queuedv3.4` to `2.7.8b1`. The wheel is 610851 bytes with
+SHA-256 `b693653711ef41b9a6fc2b3dc597a4afa662bad3d3f485add4b3857444919ec5`.
+All 663 offline rollout and model tests passed against an isolated installation
+of this wheel with the standard offline catalog fixture. All 63 packaged
+project Python files match the pinned merged source except for the exact release
+version override; parsed wheel metadata and installed imports report `2.7.8b1`.
+
+This registry update selects `2.7.8b1` as `latest` only after the artifact PR
+merges, preserving all eight earlier versions and checksums. This is an RLE
+preview distribution, not a PyPI publication. No live catalog-fetch,
+gateway/training qualification, backend deployment, consumer pin change or
+image rebuild is included.
