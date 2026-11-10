@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.3b1
+python install_rle_sdk.py --version 2.7.4b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -77,7 +77,7 @@ The wheel is 600811 bytes with SHA-256
 Existing wheel versions and checksums are preserved; this is distribution,
 not an upstream source merge or a PyPI publication.
 
-The registry selects `2.7.3b1` as `latest`; to pin explicitly:
+Version `2.7.3b1` remains available; to pin explicitly:
 
 ```powershell
 python install_rle_sdk.py --version 2.7.3b1
@@ -86,3 +86,29 @@ python install_rle_sdk.py --version 2.7.3b1
 Installing this preview does not enable V3 automatically: callers must opt in.
 Image rebuild/selection and service qualification are separate work; this
 publication does not run cloud jobs, deploy resources or change permissions.
+
+## Version 2.7.4b1
+
+This preview fixes queued V3 result retrieval for Foundry workspace names such
+as `account-name@project-name@AML`. The service encodes `@` as `%40` in result
+references; the SDK now accepts that encoding instead of raising
+`InvalidRolloutResultReference` after execution completes. Other encoded
+characters remain rejected. Original-project authentication, rollout-ID checks,
+disabled redirects and no execution replay are preserved. No V4 backend or
+protocol selection is required.
+
+The wheel also includes the already-merged grading-context additions from
+source PR #9.
+
+The wheel is built from merged SDK source
+`1e8d9b3e338b936b1b6ac14248cd7b086ced9433` in
+`sujit-kamireddy/azure-sdk-for-python`, including source PR #14, with only the
+staged package version overridden from `2.7.0b7.dev20261104+queuedv3.4` to
+`2.7.4b1`. The wheel is 602347 bytes with SHA-256
+`fb99412bfd393ee04cc6575515c5fc2ea3400a9ba85ecc14dd2fa545b99636e1`.
+All 102 queued V3 offline tests passed against an isolated installation of
+this wheel. Live gateway or training qualification was not performed.
+
+The registry selects `2.7.4b1` as `latest`; existing versions and checksums are
+preserved. Existing environments and training images must install this version
+or be rebuilt to consume the fix. This is not a PyPI publication.
