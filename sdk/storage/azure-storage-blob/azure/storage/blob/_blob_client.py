@@ -826,6 +826,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         from ._transfer_native import (  # pylint: disable=import-outside-toplevel
             try_native_download_eager,
         )
+
         native_result = try_native_download_eager(
             blob_client=self,
             offset=offset,

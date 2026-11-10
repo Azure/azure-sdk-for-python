@@ -164,7 +164,11 @@ class _NativeErrorIterator:
 
 
 def _native_disabled() -> bool:
-    """Return True if the native transfer path has been explicitly disabled via env var."""
+    """Return True if the native transfer path has been explicitly disabled via env var.
+
+    :returns: True if the native transfer path is disabled.
+    :rtype: bool
+    """
     return os.environ.get(_DISABLE_NATIVE_ENV_VAR, "").strip().lower() in (
         "1",
         "true",
@@ -174,7 +178,11 @@ def _native_disabled() -> bool:
 
 
 def _is_native_available() -> bool:
-    """Check if the native transfer extension is installed, importable, and not disabled."""
+    """Check if the native transfer extension is installed, importable, and not disabled.
+
+    :returns: True if the native transfer extension is available for use.
+    :rtype: bool
+    """
     if _native_disabled():
         return False
     try:
@@ -204,6 +212,11 @@ def _build_token_provider(
     a synchronous refresh once a token is expired, so the extension never receives an
     already-expired token. A per-provider :class:`threading.Lock` serializes concurrent
     calls (the native side may invoke the provider from multiple worker threads).
+
+    :param credential: The credential to build a token provider for.
+    :type credential: any
+    :returns: A token-provider callable, or ``None`` if the credential doesn't use OAuth tokens.
+    :rtype: callable or None
     """
     if credential is None:
         return None
@@ -244,6 +257,19 @@ def _can_use_native_upload(
     Returns ``False`` only when the native extension is unavailable or explicitly disabled.
     If the extension is available, unsupported upload options raise :class:`ValueError`
     with a reason-specific message instead of silently falling back to the Python upload path.
+
+    :param blob_type: The type of blob being uploaded.
+    :type blob_type: str
+    :param encryption_options: Client-side encryption options.
+    :type encryption_options: dict[str, any]
+    :param validate_content: Whether transactional content validation was requested.
+    :type validate_content: any
+    :param data: The data to upload.
+    :type data: any
+    :param credential: The credential used for the upload.
+    :type credential: any
+    :returns: True if the native upload path can be used.
+    :rtype: bool
     """
     if not _is_native_available():
         return False
@@ -286,6 +312,15 @@ def _can_use_native_download(
     Returns ``False`` only when the native extension is unavailable or explicitly disabled.
     If the extension is available, unsupported download options raise :class:`ValueError`
     with a reason-specific message instead of silently falling back to the Python download path.
+
+    :param encryption_options: Client-side encryption options.
+    :type encryption_options: dict[str, any]
+    :param validate_content: Whether transactional content validation was requested.
+    :type validate_content: any
+    :param credential: The credential used for the download.
+    :type credential: any
+    :returns: True if the native download path can be used.
+    :rtype: bool
     """
     if not _is_native_available():
         return False
@@ -315,7 +350,7 @@ def _can_use_native_download(
     return True
 
 
-def try_native_upload(
+def try_native_upload(  # pylint: disable=too-many-locals
     blob_client: Any,
     data: Any,
     blob_type: str,
@@ -329,6 +364,21 @@ def try_native_upload(
     Returns ``None`` only when the extension is unavailable or explicitly disabled. Once the
     extension is available, unsupported inputs and native execution failures are raised rather
     than falling back to the Python upload path.
+
+    :param blob_client: The blob client performing the upload.
+    :type blob_client: any
+    :param data: The data to upload.
+    :type data: any
+    :param blob_type: The type of blob being uploaded.
+    :type blob_type: str
+    :param encryption_options: Client-side encryption options.
+    :type encryption_options: dict[str, any]
+    :param validate_content: Whether transactional content validation was requested.
+    :type validate_content: any
+    :param config: The storage configuration for the upload.
+    :type config: ~azure.storage.blob._shared.base_client.StorageConfiguration
+    :returns: The upload result, or ``None`` if the native path is unavailable.
+    :rtype: dict[str, any] or None
     """
     if not _can_use_native_upload(
         blob_type=blob_type,
@@ -388,7 +438,7 @@ def try_native_upload(
             immutability_policy_mode = immutability_policy_mode.value
 
     tier = kwargs.get("standard_blob_tier", None)
-    if hasattr(tier, "value"):
+    if tier is not None and hasattr(tier, "value"):
         tier = tier.value
 
     with _translate_native_errors():
@@ -499,6 +549,7 @@ class NativeStorageStreamDownloader:
         """Write the full content to a writable stream, one chunk at a time.
 
         :param stream: A writable stream (file-like object).
+        :type stream: any
         :returns: Number of bytes written.
         :rtype: int
         """
@@ -543,6 +594,20 @@ def try_native_download_eager(
     Returns ``None`` only when the extension is unavailable or explicitly disabled. Once the
     extension is available, unsupported inputs and native execution failures are raised rather
     than falling back to the Python download path.
+
+    :param blob_client: The blob client performing the download.
+    :type blob_client: any
+    :param offset: The start of the byte range to download.
+    :type offset: int or None
+    :param length: The length of the byte range to download.
+    :type length: int or None
+    :param encryption_options: Client-side encryption options.
+    :type encryption_options: dict[str, any]
+    :param validate_content: Whether transactional content validation was requested.
+    :type validate_content: any
+    :returns: A downloader wrapping the native download stream, or ``None`` if the native path
+        is unavailable.
+    :rtype: ~azure.storage.blob._transfer_native.NativeStorageStreamDownloader or None
     """
     if not _can_use_native_download(
         encryption_options=encryption_options,
