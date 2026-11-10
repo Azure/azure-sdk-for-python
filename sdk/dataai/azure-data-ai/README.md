@@ -12,9 +12,9 @@
 Embedding generation returns vectors for retrieval. Reranking scores documents
 you have already retrieved; it doesn't generate vectors.
 
-The reranking package uses the `2026-10-30` service API. Embedding examples require
-an embedding-enabled preview SDK and endpoint; reranking-only releases don't
-provide `multi_modal_embed`.
+The reranking package uses the `2026-10-30` service API. Embedding examples target
+`2026-11-01-preview` and require an embedding-enabled preview SDK and endpoint;
+reranking-only releases don't provide `multi_modal_embed`.
 
 ## Getting started
 
@@ -40,19 +40,16 @@ additional manual inference-resource creation step in that portal workflow.
 
 For embedding generation, follow the [Azure Cosmos DB embedding-generation
 setup][cosmos_embeddings] to enable the capability, copy its endpoint, and assign
-**Embedding User** to the calling Microsoft Entra identity. Use that endpoint,
-not the Cosmos DB document endpoint or a reranking endpoint.
+**Embedding User** to the calling Microsoft Entra identity at the companion
+inference-account scope. Use the embedding endpoint, not the Cosmos DB document
+endpoint or a reranking endpoint.
 
-Install `azure-identity` for the embedding examples. For image inputs, also
-install `azure-storage-blob` and upload your image to Azure Blob Storage.
-The calling identity needs blob read access and permission to obtain a
-user-delegation key. **Storage Blob Data Reader** at storage-account scope
-provides both. For container-scoped read access, additionally assign **Storage
-Blob Delegator** at storage-account scope. The service must be able to reach
-the image blob; a SAS doesn't bypass storage network restrictions.
+Install `azure-identity` for the embedding examples. Image inputs also require an
+existing Azure Blob Storage image and a user-delegation SAS. See
+[Prepare image inputs](#prepare-image-inputs) for permissions and token generation.
 
 ```bash
-python -m pip install azure-identity azure-storage-blob
+python -m pip install azure-identity
 ```
 
 ### Authenticate the client
@@ -130,34 +127,72 @@ Microsoft Entra authentication.
 
 ### Embedding generation
 
-Call `multi_modal_embed` with keyword arguments and pass plain dictionaries in
-the `inputs` list. No request or input-item wrapper objects are needed. Set
-`"type": "text"` for document text, `"type": "query"` for retrieval queries,
-and `"type": "image"` for blob images. Text and query items use `content`;
-image items use separate `url` and `sas_token` keys. Don't use `embed`.
+Embedding generation converts text and images into vectors for semantic
+retrieval. Microsoft Embedding 1 embeds documents, search queries, and images
+into the same vector space. Your application receives the vectors; the operation
+doesn't write them to Azure Cosmos DB or search a container.
 
-| Keyword argument | Meaning |
+> **Note:** The embedding model used in Embedding Generation is based on the
+> [Qwen 3.5 model](https://huggingface.co/Qwen/Qwen3.5-2B) and has been fine-tuned
+> by Microsoft.
+
+Call `client.multi_modal_embed(...)` with keyword arguments and plain
+dictionaries in `inputs`. You don't need request or input-item wrapper objects.
+
+#### Embedding API parameters
+
+| Parameter | Required | Default | Description |
+| --- | --- | --- | --- |
+| `model` | Yes | None | Use `microsoft-embedding-1-large`. Don't use a Foundry deployment name. |
+| `model_version` | Yes | None | The model version, such as `"5"`. Use the same version for documents and queries. |
+| `inputs` | Yes | None | A list of dictionaries. See [Embedding input fields](#embedding-input-fields). |
+| `dimensions` | No | Model's native width | Vector width as a string. Dense: `"2560"` or `"1536"`. Multi-vector: `"128"` or `"256"`. |
+| `vector_type` | No | `dense` | `dense` returns one vector per input. `multi` returns token-level vectors for late-interaction scoring. `both` returns both. |
+| `max_num_vectors` | No | No limit | The maximum number of token-level vectors per input for `multi` or `both`, not the batch size. |
+| `delivery` | No | `inline` | `inline` returns vectors in the response for text, query, and image inputs. `link` returns a results-file reference. |
+
+#### Embedding input fields
+
+| Key | Used with | Description |
+| --- | --- | --- |
+| `type` | All | `text` for stored content, `query` for search queries, or `image`. |
+| `content` | Text, query | The text to embed. |
+| `url` | Image | The plain HTTPS blob URL, without a query string. |
+| `sas_token` | Image | A read-only user-delegation SAS for the blob. |
+| `id` | All (optional) | A label that the result echoes. It doesn't look up a Cosmos DB item. |
+
+#### Embedding request limits
+
+| Limit | Current preview value |
 | --- | --- |
-| `model` | Required. Use `microsoft-embedding-1-large` for Microsoft Embedding 1. |
-| `model_version` | Required released date-version identifier, echoed in the response. Pin the same released version for documents and queries in an index. |
-| `inputs` | Required list of dictionaries. An optional item `id` associates each result with its input. Use separate calls for separate text documents; two text items in one request are invalid. |
-| `vector_type` | `dense` (default), `multi`, or `both`. Multi-vectors require a compatible late-interaction retrieval strategy. |
-| `dimensions` | Optional vector width as a string, such as `"1536"` or `"2560"`. Defaults to the model's native width. The dense examples request `"1536"`. |
-| `max_num_vectors` | Limits token-level vectors for `multi` or `both` output. |
-| `delivery` | `inline` (default) returns vectors in `data`; `link` returns a results-file reference in `output` and an empty `data` list. |
+| Text or query inputs | At most one per request. Send separate requests for separate documents or queries. |
+| Image inputs | Up to eight, plus one optional text or query input. |
+| Image size | At most 20 MiB and 50 megapixels per image, and 20 MiB total per request. |
+| Image formats | JPEG, PNG, GIF, and WebP. |
+| Request body | At most 30,000,000 bytes. |
 
-Pass these options directly as operation keyword arguments.
-With inline dense output, each `MultimodalDenseEmbedding` in `response.data`
-contains `embedding` and the input's `id`. With `vector_type="both"`,
-`MultimodalDenseAndMultiVectorEmbedding` contains `embedding`, `multi_embedding`,
-and `shape`. Don't flatten token-level vectors into a single-vector index.
+Split larger workloads into requests and reuse the client. The embedding API
+has no `batch_size` or `top_k` argument; set search-result limits in your
+retrieval query instead. Inputs over 8,192 text tokens can be truncated from
+the end. Inspect `warnings` and each result's `truncated` indicator.
 
-Inspect `response.model`, `response.model_version`, and
-`response.output_data_type` for the resolved model configuration.
-`response.usage.text_tokens` and `response.usage.visual_tokens` distinguish
-text and image token usage. For link delivery, use both `output.url` and
-`output.sas_token` to download the results file and verify `output.bytes` and
-`output.sha256` before processing it. Never log the results-file SAS.
+#### Read embedding output
+
+Read each dense vector from `response.data` and match it to its input ID:
+
+```python
+vectors = {item.id: item.embedding for item in response.data}
+```
+
+Keep the model, version, vector type, and dimensions consistent for vectors you
+compare. Multi-vector output returns a matrix in `multi_embedding` and its
+`shape`; don't flatten it into one vector. Link delivery leaves `data` empty
+and returns the results-file URL and a separate SAS token in `response.output`.
+Don't log that token.
+
+Use `response.model` and `response.model_version` to record the resolved model.
+`response.usage.text_tokens` and `response.usage.visual_tokens` report input
+usage. For inference charges, see the [embedding-generation pricing guide][cosmos_embedding_pricing].
 
 ### Semantic reranking
 
@@ -218,101 +253,145 @@ inclusive range 0–1. Sentence indices are not capped at 2.
 
 See the [samples][samples] for runnable sync and async examples.
 
-### Generate text and query embeddings
+### Generate text and image embeddings
 
-Set `AZURE_DATA_AI_ENDPOINT` to the embedding endpoint copied during setup.
-Set `AZURE_DATA_AI_MODEL_VERSION` to a supported released date-version identifier,
-not today's date or an internal numeric version. Sign in with your calling
-identity, for example with `az login` for local development.
+Prepare the image SAS using [Prepare image inputs](#prepare-image-inputs).
+Set the endpoint and image settings, then sign in as the identity that has
+**Embedding User**. Sign the image SAS as that same identity.
 
-The example sends document text and a retrieval query in separate calls.
-Both use the same model, version, vector type, and dimensions. Your application
-stores and searches the returned vectors; this operation doesn't write to a
-Cosmos DB container.
+```bash
+export AZURE_DATA_AI_ENDPOINT="<embedding-endpoint>"
+export IMAGE_BLOB_URL="https://<storage-account>.blob.core.windows.net/<container>/<image-blob-name>"
+export IMAGE_SAS_TOKEN="<user-delegation-sas-without-leading-question-mark>"
+az login
+```
+
+The following example embeds one text document and one image in a single call.
+Save it as `generate_embeddings.py` and run `python generate_embeddings.py`:
 
 ```python
 import os
 
 from azure.data.ai import InferenceClient
-from azure.data.ai.models import MultimodalDenseEmbedding
 from azure.identity import DefaultAzureCredential
-
-items = [
-    {
-        "id": "camera-guide",
-        "type": "text",
-        "content": "Use a tripod and a longer exposure to photograph the night sky.",
-    },
-    {
-        "id": "photography-question",
-        "type": "query",
-        "content": "What equipment helps with photographs of stars?",
-    },
-]
 
 with DefaultAzureCredential() as credential:
     with InferenceClient(
         endpoint=os.environ["AZURE_DATA_AI_ENDPOINT"],
         credential=credential,
     ) as client:
-        for item in items:
-            response = client.multi_modal_embed(
-                model="microsoft-embedding-1-large",
-                model_version=os.environ["AZURE_DATA_AI_MODEL_VERSION"],
-                dimensions="1536",
-                inputs=[item],
-                vector_type="dense",
-                delivery="inline",
-            )
-            if len(response.data) != 1:
-                raise ValueError("Expected one embedding for the input.")
-            result = response.data[0]
-            if not isinstance(result, MultimodalDenseEmbedding):
-                raise ValueError("Expected an inline dense embedding.")
-            if result.id != item["id"] or len(result.embedding) != 1536:
-                raise ValueError("The embedding doesn't match the input.")
-            print(result.id, len(result.embedding), response.model_version)
+        response = client.multi_modal_embed(
+            model="microsoft-embedding-1-large",
+            model_version="5",
+            dimensions="1536",  # Dense embeddings support up to 2,560 dimensions.
+            inputs=[
+                {
+                    "id": "trail-guide",
+                    "type": "text",
+                    "content": "The lakeside walking route is accessible throughout the year.",
+                },
+                {
+                    "id": "trail-map",
+                    "type": "image",
+                    "url": os.environ["IMAGE_BLOB_URL"],
+                    "sas_token": os.environ["IMAGE_SAS_TOKEN"],
+                },
+            ],
+        )
+
+vectors = {item.id: item.embedding for item in response.data}
+for item_id, vector in vectors.items():
+    print(f"{item_id}: {len(vector)} dimensions")
 ```
 
-### Generate image embeddings with a user-delegation SAS
+To embed text only, omit the image dictionary. Keep `vectors` and `response`
+if you want to store the embeddings with their model metadata.
 
-Image inputs require an existing Azure Blob Storage image and a shared access
-signature (SAS). Use a blob-scoped, read-only, HTTPS-only user-delegation SAS
-with a short expiry. The identity that signs the SAS must also call the
-embedding endpoint. Don't use an account-key SAS or a token created by a
-different identity.
+### Generate a retrieval-query embedding
+
+Use `query` for what users search with and `text` for content you store. The
+model encodes them differently for retrieval. Append this code to the same
+script, using the same model, version, and dimensions as the source vectors:
+
+```python
+with DefaultAzureCredential() as credential:
+    with InferenceClient(
+        endpoint=os.environ["AZURE_DATA_AI_ENDPOINT"],
+        credential=credential,
+    ) as client:
+        query_response = client.multi_modal_embed(
+            model="microsoft-embedding-1-large",
+            model_version="5",
+            dimensions="1536",  # Must match the stored vectors.
+            inputs=[
+                {
+                    "id": "route-question",
+                    "type": "query",
+                    "content": "Which walking route follows the lake?",
+                }
+            ],
+        )
+
+query_vector = query_response.data[0].embedding
+```
+
+Use the Azure Cosmos DB SDK to store source vectors and compare them with
+`query_vector`. The [Cosmos DB storage and search example][cosmos_embedding_search]
+shows container requirements and a parameterized `VectorDistance` query.
+**Embedding User** doesn't grant permission to read or write Cosmos DB documents;
+assign the separate data-plane roles described in that guide.
+
+### Prepare image inputs
+
+The service reads images from Azure Blob Storage, not inline base64 content.
+Pass a plain HTTPS blob URL and a separate blob-scoped, read-only user-delegation
+SAS. Sign the SAS as the identity that calls the embedding endpoint; don't use an
+account-key SAS or one signed by a different identity.
+
+The caller needs blob read access and permission to obtain a user-delegation
+key. **Storage Blob Data Reader** at storage-account scope provides both. For
+container-scoped read access, also assign **Storage Blob Delegator** at
+storage-account scope. A SAS doesn't bypass storage network restrictions.
+
+Use HTTPS-only access and an expiry of about 15 minutes. Keep tokens out of logs,
+telemetry, source code, and error messages. Don't enable HTTP body logging for
+requests with image SAS tokens. Generate a fresh token if one expires before a retry.
+
+For manual token creation, follow the [portal and CLI SAS steps][cosmos_embedding_images].
+For application code, install the Storage library:
+
+```bash
+python -m pip install azure-storage-blob
+```
 
 Set `AZURE_STORAGE_ACCOUNT_NAME`, `AZURE_STORAGE_CONTAINER_NAME`, and
-`AZURE_STORAGE_IMAGE_BLOB_NAME` to your image location. Keep the endpoint and
-model version configured as in the text example. The example creates the SAS
-at runtime and sends a retrieval query with the image.
+`AZURE_STORAGE_IMAGE_BLOB_NAME` to an existing image. This code creates
+`blob_url` and `sas_token`; pass them as the image input's `url` and `sas_token`.
+Reuse the same calling identity for Storage and inference.
 
 ```python
 import os
 from datetime import datetime, timedelta, timezone
 
-from azure.data.ai import InferenceClient
-from azure.data.ai.models import MultimodalDenseEmbedding
 from azure.identity import DefaultAzureCredential
-from azure.storage.blob import (
-    BlobSasPermissions,
-    BlobServiceClient,
-    generate_blob_sas,
-)
+from azure.storage.blob import BlobSasPermissions, BlobServiceClient, generate_blob_sas
 
 account_name = os.environ["AZURE_STORAGE_ACCOUNT_NAME"]
 container_name = os.environ["AZURE_STORAGE_CONTAINER_NAME"]
 blob_name = os.environ["AZURE_STORAGE_IMAGE_BLOB_NAME"]
-account_url = f"https://{account_name}.blob.core.windows.net"
 
 with DefaultAzureCredential() as credential:
     now = datetime.now(timezone.utc)
     starts_on = now - timedelta(minutes=5)
     expires_on = now + timedelta(minutes=15)
-    with BlobServiceClient(account_url, credential=credential) as storage:
+
+    with BlobServiceClient(
+        account_url=f"https://{account_name}.blob.core.windows.net",
+        credential=credential,
+    ) as storage:
         delegation_key = storage.get_user_delegation_key(starts_on, expires_on)
-        image_url = storage.get_blob_client(container_name, blob_name).url
-        image_sas = generate_blob_sas(
+        blob_url = storage.get_blob_client(container_name, blob_name).url
+        sas_token = generate_blob_sas(
             account_name=account_name,
             container_name=container_name,
             blob_name=blob_name,
@@ -322,49 +401,7 @@ with DefaultAzureCredential() as credential:
             expiry=expires_on,
             protocol="https",
         )
-
-    with InferenceClient(
-        endpoint=os.environ["AZURE_DATA_AI_ENDPOINT"],
-        credential=credential,
-    ) as client:
-        response = client.multi_modal_embed(
-            model="microsoft-embedding-1-large",
-            model_version=os.environ["AZURE_DATA_AI_MODEL_VERSION"],
-            dimensions="1536",
-            inputs=[
-                {
-                    "id": "scene-question",
-                    "type": "query",
-                    "content": "A wooden footbridge crossing a forest stream.",
-                },
-                {
-                    "id": "catalog-photo",
-                    "type": "image",
-                    "url": image_url,
-                    "sas_token": image_sas,
-                },
-            ],
-            vector_type="dense",
-            delivery="inline",
-        )
-
-if len(response.data) != 2 or {item.id for item in response.data} != {
-    "scene-question", "catalog-photo"
-}:
-    raise ValueError("Expected embeddings for the query and image.")
-for result in response.data:
-    if not isinstance(result, MultimodalDenseEmbedding):
-        raise ValueError("Expected an inline dense embedding.")
-    if len(result.embedding) != 1536:
-        raise ValueError("Unexpected dense vector dimensions.")
-    print(result.id, len(result.embedding))
 ```
-
-Set `url` and `sas_token` as separate keys in the Python image-input dictionary.
-Keep the blob URL free of SAS query parameters, and don't
-send inline base64 image content. A SAS is a credential: don't print the token,
-serialize the image request to logs, or enable HTTP body logging for it.
-Generate a fresh token if it expires before a retry.
 
 ### Model selection and JSON documents
 
@@ -490,11 +527,17 @@ the required `code` and `message` and any additional `ProblemDetails` fields.
 Errors can include a `target`, detailed errors, and nested `innererror` information.
 Response headers retain `x-ms-error-code`, `X-Correlation-ID`, and `Retry-After`.
 
-Embedding errors can expose a typed model through `error.model`; inspect its
-`code` for the service error. For `EMBEDDING_INPUT_INVALID`, check the request
-shape and content types. For `EMBEDDING_BLOB_READ_FAILED`, check that the blob
-exists, is reachable, and has a valid read-only user-delegation SAS signed by
-the inference caller. Don't include the SAS or request body in diagnostics.
+For embedding errors, inspect the service error `code` on `error.model` when
+available:
+
+| Error | What to check |
+| --- | --- |
+| HTTP 403 | The caller's **Embedding User** role, inference-account scope, endpoint, and role-assignment propagation. |
+| HTTP 429 | Respect `Retry-After` and cap the number of retries. |
+| `EMBEDDING_INPUT_INVALID` | Check [input fields](#embedding-input-fields) and [request limits](#embedding-request-limits). |
+| `EMBEDDING_BLOB_READ_FAILED` | Confirm the blob exists, the SAS is valid and signed by the inference caller, and network rules allow service access. |
+
+Don't include image SAS tokens or request bodies in diagnostics.
 
 Do not log credentials or sensitive document content. For HTTP 401/403, confirm
 the credential type and that the key belongs to the endpoint with key-based
@@ -529,4 +572,7 @@ additional questions or comments.
 [azure_sub]: https://azure.microsoft.com/free/
 [cosmos_reranker]: https://learn.microsoft.com/azure/cosmos-db/gen-ai/semantic-reranker
 [cosmos_embeddings]: https://learn.microsoft.com/azure/cosmos-db/gen-ai/embedding-generation
+[cosmos_embedding_pricing]: https://learn.microsoft.com/azure/cosmos-db/gen-ai/embedding-generation#pricing
+[cosmos_embedding_search]: https://learn.microsoft.com/azure/cosmos-db/gen-ai/embedding-generation#store-and-search-vectors-in-azure-cosmos-db
+[cosmos_embedding_images]: https://learn.microsoft.com/azure/cosmos-db/gen-ai/embedding-generation#prepare-image-inputs
 [samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/dataai/azure-data-ai/samples/README.md
