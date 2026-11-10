@@ -64,6 +64,7 @@ Breaking changes in beta classes:
 * Updated existing Voice Agent sample descriptions, configuration guidance, and cleanup instructions.
 * Consolidated the Realtime text-conversation and function-tool examples into their asynchronous samples, and removed the separate asynchronous basic agent sample.
 * Updated multi-agent workflow samples to read workflow action details from serialized streaming event items.
+* Added `sample_trace_evaluation_rule.py` and `sample_dataset_evaluation_rule.py` demonstrating scheduled evaluation rules that evaluate agent traces or a dataset on a recurring timer.
 
 ### Features Added
 
