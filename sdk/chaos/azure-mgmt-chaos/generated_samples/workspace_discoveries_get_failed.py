@@ -15,7 +15,7 @@ from azure.mgmt.chaos import ChaosManagementClient
     pip install azure-identity
     pip install azure-mgmt-chaos
 # USAGE
-    python private_accesses_get_get_a_private_access_resource.py
+    python workspace_discoveries_get_failed.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_accesses.get(
-        resource_group_name="myResourceGroup",
-        private_access_name="myPrivateAccess",
+    response = client.workspace_discoveries.get(
+        resource_group_name="exampleRG",
+        workspace_name="exampleWorkspace",
+        discovery_name="00000000-0000-0000-0000-000000000005",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/PrivateAccesses_Get_Get_A_Private_Access_Resource.json
+# x-ms-original-file: 2026-11-01/WorkspaceDiscoveries_Get_Failed.json
 if __name__ == "__main__":
     main()

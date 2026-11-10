@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.chaos import ChaosManagementClient
     pip install azure-identity
     pip install azure-mgmt-chaos
 # USAGE
-    python private_accesses_create_or_update_create_or_update_a_private_access_resource_with_public_network_access.py
+    python workspace_evaluations_get_latest.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_accesses.begin_create_or_update(
-        resource_group_name="myResourceGroup",
-        private_access_name="myPrivateAccess",
-        resource={"location": "centraluseuap", "properties": {"publicNetworkAccess": "Enabled"}},
-    ).result()
+    response = client.workspace_evaluations.get(
+        resource_group_name="exampleRG",
+        workspace_name="exampleWorkspace",
+        evaluation_name="latest",
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/PrivateAccesses_CreateOrUpdate_Create_Or_Update_A_Private_Access_Resource_With_Public_Network_Access.json
+# x-ms-original-file: 2026-11-01/WorkspaceEvaluations_Get_Latest.json
 if __name__ == "__main__":
     main()
