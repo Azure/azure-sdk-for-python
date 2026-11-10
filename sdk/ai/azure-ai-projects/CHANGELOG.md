@@ -64,7 +64,7 @@ Breaking changes in beta classes:
 * Updated existing Voice Agent sample descriptions, configuration guidance, and cleanup instructions.
 * Consolidated the Realtime text-conversation and function-tool examples into their asynchronous samples, and removed the separate asynchronous basic agent sample.
 * Updated multi-agent workflow samples to read workflow action details from serialized streaming event items.
-* Updated the endpoint evaluator samples to register evaluators with `schema_version=EndpointEvaluatorSchemaVersion.V0_0_2` and to document the 0.0.2 request and response contract.
+* Updated the endpoint evaluator samples to register evaluators with `schema_version=EndpointEvaluatorSchemaVersion.V0_0_2` and to document the 0.0.2 request and response contract. Added `sample_endpoint_evaluator_schema_0_0_1.py` for existing endpoints that use the 0.0.1 contract.
 
 ### Features Added
 

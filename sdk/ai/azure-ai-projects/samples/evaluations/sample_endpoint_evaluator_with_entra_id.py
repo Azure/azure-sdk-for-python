@@ -21,8 +21,10 @@ DESCRIPTION:
     fields. Authentication is resolved server-side using a managed identity token acquired
     via the workspace connection.
 
-    This sample uses endpoint contract schema version 0.0.2. With 0.0.2, the evaluator must
-    define exactly one metric, of type "ordinal" or "continuous".
+    This sample uses endpoint contract schema version 0.0.2, which is recommended for new
+    evaluators. With 0.0.2, the evaluator must define exactly one metric, of type "ordinal" or
+    "continuous". For endpoints that still implement schema 0.0.1, see
+    sample_endpoint_evaluator_schema_0_0_1.py.
 
     Your endpoint must:
     - Accept POST requests with a JSON body like:

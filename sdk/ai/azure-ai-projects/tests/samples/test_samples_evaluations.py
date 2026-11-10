@@ -180,6 +180,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_scheduled_agent_traces_evaluation_smart_filter.py",  # PR #47217: recording not yet available
                 "sample_endpoint_evaluator_with_api_key.py",  # Requires external scoring endpoint and azure-mgmt-cognitiveservices
                 "sample_endpoint_evaluator_with_entra_id.py",  # Requires external scoring endpoint with Easy Auth and azure-mgmt-cognitiveservices
+                "sample_endpoint_evaluator_schema_0_0_1.py",  # Requires external scoring endpoint and azure-mgmt-cognitiveservices
             ],
         ),
     )
