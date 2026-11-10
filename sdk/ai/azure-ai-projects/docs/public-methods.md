@@ -28,7 +28,7 @@ There are a total of 213 unique public methods:
 | `telemetry` | TelemetryOperations | 1 |
 | `toolboxes` | ToolboxesOperations | 9 |
 | `voice_agents.conversations` | VoiceAgentsConversationsOperations | 14 |
-| `voice_agents.realtime` | BetaRealtime | 1 |
+| `voice_agents.realtime` | Realtime | 1 |
 | `voice_agents.telephony` | VoiceAgentsTelephonyOperations | 16 |
 
 ### Nested sub-clients (beta operations)

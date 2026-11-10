@@ -14,22 +14,20 @@ import pytest
 from azure.core.credentials import AccessToken
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
-from azure.ai.projects._realtime import BetaRealtime, BetaRealtimeConnectionManager
-from azure.ai.projects.aio._realtime import AsyncBetaRealtime, AsyncBetaRealtimeConnectionManager
+from azure.ai.projects._realtime import Realtime, RealtimeConnectionManager
+from azure.ai.projects.aio._realtime import AsyncRealtime, AsyncRealtimeConnectionManager
 from azure.ai.projects.models import VoiceAgentTransport
 
 _ENDPOINT = "https://fake-account.services.ai.azure.com/api/projects/fake-project"
 _PUBLIC_METHODS = [
-    BetaRealtime.connect,
-    AsyncBetaRealtime.connect,
-    BetaRealtimeConnectionManager.__init__,
-    AsyncBetaRealtimeConnectionManager.__init__,
+    Realtime.connect,
+    AsyncRealtime.connect,
+    RealtimeConnectionManager.__init__,
+    AsyncRealtimeConnectionManager.__init__,
 ]
 
 
-def _make_realtime(
-    is_async: bool, *, allow_preview: bool = False
-) -> tuple[Union[BetaRealtime, AsyncBetaRealtime], MagicMock]:
+def _make_realtime(is_async: bool, *, allow_preview: bool = False) -> tuple[Union[Realtime, AsyncRealtime], MagicMock]:
     credential = MagicMock()
     token = AccessToken("fake-token", 9_999_999_999)
     credential.get_token = AsyncMock(return_value=token) if is_async else MagicMock(return_value=token)
@@ -42,13 +40,13 @@ def _make_realtime(
             allow_preview=allow_preview,
         )
     )
-    return (AsyncBetaRealtime(client) if is_async else BetaRealtime(client)), credential
+    return (AsyncRealtime(client) if is_async else Realtime(client)), credential
 
 
 async def _capture_handshake(
-    manager: Union[BetaRealtimeConnectionManager, AsyncBetaRealtimeConnectionManager],
+    manager: Union[RealtimeConnectionManager, AsyncRealtimeConnectionManager],
 ) -> tuple[str, dict[str, Any]]:
-    if isinstance(manager, AsyncBetaRealtimeConnectionManager):
+    if isinstance(manager, AsyncRealtimeConnectionManager):
         connection = MagicMock(close=AsyncMock())
         session = MagicMock(ws_connect=AsyncMock(return_value=connection), close=AsyncMock())
         with patch("aiohttp.ClientSession", return_value=session):
@@ -206,7 +204,7 @@ async def test_transport_handshake_respects_preview_opt_in(is_async: bool, allow
 @pytest.mark.parametrize("is_async", [False, True], ids=["sync", "async"])
 async def test_public_project_client_exposes_typed_transport_selection(is_async: bool) -> None:
     _, credential = _make_realtime(is_async)
-    manager: Union[BetaRealtimeConnectionManager, AsyncBetaRealtimeConnectionManager]
+    manager: Union[RealtimeConnectionManager, AsyncRealtimeConnectionManager]
     if is_async:
         async with AsyncAIProjectClient(endpoint=_ENDPOINT, credential=credential, allow_preview=True) as async_client:
             manager = async_client.voice_agents.realtime.connect(

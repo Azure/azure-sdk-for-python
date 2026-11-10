@@ -18,11 +18,15 @@ from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
-from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
+from ...operations._patch import (
+    _BETA_OPERATION_FEATURE_HEADERS,
+    _OperationMethodHeaderProxy,
+    _VOICE_AGENT_CONDITIONAL_TELEPHONY_METHODS,
+)
 from .._realtime import (
-    AsyncBetaRealtime,
-    AsyncBetaRealtimeConnection,
-    AsyncBetaRealtimeConnectionManager,
+    AsyncRealtime,
+    AsyncRealtimeConnection,
+    AsyncRealtimeConnectionManager,
     ClientEvent,
     ConversationItem,
     ServerEvent,
@@ -63,18 +67,22 @@ class VoiceAgentsOperations(GeneratedVoiceAgentsOperations):
     """:class:`~azure.ai.projects.aio.operations.VoiceAgentsConversationsOperations` operations"""
     telephony: VoiceAgentsTelephonyOperations
     """:class:`~azure.ai.projects.aio.operations.VoiceAgentsTelephonyOperations` operations"""
-    realtime: AsyncBetaRealtime
-    """:class:`~azure.ai.projects.aio.operations.AsyncBetaRealtime` operations"""
+    realtime: AsyncRealtime
+    """:class:`~azure.ai.projects.aio.operations.AsyncRealtime` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # WebSocket connections cannot be kept alive by the generated HTTP pipeline.
-        self.realtime = AsyncBetaRealtime(self)
+        self.realtime = AsyncRealtime(self)
         if self._config.allow_preview:
             setattr(
                 self,
                 "telephony",
-                _OperationMethodHeaderProxy(self.telephony, _BETA_OPERATION_FEATURE_HEADERS["voice_agents"]),
+                _OperationMethodHeaderProxy(
+                    self.telephony,
+                    _BETA_OPERATION_FEATURE_HEADERS["voice_agents"],
+                    method_names=_VOICE_AGENT_CONDITIONAL_TELEPHONY_METHODS,
+                ),
             )
 
 
@@ -149,9 +157,9 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
-    "AsyncBetaRealtime",
-    "AsyncBetaRealtimeConnection",
-    "AsyncBetaRealtimeConnectionManager",
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
     "AsyncBetaLive",
     "AsyncBetaLiveConnection",
     "AsyncBetaLiveConnectionManager",

@@ -37,8 +37,8 @@ from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry import _voice_agents_instrumentor as voice
 from azure.ai.projects.telemetry import _responses_instrumentor as responses
-from azure.ai.projects._realtime import BetaRealtimeConnectionManager
-from azure.ai.projects.aio._realtime import AsyncBetaRealtimeConnectionManager
+from azure.ai.projects._realtime import RealtimeConnectionManager
+from azure.ai.projects.aio._realtime import AsyncRealtimeConnectionManager
 
 _ENDPOINT = "https://example.test/api/projects/project-test"
 _PREFIX = "az.ai.voice_agents."
@@ -134,7 +134,7 @@ def _manager(monkeypatch, is_async, events=None, failure=None, headers=None):
     ws = MagicMock()
     ws.close_code = 1000
     ws.closed = False
-    manager: BetaRealtimeConnectionManager | AsyncBetaRealtimeConnectionManager
+    manager: RealtimeConnectionManager | AsyncRealtimeConnectionManager
     if is_async:
         import aiohttp
 
@@ -149,7 +149,7 @@ def _manager(monkeypatch, is_async, events=None, failure=None, headers=None):
         session.ws_connect = AsyncMock(side_effect=failure, return_value=ws)
         credential.get_token = AsyncMock(return_value=token)
         monkeypatch.setattr(aiohttp, "ClientSession", MagicMock(return_value=session))
-        manager = AsyncBetaRealtimeConnectionManager(
+        manager = AsyncRealtimeConnectionManager(
             endpoint=_ENDPOINT,
             credential=credential,
             credential_scopes=["https://ai.azure.com/.default"],
@@ -165,7 +165,7 @@ def _manager(monkeypatch, is_async, events=None, failure=None, headers=None):
         credential.get_token.return_value = token
         connect = MagicMock(side_effect=failure, return_value=ws)
         monkeypatch.setattr(websockets.sync.client, "connect", connect)
-        manager = BetaRealtimeConnectionManager(
+        manager = RealtimeConnectionManager(
             endpoint=_ENDPOINT,
             credential=credential,
             credential_scopes=["https://ai.azure.com/.default"],
