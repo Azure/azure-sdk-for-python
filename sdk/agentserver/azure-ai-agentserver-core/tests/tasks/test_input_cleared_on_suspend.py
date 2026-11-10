@@ -69,3 +69,60 @@ async def test_suspend_clears_payload_input(tmp_path: Path) -> None:
         )
     finally:
         await _teardown_manager(manager, mgr_mod)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("turn_outcome", ["return", "raise"])
+async def test_turn_end_atomically_clears_stale_drain_state(tmp_path: Path, turn_outcome: str) -> None:
+    """A failed Phase-3 clear cannot leave a phantom active drain."""
+    from azure.ai.agentserver.core.tasks._models import TaskCreateRequest
+
+    manager, mgr_mod = await _setup_manager(tmp_path)
+    task_id = f"t-stale-drain-{turn_outcome}"
+    try:
+        await manager.provider.create(
+            TaskCreateRequest(
+                id=task_id,
+                agent_name="test-agent",
+                session_id="test-session",
+                status="in_progress",
+                title="stale drain",
+                payload={
+                    "input": {"msg": "B"},
+                    "schema_version": "1",
+                    "steering": {
+                        "active_input": {"msg": "B"},
+                        "active_ack_id": "ack-b",
+                        "pending_inputs": [{"msg": "C"}],
+                        "pending_ack_ids": ["ack-c"],
+                        "cancel_requested": True,
+                        "drain_in_progress": True,
+                    },
+                },
+                lease_owner=manager._lease_owner,
+                lease_instance_id=manager._instance_id,
+                lease_duration_seconds=60,
+            )
+        )
+
+        if turn_outcome == "return":
+            await manager._handle_multi_turn_success(task_id=task_id, opts=None)
+        else:
+            await manager._handle_multi_turn_failure(
+                task_id=task_id,
+                exc=RuntimeError("planned failure"),
+                opts=None,
+                error_dict={"type": "RuntimeError", "message": "planned failure", "traceback": ""},
+            )
+
+        info = await manager.provider.get(task_id)
+        assert info is not None
+        assert info.status == "suspended"
+        steering = info.payload["steering"]
+        assert steering["active_input"] is None
+        assert steering["active_ack_id"] is None
+        assert steering["drain_in_progress"] is False
+        assert steering["pending_inputs"] == [{"msg": "C"}]
+        assert steering["pending_ack_ids"] == ["ack-c"]
+    finally:
+        await _teardown_manager(manager, mgr_mod)
