@@ -53,6 +53,46 @@ def test_analysis_checkout_has_history_for_api_comparison():
     }
 
 
+def test_autorest_legacy_tests_install_only_the_declared_test_server():
+    pipeline = yaml.safe_load((REPO_ROOT / "eng" / "pipelines" / "autorest_checks.yml").read_text())
+    steps = pipeline["jobs"][0]["steps"]
+    assert steps[0]["template"].endswith("create-authenticated-npmrc.yml")
+    prepare = next(step["script"] for step in steps if step.get("displayName") == "Prepare Environment")
+    assert prepare.startswith("set -euo pipefail\n")
+    assert "git clone $(auto_rest_clone_url)" in prepare
+    assert "devDependencies['@microsoft.azure/autorest.testserver']" in prepare
+    assert (
+        'npm install --ignore-scripts --no-audit --no-fund '
+        '"@microsoft.azure/autorest.testserver@$test_server_version"'
+    ) in prepare
+    assert 'ln -s "$test_server_directory/node_modules"' in prepare
+    assert "pnpm install" not in prepare
+
+
+@pytest.mark.parametrize("kind", ["Vanilla", "Azure"])
+def test_autorest_legacy_requirements_cannot_replace_the_pr_packages(kind):
+    pipeline = yaml.safe_load((REPO_ROOT / "eng" / "pipelines" / "autorest_checks.yml").read_text())
+    step = next(
+        step for step in pipeline["jobs"][0]["steps"]
+        if step.get("displayName", "").endswith(f"Test {kind} Legacy")
+    )
+    assert step["script"].startswith("set -euo pipefail\n")
+    commands = step["script"].splitlines()
+    requirements = commands.index("python -m pip install -r requirements.txt")
+    local_packages = next(
+        index for index, command in enumerate(commands)
+        if command.startswith("python -m pip install $(Build.SourcesDirectory)")
+    )
+    assert requirements < local_packages
+    assert "$(source_path_azure_core)" in commands[local_packages]
+    if kind == "Azure":
+        assert "$(source_path_azure_mgmt_core)" in commands[local_packages]
+    suite = kind.lower()
+    assert commands[-1] == (
+        f"pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/{suite}/legacy"
+    )
+
+
 def test_rust_support_is_disabled_by_default_and_forwarded():
     archetype = load_template("stages/archetype-sdk-client.yml")
     jobs = load_template("jobs/ci.yml")
