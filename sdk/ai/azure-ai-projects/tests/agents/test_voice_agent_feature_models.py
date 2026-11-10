@@ -25,25 +25,25 @@ _SYSTEM_TOOLS = [
 _DTMF_COMPLETION_MODES = [
     pytest.param(
         models.VoiceAgentDtmfFixedLengthCompletionMode,
-        {"length": 6, "inter_digit_timeout_seconds": 2},
+        {"length": 6, "inter_digit_timeout": 2},
         {"type": "fixed_length", "length": 6, "inter_digit_timeout_seconds": 2},
         id="fixed-length",
     ),
     pytest.param(
         models.VoiceAgentDtmfTerminatorCompletionMode,
-        {"terminator": models.VoiceAgentDtmfTerminator.NUMBER_SIGN, "inter_digit_timeout_seconds": 2},
+        {"terminator": models.VoiceAgentDtmfTerminator.NUMBER_SIGN, "inter_digit_timeout": 2},
         {"type": "terminator", "terminator": "#", "inter_digit_timeout_seconds": 2},
         id="number-sign",
     ),
     pytest.param(
         models.VoiceAgentDtmfTerminatorCompletionMode,
-        {"terminator": models.VoiceAgentDtmfTerminator.ASTERISK, "inter_digit_timeout_seconds": 2},
+        {"terminator": models.VoiceAgentDtmfTerminator.ASTERISK, "inter_digit_timeout": 2},
         {"type": "terminator", "terminator": "*", "inter_digit_timeout_seconds": 2},
         id="asterisk",
     ),
     pytest.param(
         models.VoiceAgentDtmfInterDigitSilenceCompletionMode,
-        {"inter_digit_timeout_seconds": 2},
+        {"inter_digit_timeout": 2},
         {"type": "inter_digit_silence", "inter_digit_timeout_seconds": 2},
         id="inter-digit-silence",
     ),
@@ -258,7 +258,7 @@ def test_dtmf_completion_mode_concrete_writable_json_roundtrip(mode_type, mode_k
 
     restored = mode_type(json.loads(json.dumps(mode_wire)))
     assert restored.type == mode_wire["type"]
-    assert restored.inter_digit_timeout_seconds == 2
+    assert restored.inter_digit_timeout == 2
     if mode_wire["type"] == "fixed_length":
         assert restored.length == 6
     elif mode_wire["type"] == "terminator":
@@ -272,8 +272,8 @@ def test_dtmf_collection_arguments_writable_json_roundtrip(mode_type, mode_kwarg
     kwargs = {
         "secret": secret,
         "completion_mode": mode_type(**mode_kwargs),
-        "timeout_seconds": 60,
-        "first_digit_timeout_seconds": 5,
+        "timeout": 60,
+        "first_digit_timeout": 5,
     }
     expected = {
         "secret": secret,
@@ -290,8 +290,8 @@ def test_dtmf_collection_arguments_writable_json_roundtrip(mode_type, mode_kwarg
 
     restored = models.VoiceAgentCollectDtmfStartArguments(json.loads(json.dumps(expected)))
     assert restored.secret is secret
-    assert restored.timeout_seconds == 60
-    assert restored.first_digit_timeout_seconds == 5
+    assert restored.timeout == 60
+    assert restored.first_digit_timeout == 5
     assert restored.output_variable_name == ("verification_code" if secret else None)
     mode_data = restored.completion_mode
     assert isinstance(mode_data, Mapping)
@@ -299,7 +299,7 @@ def test_dtmf_collection_arguments_writable_json_roundtrip(mode_type, mode_kwarg
     # This union has no discriminator base; reconstruct its public member explicitly.
     completion_mode = mode_type(dict(mode_data))
     assert completion_mode.type == mode_data["type"] == mode_wire["type"]
-    assert completion_mode.inter_digit_timeout_seconds == 2
+    assert completion_mode.inter_digit_timeout == 2
     if mode_wire["type"] == "fixed_length":
         assert completion_mode.length == 6
     elif mode_wire["type"] == "terminator":
@@ -310,7 +310,7 @@ def test_dtmf_collection_arguments_writable_json_roundtrip(mode_type, mode_kwarg
 
 @pytest.mark.parametrize("secret", [False, True], ids=["public-value", "private-reference"])
 def test_sms_collection_arguments_writable_json_roundtrip(secret):
-    kwargs = {"secret": secret, "from_phone_number": _SMS_SENDER, "timeout_seconds": 60}
+    kwargs = {"secret": secret, "from_phone_number": _SMS_SENDER, "timeout": 60}
     expected = {"secret": secret, "from_phone_number": "+12025550123", "timeout_seconds": 60}
     if secret:
         kwargs["output_variable_name"] = "confirmation_message"
@@ -321,7 +321,7 @@ def test_sms_collection_arguments_writable_json_roundtrip(secret):
     restored = models.VoiceAgentCollectSmsStartArguments(json.loads(json.dumps(expected)))
     assert restored.secret is secret
     assert restored.from_phone_number == "+12025550123"
-    assert restored.timeout_seconds == 60
+    assert restored.timeout == 60
     assert restored.output_variable_name == ("confirmation_message" if secret else None)
     assert restored.as_dict(exclude_readonly=True) == expected
 
@@ -355,7 +355,7 @@ def test_collection_arguments_keep_false_without_inventing_service_defaults(argu
 
     restored = argument_type(json.loads(json.dumps(expected)))
     assert restored.secret is False
-    assert restored.timeout_seconds is None
+    assert restored.timeout is None
     assert restored.output_variable_name is None
     assert restored.as_dict(exclude_readonly=True) == expected
 
@@ -363,9 +363,7 @@ def test_collection_arguments_keep_false_without_inventing_service_defaults(argu
 @pytest.mark.parametrize("tool_type,tool_name", _SYSTEM_TOOLS)
 @pytest.mark.parametrize("timeout_seconds", [1, 300])
 def test_system_tool_discriminators_and_timeout_roundtrip(tool_type, tool_name, timeout_seconds):
-    tool = tool_type(
-        description="Offline system-tool configuration.", timeout_seconds=timedelta(seconds=timeout_seconds)
-    )
+    tool = tool_type(description="Offline system-tool configuration.", timeout=timedelta(seconds=timeout_seconds))
     expected = {
         "type": "system",
         "name": tool_name,
@@ -391,7 +389,7 @@ def test_system_tool_discriminators_and_timeout_roundtrip(tool_type, tool_name, 
     assert restored_tool.type == "system"
     assert restored_tool.name == tool_name
     assert restored_tool.description == "Offline system-tool configuration."
-    assert restored_tool.timeout_seconds == timedelta(seconds=timeout_seconds)
+    assert restored_tool.timeout == timedelta(seconds=timeout_seconds)
     assert restored.as_dict(exclude_readonly=True) == wire
 
 

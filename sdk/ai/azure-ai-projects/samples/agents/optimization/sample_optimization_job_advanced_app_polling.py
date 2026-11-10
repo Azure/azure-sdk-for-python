@@ -51,7 +51,7 @@ from azure.ai.projects.models import (
     AgentOptimizationTargetCompletionInlineDataSource,
     AgentOptimizationTargetCompletionTestCase,
     EvaluationModelConfiguration,
-    JobStatus,
+    AgentOptimizationJobStatus,
 )
 
 load_dotenv()
@@ -63,7 +63,12 @@ poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 eval_model = os.environ["EVAL_MODEL"]
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
+TERMINAL_STATUSES = {
+    AgentOptimizationJobStatus.SUCCEEDED,
+    AgentOptimizationJobStatus.FAILED,
+    AgentOptimizationJobStatus.CANCELLED,
+    AgentOptimizationJobStatus.SKIPPED,
+}
 
 with (
     DefaultAzureCredential() as credential,
@@ -131,11 +136,13 @@ with (
         for warning in job.warnings:
             print(f"[WARNING] {warning}")
 
-    if job.status == JobStatus.FAILED:
+    if job.status == AgentOptimizationJobStatus.FAILED:
         message = job.error.message if job.error else "<no error message>"
         raise RuntimeError(f"Optimization job `{job.id}` failed: {message}")
-    if job.status == JobStatus.CANCELLED:
+    if job.status == AgentOptimizationJobStatus.CANCELLED:
         raise RuntimeError(f"Optimization job `{job.id}` was cancelled.")
+    if job.status == AgentOptimizationJobStatus.SKIPPED:
+        raise RuntimeError(f"Optimization job `{job.id}` was skipped; no optimization result is available.")
 
     # ------------------------------------------------------------------
     # 3. Inspect the results.

@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Any, List
 from ._patch_agents_async import AgentsOperations
-from ._patch_agent_insights_async import BetaAgentInsightMonitorsOperations
+from ._patch_agent_insights_async import AgentInsightMonitorsOperations
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_evaluators_async import EvaluatorsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
@@ -36,7 +36,7 @@ from .._live import (
 )
 
 # Nested operation groups are re-exported here rather than in the generated package exports.
-from ._patch_campaigns_async import BetaVoiceAgentsTelephonyOperations
+from ._patch_campaigns_async import BetaVoiceAgentsCampaignsOperations
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
@@ -44,7 +44,6 @@ from ._operations import (
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
     BetaSchedulesOperations,
-    BetaSkillsOperations,
     BetaVoiceAgentsLiveConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     VoiceAgentsConversationsOperations,
@@ -89,8 +88,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         :attr:`~azure.ai.projects.aio.operations.BetaOperations.voice_agents` attribute.
     """
 
-    telephony: BetaVoiceAgentsTelephonyOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations` operations"""
+    campaigns: BetaVoiceAgentsCampaignsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsCampaignsOperations` operations"""
     live_conversations: BetaVoiceAgentsLiveConversationsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
     live: AsyncBetaLive
@@ -98,7 +97,7 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.telephony = BetaVoiceAgentsTelephonyOperations(
+        self.campaigns = BetaVoiceAgentsCampaignsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.live = AsyncBetaLive(self)
@@ -114,8 +113,6 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
-    agent_insight_monitors: BetaAgentInsightMonitorsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
     insights: BetaInsightsOperations
@@ -130,8 +127,6 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
-    skills: BetaSkillsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     voice_agents: BetaVoiceAgentsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsOperations` operations"""
 
@@ -141,10 +136,6 @@ class BetaOperations(GeneratedBetaOperations):
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        # Replace with patched class that returns AsyncAgentInsightRunLROPoller
-        self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         # Replace with patched class that wires up the hand-written realtime client
         self.voice_agents = BetaVoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
@@ -166,7 +157,7 @@ __all__: List[str] = [
     "AsyncBetaLiveConnectionManager",
     "LiveClientEvent",
     "LiveServerEvent",
-    "BetaAgentInsightMonitorsOperations",
+    "AgentInsightMonitorsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
@@ -175,8 +166,7 @@ __all__: List[str] = [
     "BetaRedTeamsOperations",
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
-    "BetaSkillsOperations",
-    "BetaVoiceAgentsTelephonyOperations",
+    "BetaVoiceAgentsCampaignsOperations",
     "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
     "VoiceAgentsConversationsOperations",
