@@ -52,6 +52,35 @@ Code samples for this package can be found at:
 
 ## Troubleshooting
 
+### Exact compliance snapshots
+
+Pass the `evaluated_at` value from a compliance dimension directly to
+`SovereignViewComplianceResourceDetailsContent.evaluated_at` to select that
+snapshot. The SDK preserves fractional digits beyond Python's microsecond
+precision during this round-trip, including timezone conversion, copying,
+and pickling. The value remains a `datetime` instance.
+
+Do not rebuild the timestamp from its `microsecond` field or perform datetime
+arithmetic when using it as an exact snapshot identifier: standard Python
+datetime arithmetic and comparisons have microsecond precision. Explicitly
+replacing `microsecond` or formatting with an explicit `timespec` uses the
+requested Python precision rather than retaining extra fractional digits.
+An original RFC3339 timestamp can also be supplied in a dictionary request.
+
+### Awaited remediation results
+
+For synchronous clients, call `begin_remediate(...).result()`. For asynchronous
+clients, await `begin_remediate(...)` and then await the returned poller's
+`result()`. The returned model exposes `remediation_id` for both an immediate
+response and a terminal ARM operation-status response. Pass this ID to
+`remediation_result` to retrieve generated bundles. Missing or invalid IDs
+raise `DeserializationError`; service polling failures remain errors.
+
+These client fixes do not change the service's supported resource types,
+API version, PATCH/DELETE behavior, or subscription-list continuation behavior.
+In particular, subscription enumeration still surfaces a service-side paging
+error rather than silently returning an incomplete list.
+
 ## Next steps
 
 ## Provide Feedback

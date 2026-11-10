@@ -8,7 +8,50 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+from datetime import datetime
+from typing import Optional
+
+from .._utils.model_base import rest_field
+from . import _models
+from ._snapshot_datetime import _deserialize_snapshot_datetime
+
+__all__ = [
+    "SovereignViewComplianceDetail",
+    "SovereignViewComplianceResourceDetailsContent",
+    "SovereignViewComplianceResourceDetailsResult",
+    "SovereignViewDimensionDetail",
+]
+
+
+def _snapshot_field():
+    return rest_field(
+        name="evaluatedAt", visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339", deserializer=_deserialize_snapshot_datetime,
+    )
+
+
+class SovereignViewComplianceDetail(_models.SovereignViewComplianceDetail):
+    """A compliance detail preserving the complete evaluation timestamp."""
+
+    evaluated_at: Optional[datetime] = _snapshot_field()
+
+
+class SovereignViewComplianceResourceDetailsContent(_models.SovereignViewComplianceResourceDetailsContent):
+    """A resource-details request preserving the selected snapshot timestamp."""
+
+    evaluated_at: Optional[datetime] = _snapshot_field()
+
+
+class SovereignViewComplianceResourceDetailsResult(_models.SovereignViewComplianceResourceDetailsResult):
+    """Resource details preserving the complete snapshot timestamp."""
+
+    evaluated_at: datetime = _snapshot_field()
+
+
+class SovereignViewDimensionDetail(_models.SovereignViewDimensionDetail):
+    """A compliance dimension preserving the complete snapshot timestamp."""
+
+    evaluated_at: datetime = _snapshot_field()
 
 
 def patch_sdk():
