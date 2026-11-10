@@ -19,11 +19,11 @@ DESCRIPTION:
     for more information.
 
 PREREQUISITE:
-    Assign the project managed identity the "Azure AI User" role:
+    Assign the project managed identity the "Foundry User" role:
     1) Open https://portal.azure.com
     2) Search for the AI Foundry project from search bar
     3) Choose "Access control (IAM)" -> "Add"
-    4) In "Add role assignment", search for "Azure AI User"
+    4) In "Add role assignment", search for "Foundry User"
     5) Choose "User, group, or service principal" or "Managed Identity", add your AI Foundry project managed identity
 
 USAGE:

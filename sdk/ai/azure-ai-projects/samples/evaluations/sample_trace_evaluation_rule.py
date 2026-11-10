@@ -19,11 +19,11 @@ DESCRIPTION:
 PREREQUISITE:
     1) The Foundry project must have an Application Insights resource connected, and the agent
        must have produced traces.
-    2) Assign the project managed identity the "Azure AI User" role:
+    2) Assign the project managed identity the "Foundry User" role:
        a) Open https://portal.azure.com
        b) Search for the AI Foundry project from search bar
        c) Choose "Access control (IAM)" -> "Add"
-       d) In "Add role assignment", search for "Azure AI User"
+       d) In "Add role assignment", search for "Foundry User"
        e) Choose "User, group, or service principal" or "Managed Identity", add your AI Foundry project managed identity
 
 USAGE:
