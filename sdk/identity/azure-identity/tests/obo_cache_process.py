@@ -89,7 +89,7 @@ async def main():
         ) as credential:
             try:
                 token = await credential.get_token("scope", enable_cae=settings["enable_cae"])
-            except (AssertionError, ClientAuthenticationError):
+            except (AssertionError, ClientAuthenticationError, KeyError):
                 try:
                     client_id = credential._client._get_cache_client_id(enable_cae=settings["enable_cae"])
                     memory = SerializableTokenCache()
