@@ -123,8 +123,8 @@ with (
 
     edited_dimensions = []
     if editable:
-        top = max(editable, key=lambda d: d.weight)
-        lowest = min(editable, key=lambda d: d.weight)
+        top = max(editable, key=lambda d: d.weight or 0)
+        lowest = min(editable, key=lambda d: d.weight or 0)
         for dim in editable:
             if dim.id == lowest.id:
                 continue
