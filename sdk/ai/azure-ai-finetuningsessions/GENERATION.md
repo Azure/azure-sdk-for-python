@@ -36,9 +36,18 @@ unchanged. The reviewed public TypeSpec source pin remains unchanged.
 
 The tool-call hierarchy review adds a `type`-discriminated TypeSpec base while
 retaining the existing function-specific model name and payload requirements.
-Current message arrays remain function-only. Two independent emissions retain
+Current tool-call arrays remain function-only. Two independent emissions retain
 all 32 Python runtime files exactly; only the generated APIView source checksum
 changes. Sync/async regressions also confirm that other call kinds are rejected.
+
+Input messages now have a `role`-discriminated TypeSpec hierarchy with separate
+system, user, assistant, and tool-result variants. Tool definitions also have a
+`type`-discriminated base while the current tools array stays function-only.
+The same four input roles and effective JSON fields remain supported. Shared
+Java, JavaScript, and C# generation graphs recognize both hierarchies. Actual
+Python emissions retain every runtime file, including the public combined
+context-message type, message alias, tool types, and validation; only the
+generated APIView source checksum changes.
 
 Checkpoint preparation statuses remain extensible in TypeSpec. The earlier
 response-enum review also opened completion metadata unions; those standalone

@@ -19,6 +19,7 @@
 
 ### Other Changes
 
+- Pin discriminated TypeSpec request-message and tool-definition hierarchies. Existing request JSON, four supported roles, function-only tools, and Python API/runtime remain unchanged; add sync/async regression checks rejecting unsupported tool definitions.
 - Remove unused TypeSpec sampling-output scaffolding and document the existing choices on the generic polling result. Service responses, Python result classes, and safety checks are unchanged; no valid-choice `outcome` field is added.
 - Pin the removal of an unused TypeSpec training-result declaration, retaining its scalar-result documentation on the generic polling field without changing the Python API or safety validation.
 - Keep checkpoint preparation states extensible in TypeSpec. Known labels, Python API, safety validation, and preparation-state handling remain unchanged.

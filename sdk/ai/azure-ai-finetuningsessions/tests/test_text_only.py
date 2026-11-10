@@ -566,6 +566,10 @@ async def test_text_sampling_rejects_incompatible_options(asynchronous, extra):
                 }
             ]
         },
+        {
+            "messages": [{"role": "user", "content": "text"}],
+            "tools": [{"type": "custom", "function": {"name": "f", "parameters": {"type": "object"}}}],
+        },
         {"messages": [{"role": "tool", "tool_call_id": "orphan", "content": "needs name"}]},
         {
             "messages": [

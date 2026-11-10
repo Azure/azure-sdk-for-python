@@ -15,10 +15,10 @@
   "typespec": {
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
-    "base_commit": "ffb38d4e6cdfb9bb727e37975e97c47cffc12a6e",
-    "commit": "c10e31b9482fc087639bfd25321d8b56c7f7801c",
+    "base_commit": "c10e31b9482fc087639bfd25321d8b56c7f7801c",
+    "commit": "46d967fb645685f33a115bf9c68b161cbbc5d36c",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "0f6b08483f0b44f5b59eaa78f2596f09e7ee3cfa0997c06bb1313f70be4021ea",
+    "source_fingerprint_sha256": "93d5ea992091fe0f73c853054de4105eff0a98c778b39d6128fe61ec3700d994",
     "client_sha256": "a974c5c1b8bb6649f9baaeba925a24b9e3439c1e80c9c92dd2ded2e2bd286694",
     "models_path": "specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp",
     "models_sha256": "bee9a1c4f4b8d80315f98212e378c28aef552d28eee3d6ec2327f1b30a0cbec3",
@@ -41,7 +41,7 @@
   },
   "assembly": {
     "generated_inventory_entries": 21,
-    "generated_inventory_fingerprint_sha256": "2f907df3103ab8e4dbfb62577da0eea3999f35b621d17b4f68ae6948bbb36bb3",
+    "generated_inventory_fingerprint_sha256": "8425ff21f51c5b83f16b55b3b9460ebba8ed1456114747384a664859c7f6920b",
     "runtime_files": 32,
     "runtime_python_modules": 31,
     "baseline_runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
@@ -64,6 +64,47 @@
     "method": "Seed only supported maintained modules, including scalar optimization via models.patch_sdk, before fresh emission; compare complete generated inventory and assembled runtime. No generated-source rewriting."
   },
   "validation": {
+    "request_message_tool_hierarchies_20261110": {
+      "review_comment_ids": [
+        4519303279,
+        4519309784
+      ],
+      "spec_commit": "46d967fb645685f33a115bf9c68b161cbbc5d36c",
+      "previous_spec_commit": "c10e31b9482fc087639bfd25321d8b56c7f7801c",
+      "message_discriminator": "role",
+      "input_message_roles": [
+        "system",
+        "user",
+        "assistant",
+        "tool"
+      ],
+      "system_and_user_are_separate_concrete_models": true,
+      "request_role_set_remains_closed": true,
+      "tool_definition_discriminator": "type",
+      "tool_definition_array_remains_function_specific": true,
+      "effective_payload_fields_and_requiredness_preserved": true,
+      "public_python_context_message_and_tool_types_unchanged": true,
+      "service_response_and_sdk_validation_unchanged": true,
+      "experimental_feature_flags_added": false,
+      "independent_emissions": 2,
+      "generated_entries": 21,
+      "generated_delta": "Only apiview-properties.json CrossLanguageVersion changed.",
+      "api_view_cross_language_version": "eeb88d776c55",
+      "runtime_files_unchanged": 32,
+      "public_python_api_unchanged": true,
+      "python_310_text_only_tests_passed": 296,
+      "python_310_text_only_tests_skipped": 68,
+      "python_313_text_only_tests_passed": 296,
+      "python_313_text_only_tests_skipped": 68,
+      "new_non_function_tool_definition_rejection_cases": 2,
+      "mirror_workflow_tests_passed": 39,
+      "other_language_hierarchy_validation": "Java, JavaScript and C# shared SDK graphs have both native discriminator hierarchies, correct subtype mappings and function-only tool arrays, with zero diagnostics; final language package builds remain CI-owned.",
+      "typespec_validation_mcp_passed": true,
+      "strict_compilation_passed": true,
+      "client_configuration_changed": false,
+      "live_service_tested": false,
+      "validation_scope": "Exact Python runtime equality, request-schema field/role/kind checks, shared cross-language SDK graphs and existing text-only regressions."
+    },
     "unused_sampling_output_review_20261110": {
       "review_comment_id": 4517651380,
       "spec_commit": "c10e31b9482fc087639bfd25321d8b56c7f7801c",
