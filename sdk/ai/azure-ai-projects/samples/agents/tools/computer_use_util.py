@@ -80,26 +80,20 @@ def load_screenshot_assets():
     return screenshots
 
 
-def handle_computer_action_and_take_screenshot(action_or_actions, current_state, screenshots):
-    """Process computer action(s) and simulate execution.
+def handle_computer_action_and_take_screenshot(actions, current_state, screenshots):
+    """Process computer actions and simulate execution.
 
     In a real implementation, you might want to execute real browser operations
     instead of just printing, take screenshots, and return actual screenshot data.
 
     Args:
-        action_or_actions: The computer action or list of actions to process (click, type, key press, etc.)
+        actions: List of computer actions to process (click, type, key press, etc.)
         current_state: Current SearchState of the simulation
         screenshots: Dictionary of screenshot data
 
     Returns:
         tuple: (screenshot_info, updated_current_state)
     """
-    actions = (
-        action_or_actions
-        if isinstance(action_or_actions, list)
-        else ([action_or_actions] if action_or_actions is not None else [])
-    )
-
     for action in actions:
         print(f"Executing computer action: {action.type}")
 

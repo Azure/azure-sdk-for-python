@@ -25,8 +25,8 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) (Optional) COMPUTER_USE_MODEL_DEPLOYMENT_NAME - The deployment name of the computer-use model, as found under the "Name" column in
-       the "Models + endpoints" tab in your Microsoft Foundry project. If not set, defaults to "gpt-5.4".
+    2) FOUNDRY_MODEL_NAME - The deployment name of a computer-use supported AI model (such as "gpt-5.4"), as found under
+       the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
     3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
@@ -70,7 +70,7 @@ with (
         project_client=project_client,
         agent_name=agent_name,
         definition=PromptAgentDefinition(
-            model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "gpt-5.4"),
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="""
         You are a computer automation assistant.
 
@@ -127,9 +127,7 @@ with (
 
         # Process the first computer call
         computer_call = computer_calls[0]
-        actions = getattr(computer_call, "actions", None) or (
-            [computer_call.action] if getattr(computer_call, "action", None) else []
-        )
+        actions = computer_call.actions or ([computer_call.action] if getattr(computer_call, "action", None) else [])
         call_id = computer_call.call_id
 
         print(f"Processing computer call (ID: {call_id})")
