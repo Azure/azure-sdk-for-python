@@ -35,6 +35,12 @@ def main():
         resource_group_name="TestingMetricsScaleSet",
         autoscale_setting_name="MySetting",
         autoscale_setting_resource={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/b67f7fec-69fc-4974-9099-a26bd6ffeda3/resourceGroups/TestingMetricsScaleSet/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity": {}
+                },
+            },
             "properties": {
                 "enabled": True,
                 "notifications": [
@@ -156,6 +162,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2022-10-01/patchAutoscaleSetting.json
+# x-ms-original-file: 2025-09-01-preview/patchAutoscaleSetting.json
 if __name__ == "__main__":
     main()

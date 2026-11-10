@@ -1,6 +1,16 @@
 # Release History
 
-## 1.27.0 (Unreleased)
+## 1.27.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.27.0 (2026-10-26)
 
 ### Features Added
 

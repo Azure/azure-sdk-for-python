@@ -2,6 +2,34 @@
 
 The `azure-ai-agentserver-core` package provides the foundation host framework for building Azure AI Hosted Agent containers. It handles the protocol-agnostic infrastructure — health probes, graceful shutdown, OpenTelemetry tracing, and ASGI serving — so that protocol packages can focus on their endpoint logic.
 
+## Memory snapshot task initialization
+
+The draft integration separates task definitions from session-bound TaskManager
+initialization. Resilient tasks must still be explicitly enabled.
+
+`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers enabled tasks in the temporary
+capture sandbox until the platform after-restore hook. After session hydration,
+the manager is prepared before the application callback, and automatic recovery
+follows that callback. An absent value or `false` activates requested tasks during
+ordinary cold/local startup. For standalone Core and Invocations,
+`set_resilient_tasks_enabled(False)` keeps task execution disabled on both paths.
+Responses independently requests its runtime through `resilient_background` or
+`steerable_conversations`; the Invocations switch does not disable those options.
+Present values must be literal `true` or `false` (case-insensitive). The variable
+does not gate running tasks or lease renewal after activation.
+
+Task startup checkpoints completed phases by restore ID and owns the manager
+through shutdown, including managers created after lifespan startup. Existing
+best-effort recovery dispatches reclaimed work immediately during the hook.
+FHA admits new requests after successful restore.
+
+Submit startup tasks from the existing `after_restore_handler` after rebuilding
+dependencies. Capture-time submissions are not queued or replayed; no additional
+session-start callback or launch-intent registry is included. Local tests are
+not proof of hosted golden restoration. See the [design specification](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/memory-snapshot-task-integration.md)
+for lifecycle ordering, launcher compatibility requirements, validation, and
+the selected startup-submission flow.
+
 ## Getting started
 
 ### Install the package
@@ -100,7 +128,7 @@ same metadata. The existing user-state identifier and `platform_headers()`
 behavior are unchanged.
 
 This is a draft contract for owner review, not an enabled budget feature.
-The proposed single header is an RFC 9651 Structured Fields dictionary:
+The inbound original-subject header is an RFC 9651 Structured Fields dictionary:
 
 ```text
 x-ms-original-subject: oid="<object-id>", tid="<tenant-id>", idtype="user"
@@ -130,19 +158,52 @@ response = await model_client.responses.create(
 )
 ```
 
-The helper supplies the correctly quoted dictionary value and the current call
-ID when available. Do not `json.dumps` the original-subject value: that is a
-different wire format. Other independently supported per-call headers can be
-merged into this mapping without changing their own encoding.
+The helper supplies the current call ID when available and one custom
+`x-ms-foundry-baggage` member, `foundry.original_subject`. That member contains
+the **entire quoted dictionary**, percent-encoded once, not three scalar
+dimensions. Outbound model attribution is baggage-only: the helper does not
+emit `x-ms-original-subject` or its retired aliases. The standalone header is
+still accepted on platform-to-container ingress. Do not `json.dumps` the
+original-subject value or pre-encode it.
 
-No model client is patched automatically. Absent metadata returns an empty
-mapping; partial, empty, or HTTP-unsafe metadata raises `ValueError` rather
-than silently forwarding an incomplete tuple. Non-user and unknown
-classifications are preserved for receiver-side policy, not treated as users.
+Pass any existing per-call header dictionary into the helper to merge safely:
+
+```python
+extra_headers = get_request_context().model_attribution_headers(
+    {"x-ms-foundry-baggage": "foundry.agent.name=example", "x-example-context": "value"}
+)
+```
+
+Each call returns a fresh mapping. Unrelated headers and baggage values keep
+their encoding. Case-insensitive competing subject headers, reserved subject
+baggage members (including retired scalar dimensions), and stale call IDs are
+removed before the current invocation assertions are added. Unrelated baggage
+members keep their relative order and duplicates. The subject member comes first
+so bounded transport normalization cannot displace it. The helper does not choose
+between competing caller or project assertions. Neither the
+input dictionary, shared client defaults, nor the context is mutated. Always
+merge before sending, not by overlaying the result onto stale headers.
+
+No model client is patched automatically. There is no Microsoft Agent Framework
+(MAF) adapter in this package tree. An integration must forward the helper's
+result at its supported per-call model boundary, including streaming calls;
+calling the helper alone does not integrate an external framework.
+Absent metadata returns only unrelated supplied headers, or an empty mapping
+when none remain; partial, empty, or HTTP-unsafe metadata raises `ValueError` rather
+than silently forwarding an incomplete tuple. A supplied subject also requires
+the serialized, quoted dictionary to fit 256 characters and the final merged
+baggage header to fit 1024 characters. Oversized output raises `ValueError`
+instead of forwarding attribution that exceeds the transport bounds.
+These limits do not truncate unrelated baggage or apply to subject-free calls.
+Non-user and unknown classifications are preserved for receiver-side policy,
+not treated as users.
 Header assertions are not identity proof: receiver provenance validation,
 invocation binding, wire names, and missing-metadata policy still require
 owner agreement. Durable restore and detached execution are not supported by
 this draft. It does not change authentication, billing, or enforcement.
+Supported model transport and billing adapters must accept baggage-only
+attribution before release or adoption. Keep receiver-side original-user
+selection disabled during rollout.
 
 ### Subclassing AgentServerHost
 
@@ -234,6 +295,30 @@ Lifecycle calls are serialized and idempotent. A repeated `after-restore`
 request with the same `restore_id` does not invoke the handler again, while a
 new `restore_id` for the same session starts a new restore cycle. The server
 rejects attempts to reuse a restored process for a different session.
+
+When the host's protocols request task execution, the SDK prepares a session-bound
+TaskManager before the application `after_restore_handler`. Invocations uses
+`set_resilient_tasks_enabled(True)`; Responses independently uses
+`resilient_background=True` or `steerable_conversations=True`. Rebuild dependencies first,
+then submit `@task`/`@multi_turn_task` work using the normal task APIs:
+
+```python
+@app.after_restore_handler
+async def after_restore(context: AgentSessionContext):
+    await database.connect()
+    await startup_work.start(input={"session_id": context.session_id})
+```
+
+Here `startup_work` is an application's decorated task method. Automatic initial
+recovery and the periodic scanner start after the handler returns; HTTP 200 waits
+for that initialization, not for background work to finish. `.run()` is also
+available for bounded work, but awaiting long-running completion can exceed the
+restore timeout. A failed hook can be retried: reconcile unfinished task IDs and
+persist completion state if startup must run only once per logical session.
+Request routes retain their own protocol's opt-out even on a mixed host. The
+restore handler uses the owning host's runtime if any protocol requests one.
+The Invocations switch does not disable an enabled Responses option, and
+ordinary cold startup does not invoke the restore handler.
 
 Protocol-specific hosts can override the protected `_before_snapshot` and
 `_after_restore` methods to extend the lifecycle before application callbacks

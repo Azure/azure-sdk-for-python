@@ -19,6 +19,32 @@ if TYPE_CHECKING:
     )
 
 
+class ComputePlacementScoresInput(TypedDict, total=False):
+    """ComputePlacementScores API Input.
+
+    :ivar desiredLocations: The desired regions. If not set, the location from the request URI is
+     used as the desired location. Each location in this list must be a valid Azure region.
+    :vartype desiredLocations: list[str]
+    :ivar desiredSizes: The desired virtual machine SKU sizes. Required.
+    :vartype desiredSizes: list["ResourceSize"]
+    :ivar desiredCount: Desired instance count per region/zone based on the scope. If not set,
+     defaults to 1.
+    :vartype desiredCount: int
+    :ivar availabilityZones: Defines if the scope is zonal or regional.
+    :vartype availabilityZones: bool
+    """
+
+    desiredLocations: list[str]
+    """The desired regions. If not set, the location from the request URI is used as the desired
+     location. Each location in this list must be a valid Azure region."""
+    desiredSizes: Required[list["ResourceSize"]]
+    """The desired virtual machine SKU sizes. Required."""
+    desiredCount: int
+    """Desired instance count per region/zone based on the scope. If not set, defaults to 1."""
+    availabilityZones: bool
+    """Defines if the scope is zonal or regional."""
+
+
 class ResourceSize(TypedDict, total=False):
     """SpotPlacementRecommender API response.
 
@@ -175,21 +201,24 @@ class SkuMixPlacementZonePreference(TypedDict, total=False):
 class SpotPlacementScoresInput(TypedDict, total=False):
     """SpotPlacementScores API Input.
 
-    :ivar desiredLocations: The desired regions.
+    :ivar desiredLocations: The desired regions. If not set, the location from the request URI is
+     used as the desired location. Each location in this list must be a valid Azure region.
     :vartype desiredLocations: list[str]
-    :ivar desiredSizes: The desired virtual machine SKU sizes.
+    :ivar desiredSizes: The desired virtual machine SKU sizes. Required.
     :vartype desiredSizes: list["ResourceSize"]
-    :ivar desiredCount: Desired instance count per region/zone based on the scope.
+    :ivar desiredCount: Desired instance count per region/zone based on the scope. If not set,
+     defaults to 1.
     :vartype desiredCount: int
     :ivar availabilityZones: Defines if the scope is zonal or regional.
     :vartype availabilityZones: bool
     """
 
     desiredLocations: list[str]
-    """The desired regions."""
-    desiredSizes: list["ResourceSize"]
-    """The desired virtual machine SKU sizes."""
+    """The desired regions. If not set, the location from the request URI is used as the desired
+     location. Each location in this list must be a valid Azure region."""
+    desiredSizes: Required[list["ResourceSize"]]
+    """The desired virtual machine SKU sizes. Required."""
     desiredCount: int
-    """Desired instance count per region/zone based on the scope."""
+    """Desired instance count per region/zone based on the scope. If not set, defaults to 1."""
     availabilityZones: bool
     """Defines if the scope is zonal or regional."""

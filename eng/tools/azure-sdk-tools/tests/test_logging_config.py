@@ -44,6 +44,32 @@ def test_run_logged_inherits_environment(stream, tmp_path, monkeypatch, capfd):
 
 
 @pytest.mark.parametrize("stream", [False, True])
+def test_run_logged_uses_explicit_environment(stream, tmp_path, monkeypatch, capfd):
+    monkeypatch.setenv("CI_TOOLS_LOGGED_ENV_TEST", "parent")
+    monkeypatch.setenv("CI_TOOLS_LOGGED_REMOVED_TEST", "parent-only")
+    before = os.environ.copy()
+    environment = {**before, "CI_TOOLS_LOGGED_ENV_TEST": "child"}
+    environment.pop("CI_TOOLS_LOGGED_REMOVED_TEST")
+    result = run_logged(
+        [
+            sys.executable,
+            "-c",
+            "import os; print(os.environ['CI_TOOLS_LOGGED_ENV_TEST']); "
+            "assert 'CI_TOOLS_LOGGED_REMOVED_TEST' not in os.environ",
+        ],
+        cwd=str(tmp_path),
+        check=True,
+        should_stream_to_console=stream,
+        env=environment,
+    )
+    output = capfd.readouterr().out if stream else result.stdout
+    assert output.strip() == "child"
+    assert os.environ == before
+    assert environment["CI_TOOLS_LOGGED_ENV_TEST"] == "child"
+    assert "CI_TOOLS_LOGGED_REMOVED_TEST" not in environment
+
+
+@pytest.mark.parametrize("stream", [False, True])
 def test_run_logged_failure_preserved(stream, tmp_path, caplog):
     with pytest.raises(subprocess.CalledProcessError) as error:
         run_logged(

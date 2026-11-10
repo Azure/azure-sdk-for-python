@@ -30,7 +30,8 @@ class TestHealthDeidentificationCreateCancelDelete(DeidBaseTestCase):
             operation_type=DeidentificationOperationType.SURROGATE,
         )
 
-        client.begin_deidentify_documents(jobname, job)
+        # The test polls the job itself; a background LRO poller would race it for recorded GET responses.
+        client.begin_deidentify_documents(jobname, job, polling=False)
 
         job = client.get_job(jobname)
         while job.status == OperationStatus.NOT_STARTED:

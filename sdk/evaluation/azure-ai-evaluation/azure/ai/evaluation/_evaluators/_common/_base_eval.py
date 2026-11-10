@@ -249,13 +249,14 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     def _get_all_singleton_inputs(self) -> List[str]:
         """Get a flattened list of all possible singleton inputs across all overloads.
 
+        Names keep the order in which the overloads declare them, so an evaluator's inputs, and the state of a decision
+        request that sends them unchanged, have the same order in every process. A set's order would vary with the
+        process's hash seed.
+
         :return: Flattened list of all singleton input names.
         :rtype: List[str]
         """
-        all_inputs = set()
-        for inputs in self._singleton_inputs:
-            all_inputs.update(inputs)
-        return list(all_inputs)
+        return list(dict.fromkeys(name for inputs in self._singleton_inputs for name in inputs))
 
     def _derive_conversation_converter(
         self,

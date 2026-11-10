@@ -598,9 +598,12 @@ class ClustersOperations:  # pylint: disable=docstring-missing-param
         backup. It does not clone source pools, Pool-scoped endpoints, firewall rules, parameter-group
         associations, or other child resources. The new Cluster receives its service-generated
         Cluster-scoped Endpoint named cluster. For restore, postgreSqlVersion must be omitted because
-        the service obtains it from backup metadata; all other new-cluster configuration comes from the
-        request or service defaults. Same-location restore requires and honors pointInTimeUtc and
-        allows creationSourceClusterLocation to be omitted. Cross-location restore requires
+        the service obtains it from backup metadata. During restore creation, the service ignores the
+        requested backup.geoRedundancy value and configures the new cluster with the same
+        geo-redundancy setting as the source cluster; this applies to both same-location and
+        cross-location restores. All remaining new-cluster configuration comes from the request or
+        service defaults. Same-location restore requires and honors pointInTimeUtc and allows
+        creationSourceClusterLocation to be omitted. Cross-location restore requires
         creationSourceClusterLocation to identify the source cluster's Azure location and requires
         pointInTimeUtc, but ignores the supplied timestamp and restores the latest available backup.
         Cross-location responses omit pointInTimeUtc.
@@ -636,9 +639,12 @@ class ClustersOperations:  # pylint: disable=docstring-missing-param
         backup. It does not clone source pools, Pool-scoped endpoints, firewall rules, parameter-group
         associations, or other child resources. The new Cluster receives its service-generated
         Cluster-scoped Endpoint named cluster. For restore, postgreSqlVersion must be omitted because
-        the service obtains it from backup metadata; all other new-cluster configuration comes from the
-        request or service defaults. Same-location restore requires and honors pointInTimeUtc and
-        allows creationSourceClusterLocation to be omitted. Cross-location restore requires
+        the service obtains it from backup metadata. During restore creation, the service ignores the
+        requested backup.geoRedundancy value and configures the new cluster with the same
+        geo-redundancy setting as the source cluster; this applies to both same-location and
+        cross-location restores. All remaining new-cluster configuration comes from the request or
+        service defaults. Same-location restore requires and honors pointInTimeUtc and allows
+        creationSourceClusterLocation to be omitted. Cross-location restore requires
         creationSourceClusterLocation to identify the source cluster's Azure location and requires
         pointInTimeUtc, but ignores the supplied timestamp and restores the latest available backup.
         Cross-location responses omit pointInTimeUtc.
@@ -674,9 +680,12 @@ class ClustersOperations:  # pylint: disable=docstring-missing-param
         backup. It does not clone source pools, Pool-scoped endpoints, firewall rules, parameter-group
         associations, or other child resources. The new Cluster receives its service-generated
         Cluster-scoped Endpoint named cluster. For restore, postgreSqlVersion must be omitted because
-        the service obtains it from backup metadata; all other new-cluster configuration comes from the
-        request or service defaults. Same-location restore requires and honors pointInTimeUtc and
-        allows creationSourceClusterLocation to be omitted. Cross-location restore requires
+        the service obtains it from backup metadata. During restore creation, the service ignores the
+        requested backup.geoRedundancy value and configures the new cluster with the same
+        geo-redundancy setting as the source cluster; this applies to both same-location and
+        cross-location restores. All remaining new-cluster configuration comes from the request or
+        service defaults. Same-location restore requires and honors pointInTimeUtc and allows
+        creationSourceClusterLocation to be omitted. Cross-location restore requires
         creationSourceClusterLocation to identify the source cluster's Azure location and requires
         pointInTimeUtc, but ignores the supplied timestamp and restores the latest available backup.
         Cross-location responses omit pointInTimeUtc.
@@ -710,9 +719,12 @@ class ClustersOperations:  # pylint: disable=docstring-missing-param
         backup. It does not clone source pools, Pool-scoped endpoints, firewall rules, parameter-group
         associations, or other child resources. The new Cluster receives its service-generated
         Cluster-scoped Endpoint named cluster. For restore, postgreSqlVersion must be omitted because
-        the service obtains it from backup metadata; all other new-cluster configuration comes from the
-        request or service defaults. Same-location restore requires and honors pointInTimeUtc and
-        allows creationSourceClusterLocation to be omitted. Cross-location restore requires
+        the service obtains it from backup metadata. During restore creation, the service ignores the
+        requested backup.geoRedundancy value and configures the new cluster with the same
+        geo-redundancy setting as the source cluster; this applies to both same-location and
+        cross-location restores. All remaining new-cluster configuration comes from the request or
+        service defaults. Same-location restore requires and honors pointInTimeUtc and allows
+        creationSourceClusterLocation to be omitted. Cross-location restore requires
         creationSourceClusterLocation to identify the source cluster's Azure location and requires
         pointInTimeUtc, but ignores the supplied timestamp and restores the latest available backup.
         Cross-location responses omit pointInTimeUtc.
@@ -1674,15 +1686,18 @@ class PoolsOperations:  # pylint: disable=docstring-missing-param
         pool is created, the service automatically designates it to host the cluster's read-write node
         when an eligible node is available. A Cluster must contain at least one Pool before a private
         endpoint connection can be created or approved. This API version supports at most one pool per
-        cluster; an attempt to create another pool is rejected with 409 Conflict. parameterGroup,
-        parameterGroupResourceId, and applyMethod are required. When creating a new pool in this API
-        version, parameterGroupResourceId must identify the corresponding default parameter group; a
-        customer-created parameter group is rejected. When replacing an existing pool, the request can
-        switch its association in either direction between the corresponding default parameter group
-        and a customer-created parameter group. applyMethod controls when dynamic parameter changes
-        become effective. Static parameter changes always require a customer-initiated Restart; Stop
-        followed by Start and scheduled maintenance do not apply pending changes. Subtype-specific
-        compute constraints are validated before the resource is changed.
+        cluster; an attempt to create another pool is rejected with 409 Conflict. parameterGroup is
+        optional during creation. When omitted during creation, the service applies the default
+        parameter group compatible with the parent cluster's PostgreSQL version. When parameterGroup is
+        supplied, parameterGroupResourceId and applyMethod are required. When creating a new pool in
+        this API version, a supplied parameterGroupResourceId must identify the corresponding default
+        parameter group; a customer-created parameter group is rejected. When replacing an existing
+        pool, the request can switch its association in either direction between the corresponding
+        default parameter group and a customer-created parameter group. applyMethod controls when
+        dynamic parameter changes become effective. Static parameter changes always require a
+        customer-initiated Restart; Stop followed by Start and scheduled maintenance do not apply
+        pending changes. Subtype-specific compute constraints are validated before the resource is
+        changed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1730,15 +1745,18 @@ class PoolsOperations:  # pylint: disable=docstring-missing-param
         pool is created, the service automatically designates it to host the cluster's read-write node
         when an eligible node is available. A Cluster must contain at least one Pool before a private
         endpoint connection can be created or approved. This API version supports at most one pool per
-        cluster; an attempt to create another pool is rejected with 409 Conflict. parameterGroup,
-        parameterGroupResourceId, and applyMethod are required. When creating a new pool in this API
-        version, parameterGroupResourceId must identify the corresponding default parameter group; a
-        customer-created parameter group is rejected. When replacing an existing pool, the request can
-        switch its association in either direction between the corresponding default parameter group
-        and a customer-created parameter group. applyMethod controls when dynamic parameter changes
-        become effective. Static parameter changes always require a customer-initiated Restart; Stop
-        followed by Start and scheduled maintenance do not apply pending changes. Subtype-specific
-        compute constraints are validated before the resource is changed.
+        cluster; an attempt to create another pool is rejected with 409 Conflict. parameterGroup is
+        optional during creation. When omitted during creation, the service applies the default
+        parameter group compatible with the parent cluster's PostgreSQL version. When parameterGroup is
+        supplied, parameterGroupResourceId and applyMethod are required. When creating a new pool in
+        this API version, a supplied parameterGroupResourceId must identify the corresponding default
+        parameter group; a customer-created parameter group is rejected. When replacing an existing
+        pool, the request can switch its association in either direction between the corresponding
+        default parameter group and a customer-created parameter group. applyMethod controls when
+        dynamic parameter changes become effective. Static parameter changes always require a
+        customer-initiated Restart; Stop followed by Start and scheduled maintenance do not apply
+        pending changes. Subtype-specific compute constraints are validated before the resource is
+        changed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1786,15 +1804,18 @@ class PoolsOperations:  # pylint: disable=docstring-missing-param
         pool is created, the service automatically designates it to host the cluster's read-write node
         when an eligible node is available. A Cluster must contain at least one Pool before a private
         endpoint connection can be created or approved. This API version supports at most one pool per
-        cluster; an attempt to create another pool is rejected with 409 Conflict. parameterGroup,
-        parameterGroupResourceId, and applyMethod are required. When creating a new pool in this API
-        version, parameterGroupResourceId must identify the corresponding default parameter group; a
-        customer-created parameter group is rejected. When replacing an existing pool, the request can
-        switch its association in either direction between the corresponding default parameter group
-        and a customer-created parameter group. applyMethod controls when dynamic parameter changes
-        become effective. Static parameter changes always require a customer-initiated Restart; Stop
-        followed by Start and scheduled maintenance do not apply pending changes. Subtype-specific
-        compute constraints are validated before the resource is changed.
+        cluster; an attempt to create another pool is rejected with 409 Conflict. parameterGroup is
+        optional during creation. When omitted during creation, the service applies the default
+        parameter group compatible with the parent cluster's PostgreSQL version. When parameterGroup is
+        supplied, parameterGroupResourceId and applyMethod are required. When creating a new pool in
+        this API version, a supplied parameterGroupResourceId must identify the corresponding default
+        parameter group; a customer-created parameter group is rejected. When replacing an existing
+        pool, the request can switch its association in either direction between the corresponding
+        default parameter group and a customer-created parameter group. applyMethod controls when
+        dynamic parameter changes become effective. Static parameter changes always require a
+        customer-initiated Restart; Stop followed by Start and scheduled maintenance do not apply
+        pending changes. Subtype-specific compute constraints are validated before the resource is
+        changed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1840,15 +1861,18 @@ class PoolsOperations:  # pylint: disable=docstring-missing-param
         pool is created, the service automatically designates it to host the cluster's read-write node
         when an eligible node is available. A Cluster must contain at least one Pool before a private
         endpoint connection can be created or approved. This API version supports at most one pool per
-        cluster; an attempt to create another pool is rejected with 409 Conflict. parameterGroup,
-        parameterGroupResourceId, and applyMethod are required. When creating a new pool in this API
-        version, parameterGroupResourceId must identify the corresponding default parameter group; a
-        customer-created parameter group is rejected. When replacing an existing pool, the request can
-        switch its association in either direction between the corresponding default parameter group
-        and a customer-created parameter group. applyMethod controls when dynamic parameter changes
-        become effective. Static parameter changes always require a customer-initiated Restart; Stop
-        followed by Start and scheduled maintenance do not apply pending changes. Subtype-specific
-        compute constraints are validated before the resource is changed.
+        cluster; an attempt to create another pool is rejected with 409 Conflict. parameterGroup is
+        optional during creation. When omitted during creation, the service applies the default
+        parameter group compatible with the parent cluster's PostgreSQL version. When parameterGroup is
+        supplied, parameterGroupResourceId and applyMethod are required. When creating a new pool in
+        this API version, a supplied parameterGroupResourceId must identify the corresponding default
+        parameter group; a customer-created parameter group is rejected. When replacing an existing
+        pool, the request can switch its association in either direction between the corresponding
+        default parameter group and a customer-created parameter group. applyMethod controls when
+        dynamic parameter changes become effective. Static parameter changes always require a
+        customer-initiated Restart; Stop followed by Start and scheduled maintenance do not apply
+        pending changes. Subtype-specific compute constraints are validated before the resource is
+        changed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2938,7 +2962,9 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         :type cluster_name: str
         :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. The name must be 1
+         through 80 characters, contain only ASCII letters, digits, underscores, periods, and hyphens,
+         start with a letter or digit, and end with a letter, digit, or underscore. Required.
         :type firewall_rule_name: str
         :return: FirewallRule. The FirewallRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.horizondb.models.FirewallRule
@@ -3209,7 +3235,9 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         :type cluster_name: str
         :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. The name must be 1
+         through 80 characters, contain only ASCII letters, digits, underscores, periods, and hyphens,
+         start with a letter or digit, and end with a letter, digit, or underscore. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.horizondb.models.FirewallRule
@@ -3243,7 +3271,9 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         :type cluster_name: str
         :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. The name must be 1
+         through 80 characters, contain only ASCII letters, digits, underscores, periods, and hyphens,
+         start with a letter or digit, and end with a letter, digit, or underscore. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.horizondb.types.FirewallRule
@@ -3277,7 +3307,9 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         :type cluster_name: str
         :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. The name must be 1
+         through 80 characters, contain only ASCII letters, digits, underscores, periods, and hyphens,
+         start with a letter or digit, and end with a letter, digit, or underscore. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -3309,7 +3341,9 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         :type cluster_name: str
         :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. The name must be 1
+         through 80 characters, contain only ASCII letters, digits, underscores, periods, and hyphens,
+         start with a letter or digit, and end with a letter, digit, or underscore. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Is either a FirewallRule type or a IO[bytes] type.
          Required.
@@ -3459,7 +3493,9 @@ class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
         :type cluster_name: str
         :param pool_name: The name of the HorizonDB pool. Required.
         :type pool_name: str
-        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. Required.
+        :param firewall_rule_name: The name of the HorizonDB pool firewall rule. The name must be 1
+         through 80 characters, contain only ASCII letters, digits, underscores, periods, and hyphens,
+         start with a letter or digit, and end with a letter, digit, or underscore. Required.
         :type firewall_rule_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]

@@ -22,15 +22,14 @@ DESCRIPTION:
 
     `SimulationSeedDataGenerationJobConfiguration` can be used with prompt, file, or
     agent sources. The service requires `max_samples` (1-1000) for this generation
-    type; because the options class does not expose it as a keyword argument, the
-    sample sets it through the model's mapping interface.
+    type, which is passed as a constructor argument.
 
 USAGE:
     python sample_dataset_generation_job_simulation_seed_for_evaluation.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.10.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -133,12 +132,9 @@ def main() -> None:
             # 1. Submit a simulation seed data generation job.
             # ------------------------------------------------------------------
             generation_configuration = SimulationSeedDataGenerationJobConfiguration(
+                max_samples=15,
                 model_options=DataGenerationModelOptions(model=model_name),
             )
-            # The service currently requires `max_samples` (1-1000) for `simulation_seed`
-            # jobs, but `SimulationSeedDataGenerationJobConfiguration` does not expose it as a
-            # keyword argument, so set it through the model's mapping interface.
-            generation_configuration["max_samples"] = 15
 
             job = EvaluationDataGenerationJobInputs(
                 name=f"simulation-seed-{run_id}",
