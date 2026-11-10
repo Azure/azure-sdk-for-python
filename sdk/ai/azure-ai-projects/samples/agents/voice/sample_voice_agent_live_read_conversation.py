@@ -5,7 +5,7 @@
 
 """
 DESCRIPTION:
-    Read a GPT Live conversation, list its items, and download its audio using
+    Read a GPT-Live conversation (preview), list its items, and download its audio using
     project_client.beta.voice_agents.live_conversations.
 
     With no conversation ID, the sample creates a short greeting session and
@@ -21,12 +21,12 @@ DESCRIPTION:
 USAGE:
     python sample_voice_agent_live_read_conversation.py
 
-    pip install "azure-ai-projects[voice]" azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
     2) FOUNDRY_VOICE_AGENT_MODEL (required when creating a conversation) -
-       Your GPT Live deployment name.
+       Your GPT-Live deployment name.
     3) FOUNDRY_VOICE_CONVERSATION_ID (optional) - An existing conversation ID.
        Unset or blank means create a conversation for this run.
     4) FOUNDRY_VOICE_AGENT_NAME - Required with an existing ID; otherwise an

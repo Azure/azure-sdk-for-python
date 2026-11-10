@@ -25,8 +25,9 @@ import pytest
 from azure.core.credentials import AccessToken
 
 from azure.ai.projects import models
-from azure.ai.projects.aio._realtime import AsyncBetaRealtime, AsyncBetaRealtimeConnectionManager, _USER_AGENT
-from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection, ServerEvent
+from azure.ai.projects.aio import AIProjectClient, operations
+from azure.ai.projects.aio._realtime import AsyncRealtime, AsyncRealtimeConnectionManager, _USER_AGENT
+from azure.ai.projects.aio.operations import AsyncRealtimeConnection, ServerEvent
 from azure.ai.projects._version import VERSION
 from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
@@ -52,13 +53,13 @@ async def test_async_realtime_constructor_hides_config_in_kwargs():
     config = MagicMock()
     client = MagicMock(_config=config)
 
-    realtime = AsyncBetaRealtime(client)
+    realtime = AsyncRealtime(client)
 
     assert realtime._config is config
-    assert tuple(inspect.signature(AsyncBetaRealtime.__init__).parameters) == ("self", "args", "kwargs")
+    assert tuple(inspect.signature(AsyncRealtime.__init__).parameters) == ("self", "args", "kwargs")
 
 
-def _make_manager(**overrides) -> AsyncBetaRealtimeConnectionManager:
+def _make_manager(**overrides) -> AsyncRealtimeConnectionManager:
     kwargs = {
         "endpoint": _ENDPOINT,
         "credential": _AsyncFakeCredential(),
@@ -67,7 +68,7 @@ def _make_manager(**overrides) -> AsyncBetaRealtimeConnectionManager:
         "agent_name": "my-agent",
     }
     kwargs.update(overrides)
-    return AsyncBetaRealtimeConnectionManager(**kwargs)
+    return AsyncRealtimeConnectionManager(**kwargs)
 
 
 def _make_fake_msg(msg_type, data=None):
@@ -107,12 +108,28 @@ async def test_public_server_event_union_covers_generated_events_and_shared_erro
     expected_models = set(models.RealtimeServerEvent.__mapping__.values()) | {models.RealtimeServerEventError}
 
     assert set(get_args(ServerEvent)) == expected_models | {Mapping[str, Any]}
-    assert get_type_hints(AsyncBetaRealtimeConnection.recv)["return"] == ServerEvent
-    assert get_args(get_type_hints(AsyncBetaRealtimeConnection.__aiter__)["return"]) == (ServerEvent,)
+    assert get_type_hints(AsyncRealtimeConnection.recv)["return"] == ServerEvent
+    assert get_args(get_type_hints(AsyncRealtimeConnection.__aiter__)["return"]) == (ServerEvent,)
+
+
+async def test_ga_realtime_public_types_are_used_by_the_client():
+    patcher, _ = _patch_client_session(_make_fake_ws())
+    with patcher:
+        async with AIProjectClient(_ENDPOINT, _AsyncFakeCredential()) as client:
+            assert type(client.voice_agents.realtime) is operations.AsyncRealtime
+            assert type(client.voice_agents.realtime).__name__ == "AsyncRealtime"
+            manager = client.voice_agents.realtime.connect(agent_name="my-agent")
+            assert type(manager) is operations.AsyncRealtimeConnectionManager
+            assert type(manager).__name__ == "AsyncRealtimeConnectionManager"
+            async with manager as connection:
+                assert type(connection) is operations.AsyncRealtimeConnection
+                assert type(connection).__name__ == "AsyncRealtimeConnection"
+
+    assert not any(name.startswith("AsyncBetaRealtime") for name in dir(operations))
 
 
 class TestAsyncRealtimeConnectionManagerEnter:
-    """Unit tests for ``AsyncBetaRealtimeConnectionManager.enter()``: URL/header construction and errors."""
+    """Unit tests for ``AsyncRealtimeConnectionManager.enter()``: URL/header construction and errors."""
 
     async def test_enter_builds_bearer_auth_and_query(self):
         fake_ws = _make_fake_ws()
@@ -127,9 +144,21 @@ class TestAsyncRealtimeConnectionManagerEnter:
         assert _args[0].startswith("wss://my-account.services.ai.azure.com")
         assert kwargs["params"]["api-version"] == "v1"
         assert kwargs["headers"]["Authorization"] == "Bearer fake-token"
-        assert kwargs["headers"]["Foundry-Features"] == "VoiceAgents=V1Preview"
+        assert "Foundry-Features" not in kwargs["headers"]
+        assert "foundry_features" not in kwargs["params"]
         assert "Sec-WebSocket-Protocol" not in kwargs["headers"]
         assert kwargs["protocols"] == ("realtime",)
+
+    @pytest.mark.parametrize("extra_headers", [{}, {"foundry-features": "Custom=V1Preview"}])
+    async def test_enter_preserves_preview_opt_in(self, extra_headers):
+        patcher, fake_session = _patch_client_session(_make_fake_ws())
+        with patcher:
+            async with _make_manager(allow_preview=True, extra_headers=extra_headers):
+                pass
+
+        headers = fake_session.ws_connect.call_args.kwargs["headers"]
+        feature_headers = {key.lower(): value for key, value in headers.items() if key.lower() == "foundry-features"}
+        assert feature_headers == {"foundry-features": extra_headers.get("foundry-features", "VoiceAgents=V1Preview")}
 
     async def test_enter_identifies_sdk_via_user_agent_and_query(self):
         # The generated HTTP surface gets SDK identification for free from the core pipeline's
@@ -198,7 +227,7 @@ class TestAsyncRealtimeConnectionManagerEnter:
         # SDK identification belongs to the authenticated transport shared by Live and Realtime.
         source = "\n".join(
             inspect.getsource(cls.__dict__[method])
-            for cls in AsyncBetaRealtimeConnectionManager.__mro__
+            for cls in AsyncRealtimeConnectionManager.__mro__
             for method in ("enter", "_get_query")
             if method in cls.__dict__
         )
@@ -258,7 +287,7 @@ class TestAsyncRealtimeConnectionManagerEnter:
 
 
 class TestAsyncRealtimeConnectionRecv:
-    """Unit tests for ``AsyncBetaRealtimeConnection.recv()``: event dispatch and non-text frames."""
+    """Unit tests for ``AsyncRealtimeConnection.recv()``: event dispatch and non-text frames."""
 
     @pytest.mark.parametrize(
         "event_type,event_model",
@@ -523,7 +552,7 @@ class TestAsyncRealtimeConnectionRecv:
 
 
 class TestAsyncRealtimeConnectionSend:
-    """Unit tests for ``AsyncBetaRealtimeConnection.send()``: model/str/mapping serialization."""
+    """Unit tests for ``AsyncRealtimeConnection.send()``: model/str/mapping serialization."""
 
     async def test_send_serializes_typed_model(self):
         fake_ws = _make_fake_ws()

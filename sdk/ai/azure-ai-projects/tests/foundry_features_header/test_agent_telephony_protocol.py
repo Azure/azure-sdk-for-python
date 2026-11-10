@@ -23,9 +23,11 @@ from azure.core.pipeline.transport import HttpTransport
 from azure.ai.projects import AIProjectClient
 
 from foundry_features_header_test_base import (
+    CONDITIONAL_VOICE_TELEPHONY_METHODS,
     FAKE_ENDPOINT,
     FakeCredential,
     FoundryFeaturesHeaderTestBase,
+    GA_VOICE_OPERATION_PATHS,
     _RequestCaptured,
 )
 
@@ -54,7 +56,6 @@ def client() -> Iterator[AIProjectClient]:
     with AIProjectClient(
         endpoint=FAKE_ENDPOINT,
         credential=FakeCredential(),  # type: ignore[arg-type]
-        allow_preview=True,
         transport=CapturingTransport(),
     ) as c:
         yield c
@@ -97,9 +98,56 @@ class TestAgentTelephonyProtocol(FoundryFeaturesHeaderTestBase):
         expected_http_method: str,
         expected_path: str,
     ) -> None:
-        method = getattr(client.beta.voice_agents.telephony, method_name)
+        method = getattr(client.voice_agents.telephony, method_name)
         request = self._capture(self._make_fake_call(method))
         assert (
             request.method == expected_http_method
         ), f"{method_name}: expected HTTP method {expected_http_method!r}, got {request.method!r}"
         assert expected_path in request.url, f"{method_name}: expected path {expected_path!r} in URL {request.url!r}"
+        assert "Foundry-Features" not in request.headers
+
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    @pytest.mark.parametrize("method_name", CONDITIONAL_VOICE_TELEPHONY_METHODS)
+    def test_preview_opt_in_on_conditional_writes(self, allow_preview: bool, method_name: str) -> None:
+        with AIProjectClient(
+            endpoint=FAKE_ENDPOINT,
+            credential=FakeCredential(),
+            allow_preview=allow_preview,
+            transport=CapturingTransport(),
+        ) as client:
+            method = getattr(client.voice_agents.telephony, method_name)
+            request = self._capture(self._make_fake_call(method))
+        assert request.headers.get("Foundry-Features") == ("VoiceAgents=V1Preview" if allow_preview else None)
+
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    @pytest.mark.parametrize("method_name", ["create_call_job", "list_call_jobs"])
+    @pytest.mark.parametrize("headers", [{}, {"foundry-features": "Custom=V1Preview", "x-test": "preserved"}])
+    def test_conditional_preview_headers(self, allow_preview: bool, method_name: str, headers: dict) -> None:
+        with AIProjectClient(
+            endpoint=FAKE_ENDPOINT,
+            credential=FakeCredential(),
+            allow_preview=allow_preview,
+            transport=CapturingTransport(),
+        ) as client:
+            method = getattr(client.voice_agents.telephony, method_name)
+            request = self._capture(self._make_fake_call(method, extra_kwargs={"headers": headers.copy()}))
+        automatic = "VoiceAgents=V1Preview" if allow_preview and method_name == "create_call_job" else None
+        expected = headers.get("foundry-features", automatic)
+        assert request.headers.get("Foundry-Features") == expected
+        if headers:
+            assert request.headers["x-test"] == "preserved"
+
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    @pytest.mark.parametrize("operation_path", GA_VOICE_OPERATION_PATHS)
+    def test_ga_voice_requests_without_preview(self, allow_preview: bool, operation_path: str) -> None:
+        with AIProjectClient(
+            endpoint=FAKE_ENDPOINT,
+            credential=FakeCredential(),
+            allow_preview=allow_preview,
+            transport=CapturingTransport(),
+        ) as client:
+            operation = client
+            for attribute in operation_path.split("."):
+                operation = getattr(operation, attribute)
+            request = self._capture(self._make_fake_call(operation))
+        assert "Foundry-Features" not in request.headers

@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 # cspell:ignore capsys
 
+from pathlib import Path
 import io
 import json
-from pathlib import Path
 import runpy
 from types import SimpleNamespace
 from unittest.mock import MagicMock, call
@@ -20,9 +20,8 @@ from agent_insights.sample_test_helpers import assert_agent_insights_output
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentInsight,
-    AgentInsightPrioritiesRead,
+    AgentInsightPriorities,
     AgentInsightRun,
-    AgentInsightRunInputs,
     AgentInsightRunResult,
     AgentInsightStatus,
 )
@@ -74,7 +73,7 @@ def test_longest_agent_prefix_fits_service_limit(on_demand_sample):
     assert creation["definition"].otel_agent_id == creation["agent_name"]
 
 
-def test_external_agent_preview_is_scoped_to_creation(on_demand_sample):
+def test_external_agent_and_monitor_use_ga_without_preview_headers(on_demand_sample):
     responses = []
     for status_code, payload in (
         (200, {"name": "test-agent", "version": "1"}),
@@ -104,7 +103,7 @@ def test_external_agent_preview_is_scoped_to_creation(on_demand_sample):
     agent_request, monitor_request = session.request.call_args_list
     agent_headers = {key.lower(): value for key, value in agent_request.kwargs["headers"].items()}
     monitor_headers = {key.lower(): value for key, value in monitor_request.kwargs["headers"].items()}
-    assert agent_headers["foundry-features"] == "ExternalAgents=V1Preview"
+    assert "foundry-features" not in agent_headers
     assert "foundry-features" not in monitor_headers
     monitor_url = monitor_request.args[1] if len(monitor_request.args) > 1 else monitor_request.kwargs["url"]
     assert "api-version=v1" in monitor_url
@@ -119,7 +118,7 @@ def test_cleanup_cancels_active_run(cleanup_sample):
 
     cleanup_sample["delete_monitor"](operations, "monitor-test")
 
-    assert operations.update.call_args.kwargs["enabled"] is False
+    operations.update.assert_called_once_with("monitor-test", enabled=False)
     operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
     operations.delete.assert_called_once_with("monitor-test")
     cleanup_sample["time"].sleep.assert_called_once_with(10)
@@ -236,69 +235,6 @@ def _on_demand_main(on_demand_sample, monkeypatch):
     return main, operations
 
 
-@pytest.mark.parametrize("has_inputs", [False, True])
-def test_on_demand_uses_ga_priorities_and_filters(on_demand_main, capsys, has_inputs):
-    main, operations = on_demand_main
-    operations.get_run.return_value = AgentInsightRun(
-        status="succeeded",
-        inputs=AgentInsightRunInputs(lookback_hours=3.0) if has_inputs else None,
-    )
-
-    main()
-
-    creation = operations.create.call_args.kwargs
-    assert creation["agent_name"] == "test-agent"
-    assert creation["model_deployment_name"] == "test-model"
-    assert creation["priorities"].as_dict() == {
-        "categories": [],
-        "instructions": "Focus on tool calls made without the user's approval.",
-    }
-    operations.list_insights.assert_called_once_with(
-        "new-monitor", statuses=[AgentInsightStatus.ACTIVE], include_details=True
-    )
-    output = capsys.readouterr().out
-    assert ("Lookback hours: 3.0" in output) is has_inputs
-
-
-@pytest.mark.parametrize("has_priorities", [False, True])
-def test_scheduled_sample_replaces_ga_priorities(scheduled_sample, on_demand_main, monkeypatch, capsys, has_priorities):
-    main = scheduled_sample["main"]
-    configured_main, operations = on_demand_main
-    for name in (
-        "AIProjectClient",
-        "DefaultAzureCredential",
-        "load_dotenv",
-        "LogsQueryClient",
-        "seed_traces",
-        "wait_for_ingestion",
-    ):
-        monkeypatch.setitem(main.__globals__, name, configured_main.__globals__[name])
-    instructions = "Focus on tool calls made without the user's approval."
-    operations.update.side_effect = [
-        SimpleNamespace(
-            enabled=True,
-            run_interval_hours=6,
-            next_scheduled_run_at="2026-11-07T06:00:00+00:00",
-            priorities=AgentInsightPrioritiesRead(categories=[], instructions=instructions) if has_priorities else None,
-        ),
-        None,
-    ]
-
-    main()
-
-    update = operations.update.call_args_list[0]
-    assert update.args == ("new-monitor",)
-    assert update.kwargs["enabled"] is True
-    assert update.kwargs["run_interval_hours"] == 6
-    assert update.kwargs["priorities"].as_dict() == {
-        "categories": [],
-        "instructions": instructions,
-    }
-    output = capsys.readouterr().out
-    assert_agent_insights_output("sample_agent_insights_scheduled.py", output.splitlines())
-    assert (f"Analysis guidance: {instructions}" in output) is has_priorities
-
-
 @pytest.mark.parametrize("polling_error", [RuntimeError("Polling failed"), KeyboardInterrupt()])
 def test_on_demand_cleans_up_after_polling_error(on_demand_main, polling_error, capsys):
     main, operations = on_demand_main
@@ -310,7 +246,7 @@ def test_on_demand_cleans_up_after_polling_error(on_demand_main, polling_error, 
     operations.list.assert_not_called()
     operations.cancel_run.assert_not_called()
     operations.delete.assert_called_once_with("new-monitor")
-    assert operations.update.call_args.kwargs["enabled"] is False
+    operations.update.assert_called_once_with("new-monitor", enabled=False)
     operations.list_runs.assert_called_once()
     project = main.__globals__["AIProjectClient"].return_value.__enter__.return_value
     project.agents.delete.assert_called_once_with("test-agent", force=True)
@@ -330,7 +266,21 @@ def test_on_demand_accepts_future_severity(on_demand_main, capsys):
     assert any("severity=future-severity," in line for line in output)
     operations.update_insight.assert_called_once()
     assert operations.update_insight.call_args.args[:2] == ("new-monitor", "insight-test")
-    assert operations.update_insight.call_args.kwargs["status"] == "resolved"
+    assert operations.update_insight.call_args.kwargs["status"] == AgentInsightStatus.RESOLVED
+
+
+def test_on_demand_sets_priorities_and_filters_active_insights(on_demand_main):
+    main, operations = on_demand_main
+
+    main()
+
+    priorities = operations.create.call_args.kwargs["priorities"]
+    assert isinstance(priorities, AgentInsightPriorities)
+    assert priorities.categories == []
+    assert priorities.instructions == "Focus on tool calls made without the user's approval."
+    operations.list_insights.assert_called_once_with(
+        "new-monitor", statuses=[AgentInsightStatus.ACTIVE], include_details=True
+    )
 
 
 def test_on_demand_reports_no_insights(on_demand_main, capsys):
@@ -409,6 +359,38 @@ def test_scheduled_sample_cleans_up_after_configuration_error(
     ) < project.mock_calls.index(call.agents.delete("test-agent", force=True))
 
 
+def test_scheduled_sample_replaces_complete_priorities(scheduled_sample, on_demand_main, monkeypatch, capsys):
+    main = scheduled_sample["main"]
+    configured_main, operations = on_demand_main
+    for name in (
+        "AIProjectClient",
+        "DefaultAzureCredential",
+        "load_dotenv",
+        "LogsQueryClient",
+        "seed_traces",
+        "wait_for_ingestion",
+    ):
+        monkeypatch.setitem(main.__globals__, name, configured_main.__globals__[name])
+    operations.update.return_value = SimpleNamespace(
+        enabled=True, run_interval_hours=6, next_scheduled_run_at="2026-11-11T00:00:00Z"
+    )
+
+    main()
+
+    assert operations.create.call_args.kwargs["enabled"] is False
+    schedule_update = operations.update.call_args_list[0]
+    assert schedule_update.args == ("new-monitor",)
+    assert schedule_update.kwargs["enabled"] is True
+    assert schedule_update.kwargs["run_interval_hours"] == 6
+    priorities = schedule_update.kwargs["priorities"]
+    assert isinstance(priorities, AgentInsightPriorities)
+    assert priorities.categories == []
+    assert priorities.instructions == "Focus on tool calls made without the user's approval."
+    operations.begin_create_run.assert_not_called()
+    operations.delete.assert_called_once_with("new-monitor")
+    assert_agent_insights_output("sample_agent_insights_scheduled.py", capsys.readouterr().out.splitlines())
+
+
 def test_scheduled_creation_failure_leaves_existing_monitor(scheduled_sample, monkeypatch, on_demand_main):
     main = scheduled_sample["main"]
     configured_main, operations = on_demand_main
@@ -463,9 +445,7 @@ def test_partial_setup_cleans_up_only_owned_agent(request, sample_fixture, name_
     creation = project.agents.create_version.call_args.kwargs
     assert creation["agent_name"].startswith(f"{name_prefix or 'agent-insights-sample'}-")
     assert creation["definition"].otel_agent_id == creation["agent_name"]
-    assert creation["headers"] == {"Foundry-Features": "ExternalAgents=V1Preview"}
     assert main.__globals__["AIProjectClient"].call_args.kwargs.get("allow_preview", False) is False
-    assert main.__globals__["AIProjectClient"].call_args.kwargs["api_version"] == "v1"
     project.agents.delete.assert_called_once_with("test-agent", force=True)
     operations.create.assert_not_called()
     operations.delete.assert_not_called()

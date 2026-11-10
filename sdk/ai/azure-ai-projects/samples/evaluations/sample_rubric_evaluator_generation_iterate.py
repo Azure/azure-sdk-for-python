@@ -120,11 +120,19 @@ with (
     #   * Add a new custom dimension specific to this assistant.
     editable = [d for d in v1_definition.dimensions if not d.always_applicable]
     always_on = [d for d in v1_definition.dimensions if d.always_applicable]
+    weights: dict[str, int] = {}
+    for dimension in v1_definition.dimensions:
+        if dimension.weight is None:
+            raise ValueError(
+                f"Dimension `{dimension.id}` has no configured weight. "
+                "This sample requires a weighted rubric to rank and edit dimensions."
+            )
+        weights[dimension.id] = dimension.weight
 
     edited_dimensions = []
     if editable:
-        top = max(editable, key=lambda d: d.weight)
-        lowest = min(editable, key=lambda d: d.weight)
+        top = max(editable, key=lambda d: weights[d.id])
+        lowest = min(editable, key=lambda d: weights[d.id])
         for dim in editable:
             if dim.id == lowest.id:
                 continue

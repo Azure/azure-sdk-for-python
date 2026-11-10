@@ -9,11 +9,13 @@ DESCRIPTION:
     Create published and draft versions of a voice agent, list them, and read
     their settings. Each create_version call makes a new version rather than
     changing an existing one.
+    Published versioning is GA. Only the draft creation call opts in to the
+    separate Draft Agents preview; it does not enable Voice Agents preview.
 
 USAGE:
     python sample_voice_agent_versions.py
 
-    pip install "azure-ai-projects>=2.7.0" python-dotenv
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
@@ -43,7 +45,7 @@ def make_definition(instructions: str) -> VoiceAgentDefinition:
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     created_versions = []
     try:
@@ -71,6 +73,7 @@ with (
             definition=make_definition("You are a helpful voice assistant. Experimental draft persona."),
             description="Candidate persona under review.",
             draft=True,
+            headers={"Foundry-Features": "DraftAgents=V1Preview"},
         )
         created_versions.append(draft_version)
         print(f"Created draft version: {draft_version.version}")

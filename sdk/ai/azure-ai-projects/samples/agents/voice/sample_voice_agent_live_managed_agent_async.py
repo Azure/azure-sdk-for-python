@@ -5,18 +5,18 @@
 
 """
 DESCRIPTION:
-    Ask a same-project prompt agent a spoken question through GPT Live.
+    Ask a same-project prompt agent a spoken question through GPT-Live (preview).
     Send the bundled spoken question, print the reply transcript and audio size, and delete
     both temporary agent versions. No microphone or speakers are needed.
 
 USAGE:
     python sample_voice_agent_live_managed_agent_async.py
 
-    pip install "azure-ai-projects[voice]" azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL (required) - An existing GPT Live deployment.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - An existing GPT-Live deployment.
     3) FOUNDRY_MODEL_NAME (required) - A prompt-agent deployment in the same project.
     4) FOUNDRY_VOICE_AUDIO_INPUT_PATH (optional) - Override audio/question.wav
        with your own PCM16, mono, 24-kHz WAV of at most 30 seconds.

@@ -17,7 +17,7 @@ DESCRIPTION:
 USAGE:
     python sample_voice_agent_realtime_text_conversation_async.py
 
-    pip install "azure-ai-projects[voice]>=2.7.0" azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
     pip install pyaudio  # Optional speaker playback.
 
     Environment variables:
@@ -41,7 +41,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
 # This public re-export is not recognized by Pylint's import resolver.
-from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection  # pylint: disable=no-name-in-module
+from azure.ai.projects.aio.operations import AsyncRealtimeConnection  # pylint: disable=no-name-in-module
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeConversationItemMessageUser,
@@ -176,7 +176,7 @@ class _CancellationNotConfirmed(Exception):
     ``_RESPONSE_TIMEOUT``, leaving the stream in an unknown state."""
 
 
-async def _drain_cancelled_response(conn: "AsyncBetaRealtimeConnection", response_id: Optional[str]) -> None:
+async def _drain_cancelled_response(conn: "AsyncRealtimeConnection", response_id: Optional[str]) -> None:
     """Wait (bounded) for a just-cancelled response's terminal event, discarding it and any of
     its trailing content events, so the next turn's ``pump()`` doesn't mistake this stale
     completion for its own.
@@ -185,7 +185,7 @@ async def _drain_cancelled_response(conn: "AsyncBetaRealtimeConnection", respons
     :param response_id: The id of the response that was just cancelled, if it was captured from
      that response's ``response.created`` event. If None, the first terminal event seen is
      accepted, since there is nothing more specific to correlate against.
-    :type conn: ~azure.ai.projects.aio.AsyncBetaRealtimeConnection
+    :type conn: ~azure.ai.projects.aio.operations.AsyncRealtimeConnection
     :type response_id: str or None
     :raises _CancellationNotConfirmed: If no matching terminal event arrives in time.
     """
@@ -228,7 +228,7 @@ async def _run_text_conversation(  # pylint: disable=too-many-statements
 
     try:
         # Open the realtime session on the voice agent's dedicated route.
-        async with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+        async with client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
 
             async def pump() -> None:
                 nonlocal conversation_id, audio_delta_count, active_response_id
@@ -340,7 +340,7 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
     :type agent_name: str
     :type conversation_id: str
     """
-    conversations = client.beta.voice_agents.conversations
+    conversations = client.voice_agents.conversations
 
     conversation = await conversations.get(agent_name, conversation_id)
     print(f"Conversation {conversation.id}: status={conversation.status}, created_at={conversation.created_at}")
@@ -363,7 +363,7 @@ async def text_conversation() -> None:
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
         created_version = None
         try:
@@ -397,7 +397,7 @@ async def text_conversation() -> None:
                 except HttpResponseError as e:
                     print(f"Could not read conversation: {e.status_code} {e.reason}")
                 # To fetch this session's audio afterward, use
-                # `project_client.beta.voice_agents.conversations`:
+                # `project_client.voice_agents.conversations`:
                 #   - get_audio(agent_name, conversation_id) for the merged
                 #     whole-call stereo recording's metadata, then
                 #     download_audio(agent_name, conversation_id) to stream

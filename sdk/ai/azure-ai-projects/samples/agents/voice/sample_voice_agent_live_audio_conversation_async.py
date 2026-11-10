@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    Send the bundled spoken question to GPT Live and print the reply transcript
+    Send the bundled spoken question to GPT-Live (preview) and print the reply transcript
     and audio size. The sample deletes its temporary agent version afterward.
 
 USAGE:
@@ -19,12 +19,12 @@ USAGE:
     - SAVE_AUDIO = True: save reply audio in a printed temporary folder.
       These files contain conversation content; remove them when finished.
 
-    pip install "azure-ai-projects[voice]" azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
     pip install pyaudio  # Only required for microphone mode.
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live deployment name.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT-Live deployment name.
     3) FOUNDRY_VOICE_AUDIO_INPUT_PATH (optional) - Override audio/question.wav
        with your own uncompressed PCM16, mono, 24-kHz WAV.
     4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.

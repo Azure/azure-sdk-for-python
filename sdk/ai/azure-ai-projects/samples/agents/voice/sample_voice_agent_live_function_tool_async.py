@@ -5,18 +5,18 @@
 
 """
 DESCRIPTION:
-    Let GPT Live call a local weather function, return its result, and print
+    Let GPT-Live (preview) call a local weather function, return its result, and print
     the final reply. Weather is fixed sample data, not a live forecast.
     The sample deletes its temporary agent version when finished.
 
 USAGE:
     python sample_voice_agent_live_function_tool_async.py
 
-    pip install "azure-ai-projects[voice]" azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live deployment name.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT-Live deployment name.
     3) FOUNDRY_MODEL_NAME (required) - A tool-capable Responses deployment available to Live.
     4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.
 

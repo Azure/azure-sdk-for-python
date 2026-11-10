@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Custom Voice Agent campaign operations."""
+"""Campaign LRO polling customizations for ``beta.voice_agents.campaigns``."""
 
 from collections.abc import MutableMapping
 from typing import Any, IO, Optional, Union, overload

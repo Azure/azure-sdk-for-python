@@ -22,7 +22,7 @@ DESCRIPTION:
 USAGE:
     python sample_voice_agent_read_conversation_audio.py
 
-    pip install "azure-ai-projects[voice]>=2.7.0" python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
@@ -73,7 +73,7 @@ def read_merged_recording(conversations, agent_name, conversation_id) -> None:
     :param conversations: The conversation operations client.
     :param agent_name: The voice agent name.
     :param conversation_id: The persisted conversation id.
-    :type conversations: azure.ai.projects.operations.BetaVoiceAgentsConversationsOperations
+    :type conversations: azure.ai.projects.operations.VoiceAgentsConversationsOperations
     :type agent_name: str
     :type conversation_id: str
     """
@@ -108,7 +108,7 @@ def read_first_item_audio(conversations, agent_name, conversation_id) -> None:
     :param conversations: The conversation operations client.
     :param agent_name: The voice agent name.
     :param conversation_id: The persisted conversation id.
-    :type conversations: azure.ai.projects.operations.BetaVoiceAgentsConversationsOperations
+    :type conversations: azure.ai.projects.operations.VoiceAgentsConversationsOperations
     :type agent_name: str
     :type conversation_id: str
     """
@@ -149,9 +149,9 @@ def main() -> None:
 
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
-        conversations = project_client.beta.voice_agents.conversations
+        conversations = project_client.voice_agents.conversations
         created_version = None
         try:
             if not conversation_id:

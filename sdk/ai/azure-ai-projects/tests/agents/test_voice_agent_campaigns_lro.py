@@ -352,9 +352,10 @@ async def test_campaign_lro_keeps_encoded_names_and_overrides_stale_guard(asynch
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-async def test_campaign_operations_are_wired_to_public_clients(asynchronous):
+@pytest.mark.parametrize("allow_preview", [False, True])
+async def test_campaign_operations_are_wired_to_public_clients(asynchronous, allow_preview):
     client_type = AsyncAIProjectClient if asynchronous else AIProjectClient
-    client = client_type(endpoint=_ENDPOINT, credential=MagicMock(), allow_preview=True)
+    client = client_type(endpoint=_ENDPOINT, credential=MagicMock(), allow_preview=allow_preview)
     try:
         campaigns = client.beta.voice_agents.campaigns._operation
         assert isinstance(campaigns, AsyncCampaignsOperations if asynchronous else CampaignsOperations)

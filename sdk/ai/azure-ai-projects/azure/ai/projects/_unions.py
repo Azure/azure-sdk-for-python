@@ -11,12 +11,33 @@ from typing import Literal, TYPE_CHECKING, TypeAlias, Union
 if TYPE_CHECKING:
     from . import models as _models
 Filters: TypeAlias = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
+RoutineRunStatus: TypeAlias = str
 VoiceAgentToolChoice: TypeAlias = Union[
     Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
 ]
 VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
 VoiceAgentHandoffMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
-RoutineRunStatus: TypeAlias = str
+UserConversationSimulationSource: TypeAlias = Union[
+    "_models.EvalJsonlFileContentSource",
+    "_models.EvalJsonlFileIdSource",
+    "_models.UserConversationSimulationInlineTestCasesSource",
+]
+EvalItemContentItem: TypeAlias = Union[str, "_models.EvalItemContentItemObject"]
+EvalItemContent: TypeAlias = Union["_unions.EvalItemContentItem", list["_unions.EvalItemContentItem"]]
+DatasetEvaluationSource: TypeAlias = Union[
+    "_models.CreateEvalJsonlRunDataSource",
+    "_models.EvalCsvRunDataSource",
+    "_models.CreateEvalCompletionsRunDataSource",
+    "_models.TargetCompletionEvalRunDataSource",
+    "_models.UserConversationSimulationEvalRunDataSource",
+    "_models.UserConversationSimulationPreviewEvalRunDataSource",
+]
+TraceEvaluationSource: TypeAlias = Union[
+    "_models.TracesEvalRunDataSource",
+    "_models.AzureAITraceDataSourceEvalRunDataSource",
+    "_models.TracesPreviewEvalRunDataSource",
+    "_models.AzureAITraceDataSourcePreviewEvalRunDataSource",
+]
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
 RealtimeResponseInputItem: TypeAlias = Union[
     "_models.RealtimeResponseInputMessage",

@@ -26,7 +26,9 @@ from .operations import (
     EvaluationRulesOperations,
     EvaluatorsOperations,
     IndexesOperations,
+    SkillsOperations,
     ToolboxesOperations,
+    VoiceAgentsOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -43,6 +45,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
 
     :ivar beta: BetaOperations operations
     :vartype beta: azure.ai.projects.aio.operations.BetaOperations
+    :ivar voice_agents: VoiceAgentsOperations operations
+    :vartype voice_agents: azure.ai.projects.aio.operations.VoiceAgentsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.aio.operations.AgentsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
@@ -58,6 +62,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
+    :ivar skills: SkillsOperations operations
+    :vartype skills: azure.ai.projects.aio.operations.SkillsOperations
     :ivar evaluators: EvaluatorsOperations operations
     :vartype evaluators: azure.ai.projects.aio.operations.EvaluatorsOperations
     :ivar toolboxes: ToolboxesOperations operations
@@ -112,6 +118,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.beta = BetaOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.voice_agents = VoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluation_rules = EvaluationRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -123,6 +130,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skills = SkillsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluators = EvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 

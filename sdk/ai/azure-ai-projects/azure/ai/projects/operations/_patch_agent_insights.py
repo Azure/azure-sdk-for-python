@@ -15,8 +15,10 @@ from azure.core.polling import NoPolling, PollingMethod
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ._operations import AgentInsightMonitorsOperations as AgentInsightMonitorsOperationsGenerated
-from ._operations import _Unset
+from ._operations import (
+    AgentInsightMonitorsOperations as AgentInsightMonitorsOperationsGenerated,
+    _Unset,
+)
 from .. import models as _models
 from .._utils.model_base import _deserialize
 from .._utils.polling import AIProjectsLROBasePolling
@@ -26,7 +28,7 @@ JSON = MutableMapping[str, Any]
 
 
 class AgentInsightMonitorsOperations(AgentInsightMonitorsOperationsGenerated):
-    """Custom operations for GA Agent Insights monitors."""
+    """Custom operations for Agent Insights monitors."""
 
     @overload
     def begin_create_run(
@@ -75,13 +77,12 @@ class AgentInsightMonitorsOperations(AgentInsightMonitorsOperationsGenerated):
 
         :param monitor_id: The identifier of the monitor. Required.
         :type monitor_id: str
-        :param body: Optional JSON or binary request body. Omit to use the keyword parameters.
-        :type body: MutableMapping[str, Any] or IO[bytes]
+        :param body: Run inputs as JSON or IO[bytes]. Omit to use ``lookback_hours``.
+        :type body: JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the run unconditionally. Default value is None.
         :paramtype operation_id: str
-        :keyword lookback_hours: Optional finite positive number of hours of trace history to analyze,
-         up to 2,160. Defaults to 168.
+        :keyword lookback_hours: Hours of trace history to analyze, up to 2,160. Defaults to 168.
         :paramtype lookback_hours: float
         :return: A poller that returns AgentInsightRunResult and exposes the run ID in ``details``.
         :rtype: ~azure.ai.projects.models.AgentInsightRunLROPoller

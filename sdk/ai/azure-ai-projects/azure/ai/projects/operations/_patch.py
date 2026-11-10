@@ -10,18 +10,18 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from functools import wraps
 import inspect
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Optional
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
 from .._realtime import (
-    BetaRealtime,
-    BetaRealtimeConnection,
-    BetaRealtimeConnectionManager,
+    Realtime,
+    RealtimeConnection,
+    RealtimeConnectionManager,
     ClientEvent,
     ConversationItem,
     ServerEvent,
 )
 from .._live import BetaLive, BetaLiveConnection, BetaLiveConnectionManager, LiveClientEvent, LiveServerEvent
-from ._patch_agents import AgentsOperations, BetaAgentsOperations
+from ._patch_agents import AgentsOperations
 from ._patch_agent_insights import AgentInsightMonitorsOperations
 from ._patch_datasets import DatasetsOperations
 from ._patch_evaluators import EvaluatorsOperations
@@ -40,11 +40,25 @@ from ._operations import (
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
     BetaSchedulesOperations,
-    BetaSkillsOperations,
-    BetaVoiceAgentsConversationsOperations,
     BetaVoiceAgentsLiveConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
-    BetaVoiceAgentsTelephonyOperations,
+    VoiceAgentsConversationsOperations,
+    VoiceAgentsOperations as GeneratedVoiceAgentsOperations,
+    VoiceAgentsTelephonyOperations,
+)
+
+_VOICE_AGENT_CONDITIONAL_TELEPHONY_METHODS = frozenset(
+    {
+        "cancel_call_job",
+        "create_binding",
+        "create_call_job",
+        "delete_binding",
+        "delete_call_job",
+        "end_call",
+        "replace_transfer_targets",
+        "transfer_call",
+        "update_binding",
+    }
 )
 
 
@@ -66,16 +80,25 @@ def _method_accepts_keyword_headers(method: Callable[..., Any]) -> bool:
 class _OperationMethodHeaderProxy:
     """Proxy that injects the Foundry-Features header into public operation method calls."""
 
-    def __init__(self, operation: Any, foundry_features_value: str):
+    def __init__(
+        self,
+        operation: Any,
+        foundry_features_value: str,
+        *,
+        method_names: Optional[frozenset[str]] = None,
+    ):
         """Wrap an operation and its nested operation groups with the same header value.
 
-        For example, ``.beta.voice_agents`` stores ``conversations`` and ``telephony`` as nested
+        For example,         ``.beta.voice_agents`` stores ``live_conversations`` and ``campaigns`` as nested
         operation groups. Wrapping them with the parent proxy ensures every call under
-        ``.beta.voice_agents.conversations`` and ``.beta.voice_agents.telephony`` receives the
+        ``.beta.voice_agents.live_conversations`` and ``.beta.voice_agents.campaigns`` receives the
         ``Foundry-Features: VoiceAgents=V1Preview`` header.
+
+        ``method_names`` restricts injection to conditional preview operations on a GA group.
         """
         object.__setattr__(self, "_operation", operation)
         object.__setattr__(self, "_foundry_features_value", foundry_features_value)
+        object.__setattr__(self, "_method_names", method_names)
         for name, attribute in vars(operation).items():
             # Generated operation groups share these fields; ordinary public attributes do not.
             if (
@@ -98,7 +121,9 @@ class _OperationMethodHeaderProxy:
             if hasattr(attribute, "_client") and hasattr(attribute, "_config"):
                 return _OperationMethodHeaderProxy(attribute, self._foundry_features_value)
             return attribute
-        if not _method_accepts_keyword_headers(attribute):
+        if (self._method_names is not None and name not in self._method_names) or not _method_accepts_keyword_headers(
+            attribute
+        ):
             return attribute
 
         @wraps(attribute)
@@ -126,6 +151,36 @@ class _OperationMethodHeaderProxy:
         setattr(self._operation, name, value)
 
 
+class VoiceAgentsOperations(GeneratedVoiceAgentsOperations):
+    """Generally available voice-agent operations.
+
+    Access these operations through :class:`~azure.ai.projects.AIProjectClient`'s
+    ``voice_agents`` attribute.
+    """
+
+    conversations: VoiceAgentsConversationsOperations
+    """:class:`~azure.ai.projects.operations.VoiceAgentsConversationsOperations` operations"""
+    telephony: VoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.operations.VoiceAgentsTelephonyOperations` operations"""
+    realtime: Realtime
+    """:class:`~azure.ai.projects.operations.Realtime` operations"""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        # WebSocket connections cannot be kept alive by the generated HTTP pipeline.
+        self.realtime = Realtime(self)
+        if self._config.allow_preview:
+            setattr(
+                self,
+                "telephony",
+                _OperationMethodHeaderProxy(
+                    self.telephony,
+                    _BETA_OPERATION_FEATURE_HEADERS["voice_agents"],
+                    method_names=_VOICE_AGENT_CONDITIONAL_TELEPHONY_METHODS,
+                ),
+            )
+
+
 class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
     """
     .. warning::
@@ -138,14 +193,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
 
     campaigns: BetaVoiceAgentsCampaignsOperations
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsCampaignsOperations` operations"""
-    conversations: BetaVoiceAgentsConversationsOperations
-    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsConversationsOperations` operations"""
     live_conversations: BetaVoiceAgentsLiveConversationsOperations
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
-    telephony: BetaVoiceAgentsTelephonyOperations
-    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations` operations"""
-    realtime: BetaRealtime
-    """:class:`~azure.ai.projects.operations.BetaRealtime` operations"""
     live: BetaLive
     """:class:`~azure.ai.projects.operations.BetaLive` operations"""
 
@@ -154,10 +203,6 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         self.campaigns = BetaVoiceAgentsCampaignsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        # The generator does not emit realtime operations at all, since azure-core's HTTP
-        # pipeline has no way to keep a WebSocket upgrade's resulting socket alive. Add our
-        # hand-written client, which manages a real, long-lived connection, in its place.
-        self.realtime = BetaRealtime(self)
         self.live = BetaLive(self)
 
 
@@ -171,8 +216,6 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
-    agents: BetaAgentsOperations
-    """:class:`~azure.ai.projects.operations.BetaAgentsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations` operations"""
     insights: BetaInsightsOperations
@@ -187,15 +230,11 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.operations.BetaSchedulesOperations` operations"""
-    skills: BetaSkillsOperations
-    """:class:`~azure.ai.projects.operations.BetaSkillsOperations` operations"""
     voice_agents: BetaVoiceAgentsOperations
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Replace with patched beta agents operations
-        self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
@@ -212,9 +251,8 @@ class BetaOperations(GeneratedBetaOperations):
 
 
 __all__: List[str] = [
-    "AgentInsightMonitorsOperations",
     "AgentsOperations",
-    "BetaAgentsOperations",
+    "AgentInsightMonitorsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
@@ -223,21 +261,21 @@ __all__: List[str] = [
     "BetaRedTeamsOperations",
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
-    "BetaSkillsOperations",
     "BetaVoiceAgentsCampaignsOperations",
-    "BetaVoiceAgentsConversationsOperations",
     "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
-    "BetaVoiceAgentsTelephonyOperations",
+    "VoiceAgentsConversationsOperations",
+    "VoiceAgentsOperations",
+    "VoiceAgentsTelephonyOperations",
     "ClientEvent",
     "ConnectionsOperations",
     "ConversationItem",
     "DatasetsOperations",
     "EvaluatorsOperations",
     "EvaluationRulesOperations",
-    "BetaRealtime",
-    "BetaRealtimeConnection",
-    "BetaRealtimeConnectionManager",
+    "Realtime",
+    "RealtimeConnection",
+    "RealtimeConnectionManager",
     "BetaLive",
     "BetaLiveConnection",
     "BetaLiveConnectionManager",

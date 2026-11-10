@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Read a stored Realtime conversation, its model replies, and its transcript
-    through project_client.beta.voice_agents.conversations.
+    through project_client.voice_agents.conversations.
 
     With no conversation ID, send one text message to create a conversation.
     With no agent name, also create a temporary agent and delete its version
@@ -17,7 +17,7 @@ DESCRIPTION:
 USAGE:
     python sample_voice_agent_read_conversation.py
 
-    pip install "azure-ai-projects[voice]>=2.7.0" python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
@@ -59,9 +59,9 @@ agent_name = agent_name or "sample-read-conversation-agent"
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    conversations = project_client.beta.voice_agents.conversations
+    conversations = project_client.voice_agents.conversations
     created_version = None
     try:
         if not conversation_id:

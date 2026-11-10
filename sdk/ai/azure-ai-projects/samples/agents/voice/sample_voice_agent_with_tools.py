@@ -16,7 +16,7 @@ DESCRIPTION:
 USAGE:
     python sample_voice_agent_with_tools.py
 
-    pip install "azure-ai-projects>=2.7.0" python-dotenv
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
@@ -107,7 +107,7 @@ definition = VoiceAgentDefinition(
                 prefix_padding_ms=300,
                 silence_duration_ms=500,
             ),
-            transcription=VoiceAgentInputTranscription(model=VoiceAgentInputTranscriptionModel.WHISPER1),
+            transcription=VoiceAgentInputTranscription(model=VoiceAgentInputTranscriptionModel("whisper-1")),
         ),
         # Output (agent speech) side: the voice the agent speaks with.
         output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
@@ -121,7 +121,7 @@ definition = VoiceAgentDefinition(
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     created_version = None
     try:

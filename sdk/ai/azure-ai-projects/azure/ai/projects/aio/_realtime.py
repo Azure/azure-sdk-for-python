@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 """Asynchronous Realtime voice-agent client.
 
-Use ``async with client.beta.voice_agents.realtime.connect(...)`` to open a session.
+Use ``async with client.voice_agents.realtime.connect(...)`` to open a session.
 Send text or audio through the connection and use ``async for`` to receive events.
 Known events use SDK models; unknown event types are returned as dictionaries.
 Install ``azure-ai-projects[voice]`` for the optional WebSocket dependencies.
@@ -47,7 +47,7 @@ from .._realtime_utils import _normalize_transport, _without_transport_query
 
 _LOGGER = logging.getLogger("azure.ai.projects.realtime")
 
-# Voice-agent WebSocket requests need the same preview header as REST requests.
+# Preview voice features use the same opt-in for WebSocket and REST requests.
 _VOICE_AGENT_FEATURE_HEADER: str = _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value
 
 # The WebSocket handshake does not use the HTTP pipeline, so identify the SDK explicitly.
@@ -66,9 +66,9 @@ class _ConfigProvider(Protocol):
 
 
 __all__ = [
-    "AsyncBetaRealtime",
-    "AsyncBetaRealtimeConnection",
-    "AsyncBetaRealtimeConnectionManager",
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
     "ClientEvent",
     "ConversationItem",
     "ServerEvent",
@@ -128,7 +128,7 @@ _SERVER_EVENT_TYPES: Dict[str, Type[_Model]] = {
     ),
     "conversation.item.retrieved": _models.RealtimeServerEventConversationItemRetrieved,
     "conversation.item.truncated": _models.RealtimeServerEventConversationItemTruncated,
-    # Shared OpenAI-style BetaRealtime error event (not voice-agent specific in this package).
+    # Shared OpenAI-style Realtime error event (not voice-agent specific in this package).
     "error": _models.RealtimeServerEventError,
     "input_audio_buffer.cleared": _models.RealtimeServerEventInputAudioBufferCleared,
     "input_audio_buffer.committed": _models.RealtimeServerEventInputAudioBufferCommitted,
@@ -259,7 +259,7 @@ def _to_ws_url(endpoint: str, agent_name: str) -> str:
     """Build the realtime WebSocket URL from the HTTPS project endpoint.
 
     Only the ``https://`` scheme is translated (to ``wss://``); any other scheme is left
-    unchanged so that :meth:`AsyncBetaRealtimeConnectionManager.enter`'s ``wss://``-only check
+    unchanged so that :meth:`AsyncRealtimeConnectionManager.enter`'s ``wss://``-only check
     rejects it with a clear error instead of silently producing an unencrypted ``ws://`` URL
     that would also send the live Authorization token in plain text.
 
@@ -326,7 +326,7 @@ def _assert_trusted_connection_url(connection_url: str, endpoint: str) -> None:
 class _BaseResource:  # pylint: disable=too-few-public-methods
     """Base helper that forwards typed helpers to the parent connection."""
 
-    def __init__(self, connection: "AsyncBetaRealtimeConnection") -> None:
+    def __init__(self, connection: "AsyncRealtimeConnection") -> None:
         self._connection = connection
 
     async def _send(self, event: ClientEvent) -> None:
@@ -507,7 +507,7 @@ class ConversationItemResource(_BaseResource):
 class ConversationResource(_BaseResource):  # pylint: disable=too-few-public-methods
     """Send ``conversation.*`` client events."""
 
-    def __init__(self, connection: "AsyncBetaRealtimeConnection") -> None:
+    def __init__(self, connection: "AsyncRealtimeConnection") -> None:
         super().__init__(connection)
         self.item: ConversationItemResource = ConversationItemResource(connection)
 
@@ -555,7 +555,7 @@ class ResponseResource(_BaseResource):
 
 class _AbnormalWebSocketClosure(Exception):
     """Internal marker chained onto :exc:`ConnectionResetError` for a non-graceful WebSocket
-    closure (an abnormal close code), so :meth:`AsyncBetaRealtimeConnection._iter` can tell it apart
+    closure (an abnormal close code), so :meth:`AsyncRealtimeConnection._iter` can tell it apart
     from a normal end of stream, which chains no cause."""
 
 
@@ -712,7 +712,7 @@ class _BaseWebSocketConnection(Generic[_ServerEventT, _ClientEventT]):
             await self._session.close()
 
 
-class AsyncBetaRealtimeConnection(  # pylint: disable=too-many-instance-attributes
+class AsyncRealtimeConnection(  # pylint: disable=too-many-instance-attributes
     _BaseWebSocketConnection[ServerEvent, ClientEvent]
 ):
     """An open realtime WebSocket connection to a voice agent.
@@ -720,7 +720,7 @@ class AsyncBetaRealtimeConnection(  # pylint: disable=too-many-instance-attribut
     Iterate to receive events. Use ``conversation``, ``response``, and the audio
     buffers to send messages and control replies::
 
-        async with client.beta.voice_agents.realtime.connect(agent_name="my-agent") as conn:
+        async with client.voice_agents.realtime.connect(agent_name="my-agent") as conn:
             await conn.input_audio_buffer.append(audio=chunk)
             await conn.input_audio_buffer.commit()
             await conn.response.create()
@@ -737,7 +737,7 @@ class AsyncBetaRealtimeConnection(  # pylint: disable=too-many-instance-attribut
         self.conversation: ConversationResource = ConversationResource(self)
         self.response: ResponseResource = ResponseResource(self)
 
-    async def __aenter__(self) -> "AsyncBetaRealtimeConnection":
+    async def __aenter__(self) -> "AsyncRealtimeConnection":
         return self
 
     async def __aexit__(self, *exc_details: Any) -> None:
@@ -801,6 +801,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
     :paramtype credential_scopes: list[str]
     :keyword str api_version: The API version for the handshake.
     :keyword str agent_name: The name of the voice agent.
+    :keyword bool allow_preview: Enable preview voice features. Default is False.
     :keyword agent_session_id: An optional session correlation identifier.
     :paramtype agent_session_id: str or None
     :keyword transport: The optional Realtime connection transport.
@@ -818,6 +819,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
     _logger = _LOGGER
     _subprotocol: Optional[str] = "realtime"
     _protocol_name = "realtime"
+    _requires_preview = False
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
@@ -827,6 +829,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
         credential_scopes: List[str],
         api_version: str,
         agent_name: str,
+        allow_preview: bool = False,
         agent_session_id: Optional[str] = None,
         transport: Optional[Union[str, "_models.VoiceAgentTransport"]] = None,
         structured_inputs: Optional[Mapping[str, Any]] = None,
@@ -840,6 +843,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
         self._credential_scopes = credential_scopes
         self._api_version = api_version
         self._agent_name = agent_name
+        self._allow_preview = allow_preview
         self._agent_session_id = agent_session_id
         self._transport = _normalize_transport(transport)
         self._structured_inputs = structured_inputs
@@ -856,7 +860,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
         """Open the connection.
 
         :return: The live realtime connection.
-        :rtype: ~azure.ai.projects.aio.AsyncBetaRealtimeConnection
+        :rtype: ~azure.ai.projects.aio.operations.AsyncRealtimeConnection
         :raises RuntimeError: If ``aiohttp`` is not installed.
         :raises ValueError: If the computed or supplied WebSocket URL does not use ``wss://``.
         :raises ConnectionError: If the WebSocket upgrade handshake fails (for example, a
@@ -892,9 +896,12 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
             token = await self._credential.get_token(*self._credential_scopes)
             headers: Dict[str, str] = {
                 "Authorization": "Bearer " + token.token,
-                _FOUNDRY_FEATURES_HEADER_NAME: _VOICE_AGENT_FEATURE_HEADER,
             }
             headers.update(self._extra_headers)
+            if (self._requires_preview or self._allow_preview) and not _has_header_case_insensitive(
+                headers, _FOUNDRY_FEATURES_HEADER_NAME
+            ):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _VOICE_AGENT_FEATURE_HEADER
             if not _has_header_case_insensitive(headers, "User-Agent"):
                 # Header names are case-insensitive; preserve caller overrides in any casing.
                 headers["User-Agent"] = _USER_AGENT
@@ -951,11 +958,11 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
                     self._connection = None
 
 
-class AsyncBetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaRealtimeConnection]):
-    """Async context manager that opens an :class:`AsyncBetaRealtimeConnection`.
+class AsyncRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncRealtimeConnection]):
+    """Async context manager that opens an :class:`AsyncRealtimeConnection`.
 
-    Returned by :meth:`AsyncBetaRealtime.connect`; you normally use it as
-    ``async with client.beta.voice_agents.realtime.connect(...) as conn:``.
+    Returned by :meth:`AsyncRealtime.connect`; you normally use it as
+    ``async with client.voice_agents.realtime.connect(...) as conn:``.
 
     :keyword str endpoint: The Foundry project endpoint.
     :keyword credential: The credential used for the WebSocket handshake.
@@ -978,14 +985,14 @@ class AsyncBetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncBe
     :paramtype extra_headers: Mapping[str, str] or None
     """
 
-    async def __aenter__(self) -> AsyncBetaRealtimeConnection:
+    async def __aenter__(self) -> AsyncRealtimeConnection:
         return await self.enter()
 
-    async def enter(self) -> AsyncBetaRealtimeConnection:
+    async def enter(self) -> AsyncRealtimeConnection:
         """Open the connection.
 
         :return: The live realtime connection.
-        :rtype: ~azure.ai.projects.aio.AsyncBetaRealtimeConnection
+        :rtype: ~azure.ai.projects.aio.operations.AsyncRealtimeConnection
         :raises RuntimeError: If ``aiohttp`` is not installed.
         :raises ValueError: If the computed or supplied WebSocket URL does not use ``wss://``.
         :raises ConnectionError: If the WebSocket upgrade handshake fails (for example, a
@@ -995,12 +1002,12 @@ class AsyncBetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncBe
 
     def _create_connection(
         self, connection: "ClientWebSocketResponse", session: "ClientSession"
-    ) -> AsyncBetaRealtimeConnection:
-        return AsyncBetaRealtimeConnection(connection, session)
+    ) -> AsyncRealtimeConnection:
+        return AsyncRealtimeConnection(connection, session)
 
 
-class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
-    """Connect to a voice agent through ``client.beta.voice_agents.realtime``.
+class AsyncRealtime:  # pylint: disable=too-few-public-methods
+    """Connect to a voice agent through ``client.voice_agents.realtime``.
 
     Open a connection with :meth:`connect`::
 
@@ -1008,7 +1015,7 @@ class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
         from azure.identity.aio import DefaultAzureCredential
 
         client = AIProjectClient(endpoint, DefaultAzureCredential())
-        async with client.beta.voice_agents.realtime.connect(agent_name="my-agent") as conn:
+        async with client.voice_agents.realtime.connect(agent_name="my-agent") as conn:
             await conn.input_audio_buffer.append(audio=chunk)
             await conn.input_audio_buffer.commit()
             await conn.response.create()
@@ -1017,7 +1024,7 @@ class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
                     break
 
     :param client: The voice-agent client that supplies the project endpoint and credential.
-    :type client: ~azure.ai.projects.aio.operations.BetaVoiceAgentsOperations
+    :type client: ~azure.ai.projects.aio.operations.VoiceAgentsOperations
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -1038,7 +1045,7 @@ class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
         extra_query: Optional[Mapping[str, str]] = None,
         extra_headers: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
-    ) -> AsyncBetaRealtimeConnectionManager:
+    ) -> AsyncRealtimeConnectionManager:
         """Open a realtime WebSocket connection to a voice agent.
 
         :keyword str agent_name: The name of the voice agent to connect to.
@@ -1062,20 +1069,21 @@ class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
         :paramtype credential_scopes: list[str] or None
         :keyword extra_query: Additional query-string parameters for the handshake.
         :paramtype extra_query: Mapping[str, str] or None
-        :keyword extra_headers: Additional headers for the handshake. Pass
-         ``{"Foundry-Features": "..."}`` here to override the ``VoiceAgents=V1Preview`` value
-         this method always sends by default.
+        :keyword extra_headers: Additional headers for the handshake. Preview voice features
+         require ``allow_preview=True`` on the project client or an explicit
+         ``{"Foundry-Features": "VoiceAgents=V1Preview"}`` header. GA voice sessions need no opt-in.
         :paramtype extra_headers: Mapping[str, str] or None
-        :return: An async context manager yielding an :class:`AsyncBetaRealtimeConnection`.
-        :rtype: ~azure.ai.projects.aio.AsyncBetaRealtimeConnectionManager
+        :return: An async context manager yielding an :class:`AsyncRealtimeConnection`.
+        :rtype: ~azure.ai.projects.aio.operations.AsyncRealtimeConnectionManager
         :raises TypeError: If ``transport`` is not a string or VoiceAgentTransport.
         """
-        return AsyncBetaRealtimeConnectionManager(
+        return AsyncRealtimeConnectionManager(
             endpoint=self._config.endpoint,
             credential=self._config.credential,
             credential_scopes=credential_scopes or self._config.credential_scopes,
             api_version=api_version or self._config.api_version,
             agent_name=agent_name,
+            allow_preview=bool(self._config.allow_preview),
             agent_session_id=agent_session_id,
             transport=transport,
             structured_inputs=structured_inputs,

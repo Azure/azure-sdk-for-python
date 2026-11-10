@@ -10,19 +10,18 @@ DESCRIPTION:
     Insights monitor with analysis priorities and a six-hour run interval, then
     read the next scheduled run time. It does not wait for scheduled analysis.
 
-    Access GA API v1 through `project_client.agent_insight_monitors`.
-    No Agent Insights preview header is needed. Only temporary external-agent
-    creation opts in to ExternalAgents=V1Preview.
+    Agent Insights operations are generally available through
+    `project_client.agent_insight_monitors`.
 
     This sample registers a temporary external agent and emits fictional traces;
     it does not execute tools or call a model to produce those traces. It waits
     for ingestion, then deletes its monitor and agent in finally. Ingested
     telemetry remains in Application Insights under its normal retention policy.
 
-    Use an existing project, connected Application Insights resource, and a
-    GPT analysis-model deployment with generation 5 or later. Your identity
-    needs agent/monitor management and telemetry query access. The project
-    identity needs model-deployment read, model-inference, and trace-content access.
+    Use an existing project, connected Application Insights resource, and suitable
+    analysis-model deployment. Your identity needs agent/monitor management and
+    telemetry query access. The project identity needs model deployment read,
+    model invocation, and trace-content access.
     Protected trace content also requires Privileged Monitoring Data Reader on
     the connected Application Insights resource for the project identity.
 
@@ -34,11 +33,9 @@ USAGE:
     pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint in a
-       region where Agent Insights GA is available.
+    1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint.
     2) APP_INSIGHTS_RESOURCE_ID - The connected Application Insights resource ID.
-    3) FOUNDRY_MODEL_NAME - The deployment name of a GPT model with generation 5
-       or later for trace analysis.
+    3) FOUNDRY_MODEL_NAME - A GPT-5 or later deployment for trace analysis.
     4) FOUNDRY_AGENT_NAME - Optional agent name prefix. Defaults to
        "agent-insights-sample" when unset or empty. A unique suffix is added
        on each run so existing agents and retained traces are not reused.
@@ -69,7 +66,7 @@ def main() -> None:
 
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, api_version="v1") as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         LogsQueryClient(credential) as logs_client,
     ):
         monitor_operations = project_client.agent_insight_monitors
@@ -89,13 +86,13 @@ def main() -> None:
             )
             print(f"Created disabled monitor `{monitor.id}` for agent `{monitor.agent_name}`.")
 
-            # Replace priorities and enable recurring runs in one update.
+            # Priorities replace the complete value, including categories and instructions.
             scheduled_monitor = monitor_operations.update(
                 monitor.id,
                 enabled=True,
                 run_interval_hours=ANALYSIS_INTERVAL_HOURS,
                 priorities=AgentInsightPriorities(
-                    categories=[],  # Use the default analysis categories.
+                    categories=[],
                     instructions="Focus on tool calls made without the user's approval.",
                 ),
             )
@@ -103,8 +100,6 @@ def main() -> None:
             print(f"Scheduled monitor enabled: {scheduled_monitor.enabled}")
             print(f"Run interval hours: {scheduled_monitor.run_interval_hours}")
             print(f"Next scheduled run: {scheduled_monitor.next_scheduled_run_at}")
-            if scheduled_monitor.priorities and scheduled_monitor.priorities.instructions:
-                print(f"Analysis guidance: {scheduled_monitor.priorities.instructions}")
         finally:
             # Enabling schedules the first occurrence for now, so a run may already be active.
             cleanup(project_client, agent, monitor.id if monitor is not None else None, scheduled=True)

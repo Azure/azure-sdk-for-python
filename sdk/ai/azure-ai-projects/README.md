@@ -4,7 +4,7 @@ The AI Projects client library is part of the Microsoft Foundry SDK, and provide
 resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents**, which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
-* **Build and run Voice Agents (preview)** for real-time, speech-to-speech conversational AI, reachable over a WebSocket (`.beta.voice_agents.realtime`) or telephony (`.beta.voice_agents.telephony`), with persisted conversation transcripts and audio through `.beta.voice_agents.conversations`.
+* **Build and run Voice Agents** for real-time, speech-to-speech conversational AI, reachable over a WebSocket (`.voice_agents.realtime`) or telephony (`.voice_agents.telephony`), with persisted conversation transcripts and audio through `.voice_agents.conversations`. Generate agents from a prompt with `.agents.create_from_prompt()`. These generally available features do not require preview opt-in.
 * **Enhance Agents with specialized tools and toolbox tools** such as:
   * Agent-to-Agent (A2A)
   * Azure AI Search
@@ -35,16 +35,36 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
 * **Upload documents and create Datasets** to reference them using `.datasets` operations.
 * **Create and enumerate Search Indexes** using `.indexes` operations.
-* **Analyze agent traces and manage insights** with configurable priorities, on-demand runs, scheduled monitors, and list-based insight filters through `.agent_insight_monitors` operations.
 * **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using `.evaluation_rules`,
 `.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
 * **Manage memory stores (preview)** for Agent conversations, using `.beta.memory_stores` operations.
 * **Register and manage local AI model weights (preview)** using `.beta.models` operations.
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
 * **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
-* **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
+* **Manage skills** as reusable capabilities that can be included in toolboxes and agents, using `.skills` operations.
+* **Analyze agent traces** using `.agent_insight_monitors` operations to create monitors, run analyses, and manage insights.
 
 **Important:** This stable package includes Preview features. Preview features available through stable methods require setting `allow_preview=True` when constructing the client, while Preview features exposed via the .beta sub-clients do not. Preview features may change or be removed in future versions and are not recommended for production use.
+
+Voice Agents includes both generally available APIs and preview features:
+
+| Voice Agents feature | Scope and client path |
+|---|---|
+| Realtime sessions and stored conversation/audio readback | GA: `.voice_agents.realtime` and `.voice_agents.conversations`; no preview opt-in |
+| Generate a voice agent from a prompt | GA: `.agents.create_from_prompt()`; no automatic preview header |
+| Teams Phone Extensibility and Twilio telephony | GA: `.voice_agents.telephony`; no preview opt-in |
+| SIP, inline subagent handoff, and post-call delivery | Preview options on GA operations; set `allow_preview=True` |
+| GPT-Live sessions and stored Live conversations | Preview: `.beta.voice_agents.live` and `.beta.voice_agents.live_conversations`; creating a GPT-Live definition also requires `allow_preview=True` |
+| Outbound campaigns | Preview: `.beta.voice_agents.telephony`; operations automatically include the required preview header |
+
+GA generation, conversation operations, and telephony reads do not automatically send preview headers,
+even when the client has `allow_preview=True`. That setting enables opt-in on conditional telephony
+writes for SIP; caller-supplied headers are preserved.
+
+Realtime uses `Realtime`, `RealtimeConnection`, and `RealtimeConnectionManager` from
+`azure.ai.projects.operations`. Their asynchronous counterparts are `AsyncRealtime`,
+`AsyncRealtimeConnection`, and `AsyncRealtimeConnectionManager` from `azure.ai.projects.aio.operations`.
+These GA types do not have `Beta` aliases.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
@@ -176,7 +196,7 @@ The table below lists the operation groups supported by the client library, with
 | Topic | Foundry documentation | Samples folder |
 |---|---|---|
 | Agents (create, run, stream) | [Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview) | `samples/agents/` |
-| Agent Insights | | [On-demand analysis and scheduled monitors](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agent_insights) |
+| Agent Insights (preview) | | [On-demand analysis and scheduled monitors](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agent_insights) |
 | Hosted agents | [Hosted agents concepts](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents), [Deploy your first hosted agent](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent) | `samples/hosted_agents/` |
 | Agents tools | [Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog) | `samples/agents/tools/` |
 | Agents optimization | [Prompt optimizer](https://learn.microsoft.com/azure/foundry/observability/how-to/prompt-optimizer), [Agent optimizer overview](https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview) | `samples/agents/optimization/` |
@@ -196,23 +216,17 @@ The table below lists the operation groups supported by the client library, with
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
 | Skills (preview) | | `samples/skills/` |
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
-| Voice agents (preview) | | `samples/agents/voice/` |
+| Voice agents | | [Voice Agents samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agents/voice) |
 
-Agent Insights samples use GA API `v1` without a client-wide preview opt-in.
-Set `FOUNDRY_PROJECT_ENDPOINT` to a project in a GA-enabled region and
-`FOUNDRY_MODEL_NAME` to a GPT deployment with generation 5 or later.
-The project identity needs model-deployment read, model-inference, and trace-content access.
-Only temporary external-agent creation sends `ExternalAgents=V1Preview`.
+### Voice Agent realtime transport
 
-### Voice Agent realtime transport (preview)
-
-Use `project_client.beta.voice_agents.realtime` for agents created with `VoiceAgentDefinition`.
+Use `project_client.voice_agents.realtime` for agents created with `VoiceAgentDefinition`.
 Connections use WebSocket by default. You can also select the transport explicitly:
 
 ```python
 from azure.ai.projects.models import VoiceAgentTransport
 
-with project_client.beta.voice_agents.realtime.connect(
+with project_client.voice_agents.realtime.connect(
     agent_name="my-voice-agent",
     transport=VoiceAgentTransport.WEBSOCKET,
 ) as connection:
@@ -222,7 +236,7 @@ with project_client.beta.voice_agents.realtime.connect(
 The asynchronous client uses the same keyword:
 
 ```python
-async with async_project_client.beta.voice_agents.realtime.connect(
+async with async_project_client.voice_agents.realtime.connect(
     agent_name="my-voice-agent",
     transport=VoiceAgentTransport.WEBSOCKET,
 ) as connection:
@@ -243,9 +257,22 @@ The separate [sync REST example](https://github.com/Azure/azure-sdk-for-python/b
 reads an existing generated-audio artifact and optionally saves it to a new output file.
 It requires the stored item ID from REST and a deployment that persists unheard audio.
 
-### Voice Agent GPT Live (preview)
+### Voice Agent campaigns (preview)
 
-Use `.beta.voice_agents.live` for GPT Live sessions and `.beta.voice_agents.live_conversations`
+The [campaign sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_campaign.py)
+create an outbound campaign scheduled for the next day, wait for preparation, then cancel
+and delete the sample campaign. They use `.beta.voice_agents.campaigns` and the SDK's
+automatic long-running-operation polling, including operation-guarded final reads and
+conditional cancellation/deletion with fresh ETags.
+
+Use an existing voice agent, an outbound-capable telephony connection, and phone numbers
+you have permission to use. Creation authorizes dialing; if execution is interrupted before
+cancellation, the campaign may place calls at its scheduled time. The samples preserve the
+existing agent and connection.
+
+### Voice Agent GPT-Live (preview)
+
+Use `.beta.voice_agents.live` for GPT-Live sessions and `.beta.voice_agents.live_conversations`
 for their stored conversations. Realtime uses separate clients and agent definitions.
 
 **Get started**
@@ -257,7 +284,7 @@ pip install "azure-ai-projects[voice]" azure-identity python-dotenv
 ```
 
 2. Set `FOUNDRY_PROJECT_ENDPOINT` and `FOUNDRY_VOICE_AGENT_MODEL` in your environment or `.env`.
-   The model value must be your GPT Live **deployment name**, not a model catalog ID.
+   The model value must be your GPT-Live **deployment name**, not a model catalog ID.
 3. Choose an example below and follow its `USAGE` instructions. Samples authenticate with
    `DefaultAzureCredential` and opt in to preview features.
 

@@ -5,11 +5,13 @@
 """
 DESCRIPTION:
     Download generated, unheard audio from an existing interrupted Realtime
-    reply. This read-only REST sample never creates or deletes resources.
+    reply. This GA, read-only REST sample never creates or deletes resources.
+    The item must already have a generated-audio artifact; a stored conversation
+    alone is insufficient, and cancelling a response does not guarantee an artifact.
 
 USAGE:
     python sample_voice_agent_read_generated_audio.py
-    pip install azure-ai-projects azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
@@ -48,9 +50,9 @@ def main() -> None:
 
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as client,
     ):
-        conversations = client.beta.voice_agents.conversations
+        conversations = client.voice_agents.conversations
         metadata = conversations.get_generated_audio_item(agent_name, conversation_id, item_id)
         print(f"Generated audio metadata: format={metadata.format}, duration={metadata.duration_ms}.")
         if metadata.blob_uri:

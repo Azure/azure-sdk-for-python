@@ -69,21 +69,21 @@ class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An access boundary for the activity protocol."""
 
-    READ1_ON1_DEVELOPERS = "read.1on1.developers"
+    READ_1_ON1_DEVELOPERS = "read.1on1.developers"
     """Allows read access to one-on-one developer conversations."""
-    READ1_ON1_MANAGER = "read.1on1.manager"
+    READ_1_ON1_MANAGER = "read.1on1.manager"
     """Allows read access to one-on-one manager conversations."""
-    READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+    READ_1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
     """Allows read access to allowlisted one-on-one conversations."""
-    READ1_ON1_TENANT = "read.1on1.tenant"
+    READ_1_ON1_TENANT = "read.1on1.tenant"
     """Allows read access to tenant-wide one-on-one conversations."""
-    WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+    WRITE_1_ON1_DEVELOPERS = "write.1on1.developers"
     """Allows write access to one-on-one developer conversations."""
-    WRITE1_ON1_MANAGER = "write.1on1.manager"
+    WRITE_1_ON1_MANAGER = "write.1on1.manager"
     """Allows write access to one-on-one manager conversations."""
-    WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+    WRITE_1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
     """Allows write access to allowlisted one-on-one conversations."""
-    WRITE1_ON1_TENANT = "write.1on1.tenant"
+    WRITE_1_ON1_TENANT = "write.1on1.tenant"
     """Allows write access to tenant-wide one-on-one conversations."""
     READ_GROUP_DEVELOPERS = "read.group.developers"
     """Allows read access to developer group conversations."""
@@ -260,18 +260,24 @@ class AgentOptimizationCandidateStatus(str, Enum, metaclass=CaseInsensitiveEnumM
     EVALUATING = "evaluating"
     """The accepted candidate is undergoing full evaluation."""
     COMPLETED = "completed"
-    """The candidate completed full evaluation."""
+    """Candidate processing completed, including evaluation when applicable."""
     FAILED = "failed"
     """The optimizer stopped before this candidate completed."""
+    SKIPPED = "skipped"
+    """Required input was unavailable, so skill optimization did not run."""
 
 
 class AgentOptimizationConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Optimization job configuration types."""
 
     AGENT_OPTIMIZATION = "agent_optimization"
-    """Comparative agent optimization."""
+    """Comparative agent optimization that can generate multiple candidates within configured search
+    limits."""
     PROMPT_OPTIMIZATION = "prompt_optimization"
-    """One-shot prompt optimization."""
+    """One-shot prompt optimization that generates a single candidate."""
+    SKILL_OPTIMIZATION = "skill_optimization"
+    """Generates a single candidate containing zero or more skill outcomes from trace evidence, with
+    optional reporting-only evaluation recorded on baseline and learned candidates."""
 
 
 class AgentOptimizationDataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -292,11 +298,128 @@ class AgentOptimizationEvaluationSetType(str, Enum, metaclass=CaseInsensitiveEnu
     """Scenarios used to simulate conversations against each candidate."""
 
 
+class AgentOptimizationEvaluatorGenerationSourceType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Evidence sources for generating skill-optimization evaluators."""
+
+    AGENT_TRACES = "agent_traces"
+    """The job's selected agent trace evidence."""
+
+
 class AgentOptimizationGoal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Goal for an agent-optimization job."""
 
     IMPROVE_QUALITY = "improve_quality"
     """Search for agent configurations that improve measured evaluation quality."""
+
+
+class AgentOptimizationJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Optimization job lifecycle, including a terminal skip when required input is unavailable."""
+
+    QUEUED = "queued"
+    """Job is waiting to start."""
+    IN_PROGRESS = "in_progress"
+    """Job is actively processing."""
+    SUCCEEDED = "succeeded"
+    """Job completed successfully."""
+    FAILED = "failed"
+    """Job failed."""
+    CANCELLED = "cancelled"
+    """Job was cancelled by the caller."""
+    SKIPPED = "skipped"
+    """Required input was unavailable and optimization was skipped. Terminal, but not evidence that
+    skills were created; error explains the skip."""
+
+
+class AgentOptimizationSkillExecutionStepStatus(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Latest recorded state of a logical execution step."""
+
+    NOT_STARTED = "not_started"
+    """NOT_STARTED."""
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    FAILED = "failed"
+    """FAILED."""
+    SKIPPED = "skipped"
+    """SKIPPED."""
+    CANCELLED = "cancelled"
+    """CANCELLED."""
+
+
+class AgentOptimizationSkillReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Types of skill references used by optimization."""
+
+    FOUNDRY_SKILL = "foundry_skill"
+    """A registered Foundry skill."""
+
+
+class AgentOptimizationSkillResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Publication or validation outcome for one skill, independent of whole-job status."""
+
+    CREATED = "created"
+    """A new skill version was confirmed created."""
+    NO_CHANGE = "no_change"
+    """Validated artifact is byte-identical to its exact baseline; no version was created."""
+    REJECTED = "rejected"
+    """Artifact was rejected by validation."""
+    PENDING = "pending"
+    """Publication has not completed."""
+    FAILED = "failed"
+    """Processing or publication failed."""
+    PUBLICATION_UNKNOWN = "publication_unknown"
+    """A publication attempt has an uncertain outcome; no version is claimed."""
+
+
+class AgentOptimizationSkillValidationId(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Artifact check identifier. Only implemented checks in the validation plan are reported."""
+
+    SCHEMA = "schema"
+    """SCHEMA."""
+    FORMAT = "format"
+    """FORMAT."""
+    PII = "pii"
+    """PII."""
+    LINT_SCRIPTS = "lint-scripts"
+    """LINT_SCRIPTS."""
+    QUALITY = "quality"
+    """QUALITY."""
+    SECURITY_SCAN = "security-scan"
+    """SECURITY_SCAN."""
+    OVERLAP = "overlap"
+    """OVERLAP."""
+    PACKAGE_INTEGRITY = "package_integrity"
+    """PACKAGE_INTEGRITY."""
+    TARGET_COMPATIBILITY = "target_compatibility"
+    """TARGET_COMPATIBILITY."""
+    EVIDENCE_PROVENANCE = "evidence_provenance"
+    """EVIDENCE_PROVENANCE."""
+
+
+class AgentOptimizationSkillValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of an artifact validation and its coverage."""
+
+    PASSED = "passed"
+    """The check ran and passed."""
+    FAILED = "failed"
+    """The check ran and failed."""
+    WARNING = "warning"
+    """The check ran with limitations or findings."""
+    SKIPPED = "skipped"
+    """The planned check was not reached; this is not a pass."""
+    UNAVAILABLE = "unavailable"
+    """Required tooling or model configuration was missing."""
+
+
+class AgentOptimizationSkillValidationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Categories of per-skill validation."""
+
+    ARTIFACT = "artifact"
+    """Validation of an individual skill artifact."""
 
 
 class AgentOptimizationStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -330,6 +453,22 @@ class AgentOptimizationTerminationReason(str, Enum, metaclass=CaseInsensitiveEnu
     CANDIDATE_SCREENING_STALLED = "candidate_screening_stalled"
     """The job succeeded with its completed candidates, but stopped after the configured number of
     consecutive proposed candidates failed screening."""
+
+
+class AgentOptimizationTraceConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Project-authorized trace providers for skill optimization."""
+
+    APPLICATION_INSIGHTS = "application_insights"
+    """A project-linked Application Insights component."""
+
+
+class AgentOptimizationTraceWindowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Trace selection strategies for skill optimization."""
+
+    FIXED = "fixed"
+    """A half-open time interval whose effective end is no later than job submission."""
+    TRACE_IDS = "trace_ids"
+    """Explicit trace-ID selection within a lookback interval ending at job creation."""
 
 
 class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -581,6 +720,19 @@ class ContainerSkillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INLINE."""
 
 
+class CreateChatCompletionRequestResponseFormatType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Type of CreateChatCompletionRequestResponseFormatType."""
+
+    TEXT = "text"
+    """TEXT."""
+    JSON_SCHEMA = "json_schema"
+    """JSON_SCHEMA."""
+    JSON_OBJECT = "json_object"
+    """JSON_OBJECT."""
+
+
 class CreateTranscriptionResponseJsonUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of CreateTranscriptionResponseJsonUsageType."""
 
@@ -634,8 +786,13 @@ class DataGenerationJobOutputWriteMode(str, Enum, metaclass=CaseInsensitiveEnumM
     MERGE = "merge"
     """Merge newly generated output into an existing output. For trace data generation jobs that
     output evaluation datasets, creates the next dataset version by merging newly generated rows
-    with the latest existing dataset version and de-duping trace rows. For fine-tuning file
-    outputs, merges into the file identified by ``merge_file_id``."""
+    with the latest existing dataset version and de-duping trace rows. For conversation jobs, a
+    newly generated conversation snapshot replaces the existing snapshot of the same conversation
+    wholesale. The replacement snapshot may omit earlier turns outside the selected time window.
+    Existing conversations without a newly generated replacement remain unchanged. Merging replaces
+    whole conversation snapshots rather than unioning individual turns, so it does not retain every
+    previous turn from the replaced snapshot. For fine-tuning file outputs, merges into the file
+    identified by ``merge_file_id``."""
 
 
 class DataGenerationJobScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -668,11 +825,22 @@ class DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SIMPLE_QNA = "simple_qna"
     """Simple question and answers between user and agent."""
     TRACES = "traces"
-    """Single turn query and response from agent traces."""
+    """Samples from captured turns in agent traces."""
     TOOL_USE = "tool_use"
     """Tool calling conversation between user and agent."""
     SIMULATION_SEED = "simulation_seed"
     """Simulation seed for evaluation scenarios."""
+    CONVERSATIONS = "conversations"
+    """Reconstruction of existing traced conversations for evaluation. This is a preview feature, not
+    synthetic conversation simulation."""
+
+
+class DataGenerationWarningCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known warning codes for data generation jobs. Additional codes may be returned."""
+
+    TEST_CASE_DESCRIPTION_GENERATION_INCOMPLETE = "test_case_description_generation_incomplete"
+    """Conversation rows were produced, but one or more optional test-case descriptions could not be
+    generated."""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -717,6 +885,29 @@ class DigitalWorkerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A Microsoft 365 digital worker."""
 
 
+class EndpointEvaluatorSchemaVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Contract version for an endpoint-based evaluator."""
+
+    V0_0_1 = "0.0.1"
+    """Contract version 0.0.1."""
+    V0_0_2 = "0.0.2"
+    """Contract version 0.0.2. Registration requires ``metrics`` to contain exactly one metric, of
+    type ``ordinal`` or ``continuous``."""
+
+
+class EvalItemContentItemObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of EvalItemContentItemObjectType."""
+
+    INPUT_TEXT = "input_text"
+    """INPUT_TEXT."""
+    OUTPUT_TEXT = "output_text"
+    """OUTPUT_TEXT."""
+    INPUT_IMAGE = "input_image"
+    """INPUT_IMAGE."""
+    INPUT_AUDIO = "input_audio"
+    """INPUT_AUDIO."""
+
+
 class EvaluationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level at which evaluation is performed."""
 
@@ -733,6 +924,10 @@ class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Continuous evaluation."""
     HUMAN_EVALUATION_PREVIEW = "humanEvaluationPreview"
     """Human evaluation preview."""
+    TRACE_EVALUATION = "traceEvaluation"
+    """Evaluate agent traces on the rule's schedule."""
+    DATASET_EVALUATION = "datasetEvaluation"
+    """Evaluate dataset inputs on the rule's schedule."""
 
 
 class EvaluationRuleEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -742,6 +937,8 @@ class EvaluationRuleEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Response completed."""
     MANUAL = "manual"
     """Manual trigger."""
+    TIMER_TRIGGER = "timerTrigger"
+    """Run the rule's action on its schedule."""
 
 
 class EvaluationTaxonomyInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -785,6 +982,63 @@ class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Connection."""
 
 
+class EvaluatorDiagnosticActorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of actor responsible for an evaluator lineage diagnostic."""
+
+    USER = "user"
+    """An authenticated user initiated the change."""
+    SERVICE = "service"
+    """A Foundry service component initiated the change."""
+
+
+class EvaluatorDiagnosticChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known machine-readable classifications for evaluator diagnostic changes."""
+
+    HUMAN_CREATED = "human_created"
+    """A user created an evaluator version."""
+    HUMAN_ADDED = "human_added"
+    """A user added a rubric dimension."""
+    HUMAN_EDITED = "human_edited"
+    """A user changed evaluator functional content."""
+    HUMAN_REMOVED = "human_removed"
+    """A user removed a rubric dimension."""
+    GENERATED = "generated"
+    """Evaluator generation created the resulting content."""
+    REGENERATED = "regenerated"
+    """Evaluator generation changed an existing dimension."""
+    NOT_PRESENT_IN_GENERATED_RUBRIC = "not_present_in_generated_rubric"
+    """The generated rubric no longer contained an existing dimension."""
+    GENERATION_COMPLETED = "generation_completed"
+    """An evaluator version was published from completed generation."""
+
+
+class EvaluatorDiagnosticType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported evaluator diagnostic change shapes."""
+
+    VERSION_CREATED = "version_created"
+    """An evaluator version was created."""
+    DIMENSION_ADDED = "dimension_added"
+    """A rubric dimension was added."""
+    DIMENSION_UPDATED = "dimension_updated"
+    """A rubric dimension was updated."""
+    DIMENSION_REMOVED = "dimension_removed"
+    """A rubric dimension was removed."""
+    DEFINITION_UPDATED = "definition_updated"
+    """Functional evaluator fields outside individual dimensions were updated."""
+    HEALTH_COMPUTED = "health_computed"
+    """Existing rubric-health computations were recorded for a generated evaluator version."""
+
+
+class EvaluatorGenerationCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The requested evaluator generation category."""
+
+    QUALITY = "quality"
+    """Generate an ordinary quality rubric, preserving existing scoring and regeneration behavior."""
+    SAFETY = "safety"
+    """Generate or regenerate a safety rubric with Boolean judgments, explicit allowed/disallowed
+    classifications, and two separate violation metrics."""
+
+
 class EvaluatorGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported source types for evaluator generation jobs."""
 
@@ -796,6 +1050,17 @@ class EvaluatorGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumM
     """Traces source — conversation traces from Application Insights."""
     DATASET = "dataset"
     """Dataset source — reference to a dataset."""
+
+
+class EvaluatorHealthConfidence(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisional structural confidence level for computed rubric health."""
+
+    LOW = "low"
+    """Low structural confidence."""
+    MED = "med"
+    """Medium structural confidence."""
+    HIGH = "high"
+    """High structural confidence."""
 
 
 class EvaluatorMetricDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -829,6 +1094,26 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Built-in evaluator (Microsoft provided)."""
     CUSTOM = "custom"
     """Custom evaluator."""
+
+
+class FileInputDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FileInputDetail."""
+
+    AUTO = "auto"
+    """AUTO."""
+    LOW = "low"
+    """LOW."""
+    HIGH = "high"
+    """HIGH."""
+
+
+class FilterStrategyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the type of filter strategy used to select traces for evaluation."""
+
+    RANDOM_SAMPLING = "random_sampling"
+    """Selects traces by random sampling."""
+    SMART_FILTERING = "smart_filtering"
+    """Selects traces using an algorithm to identify the most relevant ones."""
 
 
 class FoundryModelArtifactProfileCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -942,6 +1227,19 @@ class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """REGEX."""
 
 
+class ImageDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ImageDetail."""
+
+    LOW = "low"
+    """LOW."""
+    HIGH = "high"
+    """HIGH."""
+    AUTO = "auto"
+    """AUTO."""
+    ORIGINAL = "original"
+    """ORIGINAL."""
+
+
 class ImageGenAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ImageGenAction."""
 
@@ -964,6 +1262,17 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Managed Azure Search."""
 
 
+class InputContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of InputContentType."""
+
+    INPUT_TEXT = "input_text"
+    """INPUT_TEXT."""
+    INPUT_IMAGE = "input_image"
+    """INPUT_IMAGE."""
+    INPUT_FILE = "input_file"
+    """INPUT_FILE."""
+
+
 class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control how much effort the model will exert to match the style and features, especially facial
     features, of input images. Supports ``high`` and ``low`` on ``gpt-image-1.5``;
@@ -977,6 +1286,69 @@ class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LOW."""
 
 
+class InputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of InputItemType."""
+
+    MESSAGE = "message"
+    """MESSAGE."""
+    OUTPUT_MESSAGE = "output_message"
+    """OUTPUT_MESSAGE."""
+    FILE_SEARCH_CALL = "file_search_call"
+    """FILE_SEARCH_CALL."""
+    COMPUTER_CALL = "computer_call"
+    """COMPUTER_CALL."""
+    COMPUTER_CALL_OUTPUT = "computer_call_output"
+    """COMPUTER_CALL_OUTPUT."""
+    WEB_SEARCH_CALL = "web_search_call"
+    """WEB_SEARCH_CALL."""
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
+    TOOL_SEARCH_CALL = "tool_search_call"
+    """TOOL_SEARCH_CALL."""
+    TOOL_SEARCH_OUTPUT = "tool_search_output"
+    """TOOL_SEARCH_OUTPUT."""
+    ADDITIONAL_TOOLS = "additional_tools"
+    """ADDITIONAL_TOOLS."""
+    CONFIGURATION_UPDATE = "configuration_update"
+    """CONFIGURATION_UPDATE."""
+    REASONING = "reasoning"
+    """REASONING."""
+    COMPACTION = "compaction"
+    """COMPACTION."""
+    IMAGE_GENERATION_CALL = "image_generation_call"
+    """IMAGE_GENERATION_CALL."""
+    CODE_INTERPRETER_CALL = "code_interpreter_call"
+    """CODE_INTERPRETER_CALL."""
+    LOCAL_SHELL_CALL = "local_shell_call"
+    """LOCAL_SHELL_CALL."""
+    LOCAL_SHELL_CALL_OUTPUT = "local_shell_call_output"
+    """LOCAL_SHELL_CALL_OUTPUT."""
+    SHELL_CALL = "shell_call"
+    """SHELL_CALL."""
+    SHELL_CALL_OUTPUT = "shell_call_output"
+    """SHELL_CALL_OUTPUT."""
+    APPLY_PATCH_CALL = "apply_patch_call"
+    """APPLY_PATCH_CALL."""
+    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
+    """APPLY_PATCH_CALL_OUTPUT."""
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    """MCP_LIST_TOOLS."""
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    """MCP_APPROVAL_REQUEST."""
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    """MCP_APPROVAL_RESPONSE."""
+    MCP_CALL = "mcp_call"
+    """MCP_CALL."""
+    CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+    """CUSTOM_TOOL_CALL_OUTPUT."""
+    CUSTOM_TOOL_CALL = "custom_tool_call"
+    """CUSTOM_TOOL_CALL."""
+    ITEM_REFERENCE = "item_reference"
+    """ITEM_REFERENCE."""
+
+
 class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The request of the insights."""
 
@@ -986,6 +1358,23 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cluster Insight on an Agent."""
     EVALUATION_COMPARISON = "EvaluationComparison"
     """Evaluation Comparison."""
+
+
+class ItemGenerationParamsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identifies how evaluation input items are prepared before evaluation."""
+
+    RED_TEAM = "red_team"
+    """Parameters for red team."""
+    RESPONSE_RETRIEVAL = "response_retrieval"
+    """The ResponseRetrieval item generation parameters."""
+    RED_TEAM_SEED_PROMPTS = "red_team_seed_prompts"
+    """Parameters for red team seed prompts."""
+    RED_TEAM_TAXONOMY = "red_team_taxonomy"
+    """Parameters for red team taxonomy item generation."""
+    SYNTHETIC_DATA_GENERATION = "synthetic_data_gen"
+    """Parameters for synthetic data item generation."""
+    TARGET_COMPLETION = "target_completion"
+    """Parameters for target completion item generation."""
 
 
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1306,6 +1695,13 @@ class LiveToolChoiceValueEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """REQUIRED."""
 
 
+class MCPToolboxRequestHeaderBindingSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source used to resolve a request header value for an MCP server."""
+
+    CLIENT_HEADERS = "client_headers"
+    """Resolve the value from headers supplied by the client."""
+
+
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Memory item kind."""
 
@@ -1363,6 +1759,19 @@ class MemoryStoreUpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SUPERSEDED."""
 
 
+class MessagePhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Labels an ``assistant`` message as intermediate commentary (``commentary``) or the final answer
+    (``final_answer``). For models like ``gpt-5.3-codex`` and beyond, when sending follow-up
+    requests, preserve and resend phase on all assistant messages — dropping it can degrade
+    performance. Not used for user messages.
+    """
+
+    COMMENTARY = "commentary"
+    """COMMENTARY."""
+    FINAL_ANSWER = "final_answer"
+    """FINAL_ANSWER."""
+
+
 class Microsoft365PublishScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The publish scope for the generated Microsoft Teams app."""
 
@@ -1407,8 +1816,8 @@ class ModelIdsLive(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     URL query parameter.
     """
 
-    GPT_LIVE1 = "gpt-live-1"
-    """GPT_LIVE1."""
+    GPT_LIVE_1 = "gpt-live-1"
+    """GPT_LIVE_1."""
 
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1447,6 +1856,10 @@ class OptimizationContextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STEERING_PROMPT = "steering_prompt"
     """Natural-language guidance that steers the desired optimization."""
+    AGENT_TRACES = "agent_traces"
+    """Agent trace evidence selected from project-authorized telemetry."""
+    SKILL_REFERENCES = "skill_references"
+    """Exact baseline skill references for skill optimization."""
 
 
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1969,6 +2382,20 @@ class RubricGenerationInputQualityWarningSource(  # pylint: disable=name-too-lon
     """The warning is computed across all successfully resolved sources."""
 
 
+class RubricScoringMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The judgment mode selected for an entire rubric. Safety rubrics use Boolean judgments with
+    separately reported allowed and disallowed behavior metrics.
+    """
+
+    BOOLEAN = "boolean"
+    """Ordinary rubrics require every applicable check to pass. Any failed check fails the rubric.
+    Configured dimension weights are not supported; pass_threshold must be omitted or 1. The
+    aggregate score is 1 for pass or 0 for fail. Safety rubrics instead report allowed and
+    disallowed behavior violations separately, without an overall threshold or aggregate score."""
+    LIKERT = "likert"
+    """Grade applicable rubric dimensions from 1 through 5, with optional relative weights."""
+
+
 class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of sample used in the analysis."""
 
@@ -2098,7 +2525,8 @@ class TelephonyAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A Microsoft Teams identity. Source addresses require a nonempty resource-account object GUID;
     transfer destinations also support 28:orgid:{guid}."""
     SIP = "sip"
-    """A SIP or SIPS destination for transfer."""
+    """A SIP or SIPS destination for transfer. SIP is in preview and requires the
+    ``VoiceAgents=V1Preview`` opt-in."""
 
 
 class TelephonyCallDurationBasis(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2530,7 +2958,8 @@ class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TWILIO = "twilio"
     """Twilio Programmable Voice."""
     SIP = "sip"
-    """Session Initiation Protocol."""
+    """Session Initiation Protocol. SIP is in preview and requires the ``VoiceAgents=V1Preview``
+    opt-in."""
 
 
 class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2711,6 +3140,17 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OPENAPI."""
     MICROSOFT_COPILOT_TOOLSET_PREVIEW = "microsoft_copilot_toolset_preview"
     """MICROSOFT_COPILOT_TOOLSET_PREVIEW."""
+
+
+class TraceSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the type of trace source used to select traces for evaluation."""
+
+    TRACE_ID_SOURCE = "trace_id_source"
+    """Selects traces by explicit trace IDs."""
+    CONVERSATION_ID_SOURCE = "conversation_id_source"
+    """Selects traces by conversation IDs."""
+    AGENT_FILTER = "agent_filter"
+    """Selects traces by agent reference with time-based filtering."""
 
 
 class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2984,15 +3424,15 @@ class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnum
     added over time.
     """
 
-    WHISPER1 = "whisper-1"
+    WHISPER_1 = "whisper-1"
     """OpenAI Whisper."""
     GPT_REALTIME_WHISPER = "gpt-realtime-whisper"
     """OpenAI GPT Realtime Whisper."""
-    GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
+    GPT_4_O_TRANSCRIBE = "gpt-4o-transcribe"
     """OpenAI GPT-4o transcribe."""
-    GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
+    GPT_4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
     """OpenAI GPT-4o mini transcribe."""
-    GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
+    GPT_4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
     """OpenAI GPT-4o transcribe with speaker diarization."""
     GPT_TRANSCRIBE = "gpt-transcribe"
     """OpenAI GPT Transcribe."""
@@ -3115,8 +3555,7 @@ class VoiceAgentPostCallIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Content that can be included in a post-call delivery."""
 
     AUDIO = "audio"
-    """A URL to the merged call recording. Not supported in this preview: the service rejects
-    ``audio`` when the agent version is saved."""
+    """A URL to the merged call recording."""
 
 
 class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3321,7 +3760,7 @@ class VoiceAgentTransferDestinationType(str, Enum, metaclass=CaseInsensitiveEnum
     TEAMS = "teams"
     """A Microsoft Teams user or resource-account identifier."""
     SIP = "sip"
-    """A SIP or SIPS URI."""
+    """A SIP or SIPS URI. SIP is in preview and requires the ``VoiceAgents=V1Preview`` opt-in."""
 
 
 class VoiceAgentTransferStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):

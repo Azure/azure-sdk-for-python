@@ -10,7 +10,7 @@ DESCRIPTION:
 
 USAGE:
     python sample_voice_agent_realtime_interruption_async.py
-    pip install "azure-ai-projects[voice]" azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
@@ -47,14 +47,14 @@ async def main() -> None:
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as client,
     ):
         created = None
         try:
             created = await client.agents.create_version(
                 agent_name=agent_name, definition=interruption_definition(model)
             )
-            async with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as connection:
+            async with client.voice_agents.realtime.connect(agent_name=agent_name) as connection:
                 await interrupt_reply_async(connection, turn)
             print(
                 f"Confirmed response cancellation and item truncation. Received {turn.received_audio_bytes} PCM bytes."
@@ -63,7 +63,7 @@ async def main() -> None:
             try:
                 if turn.conversation_id:
                     try:
-                        await client.beta.voice_agents.conversations.delete(agent_name, turn.conversation_id)
+                        await client.voice_agents.conversations.delete(agent_name, turn.conversation_id)
                     except ResourceNotFoundError:
                         print("Conversation cleanup returned 404; no persisted conversation was found.")
             finally:

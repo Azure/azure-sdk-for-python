@@ -8,21 +8,20 @@
 DESCRIPTION:
     This sample uses the synchronous AIProjectClient to create an Agent Insights
     monitor with analysis priorities, analyze traces from the last three hours,
-    list active insights, and resolve one insight.
+    read run results, list active insights, and resolve one insight.
 
-    Access GA API v1 through `project_client.agent_insight_monitors`.
-    No Agent Insights preview header is needed. Only temporary external-agent
-    creation opts in to ExternalAgents=V1Preview.
+    Agent Insights operations are generally available through
+    `project_client.agent_insight_monitors`.
 
     This sample registers a temporary external agent and emits fictional traces;
     it does not execute tools or call a model to produce those traces. It waits
     for ingestion, then deletes its monitor and agent in finally. Ingested
     telemetry remains in Application Insights under its normal retention policy.
 
-    Use an existing project, connected Application Insights resource, and a
-    GPT analysis-model deployment with generation 5 or later. Your identity
-    needs agent/monitor management and telemetry query access. The project
-    identity needs model-deployment read, model-inference, and trace-content access.
+    Use an existing project, connected Application Insights resource, and suitable
+    analysis-model deployment. Your identity needs agent/monitor management and
+    telemetry query access. The project identity needs model deployment read,
+    model invocation, and trace-content access.
     Protected trace content also requires Privileged Monitoring Data Reader on
     the connected Application Insights resource for the project identity.
 
@@ -34,11 +33,9 @@ USAGE:
     pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint in a
-       region where Agent Insights GA is available.
+    1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint.
     2) APP_INSIGHTS_RESOURCE_ID - The connected Application Insights resource ID.
-    3) FOUNDRY_MODEL_NAME - The deployment name of a GPT model with generation 5
-       or later for trace analysis.
+    3) FOUNDRY_MODEL_NAME - A GPT-5 or later deployment for trace analysis.
     4) FOUNDRY_AGENT_NAME - Optional agent name prefix. Defaults to
        "agent-insights-sample" when unset or empty. A unique suffix is added
        on each run so existing agents and retained traces are not reused.
@@ -68,7 +65,7 @@ def main() -> None:
 
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, api_version="v1") as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         LogsQueryClient(credential) as logs_client,
     ):
         monitor_operations = project_client.agent_insight_monitors
@@ -86,7 +83,7 @@ def main() -> None:
                 model_deployment_name=model_deployment_name,
                 enabled=False,
                 priorities=AgentInsightPriorities(
-                    categories=[],  # Use the default analysis categories.
+                    categories=[],
                     instructions="Focus on tool calls made without the user's approval.",
                 ),
             )
@@ -106,8 +103,6 @@ def main() -> None:
             run_result = poller.result()
             completed_run = monitor_operations.get_run(monitor.id, run_id)
             print(f"Run status: {completed_run.status}")
-            if completed_run.inputs:
-                print(f"Lookback hours: {completed_run.inputs.lookback_hours}")
             print(f"Traces in window: {run_result.traces_in_window}")
             print(f"Traces analyzed: {run_result.traces_analyzed}")
             print(f"Insights created: {run_result.insights_created}")

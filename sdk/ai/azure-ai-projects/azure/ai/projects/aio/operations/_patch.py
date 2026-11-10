@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, List
-from ._patch_agents_async import AgentsOperations, BetaAgentsOperations
+from ._patch_agents_async import AgentsOperations
 from ._patch_agent_insights_async import AgentInsightMonitorsOperations
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_evaluators_async import EvaluatorsOperations
@@ -18,11 +18,15 @@ from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
-from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
+from ...operations._patch import (
+    _BETA_OPERATION_FEATURE_HEADERS,
+    _OperationMethodHeaderProxy,
+    _VOICE_AGENT_CONDITIONAL_TELEPHONY_METHODS,
+)
 from .._realtime import (
-    AsyncBetaRealtime,
-    AsyncBetaRealtimeConnection,
-    AsyncBetaRealtimeConnectionManager,
+    AsyncRealtime,
+    AsyncRealtimeConnection,
+    AsyncRealtimeConnectionManager,
     ClientEvent,
     ConversationItem,
     ServerEvent,
@@ -44,12 +48,42 @@ from ._operations import (
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
     BetaSchedulesOperations,
-    BetaSkillsOperations,
-    BetaVoiceAgentsConversationsOperations,
     BetaVoiceAgentsLiveConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
-    BetaVoiceAgentsTelephonyOperations,
+    VoiceAgentsConversationsOperations,
+    VoiceAgentsOperations as GeneratedVoiceAgentsOperations,
+    VoiceAgentsTelephonyOperations,
 )
+
+
+class VoiceAgentsOperations(GeneratedVoiceAgentsOperations):
+    """Generally available voice-agent operations.
+
+    Access these operations through :class:`~azure.ai.projects.aio.AIProjectClient`'s
+    ``voice_agents`` attribute.
+    """
+
+    conversations: VoiceAgentsConversationsOperations
+    """:class:`~azure.ai.projects.aio.operations.VoiceAgentsConversationsOperations` operations"""
+    telephony: VoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.aio.operations.VoiceAgentsTelephonyOperations` operations"""
+    realtime: AsyncRealtime
+    """:class:`~azure.ai.projects.aio.operations.AsyncRealtime` operations"""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        # WebSocket connections cannot be kept alive by the generated HTTP pipeline.
+        self.realtime = AsyncRealtime(self)
+        if self._config.allow_preview:
+            setattr(
+                self,
+                "telephony",
+                _OperationMethodHeaderProxy(
+                    self.telephony,
+                    _BETA_OPERATION_FEATURE_HEADERS["voice_agents"],
+                    method_names=_VOICE_AGENT_CONDITIONAL_TELEPHONY_METHODS,
+                ),
+            )
 
 
 class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
@@ -64,14 +98,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
 
     campaigns: BetaVoiceAgentsCampaignsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsCampaignsOperations` operations"""
-    conversations: BetaVoiceAgentsConversationsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsConversationsOperations` operations"""
     live_conversations: BetaVoiceAgentsLiveConversationsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
-    telephony: BetaVoiceAgentsTelephonyOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations` operations"""
-    realtime: AsyncBetaRealtime
-    """:class:`~azure.ai.projects.aio.operations.AsyncBetaRealtime` operations"""
     live: AsyncBetaLive
     """:class:`~azure.ai.projects.aio.operations.AsyncBetaLive` operations"""
 
@@ -80,10 +108,6 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         self.campaigns = BetaVoiceAgentsCampaignsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        # The generator does not emit realtime operations at all, since azure-core's HTTP
-        # pipeline has no way to keep a WebSocket upgrade's resulting socket alive. Add our
-        # hand-written client, which manages a real, long-lived connection, in its place.
-        self.realtime = AsyncBetaRealtime(self)
         self.live = AsyncBetaLive(self)
 
 
@@ -97,8 +121,6 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
-    agents: BetaAgentsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaAgentsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
     insights: BetaInsightsOperations
@@ -113,15 +135,11 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
-    skills: BetaSkillsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     voice_agents: BetaVoiceAgentsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Replace with patched class that returns AsyncAgentOptimizationLROPoller
-        self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
@@ -138,17 +156,16 @@ class BetaOperations(GeneratedBetaOperations):
 
 
 __all__: List[str] = [
-    "AgentInsightMonitorsOperations",
     "AgentsOperations",
-    "AsyncBetaRealtime",
-    "AsyncBetaRealtimeConnection",
-    "AsyncBetaRealtimeConnectionManager",
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
     "AsyncBetaLive",
     "AsyncBetaLiveConnection",
     "AsyncBetaLiveConnectionManager",
     "LiveClientEvent",
     "LiveServerEvent",
-    "BetaAgentsOperations",
+    "AgentInsightMonitorsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
@@ -157,12 +174,12 @@ __all__: List[str] = [
     "BetaRedTeamsOperations",
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
-    "BetaSkillsOperations",
     "BetaVoiceAgentsCampaignsOperations",
-    "BetaVoiceAgentsConversationsOperations",
     "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
-    "BetaVoiceAgentsTelephonyOperations",
+    "VoiceAgentsConversationsOperations",
+    "VoiceAgentsOperations",
+    "VoiceAgentsTelephonyOperations",
     "ClientEvent",
     "ConnectionsOperations",
     "ConversationItem",
