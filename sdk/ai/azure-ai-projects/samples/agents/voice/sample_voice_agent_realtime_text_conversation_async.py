@@ -17,7 +17,7 @@ DESCRIPTION:
 USAGE:
     python sample_voice_agent_realtime_text_conversation_async.py
 
-    pip install "azure-ai-projects[voice]>=2.7.0" azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
     pip install pyaudio  # Optional speaker playback.
 
     Environment variables:

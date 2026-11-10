@@ -12,7 +12,7 @@ DESCRIPTION:
 USAGE:
     python sample_voice_agent_live_function_tool_async.py
 
-    pip install "azure-ai-projects[voice]" azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
