@@ -17,6 +17,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
 from .operations import (
+    AgentInsightMonitorsOperations,
     AgentsOperations,
     BetaOperations,
     ConnectionsOperations,
@@ -25,6 +26,7 @@ from .operations import (
     EvaluationRulesOperations,
     EvaluatorsOperations,
     IndexesOperations,
+    SkillsOperations,
     ToolboxesOperations,
     VoiceAgentsOperations,
 )
@@ -51,12 +53,17 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
     :vartype evaluation_rules: azure.ai.projects.aio.operations.EvaluationRulesOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.aio.operations.DatasetsOperations
+    :ivar agent_insight_monitors: AgentInsightMonitorsOperations operations
+    :vartype agent_insight_monitors:
+     azure.ai.projects.aio.operations.AgentInsightMonitorsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.aio.operations.ConnectionsOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
+    :ivar skills: SkillsOperations operations
+    :vartype skills: azure.ai.projects.aio.operations.SkillsOperations
     :ivar evaluators: EvaluatorsOperations operations
     :vartype evaluators: azure.ai.projects.aio.operations.EvaluatorsOperations
     :ivar toolboxes: ToolboxesOperations operations
@@ -117,9 +124,13 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
             self._client, self._config, self._serialize, self._deserialize
         )
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agent_insight_monitors = AgentInsightMonitorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skills = SkillsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluators = EvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 

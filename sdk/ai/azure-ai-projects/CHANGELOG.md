@@ -22,6 +22,11 @@
 * Added optional error details `MisalignmentErrorDetailsResource.review_target` and `RealtimeResponseStatusDetailsError.message`.
 * Expanded `ImageGenTool.model` known-value annotations to include the `gpt-image-2.5-sunburst` and `gpt-image-2.5-flare` model families and their dated versions, and `ImageGenTool.quality` to include `xhigh` and `max`.
 * Added explicit recursive typing for nested `CompoundFilter` instances in `CompoundFilter.filters`.
+* Added rubric scoring modes for rubric-based evaluators through `RubricScoring` and `RubricScoringMode` (`LIKERT` or `BOOLEAN`), with optional `RubricBasedEvaluatorDefinition.scoring` and `pass_threshold`.
+* Added `Dimension.allowed` for safety rubrics and read-only `Dimension.generated_weight`. `Dimension.weight` is now optional; omit it for Boolean and safety rubrics.
+* Added optional `category` (`EvaluatorGenerationCategory.QUALITY` or `SAFETY`), `scoring`, `pass_threshold`, and `dimensions` to `EvaluatorGenerationInputs`. Supplying `dimensions` replaces the approved dimensions; omitting it preserves them. `model` is now optional; it is required for quality generation and ignored for safety generation.
+* Added evaluator diagnostics models, including `EvaluatorDiagnostic`, `EvaluatorHealthMetrics`, and the `DimensionAddedDiagnosticChange`, `DimensionRemovedDiagnosticChange`, and `DimensionUpdatedDiagnosticChange` change types.
+* Added `DatasetEvaluationRuleAction` and `TraceEvaluationRuleAction` for evaluation rules.
 
 ### Breaking Changes
 
