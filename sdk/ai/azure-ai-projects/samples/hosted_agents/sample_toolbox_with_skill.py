@@ -83,11 +83,11 @@ def main() -> None:
             pass
 
         try:
-            project_client.beta.skills.delete(SKILL_NAME)
+            project_client.skills.delete(SKILL_NAME)
         except ResourceNotFoundError:
             pass
 
-        skill_version = project_client.beta.skills.create(
+        skill_version = project_client.skills.create(
             name=SKILL_NAME,
             inline_content=SkillInlineContent(
                 description="Compute shipping cost for a package given weight and destination.",
@@ -160,7 +160,7 @@ def main() -> None:
         finally:
             project_client.toolboxes.delete(TOOLBOX_NAME)
             print("Toolbox deleted")
-            project_client.beta.skills.delete(SKILL_NAME)
+            project_client.skills.delete(SKILL_NAME)
             print("Skill deleted")
 
 

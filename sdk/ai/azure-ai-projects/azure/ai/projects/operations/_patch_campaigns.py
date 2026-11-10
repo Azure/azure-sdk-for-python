@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Campaign LRO polling customizations for ``beta.voice_agents.telephony``."""
+"""Campaign LRO polling customizations for ``beta.voice_agents.campaigns``."""
 
 from collections.abc import MutableMapping
 from typing import Any, IO, Optional, Union, overload
@@ -10,20 +10,20 @@ from typing import Any, IO, Optional, Union, overload
 from azure.core import MatchConditions
 from azure.core.polling import LROPoller
 
-from ._operations import BetaVoiceAgentsTelephonyOperations as GeneratedBetaVoiceAgentsTelephonyOperations
+from ._operations import BetaVoiceAgentsCampaignsOperations as GeneratedBetaVoiceAgentsCampaignsOperations
 from .. import models as _models
 from .._utils.campaign_polling import _configure_campaign_polling
 
 JSON = MutableMapping[str, Any]
 
 
-class BetaVoiceAgentsTelephonyOperations(GeneratedBetaVoiceAgentsTelephonyOperations):
+class BetaVoiceAgentsCampaignsOperations(GeneratedBetaVoiceAgentsCampaignsOperations):
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, access these operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s ``beta.voice_agents.telephony`` attribute.
+        :class:`~azure.ai.projects.AIProjectClient`'s ``beta.voice_agents.campaigns`` attribute.
     """
 
     def _configure_polling(self, kwargs: dict[str, Any]) -> None:

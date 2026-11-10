@@ -56,31 +56,21 @@ def main() -> None:
     campaign_name = f"sample-campaign-{uuid4().hex}"
     scheduled_at = datetime.now(timezone.utc) + timedelta(days=1)
     campaign = TelephonyCampaign(
-        connection_name=os.environ.get(
-            "FOUNDRY_VOICE_CONNECTION_NAME", "MyTelephonyConnection"
-        ),
-        source=PhoneNumber(
-            value=os.environ.get("FOUNDRY_VOICE_SOURCE_PHONE_NUMBER", "+15555550100")
-        ),
+        connection_name=os.environ.get("FOUNDRY_VOICE_CONNECTION_NAME", "MyTelephonyConnection"),
+        source=PhoneNumber(value=os.environ.get("FOUNDRY_VOICE_SOURCE_PHONE_NUMBER", "+15555550100")),
         recipients=[
             TelephonyRecipient(
-                destination=PhoneNumber(
-                    value=os.environ.get(
-                        "FOUNDRY_VOICE_DESTINATION_PHONE_NUMBER", "+15555550101"
-                    )
-                )
+                destination=PhoneNumber(value=os.environ.get("FOUNDRY_VOICE_DESTINATION_PHONE_NUMBER", "+15555550101"))
             )
         ],
-        schedule=AtTimeSchedule(
-            scheduled_at=scheduled_at, expires_at=scheduled_at + timedelta(hours=1)
-        ),
+        schedule=AtTimeSchedule(scheduled_at=scheduled_at, expires_at=scheduled_at + timedelta(hours=1)),
     )
 
     with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
-        campaigns = project_client.beta.voice_agents.telephony
+        campaigns = project_client.beta.voice_agents.campaigns
         create_poller = None
         try:
             create_poller = campaigns.begin_create(
@@ -88,17 +78,13 @@ def main() -> None:
                 campaign_name=campaign_name,
                 campaign=campaign,
             )
-            print(
-                f"Preparing campaign '{campaign_name}'. Calls are scheduled for {scheduled_at.isoformat()}."
-            )
+            print(f"Preparing campaign '{campaign_name}'. Calls are scheduled for {scheduled_at.isoformat()}.")
             prepared = create_poller.result()
             print(f"Preparation finished: campaign status={prepared.status}")
         finally:
             if create_poller is not None:
                 # Read a fresh ETag before each conditional control action.
-                current = campaigns.get(
-                    agent_name=agent_name, campaign_name=campaign_name
-                )
+                current = campaigns.get(agent_name=agent_name, campaign_name=campaign_name)
                 if current.status in {"validating", "running"}:
                     cancel_poller = campaigns.begin_cancel(
                         agent_name=agent_name,
@@ -109,9 +95,7 @@ def main() -> None:
                     cancelled = cancel_poller.result()
                     print(f"Cancellation finished: campaign status={cancelled.status}")
 
-                current = campaigns.get(
-                    agent_name=agent_name, campaign_name=campaign_name
-                )
+                current = campaigns.get(agent_name=agent_name, campaign_name=campaign_name)
                 delete_poller = campaigns.begin_delete(
                     agent_name=agent_name,
                     campaign_name=campaign_name,
@@ -119,9 +103,7 @@ def main() -> None:
                     match_condition=MatchConditions.IfNotModified,
                 )
                 delete_poller.result()
-                print(
-                    f"Deleted sample campaign '{campaign_name}'. The agent and connection were preserved."
-                )
+                print(f"Deleted sample campaign '{campaign_name}'. The agent and connection were preserved.")
 
 
 if __name__ == "__main__":

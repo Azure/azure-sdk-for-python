@@ -70,11 +70,11 @@ with (
         pass
 
     try:
-        project_client.beta.skills.delete(SKILL_NAME)
+        project_client.skills.delete(SKILL_NAME)
     except ResourceNotFoundError:
         pass
 
-    skill_version = project_client.beta.skills.create(
+    skill_version = project_client.skills.create(
         name=SKILL_NAME,
         inline_content=SkillInlineContent(
             description="Compute shipping cost for a package given weight and destination.",
@@ -91,7 +91,7 @@ with (
 
     try:
         skill_archive = b"".join(
-            project_client.beta.skills.download_version(name=skill_version.name, version=skill_version.version)
+            project_client.skills.download_version(name=skill_version.name, version=skill_version.version)
         )
         with zipfile.ZipFile(io.BytesIO(skill_archive)) as archive:
             skill_instructions = archive.read("SKILL.md").decode("utf-8")
@@ -147,7 +147,7 @@ with (
             pass
         finally:
             try:
-                project_client.beta.skills.delete(SKILL_NAME)
+                project_client.skills.delete(SKILL_NAME)
                 print(f"Deleted skill `{SKILL_NAME}`")
             except ResourceNotFoundError:
                 pass
