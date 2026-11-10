@@ -1,6 +1,6 @@
 # Release History
 
-## 12.28.0b1 (2026-11-04)
+## 12.28.0b1 (2026-11-05)
 
 ### Breaking Changes
 - Changed the default `max_single_get_size` from 32 MiB to 4 MiB. This means the initial download request will now be 4 MiB rather than 32 MiB which may result in more requests than previous versions depending on file size. This also means some file downloads may use parallel requests when they were not previously, if `max_concurrency` is set greater than 1. To restore the previous behavior, pass `max_single_get_size = 32 * 1024 * 1024` when constructing the client.
