@@ -72,6 +72,15 @@ parameters:
   - name: DisableAzureResourceCreation
     type: boolean
     default: false
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
 
 jobs:
   - job:
@@ -174,9 +183,45 @@ jobs:
           }
         displayName: 'Check for compiled dev requirements'
 
-      - template: /eng/pipelines/templates/steps/prepare-native-test-dependencies.yml
-        parameters:
-          Condition: and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+      - ${{ if parameters.InstallMsRustToolchain }}:
+        - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
+          parameters:
+            ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+            WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+            Condition: and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+      - pwsh: |
+          Write-Host "##vso[task.setvariable variable=CIBW_ARCHS]native"
+          Write-Host "##vso[task.setvariable variable=CIBW_SKIP]pp* *musllinux*"
+          Write-Host "##vso[task.setvariable variable=CIBW_TEST_SKIP]*"
+          # CIBW_ENVIRONMENT_PASS_LINUX, not CIBW_ENVIRONMENT: the latter would clobber the package's
+          # own [tool.cibuildwheel].environment (CFLAGS). PIP_INDEX_URL is set by the time the test step
+          # runs (use-python-version.yml, then auth-dev-feed.yml inside build-test.yml).
+          $passVariables = @('PIP_INDEX_URL')
+          if ($env:RUST_ENVIRONMENT_PASS) {
+            $passVariables += $env:RUST_ENVIRONMENT_PASS.Split(' ')
+          }
+          Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]$($passVariables -join ' ')"
+        displayName: 'Configure cibuildwheel for dev requirement builds'
+        condition: and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+        env:
+          ${{ if parameters.InstallMsRustToolchain }}:
+            RUST_ENVIRONMENT_PASS: MSRUSTUP_ACCESS_TOKEN MSRUSTUP_FEED_URL CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER
+
+      # Download the Python versions selected by cibuildwheel from the approved feed.
+      # This test job builds only for the current machine's architecture, not ARM64.
+      - task: NuGetAuthenticate@1
+        displayName: 'Authenticate to NuGet feed'
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
+
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+          $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+          Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+          Write-Host "##vso[task.setvariable variable=AZURESDK_PYTHON_NUGET_FEED]$feed"
+        displayName: 'Pre-provision CPython for cibuildwheel'
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
 
       - template: /eng/pipelines/templates/steps/build-test.yml
         parameters:
@@ -185,6 +230,11 @@ jobs:
           CoverageArg: $(CoverageArg)
           EnvVars:
             AZURE_RUN_MODE: 'Live' #Record, Playback
+            ${{ if parameters.InstallMsRustToolchain }}:
+              MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+              MSRUSTUP_FEED_URL: $(MSRUSTUP_FEED_URL)
+              CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+              CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
             ${{ insert }}: ${{ parameters.EnvVars }}
           PythonVersion: $(PythonVersion)
           OSVmImage: $(OSVmImage)

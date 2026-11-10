@@ -178,14 +178,33 @@ def test_dev_requirements_share_selected_target_provisioning(tmp_path):
     template = "prepare-native-test-dependencies.yml"
     for job in ("ci.tests.yml", "live.tests.yml"):
         steps = [step for step in load_template(f"jobs/{job}")["jobs"][0]["steps"] if isinstance(step, dict)]
-        configure_index = next(i for i, step in enumerate(steps) if step.get("template", "").endswith(template))
         test_index = next(i for i, step in enumerate(steps) if step.get("template", "").endswith("build-test.yml"))
-        assert configure_index < test_index
         if job == "live.tests.yml":
-            assert steps[configure_index]["parameters"]["Condition"] == (
-                "and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))"
+            configure = next(
+                step for step in steps if step.get("displayName") == "Configure cibuildwheel for dev requirement builds"
             )
+            assert configure["condition"] == ("and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))")
+            provision = next(
+                step for step in steps if step.get("displayName") == "Pre-provision CPython for cibuildwheel"
+            )
+            authenticate = next(step for step in steps if step.get("task") == "NuGetAuthenticate@1")
+            assert (
+                authenticate["condition"]
+                == provision["condition"]
+                == (
+                    "and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), "
+                    "eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))"
+                )
+            )
+            assert steps.index(configure) < steps.index(authenticate) < steps.index(provision) < test_index
+            result = run_powershell(configure["pwsh"], RUST_ENVIRONMENT_PASS="")
+            assert result.returncode == 0, result.stderr
+            for variable in ("CIBW_ARCHS]native", "CIBW_SKIP]pp* *musllinux*", "CIBW_TEST_SKIP]*"):
+                assert "variable=" + variable in result.stdout
+            assert "variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL" in result.stdout
         else:
+            configure_index = next(i for i, step in enumerate(steps) if step.get("template", "").endswith(template))
+            assert configure_index < test_index
             assert "parameters" not in steps[configure_index]
 
     preparation = load_template(f"steps/{template}")
