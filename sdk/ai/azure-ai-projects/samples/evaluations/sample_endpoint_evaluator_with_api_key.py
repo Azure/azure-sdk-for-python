@@ -176,6 +176,8 @@ with (
             display_name="Endpoint Evaluator (API Key)",
             description="Custom scoring endpoint authenticated with an API key",
         ),
+        # Endpoint evaluators are still in preview, so the service requires this opt-in header.
+        headers={"Foundry-Features": "Evaluations=V1Preview"},
     )
 
     print(f"  Created evaluator: name={evaluator.name}, version={evaluator.version}")
