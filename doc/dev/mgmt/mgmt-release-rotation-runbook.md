@@ -130,6 +130,13 @@ package's `Release: <artifact>` stage. Confirm the exact version is available on
 Release-plan completion can fail separately from publication; do not republish
 an existing version to repair tracking.
 
+Automatic release completion uses the triggering SDK PR selected by
+`AutoReleasePrepare` to find the matching release plan. The
+[completion job](../../../eng/pipelines/templates/stages/release-artifact.yml)
+imports that stage's SDK PR output before updating the plan. For manual releases
+with multiple active plans, supply the intended release plan ID instead of relying
+on the package name.
+
 If publishing is absent, skipped, failed, or unclear, the service team
 investigates the release run and requests help when needed.
 For release pipeline failures, seek engineering team support in the
