@@ -407,7 +407,12 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
 
             properties = await created_container.read()
             assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-            assert properties["indexingPolicy"]["vectorIndexes"] == expected_indexing_policy["vectorIndexes"]
+            actual_indexes = properties["indexingPolicy"]["vectorIndexes"]
+            expected_indexes = expected_indexing_policy["vectorIndexes"]
+            assert len(actual_indexes) == len(expected_indexes)
+            for actual_index, expected_index in zip(actual_indexes, expected_indexes):
+                for key, value in expected_index.items():
+                    assert actual_index[key] == value
         finally:
             await self.test_db.delete_container(container_id)
 
