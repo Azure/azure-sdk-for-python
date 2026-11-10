@@ -1,9 +1,19 @@
 {
     "CrossLanguagePackageId": "Azure.Data.AI",
     "CrossLanguageDefinitionId": {
+        "azure.data.ai.models.EmbeddingContentItem": "Azure.Data.AI.EmbeddingContentItem",
+        "azure.data.ai.models.EmbeddingError": "Azure.Data.AI.EmbeddingError",
         "azure.data.ai.models.InferenceErrorResult": "Azure.Data.AI.InferenceErrorResult",
         "azure.data.ai.models.InnerError": "Azure.Core.Foundations.InnerError",
         "azure.data.ai.models.LatencyResult": "Azure.Data.AI.LatencyResult",
+        "azure.data.ai.models.MultimodalEmbeddingData": "Azure.Data.AI.MultimodalEmbeddingData",
+        "azure.data.ai.models.MultimodalDenseAndMultiVectorEmbedding": "Azure.Data.AI.MultimodalDenseAndMultiVectorEmbedding",
+        "azure.data.ai.models.MultimodalDenseEmbedding": "Azure.Data.AI.MultimodalDenseEmbedding",
+        "azure.data.ai.models.MultimodalEmbeddingOutput": "Azure.Data.AI.MultimodalEmbeddingOutput",
+        "azure.data.ai.models.MultimodalEmbeddingResult": "Azure.Data.AI.MultimodalEmbeddingResult",
+        "azure.data.ai.models.MultimodalEmbeddingUsage": "Azure.Data.AI.MultimodalEmbeddingUsage",
+        "azure.data.ai.models.MultimodalEmbeddingWarning": "Azure.Data.AI.MultimodalEmbeddingWarning",
+        "azure.data.ai.models.MultimodalMultiVectorEmbedding": "Azure.Data.AI.MultimodalMultiVectorEmbedding",
         "azure.data.ai.models.ProblemDetails": "Azure.Data.AI.ProblemDetails",
         "azure.data.ai.models.SemanticRerankingInferenceContent": "Azure.Data.AI.SemanticRerankingInferenceContent",
         "azure.data.ai.models.SemanticRerankingInferenceResult": "Azure.Data.AI.SemanticRerankingInferenceResult",
@@ -13,8 +23,18 @@
         "azure.data.ai.models.TokenUsageResult": "Azure.Data.AI.TokenUsageResult",
         "azure.data.ai.models.TooManyRequestsResult": "Azure.Data.AI.TooManyRequestsResult",
         "azure.data.ai.models.SemanticRerankingDocumentType": "Azure.Data.AI.DocumentType",
+        "azure.data.ai.models.EmbeddingOutputDataType": "Azure.Data.AI.EmbeddingOutputDataType",
+        "azure.data.ai.models.EmbeddingContentType": "Azure.Data.AI.EmbeddingContentType",
+        "azure.data.ai.models.EmbeddingVectorType": "Azure.Data.AI.EmbeddingVectorType",
+        "azure.data.ai.models.EmbeddingImageFormat": "Azure.Data.AI.EmbeddingImageFormat",
+        "azure.data.ai.models.EmbeddingWarningCode": "Azure.Data.AI.EmbeddingWarningCode",
+        "azure.data.ai.models.EmbeddingErrorCode": "Azure.Data.AI.EmbeddingErrorCode",
+        "azure.data.ai.models.EmbeddingEncodingFormat": "Azure.Data.AI.EmbeddingEncodingFormat",
+        "azure.data.ai.models.EmbeddingDelivery": "Azure.Data.AI.EmbeddingDelivery",
         "azure.data.ai.InferenceClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
-        "azure.data.ai.aio.InferenceClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank"
+        "azure.data.ai.aio.InferenceClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
+        "azure.data.ai.InferenceClient.multi_modal_embed": "Azure.Data.AI.InferenceOperationGroup.multiModalEmbed",
+        "azure.data.ai.aio.InferenceClient.multi_modal_embed": "Azure.Data.AI.InferenceOperationGroup.multiModalEmbed"
     },
-    "CrossLanguageVersion": "e5852170de97"
+    "CrossLanguageVersion": "d5b4634b591b"
 }

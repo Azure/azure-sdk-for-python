@@ -14,9 +14,19 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    EmbeddingContentItem,
+    EmbeddingError,
     InferenceErrorResult,
     InnerError,
     LatencyResult,
+    MultimodalDenseAndMultiVectorEmbedding,
+    MultimodalDenseEmbedding,
+    MultimodalEmbeddingData,
+    MultimodalEmbeddingOutput,
+    MultimodalEmbeddingResult,
+    MultimodalEmbeddingUsage,
+    MultimodalEmbeddingWarning,
+    MultimodalMultiVectorEmbedding,
     ProblemDetails,
     SemanticRerankingInferenceContent,
     SemanticRerankingInferenceResult,
@@ -28,6 +38,14 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    EmbeddingContentType,
+    EmbeddingDelivery,
+    EmbeddingEncodingFormat,
+    EmbeddingErrorCode,
+    EmbeddingImageFormat,
+    EmbeddingOutputDataType,
+    EmbeddingVectorType,
+    EmbeddingWarningCode,
     SemanticRerankingDocumentType,
 )
 from ._patch import __all__ as _patch_all
@@ -35,9 +53,19 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "EmbeddingContentItem",
+    "EmbeddingError",
     "InferenceErrorResult",
     "InnerError",
     "LatencyResult",
+    "MultimodalDenseAndMultiVectorEmbedding",
+    "MultimodalDenseEmbedding",
+    "MultimodalEmbeddingData",
+    "MultimodalEmbeddingOutput",
+    "MultimodalEmbeddingResult",
+    "MultimodalEmbeddingUsage",
+    "MultimodalEmbeddingWarning",
+    "MultimodalMultiVectorEmbedding",
     "ProblemDetails",
     "SemanticRerankingInferenceContent",
     "SemanticRerankingInferenceResult",
@@ -46,6 +74,14 @@ __all__ = [
     "SentenceScore",
     "TokenUsageResult",
     "TooManyRequestsResult",
+    "EmbeddingContentType",
+    "EmbeddingDelivery",
+    "EmbeddingEncodingFormat",
+    "EmbeddingErrorCode",
+    "EmbeddingImageFormat",
+    "EmbeddingOutputDataType",
+    "EmbeddingVectorType",
+    "EmbeddingWarningCode",
     "SemanticRerankingDocumentType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

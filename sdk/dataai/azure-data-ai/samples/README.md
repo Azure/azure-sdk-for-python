@@ -30,6 +30,26 @@ Never put real credentials in source code intended to be shared.
 For the async sample, install `aiohttp`. The Entra samples only need
 `AZURE_DATA_AI_ENDPOINT`, not `AZURE_DATA_AI_KEY`.
 
+## Multimodal embedding
+
+- `python samples/multi_modal_embedding.py`: synchronous Microsoft Entra example. It embeds a document as a dense
+  vector and prints its token count and any truncation warning, then embeds a query with `vector_type="both"`.
+  If `AZURE_DATA_AI_IMAGE_URL` and `AZURE_DATA_AI_IMAGE_SAS` are set, it also embeds that blob image as base64
+  multi-vectors, decodes them with `shape`, and reads the same image's results through a result link.
+- `python samples/multi_modal_embedding_async.py`: asynchronous example that embeds a document and a query
+  concurrently, one item per request.
+
+A request has at most one text or query item. Text and queries are sent inline in `content`. Images are read
+from Azure Blob Storage: `url` plus, in `sasToken`, a read-only, https-only user delegation SAS for that blob,
+signed by the identity that calls the API (see the package README). Inline images work only where the endpoint
+allows them. Each result item is a `MultimodalDenseEmbedding` (`embedding`), a
+`MultimodalMultiVectorEmbedding` (`multi_embedding` and `shape`) or a `MultimodalDenseAndMultiVectorEmbedding`
+(both), selected by its `kind`. A SAS, including a result link's `sas_token`, is a credential: don't log it.
+
+Pass the items in `contents` and the options as keyword arguments, such as `vector_type`, `encoding_format` and
+`delivery`. Items are `EmbeddingContentItem` models; `multi_modal_embed` also accepts the whole request as a
+dictionary with the service's JSON names (`vectorType`, `sasToken`, ...), typed by `azure.data.ai.types.MultiModalEmbedRequest`.
+
 Both clients accept `AzureKeyCredential` or the appropriate sync/async token
 credential. Wrap raw keys with `AzureKeyCredential`. Key authentication uses `Ocp-Apim-Subscription-Key` and requires a
 key issued for an endpoint with key-based authentication enabled.

@@ -31,7 +31,10 @@ from .._configuration import InferenceClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
+from .._validation import api_version_validation
 
+JSON = MutableMapping[str, Any]
+_Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -44,11 +47,33 @@ def build_inference_semantic_rerank_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/inference/semanticReranking"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_inference_multi_modal_embed_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/inference/embedding"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -211,6 +236,288 @@ class _InferenceClientOperationsMixin(
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SemanticRerankingInferenceResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def multi_modal_embed(
+        self,
+        *,
+        contents: list[_models.EmbeddingContentItem],
+        content_type: str = "application/json",
+        model: Optional[str] = None,
+        model_version: Optional[str] = None,
+        vector_type: Optional[Union[str, _models.EmbeddingVectorType]] = None,
+        dimensions: Optional[int] = None,
+        multi_dimensions: Optional[int] = None,
+        max_num_vectors: Optional[int] = None,
+        output_data_type: Optional[Union[str, _models.EmbeddingOutputDataType]] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        delivery: Optional[Union[str, _models.EmbeddingDelivery]] = None,
+        **kwargs: Any
+    ) -> _models.MultimodalEmbeddingResult:
+        """Embeds text, queries and document images and returns dense or multi-vector embeddings as
+        numbers or base64. Text and queries are sent inline. Images are read from the caller's Azure
+        Blob Storage with a caller-signed user delegation SAS (Microsoft Entra callers only). Results
+        come back in the response or, with ``delivery: link``, as a time-limited read-only link.
+
+        :keyword contents: The items to embed, in order: 1 to 32 items. Currently a request can have at
+         most one ``text`` or ``query`` item and
+         at most 8 images. Images can be up to 20 MiB and 50 megapixels each (JPEG, PNG, GIF or WebP),
+         with at most 20 MiB
+         of images per request. The request body can be up to 30,000,000 bytes. Required.
+        :paramtype contents: list[~azure.data.ai.models.EmbeddingContentItem]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft
+         Embedding 1-large). Default value is None.
+        :paramtype model: str
+        :keyword model_version: The model version. Defaults to the latest; the response always names
+         the version used. Default value is None.
+        :paramtype model_version: str
+        :keyword vector_type: The kind of vectors to return. Defaults to ``dense``. Known values are:
+         "dense", "multi", and "both". Default value is None.
+        :paramtype vector_type: str or ~azure.data.ai.models.EmbeddingVectorType
+        :keyword dimensions: The number of dimensions per vector; with ``both``, of the dense vector.
+         Must be a value the model supports for the
+         requested vector type; the model's native width is the default. Default value is None.
+        :paramtype dimensions: int
+        :keyword multi_dimensions: For ``both`` only: the number of dimensions per multi-vector. Must
+         be a value the model supports for multi-vectors;
+         the model's native multi-vector width is the default. Default value is None.
+        :paramtype multi_dimensions: int
+        :keyword max_num_vectors: For ``multi`` and ``both`` only: the most multi-vectors to return per
+         item. Default value is None.
+        :paramtype max_num_vectors: int
+        :keyword output_data_type: The numeric type of the returned values, for every vector in the
+         response. Defaults to ``float32`` for ``dense`` and
+         ``float16`` for ``multi`` and ``both``. Known values are: "float32" and "float16". Default
+         value is None.
+        :paramtype output_data_type: str or ~azure.data.ai.models.EmbeddingOutputDataType
+        :keyword encoding_format: How vectors are encoded in the response. Defaults to ``float``. Known
+         values are: "float" and "base64". Default value is None.
+        :paramtype encoding_format: str or ~azure.data.ai.models.EmbeddingEncodingFormat
+        :keyword delivery: How to return the results. An explicit value wins. Without it, a request
+         with images gets ``link`` where the
+         endpoint has a result store, and every other request gets ``inline``. Known values are:
+         "inline" and "link". Default value is None.
+        :paramtype delivery: str or ~azure.data.ai.models.EmbeddingDelivery
+        :return: MultimodalEmbeddingResult. The MultimodalEmbeddingResult is compatible with
+         MutableMapping
+        :rtype: ~azure.data.ai.models.MultimodalEmbeddingResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def multi_modal_embed(
+        self, body: _types.MultiModalEmbedRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MultimodalEmbeddingResult:
+        """Embeds text, queries and document images and returns dense or multi-vector embeddings as
+        numbers or base64. Text and queries are sent inline. Images are read from the caller's Azure
+        Blob Storage with a caller-signed user delegation SAS (Microsoft Entra callers only). Results
+        come back in the response or, with ``delivery: link``, as a time-limited read-only link.
+
+        :param body: Required.
+        :type body: ~azure.data.ai.types.MultiModalEmbedRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MultimodalEmbeddingResult. The MultimodalEmbeddingResult is compatible with
+         MutableMapping
+        :rtype: ~azure.data.ai.models.MultimodalEmbeddingResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def multi_modal_embed(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MultimodalEmbeddingResult:
+        """Embeds text, queries and document images and returns dense or multi-vector embeddings as
+        numbers or base64. Text and queries are sent inline. Images are read from the caller's Azure
+        Blob Storage with a caller-signed user delegation SAS (Microsoft Entra callers only). Results
+        come back in the response or, with ``delivery: link``, as a time-limited read-only link.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MultimodalEmbeddingResult. The MultimodalEmbeddingResult is compatible with
+         MutableMapping
+        :rtype: ~azure.data.ai.models.MultimodalEmbeddingResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01-preview",
+        params_added_on={"2026-11-01-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2026-11-01-preview"],
+    )
+    def multi_modal_embed(  # pylint: disable=too-many-locals
+        self,
+        body: Union[JSON, _types.MultiModalEmbedRequest, IO[bytes]] = _Unset,
+        *,
+        contents: list[_models.EmbeddingContentItem] = _Unset,
+        model: Optional[str] = None,
+        model_version: Optional[str] = None,
+        vector_type: Optional[Union[str, _models.EmbeddingVectorType]] = None,
+        dimensions: Optional[int] = None,
+        multi_dimensions: Optional[int] = None,
+        max_num_vectors: Optional[int] = None,
+        output_data_type: Optional[Union[str, _models.EmbeddingOutputDataType]] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        delivery: Optional[Union[str, _models.EmbeddingDelivery]] = None,
+        **kwargs: Any
+    ) -> _models.MultimodalEmbeddingResult:
+        """Embeds text, queries and document images and returns dense or multi-vector embeddings as
+        numbers or base64. Text and queries are sent inline. Images are read from the caller's Azure
+        Blob Storage with a caller-signed user delegation SAS (Microsoft Entra callers only). Results
+        come back in the response or, with ``delivery: link``, as a time-limited read-only link.
+
+        :param body: Is one of the following types: JSON, MultiModalEmbedRequest, IO[bytes] Required.
+        :type body: JSON or ~azure.data.ai.types.MultiModalEmbedRequest or IO[bytes]
+        :keyword contents: The items to embed, in order: 1 to 32 items. Currently a request can have at
+         most one ``text`` or ``query`` item and
+         at most 8 images. Images can be up to 20 MiB and 50 megapixels each (JPEG, PNG, GIF or WebP),
+         with at most 20 MiB
+         of images per request. The request body can be up to 30,000,000 bytes. Required.
+        :paramtype contents: list[~azure.data.ai.models.EmbeddingContentItem]
+        :keyword model: The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft
+         Embedding 1-large). Default value is None.
+        :paramtype model: str
+        :keyword model_version: The model version. Defaults to the latest; the response always names
+         the version used. Default value is None.
+        :paramtype model_version: str
+        :keyword vector_type: The kind of vectors to return. Defaults to ``dense``. Known values are:
+         "dense", "multi", and "both". Default value is None.
+        :paramtype vector_type: str or ~azure.data.ai.models.EmbeddingVectorType
+        :keyword dimensions: The number of dimensions per vector; with ``both``, of the dense vector.
+         Must be a value the model supports for the
+         requested vector type; the model's native width is the default. Default value is None.
+        :paramtype dimensions: int
+        :keyword multi_dimensions: For ``both`` only: the number of dimensions per multi-vector. Must
+         be a value the model supports for multi-vectors;
+         the model's native multi-vector width is the default. Default value is None.
+        :paramtype multi_dimensions: int
+        :keyword max_num_vectors: For ``multi`` and ``both`` only: the most multi-vectors to return per
+         item. Default value is None.
+        :paramtype max_num_vectors: int
+        :keyword output_data_type: The numeric type of the returned values, for every vector in the
+         response. Defaults to ``float32`` for ``dense`` and
+         ``float16`` for ``multi`` and ``both``. Known values are: "float32" and "float16". Default
+         value is None.
+        :paramtype output_data_type: str or ~azure.data.ai.models.EmbeddingOutputDataType
+        :keyword encoding_format: How vectors are encoded in the response. Defaults to ``float``. Known
+         values are: "float" and "base64". Default value is None.
+        :paramtype encoding_format: str or ~azure.data.ai.models.EmbeddingEncodingFormat
+        :keyword delivery: How to return the results. An explicit value wins. Without it, a request
+         with images gets ``link`` where the
+         endpoint has a result store, and every other request gets ``inline``. Known values are:
+         "inline" and "link". Default value is None.
+        :paramtype delivery: str or ~azure.data.ai.models.EmbeddingDelivery
+        :return: MultimodalEmbeddingResult. The MultimodalEmbeddingResult is compatible with
+         MutableMapping
+        :rtype: ~azure.data.ai.models.MultimodalEmbeddingResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MultimodalEmbeddingResult] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if contents is _Unset:
+                raise TypeError("missing required argument: contents")
+            body = {
+                "contents": contents,
+                "delivery": delivery,
+                "dimensions": dimensions,
+                "encodingFormat": encoding_format,
+                "maxNumVectors": max_num_vectors,
+                "model": model,
+                "modelVersion": model_version,
+                "multiDimensions": multi_dimensions,
+                "outputDtype": output_data_type,
+                "vectorType": vector_type,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_inference_multi_modal_embed_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = None
+            if response.status_code == 400:
+                error = _failsafe_deserialize(_models.EmbeddingError, response)
+            elif response.status_code == 403:
+                error = _failsafe_deserialize(_models.EmbeddingError, response)
+            elif response.status_code == 413:
+                error = _failsafe_deserialize(_models.EmbeddingError, response)
+            elif response.status_code == 429:
+                error = _failsafe_deserialize(_models.TooManyRequestsResult, response)
+            elif response.status_code == 502:
+                error = _failsafe_deserialize(_models.EmbeddingError, response)
+            elif response.status_code == 503:
+                error = _failsafe_deserialize(_models.EmbeddingError, response)
+            elif response.status_code == 504:
+                error = _failsafe_deserialize(_models.EmbeddingError, response)
+            else:
+                error = _failsafe_deserialize(
+                    _models.InferenceErrorResult,
+                    response,
+                )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["X-Correlation-ID"] = self._deserialize("str", response.headers.get("X-Correlation-ID"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MultimodalEmbeddingResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

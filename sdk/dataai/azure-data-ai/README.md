@@ -2,9 +2,11 @@
 
 `azure-data-ai` provides access to **Azure Data AI**, hosted by Azure Inference Service. It
 supports semantic reranking: rank caller-supplied documents by their relevance to a
-query, optionally returning the documents and sentence-level scores.
+query, optionally returning the documents and sentence-level scores. Version 1.1.0b1 adds multimodal
+embedding (preview), which embeds text, search queries and document images.
 
-The package uses the `2026-10-30` service API.
+Version 1.0.0 uses the `2026-10-30` service API. Version 1.1.0b1 uses `2026-11-01-preview` by default,
+which multimodal embedding requires; semantic reranking also works with `2026-10-30`.
 
 ## Getting started
 
@@ -13,6 +15,8 @@ The package uses the `2026-10-30` service API.
 ```bash
 python -m pip install azure-data-ai
 ```
+
+For multimodal embedding (preview), install the latest beta with `python -m pip install --pre azure-data-ai`.
 
 For local development, run `python -m pip install -e .` from this package directory instead.
 
@@ -151,6 +155,96 @@ and `as_dict()` retain the numeric millisecond representation.
 
 Each sentence score has a nonnegative, zero-based `index` and a `score` in the
 inclusive range 0–1. Sentence indices are not capped at 2.
+
+### Multimodal embedding
+
+Call `client.multi_modal_embed(contents=[...], ...)` to embed text documents (`type="text"`), search queries
+(`type="query"`) and document images (`type="image"`) with Microsoft Embedding 1-large
+(`microsoft-embedding-1-large`). Items are `EmbeddingContentItem` models, and the request options (`model`,
+`dimensions`, `vector_type`, `delivery`, ...) are keyword arguments. A request can currently have at most one text or
+query item and up to 8 images. You can also pass the whole request as a dictionary with the service's JSON names.
+
+- **Text and queries** are sent inline in `content`. Text over the model's token limit (currently 8,192 tokens)
+  isn't rejected: only its start is embedded, the item has `truncated=True` and `input_tokens`, and
+  `result.warnings` has an entry with code `EmbeddingWarningCode.INPUT_TRUNCATED` (number 1001).
+- **Images** are read from your Azure Blob Storage, where the endpoint enables blob inputs: send the blob's `url`
+  and, in `sas_token`, a user delegation SAS for that blob. The SAS must be read-only (`sp=r`), https-only and
+  signed by the same Microsoft Entra identity that calls the API; a SAS valid for more than 15 minutes is accepted
+  with warning `EmbeddingWarningCode.SAS_LONG_LIVED` (number 1002). Inline images (a `data:` URI or base64 in
+  `content`) work only where the endpoint allows them, which is off by default.
+- **Vectors:** each item in `result.data` is a `MultimodalDenseEmbedding` (`embedding`), a
+  `MultimodalMultiVectorEmbedding` (`multi_embedding` with `shape`) or, with `vector_type="both"`, a
+  `MultimodalDenseAndMultiVectorEmbedding` with both from one model run (`multi_dimensions` sets the
+  multi-vector width). With `encoding_format="base64"`, vectors are little-endian values of `output_data_type`.
+- **Usage:** items report `tokens` (and `visual_tokens` for images); `result.usage` reports `prompt_tokens`,
+  `text_tokens`, `visual_tokens` and `image_count`. A request body can be up to 30,000,000 bytes.
+
+```python
+from azure.data.ai.models import EmbeddingContentItem, MultimodalDenseEmbedding
+
+result = client.multi_modal_embed(
+    contents=[EmbeddingContentItem(id="doc-1", type="text", content="Invoice terms: net 30.")],
+    dimensions=1536,
+)
+item = result.data[0]
+if isinstance(item, MultimodalDenseEmbedding):
+    print(item.id, len(item.embedding), result.usage.text_tokens)
+```
+
+To embed an image, make a user delegation SAS for the blob with the identity that calls the API. For example,
+with `azure-storage-blob` (not a dependency of this package):
+
+```python
+import datetime as dt
+
+from azure.data.ai.models import EmbeddingContentItem
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobSasPermissions, BlobServiceClient, generate_blob_sas
+
+credential = DefaultAzureCredential()  # also pass this credential to InferenceClient
+account, container, blob = "<storage-account>", "pages", "p1.jpg"
+service = BlobServiceClient(f"https://{account}.blob.core.windows.net", credential=credential)
+now = dt.datetime.now(dt.timezone.utc)
+key = service.get_user_delegation_key(now - dt.timedelta(minutes=5), now + dt.timedelta(hours=1))
+sas_token = generate_blob_sas(
+    account, container, blob, user_delegation_key=key, permission=BlobSasPermissions(read=True),
+    protocol="https", start=now - dt.timedelta(minutes=5), expiry=now + dt.timedelta(minutes=15),
+)
+
+result = client.multi_modal_embed(
+    contents=[
+        EmbeddingContentItem(type="query", content="When is the invoice due?"),
+        EmbeddingContentItem(
+            id="page-1",
+            type="image",
+            url=f"https://{account}.blob.core.windows.net/{container}/{blob}",
+            sas_token=sas_token,
+        ),
+    ],
+    delivery="inline",
+)
+```
+
+Results come back in `result.data`, or with `delivery="link"` as `result.output`: a read-only link, valid for up
+to 15 minutes, to a JSON file with the same body as an inline response. Without `delivery`, a request with images
+gets a link where the endpoint has a result store. Read the file with any HTTP client, or with
+`BlobClient.from_blob_url(output.url, credential=AzureSasCredential(output.sas_token))`, and check its size and
+hash. `output.sas_token` is a credential: don't log or store it.
+
+```python
+import hashlib
+import json
+import urllib.request
+
+from azure.data.ai.models import MultimodalEmbeddingResult
+
+output = result.output  # from a request with delivery="link"
+with urllib.request.urlopen(f"{output.url}?{output.sas_token}") as response:
+    data = response.read()
+if len(data) != output.bytes or hashlib.sha256(data).hexdigest() != output.sha256:
+    raise ValueError("The result file doesn't match output.bytes and output.sha256.")
+results = MultimodalEmbeddingResult(json.loads(data))
+```
 
 ## Examples
 

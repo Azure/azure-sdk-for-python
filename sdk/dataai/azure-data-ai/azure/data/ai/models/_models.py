@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,14 +9,140 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ._enums import EmbeddingVectorType
 
 if TYPE_CHECKING:
-    from .. import models as _models
+    from .. import _unions, models as _models
+
+
+class EmbeddingContentItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """One item to embed: its ``type``, an optional ``id``, and exactly one source: ``content``, or
+    ``url`` with ``sasToken``.
+
+    :ivar id: A caller-chosen identifier, up to 256 characters, echoed on the matching result.
+    :vartype id: str
+    :ivar type: What the item is: a document (``text``), a search query (``query``) or a document
+     image (``image``). Required. Known values are: "text", "query", and "image".
+    :vartype type: str or ~azure.data.ai.models.EmbeddingContentType
+    :ivar content: The item, inline. For ``text`` and ``query``: the text, up to 100,000
+     characters; text over the model's token limit (currently 8,192 tokens) isn't rejected: only its
+     start is embedded, and the result is flagged with ``truncated`` and an
+     ``EMBEDDING_INPUT_TRUNCATED`` warning. For ``image``, only where the endpoint accepts inline
+     images (off by default): a ``data:image/...;base64,`` URI or raw base64. The service never
+     fetches URLs in ``content``.
+    :vartype content: str
+    :ivar url: For ``text`` and ``image`` items, from Microsoft Entra callers, where enabled: the
+     Azure Blob Storage URL of the blob to embed,
+     ``https://{account}.blob.core.windows.net/{container}/{blob}``, with no query string. This is
+     how images are sent by default. Text blobs are read as UTF-8, currently up to 1 MiB. Queries
+     must be sent inline.
+    :vartype url: str
+    :ivar sas_token: Required with ``url``: a user delegation SAS for that one blob (its query
+     string, with or without a leading ``?``): read-only (``sp=r``), for the blob (``sr=b``),
+     https-only (``spr=https``), and signed by the identity that calls this API. A SAS valid for
+     more than 15 minutes is accepted with warning ``EMBEDDING_SAS_LONG_LIVED``. The service uses it
+     for one read and never stores, logs or returns it.
+    :vartype sas_token: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A caller-chosen identifier, up to 256 characters, echoed on the matching result."""
+    type: Union[str, "_models.EmbeddingContentType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """What the item is: a document (``text``), a search query (``query``) or a document image
+     (``image``). Required. Known values are: \"text\", \"query\", and \"image\"."""
+    content: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The item, inline. For ``text`` and ``query``: the text, up to 100,000 characters; text over the
+     model's token limit (currently 8,192 tokens) isn't rejected: only its start is embedded, and
+     the result is flagged with ``truncated`` and an ``EMBEDDING_INPUT_TRUNCATED`` warning. For
+     ``image``, only where the endpoint accepts inline images (off by default): a
+     ``data:image/...;base64,`` URI or raw base64. The service never fetches URLs in ``content``."""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For ``text`` and ``image`` items, from Microsoft Entra callers, where enabled: the Azure Blob
+     Storage URL of the blob to embed,
+     ``https://{account}.blob.core.windows.net/{container}/{blob}``, with no query string. This is
+     how images are sent by default. Text blobs are read as UTF-8, currently up to 1 MiB. Queries
+     must be sent inline."""
+    sas_token: Optional[str] = rest_field(name="sasToken", visibility=["read", "create", "update", "delete", "query"])
+    """Required with ``url``: a user delegation SAS for that one blob (its query string, with or
+     without a leading ``?``): read-only (``sp=r``), for the blob (``sr=b``), https-only
+     (``spr=https``), and signed by the identity that calls this API. A SAS valid for more than 15
+     minutes is accepted with warning ``EMBEDDING_SAS_LONG_LIVED``. The service uses it for one read
+     and never stores, logs or returns it."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.EmbeddingContentType"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        content: Optional[str] = None,
+        url: Optional[str] = None,
+        sas_token: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Details about an embedding error.
+
+    :ivar code: A machine-readable error code. Required. Known values are: "InvalidRequest",
+     "InvalidRequestBody", "EMBEDDING_INPUT_INVALID", "EMBEDDING_URL_NOT_ALLOWED",
+     "EMBEDDING_BLOB_READ_FAILED", "EMBEDDING_DELIVERY_NOT_SUPPORTED", and
+     "EMBEDDING_OUTPUT_WRITE_FAILED".
+    :vartype code: str or ~azure.data.ai.models.EmbeddingErrorCode
+    :ivar message: A human-readable description of the error and, when possible, how to fix it.
+     Required.
+    :vartype message: str
+    :ivar details: Additional details about the error, when available.
+    :vartype details: str
+    """
+
+    code: Union[str, "_models.EmbeddingErrorCode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A machine-readable error code. Required. Known values are: \"InvalidRequest\",
+     \"InvalidRequestBody\", \"EMBEDDING_INPUT_INVALID\", \"EMBEDDING_URL_NOT_ALLOWED\",
+     \"EMBEDDING_BLOB_READ_FAILED\", \"EMBEDDING_DELIVERY_NOT_SUPPORTED\", and
+     \"EMBEDDING_OUTPUT_WRITE_FAILED\"."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable description of the error and, when possible, how to fix it. Required."""
+    details: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional details about the error, when available."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Union[str, "_models.EmbeddingErrorCode"],
+        message: str,
+        details: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class InferenceErrorResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -134,6 +261,642 @@ class LatencyResult(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
+class MultimodalEmbeddingData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The result for one item, in request order. ``kind`` says which vectors it holds: ``dense``
+    (``MultimodalDenseEmbedding``), ``multi`` (``MultimodalMultiVectorEmbedding``) or ``both``
+    (``MultimodalDenseAndMultiVectorEmbedding``).
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    MultimodalDenseAndMultiVectorEmbedding, MultimodalDenseEmbedding,
+    MultimodalMultiVectorEmbedding
+
+    :ivar index: The zero-based position of the item in the request. Required.
+    :vartype index: int
+    :ivar id: The item's ``id`` from the request, if it had one.
+    :vartype id: str
+    :ivar type: The item's kind. Required. Known values are: "text", "query", and "image".
+    :vartype type: str or ~azure.data.ai.models.EmbeddingContentType
+    :ivar kind: The kind of vectors returned, as requested in ``vectorType``. Required. Known
+     values are: "dense", "multi", and "both".
+    :vartype kind: str or ~azure.data.ai.models.EmbeddingVectorType
+    :ivar width: For images: the width in pixels.
+    :vartype width: int
+    :ivar height: For images: the height in pixels.
+    :vartype height: int
+    :ivar format: For images: the detected image format. Known values are: "jpeg", "png", "gif",
+     and "webp".
+    :vartype format: str or ~azure.data.ai.models.EmbeddingImageFormat
+    :ivar tokens: The tokens the model read for this item, including any text the service adds to
+     queries and, for images, the image prompt and image tokens. For a truncated item, the tokens
+     embedded. Omitted when the model doesn't report it.
+    :vartype tokens: int
+    :ivar visual_tokens: For images: how many of ``tokens`` were image tokens.
+    :vartype visual_tokens: int
+    :ivar truncated: ``true`` when the item was over the model's token limit and only its start was
+     embedded; ``warnings`` then has an ``EMBEDDING_INPUT_TRUNCATED`` entry for it. Omitted
+     otherwise.
+    :vartype truncated: bool
+    :ivar input_tokens: For truncated items only: the item's tokens before truncation.
+    :vartype input_tokens: int
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The zero-based position of the item in the request. Required."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The item's ``id`` from the request, if it had one."""
+    type: Union[str, "_models.EmbeddingContentType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The item's kind. Required. Known values are: \"text\", \"query\", and \"image\"."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of vectors returned, as requested in ``vectorType``. Required. Known values are:
+     \"dense\", \"multi\", and \"both\"."""
+    width: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For images: the width in pixels."""
+    height: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For images: the height in pixels."""
+    format: Optional[Union[str, "_models.EmbeddingImageFormat"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For images: the detected image format. Known values are: \"jpeg\", \"png\", \"gif\", and
+     \"webp\"."""
+    tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tokens the model read for this item, including any text the service adds to queries and,
+     for images, the image prompt and image tokens. For a truncated item, the tokens embedded.
+     Omitted when the model doesn't report it."""
+    visual_tokens: Optional[int] = rest_field(
+        name="visualTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For images: how many of ``tokens`` were image tokens."""
+    truncated: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """``true`` when the item was over the model's token limit and only its start was embedded;
+     ``warnings`` then has an ``EMBEDDING_INPUT_TRUNCATED`` entry for it. Omitted otherwise."""
+    input_tokens: Optional[int] = rest_field(
+        name="inputTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For truncated items only: the item's tokens before truncation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        type: Union[str, "_models.EmbeddingContentType"],
+        kind: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        format: Optional[Union[str, "_models.EmbeddingImageFormat"]] = None,
+        tokens: Optional[int] = None,
+        visual_tokens: Optional[int] = None,
+        truncated: Optional[bool] = None,
+        input_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MultimodalDenseAndMultiVectorEmbedding(
+    MultimodalEmbeddingData, discriminator="both"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The result for one item when ``vectorType`` is ``both``: a dense vector and one vector per
+    token, from one model run.
+
+    :ivar index: The zero-based position of the item in the request. Required.
+    :vartype index: int
+    :ivar id: The item's ``id`` from the request, if it had one.
+    :vartype id: str
+    :ivar type: The item's kind. Required. Known values are: "text", "query", and "image".
+    :vartype type: str or ~azure.data.ai.models.EmbeddingContentType
+    :ivar width: For images: the width in pixels.
+    :vartype width: int
+    :ivar height: For images: the height in pixels.
+    :vartype height: int
+    :ivar format: For images: the detected image format. Known values are: "jpeg", "png", "gif",
+     and "webp".
+    :vartype format: str or ~azure.data.ai.models.EmbeddingImageFormat
+    :ivar tokens: The tokens the model read for this item, including any text the service adds to
+     queries and, for images, the image prompt and image tokens. For a truncated item, the tokens
+     embedded. Omitted when the model doesn't report it.
+    :vartype tokens: int
+    :ivar visual_tokens: For images: how many of ``tokens`` were image tokens.
+    :vartype visual_tokens: int
+    :ivar truncated: ``true`` when the item was over the model's token limit and only its start was
+     embedded; ``warnings`` then has an ``EMBEDDING_INPUT_TRUNCATED`` entry for it. Omitted
+     otherwise.
+    :vartype truncated: bool
+    :ivar input_tokens: For truncated items only: the item's tokens before truncation.
+    :vartype input_tokens: int
+    :ivar kind: The kind of vectors returned. Required. Both, from one model run: one dense vector
+     (``dimensions`` wide) and one vector per token (``multiDimensions`` wide) for each item.
+    :vartype kind: str or ~azure.data.ai.models.BOTH
+    :ivar shape: The number of multi-vectors and their number of dimensions: ``[vectors,
+     multiDimensions]``. Required.
+    :vartype shape: list[int]
+    :ivar embedding: The dense vector: an array of numbers, or, when ``encodingFormat`` is
+     ``base64``, a base64 string of its little-endian ``outputDtype`` values. Required. Is either a
+     [float] type or a str type.
+    :vartype embedding: list[float] or str
+    :ivar multi_embedding: The multi-vectors: an array of arrays of numbers, or, when
+     ``encodingFormat`` is ``base64``, one base64 string of all their little-endian ``outputDtype``
+     values in row-major order. Decode it and reshape it to ``shape``. Required. Is either a
+     [[float]] type or a str type.
+    :vartype multi_embedding: list[list[float]] or str
+    """
+
+    kind: Literal[EmbeddingVectorType.BOTH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of vectors returned. Required. Both, from one model run: one dense vector
+     (``dimensions`` wide) and one vector per token (``multiDimensions`` wide) for each item."""
+    shape: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of multi-vectors and their number of dimensions: ``[vectors, multiDimensions]``.
+     Required."""
+    embedding: "_unions.EmbeddingVector" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The dense vector: an array of numbers, or, when ``encodingFormat`` is ``base64``, a base64
+     string of its little-endian ``outputDtype`` values. Required. Is either a [float] type or a str
+     type."""
+    multi_embedding: "_unions.MultiEmbeddingVector" = rest_field(
+        name="multiEmbedding", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The multi-vectors: an array of arrays of numbers, or, when ``encodingFormat`` is ``base64``,
+     one base64 string of all their little-endian ``outputDtype`` values in row-major order. Decode
+     it and reshape it to ``shape``. Required. Is either a [[float]] type or a str type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        type: Union[str, "_models.EmbeddingContentType"],
+        shape: list[int],
+        embedding: "_unions.EmbeddingVector",
+        multi_embedding: "_unions.MultiEmbeddingVector",
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        format: Optional[Union[str, "_models.EmbeddingImageFormat"]] = None,
+        tokens: Optional[int] = None,
+        visual_tokens: Optional[int] = None,
+        truncated: Optional[bool] = None,
+        input_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = EmbeddingVectorType.BOTH  # type: ignore
+
+
+class MultimodalDenseEmbedding(
+    MultimodalEmbeddingData, discriminator="dense"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The result for one item when ``vectorType`` is ``dense``: one vector.
+
+    :ivar index: The zero-based position of the item in the request. Required.
+    :vartype index: int
+    :ivar id: The item's ``id`` from the request, if it had one.
+    :vartype id: str
+    :ivar type: The item's kind. Required. Known values are: "text", "query", and "image".
+    :vartype type: str or ~azure.data.ai.models.EmbeddingContentType
+    :ivar width: For images: the width in pixels.
+    :vartype width: int
+    :ivar height: For images: the height in pixels.
+    :vartype height: int
+    :ivar format: For images: the detected image format. Known values are: "jpeg", "png", "gif",
+     and "webp".
+    :vartype format: str or ~azure.data.ai.models.EmbeddingImageFormat
+    :ivar tokens: The tokens the model read for this item, including any text the service adds to
+     queries and, for images, the image prompt and image tokens. For a truncated item, the tokens
+     embedded. Omitted when the model doesn't report it.
+    :vartype tokens: int
+    :ivar visual_tokens: For images: how many of ``tokens`` were image tokens.
+    :vartype visual_tokens: int
+    :ivar truncated: ``true`` when the item was over the model's token limit and only its start was
+     embedded; ``warnings`` then has an ``EMBEDDING_INPUT_TRUNCATED`` entry for it. Omitted
+     otherwise.
+    :vartype truncated: bool
+    :ivar input_tokens: For truncated items only: the item's tokens before truncation.
+    :vartype input_tokens: int
+    :ivar kind: The kind of vectors returned. Required. One vector per item.
+    :vartype kind: str or ~azure.data.ai.models.DENSE
+    :ivar embedding: The vector: an array of numbers, or, when ``encodingFormat`` is ``base64``, a
+     base64 string of its little-endian ``outputDtype`` values. Required. Is either a [float] type
+     or a str type.
+    :vartype embedding: list[float] or str
+    """
+
+    kind: Literal[EmbeddingVectorType.DENSE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of vectors returned. Required. One vector per item."""
+    embedding: "_unions.EmbeddingVector" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The vector: an array of numbers, or, when ``encodingFormat`` is ``base64``, a base64 string of
+     its little-endian ``outputDtype`` values. Required. Is either a [float] type or a str type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        type: Union[str, "_models.EmbeddingContentType"],
+        embedding: "_unions.EmbeddingVector",
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        format: Optional[Union[str, "_models.EmbeddingImageFormat"]] = None,
+        tokens: Optional[int] = None,
+        visual_tokens: Optional[int] = None,
+        truncated: Optional[bool] = None,
+        input_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = EmbeddingVectorType.DENSE  # type: ignore
+
+
+class MultimodalEmbeddingOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A ``delivery: link`` result: a JSON file with the complete response (the same body as an inline
+    response, including ``data``), readable with ``sasToken`` until ``expiresAt``.
+
+    :ivar id: The result's identifier, for support requests. Required.
+    :vartype id: str
+    :ivar url: The result file's URL, without a query string. Read it with ``sasToken``. Required.
+    :vartype url: str
+    :ivar sas_token: A read-only SAS for the result file only, valid until ``expiresAt`` (at most
+     15 minutes). Read the file with ``GET {url}?{sasToken}``. Required.
+    :vartype sas_token: str
+    :ivar expires_at: When ``sasToken`` stops working. After that, send the request again, or use
+     ``delivery: inline``. Required.
+    :vartype expires_at: ~datetime.datetime
+    :ivar records: The number of ``data`` items in the file. Required.
+    :vartype records: int
+    :ivar bytes: The size of the file in bytes. Required.
+    :vartype bytes: int
+    :ivar sha256: The lowercase hexadecimal SHA-256 hash of the file. Required.
+    :vartype sha256: str
+    :ivar content_type: The media type of the file: ``application/json``. Required.
+    :vartype content_type: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The result's identifier, for support requests. Required."""
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The result file's URL, without a query string. Read it with ``sasToken``. Required."""
+    sas_token: str = rest_field(name="sasToken", visibility=["read", "create", "update", "delete", "query"])
+    """A read-only SAS for the result file only, valid until ``expiresAt`` (at most 15 minutes). Read
+     the file with ``GET {url}?{sasToken}``. Required."""
+    expires_at: datetime.datetime = rest_field(
+        name="expiresAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """When ``sasToken`` stops working. After that, send the request again, or use ``delivery:
+     inline``. Required."""
+    records: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of ``data`` items in the file. Required."""
+    bytes: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The size of the file in bytes. Required."""
+    sha256: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The lowercase hexadecimal SHA-256 hash of the file. Required."""
+    content_type: str = rest_field(name="contentType", visibility=["read", "create", "update", "delete", "query"])
+    """The media type of the file: ``application/json``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        url: str,
+        sas_token: str,
+        expires_at: datetime.datetime,
+        records: int,
+        bytes: int,
+        sha256: str,
+        content_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MultimodalEmbeddingResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The result of a multimodal embedding operation.
+
+    :ivar object: The object type, always ``list``. Required. Default value is "list".
+    :vartype object: str
+    :ivar model: The name of the model that produced the vectors. Required.
+    :vartype model: str
+    :ivar model_version: The model version that produced the vectors. Pin it to keep an index
+     stable. Required.
+    :vartype model_version: str
+    :ivar output_data_type: The numeric type of the returned values. Required. Known values are:
+     "float32" and "float16".
+    :vartype output_data_type: str or ~azure.data.ai.models.EmbeddingOutputDataType
+    :ivar data: One entry per item in ``contents``, in request order. Empty when ``output`` is
+     present. Required.
+    :vartype data: list[~azure.data.ai.models.MultimodalEmbeddingData]
+    :ivar usage: Usage for the operation. Required.
+    :vartype usage: ~azure.data.ai.models.MultimodalEmbeddingUsage
+    :ivar warnings: Things to know about a successful response, such as truncated items. Omitted
+     when there are none.
+    :vartype warnings: list[~azure.data.ai.models.MultimodalEmbeddingWarning]
+    :ivar output: With ``delivery: link``: where to read the results.
+    :vartype output: ~azure.data.ai.models.MultimodalEmbeddingOutput
+    """
+
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, always ``list``. Required. Default value is \"list\"."""
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the model that produced the vectors. Required."""
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
+    """The model version that produced the vectors. Pin it to keep an index stable. Required."""
+    output_data_type: Union[str, "_models.EmbeddingOutputDataType"] = rest_field(
+        name="outputDtype", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The numeric type of the returned values. Required. Known values are: \"float32\" and
+     \"float16\"."""
+    data: list["_models.MultimodalEmbeddingData"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """One entry per item in ``contents``, in request order. Empty when ``output`` is present.
+     Required."""
+    usage: "_models.MultimodalEmbeddingUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Usage for the operation. Required."""
+    warnings: Optional[list["_models.MultimodalEmbeddingWarning"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Things to know about a successful response, such as truncated items. Omitted when there are
+     none."""
+    output: Optional["_models.MultimodalEmbeddingOutput"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """With ``delivery: link``: where to read the results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: str,
+        model_version: str,
+        output_data_type: Union[str, "_models.EmbeddingOutputDataType"],
+        data: list["_models.MultimodalEmbeddingData"],
+        usage: "_models.MultimodalEmbeddingUsage",
+        warnings: Optional[list["_models.MultimodalEmbeddingWarning"]] = None,
+        output: Optional["_models.MultimodalEmbeddingOutput"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["list"] = "list"
+
+
+class MultimodalEmbeddingUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Usage for a multimodal embedding operation. Token counts are omitted when the model doesn't
+    report them.
+
+    :ivar prompt_tokens: The number of input tokens.
+    :vartype prompt_tokens: int
+    :ivar total_tokens: The total number of tokens.
+    :vartype total_tokens: int
+    :ivar text_tokens: Tokens that aren't image tokens: the query and text items (including the
+     query instruction) and the short prompt the model adds around each image. Equal to
+     ``promptTokens`` minus ``visualTokens``, so text and image tokens can be priced separately.
+     Omitted when the split isn't known: ``promptTokens`` isn't reported, or the request has images
+     and ``visualTokens`` isn't reported.
+    :vartype text_tokens: int
+    :ivar image_count: The number of images embedded. Required.
+    :vartype image_count: int
+    :ivar visual_tokens: The number of tokens the images produced.
+    :vartype visual_tokens: int
+    """
+
+    prompt_tokens: Optional[int] = rest_field(
+        name="promptTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of input tokens."""
+    total_tokens: Optional[int] = rest_field(
+        name="totalTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total number of tokens."""
+    text_tokens: Optional[int] = rest_field(
+        name="textTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tokens that aren't image tokens: the query and text items (including the query instruction) and
+     the short prompt the model adds around each image. Equal to ``promptTokens`` minus
+     ``visualTokens``, so text and image tokens can be priced separately. Omitted when the split
+     isn't known: ``promptTokens`` isn't reported, or the request has images and ``visualTokens``
+     isn't reported."""
+    image_count: int = rest_field(name="imageCount", visibility=["read", "create", "update", "delete", "query"])
+    """The number of images embedded. Required."""
+    visual_tokens: Optional[int] = rest_field(
+        name="visualTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of tokens the images produced."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_count: int,
+        prompt_tokens: Optional[int] = None,
+        total_tokens: Optional[int] = None,
+        text_tokens: Optional[int] = None,
+        visual_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MultimodalEmbeddingWarning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Something about a successful multimodal embedding response the caller should know.
+
+    :ivar code: A machine-readable warning code. Required. Known values are:
+     "EMBEDDING_INPUT_TRUNCATED" and "EMBEDDING_SAS_LONG_LIVED".
+    :vartype code: str or ~azure.data.ai.models.EmbeddingWarningCode
+    :ivar number: A stable numeric alias of ``code``: ``1001`` for ``EMBEDDING_INPUT_TRUNCATED``,
+     ``1002`` for ``EMBEDDING_SAS_LONG_LIVED``.
+    :vartype number: int
+    :ivar index: The zero-based position of the item the warning is about, in ``contents`` and
+     ``data``. Required.
+    :vartype index: int
+    :ivar input_tokens: For ``EMBEDDING_INPUT_TRUNCATED``: the item's tokens before truncation.
+    :vartype input_tokens: int
+    :ivar tokens: For ``EMBEDDING_INPUT_TRUNCATED``: the tokens embedded.
+    :vartype tokens: int
+    :ivar message: A human-readable description that names the item, for example ``contents[1]``.
+     Required.
+    :vartype message: str
+    """
+
+    code: Union[str, "_models.EmbeddingWarningCode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A machine-readable warning code. Required. Known values are: \"EMBEDDING_INPUT_TRUNCATED\" and
+     \"EMBEDDING_SAS_LONG_LIVED\"."""
+    number: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A stable numeric alias of ``code``: ``1001`` for ``EMBEDDING_INPUT_TRUNCATED``, ``1002`` for
+     ``EMBEDDING_SAS_LONG_LIVED``."""
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The zero-based position of the item the warning is about, in ``contents`` and ``data``.
+     Required."""
+    input_tokens: Optional[int] = rest_field(
+        name="inputTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For ``EMBEDDING_INPUT_TRUNCATED``: the item's tokens before truncation."""
+    tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For ``EMBEDDING_INPUT_TRUNCATED``: the tokens embedded."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable description that names the item, for example ``contents[1]``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Union[str, "_models.EmbeddingWarningCode"],
+        index: int,
+        message: str,
+        number: Optional[int] = None,
+        input_tokens: Optional[int] = None,
+        tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MultimodalMultiVectorEmbedding(
+    MultimodalEmbeddingData, discriminator="multi"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The result for one item when ``vectorType`` is ``multi``: one vector per token, for
+    late-interaction (MaxSim) scoring.
+
+    :ivar index: The zero-based position of the item in the request. Required.
+    :vartype index: int
+    :ivar id: The item's ``id`` from the request, if it had one.
+    :vartype id: str
+    :ivar type: The item's kind. Required. Known values are: "text", "query", and "image".
+    :vartype type: str or ~azure.data.ai.models.EmbeddingContentType
+    :ivar width: For images: the width in pixels.
+    :vartype width: int
+    :ivar height: For images: the height in pixels.
+    :vartype height: int
+    :ivar format: For images: the detected image format. Known values are: "jpeg", "png", "gif",
+     and "webp".
+    :vartype format: str or ~azure.data.ai.models.EmbeddingImageFormat
+    :ivar tokens: The tokens the model read for this item, including any text the service adds to
+     queries and, for images, the image prompt and image tokens. For a truncated item, the tokens
+     embedded. Omitted when the model doesn't report it.
+    :vartype tokens: int
+    :ivar visual_tokens: For images: how many of ``tokens`` were image tokens.
+    :vartype visual_tokens: int
+    :ivar truncated: ``true`` when the item was over the model's token limit and only its start was
+     embedded; ``warnings`` then has an ``EMBEDDING_INPUT_TRUNCATED`` entry for it. Omitted
+     otherwise.
+    :vartype truncated: bool
+    :ivar input_tokens: For truncated items only: the item's tokens before truncation.
+    :vartype input_tokens: int
+    :ivar kind: The kind of vectors returned. Required. One vector per token, for late-interaction
+     (MaxSim) scoring.
+    :vartype kind: str or ~azure.data.ai.models.MULTI
+    :ivar shape: The number of vectors and the number of dimensions: ``[vectors, dimensions]``.
+     Required.
+    :vartype shape: list[int]
+    :ivar multi_embedding: The vectors: an array of arrays of numbers, or, when ``encodingFormat``
+     is ``base64``, one base64 string of all their little-endian ``outputDtype`` values in row-major
+     order. Decode it and reshape it to ``shape``. Required. Is either a [[float]] type or a str
+     type.
+    :vartype multi_embedding: list[list[float]] or str
+    """
+
+    kind: Literal[EmbeddingVectorType.MULTI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of vectors returned. Required. One vector per token, for late-interaction (MaxSim)
+     scoring."""
+    shape: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of vectors and the number of dimensions: ``[vectors, dimensions]``. Required."""
+    multi_embedding: "_unions.MultiEmbeddingVector" = rest_field(
+        name="multiEmbedding", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The vectors: an array of arrays of numbers, or, when ``encodingFormat`` is ``base64``, one
+     base64 string of all their little-endian ``outputDtype`` values in row-major order. Decode it
+     and reshape it to ``shape``. Required. Is either a [[float]] type or a str type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        type: Union[str, "_models.EmbeddingContentType"],
+        shape: list[int],
+        multi_embedding: "_unions.MultiEmbeddingVector",
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        format: Optional[Union[str, "_models.EmbeddingImageFormat"]] = None,
+        tokens: Optional[int] = None,
+        visual_tokens: Optional[int] = None,
+        truncated: Optional[bool] = None,
+        input_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = EmbeddingVectorType.MULTI  # type: ignore
+
+
 class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about an HTTP API error.
 
@@ -154,8 +917,8 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
     :vartype title: str
     :ivar status: The HTTP status code associated with the problem.
     :vartype status: int
-    :ivar detail: A human-readable explanation specific to this occurrence.
-    :vartype detail: str
+    :ivar explanation: A human-readable explanation specific to this occurrence.
+    :vartype explanation: str
     :ivar instance: A URI reference identifying this occurrence of the problem.
     :vartype instance: str
     :ivar extensions: Additional service-defined details about the problem.
@@ -178,7 +941,7 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
     """A short, human-readable summary of the problem."""
     status: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The HTTP status code associated with the problem."""
-    detail: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    explanation: Optional[str] = rest_field(name="detail", visibility=["read", "create", "update", "delete", "query"])
     """A human-readable explanation specific to this occurrence."""
     instance: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A URI reference identifying this occurrence of the problem."""
@@ -197,7 +960,7 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
         type: Optional[str] = None,
         title: Optional[str] = None,
         status: Optional[int] = None,
-        detail: Optional[str] = None,
+        explanation: Optional[str] = None,
         instance: Optional[str] = None,
         extensions: Optional[dict[str, Any]] = None,
     ) -> None: ...
@@ -235,7 +998,7 @@ class SemanticRerankingInferenceContent(_Model):  # pylint: disable=docstring-ke
      property is required for JSON documents. Use dot notation for a nested property, for example
      ``meta.content``. You can specify multiple property paths separated by commas, for example
      ``meta.content,id``.
-    :vartype target_paths: str
+    :vartype target_paths: list[str]
     :ivar model: The name of the model used for the semantic reranking operation.
     :vartype model: str
     :ivar return_sentence_score: Whether to return sentence-level scores in the response.
@@ -260,8 +1023,8 @@ class SemanticRerankingInferenceContent(_Model):  # pylint: disable=docstring-ke
         name="documentType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The format of the submitted documents. Known values are: \"text\" and \"json\"."""
-    target_paths: Optional[str] = rest_field(
-        name="targetPaths", visibility=["read", "create", "update", "delete", "query"]
+    target_paths: Optional[list[str]] = rest_field(
+        name="targetPaths", visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
     )
     """The property containing text to rank when the document type is JSON. This property is required
      for JSON documents. Use dot notation for a nested property, for example ``meta.content``. You
@@ -284,7 +1047,7 @@ class SemanticRerankingInferenceContent(_Model):  # pylint: disable=docstring-ke
         batch_size: Optional[int] = None,
         sort: Optional[bool] = None,
         document_type: Optional[Union[str, "_models.SemanticRerankingDocumentType"]] = None,
-        target_paths: Optional[str] = None,
+        target_paths: Optional[list[str]] = None,
         model: Optional[str] = None,
         return_sentence_score: Optional[bool] = None,
     ) -> None: ...

@@ -10,6 +10,107 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class EmbeddingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of an item to embed."""
+
+    TEXT = "text"
+    """A document to index."""
+    QUERY = "query"
+    """A search query. Queries are embedded for retrieval against documents and must be sent inline."""
+    IMAGE = "image"
+    """A document image, such as a scanned page."""
+
+
+class EmbeddingDelivery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How the results of a multimodal embedding operation are returned."""
+
+    INLINE = "inline"
+    """The vectors are in the response's ``data``."""
+    LINK = "link"
+    """The service stores the response as a JSON file and returns ``output``, a read-only link valid
+    for up to 15 minutes, with an empty ``data``. Not available on every endpoint
+    (``EMBEDDING_DELIVERY_NOT_SUPPORTED``)."""
+
+
+class EmbeddingEncodingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How vectors are encoded in the response."""
+
+    FLOAT = "float"
+    """JSON arrays of numbers."""
+    BASE64 = "base64"
+    """A base64 string of little-endian values; row-major for multi-vectors."""
+
+
+class EmbeddingErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A machine-readable embedding error code."""
+
+    INVALID_REQUEST = "InvalidRequest"
+    """The request isn't supported on this endpoint, for example ``contents`` isn't enabled."""
+    INVALID_REQUEST_BODY = "InvalidRequestBody"
+    """The request body isn't valid for this operation: malformed JSON, a wrong type, an unknown or
+    snake_case field, or a value outside its allowed set. ``details`` describes each problem."""
+    INPUT_INVALID = "EMBEDDING_INPUT_INVALID"
+    """An item or option isn't valid: its type, source, size, format or count, or an unknown model or
+    version. Text over the model's token limit isn't an error; see ``EMBEDDING_INPUT_TRUNCATED``."""
+    URL_NOT_ALLOWED = "EMBEDDING_URL_NOT_ALLOWED"
+    """A URL or SAS the service won't use: ``input_images``, a link in an image's ``content``, a
+    ``url`` where blob inputs are off or from an API-key caller, or a ``sasToken`` that isn't a
+    read-only, https-only user delegation SAS for one blob signed by the caller. Nothing is read."""
+    BLOB_READ_FAILED = "EMBEDDING_BLOB_READ_FAILED"
+    """A blob couldn't be read: Storage refused it (for example, an expired SAS or a missing blob),
+    it's over its size limit, or Storage failed or didn't answer in time. Returned with status 400,
+    413, 502 or 504."""
+    DELIVERY_NOT_SUPPORTED = "EMBEDDING_DELIVERY_NOT_SUPPORTED"
+    """``delivery: link`` isn't enabled on this endpoint. Use ``inline``."""
+    OUTPUT_WRITE_FAILED = "EMBEDDING_OUTPUT_WRITE_FAILED"
+    """A ``delivery: link`` result couldn't be stored. Try again, or use ``delivery: inline``."""
+
+
+class EmbeddingImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of an embedded image."""
+
+    JPEG = "jpeg"
+    """JPEG."""
+    PNG = "png"
+    """PNG."""
+    GIF = "gif"
+    """GIF."""
+    WEBP = "webp"
+    """WebP."""
+
+
+class EmbeddingOutputDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The numeric type of the returned vector values."""
+
+    FLOAT32 = "float32"
+    """32-bit floating point. The default for dense vectors."""
+    FLOAT16 = "float16"
+    """16-bit floating point. The default for ``multi`` and ``both``."""
+
+
+class EmbeddingVectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of vectors to return."""
+
+    DENSE = "dense"
+    """One vector per item."""
+    MULTI = "multi"
+    """One vector per token, for late-interaction (MaxSim) scoring."""
+    BOTH = "both"
+    """Both, from one model run: one dense vector (``dimensions`` wide) and one vector per token
+    (``multiDimensions`` wide) for each item."""
+
+
+class EmbeddingWarningCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A machine-readable embedding warning code."""
+
+    INPUT_TRUNCATED = "EMBEDDING_INPUT_TRUNCATED"
+    """A ``text`` or ``query`` item was over the model's token limit, and only its start was embedded.
+    Numeric alias ``1001``."""
+    SAS_LONG_LIVED = "EMBEDDING_SAS_LONG_LIVED"
+    """An item's ``sasToken`` stays valid for more than 15 minutes (plus 5 minutes of clock skew). The
+    blob was read and embedded; a shorter SAS is recommended. Numeric alias ``1002``."""
+
+
 class SemanticRerankingDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format of a document submitted for semantic reranking."""
 
