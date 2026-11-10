@@ -1,8 +1,127 @@
 import pytest
 import copy
+import pandas as pd
+from types import SimpleNamespace
+from typing import Any, Dict, List
 from unittest.mock import MagicMock, patch
-from azure.ai.evaluation._evaluate._evaluate_aoai import _combine_item_schemas, _get_single_run_results
+from openai.types.eval_create_response import TestingCriterionEvalGraderScoreModel
+from openai.types.graders import LabelModelGrader
+from azure.ai.evaluation._evaluate._evaluate_aoai import (
+    _begin_single_aoai_evaluation,
+    _combine_item_schemas,
+    _get_single_run_results,
+)
 from azure.ai.evaluation._exceptions import ErrorBlame, EvaluationException
+
+
+@pytest.mark.unittest
+class TestBeginSingleAOAIEvaluationGraderIdentifiers:
+    """Map real native grader responses without requiring service-specific IDs."""
+
+    @staticmethod
+    def _score(name: str) -> TestingCriterionEvalGraderScoreModel:
+        return TestingCriterionEvalGraderScoreModel(
+            name=name,
+            type="score_model",
+            model="unused",
+            input=[{"role": "user", "content": "{{item.response}}"}],
+        )
+
+    @staticmethod
+    def _label(name: str) -> LabelModelGrader:
+        return LabelModelGrader(
+            name=name,
+            type="label_model",
+            model="unused",
+            input=[{"role": "user", "content": "{{item.response}}"}],
+            labels=["pass", "fail"],
+            passing_labels=["pass"],
+        )
+
+    @staticmethod
+    def _client(criteria: List[Any]) -> MagicMock:
+        client = MagicMock()
+        client.evals.create.return_value = SimpleNamespace(id="eval-test", testing_criteria=criteria)
+        client.evals.runs.create.return_value = SimpleNamespace(id="run-test")
+        return client
+
+    @staticmethod
+    def _begin(client: MagicMock, configs: Dict[str, Any]) -> Dict[str, Any]:
+        graders = {
+            alias: SimpleNamespace(_grader_config=config, get_client=lambda: client)
+            for alias, config in configs.items()
+        }
+        return _begin_single_aoai_evaluation(
+            graders,
+            pd.DataFrame([{"response": "synthetic fixture"}]),
+            {},
+            "test",
+        )
+
+    @pytest.mark.parametrize("kind", ["score", "label"])
+    def test_native_criterion_name_maps_to_caller_alias(self, kind: str) -> None:
+        criterion = self._score("native") if kind == "score" else self._label("native")
+        client = self._client([criterion])
+
+        result = self._begin(client, {"caller_alias": criterion})
+
+        assert result["grader_name_map"] == {"native": "caller_alias"}
+        client.evals.runs.create.assert_called_once()
+
+    @pytest.mark.parametrize("as_dict", [False, True])
+    def test_reordered_native_criteria_keep_their_aliases(self, as_dict: bool) -> None:
+        score = self._score("native_score")
+        label = self._label("native_label")
+        client = self._client([label, score])
+        configs = {
+            "score_alias": score.model_dump() if as_dict else score,
+            "label_alias": label.model_dump() if as_dict else label,
+        }
+
+        result = self._begin(client, configs)
+
+        assert result["grader_name_map"] == {
+            "native_label": "label_alias",
+            "native_score": "score_alias",
+        }
+
+    def test_legacy_criterion_ids_preserve_existing_mapping(self) -> None:
+        client = self._client([SimpleNamespace(id="legacy")])
+
+        result = self._begin(client, {"caller_alias": {"type": "string_check"}})
+
+        assert result["grader_name_map"] == {"legacy": "caller_alias"}
+
+    @pytest.mark.parametrize(
+        "criteria",
+        [
+            [SimpleNamespace()],
+            [SimpleNamespace(name="unknown")],
+            [SimpleNamespace(id="duplicate"), SimpleNamespace(id="duplicate")],
+            [SimpleNamespace(name="native_0"), SimpleNamespace(name="native_0")],
+        ],
+        ids=["missing_identifier", "unknown_native_name", "duplicate_identifier", "duplicate_native_name"],
+    )
+    def test_invalid_identifiers_fail_before_run_creation(self, criteria: List[Any]) -> None:
+        client = self._client(criteria)
+        configs = {
+            f"alias_{index}": {"name": f"native_{index}", "type": "string_check"} for index in range(len(criteria))
+        }
+
+        with pytest.raises(EvaluationException) as error:
+            self._begin(client, configs)
+
+        assert error.value.blame == ErrorBlame.UNKNOWN
+        client.evals.runs.create.assert_not_called()
+
+    def test_ambiguous_requested_native_names_fail_before_run_creation(self) -> None:
+        client = self._client([self._score("same"), self._label("same")])
+
+        with pytest.raises(EvaluationException) as error:
+            self._begin(client, {"score_alias": self._score("same"), "label_alias": self._label("same")})
+
+        assert error.value.blame == ErrorBlame.UNKNOWN
+        client.evals.runs.create.assert_not_called()
 
 
 @pytest.fixture

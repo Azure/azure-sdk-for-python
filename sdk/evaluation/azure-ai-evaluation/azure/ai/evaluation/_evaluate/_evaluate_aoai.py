@@ -214,7 +214,6 @@ def _begin_single_aoai_evaluation(
 
     LOGGER.info(f"AOAI: Eval group created with id {eval_group_info.id}. Creating eval run next...")
     # Use eval group info to map grader IDs back to user-assigned names.
-    grader_name_map = {}
     num_criteria = len(eval_group_info.testing_criteria)
     if num_criteria != len(grader_name_list):
         raise EvaluationException(
@@ -224,8 +223,7 @@ def _begin_single_aoai_evaluation(
             category=ErrorCategory.INVALID_VALUE,
             target=ErrorTarget.AOAI_GRADER,
         )
-    for name, criteria in zip(grader_name_list, eval_group_info.testing_criteria):
-        grader_name_map[criteria.id] = name
+    grader_name_map = _map_aoai_grader_names(graders, eval_group_info.testing_criteria)
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")
@@ -250,6 +248,41 @@ def _begin_single_aoai_evaluation(
         grader_name_map=grader_name_map,
         expected_rows=len(data),
     )
+
+
+def _map_aoai_grader_names(graders: Dict[str, AzureOpenAIGrader], testing_criteria: List[Any]) -> Dict[str, str]:
+    """Map native criterion names or legacy IDs to the caller's evaluator aliases."""
+    aliases_by_name: Dict[str, List[str]] = {}
+    for alias, grader in graders.items():
+        config = grader._grader_config
+        native_name = config.get("name") if isinstance(config, dict) else getattr(config, "name", None)
+        if isinstance(native_name, str) and native_name:
+            aliases_by_name.setdefault(native_name, []).append(alias)
+
+    grader_name_map: Dict[str, str] = {}
+    for legacy_alias, criterion in zip(graders, testing_criteria):
+        identifier = getattr(criterion, "id", None)
+        alias = legacy_alias
+        if not isinstance(identifier, str) or not identifier:
+            identifier = getattr(criterion, "name", None)
+            matches = aliases_by_name.get(identifier, []) if isinstance(identifier, str) else []
+            if len(matches) != 1:
+                raise EvaluationException(
+                    message="Returned native grader name does not uniquely match the requested graders.",
+                    blame=ErrorBlame.UNKNOWN,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.AOAI_GRADER,
+                )
+            alias = matches[0]
+        if identifier in grader_name_map:
+            raise EvaluationException(
+                message="Returned testing criteria contain duplicate grader identifiers.",
+                blame=ErrorBlame.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.AOAI_GRADER,
+            )
+        grader_name_map[identifier] = alias
+    return grader_name_map
 
 
 def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, Any]) -> None:
