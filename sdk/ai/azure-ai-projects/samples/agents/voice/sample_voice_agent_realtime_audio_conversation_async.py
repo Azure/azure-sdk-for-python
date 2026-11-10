@@ -330,7 +330,7 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
     response_active = False
 
     # Open the realtime session on the voice agent's dedicated route.
-    async with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+    async with client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
         # A voice agent owns its model, instructions, voice, turn detection, and
         # noise suppression server-side, so this client sends no ``session.update``.
         ap = _AudioProcessor(conn)
@@ -417,7 +417,7 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
     :type agent_name: str
     :type conversation_id: str
     """
-    conversations = client.beta.voice_agents.conversations
+    conversations = client.voice_agents.conversations
 
     conversation = await conversations.get(agent_name, conversation_id)
     print(f"Conversation {conversation.id}: status={conversation.status}, created_at={conversation.created_at}")
@@ -440,7 +440,7 @@ async def audio_conversation() -> None:
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
         created_version = None
         try:
@@ -453,7 +453,9 @@ async def audio_conversation() -> None:
                 audio=VoiceAgentAudioConfig(
                     input=VoiceAgentAudioInputConfig(
                         format=RealtimeAudioFormatsAudioPcm(rate=_SAMPLE_RATE),
-                        transcription=VoiceAgentInputTranscription(model=VoiceAgentInputTranscriptionModel.WHISPER1),
+                        transcription=VoiceAgentInputTranscription(
+                            model=VoiceAgentInputTranscriptionModel("whisper-1")
+                        ),
                     ),
                     output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
                 ),
@@ -477,7 +479,7 @@ async def audio_conversation() -> None:
                 except HttpResponseError as e:
                     print(f"Could not read conversation: {e.status_code} {e.reason}")
                 # To fetch this session's audio afterward, use
-                # `project_client.beta.voice_agents.conversations`:
+                # `project_client.voice_agents.conversations`:
                 #   - get_audio(agent_name, conversation_id) for the merged
                 #     whole-call stereo recording's metadata, then
                 #     download_audio(agent_name, conversation_id) to stream

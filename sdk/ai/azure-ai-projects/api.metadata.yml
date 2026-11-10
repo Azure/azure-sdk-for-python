@@ -2,4 +2,4 @@ apiHash: 4d010ad6620cc1bb8549f8521d271bd7641a19b194d9502ff3e233d95dd05f57
 packageRelativePath: sdk/ai/azure-ai-projects
 packageVersion: 2.10.0
 parserVersion: 0.3.31
-pythonVersion: 3.12.15
+pythonVersion: 3.12.16

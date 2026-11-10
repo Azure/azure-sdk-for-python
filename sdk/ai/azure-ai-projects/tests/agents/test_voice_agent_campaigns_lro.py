@@ -22,9 +22,9 @@ from azure.core.utils import case_insensitive_dict
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
-from azure.ai.projects.aio.operations import BetaVoiceAgentsCampaignsOperations as AsyncCampaignsOperations
+from azure.ai.projects.aio.operations import BetaVoiceAgentsTelephonyOperations as AsyncCampaignsOperations
 from azure.ai.projects.models import TelephonyCampaign
-from azure.ai.projects.operations import BetaVoiceAgentsCampaignsOperations as CampaignsOperations
+from azure.ai.projects.operations import BetaVoiceAgentsTelephonyOperations as CampaignsOperations
 from azure.ai.projects.operations._patch import _OperationMethodHeaderProxy
 from azure.ai.projects._utils.campaign_polling import _configure_campaign_polling
 
@@ -352,11 +352,12 @@ async def test_campaign_lro_keeps_encoded_names_and_overrides_stale_guard(asynch
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-async def test_campaign_operations_are_wired_to_public_clients(asynchronous):
+@pytest.mark.parametrize("allow_preview", [False, True])
+async def test_campaign_operations_are_wired_to_public_clients(asynchronous, allow_preview):
     client_type = AsyncAIProjectClient if asynchronous else AIProjectClient
-    client = client_type(endpoint=_ENDPOINT, credential=MagicMock(), allow_preview=True)
+    client = client_type(endpoint=_ENDPOINT, credential=MagicMock(), allow_preview=allow_preview)
     try:
-        campaigns = client.beta.voice_agents.campaigns._operation
+        campaigns = client.beta.voice_agents.telephony._operation
         assert isinstance(campaigns, AsyncCampaignsOperations if asynchronous else CampaignsOperations)
     finally:
         result = client.close()

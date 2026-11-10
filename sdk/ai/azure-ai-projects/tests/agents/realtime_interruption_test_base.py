@@ -58,7 +58,7 @@ async def _delete_fixture(client: AIProjectClient, fixture: RealtimeInterruption
     async def delete_conversation() -> None:
         if fixture.conversation_id:
             try:
-                await client.beta.voice_agents.conversations.delete(fixture.agent_name, fixture.conversation_id)
+                await client.voice_agents.conversations.delete(fixture.agent_name, fixture.conversation_id)
             except ResourceNotFoundError:
                 _LOGGER.info("Owned interrupted conversation was not persisted or was already deleted.")
 
@@ -97,7 +97,7 @@ class RealtimeInterruptionPreparer(AbstractPreparer):
         credential = self.test_class_instance.get_credential(AIProjectClient, is_async=True)
         async with (
             credential,
-            AIProjectClient(endpoint=self.endpoint, credential=credential, allow_preview=True) as client,
+            AIProjectClient(endpoint=self.endpoint, credential=credential) as client,
         ):
             agent = None
             completed = False
@@ -105,10 +105,10 @@ class RealtimeInterruptionPreparer(AbstractPreparer):
                 agent = await client.agents.create_version(
                     agent_name=agent_name, definition=helpers["interruption_definition"](model)
                 )
-                async with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as connection:
+                async with client.voice_agents.realtime.connect(agent_name=agent_name) as connection:
                     await helpers["interrupt_reply_async"](connection, turn)
                 deadline = time.monotonic() + helpers["RECORDING_TIMEOUT"]
-                conversations = client.beta.voice_agents.conversations
+                conversations = client.voice_agents.conversations
                 while not turn.stored_item_id:
                     try:
                         conversation = await conversations.get(agent_name, turn.conversation_id)
@@ -151,7 +151,7 @@ class RealtimeInterruptionPreparer(AbstractPreparer):
         fixture, endpoint = self.fixture, self.endpoint
         assert fixture is not None and endpoint
         credential = self.test_class_instance.get_credential(AIProjectClient, is_async=True)
-        async with credential, AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as client:
+        async with credential, AIProjectClient(endpoint=endpoint, credential=credential) as client:
             await _delete_fixture(client, fixture)
 
 
@@ -171,7 +171,7 @@ def assert_generated_status(expected: int | tuple[int, ...]):
         path = urlsplit(response.http_request.url).path
         assert "/protocols/voice/conversations/" in path
         assert "/audio/generated" in path
-        assert response.http_request.headers["Foundry-Features"] == "VoiceAgents=V1Preview"
+        assert "Foundry-Features" not in response.http_request.headers
 
     return verify
 
@@ -179,7 +179,7 @@ def assert_generated_status(expected: int | tuple[int, ...]):
 def assert_conversation_deleted(response) -> None:
     assert response.http_response.status_code == 204
     assert "/protocols/voice/conversations/" in urlsplit(response.http_request.url).path
-    assert response.http_request.headers["Foundry-Features"] == "VoiceAgents=V1Preview"
+    assert "Foundry-Features" not in response.http_request.headers
 
 
 def assert_generated_metadata(metadata, fixture: RealtimeInterruptionFixture) -> None:

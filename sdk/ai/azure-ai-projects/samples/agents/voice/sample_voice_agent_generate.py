@@ -45,11 +45,9 @@ agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "MyGeneratedVoiceAgen
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    agent = project_client.beta.agents.create_from_prompt(
-        GenerateVoiceAgentRequest(kind=AgentKind.VOICE, name=agent_name)
-    )
+    agent = project_client.agents.create_from_prompt(GenerateVoiceAgentRequest(kind=AgentKind.VOICE, name=agent_name))
     print(f"Generated voice agent: {agent.name}")
     _safe_print(f"Instructions:\n{agent.versions.latest.definition.instructions}")  # type: ignore[attr-defined]
 

@@ -58,7 +58,7 @@ def _assert_owned_cleanup(sample, environment):
     connection.session.close.assert_awaited_once_with()
     connection.session.start.assert_not_called()
     connection.response.cancel.assert_not_called()
-    client.beta.voice_agents.realtime.connect.assert_not_called()
+    client.voice_agents.realtime.connect.assert_not_called()
     client.beta.voice_agents.live.connect.return_value.__aexit__.assert_awaited_once()
     client.__aexit__.assert_awaited_once()
     credential = sample.DefaultAzureCredential.return_value

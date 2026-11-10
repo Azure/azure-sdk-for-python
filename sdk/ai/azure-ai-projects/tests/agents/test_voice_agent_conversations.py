@@ -7,7 +7,7 @@
 
 """
 Recorded tests covering the read-only voice-agent conversation REST API surface exposed through
-``project_client.beta.voice_agents.conversations``.
+``project_client.voice_agents.conversations``.
 
 Conversations, their responses/items, and audio are written by the realtime WebSocket subsystem
 during a live session (see ``test_voice_agent_realtime_live.py``) and can only be *read* here --
@@ -93,7 +93,7 @@ def _create_live_conversation(project_client, model: str) -> str:
     )
 
     conversation_id: Optional[str] = None
-    with project_client.beta.voice_agents.realtime.connect(agent_name=_AGENT_NAME) as conn:
+    with project_client.voice_agents.realtime.connect(agent_name=_AGENT_NAME) as conn:
         session_created = conn.recv(timeout=30)
         assert isinstance(session_created, RealtimeServerEventSessionCreated)
         conversation_id = session_created.conversation_id
@@ -120,10 +120,10 @@ def _create_live_conversation(project_client, model: str) -> str:
 class TestVoiceAgentConversations(TestBase):
     """
     Recorded tests covering the read-only voice-agent conversation REST API surface exposed
-    through ``project_client.beta.voice_agents.conversations`` (conversation envelope,
+    through ``project_client.voice_agents.conversations`` (conversation envelope,
     responses, items, and audio).
 
-    NOTE: The ``beta.voice_agents.conversations.get_generated_audio_item*``
+    NOTE: The ``voice_agents.conversations.get_generated_audio_item*``
     methods are intentionally NOT covered here: they return the played-back-interrupted
     subordinate "generated" audio, which requires deliberately barging in mid-reply during a
     live session to produce -- not exercised by the simple single-turn conversation created
@@ -144,22 +144,22 @@ class TestVoiceAgentConversations(TestBase):
 
         Action REST API Route                                                                    Client Method
         ------+-------------------------------------------------------------------------------+-----------------------------------------------------------
-        GET    /agents/{agent_name}/endpoint/protocols/voice/conversations                        beta.voice_agents.conversations.list()
-        GET    /agents/{agent_name}/endpoint/protocols/voice/conversations/{id}                    beta.voice_agents.conversations.get()
-        GET    .../conversations/{id}/responses                                                    beta.voice_agents.conversations.list_responses()
-        GET    .../conversations/{id}/responses/{response_id}                                       beta.voice_agents.conversations.get_response()
-        GET    .../conversations/{id}/responses/{response_id}/items                                 beta.voice_agents.conversations.list_response_items()
-        GET    .../conversations/{id}/items                                                         beta.voice_agents.conversations.list_items()
-        GET    .../conversations/{id}/items/{item_id}                                               beta.voice_agents.conversations.get_item()
-        GET    .../conversations/{id}/audio                                                         beta.voice_agents.conversations.get_audio()
-        GET    .../conversations/{id}/audio/content                                                 beta.voice_agents.conversations.download_audio()
-        GET    .../conversations/{id}/items/{item_id}/audio                                         beta.voice_agents.conversations.get_audio_item()
-        GET    .../conversations/{id}/items/{item_id}/audio/content                                 beta.voice_agents.conversations.download_audio_item()
-        DELETE .../conversations/{id}                                                               beta.voice_agents.conversations.delete()
+        GET    /agents/{agent_name}/endpoint/protocols/voice/conversations                        voice_agents.conversations.list()
+        GET    /agents/{agent_name}/endpoint/protocols/voice/conversations/{id}                    voice_agents.conversations.get()
+        GET    .../conversations/{id}/responses                                                    voice_agents.conversations.list_responses()
+        GET    .../conversations/{id}/responses/{response_id}                                       voice_agents.conversations.get_response()
+        GET    .../conversations/{id}/responses/{response_id}/items                                 voice_agents.conversations.list_response_items()
+        GET    .../conversations/{id}/items                                                         voice_agents.conversations.list_items()
+        GET    .../conversations/{id}/items/{item_id}                                               voice_agents.conversations.get_item()
+        GET    .../conversations/{id}/audio                                                         voice_agents.conversations.get_audio()
+        GET    .../conversations/{id}/audio/content                                                 voice_agents.conversations.download_audio()
+        GET    .../conversations/{id}/items/{item_id}/audio                                         voice_agents.conversations.get_audio_item()
+        GET    .../conversations/{id}/items/{item_id}/audio/content                                 voice_agents.conversations.download_audio_item()
+        DELETE .../conversations/{id}                                                               voice_agents.conversations.delete()
         """
         print("\n")
         project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
-        conversations = project_client.beta.voice_agents.conversations
+        conversations = project_client.voice_agents.conversations
 
         if is_live():
             model = kwargs.get("foundry_voice_model_name")

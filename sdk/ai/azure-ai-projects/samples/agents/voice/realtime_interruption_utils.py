@@ -234,7 +234,7 @@ def wait_for_generated_audio(
 ) -> tuple[models.VoiceGeneratedAudioItem, bytes]:
     """Wait for durable interruption artifacts before reading them once in a test."""
     deadline = time.monotonic() + RECORDING_TIMEOUT
-    conversations = client.beta.voice_agents.conversations
+    conversations = client.voice_agents.conversations
     while time.monotonic() < deadline:
         try:
             conversation = conversations.get(agent_name, turn.conversation_id)
@@ -269,7 +269,7 @@ async def wait_for_generated_audio_async(
 ) -> tuple[models.VoiceGeneratedAudioItem, bytes]:
     """Wait asynchronously for durable generated audio; never treat a 404 as success."""
     deadline = time.monotonic() + RECORDING_TIMEOUT
-    conversations = client.beta.voice_agents.conversations
+    conversations = client.voice_agents.conversations
     while time.monotonic() < deadline:
         try:
             conversation = await conversations.get(agent_name, turn.conversation_id)

@@ -27,6 +27,7 @@ _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMES
 _SUPPORTED_EXPERIMENTAL_FEATURES: FrozenSet[str] = frozenset(
     {
         "gen_ai_input_output_limit_increase",
+        "multi_endpoint_routing",
     }
 )
 
@@ -103,6 +104,16 @@ _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKE
 _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _MICROSOFT_CUSTOM_MEASUREMENTS = "microsoft.custom_measurements"
+_MICROSOFT_INSTRUMENTATION_KEY = "microsoft.instrumentation_key"
+_MICROSOFT_INGESTION_ENDPOINT = "microsoft.ingestion_endpoint"
+_MICROSOFT_MULTI_ENDPOINT_CLOUD_ROLE = "microsoft.multi_endpoint_cloud_role"
+_MICROSOFT_INGESTION_AUTH = "microsoft.ingestion_auth"
+_MULTI_ENDPOINT_ROUTING_ATTRIBUTES = (
+    _MICROSOFT_INSTRUMENTATION_KEY,
+    _MICROSOFT_INGESTION_ENDPOINT,
+    _MICROSOFT_MULTI_ENDPOINT_CLOUD_ROLE,
+    _MICROSOFT_INGESTION_AUTH,
+)
 
 # Track Availability telemetry constants
 _MICROSOFT_AVAILABILITY_ID = "microsoft.availability.id"
