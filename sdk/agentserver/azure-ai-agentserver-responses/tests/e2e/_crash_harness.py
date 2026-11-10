@@ -60,7 +60,8 @@ class CrashHarness:
     :type tmp_path: ~pathlib.Path
     :param port: Optional explicit port. If ``None``, the harness binds an
         ephemeral port (bind 0, read assignment) and passes it to the
-        subprocess via ``PORT`` env var.
+        subprocess via ``PORT`` env var. On Linux the auto-picked port stays
+        reserved until :meth:`close` (see ``_reserve_ephemeral_port``).
     :type port: int | None
     :param readiness_timeout_seconds: How long to wait for the subprocess to
         respond to the ``/health/live`` probe. Default 10.
@@ -100,7 +101,11 @@ class CrashHarness:
         (self._tmp_path / "responses").mkdir(parents=True, exist_ok=True)
         (self._tmp_path / "streams").mkdir(parents=True, exist_ok=True)
 
-        self._port = port if port is not None else self._pick_ephemeral_port()
+        self._port_reservation: socket.socket | None = None
+        if port is None:
+            self._port, self._port_reservation = self._reserve_ephemeral_port()
+        else:
+            self._port = port
         self._readiness_timeout = readiness_timeout_seconds
         self._env_extras = dict(env_extras or {})
 
@@ -115,16 +120,37 @@ class CrashHarness:
         self._subprocess_log_paths: list[Path] = []
 
     @staticmethod
-    def _pick_ephemeral_port() -> int:
-        """Pick an ephemeral port by binding to 0 and reading the assignment.
+    def _reserve_ephemeral_port() -> tuple[int, socket.socket | None]:
+        """Pick an ephemeral port and, on Linux, keep it reserved until ``close()``.
 
-        :returns: A port number believed to be free at this moment. (TOCTOU
-            races are possible but unlikely on a single dev box.)
-        :rtype: int
+        A bind-0-then-close pick leaves a window before the subprocess binds in
+        which another process (e.g. a concurrently running wheel/sdist test leg)
+        can pick the same port. The losing subprocess then fails with
+        ``EADDRINUSE`` while the readiness probe reaches the other process's
+        server. On Linux a bound, non-listening ``SO_REUSEADDR`` socket excludes
+        the port from other ``bind(0)`` picks and outgoing ephemeral ports, while
+        the subprocess (which also binds with ``SO_REUSEADDR``) can still bind and
+        listen on it, including across :meth:`restart`. Other platforms differ in
+        how a co-bound non-listening socket affects incoming connections, so the
+        port is released immediately there.
+
+        :returns: The port and the reservation socket (``None`` when not reserved).
+        :rtype: tuple[int, ~socket.socket | None]
         """
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        reserve = sys.platform.startswith("linux")
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            if reserve:
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.bind(("127.0.0.1", 0))
-            return int(sock.getsockname()[1])
+            port = int(sock.getsockname()[1])
+        except BaseException:
+            sock.close()
+            raise
+        if not reserve:
+            sock.close()
+            return port, None
+        return port, sock
 
     @property
     def port(self) -> int:
@@ -405,6 +431,9 @@ class CrashHarness:
         if self._process is not None and self._process.poll() is None:
             await self.kill()
         self._process = None
+        if self._port_reservation is not None:
+            self._port_reservation.close()
+            self._port_reservation = None
         # Close subprocess log file handles. Path list is retained so
         # tests/helpers can inspect logs after close (debug aid).
         for fh in self._subprocess_log_handles:
