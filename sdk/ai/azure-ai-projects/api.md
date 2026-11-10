@@ -1684,6 +1684,7 @@ namespace azure.ai.projects.aio.operations
         red_teams: BetaRedTeamsOperations
         routines: BetaRoutinesOperations
         schedules: BetaSchedulesOperations
+        skills: BetaSkillsOperations
         voice_agents: BetaVoiceAgentsOperations
 
         def __init__(
@@ -1942,7 +1943,262 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[ScheduleRun]: ...
 
 
-    class azure.ai.projects.aio.operations.BetaVoiceAgentsCampaignsOperations(GeneratedBetaVoiceAgentsCampaignsOperations):
+    class azure.ai.projects.aio.operations.BetaSkillsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create(
+                self, 
+                name: str, 
+                *, 
+                content_type: str = "application/json", 
+                default: Optional[bool] = ..., 
+                inline_content: Optional[SkillInlineContent] = ..., 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @overload
+        async def create(
+                self, 
+                name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @overload
+        async def create(
+                self, 
+                name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @overload
+        async def create_from_files(
+                self, 
+                name: str, 
+                content: CreateSkillVersionFromFilesBody, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @overload
+        async def create_from_files(
+                self, 
+                name: str, 
+                content: JSON, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @distributed_trace_async
+        async def delete(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> DeleteSkillResult: ...
+
+        @distributed_trace_async
+        async def delete_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> DeleteSkillVersionResult: ...
+
+        @distributed_trace_async
+        async def download(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def download_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> SkillDetails: ...
+
+        @distributed_trace_async
+        async def get_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[SkillDetails]: ...
+
+        @distributed_trace
+        def list_versions(
+                self, 
+                name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[SkillVersion]: ...
+
+        @overload
+        async def update(
+                self, 
+                name: str, 
+                *, 
+                content_type: str = "application/json", 
+                default_version: str, 
+                **kwargs: Any
+            ) -> SkillDetails: ...
+
+        @overload
+        async def update(
+                self, 
+                name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> SkillDetails: ...
+
+        @overload
+        async def update(
+                self, 
+                name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> SkillDetails: ...
+
+
+    class azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def delete(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def download_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def download_audio_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversation: ...
+
+        @distributed_trace_async
+        async def get_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceRecording: ...
+
+        @distributed_trace_async
+        async def get_audio_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceAudioItem: ...
+
+        @distributed_trace_async
+        async def get_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversationItem: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceAgentLiveConversation]: ...
+
+        @distributed_trace
+        def list_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceAgentLiveConversationItem]: ...
+
+
+    class azure.ai.projects.aio.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
+        live: AsyncBetaLive
+        live_conversations: BetaVoiceAgentsLiveConversationsOperations
+        telephony: BetaVoiceAgentsTelephonyOperations
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations(GeneratedBetaVoiceAgentsTelephonyOperations):
 
         def __init__(
                 self, 
@@ -2056,109 +2312,6 @@ namespace azure.ai.projects.aio.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[TelephonyCampaignValidationError]: ...
-
-
-    class azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def download_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def download_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceAgentLiveConversation: ...
-
-        @distributed_trace_async
-        async def get_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceRecording: ...
-
-        @distributed_trace_async
-        async def get_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceAudioItem: ...
-
-        @distributed_trace_async
-        async def get_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceAgentLiveConversationItem: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[VoiceAgentLiveConversation]: ...
-
-        @distributed_trace
-        def list_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[VoiceAgentLiveConversationItem]: ...
-
-
-    class azure.ai.projects.aio.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
-        campaigns: BetaVoiceAgentsCampaignsOperations
-        live: AsyncBetaLive
-        live_conversations: BetaVoiceAgentsLiveConversationsOperations
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
 
 
     class azure.ai.projects.aio.operations.ConnectionsOperations(ConnectionsOperationsGenerated):
@@ -2713,158 +2866,6 @@ namespace azure.ai.projects.aio.operations
                 name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[Index]: ...
-
-
-    class azure.ai.projects.aio.operations.SkillsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def create(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default: Optional[bool] = ..., 
-                inline_content: Optional[SkillInlineContent] = ..., 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        async def create(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        async def create(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        async def create_from_files(
-                self, 
-                name: str, 
-                content: CreateSkillVersionFromFilesBody, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        async def create_from_files(
-                self, 
-                name: str, 
-                content: JSON, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> DeleteSkillResult: ...
-
-        @distributed_trace_async
-        async def delete_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> DeleteSkillVersionResult: ...
-
-        @distributed_trace_async
-        async def download(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def download_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @distributed_trace_async
-        async def get_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[SkillDetails]: ...
-
-        @distributed_trace
-        def list_versions(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[SkillVersion]: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default_version: str, 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillDetails: ...
 
 
     class azure.ai.projects.aio.operations.TelemetryOperations:
@@ -25604,6 +25605,7 @@ namespace azure.ai.projects.operations
         red_teams: BetaRedTeamsOperations
         routines: BetaRoutinesOperations
         schedules: BetaSchedulesOperations
+        skills: BetaSkillsOperations
         voice_agents: BetaVoiceAgentsOperations
 
         def __init__(
@@ -25862,7 +25864,262 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[ScheduleRun]: ...
 
 
-    class azure.ai.projects.operations.BetaVoiceAgentsCampaignsOperations(GeneratedBetaVoiceAgentsCampaignsOperations):
+    class azure.ai.projects.operations.BetaSkillsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create(
+                self, 
+                name: str, 
+                *, 
+                content_type: str = "application/json", 
+                default: Optional[bool] = ..., 
+                inline_content: Optional[SkillInlineContent] = ..., 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @overload
+        def create(
+                self, 
+                name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @overload
+        def create(
+                self, 
+                name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @overload
+        def create_from_files(
+                self, 
+                name: str, 
+                content: CreateSkillVersionFromFilesBody, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @overload
+        def create_from_files(
+                self, 
+                name: str, 
+                content: JSON, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @distributed_trace
+        def delete(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> DeleteSkillResult: ...
+
+        @distributed_trace
+        def delete_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> DeleteSkillVersionResult: ...
+
+        @distributed_trace
+        def download(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def download_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> SkillDetails: ...
+
+        @distributed_trace
+        def get_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[SkillDetails]: ...
+
+        @distributed_trace
+        def list_versions(
+                self, 
+                name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[SkillVersion]: ...
+
+        @overload
+        def update(
+                self, 
+                name: str, 
+                *, 
+                content_type: str = "application/json", 
+                default_version: str, 
+                **kwargs: Any
+            ) -> SkillDetails: ...
+
+        @overload
+        def update(
+                self, 
+                name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> SkillDetails: ...
+
+        @overload
+        def update(
+                self, 
+                name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> SkillDetails: ...
+
+
+    class azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def delete(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def download_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def download_audio_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversation: ...
+
+        @distributed_trace
+        def get_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceRecording: ...
+
+        @distributed_trace
+        def get_audio_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceAudioItem: ...
+
+        @distributed_trace
+        def get_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversationItem: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[VoiceAgentLiveConversation]: ...
+
+        @distributed_trace
+        def list_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[VoiceAgentLiveConversationItem]: ...
+
+
+    class azure.ai.projects.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
+        live: BetaLive
+        live_conversations: BetaVoiceAgentsLiveConversationsOperations
+        telephony: BetaVoiceAgentsTelephonyOperations
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations(GeneratedBetaVoiceAgentsTelephonyOperations):
 
         def __init__(
                 self, 
@@ -25976,109 +26233,6 @@ namespace azure.ai.projects.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[TelephonyCampaignValidationError]: ...
-
-
-    class azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def download_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def download_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceAgentLiveConversation: ...
-
-        @distributed_trace
-        def get_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceRecording: ...
-
-        @distributed_trace
-        def get_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceAudioItem: ...
-
-        @distributed_trace
-        def get_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceAgentLiveConversationItem: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[VoiceAgentLiveConversation]: ...
-
-        @distributed_trace
-        def list_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[VoiceAgentLiveConversationItem]: ...
-
-
-    class azure.ai.projects.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
-        campaigns: BetaVoiceAgentsCampaignsOperations
-        live: BetaLive
-        live_conversations: BetaVoiceAgentsLiveConversationsOperations
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
 
 
     class azure.ai.projects.operations.ConnectionsOperations(ConnectionsOperationsGenerated):
@@ -26705,158 +26859,6 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         def enter(self) -> RealtimeConnection: ...
-
-
-    class azure.ai.projects.operations.SkillsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def create(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default: Optional[bool] = ..., 
-                inline_content: Optional[SkillInlineContent] = ..., 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        def create(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        def create(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        def create_from_files(
-                self, 
-                name: str, 
-                content: CreateSkillVersionFromFilesBody, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        def create_from_files(
-                self, 
-                name: str, 
-                content: JSON, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> DeleteSkillResult: ...
-
-        @distributed_trace
-        def delete_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> DeleteSkillVersionResult: ...
-
-        @distributed_trace
-        def download(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def download_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @distributed_trace
-        def get_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[SkillDetails]: ...
-
-        @distributed_trace
-        def list_versions(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[SkillVersion]: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default_version: str, 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillDetails: ...
 
 
     class azure.ai.projects.operations.TelemetryOperations:

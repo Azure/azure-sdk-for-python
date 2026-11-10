@@ -14,7 +14,7 @@ DESCRIPTION:
     description from the fetched default version to show that the default
     version pointer changes which content is returned.
 
-    Skills operations are generally available through `project_client.skills`.
+    Skills operations are in preview through `project_client.beta.skills`.
 
 USAGE:
     python sample_skills_crud.py
@@ -55,7 +55,7 @@ with (
     skill_name = "product-support-skill"
 
     try:
-        project_client.skills.delete(skill_name)
+        project_client.beta.skills.delete(skill_name)
         print(f"Skill `{skill_name}` deleted")
     except ResourceNotFoundError:
         pass
@@ -72,50 +72,50 @@ with (
         metadata={"revision": "2"},
     )
 
-    created = project_client.skills.create(
+    created = project_client.beta.skills.create(
         name=skill_name,
         inline_content=inline_content_v1,
     )
     print(f"Created skill: {created.name} revision 1 in version {created.version}")
 
-    created = project_client.skills.create(
+    created = project_client.beta.skills.create(
         name=skill_name,
         inline_content=inline_content_v2,
     )
     print(f"Created skill: {created.name} revision 2 in version {created.version}")
 
-    updated = project_client.skills.update(
+    updated = project_client.beta.skills.update(
         skill_name,
         default_version="2",
     )
     print(f"Updated skill: {updated.name} default version is now {updated.default_version}")
 
-    fetched = project_client.skills.get(name=skill_name)
+    fetched = project_client.beta.skills.get(name=skill_name)
     print(f"Retrieved skill with default version: {fetched.default_version}")
-    fetched_version = project_client.skills.get_version(
+    fetched_version = project_client.beta.skills.get_version(
         name=skill_name,
         version=fetched.default_version,
     )
     print_skill_version_description(fetched_version)
 
-    updated = project_client.skills.update(
+    updated = project_client.beta.skills.update(
         skill_name,
         default_version="1",
     )
     print(f"Updated skill: {updated.name} default version is now {updated.default_version}")
 
-    fetched = project_client.skills.get(name=skill_name)
+    fetched = project_client.beta.skills.get(name=skill_name)
     print(f"Retrieved skill with default version: {fetched.default_version}")
-    fetched_version = project_client.skills.get_version(
+    fetched_version = project_client.beta.skills.get_version(
         name=skill_name,
         version=fetched.default_version,
     )
     print_skill_version_description(fetched_version)
 
-    skills = list(project_client.skills.list())
+    skills = list(project_client.beta.skills.list())
     print(f"Found {len(skills)} skills")
     for item in skills:
         print(f"  - {item.name} ({item.id})")
 
-    project_client.skills.delete(name=skill_name)
+    project_client.beta.skills.delete(name=skill_name)
     print("Skill deleted")

@@ -9,8 +9,8 @@ This document lists all public methods available on `AIProjectClient` and its su
 There are a total of 213 unique public methods:
 
 - 5 stable methods on the client
-- 141 stable methods on top-level sub-clients
-- 67 beta methods on nested beta sub-clients
+- 130 stable methods on top-level sub-clients
+- 78 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
@@ -24,7 +24,6 @@ There are a total of 213 unique public methods:
 | `evaluation_rules` | EvaluationRulesOperations | 4 |
 | `evaluators` | EvaluatorsOperations | 11 |
 | `indexes` | IndexesOperations | 5 |
-| `skills` | SkillsOperations | 11 |
 | `telemetry` | TelemetryOperations | 1 |
 | `toolboxes` | ToolboxesOperations | 9 |
 | `voice_agents.conversations` | VoiceAgentsConversationsOperations | 14 |
@@ -43,9 +42,10 @@ There are a total of 213 unique public methods:
 | `beta.red_teams` | BetaRedTeamsOperations | 3 |
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
-| `beta.voice_agents.campaigns` | BetaVoiceAgentsCampaignsOperations | 7 |
+| `beta.skills` | BetaSkillsOperations | 11 |
 | `beta.voice_agents.live` | BetaLive | 1 |
 | `beta.voice_agents.live_conversations` | BetaVoiceAgentsLiveConversationsOperations | 9 |
+| `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 7 |
 
 ## Stable methods on the client
 
@@ -161,18 +161,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .indexes.list
 .indexes.list_versions
 
-.skills.create
-.skills.create_from_files
-.skills.delete
-.skills.delete_version
-.skills.download
-.skills.download_version
-.skills.get
-.skills.get_version
-.skills.list
-.skills.list_versions
-.skills.update
-
 .telemetry.get_application_insights_connection_string*
 
 .toolboxes.create_version
@@ -283,13 +271,17 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.schedules.list
 .beta.schedules.list_runs
 
-.beta.voice_agents.campaigns.begin_cancel*
-.beta.voice_agents.campaigns.begin_create*
-.beta.voice_agents.campaigns.begin_delete*
-.beta.voice_agents.campaigns.get
-.beta.voice_agents.campaigns.get_operation
-.beta.voice_agents.campaigns.list
-.beta.voice_agents.campaigns.list_validation_errors
+.beta.skills.create
+.beta.skills.create_from_files
+.beta.skills.delete
+.beta.skills.delete_version
+.beta.skills.download
+.beta.skills.download_version
+.beta.skills.get
+.beta.skills.get_version
+.beta.skills.list
+.beta.skills.list_versions
+.beta.skills.update
 
 .beta.voice_agents.live.connect*
 
@@ -302,4 +294,12 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.voice_agents.live_conversations.get_item
 .beta.voice_agents.live_conversations.list
 .beta.voice_agents.live_conversations.list_items
+
+.beta.voice_agents.telephony.begin_cancel*
+.beta.voice_agents.telephony.begin_create*
+.beta.voice_agents.telephony.begin_delete*
+.beta.voice_agents.telephony.get
+.beta.voice_agents.telephony.get_operation
+.beta.voice_agents.telephony.list
+.beta.voice_agents.telephony.list_validation_errors
 ```

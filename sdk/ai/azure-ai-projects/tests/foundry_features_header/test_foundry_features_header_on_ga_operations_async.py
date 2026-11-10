@@ -159,7 +159,7 @@ class TestFoundryFeaturesHeaderOnGaOperationsAsync(FoundryFeaturesHeaderTestBase
         await self._assert_header_absent_async(method_name, self._make_fake_call(method))
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("subclient_name", ["agent_insight_monitors", "skills"])
+    @pytest.mark.parametrize("subclient_name", ["agent_insight_monitors"])
     @pytest.mark.parametrize("allow_preview", [False, True])
     async def test_promoted_operations_do_not_require_preview_async(
         self,
