@@ -62,7 +62,7 @@ def test_autorest_legacy_tests_install_only_the_declared_test_server():
     assert "git clone $(auto_rest_clone_url)" in prepare
     assert "devDependencies['@microsoft.azure/autorest.testserver']" in prepare
     assert (
-        'npm install --ignore-scripts --no-audit --no-fund '
+        "npm install --ignore-scripts --no-audit --no-fund "
         '"@microsoft.azure/autorest.testserver@$test_server_version"'
     ) in prepare
     assert 'ln -s "$test_server_directory/node_modules"' in prepare
@@ -73,14 +73,14 @@ def test_autorest_legacy_tests_install_only_the_declared_test_server():
 def test_autorest_legacy_requirements_cannot_replace_the_pr_packages(kind):
     pipeline = yaml.safe_load((REPO_ROOT / "eng" / "pipelines" / "autorest_checks.yml").read_text())
     step = next(
-        step for step in pipeline["jobs"][0]["steps"]
-        if step.get("displayName", "").endswith(f"Test {kind} Legacy")
+        step for step in pipeline["jobs"][0]["steps"] if step.get("displayName", "").endswith(f"Test {kind} Legacy")
     )
     assert step["script"].startswith("set -euo pipefail\n")
     commands = step["script"].splitlines()
     requirements = commands.index("python -m pip install -r requirements.txt")
     local_packages = next(
-        index for index, command in enumerate(commands)
+        index
+        for index, command in enumerate(commands)
         if command.startswith("python -m pip install $(Build.SourcesDirectory)")
     )
     assert requirements < local_packages
