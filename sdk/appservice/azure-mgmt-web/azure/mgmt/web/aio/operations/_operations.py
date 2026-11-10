@@ -24498,7 +24498,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> str:
+    ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -24517,8 +24517,8 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: str
-        :rtype: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -24532,7 +24532,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> str:
+    ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -24551,8 +24551,8 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: str
-        :rtype: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -24566,7 +24566,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> str:
+    ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -24585,8 +24585,8 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: str
-        :rtype: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -24600,7 +24600,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
             _models.CsmPublishingProfileOptions, _types.CsmPublishingProfileOptions, IO[bytes]
         ],
         **kwargs: Any
-    ) -> str:
+    ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -24618,8 +24618,8 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
          CsmPublishingProfileOptions type or a IO[bytes] type. Required.
         :type publishing_profile_options: ~azure.mgmt.web.models.CsmPublishingProfileOptions or
          ~azure.mgmt.web.types.CsmPublishingProfileOptions or IO[bytes]
-        :return: str
-        :rtype: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -24634,7 +24634,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[str] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -24660,7 +24660,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -24683,10 +24683,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         response_headers = {}
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize_xml(str, response.text())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -37898,7 +37895,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> str:
+    ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -37914,8 +37911,8 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: str
-        :rtype: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -37928,7 +37925,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> str:
+    ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -37944,8 +37941,8 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: str
-        :rtype: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -37958,7 +37955,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> str:
+    ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -37974,8 +37971,8 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: str
-        :rtype: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -37988,7 +37985,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
             _models.CsmPublishingProfileOptions, _types.CsmPublishingProfileOptions, IO[bytes]
         ],
         **kwargs: Any
-    ) -> str:
+    ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
         Description for Gets the publishing profile for an app (or deployment slot, if specified).
@@ -38003,8 +38000,8 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
          CsmPublishingProfileOptions type or a IO[bytes] type. Required.
         :type publishing_profile_options: ~azure.mgmt.web.models.CsmPublishingProfileOptions or
          ~azure.mgmt.web.types.CsmPublishingProfileOptions or IO[bytes]
-        :return: str
-        :rtype: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -38019,7 +38016,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[str] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -38044,7 +38041,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -38067,10 +38064,7 @@ class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-pub
         response_headers = {}
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize_xml(str, response.text())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

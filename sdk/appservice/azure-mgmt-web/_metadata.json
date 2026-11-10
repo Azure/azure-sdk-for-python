@@ -6,6 +6,6 @@
   "commit": "b6ab28408ab0422cad0a2e518d31500416590e1c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/web/resource-manager/Microsoft.Web/AppService",
-  "emitterVersion": "0.63.10",
-  "httpClientPythonVersion": "0.39.0"
+  "emitterVersion": "0.63.11",
+  "httpClientPythonVersion": "0.40.0"
 }

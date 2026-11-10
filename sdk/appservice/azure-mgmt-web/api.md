@@ -9358,7 +9358,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> AsyncIterator[bytes]: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets(
@@ -9369,7 +9369,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> AsyncIterator[bytes]: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets(
@@ -9380,7 +9380,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> AsyncIterator[bytes]: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets_slot(
@@ -9392,7 +9392,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> AsyncIterator[bytes]: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets_slot(
@@ -9404,7 +9404,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> AsyncIterator[bytes]: ...
 
         @overload
         async def list_publishing_profile_xml_with_secrets_slot(
@@ -9416,7 +9416,7 @@ namespace azure.mgmt.web.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def list_relay_service_connections(
@@ -33616,7 +33616,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> Iterator[bytes]: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets(
@@ -33627,7 +33627,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> Iterator[bytes]: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets(
@@ -33638,7 +33638,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> Iterator[bytes]: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets_slot(
@@ -33650,7 +33650,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> Iterator[bytes]: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets_slot(
@@ -33662,7 +33662,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> Iterator[bytes]: ...
 
         @overload
         def list_publishing_profile_xml_with_secrets_slot(
@@ -33674,7 +33674,7 @@ namespace azure.mgmt.web.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> str: ...
+            ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def list_relay_service_connections(

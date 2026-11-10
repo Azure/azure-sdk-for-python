@@ -1,5 +1,78 @@
 # Release History
 
+## 11.1.0 (2026-11-10)
+
+### Features Added
+
+  - Client `WebSiteManagementClient` added operation group `ai_gateways`
+  - Client `WebSiteManagementClient` added operation group `last_known_good_resources`
+  - Client `WebSiteManagementClient` added operation group `managed_traffic_config_resources`
+  - Client `WebSiteManagementClient` added operation group `server_farm_silo_resources`
+  - Client `WebSiteManagementClient` added operation group `site_silo_resources`
+  - Client `WebSiteManagementClient` added operation group `site_silo_virtual_network_connections`
+  - Client `WebSiteManagementClient` added operation group `sites`
+  - Client `WebSiteManagementClient` added operation group `static_sites_async_operations`
+  - Model `OutboundVnetRouting` added property `managed_identity_traffic`
+  - Enum `RuntimeName` added member `GO`
+  - Model `SitePatchResourceProperties` added property `ai_integration`
+  - Model `SitePatchResourceProperties` added property `site_scoped_certificates_enabled`
+  - Model `SiteProperties` added property `ai_integration`
+  - Model `SiteProperties` added property `maintenance_enabled`
+  - Model `SiteProperties` added property `platform_release_channel`
+  - Model `SiteProperties` added property `site_scoped_certificates_enabled`
+  - Added model `AiGateway`
+  - Added model `AiGatewayProperties`
+  - Added model `AiGatewayTagsUpdate`
+  - Added model `AiIntegration`
+  - Added model `EndpointTrafficConfig`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `LastKnownGoodProperties`
+  - Added model `LastKnownGoodResource`
+  - Added model `ManagedTrafficConfigProperties`
+  - Added model `ManagedTrafficConfigResource`
+  - Added model `McpServerConfig`
+  - Added model `McpSettings`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `NspProfile`
+  - Added model `NspProfileAccessRule`
+  - Added model `NspProfileAccessRuleGranularFeature`
+  - Added model `NspProfileAccessRuleProperties`
+  - Added model `NspProvisioningIssue`
+  - Added model `NspProvisioningIssueProperties`
+  - Added model `NspResourceAssociation`
+  - Added model `NspSubscription`
+  - Added enum `PlatformReleaseChannel`
+  - Added model `ServerFarmSilo`
+  - Added model `ServerFarmSiloProperties`
+  - Added model `ServerFarmSiloResourceAllocation`
+  - Added model `ServerFarmSiloSubnetIpAllocation`
+  - Added model `ServerFarmSiloTagsUpdate`
+  - Added model `ServerFarmSiloVnetIntegration`
+  - Added model `ServerFarmSiloVnetIntegrationsResult`
+  - Added enum `SiloFailOverMode`
+  - Added model `SiloNetworkingOverride`
+  - Added enum `SiloProvisioningState`
+  - Added model `SiteAuthInfo`
+  - Added model `SiteSilo`
+  - Added model `SiteSiloProperties`
+  - Added model `SiteSiloTagsUpdate`
+  - Added model `StaticSitesOperationStatus`
+  - Added model `StaticSitesOperationStatusProperties`
+  - Model `AppServicePlansOperations` added method `start_web_apps`
+  - Model `AppServicePlansOperations` added method `stop_web_apps`
+  - Added operation group `AiGatewaysOperations`
+  - Added operation group `LastKnownGoodResourcesOperations`
+  - Added operation group `ManagedTrafficConfigResourcesOperations`
+  - Added operation group `ServerFarmSiloResourcesOperations`
+  - Added operation group `SiteSiloResourcesOperations`
+  - Added operation group `SiteSiloVirtualNetworkConnectionsOperations`
+  - Added operation group `SitesOperations`
+  - Added operation group `StaticSitesAsyncOperationsOperations`
+
 ## 12.0.0 (2026-11-10)
 
 ### Features Added
