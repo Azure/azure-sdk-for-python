@@ -24,7 +24,6 @@ class CommunicationErrorResponseConverter(object):
 
     @classmethod
     def convert(cls, participants, chat_errors):
-        # type: (...) -> list[(ChatThreadParticipant, ChatError)]
         """
         Util function to convert AddChatParticipantsResult.
 
@@ -41,7 +40,6 @@ class CommunicationErrorResponseConverter(object):
         """
 
         def create_dict(participants):
-            # type: (...) -> Dict(str, ChatThreadParticipant)
             """
             Create dictionary of id -> ChatParticipant
 
