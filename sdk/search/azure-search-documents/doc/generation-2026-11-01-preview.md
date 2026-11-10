@@ -100,14 +100,28 @@ in the shared request builder, as in the GA baseline.
 GA's
 `indexes.types.KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]`
 simplifies to a callable TypedDict, whereas November's three-member union is
-not callable. The approved policy restores that GA alias contract, even though
-it narrows preview-only typing. The additional spec variants explain the
-generated union; this is not a confirmed emitter bug. The customization tool
-restored the single-member alias and added an idempotent exact-match rule to
-the existing post-generation rewriter. Keep this compatibility rule until
-unmodified generated output preserves the GA constructor and type contract.
-Sync/async client regressions exercise constructing and submitting a knowledge
-base using that alias; a static caller probe checks the same inputs.
+not callable. The legacy alias remains unchanged so existing
+`KnowledgeBaseModel(...)` construction continues to work. A separate public
+`indexes.types.KnowledgeBaseModelInput` union includes Azure OpenAI, Microsoft
+Retriever 1, and OpenAI-compatible models. The `indexes.types.KnowledgeBase.models`
+annotation accepts both a list of the legacy alias and a list of this full union,
+preserving pre-typed GA lists despite mutable-list invariance. Callers construct
+the concrete TypedDicts rather than calling the input union.
+
+The original generated union correctly represents the November spec. Separating
+the input union from the callable legacy alias is an SDK-owned compatibility
+choice, not a service-spec defect or an emitter bug. The package-owned
+post-generation rewriter preserves both aliases and the input annotation.
+Sync/async regressions exercise submitting the legacy constructor and both new
+variants; regeneration tests verify the full input union and idempotence.
+Keep this compatibility customization until unmodified generated output
+preserves both GA construction and complete November input typing.
+
+The four additional offline completed File-poller continuation cases were
+removed at the user's request while the azure-core/generated-response mismatch
+remains unresolved. Original typed-poller tests and failed-operation monitor
+tests remain. Removing this coverage does not fix or establish support for
+completed-token resumption.
 
 The final customized preview was compared with the exact GA source revision
 above using the same APIView parser (0.3.31) for both locally built wheels and

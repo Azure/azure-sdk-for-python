@@ -77,6 +77,45 @@ class TestSearchFieldDataType:
 
 
 class TestSearchField:
+    def test_field_helpers_forward_november_topic_binding(self):
+        require_capability("azure.search.documents.indexes.models.SearchField.topic_graph_profile")
+        field = SearchField(
+            name="vector",
+            type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),
+            searchable=True,
+            hidden=True,
+            stored=True,
+            vector_search_dimensions=2,
+            vector_search_profile_name="vector-profile",
+            topic_graph_profile="hotel-topics",
+        )
+        serialized = field.as_dict()
+        assert serialized["topicGraphProfile"] == "hotel-topics"
+        assert serialized["vectorSearchProfile"] == "vector-profile"
+        assert serialized["dimensions"] == 2
+        assert serialized["stored"] is True
+        assert serialized["retrievable"] is False
+
+    @pytest.mark.parametrize("builder", [SearchField, SimpleField])
+    @pytest.mark.parametrize("permission_filter", ["oneLakeParentFolders", "oneLakeLakehouseId"])
+    def test_field_helpers_forward_november_permission_roles(self, builder, permission_filter):
+        require_capability(
+            "azure.search.documents.indexes.models.SearchField.permission_filter",
+            "azure.search.documents.indexes.models.SearchIndex.one_lake_security_source",
+        )
+        field = builder(
+            name="permission",
+            type=SearchFieldDataType.Collection(SearchFieldDataType.STRING),
+            hidden=True,
+            filterable=True,
+            permission_filter=permission_filter,
+        )
+        serialized = field.as_dict()
+        assert serialized["permissionFilter"] == permission_filter
+        assert serialized["filterable"] is True
+        assert serialized["retrievable"] is False
+        assert serialized["type"] == "Collection(Edm.String)"
+
     def test_hidden_constructor_kwarg_sets_inverse_retrievable_value(self):
         field = SearchField(name="Rating", type=SearchFieldDataType.DOUBLE, hidden=True)
 

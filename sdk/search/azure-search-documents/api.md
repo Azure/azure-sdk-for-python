@@ -10034,6 +10034,7 @@ namespace azure.search.documents.indexes.types
         key "description": str
         key "encryptionKey": Optional[SearchResourceEncryptionKey]
         key "knowledgeSources": Required[list[KnowledgeSourceReference]]
+        key "models": Union[list[KnowledgeBaseModel], list[KnowledgeBaseModelInput]]
         key "name": Required[str]
         key "outputMode": Union[str, KnowledgeRetrievalOutputMode]
         key "retrievalInstructions": str
@@ -10043,7 +10044,7 @@ namespace azure.search.documents.indexes.types
         description: str
         encryptionKey: SearchResourceEncryptionKey
         knowledgeSources: list[KnowledgeSourceReference]
-        models: list[KnowledgeBaseModel]
+        models: Union[list[KnowledgeBaseModel], list[KnowledgeBaseModelInput]]
         name: str
         outputMode: Union[str, KnowledgeRetrievalOutputMode]
         retrievalInstructions: str

@@ -202,6 +202,29 @@ REPLACEMENTS = (
         "]\n",
         "KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]\n",
     ),
+    Replacement(
+        "azure/search/documents/indexes/types.py",
+        "expose all knowledge-base model variants through a separate input union",
+        "KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]\nMcpServerAuthentication =",
+        "KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]\n\n"
+        "KnowledgeBaseModelInput = Union[\n"
+        "    KnowledgeBaseAzureOpenAIModel, KnowledgeBaseMicrosoftRetriever1Model, KnowledgeBaseOpenAICompatibleModel\n"
+        "]\n"
+        '"""All supported knowledge-base model variants for dictionary-style inputs."""\n\n'
+        "McpServerAuthentication =",
+    ),
+    Replacement(
+        "azure/search/documents/indexes/types.py",
+        "accept all knowledge-base model variants in dictionary-style inputs",
+        '        "models": list["KnowledgeBaseModel"],\n',
+        '        "models": Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]],\n',
+    ),
+    Replacement(
+        "azure/search/documents/indexes/types.py",
+        "document the complete knowledge-base model input union",
+        ':vartype models: list["KnowledgeBaseModel"]\n',
+        ':vartype models: Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]]\n',
+    ),
 )
 
 

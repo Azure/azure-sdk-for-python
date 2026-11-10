@@ -7,6 +7,9 @@
 - Added `ApiVersion.V2026_11_01_PREVIEW` and made `2026-11-01-preview` the default.
   Previously advertised API versions remain selectable.
 - Restored explicit `ApiVersion.V2026_10_01` selection without changing the November default.
+- Added `indexes.types.KnowledgeBaseModelInput` for all three model variants in
+  dictionary-style knowledge-base inputs, while preserving the callable GA
+  `indexes.types.KnowledgeBaseModel` alias.
 - Below operations and models are added for graph querying, index configuration, and retrieval:
   - `SearchClient.graph` (synchronous and asynchronous), including typed provenance,
     diagnostics, evidence, statistics, and explain results.

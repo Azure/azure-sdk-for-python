@@ -7,6 +7,17 @@
 from _capabilities import require_capability
 
 
+def knowledge_base_tool_documents():
+    content = (
+        "This hotel offers complimentary wireless internet in every guest room, "
+        "comfortable beds, free breakfast, and convenient access to downtown."
+    )
+    return (
+        [{"id": "hotel-selected-1", "content": content}, {"id": "hotel-selected-2", "content": content}],
+        [{"id": "hotel-excluded", "content": content}],
+    )
+
+
 def graph_index_configuration(index_name):
     require_capability(
         "azure.search.documents.indexes.models.SearchIndex.graph_profile",

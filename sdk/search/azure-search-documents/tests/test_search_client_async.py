@@ -139,15 +139,32 @@ class TestSearchRequestBuildingAsync:
         assert result.diagnostics[0].code == "GQL001"
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("kind", ["none", "diverse", "balanced"])
+    @pytest.mark.parametrize(
+        "topic_graph",
+        [
+            {"kind": "none"},
+            {"kind": "diverse"},
+            {"kind": "balanced"},
+            {"kind": "diverse", "diversityFactor": 0.35, "minDiversityPoolSize": 2500},
+            {"kind": "diverse", "diversityFactor": 0, "minDiversityPoolSize": 250},
+            {"kind": "balanced", "minDiversityPoolSize": 2500},
+        ],
+    )
     @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
-    async def test_search_forwards_agentic_options_and_topic_graph(self, mock_search_post, kind):
+    async def test_search_forwards_agentic_options_and_topic_graph(self, mock_search_post, topic_graph):
         require_capability(
             "azure.search.documents.aio.SearchClient.search.agentic_options",
             "azure.search.documents.aio.SearchClient.search.more_like_this",
             "azure.search.documents.models.VectorizedQuery.topic_graph",
             "azure.search.documents.models.AgenticSearchOptions.max_runtime_in_seconds",
         )
+        if "minDiversityPoolSize" in topic_graph:
+            owner = (
+                "DiverseVectorQueryTopicGraph" if topic_graph["kind"] == "diverse" else "BalancedVectorQueryTopicGraph"
+            )
+            require_capability(f"azure.search.documents.models.{owner}.min_diversity_pool_size")
+        if "diversityFactor" in topic_graph:
+            require_capability("azure.search.documents.models.DiverseVectorQueryTopicGraph.diversity_factor")
         from azure.search.documents import DEFAULT_VERSION
         from azure.search.documents.models import AgenticSearchOptions, VectorizedQuery
 
@@ -157,14 +174,20 @@ class TestSearchRequestBuildingAsync:
             query_type="agentic",
             more_like_this=DOCUMENT_KEY,
             agentic_options=AgenticSearchOptions(max_runtime_in_seconds=30),
-            vector_queries=[VectorizedQuery(vector=[0.1, 0.2], fields="vector", topic_graph={"kind": kind})],
+            vector_queries=[VectorizedQuery(vector=[0.1, 0.2], fields="vector", topic_graph=topic_graph)],
+            filter="Rating ge 4",
+            select=["HotelId"],
+            top=2,
         )
         _ = [item async for item in results]
 
         body = get_search_request(mock_search_post).as_dict()
         assert body["moreLikeThis"] == DOCUMENT_KEY
         assert body["agenticOptions"] == {"maxRuntimeInSeconds": 30}
-        assert body["vectorQueries"][0]["topicGraph"] == {"kind": kind}
+        assert body["vectorQueries"][0]["topicGraph"] == topic_graph
+        assert body["filter"] == "Rating ge 4"
+        assert body["select"] == "HotelId"
+        assert body["top"] == 2
         assert client._config.api_version == DEFAULT_VERSION == "2026-11-01-preview"
         assert ApiVersion.V2026_08_01_PREVIEW == "2026-08-01-preview"
 
@@ -452,6 +475,49 @@ class TestSearchRequestBuildingAsync:
             assert await result.get_debug_info() is debug_info
 
         mock_search_post.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
+    async def test_get_debug_info_preserves_agentic_payload_across_pages(self, mock_search_post):
+        require_capability(
+            "AsyncSearchItemPaged.get_debug_info",
+            "azure.search.documents.models.DebugInfo.agentic",
+            "azure.search.documents.models.AgenticSearchDebugInfo",
+            "azure.search.documents.models.AgenticSearchUsage",
+            "azure.search.documents.models.AgenticSearchSubQuery",
+        )
+        from azure.search.documents.models import AgenticSearchDebugInfo, AgenticSearchSubQuery, AgenticSearchUsage
+        from azure.search.documents.models._models import SearchDocumentsResult
+
+        first = SearchDocumentsResult(
+            {
+                "value": [{"HotelId": "1"}],
+                "@search.debug": {
+                    "agentic": {
+                        "terminationReason": "modelStopped",
+                        "subQueries": [{"search": SEARCH_TEXT, "iteration": 1}],
+                        "usage": {"agenticPlanningTokens": 1000, "reasoningTokens": 700},
+                    }
+                },
+                "@odata.nextLink": SEARCH_ENDPOINT,
+                "@search.nextPageParameters": {"search": SEARCH_TEXT, "skip": 1},
+            }
+        )
+        mock_search_post.side_effect = [first, create_search_documents_result({"HotelId": "2"})]
+        async with create_search_client() as client:
+            results = await client.search(search_text=SEARCH_TEXT, query_type="agentic", debug="agentic")
+            debug_info = await results.get_debug_info()
+            assert isinstance(debug_info.agentic, AgenticSearchDebugInfo)
+            assert isinstance(debug_info.agentic.usage, AgenticSearchUsage)
+            assert isinstance(debug_info.agentic.sub_queries[0], AgenticSearchSubQuery)
+            assert debug_info.agentic.termination_reason == "modelStopped"
+            assert debug_info.agentic.usage.agentic_planning_tokens == 1000
+            assert debug_info.agentic.usage.reasoning_tokens == 700
+            assert [(query.search, query.iteration) for query in debug_info.agentic.sub_queries] == [(SEARCH_TEXT, 1)]
+            assert [document["HotelId"] async for document in results] == ["1", "2"]
+            assert await results.get_debug_info() is debug_info
+        assert mock_search_post.call_count == 2
+        assert get_search_request(mock_search_post).skip == 1
 
 
 class TestSearchSuggestionRequestsAsync:

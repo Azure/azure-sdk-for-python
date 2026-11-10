@@ -3214,7 +3214,7 @@ KnowledgeBase = TypedDict(
         "name": Required[str],
         "knowledgeSources": Required[list["KnowledgeSourceReference"]],
         "tools": list["KnowledgeBaseTool"],
-        "models": list["KnowledgeBaseModel"],
+        "models": Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]],
         "retrievalReasoningEffort": "KnowledgeRetrievalReasoningEffort",
         "outputMode": Union[str, "KnowledgeRetrievalOutputMode"],
         "@odata.etag": str,
@@ -3240,7 +3240,7 @@ KnowledgeBase.__doc__ = """Represents a knowledge base definition.
  in this API version clears existing tools.
 :vartype tools: list["KnowledgeBaseTool"]
 :ivar models: Contains configuration options on how to connect to AI models.
-:vartype models: list["KnowledgeBaseModel"]
+:vartype models: Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]]
 :ivar retrievalReasoningEffort: The retrieval reasoning effort configuration.
 :vartype retrievalReasoningEffort: "KnowledgeRetrievalReasoningEffort"
 :ivar outputMode: The output mode for the knowledge base. Known values are: "extractiveData"
@@ -7802,6 +7802,12 @@ ScoringFunction = Union[
 ]
 VectorSearchAlgorithmConfiguration = Union[ExhaustiveKnnAlgorithmConfiguration, HnswAlgorithmConfiguration]
 KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]
+
+KnowledgeBaseModelInput = Union[
+    KnowledgeBaseAzureOpenAIModel, KnowledgeBaseMicrosoftRetriever1Model, KnowledgeBaseOpenAICompatibleModel
+]
+"""All supported knowledge-base model variants for dictionary-style inputs."""
+
 McpServerAuthentication = Union[McpServerFoundryConnectionAuthentication, McpServerStoredHeadersAuthentication]
 McpServerOutputParsing = Union[
     McpServerAutoOutputParsing, McpServerJsonOutputParsing, McpServerNoneOutputParsing, McpServerSplitOutputParsing
