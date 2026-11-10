@@ -56,30 +56,30 @@ def test_ga_voice_client_surface(namespace, allow_preview):
     assert callable(client.agents.create_from_prompt)
     assert not hasattr(client.beta, "agents")
     assert not hasattr(client.beta.voice_agents, "conversations")
-    assert not hasattr(client.beta.voice_agents, "campaigns")
+    assert not hasattr(client.beta.voice_agents, "telephony")
     assert not hasattr(client.beta.voice_agents, "realtime")
     assert client.beta.voice_agents.live is not None
     assert client.beta.voice_agents.live_conversations is not None
-    assert client.beta.voice_agents.telephony is not None
+    assert client.beta.voice_agents.campaigns is not None
     manager = client.voice_agents.realtime.connect(agent_name="voice-agent")
     assert manager._allow_preview is allow_preview
 
 
 @pytest.mark.parametrize("namespace", ["azure.ai.projects.operations", "azure.ai.projects.aio.operations"])
-def test_beta_telephony_operation_export(namespace):
+def test_beta_campaigns_operation_export(namespace):
     operations = import_module(namespace)
     generated = import_module(f"{namespace}._operations")
-    operation_name = "BetaVoiceAgentsTelephonyOperations"
+    operation_name = "BetaVoiceAgentsCampaignsOperations"
     operation_type = getattr(operations, operation_name)
 
     assert operation_name in operations.__all__
-    assert "BetaVoiceAgentsCampaignsOperations" not in operations.__all__
+    assert "BetaVoiceAgentsTelephonyOperations" not in operations.__all__
     assert issubclass(operation_type, getattr(generated, operation_name))
-    assert get_type_hints(operations.BetaVoiceAgentsOperations)["telephony"] is operation_type
+    assert get_type_hints(operations.BetaVoiceAgentsOperations)["campaigns"] is operation_type
 
     voice_agents = operations.BetaVoiceAgentsOperations(MagicMock(), MagicMock(), MagicMock(), MagicMock())
-    assert isinstance(voice_agents.telephony, operation_type)
-    assert not hasattr(voice_agents, "campaigns")
+    assert isinstance(voice_agents.campaigns, operation_type)
+    assert not hasattr(voice_agents, "telephony")
     assert {name for name, method in inspect.getmembers(operation_type, callable) if not name.startswith("_")} == {
         "begin_create",
         "get",

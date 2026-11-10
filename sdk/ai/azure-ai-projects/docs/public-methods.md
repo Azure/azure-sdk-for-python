@@ -6,23 +6,25 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 211 unique public methods:
+There are a total of 213 unique public methods:
 
 - 5 stable methods on the client
-- 116 stable methods on top-level sub-clients
-- 90 beta methods on nested beta sub-clients
+- 141 stable methods on top-level sub-clients
+- 67 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
-| `agents` | AgentsOperations | 36 |
+| `agent_insight_monitors` | AgentInsightMonitorsOperations | 13 |
+| `agents` | AgentsOperations | 37 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 14 |
 | `deployments` | DeploymentsOperations | 2 |
 | `evaluation_rules` | EvaluationRulesOperations | 4 |
 | `evaluators` | EvaluatorsOperations | 11 |
 | `indexes` | IndexesOperations | 5 |
+| `skills` | SkillsOperations | 11 |
 | `telemetry` | TelemetryOperations | 1 |
 | `toolboxes` | ToolboxesOperations | 9 |
 | `voice_agents.conversations` | VoiceAgentsConversationsOperations | 14 |
@@ -33,19 +35,17 @@ There are a total of 211 unique public methods:
 
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
-| `beta.agent_insight_monitors` | BetaAgentInsightMonitorsOperations | 13 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
-| `beta.evaluators` | BetaEvaluatorsOperations | 2 |
+| `beta.evaluators` | BetaEvaluatorsOperations | 3 |
 | `beta.insights` | BetaInsightsOperations | 3 |
 | `beta.memory_stores` | BetaMemoryStoresOperations | 13 |
 | `beta.models` | BetaModelsOperations | 9 |
 | `beta.red_teams` | BetaRedTeamsOperations | 3 |
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
-| `beta.skills` | BetaSkillsOperations | 11 |
+| `beta.voice_agents.campaigns` | BetaVoiceAgentsCampaignsOperations | 7 |
 | `beta.voice_agents.live` | BetaLive | 1 |
 | `beta.voice_agents.live_conversations` | BetaVoiceAgentsLiveConversationsOperations | 9 |
-| `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 7 |
 
 ## Stable methods on the client
 
@@ -64,6 +64,20 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
+.agent_insight_monitors.begin_create_run*
+.agent_insight_monitors.cancel_run
+.agent_insight_monitors.create
+.agent_insight_monitors.delete
+.agent_insight_monitors.get
+.agent_insight_monitors.get_insight
+.agent_insight_monitors.get_run
+.agent_insight_monitors.list
+.agent_insight_monitors.list_insights
+.agent_insight_monitors.list_runs
+.agent_insight_monitors.reset
+.agent_insight_monitors.update
+.agent_insight_monitors.update_insight
+
 .agents.begin_create_optimization_job*
 .agents.cancel_optimization_job
 .agents.create_from_prompt
@@ -78,6 +92,7 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .agents.delete_version
 .agents.disable
 .agents.download_code
+.agents.download_optimization_job_file
 .agents.download_session_file
 .agents.enable
 .agents.estimate_optimization_job
@@ -146,6 +161,18 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .indexes.list
 .indexes.list_versions
 
+.skills.create
+.skills.create_from_files
+.skills.delete
+.skills.delete_version
+.skills.download
+.skills.download_version
+.skills.get
+.skills.get_version
+.skills.list
+.skills.list_versions
+.skills.update
+
 .telemetry.get_application_insights_connection_string*
 
 .toolboxes.create_version
@@ -198,20 +225,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
-.beta.agent_insight_monitors.begin_create_run*
-.beta.agent_insight_monitors.cancel_run
-.beta.agent_insight_monitors.create
-.beta.agent_insight_monitors.delete
-.beta.agent_insight_monitors.get
-.beta.agent_insight_monitors.get_insight
-.beta.agent_insight_monitors.get_run
-.beta.agent_insight_monitors.list
-.beta.agent_insight_monitors.list_insights
-.beta.agent_insight_monitors.list_runs
-.beta.agent_insight_monitors.reset
-.beta.agent_insight_monitors.update
-.beta.agent_insight_monitors.update_insight
-
 .beta.evaluation_taxonomies.create
 .beta.evaluation_taxonomies.delete
 .beta.evaluation_taxonomies.get
@@ -219,6 +232,7 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.evaluation_taxonomies.update
 
 .beta.evaluators.get_credentials
+.beta.evaluators.list_diagnostics
 .beta.evaluators.pending_upload
 
 .beta.insights.generate
@@ -269,17 +283,13 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.schedules.list
 .beta.schedules.list_runs
 
-.beta.skills.create
-.beta.skills.create_from_files
-.beta.skills.delete
-.beta.skills.delete_version
-.beta.skills.download
-.beta.skills.download_version
-.beta.skills.get
-.beta.skills.get_version
-.beta.skills.list
-.beta.skills.list_versions
-.beta.skills.update
+.beta.voice_agents.campaigns.begin_cancel*
+.beta.voice_agents.campaigns.begin_create*
+.beta.voice_agents.campaigns.begin_delete*
+.beta.voice_agents.campaigns.get
+.beta.voice_agents.campaigns.get_operation
+.beta.voice_agents.campaigns.list
+.beta.voice_agents.campaigns.list_validation_errors
 
 .beta.voice_agents.live.connect*
 
@@ -292,12 +302,4 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.voice_agents.live_conversations.get_item
 .beta.voice_agents.live_conversations.list
 .beta.voice_agents.live_conversations.list_items
-
-.beta.voice_agents.telephony.begin_cancel*
-.beta.voice_agents.telephony.begin_create*
-.beta.voice_agents.telephony.begin_delete*
-.beta.voice_agents.telephony.get
-.beta.voice_agents.telephony.get_operation
-.beta.voice_agents.telephony.list
-.beta.voice_agents.telephony.list_validation_errors
 ```

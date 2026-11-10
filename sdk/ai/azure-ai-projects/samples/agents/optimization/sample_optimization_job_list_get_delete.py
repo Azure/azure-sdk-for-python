@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import JobStatus
+from azure.ai.projects.models import AgentOptimizationJobStatus
 
 load_dotenv()
 
@@ -69,7 +69,9 @@ with (
     # ------------------------------------------------------------------
     print(f"Listing succeeded jobs (limit=5):")
     count = 0
-    for job_list_item in project_client.agents.list_optimization_jobs(status=JobStatus.SUCCEEDED, limit=5):
+    for job_list_item in project_client.agents.list_optimization_jobs(
+        status=AgentOptimizationJobStatus.SUCCEEDED, limit=5
+    ):
         print(f"  {job_list_item.id}")
         count += 1
     print(f"  ({count} succeeded jobs)\n")
