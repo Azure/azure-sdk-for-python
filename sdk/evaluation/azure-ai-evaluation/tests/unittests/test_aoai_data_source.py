@@ -8,15 +8,132 @@ import pandas as pd
 import os
 import pathlib
 import json
+import httpx
+import numpy as np
 from copy import deepcopy
+from types import SimpleNamespace
 from typing import Dict, Any
+from unittest.mock import MagicMock
 
 from azure.ai.evaluation._evaluate._evaluate_aoai import (
+    _begin_eval_run,
     _generate_data_source_config,
     _get_data_source,
     _build_schema_tree_from_paths,
     WRAPPER_KEY,
 )
+from azure.ai.evaluation._exceptions import ErrorBlame, EvaluationException
+
+
+@pytest.mark.unittest
+class TestAOAIInputJsonNumbers:
+    """Keep typed missing values JSON-safe without manufacturing numeric scores."""
+
+    @pytest.mark.parametrize(
+        "value",
+        [float("nan"), np.float32("nan"), np.float64("nan"), pd.NA, pd.NaT],
+        ids=["float_nan", "numpy_float32_nan", "numpy_float64_nan", "pandas_na", "pandas_nat"],
+    )
+    def test_explicit_missing_values_become_json_null(self, value: Any) -> None:
+        frame = pd.DataFrame([{"value": value}], dtype=object)
+        schema = {"properties": {"value": {"type": ["number", "null"]}}}
+
+        payload = _get_data_source(frame, {"value": "${data.value}"}, item_schema=schema)
+
+        assert payload["source"]["content"] == [{"item": {"value": None}}]
+        json.dumps(payload, allow_nan=False)
+
+    @pytest.mark.parametrize("explicit", [False, True])
+    def test_nested_missing_values_are_copied_and_encoded(self, explicit: bool) -> None:
+        original = {"score": float("nan"), "details": [np.float32(0.5), None, False, 0, "nan"]}
+        frame = pd.DataFrame([{"details": original}])
+        schema = {"properties": {"details": {"type": "object"}}} if explicit else None
+
+        payload = _get_data_source(frame, {"details": "${data.details}"}, item_schema=schema)
+        actual = payload["source"]["content"][0]["item"]["details"]
+
+        assert actual == {"score": None, "details": [0.5, None, False, 0, "nan"]}
+        json.dumps(payload, allow_nan=False)
+        assert np.isnan(original["score"])
+        actual["details"].append("changed")
+        assert len(original["details"]) == 5
+
+    @pytest.mark.parametrize("value", [float("inf"), float("-inf"), np.float32("inf")])
+    def test_infinite_typed_input_is_a_user_error(self, value: Any) -> None:
+        frame = pd.DataFrame([{"value": value}], dtype=object)
+
+        with pytest.raises(EvaluationException) as error:
+            _get_data_source(frame, {}, item_schema={"properties": {"value": {"type": "number"}}})
+
+        assert error.value.blame == ErrorBlame.USER_ERROR
+
+    def test_nullable_input_reaches_strict_request_encoder(self) -> None:
+        client = MagicMock()
+
+        def create_run(**payload: Any) -> SimpleNamespace:
+            httpx.Request("POST", "https://offline.invalid/evals/runs", json=payload)
+            return SimpleNamespace(id="run-test")
+
+        client.evals.runs.create.side_effect = create_run
+        frame = pd.DataFrame([{"value": float("nan")}, {"value": 0.0}])
+
+        run_id = _begin_eval_run(
+            client,
+            "eval-test",
+            "test",
+            frame,
+            {"value": "${data.value}"},
+            item_schema={"properties": {"value": {"type": ["number", "null"]}}},
+        )
+
+        assert run_id == "run-test"
+        content = client.evals.runs.create.call_args.kwargs["data_source"]["source"]["content"]
+        assert content == [{"item": {"value": None}}, {"item": {"value": 0.0}}]
+
+    def test_legacy_inferred_numeric_text_is_unchanged(self) -> None:
+        payload = _get_data_source(pd.DataFrame([{"value": float("nan")}, {"value": float("inf")}]), {})
+
+        assert payload["source"]["content"] == [{"item": {"value": "nan"}}, {"item": {"value": "inf"}}]
+
+    @pytest.mark.parametrize(
+        "declaration",
+        [
+            {"type": ["number", "null"]},
+            {"anyOf": [{"type": "number"}, {"type": "null"}]},
+            {"oneOf": [{"type": "number"}, {"type": "null"}]},
+        ],
+    )
+    def test_explicit_nullable_schema_allows_missing_value(self, declaration: Dict[str, Any]) -> None:
+        payload = _get_data_source(
+            pd.DataFrame([{"value": pd.NA}], dtype=object),
+            {},
+            item_schema={"properties": {"value": declaration}},
+        )
+
+        assert payload["source"]["content"] == [{"item": {"value": None}}]
+
+    @pytest.mark.parametrize(
+        "declaration",
+        [
+            {"type": "number"},
+            {"enum": [0, 1]},
+            {"const": 0},
+            {"not": {"type": "null"}},
+            {"$ref": "#/$defs/number"},
+        ],
+    )
+    def test_non_nullable_missing_value_fails_before_transport(self, declaration: Dict[str, Any]) -> None:
+        client = MagicMock()
+        frame = pd.DataFrame([{"value": pd.NA}], dtype=object)
+        schema = {"properties": {"value": declaration}}
+        payload = _get_data_source(frame, {}, item_schema=schema)
+        assert payload["source"]["content"][0]["item"]["value"] is pd.NA
+
+        with pytest.raises(EvaluationException) as error:
+            _begin_eval_run(client, "eval", "test", frame, {}, item_schema=schema)
+
+        assert error.value.blame == ErrorBlame.USER_ERROR
+        client.evals.runs.create.assert_not_called()
 
 
 def _get_file(name):
