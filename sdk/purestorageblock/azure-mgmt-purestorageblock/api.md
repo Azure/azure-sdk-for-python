@@ -360,7 +360,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'recoverable_volume_group_name']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'recoverable_volume_group_name']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -370,7 +370,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'recoverable_volume_group_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'recoverable_volume_group_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -380,7 +380,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> RecoverableVolumeGroup: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         def list_by_storage_pool(
                 self, 
                 resource_group_name: str, 
@@ -513,7 +513,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> Reservation: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-11-01-preview', params_added_on={'2024-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2024-11-01-preview', '2024-11-01', '2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2024-11-01-preview', params_added_on={'2024-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2024-11-01-preview', '2024-11-01', '2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         async def get_billing_report(
                 self, 
                 resource_group_name: str, 
@@ -522,7 +522,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> ReservationBillingUsageReport: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-11-01-preview', params_added_on={'2024-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2024-11-01-preview', '2024-11-01', '2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2024-11-01-preview', params_added_on={'2024-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2024-11-01-preview', '2024-11-01', '2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         async def get_billing_status(
                 self, 
                 resource_group_name: str, 
@@ -539,7 +539,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> LimitDetails: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         async def latest_linked_saa_s(
                 self, 
                 resource_group_name: str, 
@@ -834,7 +834,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[StoragePool]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         async def list_platform_console_activation_code(
                 self, 
                 resource_group_name: str, 
@@ -891,7 +891,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> AsyncLROPoller[VolumeGroupSnapshot]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'snapshot_name']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'snapshot_name']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -902,7 +902,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'snapshot_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'snapshot_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -913,7 +913,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> VolumeGroupSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'filter', 'orderby', 'top', 'skip', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'filter', 'orderby', 'top', 'skip', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         def list_by_volume_group(
                 self, 
                 resource_group_name: str, 
@@ -1009,7 +1009,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> AsyncLROPoller[VolumeGroup]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1091,7 +1091,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> AsyncLROPoller[VolumeGroup]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1101,7 +1101,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> VolumeGroup: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         async def get_status(
                 self, 
                 resource_group_name: str, 
@@ -1111,7 +1111,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> VolumeGroupStatus: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def list_by_storage_pool(
                 self, 
                 resource_group_name: str, 
@@ -1120,7 +1120,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> AsyncItemPaged[VolumeGroup]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         async def list_connection_parameters(
                 self, 
                 resource_group_name: str, 
@@ -1178,7 +1178,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> AsyncLROPoller[Volume]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'volume_name']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'volume_name']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1267,7 +1267,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> AsyncLROPoller[Volume]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'volume_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'volume_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1278,7 +1278,7 @@ namespace azure.mgmt.purestorageblock.aio.operations
             ) -> Volume: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def list_by_volume_group(
                 self, 
                 resource_group_name: str, 
@@ -3396,7 +3396,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'recoverable_volume_group_name']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'recoverable_volume_group_name']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3406,7 +3406,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'recoverable_volume_group_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'recoverable_volume_group_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3416,7 +3416,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> RecoverableVolumeGroup: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         def list_by_storage_pool(
                 self, 
                 resource_group_name: str, 
@@ -3549,7 +3549,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> Reservation: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-11-01-preview', params_added_on={'2024-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2024-11-01-preview', '2024-11-01', '2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2024-11-01-preview', params_added_on={'2024-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2024-11-01-preview', '2024-11-01', '2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def get_billing_report(
                 self, 
                 resource_group_name: str, 
@@ -3558,7 +3558,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> ReservationBillingUsageReport: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-11-01-preview', params_added_on={'2024-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2024-11-01-preview', '2024-11-01', '2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2024-11-01-preview', params_added_on={'2024-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2024-11-01-preview', '2024-11-01', '2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def get_billing_status(
                 self, 
                 resource_group_name: str, 
@@ -3575,7 +3575,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> LimitDetails: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'reservation_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def latest_linked_saa_s(
                 self, 
                 resource_group_name: str, 
@@ -3870,7 +3870,7 @@ namespace azure.mgmt.purestorageblock.operations
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[StoragePool]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         def list_platform_console_activation_code(
                 self, 
                 resource_group_name: str, 
@@ -3927,7 +3927,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> LROPoller[VolumeGroupSnapshot]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'snapshot_name']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'snapshot_name']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3938,7 +3938,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'snapshot_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'snapshot_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3949,7 +3949,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> VolumeGroupSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'filter', 'orderby', 'top', 'skip', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'filter', 'orderby', 'top', 'skip', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-10-01'])
         def list_by_volume_group(
                 self, 
                 resource_group_name: str, 
@@ -4045,7 +4045,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> LROPoller[VolumeGroup]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4127,7 +4127,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> LROPoller[VolumeGroup]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4137,7 +4137,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> VolumeGroup: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def get_status(
                 self, 
                 resource_group_name: str, 
@@ -4147,7 +4147,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> VolumeGroupStatus: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def list_by_storage_pool(
                 self, 
                 resource_group_name: str, 
@@ -4156,7 +4156,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> ItemPaged[VolumeGroup]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def list_connection_parameters(
                 self, 
                 resource_group_name: str, 
@@ -4214,7 +4214,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> LROPoller[Volume]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'volume_name']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'volume_name']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4303,7 +4303,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> LROPoller[Volume]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'volume_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'volume_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4314,7 +4314,7 @@ namespace azure.mgmt.purestorageblock.operations
             ) -> Volume: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_pool_name', 'volume_group_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-03-01-preview', '2026-05-01-preview', '2026-10-01'])
         def list_by_volume_group(
                 self, 
                 resource_group_name: str, 
@@ -4329,8 +4329,8 @@ namespace azure.mgmt.purestorageblock.types
     class azure.mgmt.purestorageblock.types.ActivateSaaSRequest(TypedDict, total=False):
         key "publisherId": str
         key "saasGuid": Required[str]
-        publisher_id: str
-        saas_guid: str
+        publisherId: str
+        saasGuid: str
 
 
     class azure.mgmt.purestorageblock.types.Address(TypedDict, total=False):
@@ -4340,11 +4340,11 @@ namespace azure.mgmt.purestorageblock.types
         key "country": Required[str]
         key "postalCode": Required[str]
         key "state": Required[str]
-        address_line1: str
-        address_line2: str
+        addressLine1: str
+        addressLine2: str
         city: str
         country: str
-        postal_code: str
+        postalCode: str
         state: str
 
 
@@ -4355,7 +4355,7 @@ namespace azure.mgmt.purestorageblock.types
 
     class azure.mgmt.purestorageblock.types.AvsStorageContainerVolumeUpdateProperties(TypedDict, total=False):
         key "softDeletion": ForwardRef('SoftDeletion', module='types')
-        soft_deletion: SoftDeletion
+        softDeletion: SoftDeletion
 
 
     class azure.mgmt.purestorageblock.types.AvsVmUpdate(TypedDict, total=False):
@@ -4365,7 +4365,7 @@ namespace azure.mgmt.purestorageblock.types
 
     class azure.mgmt.purestorageblock.types.AvsVmUpdateProperties(TypedDict, total=False):
         key "softDeletion": ForwardRef('SoftDeletion', module='types')
-        soft_deletion: SoftDeletion
+        softDeletion: SoftDeletion
 
 
     class azure.mgmt.purestorageblock.types.AvsVmVolumeUpdate(TypedDict, total=False):
@@ -4375,14 +4375,14 @@ namespace azure.mgmt.purestorageblock.types
 
     class azure.mgmt.purestorageblock.types.AvsVmVolumeUpdateProperties(TypedDict, total=False):
         key "softDeletion": ForwardRef('SoftDeletion', module='types')
-        soft_deletion: SoftDeletion
+        softDeletion: SoftDeletion
 
 
     class azure.mgmt.purestorageblock.types.AzureVmwareService(TypedDict, total=False):
         key "avsEnabled": Required[bool]
         key "sddcResourceId": str
-        avs_enabled: bool
-        cluster_resource_id: str
+        avsEnabled: bool
+        sddcResourceId: str
 
 
     class azure.mgmt.purestorageblock.types.AzureVolumeProperties(TypedDict, total=False):
@@ -4398,17 +4398,17 @@ namespace azure.mgmt.purestorageblock.types
         key "sourceVolumeResourceId": str
         key "sourceVolumeSnapshot": ForwardRef('VolumeSnapshotSource', module='types')
         key "space": ForwardRef('Space', module='types')
-        created_at: str
-        provisioned_size: int
-        provisioning_state: Union[str, ProvisioningState]
-        serial_number: str
-        soft_deletion: DestroyedStateProperties
-        source_recoverable_volume_resource_id: str
-        source_serial_number: str
-        source_type: Union[str, VolumeSourceType]
-        source_volume_group_resource_id: str
-        source_volume_resource_id: str
-        source_volume_snapshot: VolumeSnapshotSource
+        createdAt: str
+        provisionedSize: int
+        provisioningState: Union[str, ProvisioningState]
+        serialNumber: str
+        softDeletion: DestroyedStateProperties
+        sourceRecoverableVolumeResourceId: str
+        sourceSerialNumber: str
+        sourceType: Union[str, VolumeSourceType]
+        sourceVolumeGroupResourceId: str
+        sourceVolumeResourceId: str
+        sourceVolumeSnapshot: VolumeSnapshotSource
         space: Space
 
 
@@ -4416,7 +4416,7 @@ namespace azure.mgmt.purestorageblock.types
         key "address": ForwardRef('Address', module='types')
         key "companyName": Required[str]
         address: Address
-        company_name: str
+        companyName: str
 
 
     class azure.mgmt.purestorageblock.types.DestroyedStateProperties(TypedDict, total=False):
@@ -4425,25 +4425,24 @@ namespace azure.mgmt.purestorageblock.types
         key "eradicationTimestamp": str
         key "previousName": str
         destroyed: bool
-        destroyed_at: str
-        eradication_timestamp: str
-        previous_name: str
+        destroyedAt: str
+        eradicationTimestamp: str
+        previousName: str
 
 
     class azure.mgmt.purestorageblock.types.LinkSaaSRequest(TypedDict, total=False):
         key "saaSResourceId": Required[str]
-        saa_s_resource_id: str
+        saaSResourceId: str
 
 
     class azure.mgmt.purestorageblock.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.purestorageblock.types.MarketplaceDetails(TypedDict, total=False):
@@ -4451,10 +4450,10 @@ namespace azure.mgmt.purestorageblock.types
         key "saaSResourceId": str
         key "subscriptionId": str
         key "subscriptionStatus": Union[str, MarketplaceSubscriptionStatus]
-        offer_details: OfferDetails
-        saa_s_resource_id: str
-        subscription_id: str
-        subscription_status: Union[str, MarketplaceSubscriptionStatus]
+        offerDetails: OfferDetails
+        saaSResourceId: str
+        subscriptionId: str
+        subscriptionStatus: Union[str, MarketplaceSubscriptionStatus]
 
 
     class azure.mgmt.purestorageblock.types.OfferDetails(TypedDict, total=False):
@@ -4464,19 +4463,19 @@ namespace azure.mgmt.purestorageblock.types
         key "publisherId": Required[str]
         key "termId": str
         key "termUnit": str
-        offer_id: str
-        plan_id: str
-        plan_name: str
-        publisher_id: str
-        term_id: str
-        term_unit: str
+        offerId: str
+        planId: str
+        planName: str
+        publisherId: str
+        termId: str
+        termUnit: str
 
 
     class azure.mgmt.purestorageblock.types.PerformanceParameters(TypedDict, total=False):
         key "bandwidthLimitMbPerSec": int
         key "iopsLimit": int
-        bandwidth_limit_mb_per_sec: int
-        iops_limit: int
+        bandwidthLimitMbPerSec: int
+        iopsLimit: int
 
 
     class azure.mgmt.purestorageblock.types.PlatformConsoleAccessSettings(TypedDict, total=False):
@@ -4489,8 +4488,8 @@ namespace azure.mgmt.purestorageblock.types
         key "publicKey": Required[str]
         key "role": Required[Union[str, PlatformConsoleRole]]
         key "username": Required[str]
-        auth_type: Literal[PlatformConsoleAuthType.SSH]
-        public_key: str
+        authType: Literal[PlatformConsoleAuthType.SSH]
+        publicKey: str
         role: Union[str, PlatformConsoleRole]
         username: str
 
@@ -4507,7 +4506,7 @@ namespace azure.mgmt.purestorageblock.types
         key "gui": ForwardRef('PlatformConsoleAccessSettings', module='types')
         api: PlatformConsoleAccessSettings
         cli: PlatformConsoleAccessSettings
-        default_username: str
+        defaultUsername: str
         enabled: bool
         gui: PlatformConsoleAccessSettings
         subnets: list[PlatformConsoleSubnet]
@@ -4517,9 +4516,8 @@ namespace azure.mgmt.purestorageblock.types
         key "id": Required[str]
         key "managementIpAddress": str
         id: str
-        management_ip_address: str
+        managementIpAddress: str
         serviceBackendIps: list[str]
-        service_backend_ips: list[str]
 
 
     class azure.mgmt.purestorageblock.types.ProtectionParameters(TypedDict, total=False):
@@ -4536,7 +4534,7 @@ namespace azure.mgmt.purestorageblock.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4551,7 +4549,7 @@ namespace azure.mgmt.purestorageblock.types
         location: str
         name: str
         properties: ReservationPropertiesBaseResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4562,8 +4560,8 @@ namespace azure.mgmt.purestorageblock.types
         key "reservationInternalId": str
         key "user": ForwardRef('UserDetails', module='types')
         marketplace: MarketplaceDetails
-        provisioning_state: Union[str, ProvisioningState]
-        reservation_internal_id: str
+        provisioningState: Union[str, ProvisioningState]
+        reservationInternalId: str
         user: UserDetails
 
 
@@ -4585,7 +4583,7 @@ namespace azure.mgmt.purestorageblock.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4594,17 +4592,17 @@ namespace azure.mgmt.purestorageblock.types
         key "serviceAccountUsername": str
         key "vSphereCertificate": str
         key "vSphereIp": str
-        service_account_password: str
-        service_account_username: str
-        v_sphere_certificate: str
-        v_sphere_ip: str
+        serviceAccountPassword: str
+        serviceAccountUsername: str
+        vSphereCertificate: str
+        vSphereIp: str
 
 
     class azure.mgmt.purestorageblock.types.SoftDeletion(TypedDict, total=False):
         key "destroyed": Required[bool]
         key "eradicationTimestamp": str
         destroyed: bool
-        eradication_timestamp: str
+        eradicationTimestamp: str
 
 
     class azure.mgmt.purestorageblock.types.Space(TypedDict, total=False):
@@ -4614,7 +4612,7 @@ namespace azure.mgmt.purestorageblock.types
         key "unique": Required[int]
         shared: int
         snapshots: int
-        total_used: int
+        totalUsed: int
         unique: int
 
 
@@ -4623,8 +4621,8 @@ namespace azure.mgmt.purestorageblock.types
         key "publicKey": Required[str]
         key "role": Required[Union[str, PlatformConsoleRole]]
         key "username": Required[str]
-        auth_type: Literal[PlatformConsoleAuthType.SSH]
-        public_key: str
+        authType: Literal[PlatformConsoleAuthType.SSH]
+        publicKey: str
         role: Union[str, PlatformConsoleRole]
         username: str
 
@@ -4642,21 +4640,21 @@ namespace azure.mgmt.purestorageblock.types
         location: str
         name: str
         properties: StoragePoolProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.purestorageblock.types.StoragePoolEnableAvsConnectionPost(TypedDict, total=False):
         key "sddcResourceId": Required[str]
-        cluster_resource_id: str
+        sddcResourceId: str
 
 
     class azure.mgmt.purestorageblock.types.StoragePoolFinalizeAvsConnectionPost(TypedDict, total=False):
         key "serviceInitializationData": ForwardRef('ServiceInitializationInfo', module='types')
         key "serviceInitializationDataEnc": str
-        service_initialization_data: ServiceInitializationInfo
-        service_initialization_data_enc: str
+        serviceInitializationData: ServiceInitializationInfo
+        serviceInitializationDataEnc: str
 
 
     class azure.mgmt.purestorageblock.types.StoragePoolProperties(TypedDict, total=False):
@@ -4670,16 +4668,16 @@ namespace azure.mgmt.purestorageblock.types
         key "reservationResourceId": Required[str]
         key "storagePoolInternalId": str
         key "vnetInjection": Required[VnetInjection]
-        availability_zone: str
+        availabilityZone: str
         avs: AzureVmwareService
-        data_retention_period: int
-        platform_console_settings: PlatformConsoleSettings
-        provisioned_bandwidth_mb_per_sec: int
-        provisioned_iops: int
-        provisioning_state: Union[str, ProvisioningState]
-        reservation_resource_id: str
-        storage_pool_internal_id: str
-        vnet_injection: VnetInjection
+        dataRetentionPeriod: int
+        platformConsoleSettings: PlatformConsoleSettings
+        provisionedBandwidthMbPerSec: int
+        provisionedIops: int
+        provisioningState: Union[str, ProvisioningState]
+        reservationResourceId: str
+        storagePoolInternalId: str
+        vnetInjection: VnetInjection
 
 
     class azure.mgmt.purestorageblock.types.StoragePoolUpdate(TypedDict, total=False):
@@ -4693,8 +4691,8 @@ namespace azure.mgmt.purestorageblock.types
     class azure.mgmt.purestorageblock.types.StoragePoolUpdateProperties(TypedDict, total=False):
         key "platformConsoleSettings": ForwardRef('PlatformConsoleSettings', module='types')
         key "provisionedBandwidthMbPerSec": int
-        platform_console_settings: PlatformConsoleSettings
-        provisioned_bandwidth_mb_per_sec: int
+        platformConsoleSettings: PlatformConsoleSettings
+        provisionedBandwidthMbPerSec: int
 
 
     class azure.mgmt.purestorageblock.types.SystemData(TypedDict, total=False):
@@ -4704,12 +4702,12 @@ namespace azure.mgmt.purestorageblock.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.purestorageblock.types.TrackedResource(Resource):
@@ -4721,7 +4719,7 @@ namespace azure.mgmt.purestorageblock.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4729,8 +4727,8 @@ namespace azure.mgmt.purestorageblock.types
     class azure.mgmt.purestorageblock.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.purestorageblock.types.UserDetails(TypedDict, total=False):
@@ -4740,19 +4738,19 @@ namespace azure.mgmt.purestorageblock.types
         key "lastName": Required[str]
         key "phoneNumber": str
         key "upn": str
-        company_details: CompanyDetails
-        email_address: str
-        first_name: str
-        last_name: str
-        phone_number: str
+        companyDetails: CompanyDetails
+        emailAddress: str
+        firstName: str
+        lastName: str
+        phoneNumber: str
         upn: str
 
 
     class azure.mgmt.purestorageblock.types.VnetInjection(TypedDict, total=False):
         key "subnetId": Required[str]
         key "vnetId": Required[str]
-        subnet_id: str
-        vnet_id: str
+        subnetId: str
+        vnetId: str
 
 
     class azure.mgmt.purestorageblock.types.Volume(ProxyResource):
@@ -4764,7 +4762,7 @@ namespace azure.mgmt.purestorageblock.types
         id: str
         name: str
         properties: AzureVolumeProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4779,7 +4777,7 @@ namespace azure.mgmt.purestorageblock.types
         location: str
         name: str
         properties: VolumeGroupProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4787,8 +4785,8 @@ namespace azure.mgmt.purestorageblock.types
     class azure.mgmt.purestorageblock.types.VolumeGroupOverwriteRequest(TypedDict, total=False):
         key "sourceSnapshotResourceId": Required[str]
         key "sourceVolumeGroupResourceId": Required[str]
-        source_snapshot_resource_id: str
-        source_volume_group_resource_id: str
+        sourceSnapshotResourceId: str
+        sourceVolumeGroupResourceId: str
 
 
     class azure.mgmt.purestorageblock.types.VolumeGroupProperties(TypedDict, total=False):
@@ -4801,15 +4799,15 @@ namespace azure.mgmt.purestorageblock.types
         key "sourceVolumeGroupResourceId": str
         key "storagePoolInternalId": str
         key "volumeGroupInternalId": str
-        performance_parameters: PerformanceParameters
-        protection_parameters: ProtectionParameters
-        provisioning_state: Union[str, ProvisioningState]
-        source_recoverable_volume_group_resource_id: str
-        source_snapshot_resource_id: str
-        source_type: Union[str, VolumeGroupSourceType]
-        source_volume_group_resource_id: str
-        storage_pool_internal_id: str
-        volume_group_internal_id: str
+        performanceParameters: PerformanceParameters
+        protectionParameters: ProtectionParameters
+        provisioningState: Union[str, ProvisioningState]
+        sourceRecoverableVolumeGroupResourceId: str
+        sourceSnapshotResourceId: str
+        sourceType: Union[str, VolumeGroupSourceType]
+        sourceVolumeGroupResourceId: str
+        storagePoolInternalId: str
+        volumeGroupInternalId: str
 
 
     class azure.mgmt.purestorageblock.types.VolumeGroupSnapshot(ProxyResource):
@@ -4821,7 +4819,7 @@ namespace azure.mgmt.purestorageblock.types
         id: str
         name: str
         properties: VolumeGroupSnapshotProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4843,14 +4841,13 @@ namespace azure.mgmt.purestorageblock.types
         key "softDeletion": ForwardRef('DestroyedStateProperties', module='types')
         key "sourceSnapshotResourceId": str
         key "space": ForwardRef('Space', module='types')
-        created_at: str
-        created_by_policy: bool
-        provisioning_state: Union[str, ProvisioningState]
-        soft_deletion: DestroyedStateProperties
-        source_snapshot_resource_id: str
+        createdAt: str
+        createdByPolicy: bool
+        provisioningState: Union[str, ProvisioningState]
+        softDeletion: DestroyedStateProperties
+        sourceSnapshotResourceId: str
         space: Space
         volumeSnapshots: list[VolumeSnapshotInfo]
-        volume_snapshots: list[VolumeSnapshotInfo]
 
 
     class azure.mgmt.purestorageblock.types.VolumeGroupUpdate(TypedDict, total=False):
@@ -4862,8 +4859,8 @@ namespace azure.mgmt.purestorageblock.types
     class azure.mgmt.purestorageblock.types.VolumeGroupUpdateProperties(TypedDict, total=False):
         key "performanceParameters": ForwardRef('PerformanceParameters', module='types')
         key "protectionParameters": ForwardRef('ProtectionParameters', module='types')
-        performance_parameters: PerformanceParameters
-        protection_parameters: ProtectionParameters
+        performanceParameters: PerformanceParameters
+        protectionParameters: ProtectionParameters
 
 
     class azure.mgmt.purestorageblock.types.VolumeOverwriteRequest(TypedDict, total=False):
@@ -4872,11 +4869,11 @@ namespace azure.mgmt.purestorageblock.types
         key "sourceVolumeGroupResourceId": str
         key "sourceVolumeResourceId": str
         key "sourceVolumeSnapshot": ForwardRef('VolumeSnapshotSource', module='types')
-        source_serial_number: str
-        source_type: Union[str, VolumeSourceType]
-        source_volume_group_resource_id: str
-        source_volume_resource_id: str
-        source_volume_snapshot: VolumeSnapshotSource
+        sourceSerialNumber: str
+        sourceType: Union[str, VolumeSourceType]
+        sourceVolumeGroupResourceId: str
+        sourceVolumeResourceId: str
+        sourceVolumeSnapshot: VolumeSnapshotSource
 
 
     class azure.mgmt.purestorageblock.types.VolumeSnapshotInfo(TypedDict, total=False):
@@ -4885,16 +4882,16 @@ namespace azure.mgmt.purestorageblock.types
         key "serialNumber": str
         key "space": ForwardRef('Space', module='types')
         name: str
-        provisioned_size: int
-        serial_number: str
+        provisionedSize: int
+        serialNumber: str
         space: Space
 
 
     class azure.mgmt.purestorageblock.types.VolumeSnapshotSource(TypedDict, total=False):
         key "volumeGroupSnapshotResourceId": Required[str]
         key "volumeSnapshotName": Required[str]
-        volume_group_snapshot_resource_id: str
-        volume_snapshot_name: str
+        volumeGroupSnapshotResourceId: str
+        volumeSnapshotName: str
 
 
     class azure.mgmt.purestorageblock.types.VolumeUpdate(TypedDict, total=False):
@@ -4904,7 +4901,7 @@ namespace azure.mgmt.purestorageblock.types
 
     class azure.mgmt.purestorageblock.types.VolumeUpdateProperties(TypedDict, total=False):
         key "provisionedSize": int
-        provisioned_size: int
+        provisionedSize: int
 
 
 ```

@@ -111,7 +111,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -223,7 +223,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ReservationsOperations:
+class ReservationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1186,6 +1186,7 @@ class ReservationsOperations:
             "2026-01-01-preview",
             "2026-03-01-preview",
             "2026-05-01-preview",
+            "2026-10-01",
         ],
     )
     async def get_billing_status(
@@ -1278,6 +1279,7 @@ class ReservationsOperations:
             "2026-01-01-preview",
             "2026-03-01-preview",
             "2026-05-01-preview",
+            "2026-10-01",
         ],
     )
     async def get_billing_report(
@@ -1364,7 +1366,7 @@ class ReservationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def _link_saa_s_initial(
         self,
@@ -1547,7 +1549,7 @@ class ReservationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def begin_link_saa_s(
         self,
@@ -1645,7 +1647,7 @@ class ReservationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def latest_linked_saa_s(
         self, resource_group_name: str, reservation_name: str, **kwargs: Any
@@ -1720,7 +1722,7 @@ class ReservationsOperations:
         return deserialized  # type: ignore
 
 
-class StoragePoolsOperations:  # pylint: disable=too-many-public-methods
+class StoragePoolsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3530,7 +3532,7 @@ class StoragePoolsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def list_platform_console_activation_code(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
@@ -3701,7 +3703,7 @@ class StoragePoolsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def configure_platform_console_auth(
         self,
@@ -3794,7 +3796,7 @@ class StoragePoolsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class AvsStorageContainersOperations:
+class AvsStorageContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4116,7 +4118,7 @@ class AvsStorageContainersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AvsStorageContainerVolumesOperations:
+class AvsStorageContainerVolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4733,7 +4735,7 @@ class AvsStorageContainerVolumesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AvsVmsOperations:
+class AvsVmsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5304,7 +5306,7 @@ class AvsVmsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AvsVmVolumesOperations:
+class AvsVmVolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5901,7 +5903,7 @@ class AvsVmVolumesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VolumeGroupsOperations:
+class VolumeGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5933,7 +5935,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def get(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -6022,7 +6024,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def _create_initial(
         self,
@@ -6210,7 +6212,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def begin_create(
         self,
@@ -6304,7 +6306,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def _update_initial(
         self,
@@ -6490,7 +6492,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def begin_update(
         self,
@@ -6582,7 +6584,7 @@ class VolumeGroupsOperations:
                 "volume_group_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -6658,7 +6660,7 @@ class VolumeGroupsOperations:
                 "volume_group_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -6733,7 +6735,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def list_by_storage_pool(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
@@ -6850,7 +6852,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def list_connection_parameters(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -6940,7 +6942,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def get_status(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -7028,7 +7030,7 @@ class VolumeGroupsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def _overwrite_initial(
         self,
@@ -7212,7 +7214,7 @@ class VolumeGroupsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def begin_overwrite(
         self,
@@ -7288,7 +7290,7 @@ class VolumeGroupsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class VolumesOperations:
+class VolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7321,7 +7323,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def get(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
@@ -7416,7 +7418,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def _create_initial(
         self,
@@ -7622,7 +7624,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def begin_create(
         self,
@@ -7723,7 +7725,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def _update_initial(
         self,
@@ -7927,7 +7929,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def begin_update(
         self,
@@ -8026,7 +8028,7 @@ class VolumesOperations:
                 "volume_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
@@ -8104,7 +8106,7 @@ class VolumesOperations:
                 "volume_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
@@ -8185,7 +8187,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def list_by_volume_group(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -8304,7 +8306,7 @@ class VolumesOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def _overwrite_initial(
         self,
@@ -8506,7 +8508,7 @@ class VolumesOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def begin_overwrite(
         self,
@@ -8588,7 +8590,7 @@ class VolumesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class RecoverableVolumeGroupsOperations:
+class RecoverableVolumeGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8620,7 +8622,7 @@ class RecoverableVolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def get(
         self, resource_group_name: str, storage_pool_name: str, recoverable_volume_group_name: str, **kwargs: Any
@@ -8708,7 +8710,7 @@ class RecoverableVolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def list_by_storage_pool(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
@@ -8823,7 +8825,7 @@ class RecoverableVolumeGroupsOperations:
                 "recoverable_volume_group_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, storage_pool_name: str, recoverable_volume_group_name: str, **kwargs: Any
@@ -8899,7 +8901,7 @@ class RecoverableVolumeGroupsOperations:
                 "recoverable_volume_group_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, storage_pool_name: str, recoverable_volume_group_name: str, **kwargs: Any
@@ -8963,7 +8965,7 @@ class RecoverableVolumeGroupsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SaaSOperationGroupOperations:
+class SaaSOperationGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8985,7 +8987,7 @@ class SaaSOperationGroupOperations:
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "content_type", "accept"]},
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def _activate_resource_initial(
         self, body: Union[_models.ActivateSaaSRequest, _types.ActivateSaaSRequest, IO[bytes]], **kwargs: Any
@@ -9114,7 +9116,7 @@ class SaaSOperationGroupOperations:
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "content_type", "accept"]},
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     async def begin_activate_resource(
         self, body: Union[_models.ActivateSaaSRequest, _types.ActivateSaaSRequest, IO[bytes]], **kwargs: Any
@@ -9177,7 +9179,7 @@ class SaaSOperationGroupOperations:
         )
 
 
-class VolumeGroupSnapshotsOperations:
+class VolumeGroupSnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9210,7 +9212,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def get(
         self,
@@ -9308,7 +9310,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def _create_initial(
         self,
@@ -9514,7 +9516,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def begin_create(
         self,
@@ -9613,7 +9615,7 @@ class VolumeGroupSnapshotsOperations:
                 "snapshot_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def _delete_initial(
         self,
@@ -9696,7 +9698,7 @@ class VolumeGroupSnapshotsOperations:
                 "snapshot_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def begin_delete(
         self,
@@ -9784,7 +9786,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def list_by_volume_group(
         self,
@@ -10023,7 +10025,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     async def list_snapshots(
         self,
