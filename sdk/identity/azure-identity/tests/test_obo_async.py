@@ -17,7 +17,7 @@ from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import TokenCachePersistenceOptions, UsernamePasswordCredential
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import CACHE_CAE_SUFFIX, CACHE_NON_CAE_SUFFIX, EnvironmentVariables
 from azure.identity._internal.aad_client_base import JWT_BEARER_ASSERTION
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import OnBehalfOfCredential
@@ -784,8 +784,33 @@ async def test_persistent_cache_refresh_updates_are_assertion_bound(persistent_o
 @pytest.mark.parametrize("expired", [True, False])
 async def test_persistent_cache_separate_processes(tmp_path, enable_cae, expired):
     worker = Path(__file__).with_name("obo_cache_process.py")
+    cache_path = tmp_path / ("obo-process-test" + (CACHE_CAE_SUFFIX if enable_cae else CACHE_NON_CAE_SUFFIX))
+    operation_count = 0
+
+    def record_cache_metadata(operation, event, process=None):
+        try:
+            stat = cache_path.stat()
+            metadata = {"exists": True, "size": stat.st_size, "mtime_ns": stat.st_mtime_ns}
+        except FileNotFoundError:
+            metadata = {"exists": False}
+        print(
+            "cache process metadata: "
+            + json.dumps(
+                {
+                    "operation": operation,
+                    "event": event,
+                    "pid": process.pid if process else None,
+                    "returncode": process.returncode if process else None,
+                    "file": metadata,
+                }
+            )
+        )
 
     async def run(assertion, mode):
+        nonlocal operation_count
+        operation_count += 1
+        operation = "{}-{}".format(mode, operation_count)
+        record_cache_metadata(operation, "before-start")
         process = await asyncio.create_subprocess_exec(
             sys.executable,
             str(worker),
@@ -793,6 +818,7 @@ async def test_persistent_cache_separate_processes(tmp_path, enable_cae, expired
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
+        record_cache_metadata(operation, "started", process)
         settings = json.dumps(
             {
                 "directory": str(tmp_path),
@@ -808,6 +834,7 @@ async def test_persistent_cache_separate_processes(tmp_path, enable_cae, expired
             if process.returncode is None:
                 process.kill()
                 await process.wait()
+            record_cache_metadata(operation, "completed", process)
         assert process.returncode == 0, stdout.decode() + stderr.decode()
         return json.loads(stdout)
 
@@ -828,6 +855,34 @@ async def test_persistent_cache_separate_processes(tmp_path, enable_cae, expired
         assert repeated["token"] == result["token"]
         assert repeated["requests"] == []
         assert repeated["refresh_tokens"] == result["refresh_tokens"]
+
+
+def test_cache_process_diagnostics_only_report_counts():
+    from obo_cache_process import cache_lookup_counts
+
+    cache = msal.SerializableTokenCache()
+    cache.add(
+        {
+            "client_id": "cache-client",
+            "scope": ["scope"],
+            "token_endpoint": "https://login.microsoftonline.com/tenant-id/oauth2/v2.0/token",
+            "response": build_aad_response(access_token="not-for-diagnostics", refresh_token="also-not-for-diagnostics"),
+        }
+    )
+    assert cache_lookup_counts(cache, "cache-client") == {
+        "access_total": 1,
+        "access_client": 1,
+        "access_query": 1,
+        "access_unexpired": 1,
+        "refresh_client": 1,
+    }
+    assert cache_lookup_counts(cache, "other-client") == {
+        "access_total": 1,
+        "access_client": 0,
+        "access_query": 0,
+        "access_unexpired": 0,
+        "refresh_client": 0,
+    }
 
 
 def test_tenant_id_validation():
