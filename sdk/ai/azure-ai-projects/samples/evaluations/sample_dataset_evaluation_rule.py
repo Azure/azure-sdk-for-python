@@ -6,12 +6,13 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an evaluation rule that evaluates
-    a dataset on a recurring schedule, using the synchronous AIProjectClient.
+    an agent against a fixed set of queries on a recurring schedule, using the
+    synchronous AIProjectClient.
 
     The rule uses a `DatasetEvaluationRuleAction` with the `timerTrigger` event type.
-    On each scheduled occurrence, the service adds an evaluation run over the given
-    dataset to the eval. This sample uses inline JSONL content; a file ID, a CSV file,
-    or a source that generates responses from a model or agent target also work.
+    On each scheduled occurrence, the service sends the queries to the agent and adds
+    an evaluation run that scores the agent's responses to the eval. The source can also
+    be a JSONL or CSV dataset that already contains responses, or a model target.
 
     The OpenAI compatible Evals calls in this sample are made using
     the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference
@@ -35,8 +36,9 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model used by the evaluators, as found under
-       the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model used by the agent and the evaluators, as found
+       under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the agent to create. If not set, defaults to "MyScheduledAgent".
 """
 
 import os
@@ -45,10 +47,12 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    PromptAgentDefinition,
     TestingCriterionAzureAIEvaluator,
     EvaluationRule,
     DatasetEvaluationRuleAction,
-    CreateEvalJsonlRunDataSource,
+    TargetCompletionEvalRunDataSource,
+    AzureAIAgentTarget,
     EvalJsonlFileContentSource,
     EvalJsonlFileContentSourceContent,
     EvaluationRuleEventType,
@@ -61,6 +65,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyScheduledAgent"
 
 PENDING_STATUSES = (ScheduleProvisioningStatus.CREATING, ScheduleProvisioningStatus.UPDATING)
 
@@ -70,16 +75,28 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # Create an eval for query/response pairs
+    # Create the agent to evaluate
+
+    agent = project_client.agents.create_version(
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
+            model=model_deployment_name,
+            instructions="You are a helpful assistant that answers general questions",
+        ),
+    )
+    print(f"Agent created (name: {agent.name}, version: {agent.version})")
+
+    # Create an eval that scores the agent's response to each query.
+    # `sample.output_text` is the agent's text response.
 
     data_source_config = {
         "type": "custom",
         "item_schema": {
             "type": "object",
-            "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-            "required": ["query", "response"],
+            "properties": {"query": {"type": "string"}},
+            "required": ["query"],
         },
-        "include_sample_schema": False,
+        "include_sample_schema": True,
     }
     testing_criteria = [
         TestingCriterionAzureAIEvaluator(
@@ -87,37 +104,40 @@ with (
             name="coherence",
             evaluator_name="builtin.coherence",
             initialization_parameters={"deployment_name": model_deployment_name},
-            data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
+            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
         ),
     ]
     eval_object = openai_client.evals.create(
-        name="Scheduled Dataset Evaluation",
+        name="Scheduled Agent Evaluation",
         data_source_config=data_source_config,  # type: ignore
         testing_criteria=testing_criteria,  # type: ignore
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-    # Create a rule that evaluates the dataset every day at 9 AM UTC
+    # Create a rule that sends the queries to the agent and scores its responses every day at 9 AM UTC
 
-    dataset = CreateEvalJsonlRunDataSource(
+    agent_queries = TargetCompletionEvalRunDataSource(
         source=EvalJsonlFileContentSource(
             content=[
-                EvalJsonlFileContentSourceContent(
-                    item={"query": "What is the capital of France?", "response": "Paris is the capital of France."}
-                ),
-                EvalJsonlFileContentSourceContent(
-                    item={"query": "How many legs does a spider have?", "response": "A spider has eight legs."}
-                ),
+                EvalJsonlFileContentSourceContent(item={"query": "What is the capital of France?"}),
+                EvalJsonlFileContentSourceContent(item={"query": "How many legs does a spider have?"}),
             ]
-        )
+        ),
+        input_messages={  # type: ignore
+            "type": "template",
+            "template": [
+                {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
+            ],
+        },
+        target=AzureAIAgentTarget(name=agent.name, version=agent.version),
     )
 
     dataset_eval_rule = project_client.evaluation_rules.create_or_update(
         id="my-dataset-eval-rule",
         evaluation_rule=EvaluationRule(
-            display_name="My Dataset Eval Rule",
-            description="An eval rule that evaluates a dataset every day",
-            action=DatasetEvaluationRuleAction(eval_id=eval_object.id, source=dataset),
+            display_name="My Agent Dataset Eval Rule",
+            description="An eval rule that evaluates an agent on a fixed set of queries every day",
+            action=DatasetEvaluationRuleAction(eval_id=eval_object.id, source=agent_queries),
             event_type=EvaluationRuleEventType.TIMER_TRIGGER,
             schedule=RecurrenceTrigger(interval=1, schedule=DailyRecurrenceSchedule(hours=[9]), time_zone="UTC"),
             enabled=True,
@@ -150,3 +170,6 @@ with (
 
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
+
+    project_client.agents.delete(agent_name=agent.name)
+    print("Agent deleted")
