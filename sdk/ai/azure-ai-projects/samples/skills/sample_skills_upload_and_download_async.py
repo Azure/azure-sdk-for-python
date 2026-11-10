@@ -15,15 +15,12 @@ DESCRIPTION:
     4) Download the package with `download(...)` to the temp folder.
     5) Delete the uploaded skill.
 
-    Skills are generally available. In the Python SDK, you access
-    these operations via `project_client.skills`.
-
 USAGE:
     python sample_skills_upload_and_download_async.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview

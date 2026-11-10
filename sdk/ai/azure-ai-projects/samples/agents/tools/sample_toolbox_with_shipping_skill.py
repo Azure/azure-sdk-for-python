@@ -20,7 +20,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.5.0" python-dotenv openai
+    pip install "azure-ai-projects>=2.11.0" python-dotenv openai
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
