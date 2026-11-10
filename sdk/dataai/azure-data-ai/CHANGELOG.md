@@ -52,4 +52,3 @@
 - Reranking options for model selection, batching, sorting, and JSON document paths.
 - Document and sentence-level scoring, response metadata, and standard Azure
   Core error handling and retry policies.
-

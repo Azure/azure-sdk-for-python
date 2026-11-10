@@ -34,7 +34,6 @@ from ..._operations._operations import (
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
-from ..._validation import api_version_validation
 from .._configuration import InferenceClientConfiguration
 
 JSON = MutableMapping[str, Any]
@@ -310,11 +309,6 @@ class _InferenceClientOperationsMixin(
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-11-01-preview",
-        params_added_on={"2026-11-01-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2026-11-01-preview"],
-    )
     async def multi_modal_embed(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, _types.MultiModalEmbedRequest, IO[bytes]] = _Unset,
