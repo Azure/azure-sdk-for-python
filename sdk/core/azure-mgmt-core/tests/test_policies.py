@@ -51,8 +51,17 @@ def sleepless(monkeypatch):
     monkeypatch.setattr(time, "sleep", sleep)
 
 
+@pytest.fixture(params=[None, "http://127.0.0.1:1"])
+def proxy_environment(monkeypatch, request):
+    for name in ("HTTPS_PROXY", "https_proxy", "ALL_PROXY", "all_proxy", "NO_PROXY", "no_proxy"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("NO_PROXY", "" if request.param else "*")
+    if request.param:
+        monkeypatch.setenv("HTTPS_PROXY", request.param)
+
+
 @httpretty.activate
-@pytest.mark.usefixtures("sleepless")
+@pytest.mark.usefixtures("sleepless", "proxy_environment")
 def test_register_rp_policy():
     """Protocol:
     - We call the provider and get a 409 provider error
@@ -121,14 +130,14 @@ def test_register_rp_policy():
     policies = [
         ARMAutoResourceProviderRegistrationPolicy(),
     ]
-    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+    with Pipeline(RequestsTransport(use_env_settings=False), policies=policies) as pipeline:
         response = pipeline.run(request)
 
     assert json.loads(response.http_response.text())["success"]
 
 
 @httpretty.activate
-@pytest.mark.usefixtures("sleepless")
+@pytest.mark.usefixtures("sleepless", "proxy_environment")
 def test_register_failed_policy():
     """Protocol:
     - We call the provider and get a 409 provider error
@@ -174,7 +183,7 @@ def test_register_failed_policy():
     policies = [
         ARMAutoResourceProviderRegistrationPolicy(),
     ]
-    with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+    with Pipeline(RequestsTransport(use_env_settings=False), policies=policies) as pipeline:
         response = pipeline.run(request)
 
     assert response.http_response.status_code == 409
