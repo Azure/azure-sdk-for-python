@@ -1,11 +1,5 @@
 # Release History
 
-## 1.18.13 (Unreleased)
-
-### Bugs Fixed
-
-- Fixed Azure OpenAI grader request serialization failing on NaN and pandas missing values in nullable typed fields or schema-free nested objects. Null is substituted only when the schema permits it; invalid non-nullable inputs and infinite numbers raise a typed input error before submission. Finite values, caller data, and legacy inferred scalar-to-text conversion are preserved.
-
 ## 1.18.12 (2026-11-09)
 
 ### Bugs Fixed

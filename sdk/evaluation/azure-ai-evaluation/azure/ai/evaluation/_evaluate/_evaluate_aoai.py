@@ -11,7 +11,7 @@ from time import sleep
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Type, Union, cast
 
 import pandas as pd
-from openai import AzureOpenAI, OpenAI
+from openai import AzureOpenAI, BadRequestError, OpenAI, UnprocessableEntityError
 
 # import aoai_mapping
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
@@ -870,80 +870,6 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
     return data_source_config
 
 
-def _aoai_schema_allows_null(schema: Any) -> bool:
-    """Conservatively check whether a JSON schema permits a null value."""
-    if schema is None or schema is True:
-        return True
-    if not isinstance(schema, dict) or any(key in schema for key in ("$ref", "$dynamicRef", "if")):
-        return False
-    allowed_types = schema.get("type")
-    if (
-        allowed_types is not None
-        and allowed_types != "null"
-        and (not isinstance(allowed_types, list) or "null" not in allowed_types)
-    ):
-        return False
-    if "enum" in schema and None not in schema["enum"]:
-        return False
-    if "const" in schema and schema["const"] is not None:
-        return False
-    if "allOf" in schema and not all(_aoai_schema_allows_null(item) for item in schema["allOf"]):
-        return False
-    if "anyOf" in schema and not any(_aoai_schema_allows_null(item) for item in schema["anyOf"]):
-        return False
-    if "oneOf" in schema and sum(_aoai_schema_allows_null(item) for item in schema["oneOf"]) != 1:
-        return False
-    return "not" not in schema or not _aoai_schema_allows_null(schema["not"])
-
-
-def _aoai_property_schema(schema: Any, key: str) -> Any:
-    """Resolve a directly declared object field without guessing reference/composition semantics."""
-    if not isinstance(schema, dict):
-        return schema
-    if any(item in schema for item in ("$ref", "$dynamicRef", "allOf", "anyOf", "oneOf", "if", "not")):
-        return False
-    return schema.get("properties", {}).get(key, schema.get("additionalProperties", True))
-
-
-def _normalize_aoai_input_value(value: Any, schema: Any = None) -> Any:
-    """Copy typed inputs, normalizing missing values only where their schema permits null."""
-    if value is None:
-        return None
-    if value is pd.NA or value is pd.NaT:
-        return None if _aoai_schema_allows_null(schema) else value
-    if isinstance(value, dict):
-        return {
-            key: _normalize_aoai_input_value(item, _aoai_property_schema(schema, key)) for key, item in value.items()
-        }
-    if isinstance(value, list):
-        composed = isinstance(schema, dict) and any(
-            key in schema for key in ("$ref", "$dynamicRef", "allOf", "anyOf", "oneOf", "if", "not")
-        )
-        items = False if composed else schema.get("items", True) if isinstance(schema, dict) else schema
-        prefix = schema.get("prefixItems", []) if isinstance(schema, dict) and not composed else []
-        return [
-            _normalize_aoai_input_value(item, prefix[index] if index < len(prefix) else items)
-            for index, item in enumerate(value)
-        ]
-    if pd.api.types.is_bool(value):
-        return bool(value)
-    if pd.api.types.is_integer(value):
-        return int(value)
-    if pd.api.types.is_float(value):
-        number = float(value)
-        if math.isnan(number):
-            return None if _aoai_schema_allows_null(schema) else number
-        if not math.isfinite(number):
-            raise EvaluationException(
-                message="AOAI evaluation input contains an infinite numeric value, which is not valid JSON.",
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.AOAI_GRADER,
-            )
-        return number
-    return deepcopy(value)
-
-
 def _get_data_source(
     input_data_df: pd.DataFrame,
     column_mapping: Dict[str, str],
@@ -973,10 +899,18 @@ def _get_data_source(
     def _has_explicit_schema(key: str) -> bool:
         return key in explicit_properties or explicit_additional_properties
 
-    def _convert_value(val: Any, explicit: bool = False, schema: Any = None) -> Any:
+    def _convert_value(val: Any, explicit: bool = False) -> Any:
         """Convert to AOAI-friendly representation while preserving structure when useful."""
         if explicit:
-            return _normalize_aoai_input_value(val, schema)
+            # Unbox pandas/numpy scalars without converting between JSON types.
+            if pd.api.types.is_bool(val):
+                return bool(val)
+            if pd.api.types.is_integer(val):
+                return int(val)
+            if pd.api.types.is_float(val):
+                # Pandas fills absent numeric fields with NaN, which is not valid JSON; send null instead.
+                return None if math.isnan(val) else float(val)
+            return deepcopy(val)
         if val is None:
             return ""
         if isinstance(val, str):
@@ -988,7 +922,7 @@ def _get_data_source(
             return str(val)
         if isinstance(val, (list, dict)):
             # Later path insertions must not mutate objects shared with callable evaluators.
-            return _normalize_aoai_input_value(val)
+            return deepcopy(val)
         return str(val)
 
     def _get_value_from_path(normalized_row: Dict[str, Any], path: str) -> Any:
@@ -1112,7 +1046,7 @@ def _get_data_source(
             # Flattened mappings omit empty objects and can omit siblings of mapped leaves.
             item_root.update(
                 {
-                    key: _convert_value(value, True, _aoai_property_schema(item_schema, key))
+                    key: _convert_value(value, True)
                     for key, value in source_item.items()
                     if _has_explicit_schema(key) and not _is_flattened_field(key, source_item)
                 }
@@ -1139,11 +1073,7 @@ def _get_data_source(
 
             if val is missing:
                 continue
-            value_schema: Any = item_schema
-            if explicit:
-                for part in rel_parts:
-                    value_schema = _aoai_property_schema(value_schema, part)
-            norm_val = _convert_value(val, explicit, value_schema)
+            norm_val = _convert_value(val, explicit)
 
             cursor = item_root
             for seg in rel_parts[:-1]:
@@ -1168,9 +1098,7 @@ def _get_data_source(
                 if _is_flattened_field(key, wrapper_view):
                     # Do not duplicate flattened leaves alongside their explicitly declared object.
                     continue
-                item_root[key] = _convert_value(
-                    raw_val, _has_explicit_schema(key), _aoai_property_schema(item_schema, key)
-                )
+                item_root[key] = _convert_value(raw_val, _has_explicit_schema(key))
 
         content_row: Dict[str, Any] = {}
 
@@ -1222,22 +1150,21 @@ def _begin_eval_run(
         data_source.update(data_source_params)
 
     try:
-        json.dumps(data_source, allow_nan=False)
-    except (TypeError, ValueError) as error:
+        eval_run = client.evals.runs.create(
+            eval_id=eval_group_id,
+            data_source=cast(Any, data_source),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
+            name=run_name,
+            metadata={"sample_generation": "off", "file_format": "jsonl", "is_foundry_eval": "true"},
+            # TODO decide if we want to add our own timeout value?
+        )
+    except (BadRequestError, UnprocessableEntityError) as error:
         raise EvaluationException(
-            message="AOAI evaluation input is not valid JSON. Check missing values and declared field types.",
+            message=f"AOAI rejected the evaluation run input: {error.message}",
+            internal_message="AOAI rejected the evaluation run input.",
             blame=ErrorBlame.USER_ERROR,
             category=ErrorCategory.INVALID_VALUE,
             target=ErrorTarget.AOAI_GRADER,
         ) from error
-
-    eval_run = client.evals.runs.create(
-        eval_id=eval_group_id,
-        data_source=cast(Any, data_source),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
-        name=run_name,
-        metadata={"sample_generation": "off", "file_format": "jsonl", "is_foundry_eval": "true"},
-        # TODO decide if we want to add our own timeout value?
-    )
     LOGGER.info(f"AOAI: Eval run created successfully with ID: {eval_run.id}")
     return eval_run.id
 
