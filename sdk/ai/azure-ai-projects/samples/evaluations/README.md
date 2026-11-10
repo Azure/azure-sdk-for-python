@@ -59,16 +59,21 @@ python sample_evaluations_builtin_with_inline_data.py
 ### Voice Evaluation
 
 [sample_audio_conversation_evaluation.py](sample_audio_conversation_evaluation.py) and its
-[async version](sample_audio_conversation_evaluation_async.py) evaluate an existing
+[async version](sample_audio_conversation_evaluation_async.py) evaluate a
 recorded-conversation dataset without calling a target agent. They use
 `builtin.task_completion_audio`, `builtin.groundedness_audio`,
 `builtin.customer_satisfaction_audio`, and `builtin.coherence_audio`.
 These evaluators and an eligible audio-input judge deployment must be available in the
 project; installing the SDK alone does not enable audio scoring.
 
-Set `FOUNDRY_PROJECT_ENDPOINT`, `FOUNDRY_MODEL_NAME` (the audio judge), and
-`FOUNDRY_DATASET_ID` (the registered JSONL dataset ID). The samples do not upload or delete
-input datasets or recordings. Adapt the existing
+Only `FOUNDRY_PROJECT_ENDPOINT` and `FOUNDRY_MODEL_NAME` (the audio judge) are required.
+When `FOUNDRY_DATASET_ID` is omitted, the samples upload the bundled short WAV to a
+recording-folder dataset, build and upload one JSONL row referencing it, then delete
+both created dataset versions after evaluation, including on failure. This path uses
+the project's default Azure Storage connection and requires dataset upload permissions.
+
+Optionally set `FOUNDRY_DATASET_ID` to your registered JSONL dataset ID to bypass uploads.
+Existing datasets and recordings are never changed or deleted. To prepare your own inputs, adapt the existing
 [dataset workflow](../datasets/sample_datasets.py): upload the recording folder
 with a `file_pattern` that includes `.wav` (or omit the filter for a folder containing
 only recordings), and set `data_file` to your JSONL file instead of the sample's
@@ -108,16 +113,28 @@ extra_body={"evaluation_level": "conversation"}
 
 [sample_voice_agent_simulation_evaluation.py](sample_voice_agent_simulation_evaluation.py)
 and its [async version](sample_voice_agent_simulation_evaluation_async.py) instead generate
-a short call against an **existing voice agent**, then grade its recording with
-`builtin.task_completion_audio`. The inline seed describes store-hours assistance: use an
-agent configured for that task, or replace the seed with a task your agent supports.
+a short call against a voice agent, then grade its recording with
+`builtin.task_completion_audio`. These simulation samples require `azure-ai-projects>=2.11.0`
+for the voice-agent configuration models. Only the endpoint and audio-judge variables above are
+required. By default, the sample creates a uniquely named, managed `gpt-realtime` voice
+agent that knows the Springfield store's closing time, and deletes that version afterward,
+including on failure. Set `FOUNDRY_VOICE_AGENT_MODEL` to override the managed voice model.
+The simulator defaults to the `gpt-4.1` chat deployment and `en-US-AvaNeural` speech voice;
+the project must have that chat deployment, or set `FOUNDRY_SIMULATOR_MODEL_NAME` to
+another deployed chat model. Set `FOUNDRY_SIMULATOR_VOICE` to override the speech voice.
+The audio judge is separate from the simulator; an audio-capable judge is not necessarily
+a chat-compatible simulator model.
+
+Optionally set `FOUNDRY_AGENT_NAME` to an **existing voice agent** to bypass creation.
+`FOUNDRY_AGENT_VERSION` is optional and defaults to that agent's latest version; providing
+a version requires an agent name. Existing agents are never changed or deleted.
+The inline seed describes store-hours assistance: use an agent configured for that task,
+or replace the seed with a task your agent supports.
 The [voice-agent samples](../agents/voice/sample_voice_agent_basic.py) show the agent
 configuration; keep the chosen agent/version available when running evaluation.
 Set `FOUNDRY_AGENT_NAME` to that voice agent's name (`FOUNDRY_VOICE_AGENT_NAME` in
 the voice-agent samples).
-Set the endpoint and judge variables above, plus `FOUNDRY_AGENT_NAME`,
-`FOUNDRY_AGENT_VERSION`, `FOUNDRY_SIMULATOR_MODEL_NAME`, and `FOUNDRY_SIMULATOR_VOICE`
-(for example, `en-US-AvaNeural`). The simulator model generates user turns, the voice
+The simulator model generates user turns, the voice
 renders simulated-user speech, and the audio judge grades the result; none is a substitute
 for selecting the target agent. No dataset upload is needed for this single inline seed.
 
