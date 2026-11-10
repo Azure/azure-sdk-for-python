@@ -10,6 +10,7 @@ import unittest
 import uuid
 from typing import Any, Callable, Awaitable, Dict
 from unittest import IsolatedAsyncioTestCase
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 from azure.core.pipeline.transport import AioHttpTransport
@@ -39,42 +40,41 @@ SINGLE_PARTITION_CONTAINER_NAME = os.path.basename(__file__) + str(uuid.uuid4())
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
-    @classmethod
-    async def asyncSetUp(cls):
-        logger.info("starting class: {} execution".format(cls.__name__))
-        cls.host = host
-        cls.master_key = master_key
+    async def asyncSetUp(self):
+        logger.info("starting class: {} execution".format(type(self).__name__))
+        self.host = host
+        self.master_key = master_key
 
-        if (cls.master_key == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
+        if (self.master_key == '[YOUR_KEY_HERE]' or
+                self.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.database_id = TEST_DATABASE_ID
-        cls.single_partition_container_name = SINGLE_PARTITION_CONTAINER_NAME
+        self.database_id = TEST_DATABASE_ID
+        self.single_partition_container_name = SINGLE_PARTITION_CONTAINER_NAME
 
-        cls.mgmt_client = CosmosClient(cls.host, cls.master_key, consistency_level="Session", logger=logger)
-        created_database = cls.mgmt_client.get_database_client(cls.database_id)
+        self.mgmt_client = CosmosClient(self.host, self.master_key, consistency_level="Session", logger=logger)
+        self.addAsyncCleanup(self._cleanup_container)
+        created_database = self.mgmt_client.get_database_client(self.database_id)
         await asyncio.wait_for(
             created_database.create_container(
-                cls.single_partition_container_name,
+                self.single_partition_container_name,
                 partition_key=PartitionKey("/pk")),
             MGMT_TIMEOUT)
     
-    @classmethod
-    async def asyncTearDown(cls):
-        logger.info("tearing down class: {}".format(cls.__name__))
-        created_database = cls.mgmt_client.get_database_client(cls.database_id)
+    async def _cleanup_container(self):
+        logger.info("tearing down class: {}".format(type(self).__name__))
+        created_database = self.mgmt_client.get_database_client(self.database_id)
         try:
             await asyncio.wait_for(
-                created_database.delete_container(cls.single_partition_container_name),
+                created_database.delete_container(self.single_partition_container_name),
                 MGMT_TIMEOUT)
         except Exception as containerDeleteError:    
             logger.warning("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
         finally:    
             try:
-                await asyncio.wait_for(cls.mgmt_client.close(), MGMT_TIMEOUT)
+                await asyncio.wait_for(self.mgmt_client.close(), MGMT_TIMEOUT)
             except Exception as closeError:    
                 logger.warning("Exception trying to close client {}. {}".format(created_database.id, closeError))
 
@@ -525,6 +525,37 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                 await container.upsert_item(body=document_definition)
         finally:
             await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
+@pytest.mark.parametrize("setup_times_out", [False, True])
+def test_fault_injection_setup_cleanup(setup_times_out):
+    async def create_container(*args, **kwargs):
+        if setup_times_out:
+            await asyncio.sleep(MGMT_TIMEOUT + 1)
+
+    client = Mock()
+    client.close = AsyncMock()
+    database = client.get_database_client.return_value
+    database.create_container = AsyncMock(side_effect=create_container)
+    database.delete_container = AsyncMock()
+    test_body = Mock()
+
+    class FixtureCase(TestFaultInjectionTransportAsync):
+        async def runTest(self):
+            test_body()
+
+    result = unittest.TestResult()
+    with patch(__name__ + ".CosmosClient", return_value=client):
+        FixtureCase().run(result)
+
+    assert not result.failures
+    assert len(result.errors) == int(setup_times_out)
+    if setup_times_out:
+        assert "TimeoutError" in result.errors[0][1]
+    assert test_body.call_count == int(not setup_times_out)
+    database.create_container.assert_awaited_once()
+    database.delete_container.assert_awaited_once_with(SINGLE_PARTITION_CONTAINER_NAME)
+    client.close.assert_awaited_once()
+
 
 if __name__ == '__main__':
     unittest.main()
