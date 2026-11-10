@@ -56,7 +56,6 @@ _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
 _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
     [
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
-        _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.DRAFT_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.DIGITAL_WORKER_V1_PREVIEW.value,
