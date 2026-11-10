@@ -40,17 +40,23 @@ Current message arrays remain function-only. Two independent emissions retain
 all 32 Python runtime files exactly; only the generated APIView source checksum
 changes. Sync/async regressions also confirm that other call kinds are rejected.
 
-The response-enum review makes completion finish reasons, invalid-output
-classifications, and checkpoint preparation statuses extensible in TypeSpec.
-Known labels are retained and only their four lint suppressions are removed.
-Python generation again preserves all runtime files; this source-pin update
-does not relax the maintained parser or change preparation-state handling.
-Unknown labels and states therefore retain the SDK's existing explicit errors.
+Checkpoint preparation statuses remain extensible in TypeSpec. The earlier
+response-enum review also opened completion metadata unions; those standalone
+sampling-output declarations are now removed because no operation used them.
+This does not relax the maintained parser or change preparation-state handling.
+Unknown labels and states retain the SDK's existing explicit errors.
 
 The unused standalone TypeSpec training-result declaration is removed.
 The existing generic polling-result field now documents the scalar training
 payload and empty per-token output array. Service behavior, Python result
 validation, and every Python runtime file remain unchanged.
+
+The unused standalone sampling-result, choice, and output-metadata declarations
+are also removed. The actual generic polling-result field documents the
+existing valid and invalid choice shapes instead. No `outcome` field is added
+to valid completions. The service JSON, maintained Python result classes, and
+safety checks are unchanged; actual independent emissions preserve all 32
+runtime files, with only the generated APIView source checksum changing.
 
 The shared SDK toolchain uses Python emitter 0.63.11, Python generator 0.40.0,
 and TypeSpec compiler 1.17.0. The central SDK manifest/lock remain authoritative;
