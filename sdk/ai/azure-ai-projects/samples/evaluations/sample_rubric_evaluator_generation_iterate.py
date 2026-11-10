@@ -16,6 +16,8 @@ DESCRIPTION:
          dimension to 10, drops the lowest-weight editable dimension, and
          adds a new custom dimension. The non-editable `general_quality`
          ALWAYS-ON dimension is preserved verbatim.
+         This weighting scenario requires explicit legacy or Likert weights;
+         it does not apply to unweighted or Boolean-scored rubrics.
       3. Saves the edited definition as v2 with `create_version`.
       4. Calls `list_versions` to enumerate v1 and v2.
       5. Cleans up by deleting both versions.
@@ -25,7 +27,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -120,11 +122,19 @@ with (
     #   * Add a new custom dimension specific to this assistant.
     editable = [d for d in v1_definition.dimensions if not d.always_applicable]
     always_on = [d for d in v1_definition.dimensions if d.always_applicable]
+    weights: dict[str, int] = {}
+    for dim in v1_definition.dimensions:
+        if dim.weight is None:
+            raise ValueError(
+                f"Dimension '{dim.id}' has no configured weight. This sample requires a weighted rubric; "
+                "unweighted and Boolean-scored rubrics cannot use this weighting workflow."
+            )
+        weights[dim.id] = dim.weight
 
     edited_dimensions = []
     if editable:
-        top = max(editable, key=lambda d: d.weight)
-        lowest = min(editable, key=lambda d: d.weight)
+        top = max(editable, key=lambda d: weights[d.id])
+        lowest = min(editable, key=lambda d: weights[d.id])
         for dim in editable:
             if dim.id == lowest.id:
                 continue

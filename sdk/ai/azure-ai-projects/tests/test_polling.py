@@ -63,7 +63,7 @@ def test_azure_core_polling_status_is_unchanged(polling_type):
 
 @pytest.mark.parametrize(
     "operation_module",
-    [_patch_agent_insights, _patch_agents, _patch_datasets, _patch_evaluators],
+    [_patch_agent_insights, _patch_datasets, _patch_evaluators],
 )
 def test_sync_projects_operation_modules_use_local_polling(operation_module):
     assert operation_module.AIProjectsLROBasePolling is AIProjectsLROBasePolling
@@ -71,7 +71,7 @@ def test_sync_projects_operation_modules_use_local_polling(operation_module):
 
 @pytest.mark.parametrize(
     "operation_module",
-    [_patch_agent_insights_async, _patch_agents_async, _patch_datasets_async, _patch_evaluators_async],
+    [_patch_agent_insights_async, _patch_datasets_async, _patch_evaluators_async],
 )
 def test_async_projects_operation_modules_use_local_polling(operation_module):
     assert operation_module.AsyncAIProjectsLROBasePolling is AsyncAIProjectsLROBasePolling
@@ -80,3 +80,8 @@ def test_async_projects_operation_modules_use_local_polling(operation_module):
 def test_memory_polling_uses_local_polling():
     assert issubclass(_UpdateMemoriesLROPollingMethod, AIProjectsLROBasePolling)
     assert issubclass(_AsyncUpdateMemoriesLROPollingMethod, AsyncAIProjectsLROBasePolling)
+
+
+def test_optimization_polling_uses_local_polling():
+    assert issubclass(_patch_agents._AgentOptimizationLROBasePolling, AIProjectsLROBasePolling)
+    assert issubclass(_patch_agents_async._AsyncAgentOptimizationLROBasePolling, AsyncAIProjectsLROBasePolling)

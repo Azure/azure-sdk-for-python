@@ -20,10 +20,10 @@ from ._operations import (
 )
 from ... import models as _models
 from ..._utils.model_base import _deserialize
-from ..._utils.polling import AsyncAIProjectsLROBasePolling
 from ...models import AsyncAgentOptimizationLROPoller
 from ...operations._patch_agents import _compute_sha256_from_stream
 from ...models._patch import (
+    _AsyncAgentOptimizationLROBasePolling,
     _FOUNDRY_FEATURES_HEADER_NAME,
     _has_header_case_insensitive,
     _AGENT_OPERATION_FEATURE_HEADERS,
@@ -415,7 +415,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncAIProjectsLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                _AsyncAgentOptimizationLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())

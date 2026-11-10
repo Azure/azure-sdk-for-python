@@ -64,7 +64,7 @@ def _job_response(status: str, *, initial: bool = False, is_async: bool = False)
     return PipelineResponse(request, response, PipelineContext(None))
 
 
-def _operation_for_cancellation(*, is_async: bool = False):
+def _operation_for_cancellation(*, is_async: bool = False, terminal_status: str = "cancelled"):
     operation_type = AsyncAgentsOperations if is_async else AgentsOperations
     operation = operation_type.__new__(operation_type)
     operation._client = MagicMock()  # pylint: disable=protected-access
@@ -75,7 +75,7 @@ def _operation_for_cancellation(*, is_async: bool = False):
     initial = _job_response("queued", initial=True, is_async=is_async)
     responses = [
         _job_response("in_progress", is_async=is_async),
-        _job_response("cancelled", is_async=is_async),
+        _job_response(terminal_status, is_async=is_async),
     ]
     if is_async:
         operation._create_optimization_job_initial = AsyncMock(return_value=initial)  # pylint: disable=protected-access
@@ -108,26 +108,28 @@ def test_begin_create_optimization_job_exposes_job_id():
     assert poller.details["job_id"] == "optimization-job-sync"
 
 
-def test_optimization_poller_stops_after_cancellation():
-    operation = _operation_for_cancellation()
+@pytest.mark.parametrize("terminal_status", ["cancelled", "skipped"])
+def test_optimization_poller_stops_after_cancellation_or_skip(terminal_status):
+    operation = _operation_for_cancellation(terminal_status=terminal_status)
 
     poller = operation.begin_create_optimization_job(job={})
 
     with pytest.raises(HttpResponseError):
         poller.result(timeout=5)
     assert poller.done()
-    assert poller.status() == "cancelled"
+    assert poller.status() == terminal_status
     assert operation._client.send_request.call_count == 2  # pylint: disable=protected-access
 
 
 @pytest.mark.asyncio
-async def test_async_optimization_poller_stops_after_cancellation():
-    operation = _operation_for_cancellation(is_async=True)
+@pytest.mark.parametrize("terminal_status", ["cancelled", "skipped"])
+async def test_async_optimization_poller_stops_after_cancellation_or_skip(terminal_status):
+    operation = _operation_for_cancellation(is_async=True, terminal_status=terminal_status)
 
     poller = await operation.begin_create_optimization_job(job={})
 
     with pytest.raises(HttpResponseError):
         await asyncio.wait_for(poller.result(), timeout=5)
     assert poller.polling_method().finished()
-    assert poller.status() == "cancelled"
+    assert poller.status() == terminal_status
     assert operation._client.send_request.call_count == 2  # pylint: disable=protected-access

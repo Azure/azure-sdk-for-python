@@ -14,15 +14,15 @@ DESCRIPTION:
     description from the fetched default version to show that the default
     version pointer changes which content is returned.
 
-    Skills are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.beta.skills`.
+    Skills are generally available. In the Python SDK, you access
+    these operations via `project_client.skills`.
 
 USAGE:
     python sample_skills_crud.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -56,7 +56,7 @@ with (
     skill_name = "product-support-skill"
 
     try:
-        project_client.beta.skills.delete(skill_name)
+        project_client.skills.delete(skill_name)
         print(f"Skill `{skill_name}` deleted")
     except ResourceNotFoundError:
         pass
@@ -73,50 +73,50 @@ with (
         metadata={"revision": "2"},
     )
 
-    created = project_client.beta.skills.create(
+    created = project_client.skills.create(
         name=skill_name,
         inline_content=inline_content_v1,
     )
     print(f"Created skill: {created.name} revision 1 in version {created.version}")
 
-    created = project_client.beta.skills.create(
+    created = project_client.skills.create(
         name=skill_name,
         inline_content=inline_content_v2,
     )
     print(f"Created skill: {created.name} revision 2 in version {created.version}")
 
-    updated = project_client.beta.skills.update(
+    updated = project_client.skills.update(
         skill_name,
         default_version="2",
     )
     print(f"Updated skill: {updated.name} default version is now {updated.default_version}")
 
-    fetched = project_client.beta.skills.get(name=skill_name)
+    fetched = project_client.skills.get(name=skill_name)
     print(f"Retrieved skill with default version: {fetched.default_version}")
-    fetched_version = project_client.beta.skills.get_version(
+    fetched_version = project_client.skills.get_version(
         name=skill_name,
         version=fetched.default_version,
     )
     print_skill_version_description(fetched_version)
 
-    updated = project_client.beta.skills.update(
+    updated = project_client.skills.update(
         skill_name,
         default_version="1",
     )
     print(f"Updated skill: {updated.name} default version is now {updated.default_version}")
 
-    fetched = project_client.beta.skills.get(name=skill_name)
+    fetched = project_client.skills.get(name=skill_name)
     print(f"Retrieved skill with default version: {fetched.default_version}")
-    fetched_version = project_client.beta.skills.get_version(
+    fetched_version = project_client.skills.get_version(
         name=skill_name,
         version=fetched.default_version,
     )
     print_skill_version_description(fetched_version)
 
-    skills = list(project_client.beta.skills.list())
+    skills = list(project_client.skills.list())
     print(f"Found {len(skills)} skills")
     for item in skills:
         print(f"  - {item.name} ({item.id})")
 
-    project_client.beta.skills.delete(name=skill_name)
+    project_client.skills.delete(name=skill_name)
     print("Skill deleted")

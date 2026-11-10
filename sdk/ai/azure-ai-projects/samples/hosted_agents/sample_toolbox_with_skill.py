@@ -20,7 +20,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.3.0" azure-identity azure-mgmt-authorization azure-mgmt-resource python-dotenv
+    pip install "azure-ai-projects>=2.11.0" azure-identity azure-mgmt-authorization azure-mgmt-resource python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the
@@ -83,11 +83,11 @@ def main() -> None:
             pass
 
         try:
-            project_client.beta.skills.delete(SKILL_NAME)
+            project_client.skills.delete(SKILL_NAME)
         except ResourceNotFoundError:
             pass
 
-        skill_version = project_client.beta.skills.create(
+        skill_version = project_client.skills.create(
             name=SKILL_NAME,
             inline_content=SkillInlineContent(
                 description="Compute shipping cost for a package given weight and destination.",
@@ -160,7 +160,7 @@ def main() -> None:
         finally:
             project_client.toolboxes.delete(TOOLBOX_NAME)
             print("Toolbox deleted")
-            project_client.beta.skills.delete(SKILL_NAME)
+            project_client.skills.delete(SKILL_NAME)
             print("Skill deleted")
 
 

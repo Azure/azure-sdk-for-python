@@ -10,8 +10,8 @@ DESCRIPTION:
     monitor, analyze traces from the last three hours on demand, read run results,
     and resolve one insight.
 
-    Agent Insights is a preview feature. In the Python SDK, you access these
-    operations through `project_client.beta.agent_insight_monitors`.
+    Agent Insights is generally available. In the Python SDK, you access these
+    operations through `project_client.agent_insight_monitors`.
 
     This sample registers a temporary external agent and emits fictional traces;
     it does not execute tools or call a model to produce those traces. It waits
@@ -29,7 +29,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.6.1" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint.
@@ -52,10 +52,7 @@ from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AgentInsightMonitorCreate,
-    AgentInsightRunCreate,
     AgentInsightStatus,
-    AgentInsightUpdate,
 )
 
 
@@ -72,7 +69,7 @@ def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
         LogsQueryClient(credential) as logs_client,
     ):
-        monitor_operations = project_client.beta.agent_insight_monitors
+        monitor_operations = project_client.agent_insight_monitors
         agent = None
         monitor = None
         try:
@@ -83,11 +80,9 @@ def main() -> None:
 
             # Keep scheduling disabled because this sample starts one explicit run.
             monitor = monitor_operations.create(
-                AgentInsightMonitorCreate(
-                    agent_name=agent.name,
-                    model_deployment_name=model_deployment_name,
-                    enabled=False,
-                )
+                agent_name=agent.name,
+                model_deployment_name=model_deployment_name,
+                enabled=False,
             )
             print(
                 f"Created monitor `{monitor.id}` for agent `{monitor.agent_name}` "
@@ -96,7 +91,7 @@ def main() -> None:
 
             poller = monitor_operations.begin_create_run(
                 monitor.id,
-                AgentInsightRunCreate(lookback_hours=3),
+                lookback_hours=3,
                 operation_id=str(uuid.uuid4()),
             )
             run_id = poller.details["run_id"]
@@ -135,7 +130,7 @@ def main() -> None:
                 resolved_insight = monitor_operations.update_insight(
                     monitor.id,
                     insights[0].id,
-                    AgentInsightUpdate(status=AgentInsightStatus.RESOLVED),
+                    status=AgentInsightStatus.RESOLVED,
                 )
                 print(f"Insight status after update: {resolved_insight.status}")
             else:

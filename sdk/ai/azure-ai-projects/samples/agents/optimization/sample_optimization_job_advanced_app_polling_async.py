@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -51,7 +51,7 @@ from azure.ai.projects.models import (
     AgentOptimizationTargetCompletionInlineDataSource,
     AgentOptimizationTargetCompletionTestCase,
     EvaluationModelConfiguration,
-    JobStatus,
+    AgentOptimizationJobStatus,
 )
 
 load_dotenv()
@@ -63,7 +63,12 @@ poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 eval_model = os.environ["EVAL_MODEL"]
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
+TERMINAL_STATUSES = {
+    AgentOptimizationJobStatus.SUCCEEDED,
+    AgentOptimizationJobStatus.FAILED,
+    AgentOptimizationJobStatus.CANCELLED,
+    AgentOptimizationJobStatus.SKIPPED,
+}
 
 
 async def main() -> None:
@@ -133,10 +138,10 @@ async def main() -> None:
             for warning in job.warnings:
                 print(f"[WARNING] {warning}")
 
-        if job.status == JobStatus.FAILED:
+        if job.status in {AgentOptimizationJobStatus.FAILED, AgentOptimizationJobStatus.SKIPPED}:
             message = job.error.message if job.error else "<no error message>"
-            raise RuntimeError(f"Optimization job `{job.id}` failed: {message}")
-        if job.status == JobStatus.CANCELLED:
+            raise RuntimeError(f"Optimization job `{job.id}` {job.status}: {message}")
+        if job.status == AgentOptimizationJobStatus.CANCELLED:
             raise RuntimeError(f"Optimization job `{job.id}` was cancelled.")
 
         # ------------------------------------------------------------------

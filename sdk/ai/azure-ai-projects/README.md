@@ -41,7 +41,18 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Register and manage local AI model weights (preview)** using `.beta.models` operations.
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
 * **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
-* **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
+* **Manage skills** as reusable capabilities that can be included in toolboxes and agents, using `.skills` operations.
+* **Analyze agent traces** and manage scheduled Agent Insights monitors using `.agent_insight_monitors` operations.
+
+Agent Insights monitors and skill management are generally available through
+`.agent_insight_monitors` and `.skills`, rather than `.beta`. Neither requires
+`allow_preview=True`. Creating preview agent definitions or using skills in
+preview agent features still requires the corresponding preview opt-in.
+
+Optimization jobs can terminate with `skipped` when required input is unavailable.
+SDK optimization pollers stop and raise `HttpResponseError` for this state while
+reporting `skipped` from `status()`. Applications that poll jobs themselves must
+also treat `AgentOptimizationJobStatus.SKIPPED` as terminal.
 
 **Important:** This stable package includes Preview features. Preview features available through stable methods require setting `allow_preview=True` when constructing the client, while Preview features exposed via the .beta sub-clients do not. Preview features may change or be removed in future versions and are not recommended for production use.
 
@@ -177,7 +188,7 @@ The table below lists the operation groups supported by the client library, with
 | Topic | Foundry documentation | Samples folder |
 |---|---|---|
 | Agents (create, run, stream) | [Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview) | `samples/agents/` |
-| Agent Insights (preview) | | [On-demand analysis and scheduled monitors](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agent_insights) |
+| Agent Insights | | [On-demand analysis and scheduled monitors](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agent_insights) |
 | Hosted agents | [Hosted agents concepts](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents), [Deploy your first hosted agent](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent) | `samples/hosted_agents/` |
 | Agents tools | [Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog) | `samples/agents/tools/` |
 | Agents optimization | [Prompt optimizer](https://learn.microsoft.com/azure/foundry/observability/how-to/prompt-optimizer), [Agent optimizer overview](https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview) | `samples/agents/optimization/` |
@@ -195,7 +206,7 @@ The table below lists the operation groups supported by the client library, with
 | Responses | [Responses API](https://platform.openai.com/docs/api-reference/responses) | `samples/responses/` |
 | Routines (preview) | [Routines overview](https://learn.microsoft.com/azure/foundry/agents/concepts/routines) | `samples/hosted_agents/` |
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
-| Skills (preview) | | `samples/skills/` |
+| Skills | | `samples/skills/` |
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
 | Voice agents | | `samples/agents/voice/` |
 

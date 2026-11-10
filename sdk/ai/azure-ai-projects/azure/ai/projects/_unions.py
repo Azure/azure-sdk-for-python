@@ -17,6 +17,27 @@ VoiceAgentToolChoice: TypeAlias = Union[
 ]
 VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
 VoiceAgentHandoffMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
+UserConversationSimulationSource: TypeAlias = Union[
+    "_models.EvalJsonlFileContentSource",
+    "_models.EvalJsonlFileIdSource",
+    "_models.UserConversationSimulationInlineTestCasesSource",
+]
+EvalItemContentItem: TypeAlias = Union[str, "_models.EvalItemContentItemObject"]
+EvalItemContent: TypeAlias = Union["EvalItemContentItem", list["EvalItemContentItem"]]
+DatasetEvaluationSource: TypeAlias = Union[
+    "_models.CreateEvalJsonlRunDataSource",
+    "_models.EvalCsvRunDataSource",
+    "_models.CreateEvalCompletionsRunDataSource",
+    "_models.TargetCompletionEvalRunDataSource",
+    "_models.UserConversationSimulationEvalRunDataSource",
+    "_models.UserConversationSimulationPreviewEvalRunDataSource",
+]
+TraceEvaluationSource: TypeAlias = Union[
+    "_models.TracesEvalRunDataSource",
+    "_models.AzureAITraceDataSourceEvalRunDataSource",
+    "_models.TracesPreviewEvalRunDataSource",
+    "_models.AzureAITraceDataSourcePreviewEvalRunDataSource",
+]
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
 RealtimeResponseInputItem: TypeAlias = Union[
     "_models.RealtimeResponseInputMessage",
