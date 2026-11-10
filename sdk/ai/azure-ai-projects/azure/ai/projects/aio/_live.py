@@ -223,6 +223,7 @@ class AsyncBetaLiveConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaLi
     _logger = _LOGGER
     _subprotocol = None
     _protocol_name = "Live"
+    _requires_preview = True
 
     def __init__(
         self,

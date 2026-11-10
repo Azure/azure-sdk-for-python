@@ -47,7 +47,7 @@ def hold_sample_conversation(
      reports a session error, or the conversation does not finish finalizing in time.
     """
     conversation_id = None
-    with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+    with project_client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
         conn.conversation.item.create(
             item=RealtimeConversationItemMessageUser(
                 type=RealtimeConversationItemType.MESSAGE,
@@ -72,7 +72,7 @@ def hold_sample_conversation(
         )
 
     # A reply can finish before its transcript is stored; wait for storage to finish too.
-    conversations = project_client.beta.voice_agents.conversations
+    conversations = project_client.voice_agents.conversations
     for _ in range(_FINALIZE_POLL_ATTEMPTS):
         conversation = conversations.get(agent_name, conversation_id)
         if conversation.status != VoiceConversationStatus.IN_PROGRESS:

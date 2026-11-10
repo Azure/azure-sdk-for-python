@@ -26,6 +26,7 @@ from .operations import (
     EvaluatorsOperations,
     IndexesOperations,
     ToolboxesOperations,
+    VoiceAgentsOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -42,6 +43,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
 
     :ivar beta: BetaOperations operations
     :vartype beta: azure.ai.projects.operations.BetaOperations
+    :ivar voice_agents: VoiceAgentsOperations operations
+    :vartype voice_agents: azure.ai.projects.operations.VoiceAgentsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.operations.AgentsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
@@ -108,6 +111,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.beta = BetaOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.voice_agents = VoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluation_rules = EvaluationRulesOperations(
             self._client, self._config, self._serialize, self._deserialize

@@ -179,7 +179,7 @@ class _SampleHarness:
         self.client = MagicMock()
         self.credential = MagicMock()
         self.connection = MagicMock()
-        self.manager = self.client.beta.voice_agents.realtime.connect.return_value
+        self.manager = self.client.voice_agents.realtime.connect.return_value
         mock_type = AsyncMock if self.is_async else MagicMock
 
         for resource in (self.client, self.credential):
@@ -197,7 +197,7 @@ class _SampleHarness:
         if self.is_async:
             self.connection.__aiter__.side_effect = self._iterate
 
-        self.conversations = self.client.beta.voice_agents.conversations
+        self.conversations = self.client.voice_agents.conversations
         self.conversations.get = mock_type(
             return_value=SimpleNamespace(id=_CONVERSATION_ID, status="completed", created_at=0)
         )
@@ -322,7 +322,7 @@ class _SampleHarness:
             ):
                 assert operation.await_count == operation.call_count
         self.credential_factory.assert_called_once_with()
-        self.client_factory.assert_called_once_with(endpoint=_ENDPOINT, credential=self.credential, allow_preview=True)
+        self.client_factory.assert_called_once_with(endpoint=_ENDPOINT, credential=self.credential)
 
 
 @pytest.fixture(params=_TEXT_SAMPLES, ids=["async-text"])
@@ -391,7 +391,7 @@ async def test_text_entrypoint_drains_greeting_and_reuses_one_persisted_conversa
     assert actions.index(("item", items[1])) < actions.index(("receive", second_done))
     assert connection.response.create.call_args_list == [call(), call()]
     connection.response.cancel.assert_not_called()
-    text_sample.client.beta.voice_agents.realtime.connect.assert_called_once_with(agent_name=_AGENT_NAME)
+    text_sample.client.voice_agents.realtime.connect.assert_called_once_with(agent_name=_AGENT_NAME)
     text_sample.assert_call(text_sample.conversations.get, _AGENT_NAME, _CONVERSATION_ID)
     text_sample.conversations.list_items.assert_called_once_with(_AGENT_NAME, _CONVERSATION_ID)
     definition = text_sample.client.agents.create_version.call_args.kwargs["definition"]
@@ -489,7 +489,7 @@ async def test_entrypoint_failures_clean_up_only_resources_the_sample_owns(entry
         await harness.run()
 
     if phase == "create":
-        harness.client.beta.voice_agents.realtime.connect.assert_not_called()
+        harness.client.voice_agents.realtime.connect.assert_not_called()
         assert not harness.players
     harness.conversations.get.assert_not_called()
     harness.assert_cleanup(created=phase != "create", connected=phase == "receive")

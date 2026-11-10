@@ -10,13 +10,13 @@ from azure.ai.projects.models import (
     TelephonyTransferTargets,
     UpdateTelephonyBindingRequest,
 )
-from azure.ai.projects.aio.operations._operations import BetaVoiceAgentsTelephonyOperations as AsyncTelephonyOperations
+from azure.ai.projects.aio.operations._operations import VoiceAgentsTelephonyOperations as AsyncTelephonyOperations
 from azure.ai.projects.operations._operations import (
-    BetaVoiceAgentsTelephonyOperations as TelephonyOperations,
-    build_beta_voice_agents_telephony_cancel_call_job_request,
-    build_beta_voice_agents_telephony_delete_binding_request,
-    build_beta_voice_agents_telephony_replace_transfer_targets_request,
-    build_beta_voice_agents_telephony_update_binding_request,
+    VoiceAgentsTelephonyOperations as TelephonyOperations,
+    build_voice_agents_telephony_cancel_call_job_request,
+    build_voice_agents_telephony_delete_binding_request,
+    build_voice_agents_telephony_replace_transfer_targets_request,
+    build_voice_agents_telephony_update_binding_request,
 )
 
 
@@ -49,10 +49,10 @@ def test_prep_if_none_match(etag, match_condition, expected):
 @pytest.mark.parametrize(
     "build_request",
     [
-        lambda **kwargs: build_beta_voice_agents_telephony_update_binding_request("agent", "binding", **kwargs),
-        lambda **kwargs: build_beta_voice_agents_telephony_delete_binding_request("agent", "binding", **kwargs),
-        lambda **kwargs: build_beta_voice_agents_telephony_replace_transfer_targets_request("agent", **kwargs),
-        lambda **kwargs: build_beta_voice_agents_telephony_cancel_call_job_request("agent", "job", **kwargs),
+        lambda **kwargs: build_voice_agents_telephony_update_binding_request("agent", "binding", **kwargs),
+        lambda **kwargs: build_voice_agents_telephony_delete_binding_request("agent", "binding", **kwargs),
+        lambda **kwargs: build_voice_agents_telephony_replace_transfer_targets_request("agent", **kwargs),
+        lambda **kwargs: build_voice_agents_telephony_cancel_call_job_request("agent", "job", **kwargs),
     ],
 )
 def test_telephony_builders_apply_match_condition(build_request):

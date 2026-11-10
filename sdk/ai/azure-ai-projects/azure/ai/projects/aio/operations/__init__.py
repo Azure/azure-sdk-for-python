@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._operations import BetaOperations  # type: ignore
+from ._operations import VoiceAgentsOperations  # type: ignore
 from ._operations import AgentsOperations  # type: ignore
 from ._operations import EvaluationRulesOperations  # type: ignore
 from ._operations import DatasetsOperations  # type: ignore
@@ -28,6 +29,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "BetaOperations",
+    "VoiceAgentsOperations",
     "AgentsOperations",
     "EvaluationRulesOperations",
     "DatasetsOperations",

@@ -186,7 +186,8 @@ class _LiveHarness:
 
     def manager(self, *, protocol="live", **options):
         options.setdefault("agent_name", _AGENT)
-        return getattr(self.client.beta.voice_agents, protocol).connect(**options)
+        voice_agents = self.client.beta.voice_agents if protocol == "live" else self.client.voice_agents
+        return getattr(voice_agents, protocol).connect(**options)
 
     async def call(self, method, *args, **kwargs):
         result = method(*args, **kwargs)
@@ -234,7 +235,7 @@ async def test_live_is_public_and_connect_is_lazy(live):
     prefix = "Async" if live.is_async else ""
     assert isinstance(live.live, getattr(public_operations, f"{prefix}BetaLive"))
     assert live.live is live.client.beta.voice_agents.live
-    assert live.live is not live.client.beta.voice_agents.realtime
+    assert live.live is not live.client.voice_agents.realtime
     assert tuple(inspect.signature(type(live.live).__init__).parameters) == ("self", "args", "kwargs")
 
     manager = live.manager()
