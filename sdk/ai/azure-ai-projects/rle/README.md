@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.5b1
+python install_rle_sdk.py --version 2.7.6b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -146,7 +146,36 @@ All 402 offline rollout and model tests passed against an isolated installation
 of this wheel. Packaged Python files match the pinned merged source except for
 the release version.
 
-The registry selects `2.7.5b1` as `latest`; all earlier versions and checksums
-are preserved. This is an RLE preview distribution, not a PyPI publication.
+Version `2.7.5b1` remains available for explicit installation. This is an RLE
+preview distribution, not a PyPI publication.
 No live gateway/training qualification, backend deployment, or image rebuild
 is included.
+
+## Version 2.7.6b1
+
+This preview makes **V4 the default** for asynchronous `get_rollout_client()`
+and direct `AsyncRolloutClient` construction. Completion notifications trigger
+authenticated HTTP retrieval of the full typed result. The configurable result
+download budget remains 32 MiB; use
+`execute_rollout(..., max_response_bytes=64 * 1024 * 1024)` to increase it.
+
+**A V4-capable backend is required.** Failed negotiation is an explicit error,
+with no silent fallback or execution replay. Explicit `protocol_version="v3"`
+retains V3. Explicit `protocol_version=None` retains legacy v2/v1, and is
+required when using legacy-only `server_managed_token_renewal=True`.
+Synchronous and asynchronous one-shot `rle.execute_rollout()` still default
+to HTTP. Earlier V3 result-reference fixes are included.
+
+The wheel is built from merged SDK source
+`401b1615119282243d460387c5b26f6a8f174fac` in
+`sujit-kamireddy/azure-sdk-for-python`, including source PR #16. Only the staged
+package version is overridden to `2.7.6b1`. The wheel is 604062 bytes with SHA-256
+`16c237b9e7b6f923c975a13b61c17c34006589239ade7d72a516a673f1e137db`.
+All 404 offline rollout and model tests passed against an isolated installation
+of this wheel. Packaged Python files match the pinned merged source except for
+the release version.
+
+The registry selects `2.7.6b1` as `latest`, preserving all earlier versions and
+checksums. This is an RLE preview distribution, not a PyPI publication.
+Backend deployment, live gateway/training qualification and consumer image
+rebuilds are separate work.
