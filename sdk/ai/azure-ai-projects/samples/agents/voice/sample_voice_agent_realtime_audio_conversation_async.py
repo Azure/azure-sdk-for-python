@@ -17,7 +17,7 @@ DESCRIPTION:
 USAGE:
     python sample_voice_agent_realtime_audio_conversation_async.py
 
-    pip install "azure-ai-projects[voice]>=2.7.0" azure-identity python-dotenv pyaudio
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv pyaudio
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - Foundry project endpoint:

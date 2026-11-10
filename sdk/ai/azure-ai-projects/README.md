@@ -256,6 +256,19 @@ The separate [sync REST example](https://github.com/Azure/azure-sdk-for-python/b
 reads an existing generated-audio artifact and optionally saves it to a new output file.
 It requires the stored item ID from REST and a deployment that persists unheard audio.
 
+### Voice Agent campaigns (preview)
+
+The [campaign sample](samples/agents/voice/sample_voice_agent_campaign.py)
+create an outbound campaign scheduled for the next day, wait for preparation, then cancel
+and delete the sample campaign. They use `.beta.voice_agents.telephony` and the SDK's
+automatic long-running-operation polling, including operation-guarded final reads and
+conditional cancellation/deletion with fresh ETags.
+
+Use an existing voice agent, an outbound-capable telephony connection, and phone numbers
+you have permission to use. Creation authorizes dialing; if execution is interrupted before
+cancellation, the campaign may place calls at its scheduled time. The samples preserve the
+existing agent and connection.
+
 ### Voice Agent GPT-Live (preview)
 
 Use `.beta.voice_agents.live` for GPT-Live sessions and `.beta.voice_agents.live_conversations`

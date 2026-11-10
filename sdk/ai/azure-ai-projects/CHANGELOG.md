@@ -56,6 +56,7 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
+* Added `sample_voice_agent_campaign.py` demonstrating future-scheduled outbound campaign creation, automatic polling, conditional cancellation, and deletion, with a matching asynchronous sample.
 * Updated Voice Agent samples to use the GA operation paths without `allow_preview=True`; GPT Live samples retain preview opt-in.
 * Added GPT Live samples for session lifecycle and settings updates, text and audio conversations, local function tools, and same-project managed-agent delegation.
 * Added `sample_voice_agent_live_read_conversation.py` demonstrating stored Live conversation, transcript, and audio retrieval, with an optional temporary greeting session.

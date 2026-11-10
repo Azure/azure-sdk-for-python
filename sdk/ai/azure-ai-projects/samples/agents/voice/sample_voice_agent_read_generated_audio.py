@@ -11,7 +11,7 @@ DESCRIPTION:
 
 USAGE:
     python sample_voice_agent_read_generated_audio.py
-    pip install azure-ai-projects azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
