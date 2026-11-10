@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.6b1
+python install_rle_sdk.py --version 2.7.7b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -175,7 +175,36 @@ All 404 offline rollout and model tests passed against an isolated installation
 of this wheel. Packaged Python files match the pinned merged source except for
 the release version.
 
-The registry selects `2.7.6b1` as `latest`, preserving all earlier versions and
-checksums. This is an RLE preview distribution, not a PyPI publication.
+Version `2.7.6b1` remains available for explicit installation.
+This is an RLE preview distribution, not a PyPI publication.
 Backend deployment, live gateway/training qualification and consumer image
 rebuilds are separate work.
+
+## Version 2.7.7b1
+
+This preview adds optional per-rollout model sampling defaults to
+`SamplingOptions`: `max_completion_tokens`, `temperature`, `top_p`, `top_k`,
+and `seed`. Pass `sampling=SamplingOptions(...)` to HTTP or shared-session
+`execute_rollout()` calls. Explicit model-request values override these
+defaults; service/provider ceilings and remaining model context still apply.
+Training capture requires neutral `top_p=1` and `top_k=-1` or `0`. Provider
+support varies, and a seed does not guarantee reproducibility.
+
+V4 remains the default for asynchronous rollout sessions, with authenticated
+full-result retrieval and the configurable 32 MiB download budget. Explicit
+V3/legacy selections and one-shot HTTP defaults are unchanged.
+
+The wheel is built from merged SDK source
+`ead8557db7474a94c38d3fce3564e249642c3da6` in
+`sujit-kamireddy/azure-sdk-for-python`, including source PR #11. Only the staged
+package version is overridden to `2.7.7b1`. The wheel is 604885 bytes with SHA-256
+`09319d1f7a5a2889677c03ac9ca952fd89913d93a80f441e9fbf52611b30f470`.
+All 406 offline rollout and model tests passed against an isolated installation
+of this wheel, including sampling serialization over HTTP and WebSocket.
+Packaged Python files match the pinned merged source except for the release
+version.
+
+The registry selects `2.7.7b1` as `latest`, preserving all seven earlier
+versions and checksums. This is an RLE preview distribution, not a PyPI
+publication. Backend deployment, live gateway/training qualification and
+consumer image rebuilds are separate work.
