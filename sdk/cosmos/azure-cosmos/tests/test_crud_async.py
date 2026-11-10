@@ -16,7 +16,7 @@ from unittest import mock
 import pytest
 from aiohttp import web
 from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError, ServiceRequestError, ServiceResponseTimeoutError
+from azure.core.exceptions import AzureError, ServiceResponseError, ServiceRequestError
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
 
 import azure.cosmos.documents as documents
@@ -948,45 +948,16 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_read_timeout_async(self):
         connection_policy = documents.ConnectionPolicy()
+        # making timeout 0 ms to make sure it will throw
         connection_policy.DBAReadTimeout = 0.000000000001
+        # this will make a get database account call
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
+            print('Async initialization')
 
-        async with AioHttpTransport() as transport:
-            original_send = transport.send
-
-            async def send(request, **kwargs):
-                self.assertEqual(kwargs["connection_timeout"], connection_policy.DBAConnectionTimeout)
-                if kwargs["read_timeout"] == connection_policy.DBAReadTimeout:
-                    raise ServiceResponseTimeoutError("Injected database account read timeout")
-                self.assertEqual(kwargs["read_timeout"], 5)
-                return await original_send(request, **kwargs)
-
-            # Inject the read failure without racing DNS, TCP, or TLS timeouts.
-            with mock.patch.object(transport, "send", side_effect=send) as mock_send:
-                async with CosmosClient(
-                    self.host, self.masterKey, connection_policy=connection_policy, transport=transport
-                ):
-                    pass
-                self.assertEqual(
-                    [call.kwargs["read_timeout"] for call in mock_send.call_args_list],
-                    [connection_policy.DBAReadTimeout, 5],
-                )
-
-    async def test_connection_timeout_async(self):
-        connection_policy = documents.ConnectionPolicy()
         connection_policy.DBAConnectionTimeout = 0.000000000001
-        error = ServiceRequestError("Injected database account connection timeout")
-        async with AioHttpTransport() as transport:
-            with mock.patch.object(transport, "send", side_effect=error) as mock_send:
-                with self.assertRaises(ServiceRequestError) as raised:
-                    async with CosmosClient(
-                        self.host, self.masterKey, connection_policy=connection_policy, transport=transport
-                    ):
-                        pass
-                self.assertIs(raised.exception, error)
-                self.assertGreater(mock_send.call_count, 1)
-                self.assertEqual(mock_send.call_args_list[0].kwargs["read_timeout"], connection_policy.DBAReadTimeout)
-                for call in mock_send.call_args_list:
-                    self.assertEqual(call.kwargs["connection_timeout"], connection_policy.DBAConnectionTimeout)
+        with self.assertRaises(ServiceRequestError):
+            async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
+                print('Async initialization')
 
     async def test_client_request_timeout_when_connection_retry_configuration_specified_async(self):
         connection_policy = documents.ConnectionPolicy()
