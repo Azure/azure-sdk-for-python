@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.4b1
+python install_rle_sdk.py --version 2.7.5b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -109,6 +109,44 @@ staged package version overridden from `2.7.0b7.dev20261104+queuedv3.4` to
 All 102 queued V3 offline tests passed against an isolated installation of
 this wheel. Live gateway or training qualification was not performed.
 
-The registry selects `2.7.4b1` as `latest`; existing versions and checksums are
-preserved. Existing environments and training images must install this version
-or be rebuilt to consume the fix. This is not a PyPI publication.
+Version `2.7.4b1` remains available for explicit installation. Existing
+environments and training images must install a fixed version or be rebuilt
+to consume the fix. This is not a PyPI publication.
+
+## Version 2.7.5b1
+
+This preview adds opt-in V4 completion-to-HTTP result delivery:
+`get_rollout_client(..., protocol_version="v4")`. The socket carries a small
+completion notification; the SDK fetches the complete stored result using an
+authenticated HTTP GET at the original project endpoint. Downloads do not
+block the socket receiver, preserve the original deadline, and never replay
+rollout execution.
+
+V4 result downloads default to **32 MiB (33,554,432 bytes)**. Callers can
+increase or decrease the per-call budget with
+`execute_rollout(..., max_response_bytes=64 * 1024 * 1024)`. A
+`RolloutResultTooLarge` error reports the configured limit, bytes observed,
+rollout ID, and an example override. The rollout has completed; only result
+retrieval failed. Full responses are buffered and parsed in memory, so choose
+a limit appropriate for the calling process.
+
+Omitting `protocol_version` preserves legacy defaults. V3 and legacy result
+budgets remain 8 MiB, and the WebSocket payload limit remains 8 MiB. V4 requires
+a backend that supports `rle.execute-rollout.v4`; installing this wheel does not
+deploy or enable backend support. The typed result exposes the current
+`rollout_graph` field and retains legacy `rollout` support.
+
+The wheel is built from merged SDK source
+`4dfc1b984da6fae96b68969c302f7e7286501976` in
+`sujit-kamireddy/azure-sdk-for-python`, including source PR #13 and the earlier
+V3 Foundry reference fix from PR #14. Only the staged package version is
+overridden to `2.7.5b1`. The wheel is 603721 bytes with SHA-256
+`5f31c171ba3459210d676cade5f77772795559f179d0d23b60deae1a2e3a46bf`.
+All 402 offline rollout and model tests passed against an isolated installation
+of this wheel. Packaged Python files match the pinned merged source except for
+the release version.
+
+The registry selects `2.7.5b1` as `latest`; all earlier versions and checksums
+are preserved. This is an RLE preview distribution, not a PyPI publication.
+No live gateway/training qualification, backend deployment, or image rebuild
+is included.
