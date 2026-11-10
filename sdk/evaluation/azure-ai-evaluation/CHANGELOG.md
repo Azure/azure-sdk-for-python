@@ -1,5 +1,11 @@
 # Release History
 
+## 1.18.13 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed Azure OpenAI grader setup raising `TypeError` or `AttributeError` when the service omits testing criteria or returns null. The SDK now raises a typed evaluation failure before submitting an evaluation run; existing criterion-count validation is unchanged.
+
 ## 1.18.12 (2026-11-09)
 
 ### Bugs Fixed
