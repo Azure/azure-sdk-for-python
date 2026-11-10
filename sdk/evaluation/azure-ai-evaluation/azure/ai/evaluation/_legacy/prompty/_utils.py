@@ -43,8 +43,10 @@ from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIEr
 from azure.ai.evaluation._constants import DefaultOpenEncoding
 from azure.ai.evaluation._legacy.prompty._exceptions import (
     InvalidInputError,
+    InvalidLLMOutputError,
     JinjaTemplateError,
     PromptyException,
+    invalid_llm_output_message,
 )
 
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml
@@ -660,6 +662,25 @@ async def format_llm_response(
             output_results[key] = result_dict[key]
         return output_results
 
+    def parse_choice(content: Any, finish_reason: str = "", output_tokens: Any = None) -> Any:
+        try:
+            return format_choice(content)
+        except (json.JSONDecodeError, TypeError) as error:
+            if finish_reason == "length":
+                cause = "the judge model response was truncated at the output token limit"
+            elif finish_reason == "content_filter":
+                cause = "the judge model response was blocked by the content filter"
+            elif content is None or (isinstance(content, str) and not content.strip()):
+                cause = "the judge model returned an empty response"
+            elif isinstance(error, json.JSONDecodeError):
+                # The decoder's msg and pos describe the failure without echoing the response content.
+                cause = f"the judge model response was not valid JSON ({error.msg} at character {error.pos})"
+            else:
+                cause = f"the judge model response had unexpected type {type(content).__name__}"
+            raise InvalidLLMOutputError(
+                invalid_llm_output_message(cause, finish_reason or None, output_tokens)
+            ) from None
+
     async def format_stream(llm_response: AsyncStream[ChatCompletionChunk]) -> AsyncGenerator[str, None]:
         cur_index = None
         async for chunk in llm_response:
@@ -691,7 +712,7 @@ async def format_llm_response(
             to_ret["llm_output"] = format_stream(llm_response=response)
             return to_ret
         content = "".join([item async for item in format_stream(llm_response=response)])
-        to_ret["llm_output"] = format_choice(content)
+        to_ret["llm_output"] = parse_choice(content)
         return to_ret  # we don't actually use this code path since streaming is not used, so set token counts to 0
     else:
         input_token_count = response.usage.prompt_tokens if response.usage and response.usage.prompt_tokens else 0
@@ -727,7 +748,7 @@ async def format_llm_response(
         response_content = response.model_dump()["choices"][0]["message"]
     else:
         response_content = getattr(response.choices[0].message, "content", "")
-    result = format_choice(response_content)
+    result = parse_choice(response_content, finish_reason, output_token_count)
     to_ret["llm_output"] = result
     to_ret["input_token_count"] = input_token_count
     to_ret["output_token_count"] = output_token_count

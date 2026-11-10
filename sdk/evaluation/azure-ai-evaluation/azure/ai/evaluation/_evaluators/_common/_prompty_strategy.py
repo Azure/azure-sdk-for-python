@@ -1,12 +1,27 @@
 import json
 import math
 import re
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, NoReturn, Optional, Tuple
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._common.utils import check_score_is_valid, parse_quality_evaluator_reason_score
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._legacy.prompty._exceptions import invalid_llm_output_message
 from ._base_model_eval import ModelEvaluatorBase, not_applicable_result
+
+_NO_VALID_SCORE = "the judge model response had no valid numeric score"
+
+
+def _describe_score(score: Any) -> str:
+    """Describe a score for an error message without echoing non-numeric judge text."""
+    try:
+        if score is None or isinstance(score, (bool, int, float)):
+            return str(score)
+        if isinstance(score, str):
+            return str(float(score))
+    except ValueError:
+        return "<non-numeric str>" if isinstance(score, str) else "<numeric overflow>"
+    return f"<{type(score).__name__}>"
 
 
 class PromptyEvaluationStrategy:
@@ -56,7 +71,7 @@ class PromptyEvaluationStrategy:
 
     def parse(self, output: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(output, dict) or (not self.strict and not output):
-            self._invalid_output()
+            self._invalid_output(output)
         answer = output.get("llm_output", output if self.strict else "")
         if not self.strict and isinstance(answer, str):
             try:
@@ -84,7 +99,7 @@ class PromptyEvaluationStrategy:
             reason = answer.get("reason", "")
             properties = answer.get("properties", {}) or {}
         elif self.strict:
-            self._invalid_output()
+            self._invalid_output(output)
         elif isinstance(answer, str):
             if self.result_key in PROMPT_BASED_REASON_EVALUATORS:
                 if self.score_range:
@@ -103,7 +118,7 @@ class PromptyEvaluationStrategy:
                     has_score = True
         if self.score_range:
             minimum, maximum = self.score_range
-            score_for_error = score
+            score_for_error = None
             try:
                 valid_score = (
                     has_score and not isinstance(score, bool) and check_score_is_valid(score, minimum, maximum)
@@ -114,13 +129,23 @@ class PromptyEvaluationStrategy:
                 score_for_error = "<numeric overflow>"
             if not valid_score:
                 raise EvaluationException(
-                    message=f"Invalid score value: {score_for_error}. Expected a number in range [{minimum}, {maximum}].",
+                    message=(
+                        f"Invalid score value: {score_for_error or _describe_score(score)}. "
+                        f"Expected a number in range [{minimum}, {maximum}]."
+                    ),
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     target=self.score_error_target,
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
-        score = float(score) if self.strict or score is not None else math.nan
+        elif self.strict and not has_score:
+            self._invalid_output(output, _NO_VALID_SCORE)
+        try:
+            score = float(score) if self.strict or score is not None else math.nan
+        except (TypeError, ValueError):
+            self._invalid_output(output, _NO_VALID_SCORE)
+        if self.strict and (isinstance(answer.get("score"), bool) or not math.isfinite(score)):
+            self._invalid_output(output, _NO_VALID_SCORE)
         cutoff = self.threshold if self.binary_cutoff is None else self.binary_cutoff
         if math.isnan(score) and self.binary_cutoff is None:
             verdict = "unknown"
@@ -156,9 +181,21 @@ class PromptyEvaluationStrategy:
             result.update({f"{self.result_key}_{key}": value for key, value in metadata.items()})
         return result
 
-    def _invalid_output(self) -> None:
+    def _invalid_output(self, output: Any = None, cause: Optional[str] = None) -> NoReturn:
+        # Runtime metadata is only trusted from a prompty envelope; a bare answer dict comes from the judge.
+        envelope = output if isinstance(output, dict) and "llm_output" in output else {}
+        if cause is None:
+            answer = envelope.get("llm_output") if envelope else output
+            if answer is None or answer == "" or answer == {}:
+                cause = "the judge model returned an empty response"
+            elif isinstance(answer, str):
+                cause = "the judge model response was not a JSON object"
+            else:
+                cause = f"the judge model response had unexpected type {type(answer).__name__}"
+        message = invalid_llm_output_message(cause, envelope.get("finish_reason"), envelope.get("output_token_count"))
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=message,
+            internal_message=message,
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=self.error_target,

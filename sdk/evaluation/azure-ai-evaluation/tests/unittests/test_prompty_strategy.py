@@ -219,10 +219,35 @@ def test_legacy_quality_text_domain_is_unchanged_without_an_explicit_range():
 
 def test_missing_completion_score_and_binary_rule():
     completion = strategy(binary_cutoff=1, threshold=7)
-    assert completion.parse({})["metric"] == 0
     assert completion.parse({"score": 1})["metric_result"] == "pass"
-    with pytest.raises(ValueError):
-        completion.parse({"score": "bad"})
+    for answer in ({}, {"reason": "no score"}, {"score": "SECRET"}, {"score": True}, {"score": "nan"}):
+        with pytest.raises(EvaluationException) as exc_info:
+            completion.parse(answer)
+        message = str(exc_info.value)
+        assert "Evaluator returned invalid output: the judge model response had no valid numeric score" in message
+        assert "SECRET" not in message
+
+
+def test_invalid_output_reports_only_runtime_metadata():
+    with pytest.raises(EvaluationException) as exc_info:
+        strategy().parse({"llm_output": "SECRET", "finish_reason": "length", "output_token_count": 800})
+    assert exc_info.value.args[0] == (
+        "Evaluator returned invalid output: the judge model response was not a JSON object "
+        "(finish_reason=length, output_tokens=800)."
+    )
+
+    with pytest.raises(EvaluationException) as exc_info:
+        strategy(binary_cutoff=1).parse({"finish_reason": "length", "output_token_count": 800})
+    assert "(finish_reason=unknown, output_tokens=unknown)" in str(exc_info.value)
+
+
+def test_non_numeric_scores_are_not_echoed():
+    with pytest.raises(EvaluationException, match=r"Invalid score value: <non-numeric str>\.") as exc_info:
+        strategy(score_range=(1, 5)).parse({"llm_output": {"score": "SECRET"}})
+    assert "SECRET" not in str(exc_info.value)
+    with pytest.raises(EvaluationException, match="Evaluator returned invalid output") as exc_info:
+        strategy(strict=False).parse({"llm_output": {"score": "SECRET"}})
+    assert "SECRET" not in str(exc_info.value)
 
 
 @pytest.mark.parametrize("strict", [True, False])

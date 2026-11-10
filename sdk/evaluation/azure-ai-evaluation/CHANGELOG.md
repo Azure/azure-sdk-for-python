@@ -1,5 +1,12 @@
 # Release History
 
+## 1.18.13 (Unreleased)
+
+### Bugs Fixed
+
+- Prompty-based evaluators that request JSON output now report why the judge model output could not be used, such as truncation at the output token limit, content filtering, an empty response, or invalid JSON, along with the finish reason and output token count, instead of a raw JSON decoding error. The message does not include the model output.
+- `PromptyEvaluationStrategy` reports a missing, non-numeric, or non-finite score as invalid output rather than scoring a strict binary evaluator as 0, and no longer includes non-numeric score text in error messages.
+
 ## 1.18.12 (2026-11-09)
 
 ### Bugs Fixed

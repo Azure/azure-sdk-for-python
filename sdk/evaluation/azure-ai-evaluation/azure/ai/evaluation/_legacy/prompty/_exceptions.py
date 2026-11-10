@@ -2,9 +2,33 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
+from typing import Any, Optional
 from openai import OpenAIError
 from azure.ai.evaluation._exceptions import ErrorCategory, ErrorBlame, ErrorTarget, EvaluationException
+
+_KNOWN_FINISH_REASONS = ("stop", "length", "content_filter", "tool_calls", "function_call")
+
+
+def invalid_llm_output_message(cause: str, finish_reason: Any = None, output_tokens: Any = None) -> str:
+    """Build an actionable invalid judge output message from non-content metadata only.
+
+    :param cause: A fixed description of why the output was unusable. Must not contain model output.
+    :type cause: str
+    :param finish_reason: The completion finish reason. Unrecognized values are reported as ``unknown``.
+    :type finish_reason: Any
+    :param output_tokens: The completion token count. Non-integer values are reported as ``unknown``.
+    :type output_tokens: Any
+    :return: The error message.
+    :rtype: str
+    """
+    if finish_reason not in _KNOWN_FINISH_REASONS:
+        finish_reason = "unknown"
+    if isinstance(output_tokens, bool) or not isinstance(output_tokens, int):
+        output_tokens = "unknown"
+    return (
+        f"Evaluator returned invalid output: {cause} "
+        f"(finish_reason={finish_reason}, output_tokens={output_tokens})."
+    )
 
 
 class PromptyException(EvaluationException):
@@ -58,6 +82,17 @@ class NotSupportedError(PromptyException):
         kwargs.setdefault("category", ErrorCategory.INVALID_VALUE)
         kwargs.setdefault("target", ErrorTarget.UNKNOWN)
         kwargs.setdefault("blame", ErrorBlame.SYSTEM_ERROR)
+        super().__init__(message, **kwargs)
+
+
+class InvalidLLMOutputError(PromptyException):
+    """Exception raised when the LLM response cannot be parsed into the requested response format."""
+
+    def __init__(self, message: str, **kwargs):
+        kwargs.setdefault("category", ErrorCategory.FAILED_EXECUTION)
+        kwargs.setdefault("target", ErrorTarget.EVAL_RUN)
+        kwargs.setdefault("blame", ErrorBlame.SYSTEM_ERROR)
+        kwargs.setdefault("internal_message", message)
         super().__init__(message, **kwargs)
 
 
