@@ -13,6 +13,45 @@ from typing import Any, Dict, List, Union
 from _models import ChangesChecker, Suppression, RegexSuppression, PostProcessingChecker
 
 
+def _normalize_property_type(annotation: str) -> frozenset:
+    aliases = {
+        "List": "list",
+        "Dict": "dict",
+        "Tuple": "tuple",
+        "Set": "set",
+        "FrozenSet": "frozenset",
+        "Type": "type",
+    }
+
+    def _members(node: ast.AST) -> frozenset:
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            return _normalize_property_type(node.value)
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+            return _members(node.left) | _members(node.right)
+        if isinstance(node, ast.Subscript):
+            name = ast.unparse(node.value).removeprefix("typing.")
+            if name == "Literal":
+                items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+                return frozenset({("Literal", frozenset(ast.dump(item) for item in items))})
+            if name == "Optional":
+                return _members(node.slice) | frozenset({"None"})
+            if name == "Union":
+                items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+                return frozenset().union(*(_members(item) for item in items))
+            items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+            return frozenset({(aliases.get(name, name), tuple(_members(item) for item in items))})
+        if isinstance(node, ast.List):
+            return frozenset({("arguments", tuple(_members(item) for item in node.elts))})
+        name = ast.unparse(node).removeprefix("typing.")
+        return frozenset({aliases.get(name, name)})
+
+    try:
+        node = ast.parse(annotation, mode="eval").body
+    except SyntaxError:
+        return frozenset({annotation})
+    return _members(node)
+
+
 class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLIENT = "RemovedOrRenamedClient"
     REMOVED_OR_RENAMED_CLIENT_METHOD = "RemovedOrRenamedClientMethod"
@@ -676,18 +715,7 @@ class BreakingChangesTracker:
         def _is_nullable(annotation: Any) -> bool:
             if annotation == "Optional":
                 return True
-            if not isinstance(annotation, str):
-                return False
-
-            bracket = annotation.find("[")
-            if bracket != -1 and annotation.endswith("]"):
-                name = annotation[:bracket].rsplit(".", 1)[-1]
-                if name == "Optional":
-                    return True
-                if name == "Union":
-                    return any(member.strip() == "None" for member in annotation[bracket + 1:-1].split(","))
-
-            return any(member.strip() == "None" for member in annotation.split("|"))
+            return isinstance(annotation, str) and "None" in _normalize_property_type(annotation)
 
         stable_properties = self.stable[self._module_name]["class_nodes"][self._class_name].get("properties", {})
         current_properties = self.current[self._module_name]["class_nodes"][self._class_name].get("properties", {})
@@ -713,42 +741,6 @@ class BreakingChangesTracker:
             if isinstance(value, dict) and value.get("is_annotation") is False:
                 return None
             return value.get("attr_type") if isinstance(value, dict) else value
-
-        def _normalize_property_type(annotation: str) -> frozenset:
-            def _members(node: ast.AST) -> frozenset:
-                if isinstance(node, ast.Constant) and isinstance(node.value, str):
-                    return _normalize_property_type(node.value)
-                if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
-                    return _members(node.left) | _members(node.right)
-                if isinstance(node, ast.Subscript):
-                    name = ast.unparse(node.value).removeprefix("typing.")
-                    if name == "Literal":
-                        items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
-                        return frozenset({("Literal", frozenset(ast.dump(item) for item in items))})
-                    if name == "Optional":
-                        return _members(node.slice) | frozenset({"None"})
-                    if name == "Union":
-                        items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
-                        return frozenset().union(*(_members(item) for item in items))
-                    name = {
-                        "List": "list",
-                        "Dict": "dict",
-                        "Tuple": "tuple",
-                        "Set": "set",
-                        "FrozenSet": "frozenset",
-                        "Type": "type",
-                    }.get(name, name)
-                    items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
-                    return frozenset({(name, tuple(_members(item) for item in items))})
-                if isinstance(node, ast.List):
-                    return frozenset({("arguments", tuple(_members(item) for item in node.elts))})
-                return frozenset({ast.unparse(node).removeprefix("typing.")})
-
-            try:
-                node = ast.parse(annotation, mode="eval").body
-            except SyntaxError:
-                return frozenset({annotation})
-            return _members(node)
 
         stable_class = self.stable[self._module_name]["class_nodes"][self._class_name]
         if (

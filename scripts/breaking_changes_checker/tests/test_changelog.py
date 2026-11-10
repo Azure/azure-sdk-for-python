@@ -1317,6 +1317,24 @@ def test_added_keyword_only_param_to_operation_group_method():
             0,
             id="reversed-pep604-union-to-qualified-optional",
         ),
+        pytest.param(
+            {"attr_type": "typing.Optional[Foo]"},
+            {"attr_type": "'typing.Optional[Foo]'"},
+            0,
+            id="quoted-optional",
+        ),
+        pytest.param(
+            {"attr_type": "'typing.Optional[Foo]'"},
+            {"attr_type": "Foo"},
+            1,
+            id="quoted-optional-to-required",
+        ),
+        pytest.param(
+            {"attr_type": "Union[Foo, Union[Bar, None]]"},
+            {"attr_type": "Union[Foo, Bar]"},
+            1,
+            id="nested-union-to-required",
+        ),
     ],
 )
 def test_class_property_is_required(
@@ -1466,6 +1484,20 @@ def test_class_property_is_required_with_default_report():
         ),
         pytest.param(
             {"attr_type": "typing.List[Foo]"}, {"attr_type": "list[Foo]"}, 0, id="generic-alias"
+        ),
+        pytest.param({"attr_type": "typing.Dict"}, {"attr_type": "dict"}, 0, id="bare-dict"),
+        pytest.param({"attr_type": "List"}, {"attr_type": "list"}, 0, id="bare-list"),
+        pytest.param({"attr_type": "typing.Tuple"}, {"attr_type": "tuple"}, 0, id="bare-tuple"),
+        pytest.param({"attr_type": "Set"}, {"attr_type": "set"}, 0, id="bare-set"),
+        pytest.param(
+            {"attr_type": "typing.FrozenSet"}, {"attr_type": "frozenset"}, 0, id="bare-frozenset"
+        ),
+        pytest.param({"attr_type": "Type"}, {"attr_type": "type"}, 0, id="bare-type"),
+        pytest.param(
+            {"attr_type": "typing.Optional[Foo]"},
+            {"attr_type": "'typing.Optional[Foo]'"},
+            0,
+            id="quoted-optional",
         ),
         pytest.param("Optional", "Optional[str]", 0, id="incomplete-type"),
         pytest.param({"attr_type": "foo"}, {"attr_type": "str"}, 0, id="initializer-name"),
