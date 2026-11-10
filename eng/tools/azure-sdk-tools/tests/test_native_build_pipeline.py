@@ -135,15 +135,35 @@ def test_windows_provisioning_configuration(tmp_path, rust):
 
 
 def test_dev_requirements_share_selected_target_provisioning(tmp_path):
-    steps = [step for step in load_template("jobs/live.tests.yml")["jobs"][0]["steps"] if isinstance(step, dict)]
+    template = "prepare-native-test-dependencies.yml"
+    for job in ("ci.tests.yml", "live.tests.yml"):
+        steps = [step for step in load_template(f"jobs/{job}")["jobs"][0]["steps"] if isinstance(step, dict)]
+        configure_index = next(i for i, step in enumerate(steps) if step.get("template", "").endswith(template))
+        test_index = next(i for i, step in enumerate(steps) if step.get("template", "").endswith("build-test.yml"))
+        assert configure_index < test_index
+        if job == "live.tests.yml":
+            assert steps[configure_index]["parameters"]["Condition"] == (
+                "and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))"
+            )
+        else:
+            assert "parameters" not in steps[configure_index]
+
+    preparation = load_template(f"steps/{template}")
+    assert preparation["parameters"][0]["default"] == "succeeded()"
+    steps = preparation["steps"]
     provision = next(step for step in steps if step.get("displayName") == "Pre-provision CPython for cibuildwheel")
-    assert provision["condition"] == (
-        "and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))"
-    )
+    assert provision["condition"] == ("and(${{ parameters.Condition }}, eq(variables['Agent.OS'], 'Windows_NT'))")
+    authenticate = next(step for step in steps if step.get("task") == "NuGetAuthenticate@1")
+    assert authenticate["condition"] == provision["condition"]
     configure = next(
         step for step in steps if step.get("displayName") == "Configure cibuildwheel for dev requirement builds"
     )
-    assert "variable=CIBW_ARCHS]native" in configure["pwsh"]
+    assert configure["condition"] == "${{ parameters.Condition }}"
+    result = run_powershell(configure["pwsh"])
+    assert result.returncode == 0, result.stderr
+    assert "variable=CIBW_ARCHS]native" in result.stdout
+    assert "variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL" in result.stdout
+    assert "variable=CIBW_ENVIRONMENT]" not in result.stdout
     assert "nuget install" not in provision["pwsh"]
     assert "3.10.11" not in provision["pwsh"]
     result = run_powershell(provision["pwsh"].replace("$(Agent.TempDirectory)", str(tmp_path)))
@@ -238,6 +258,7 @@ def test_cargo_feed_configuration_uses_default_cargo_home(tmp_path):
         CARGO_HOME="",
         CARGO_FEED_URL=feed,
         HOME=str(tmp_path),
+        USERPROFILE=str(tmp_path),
         RUST_TOOLCHAIN_FEED="example-feed",
     )
 
@@ -251,6 +272,7 @@ def test_build_powershell_scripts_parse():
     for template_path in (
         "steps/install-msrust-toolchain.yml",
         "steps/build-package-artifacts.yml",
+        "steps/prepare-native-test-dependencies.yml",
         "steps/resolve-build-platforms.yml",
     ):
         template = load_template(template_path)
