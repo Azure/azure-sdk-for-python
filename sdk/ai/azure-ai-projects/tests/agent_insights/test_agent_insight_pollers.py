@@ -14,8 +14,7 @@ import requests
 from urllib3.response import HTTPResponse
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import PipelineContext, PipelineResponse
-from azure.core.pipeline.transport import AioHttpTransport, RequestsTransport
+from azure.core.pipeline import PipelineContext, PipelineResponse, transport
 from azure.core.rest import HttpRequest
 
 from azure.ai.projects import AIProjectClient
@@ -83,6 +82,26 @@ def _run_response(
     return PipelineResponse(request, response, PipelineContext(None))
 
 
+def _transport_run_responses(*, is_async: bool) -> list[Any]:
+    responses = []
+    for index, status in enumerate(["queued", "in_progress", "succeeded", "succeeded"]):
+        response = _run_response(status, initial=index == 0).http_response
+        response.headers["content-type"] = "application/json"
+        response.headers["location"] = "https://example.test/runs/run-test"
+        if is_async:
+            raw_response = MagicMock(status=response.status_code, headers=response.headers, reason="OK")
+            raw_response.read = AsyncMock(return_value=response.content)
+        else:
+            raw_response = requests.Response()
+            raw_response.status_code = response.status_code
+            raw_response.headers.update(response.headers)
+            raw_response.raw = HTTPResponse(body=io.BytesIO(response.content), preload_content=False)
+            raw_response._content = response.content
+            raw_response._content_consumed = True
+        responses.append(raw_response)
+    return responses
+
+
 def _operation_for_status(terminal_status: str, *, is_async: bool = False, initial_status_code: int = 201):
     operation_type = AsyncAgentInsightMonitorsOperations if is_async else AgentInsightMonitorsOperations
     operation = operation_type.__new__(operation_type)
@@ -139,23 +158,7 @@ async def test_run_poller_sends_headers_on_every_request(
         request_arguments["body"] = expected_body
     elif request_kind == "stream":
         request_arguments["body"] = io.BytesIO(json.dumps(expected_body).encode())
-    responses = []
-    for index, status in enumerate(["queued", "in_progress", "succeeded", "succeeded"]):
-        response = _run_response(status, initial=index == 0).http_response
-        response.headers["content-type"] = "application/json"
-        response.headers["location"] = "https://example.test/runs/run-test"
-        if is_async:
-            raw_response = MagicMock(status=response.status_code, headers=response.headers, reason="OK")
-            raw_response.read = AsyncMock(return_value=response.content)
-        else:
-            raw_response = requests.Response()
-            raw_response.status_code = response.status_code
-            raw_response.headers.update(response.headers)
-            raw_response.raw = HTTPResponse(body=io.BytesIO(response.content), preload_content=False)
-            raw_response._content = response.content
-            raw_response._content_consumed = True
-        responses.append(raw_response)
-
+    responses = _transport_run_responses(is_async=is_async)
     session = MagicMock()
     credential = MagicMock(spec=["get_token"])
     token = AccessToken("test-token", 4102444800)
@@ -166,7 +169,7 @@ async def test_run_poller_sends_headers_on_every_request(
             endpoint="https://example.test",
             credential=credential,
             allow_preview=allow_preview,
-            transport=AioHttpTransport(session=session, session_owner=False),
+            transport=transport.AioHttpTransport(session=session, session_owner=False),
         ) as client:
             poller = await client.agent_insight_monitors.begin_create_run(
                 "monitor-test", polling_interval=0, headers=headers, **request_arguments
@@ -180,7 +183,7 @@ async def test_run_poller_sends_headers_on_every_request(
             endpoint="https://example.test",
             credential=credential,
             allow_preview=allow_preview,
-            transport=RequestsTransport(session=session),
+            transport=transport.RequestsTransport(session=session),
         ) as client:
             poller = client.agent_insight_monitors.begin_create_run(
                 "monitor-test", polling_interval=0, headers=headers, **request_arguments
