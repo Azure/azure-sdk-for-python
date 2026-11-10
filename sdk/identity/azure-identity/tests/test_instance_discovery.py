@@ -31,7 +31,9 @@ def test_unknown_authority():
         requests=[
             Request(
                 authority="login.microsoftonline.com",
-                required_params={"authorization_endpoint": "https://unknown.authority/organizations/oauth2/v2.0/authorize"},
+                required_params={
+                    "authorization_endpoint": "https://unknown.authority/organizations/oauth2/v2.0/authorize"
+                },
             )
         ],
         responses=[mock_response(400, json_payload={"error": "invalid_instance"})],
