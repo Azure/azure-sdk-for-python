@@ -153,7 +153,7 @@ class TestFoundryFeaturesHeaderOnGaOperations(FoundryFeaturesHeaderTestBase):
         method = getattr(sc, method_attr)
         self._assert_header_absent(method_name, self._make_fake_call(method))
 
-    @pytest.mark.parametrize("subclient_name", ["agent_insight_monitors", "skills"])
+    @pytest.mark.parametrize("subclient_name", ["agent_insight_monitors"])
     @pytest.mark.parametrize("allow_preview", [False, True])
     def test_promoted_operations_do_not_require_preview(
         self,

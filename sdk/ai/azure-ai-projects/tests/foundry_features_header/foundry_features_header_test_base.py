@@ -43,6 +43,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "red_teams": "RedTeams=V1Preview",
     "routines": "Routines=V2Preview",
     "schedules": "Schedules=V1Preview",
+    "skills": "Skills=V1Preview",
     "voice_agents": "VoiceAgents=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
 }

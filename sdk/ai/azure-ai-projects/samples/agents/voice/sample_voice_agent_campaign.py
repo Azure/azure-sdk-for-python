@@ -70,7 +70,7 @@ def main() -> None:
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
-        campaigns = project_client.beta.voice_agents.campaigns
+        campaigns = project_client.beta.voice_agents.telephony
         create_poller = None
         try:
             create_poller = campaigns.begin_create(

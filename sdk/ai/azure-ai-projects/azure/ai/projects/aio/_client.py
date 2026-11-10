@@ -26,7 +26,6 @@ from .operations import (
     EvaluationRulesOperations,
     EvaluatorsOperations,
     IndexesOperations,
-    SkillsOperations,
     ToolboxesOperations,
     VoiceAgentsOperations,
 )
@@ -62,8 +61,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
-    :ivar skills: SkillsOperations operations
-    :vartype skills: azure.ai.projects.aio.operations.SkillsOperations
     :ivar evaluators: EvaluatorsOperations operations
     :vartype evaluators: azure.ai.projects.aio.operations.EvaluatorsOperations
     :ivar toolboxes: ToolboxesOperations operations
@@ -130,7 +127,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.skills = SkillsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluators = EvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 

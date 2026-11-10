@@ -40,7 +40,7 @@ from .._live import (
 )
 
 # Nested operation groups are re-exported here rather than in the generated package exports.
-from ._patch_campaigns_async import BetaVoiceAgentsCampaignsOperations
+from ._patch_campaigns_async import BetaVoiceAgentsTelephonyOperations
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
@@ -48,6 +48,7 @@ from ._operations import (
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
     BetaSchedulesOperations,
+    BetaSkillsOperations,
     BetaVoiceAgentsLiveConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     VoiceAgentsConversationsOperations,
@@ -96,8 +97,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         :attr:`~azure.ai.projects.aio.operations.BetaOperations.voice_agents` attribute.
     """
 
-    campaigns: BetaVoiceAgentsCampaignsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsCampaignsOperations` operations"""
+    telephony: BetaVoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations` operations"""
     live_conversations: BetaVoiceAgentsLiveConversationsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
     live: AsyncBetaLive
@@ -105,7 +106,7 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.campaigns = BetaVoiceAgentsCampaignsOperations(
+        self.telephony = BetaVoiceAgentsTelephonyOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.live = AsyncBetaLive(self)
@@ -135,6 +136,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
+    skills: BetaSkillsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     voice_agents: BetaVoiceAgentsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsOperations` operations"""
 
@@ -174,7 +177,8 @@ __all__: List[str] = [
     "BetaRedTeamsOperations",
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
-    "BetaVoiceAgentsCampaignsOperations",
+    "BetaSkillsOperations",
+    "BetaVoiceAgentsTelephonyOperations",
     "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
     "VoiceAgentsConversationsOperations",

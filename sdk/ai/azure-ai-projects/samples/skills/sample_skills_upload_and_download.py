@@ -15,7 +15,7 @@ DESCRIPTION:
     4) Download the package with `download(...)` to the temp folder.
     5) Delete the uploaded skill.
 
-    Skills operations are generally available through `project_client.skills`.
+    Skills operations are in preview through `project_client.beta.skills`.
 
 USAGE:
     python sample_skills_upload_and_download.py
@@ -65,7 +65,7 @@ with (
 ):
 
     try:
-        project_client.skills.delete(skill_name)
+        project_client.beta.skills.delete(skill_name)
         print(f"Skill `{skill_name}` deleted")
     except ResourceNotFoundError:
         pass
@@ -88,20 +88,20 @@ with (
     #   # 4) (filename, bytes, content_type)
     #   files=[(skill_zip_filename, skill_zip_bytes, "application/zip")]
     #
-    imported = project_client.skills.create_from_files(
+    imported = project_client.beta.skills.create_from_files(
         skill_name,
         content=CreateSkillVersionFromFilesBody(files=[(skill_zip_filename, skill_zip_bytes)]),
     )
     imported_skill_name = imported.name
     print(f"Imported skill from package: {imported.name} ({imported.skill_id}) version={imported.version}")
 
-    fetched = project_client.skills.get(imported.name)
+    fetched = project_client.beta.skills.get(imported.name)
     print(f"Fetched imported skill: {fetched.name} ({fetched.id}) default_version={fetched.default_version}")
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     download_path = download_folder / f"{fetched.name}_{timestamp}.zip"
-    download_path.write_bytes(b"".join(project_client.skills.download(fetched.name)))
+    download_path.write_bytes(b"".join(project_client.beta.skills.download(fetched.name)))
     print(f"Downloaded skill package path: {download_path}")
 
-    deleted = project_client.skills.delete(fetched.name)
+    deleted = project_client.beta.skills.delete(fetched.name)
     print(f"Deleted imported skill: {deleted}")

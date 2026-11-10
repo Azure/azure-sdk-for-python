@@ -30,7 +30,7 @@ from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
-from ._patch_campaigns import BetaVoiceAgentsCampaignsOperations
+from ._patch_campaigns import BetaVoiceAgentsTelephonyOperations
 
 # Nested operation groups are re-exported here rather than in the generated package exports.
 from ._operations import (
@@ -40,6 +40,7 @@ from ._operations import (
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
     BetaSchedulesOperations,
+    BetaSkillsOperations,
     BetaVoiceAgentsLiveConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     VoiceAgentsConversationsOperations,
@@ -89,9 +90,9 @@ class _OperationMethodHeaderProxy:
     ):
         """Wrap an operation and its nested operation groups with the same header value.
 
-        For example,         ``.beta.voice_agents`` stores ``live_conversations`` and ``campaigns`` as nested
+        For example, ``.beta.voice_agents`` stores ``live_conversations`` and ``telephony`` as nested
         operation groups. Wrapping them with the parent proxy ensures every call under
-        ``.beta.voice_agents.live_conversations`` and ``.beta.voice_agents.campaigns`` receives the
+        ``.beta.voice_agents.live_conversations`` and ``.beta.voice_agents.telephony`` receives the
         ``Foundry-Features: VoiceAgents=V1Preview`` header.
 
         ``method_names`` restricts injection to conditional preview operations on a GA group.
@@ -191,8 +192,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         :attr:`~azure.ai.projects.operations.BetaOperations.voice_agents` attribute.
     """
 
-    campaigns: BetaVoiceAgentsCampaignsOperations
-    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsCampaignsOperations` operations"""
+    telephony: BetaVoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations` operations"""
     live_conversations: BetaVoiceAgentsLiveConversationsOperations
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
     live: BetaLive
@@ -200,7 +201,7 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.campaigns = BetaVoiceAgentsCampaignsOperations(
+        self.telephony = BetaVoiceAgentsTelephonyOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.live = BetaLive(self)
@@ -230,6 +231,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.operations.BetaSchedulesOperations` operations"""
+    skills: BetaSkillsOperations
+    """:class:`~azure.ai.projects.operations.BetaSkillsOperations` operations"""
     voice_agents: BetaVoiceAgentsOperations
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsOperations` operations"""
 
@@ -261,7 +264,8 @@ __all__: List[str] = [
     "BetaRedTeamsOperations",
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
-    "BetaVoiceAgentsCampaignsOperations",
+    "BetaSkillsOperations",
+    "BetaVoiceAgentsTelephonyOperations",
     "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
     "VoiceAgentsConversationsOperations",
