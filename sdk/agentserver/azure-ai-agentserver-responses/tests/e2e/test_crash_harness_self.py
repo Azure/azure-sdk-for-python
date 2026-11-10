@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
+# cspell:ignore EADDRINUSE
 """Self-tests for the crash-injection harness (T-052).
 
 Exercises the harness against a trivial built-in HTTP server (not against any

@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
+# cspell:ignore EADDRINUSE
 """Crash-injection harness for cross-process recovery testing (T-051).
 
 Spawns an HTTP server as a subprocess, exposes ``kill()`` (SIGKILL) and
