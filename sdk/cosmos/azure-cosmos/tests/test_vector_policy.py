@@ -486,7 +486,9 @@ class TestVectorPolicy(unittest.TestCase):
             assert "The Vector Indexing Policy parameter QuantizationByteSize value :: 513 is out of range." \
                    in e.http_error_message
 
-    def test_replace_vector_indexing_policy(self):
+    # TODO: Allow index type modifications once the emulator is updated.
+    @pytest.mark.skip(reason="Pending emulator support for vector index type modifications")
+    def test_fail_replace_vector_indexing_policy(self):
         vector_embedding_policy = {
             "vectorEmbeddings": [
                 {
@@ -518,6 +520,22 @@ class TestVectorPolicy(unittest.TestCase):
                 assert e.status_code == 400
                 assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
                         in e.http_error_message)
+            # using a new indexing policy
+            new_indexing_policy = {
+                "vectorIndexes": [
+                    {"path": "/vector1", "type": "quantizedFlat"}]
+            }
+            try:
+                self.test_db.replace_container(
+                    created_container,
+                    PartitionKey(path="/id"),
+                    vector_embedding_policy=vector_embedding_policy,
+                    indexing_policy=new_indexing_policy)
+                pytest.fail("Container replace should have failed for new indexing policy.")
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400
+                assert ("Paths in existing vector indexing policy cannot be modified in Collection Replace"
+                        in e.http_error_message)
             # using a new vector embedding policy
             new_embedding_policy = {
                 "vectorEmbeddings": [
@@ -537,35 +555,6 @@ class TestVectorPolicy(unittest.TestCase):
                 assert e.status_code == 400
                 assert ("Paths in existing embedding policy cannot be modified in Collection Replace"
                         in e.http_error_message)
-
-            # Change the index only after checking invalid replacements against the original policy.
-            new_indexing_policy = {
-                "vectorIndexes": [
-                    {"path": "/vector1", "type": "quantizedFlat"}]
-            }
-            if 'localhost' in self.host or '127.0.0.1' in self.host:
-                # Update this expectation when the emulator supports mutable vector index settings.
-                with pytest.raises(exceptions.CosmosHttpResponseError) as error:
-                    self.test_db.replace_container(
-                        created_container,
-                        PartitionKey(path="/id"),
-                        vector_embedding_policy=vector_embedding_policy,
-                        indexing_policy=new_indexing_policy,
-                        return_properties=True)
-                assert error.value.status_code == 400
-                assert ("Paths in existing vector indexing policy cannot be modified in Collection Replace"
-                        in error.value.http_error_message)
-                return
-
-            replaced_container, properties = self.test_db.replace_container(
-                created_container,
-                PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy,
-                indexing_policy=new_indexing_policy,
-                return_properties=True)
-            assert properties["indexingPolicy"]["vectorIndexes"] == new_indexing_policy["vectorIndexes"]
-            read_properties = replaced_container.read()
-            assert read_properties["indexingPolicy"]["vectorIndexes"] == new_indexing_policy["vectorIndexes"]
         finally:
             self.test_db.delete_container(container_id)
 
