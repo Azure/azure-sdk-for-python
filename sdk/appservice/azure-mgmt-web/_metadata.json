@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Web": "2026-08-01"
   },
-  "commit": "806490ed8ea740841a39f8f9cd907c6a5e113ee0",
+  "commit": "b6ab28408ab0422cad0a2e518d31500416590e1c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/web/resource-manager/Microsoft.Web/AppService",
   "emitterVersion": "0.63.10",
