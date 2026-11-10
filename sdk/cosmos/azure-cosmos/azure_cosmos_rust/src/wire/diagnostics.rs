@@ -35,7 +35,10 @@ pub(super) fn fault_payload<'py>(
     let payload = PyDict::new_bound(py);
     payload.set_item("activity_id", diagnostics.activity_id().to_string())?;
     payload.set_item("request_count", diagnostics.request_count())?;
-    payload.set_item("retained_request_count", diagnostics.retained_request_count())?;
+    payload.set_item(
+        "retained_request_count",
+        diagnostics.retained_request_count(),
+    )?;
     let requests = PyList::empty_bound(py);
     for request in diagnostics.requests().iter() {
         let row = PyDict::new_bound(py);
@@ -43,7 +46,14 @@ pub(super) fn fault_payload<'py>(
         row.set_item("region", request.region().map(|region| region.as_str()))?;
         row.set_item("pipeline", request.pipeline_type().as_str())?;
         row.set_item("status", u16::from(request.status().status_code()))?;
-        row.set_item("sub_status", request.status().sub_status().map(|status| status.value()).unwrap_or(0))?;
+        row.set_item(
+            "sub_status",
+            request
+                .status()
+                .sub_status()
+                .map(|status| status.value())
+                .unwrap_or(0),
+        )?;
         let evaluations = PyList::empty_bound(py);
         for evaluation in request.fault_injection_evaluations() {
             let entry = PyDict::new_bound(py);
@@ -58,7 +68,15 @@ pub(super) fn fault_payload<'py>(
     Ok(payload)
 }
 
-/// Private POC contract. Never export bodies, keys, or endpoints.
+/// Host of an endpoint URL, mirroring the Rust SDK's `server.address`.
+fn server_address(endpoint: &str) -> Option<String> {
+    url::Url::parse(endpoint)
+        .ok()
+        .and_then(|url| url.host_str().map(str::to_string))
+}
+
+/// Private telemetry contract. Never export bodies, keys, or full endpoints;
+/// only the endpoint host is exported, as the Rust SDK does.
 /// Timing failures are reported as data so telemetry cannot change the
 /// database operation's outcome.
 pub(super) fn attempt_payload<'py>(
@@ -68,13 +86,69 @@ pub(super) fn attempt_payload<'py>(
     let reference_instant = Instant::now();
     let reference_system = SystemTime::now();
     let payload = PyDict::new_bound(py);
-    payload.set_item("schema_version", 1)?;
+    payload.set_item("schema_version", 2)?;
     payload.set_item("request_count", diagnostics.request_count())?;
     payload.set_item(
         "retained_request_count",
         diagnostics.retained_request_count(),
     )?;
     payload.set_item("error", py.None())?;
+    let status = diagnostics.effective_status();
+    payload.set_item(
+        "status_code",
+        status.map(|status| u16::from(status.status_code())),
+    )?;
+    payload.set_item(
+        "sub_status_code",
+        status.and_then(|status| status.sub_status().map(|sub| sub.value())),
+    )?;
+    payload.set_item("failed", diagnostics.is_failure())?;
+    payload.set_item("request_charge", diagnostics.total_request_charge().value())?;
+    payload.set_item(
+        "contacted_regions",
+        diagnostics
+            .regions_contacted()
+            .iter()
+            .map(|region| region.as_str().to_string())
+            .collect::<Vec<_>>(),
+    )?;
+    payload.set_item("machine_id", diagnostics.machine_id())?;
+    payload.set_item("hedging_started", diagnostics.hedging_started())?;
+    let hedge = diagnostics.hedge_diagnostics();
+    payload.set_item(
+        "hedge_region",
+        hedge
+            .and_then(|hedge| hedge.alternate_region())
+            .map(|region| region.as_str().to_string()),
+    )?;
+    payload.set_item(
+        "hedge_terminal_state",
+        hedge.map(|hedge| hedge.terminal_state().as_str()),
+    )?;
+    payload.set_item(
+        "requested_regions",
+        diagnostics
+            .requested_regions()
+            .iter()
+            .map(|requested| requested.region.as_str().to_string())
+            .collect::<Vec<_>>(),
+    )?;
+    payload.set_item(
+        "requested_regions_total",
+        diagnostics.total_requested_regions(),
+    )?;
+    payload.set_item(
+        "responded_regions",
+        diagnostics
+            .responded_regions()
+            .iter()
+            .map(|region| region.as_str().to_string())
+            .collect::<Vec<_>>(),
+    )?;
+    payload.set_item(
+        "responded_regions_total",
+        diagnostics.total_responded_regions(),
+    )?;
     let attempts = PyList::empty_bound(py);
     for request in diagnostics.requests().iter() {
         let times = (|| {
@@ -105,6 +179,22 @@ pub(super) fn attempt_payload<'py>(
             u16::from(request.status().status_code()),
         )?;
         row.set_item("execution_context", request.execution_context().as_str())?;
+        row.set_item(
+            "sub_status_code",
+            request.status().sub_status().map(|sub| sub.value()),
+        )?;
+        row.set_item("failed", !request.status().is_success())?;
+        row.set_item("request_charge", request.request_charge().value())?;
+        row.set_item(
+            "region",
+            request.region().map(|region| region.as_str().to_string()),
+        )?;
+        row.set_item("server_address", server_address(request.endpoint()))?;
+        row.set_item(
+            "activity_id",
+            request.activity_id().map(|id| id.as_str().to_string()),
+        )?;
+        row.set_item("operation_name", request.operation_name())?;
         attempts.append(row)?;
     }
     payload.set_item("attempts", attempts)?;
@@ -201,8 +291,18 @@ fn append_transport_summary<'a>(
 
 #[cfg(test)]
 mod tests {
-    use super::{append_transport_summary, epoch_nanos};
+    use super::{append_transport_summary, epoch_nanos, server_address};
     use std::time::{Duration, Instant, UNIX_EPOCH};
+
+    #[test]
+    fn server_address_exports_only_the_endpoint_host() {
+        assert_eq!(
+            server_address("https://acct-westus.documents.azure.com:443/dbs/x?sig=secret")
+                .as_deref(),
+            Some("acct-westus.documents.azure.com")
+        );
+        assert_eq!(server_address("not a url"), None);
+    }
 
     #[test]
     fn attempt_times_use_checked_clock_translation() {

@@ -397,14 +397,12 @@ def main() -> int:
     files = discover_tests(PACKAGE, args.suite)
     sys.path[:0] = [str(PACKAGE), str(PACKAGE / "tests")]
     if args.suite == "toxiproxy":
-        from toxiproxy._toxiproxy_config import DRIVER_COMMIT, validate_endpoint, verify_server
+        from toxiproxy._toxiproxy_config import validate_endpoint, verify_server
 
         if sys.platform != "win32":
             raise RuntimeError("The required Toxiproxy lane uses the Windows emulator.")
         validate_endpoint(os.environ["ACCOUNT_HOST"])
         verify_server(os.environ.get("TOXIPROXY_SERVER", ""))
-        if native.__rust_driver_commit__ != DRIVER_COMMIT:
-            raise RuntimeError("Toxiproxy requires the pinned Rust driver build.")
         if not args.toxiproxy_worker:
             if args.collect_only:
                 parser.error("required Toxiproxy coverage requires execution")

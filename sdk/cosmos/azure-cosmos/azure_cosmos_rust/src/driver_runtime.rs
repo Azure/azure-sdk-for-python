@@ -158,7 +158,7 @@ mod tests {
 
     #[test]
     fn runtime_preserves_all_explicit_connection_options() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let module = PyModule::from_code_bound(
                 py,
@@ -232,7 +232,7 @@ mod tests {
             return;
         }
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         runtime_context().tokio_rt.block_on(async {
             assert!(default_configuration().is_none());
             FAIL_NEXT_RUNTIME_BUILD.store(true, Ordering::SeqCst);

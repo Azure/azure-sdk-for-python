@@ -37,8 +37,8 @@ def recorded_spans(request):
             operation.set_status(trace.Status(trace.StatusCode.ERROR, "PRIVATE-ERROR"))
             operation.record_exception(ValueError("PRIVATE-BODY"))
             with tracer.start_as_current_span("cosmosdb.request") as attempt:
-                attempt.set_attribute("cosmos.poc.driver_status_code", 409)
-                attempt.set_attribute("cosmos.poc.execution_context", "initial")
+                attempt.set_attribute("db.response.status_code", "409")
+                attempt.set_attribute("azure.cosmosdb.request.execution_context", "initial")
         with tracer.start_as_current_span("PRIVATE-UNEXPECTED-SPAN"):
             pass
     with tracer.start_as_current_span("cleanup"):

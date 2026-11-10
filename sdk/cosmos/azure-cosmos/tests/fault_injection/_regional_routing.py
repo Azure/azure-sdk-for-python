@@ -14,7 +14,6 @@ from urllib.parse import urlsplit
 import pytest
 
 from azure.cosmos import exceptions
-from config.fault_resources import load_account as load_account
 
 from fault_injection._delayed_create import emit
 
@@ -38,6 +37,33 @@ def emulator_endpoints(endpoint):
         raise ValueError("F02 requires an HTTPS localhost/127.0.0.1 emulator endpoint, not a cloud account")
     port = parsed.port or 443
     return f"https://127.0.0.1:{port}/", f"https://localhost:{port}/"
+
+
+def mock_account():
+    """Build the account document, as the Rust SDK's mock_account.rs does.
+
+    No test reads the real document; topology() supplies the regions.
+    No "_etag", so the driver rebuilds its regions on every injected refresh.
+    """
+    return {
+        "_self": "",
+        "id": "localhost",
+        "_rid": "localhost.documents.azure.com",
+        "media": "//media/",
+        "addresses": "//addresses/",
+        "_dbs": "//dbs/",
+        "writableLocations": [],
+        "readableLocations": [],
+        "enableMultipleWriteLocations": False,
+        "continuousBackupEnabled": False,
+        "enableNRegionSynchronousCommit": False,
+        "enablePerPartitionFailoverBehavior": False,
+        "userReplicationPolicy": {"asyncReplication": False, "minReplicaSetSize": 3, "maxReplicasetSize": 4},
+        "userConsistencyPolicy": {"defaultConsistencyLevel": "Session"},
+        "systemReplicationPolicy": {"minReplicaSetSize": 3, "maxReplicasetSize": 4, "asyncReplication": False},
+        "readPolicy": {"primaryReadCoefficient": 1, "secondaryReadCoefficient": 1},
+        "queryEngineConfiguration": json.dumps({"allowNewKeywords": True}),
+    }
 
 
 def topology(account, write_endpoint, read_endpoint, target_guard):
@@ -105,7 +131,8 @@ def native_records(payload):
 
 def assert_guard(error, records, read_endpoint, hits, rule_id):
     assert isinstance(error, exceptions.CosmosHttpResponseError), "Guard did not reject the create"
-    assert error.status_code == 403 and error.sub_status == 3, "Expected WriteForbidden 403/3"
+    # As in Rust, the operation reports 503/20311; each attempt keeps the wire 403/3.
+    assert error.status_code == 503 and error.sub_status == 20311, "Expected ClientWriteForbidden 503/20311"
     assert hits > 0, "Forbidden-write rule was not applied"
     assert_destination(records, read_endpoint, 403)
     applied = sum(

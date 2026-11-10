@@ -7,7 +7,7 @@ exists, and it must not make a single request -- customers call it in loops, in
 constructors, and on every request of a web application, so a hidden lookup here
 would be a per-call cost nobody expects.
 
-Every test proves that by asserting the connection and the engine were never
+Every test proves that by asserting the connection and the adapter were never
 touched at all.
 
 The other theme is that the returned client always belongs to the client it was
@@ -38,7 +38,7 @@ def client_and_proxy_type(request):
     """Build a bare sync or async Cosmos client that has no working connection.
 
     The client is created without running its constructor, so nothing connects
-    and no credentials are needed. Its connection and engine are stand-ins that
+    and no credentials are needed. Its connection and adapter are stand-ins that
     record every call made against them.
 
     After each test the fixture asserts both recorded nothing. That single check
@@ -181,9 +181,9 @@ def test_calling_client_context_reaches_container_rust(client_and_proxy_type, in
     existing client, the container reached through it ends up on this client's
     connection and shared context.
 
-    That context is how item operations find the engine the customer configured.
+    That context is how item operations find the client's selected adapter.
     If it were lost anywhere along the chain, reading an item through a container
-    obtained this way could run on a different engine than the one chosen at
+    obtained this way could use a different adapter than the one chosen at
     startup.
 
     Neither step is something to wait on, even on the async client -- both are
@@ -231,7 +231,7 @@ def test_opposite_proxy_family_is_not_accepted_rust(client_and_proxy_type):
     must be waited on, so quietly accepting one would produce an object whose
     calls fail later, far from the mistake.
 
-    The rejected client's own connection and engine are confirmed untouched.
+    The rejected client's own connection and adapter are confirmed untouched.
     """
     client, proxy_type = client_and_proxy_type
     other_proxy_type = AsyncDatabaseProxy if proxy_type is DatabaseProxy else DatabaseProxy

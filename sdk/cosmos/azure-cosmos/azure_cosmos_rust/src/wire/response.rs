@@ -943,15 +943,16 @@ fn record_diagnostics_for_responseless(error: &CosmosError) {
     }
 }
 
-/// Convert an attached driver response, or return `None` if there is no response.
-/// Absence alone does not distinguish a local failure from one after a request.
+/// Convert an attached driver response, or the wire response kept by a synthetic
+/// terminal error. Return `None` when neither exists; absence alone does not
+/// distinguish a local failure from one after a request.
 fn backend_response_tuple_from_cosmos_error<'py>(
     py: Python<'py>,
     error: &CosmosError,
 ) -> PyResult<Option<Bound<'py, PyTuple>>> {
     let response = match error.response() {
         Some(r) => r,
-        None => return Ok(None),
+        None => return synthetic_terminal_error_tuple(py, error),
     };
 
     let status = response.status();
@@ -979,7 +980,7 @@ fn backend_response_tuple_from_cosmos_error_feed<'py>(
 ) -> PyResult<Option<Bound<'py, PyTuple>>> {
     let response = match error.response() {
         Some(r) => r,
-        None => return Ok(None),
+        None => return synthetic_terminal_error_tuple(py, error),
     };
 
     let diagnostics = record_diagnostics(response.diagnostics());
@@ -989,6 +990,47 @@ fn backend_response_tuple_from_cosmos_error_feed<'py>(
         response.headers(),
         response.body().clone(),
         diagnostics.as_str(),
+    )?))
+}
+
+/// Return the wire response kept in `source()` by the driver's synthetic
+/// 503/20310, 503/20311, and 503/20312 errors, as the driver's C binding does.
+fn synthetic_terminal_error_response(error: &CosmosError) -> Option<&CosmosResponse> {
+    let original_status = match error.status() {
+        status_codes::CLIENT_READ_SESSION_NOT_AVAILABLE => status_codes::READ_SESSION_NOT_AVAILABLE,
+        status_codes::CLIENT_WRITE_FORBIDDEN => status_codes::WRITE_FORBIDDEN,
+        status_codes::CLIENT_DATABASE_ACCOUNT_NOT_FOUND => status_codes::DATABASE_ACCOUNT_NOT_FOUND,
+        _ => return None,
+    };
+    let source = std::error::Error::source(error)?.downcast_ref::<CosmosError>()?;
+    (source.status() == original_status)
+        .then(|| source.response())
+        .flatten()
+}
+
+/// Report a synthetic terminal error as an HTTP error, as Rust does: keep the
+/// synthetic status, message, and operation diagnostics, and the wire headers.
+fn synthetic_terminal_error_tuple<'py>(
+    py: Python<'py>,
+    error: &CosmosError,
+) -> PyResult<Option<Bound<'py, PyTuple>>> {
+    let Some(original) = synthetic_terminal_error_response(error) else {
+        return Ok(None);
+    };
+    let (status_code, sub_status) = status_code_and_sub_status(error.status());
+    let response_headers = response_headers_dict(py, original.headers())?;
+    // Python reads the exception's sub-status from this header.
+    response_headers.set_item("x-ms-substatus", sub_status.to_string())?;
+    let diagnostics = record_diagnostics(error.diagnostics().unwrap_or(original.diagnostics()));
+    let body = serde_json::to_vec(&serde_json::json!({"message": error.to_string()}))
+        .map_err(|e| PyValueError::new_err(e.to_string()))?;
+    Ok(Some(backend_response_tuple(
+        py,
+        status_code,
+        sub_status,
+        response_headers,
+        &body,
+        Some(diagnostics.as_str()),
     )?))
 }
 
@@ -1185,7 +1227,7 @@ mod tests {
 
     #[tokio::test]
     async fn released_preparation_preserves_read_response_and_counters() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (_, read, _) = create_read_and_conflict().await;
         Python::with_gil(|py| {
             assert_eq!(u16::from(read.status().status_code()), 200);
@@ -1208,7 +1250,7 @@ mod tests {
         use std::time::Instant;
 
         assert!(!cfg!(debug_assertions), "Use --release for this benchmark");
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let runtime = tokio::runtime::Runtime::new().unwrap();
         let (_, read, _) = runtime.block_on(create_read_and_conflict());
         let iterations = 10_000;
@@ -1290,7 +1332,7 @@ mod tests {
 
     #[tokio::test]
     async fn resolved_operation_coverage_preserves_available_results_without_claiming_metadata() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (success, read, conflict) = create_read_and_conflict().await;
         for result in [Ok(success), Ok(read), Err(conflict)] {
             Python::with_gil(|py| {
@@ -1326,7 +1368,7 @@ mod tests {
     #[tokio::test]
     async fn metadata_error_attachment_preserves_service_transport_and_timeout_errors() {
         use azure_core::http::StatusCode;
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (success, _, conflict) = create_read_and_conflict().await;
         let diagnostics = success.diagnostics();
         let timeout = CosmosStatus::new(StatusCode::RequestTimeout)
@@ -1379,7 +1421,7 @@ mod tests {
 
     #[tokio::test]
     async fn attempt_envelope_preserves_create_read_and_conflict_driver_records() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (success, read, conflict) = create_read_and_conflict().await;
         for result in [Ok(success), Ok(read), Err(conflict)] {
             let driver_response = match &result {
@@ -1430,7 +1472,45 @@ mod tests {
                         .unwrap()
                         .extract::<u32>()
                         .unwrap(),
-                    1
+                    2
+                );
+                assert_eq!(
+                    payload
+                        .get_item("request_charge")
+                        .unwrap()
+                        .extract::<f64>()
+                        .unwrap(),
+                    diagnostics.total_request_charge().value()
+                );
+                assert_eq!(
+                    payload
+                        .get_item("contacted_regions")
+                        .unwrap()
+                        .extract::<Vec<String>>()
+                        .unwrap(),
+                    diagnostics
+                        .regions_contacted()
+                        .iter()
+                        .map(|region| region.as_str().to_string())
+                        .collect::<Vec<_>>()
+                );
+                assert_eq!(
+                    payload
+                        .get_item("status_code")
+                        .unwrap()
+                        .extract::<Option<u16>>()
+                        .unwrap(),
+                    diagnostics
+                        .effective_status()
+                        .map(|status| u16::from(status.status_code()))
+                );
+                assert_eq!(
+                    payload
+                        .get_item("failed")
+                        .unwrap()
+                        .extract::<bool>()
+                        .unwrap(),
+                    diagnostics.is_failure()
                 );
                 assert_eq!(
                     payload
@@ -1467,6 +1547,24 @@ mod tests {
                             .unwrap(),
                         request.execution_context().as_str()
                     );
+                    assert_eq!(
+                        row.get_item("failed").unwrap().extract::<bool>().unwrap(),
+                        !request.status().is_success()
+                    );
+                    assert_eq!(
+                        row.get_item("request_charge")
+                            .unwrap()
+                            .extract::<f64>()
+                            .unwrap(),
+                        request.request_charge().value()
+                    );
+                    assert_eq!(
+                        row.get_item("region")
+                            .unwrap()
+                            .extract::<Option<String>>()
+                            .unwrap(),
+                        request.region().map(|region| region.as_str().to_string())
+                    );
                     let start = row.get_item("start_ns").unwrap().extract::<u64>().unwrap();
                     let end = row.get_item("end_ns").unwrap().extract::<u64>().unwrap();
                     assert_eq!(
@@ -1484,7 +1582,7 @@ mod tests {
 
     #[tokio::test]
     async fn attempt_tracing_preserves_responseless_errors_and_available_diagnostics() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (_, _, conflict) = create_read_and_conflict().await;
         let diagnostics = conflict.diagnostics().unwrap();
         assert!(diagnostics.request_count() > 0);
@@ -1580,7 +1678,7 @@ mod tests {
 
     #[test]
     fn attempt_exception_without_diagnostics_keeps_original_error() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let error = CosmosError::builder()
                 .with_status(CosmosStatus::new(
@@ -1601,7 +1699,7 @@ mod tests {
 
     #[test]
     fn attempt_attachment_keeps_exception_identity_args_and_message() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let error = _DriverTransportError::new_err("driver failure");
             let original = error.value_bound(py).clone();
@@ -1629,7 +1727,7 @@ mod tests {
 
     #[test]
     fn attempt_attachment_failure_reports_without_replacing_error() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let module = pyo3::types::PyModule::from_code_bound(
                 py,
@@ -1707,7 +1805,7 @@ def record_unraisable(args):
 
     #[test]
     fn attempt_conversion_error_is_reportable_data_not_a_database_error() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let payload = attempt_payload_or_error(
                 py,
@@ -1724,7 +1822,7 @@ def record_unraisable(args):
 
     #[test]
     fn attempt_envelope_preserves_synthetic_error_without_attempt_diagnostics() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let error = CosmosError::builder()
                 .with_status(CosmosStatus::new(azure_core::http::StatusCode::BadRequest))
@@ -1762,7 +1860,7 @@ def record_unraisable(args):
 
     #[tokio::test]
     async fn database_feed_attempt_envelope_preserves_results_and_errors() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (_, read, conflict) = create_read_and_conflict().await;
         let diagnostics = read.diagnostics();
         Python::with_gil(|py| {
@@ -1820,7 +1918,7 @@ def record_unraisable(args):
 
     #[test]
     fn database_feed_service_errors_preserve_wire_tuple_fields() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for status_code in [
                 azure_core::http::StatusCode::Forbidden,
@@ -1881,7 +1979,7 @@ def record_unraisable(args):
 
     #[tokio::test]
     async fn metadata_query_attempt_envelope_preserves_results_and_errors() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (_, read, conflict) = create_read_and_conflict().await;
         let diagnostics = read.diagnostics();
         Python::with_gil(|py| {
@@ -1942,7 +2040,7 @@ def record_unraisable(args):
 
     #[test]
     fn unsupported_query_feature_uses_typed_binding_error() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for convert in [
                 tuple_from_feed_result,
@@ -1961,7 +2059,7 @@ def record_unraisable(args):
 
     #[tokio::test]
     async fn container_feed_attempt_envelope_preserves_results_and_errors() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (_, read, conflict) = create_read_and_conflict().await;
         let diagnostics = read.diagnostics();
         Python::with_gil(|py| {
@@ -2013,7 +2111,7 @@ def record_unraisable(args):
 
     #[test]
     fn read_feed_ranges_tuple_sets_minimal_headers() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let ranges = vec![PartitionKeyRange::new(
                 "0".to_string(),
@@ -2049,7 +2147,7 @@ def record_unraisable(args):
 
     #[test]
     fn read_feed_ranges_tuple_rejects_missing_routing_map() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let err = tuple_from_partition_key_ranges_result(py, Ok(None))
                 .expect_err("missing routing map must raise a transport error");
@@ -2079,7 +2177,7 @@ def record_unraisable(args):
 
     #[test]
     fn response_headers_dict_maps_present_fields_and_skips_missing() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let mut headers = CosmosResponseHeaders::new();
             headers.continuation = Some("ct-1".to_string());
@@ -2137,7 +2235,7 @@ def record_unraisable(args):
 
     #[test]
     fn response_headers_dict_reencodes_index_metrics_to_base64() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let mut headers = CosmosResponseHeaders::new();
             // The driver stores this decoded; Python base64-decodes whatever we
@@ -2203,7 +2301,7 @@ def record_unraisable(args):
 
     #[test]
     fn responseless_error_surfaces_transport_error_not_runtime_error() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let error = CosmosError::builder()
                 .with_status(CosmosStatus::new(
@@ -2223,7 +2321,7 @@ def record_unraisable(args):
 
     #[test]
     fn client_operation_timeout_requires_exact_status_without_message_matching() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let timeout = CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
                 .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value());
@@ -2265,7 +2363,7 @@ def record_unraisable(args):
 
     #[tokio::test]
     async fn client_operation_timeout_preserves_attached_response_and_diagnostics() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (_, _, conflict) = create_read_and_conflict().await;
         let diagnostics = conflict.diagnostics().unwrap();
         let timeout = CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
@@ -2321,9 +2419,132 @@ def record_unraisable(args):
         });
     }
 
+    /// Run a create that always receives 403/3, so the driver itself returns
+    /// its synthetic 503/20311 wrapper.
+    async fn write_forbidden_create() -> CosmosError {
+        use azure_data_cosmos_driver::{
+            fault_injection::{
+                FaultInjectionConditionBuilder, FaultInjectionErrorType,
+                FaultInjectionResultBuilder, FaultInjectionRuleBuilder,
+            },
+            in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+            models::{
+                AccountReference, CosmosOperation, ItemReference, PartitionKey,
+                PartitionKeyDefinition,
+            },
+            options::DriverOptions,
+        };
+        use std::sync::Arc;
+
+        let url = azure_core::http::Url::parse("https://forbidden.emulator.local").unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),
+        ));
+        emulator.store().create_database("sales");
+        emulator.store().create_container(
+            "sales",
+            "orders",
+            PartitionKeyDefinition::from("/customerId"),
+        );
+        let rule = Arc::new(
+            FaultInjectionRuleBuilder::new(
+                "write-forbidden",
+                FaultInjectionResultBuilder::new()
+                    .with_error(FaultInjectionErrorType::WriteForbidden)
+                    .build(),
+            )
+            .with_condition(
+                FaultInjectionConditionBuilder::new()
+                    .with_operation_type("CreateItem".parse().unwrap())
+                    .build(),
+            )
+            .build(),
+        );
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                    .with_fault_injection_rules(vec![rule])
+                    .unwrap()
+                    .build(),
+            )
+            .await
+            .unwrap();
+        let container = driver
+            .resolve_container("sales", "orders", Default::default())
+            .await
+            .unwrap();
+        let create = CosmosOperation::create_item(ItemReference::from_name(
+            &container,
+            PartitionKey::from("customer-17"),
+            "order-17",
+        ))
+        .with_body(br#"{"id":"order-17","customerId":"customer-17"}"#.to_vec());
+        driver
+            .execute_singleton_operation(create, Default::default())
+            .await
+            .unwrap_err()
+    }
+
+    #[tokio::test]
+    async fn synthetic_terminal_errors_surface_as_http_errors_with_wire_headers() {
+        crate::test_support::prepare_python();
+        let error = write_forbidden_create().await;
+        assert_eq!(error.status(), status_codes::CLIENT_WRITE_FORBIDDEN);
+        assert!(error.response().is_none());
+        let (_, _, conflict) = create_read_and_conflict().await;
+        // A wrapper whose source is not the matching wire status stays a transport error.
+        let mismatched = CosmosError::builder()
+            .with_status(status_codes::CLIENT_WRITE_FORBIDDEN)
+            .with_source(conflict)
+            .build();
+        Python::with_gil(|py| {
+            for feed in [false, true] {
+                let convert = |error| {
+                    if feed {
+                        tuple_from_feed_result(py, Err(error))
+                    } else {
+                        tuple_from_result(py, Err(error))
+                    }
+                };
+                let tuple = convert(error.clone()).unwrap();
+                assert_eq!(tuple.get_item(0).unwrap().extract::<i64>().unwrap(), 503);
+                assert_eq!(tuple.get_item(1).unwrap().extract::<i64>().unwrap(), 20311);
+                let headers = tuple.get_item(2).unwrap();
+                let header =
+                    |name: &str| headers.get_item(name).unwrap().extract::<String>().unwrap();
+                assert_eq!(header("x-ms-substatus"), "20311");
+                // Every other header comes from the wire 403/3 response.
+                let wire = super::synthetic_terminal_error_response(&error).unwrap();
+                let wire = response_headers_dict(py, wire.headers()).unwrap();
+                assert_eq!(
+                    wire.get_item("x-ms-substatus")
+                        .unwrap()
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                    "3"
+                );
+                for (name, value) in wire.iter() {
+                    let name = name.extract::<String>().unwrap();
+                    if name != "x-ms-substatus" {
+                        assert!(headers.get_item(&name).unwrap().eq(value).unwrap());
+                    }
+                }
+                let body = tuple.get_item(3).unwrap().extract::<Vec<u8>>().unwrap();
+                assert!(String::from_utf8(body)
+                    .unwrap()
+                    .contains("no eligible write region"));
+
+                let other = convert(mismatched.clone()).unwrap_err();
+                assert!(other.is_instance_of::<_DriverTransportError>(py));
+            }
+        });
+    }
+
     #[test]
     fn local_validation_and_precondition_errors_retain_status_and_message() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for status in [
                 status_codes::CLIENT_BAD_REQUEST,
@@ -2360,7 +2581,7 @@ def record_unraisable(args):
 
     #[test]
     fn responseless_feed_error_surfaces_transport_error_not_runtime_error() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let error = CosmosError::builder()
                 .with_status(CosmosStatus::new(
@@ -2380,7 +2601,7 @@ def record_unraisable(args):
 
     #[test]
     fn responseless_database_feed_error_surfaces_transport_error() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let error = CosmosError::builder()
                 .with_status(CosmosStatus::new(

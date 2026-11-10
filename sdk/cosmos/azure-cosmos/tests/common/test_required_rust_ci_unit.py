@@ -7,6 +7,7 @@ import json
 import subprocess
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 import yaml
@@ -383,6 +384,35 @@ def test_network_worker_preserves_required_arguments_and_failure_evidence_rust(t
     assert (results / "live.txt").read_text() == "worker evidence\n"
 
 
+def test_toxiproxy_lane_accepts_current_driver_revision_rust(tmp_path, monkeypatch):
+    import azure.cosmos
+    from toxiproxy import _toxiproxy_config
+
+    native = SimpleNamespace(__file__=str(tmp_path / "_rust.pyd"), __rust_driver_commit__="unit-test-revision")
+    monkeypatch.setattr(azure.cosmos, "_rust", native)
+    monkeypatch.setitem(runner.sys.modules, "azure.cosmos._rust", native)
+    monkeypatch.setattr(runner.sys, "path", list(runner.sys.path))
+    monkeypatch.setattr(runner.sys, "platform", "win32")
+    results = tmp_path / "results"
+    monkeypatch.setattr(
+        runner.sys, "argv",
+        ["run_rust_ci.py", "toxiproxy", "--require-installed-wheel", "--results", str(results)],
+    )
+    monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
+    monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    monkeypatch.setenv("ACCOUNT_HOST", "https://localhost:8081/")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    monkeypatch.setenv("TOXIPROXY_SERVER", str(tmp_path / "toxiproxy.exe"))
+    monkeypatch.setattr(runner, "discover_tests", Mock(return_value=[]))
+    verify = Mock()
+    monkeypatch.setattr(_toxiproxy_config, "verify_server", verify)
+    execute = Mock(return_value=0)
+    monkeypatch.setattr(runner, "run_toxiproxy_worker", execute)
+    assert runner.main() == 0
+    verify.assert_called_once_with(str(tmp_path / "toxiproxy.exe"))
+    execute.assert_called_once_with(results, native)
+
+
 def test_pipeline_wires_toxiproxy_through_existing_central_hook_rust():
     repository = PACKAGE.parents[2]
     ci = yaml.safe_load((repository / "sdk" / "cosmos" / "ci.yml").read_text())
@@ -391,6 +421,10 @@ def test_pipeline_wires_toxiproxy_through_existing_central_hook_rust():
     assert parameters["TestMarkArgument"] == "cosmosEmulator"
     assert parameters["BeforeTestSteps"][0]["template"].endswith("/cosmos-emulator.yml")
     assert parameters["AfterTestSteps"] == [
+        {
+            "template": "/sdk/cosmos/templates/rust-tests.yml",
+            "parameters": {"ToolchainFeed": parameters["MsRustToolchainFeed"]},
+        },
         {"template": "/sdk/cosmos/templates/telemetry-tests.yml"},
         {"template": "/sdk/cosmos/templates/toxiproxy-tests.yml"},
     ]
@@ -409,6 +443,68 @@ def test_pipeline_wires_toxiproxy_through_existing_central_hook_rust():
     assert "run_rust_ci.py toxiproxy" in template
     assert "uploadLlmArtifacts" in template
     assert "llm-artifacts/cosmos-toxiproxy" in template
+
+
+def test_supplemental_rust_checks_reuse_one_existing_test_job_rust():
+    repository = PACKAGE.parents[2]
+    ci = yaml.safe_load((repository / "sdk" / "cosmos" / "ci.yml").read_text())
+    parameters = ci["extends"]["parameters"]
+    assert parameters["TestMarkArgument"] == "cosmosEmulator"
+    assert parameters["TestTimeoutInMinutes"] == 240
+    template = (repository / "sdk/cosmos/templates/rust-tests.yml").read_text()
+    parsed = yaml.safe_load(template)
+    assert set(parsed) == {"parameters", "steps"}
+    prepare, install, native, offline, publish = parsed["steps"]
+    condition = (
+        "and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), "
+        "eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))"
+    )
+    for step in (prepare, native, offline, publish):
+        assert step["condition"] == condition
+    assert install["template"] == "/eng/pipelines/templates/steps/install-msrust-toolchain.yml"
+    assert install["parameters"] == {
+        "ToolchainFeed": "${{ parameters.ToolchainFeed }}",
+        "WorkingDirectory": "$(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos",
+        "Condition": condition,
+    }
+    assert all("checkout" not in step for step in parsed["steps"])
+    assert all(step.get("task") != "DownloadPipelineArtifact@2" for step in parsed["steps"])
+    assert "use-python-version.yml" not in template
+    assert "cosmos-emulator.yml" not in template
+    assert "run_rust_ci.py parity" not in template
+    assert "continueOnError" not in template
+    assert "--collect-only" not in template
+
+
+def test_supplemental_rust_checks_require_built_wheel_and_save_results_rust():
+    repository = PACKAGE.parents[2]
+    parsed = yaml.safe_load((repository / "sdk/cosmos/templates/rust-tests.yml").read_text())
+    prepare, _, native, offline, publish = parsed["steps"]
+    results = "$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust"
+    assert results in prepare["pwsh"]
+    assert "uploadLlmArtifacts" in prepare["pwsh"]
+    assert "$PSNativeCommandUseErrorActionPreference = $true" in prepare["pwsh"]
+    assert "python -m pip install -r dev_requirements.txt" in prepare["pwsh"]
+    assert "-Filter 'azure_cosmos-*-win_amd64.whl'" in prepare["pwsh"]
+    assert "$wheels.Count -ne 1" in prepare["pwsh"]
+    assert "install --no-deps --force-reinstall $wheels[0].FullName" in prepare["pwsh"]
+    assert "$env:PYO3_PYTHON = (Get-Command python).Source" in native["pwsh"]
+    assert "run_rust_ci.py native" in native["pwsh"]
+    assert f"--results '{results}/native'" in native["pwsh"]
+    assert "exit $LASTEXITCODE" in native["pwsh"]
+    assert "run_rust_ci.py offline" in offline["pwsh"]
+    assert "--require-installed-wheel" in offline["pwsh"]
+    assert f"--results '{results}/offline'" in offline["pwsh"]
+    assert "exit $LASTEXITCODE" in offline["pwsh"]
+    assert offline["env"] == {
+        "COSMOS_BACKEND": "core-python",
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
+        "COSMOSDBCONNECTIONSTRING": "",
+    }
+    assert publish["task"] == "PublishTestResults@2"
+    assert publish["inputs"]["testResultsFiles"] == f"{results}/offline/pytest.xml"
+    assert publish["inputs"]["failTaskOnFailedTests"] is True
+    assert publish["inputs"]["failTaskOnMissingResultsFile"] is True
 
 
 def test_pipeline_telemetry_installs_dependencies_and_runs_offline_rust():

@@ -83,7 +83,7 @@ mod handle_ownership_tests {
 
     #[test]
     fn handle_retains_original_driver_before_lookup_across_close_and_recreation() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let endpoint = Url::parse("https://owning-handle.emulator.local").unwrap();
         let config = VirtualAccountConfig::new(vec![
             VirtualRegion::new("East US", endpoint.clone()),

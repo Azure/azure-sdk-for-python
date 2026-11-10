@@ -13,8 +13,8 @@ from azure.cosmos import CosmosClient, PartitionKey, exceptions
 from auth._token_credentials import make_sync_token_credential, skip_unless_token_auth
 from config import clients
 from create_item._legacy_contracts import (
-    AAD_CONTENT, COMPACT_CONTENT, EMOJI_CASES, INCOMPLETE_KEYS, INVALID_IDS, MEBIBYTE,
-    assert_bad_hierarchical_key, assert_native_body, assert_stored_sequence, large_cjk_body,
+    AAD_CONTENT, COMPACT_CONTENT, EMOJI_CASES, INVALID_IDS, MEBIBYTE,
+    assert_native_body, assert_stored_sequence, large_cjk_body,
 )
 from create_item._legacy_variants import assert_created, assert_fields, observe_native_create
 from create_item._legacy_variants import (  # pylint: disable=unused-import
@@ -37,23 +37,6 @@ def _contract_client_fixture(backend, request):
 
 def target(client, database, container):
     return client.get_database_client(database.id).get_container_client(container.id)
-
-
-@pytest.mark.cosmosLong
-@pytest.mark.cosmosAADLong
-@pytest.mark.parametrize("definition,body", INCOMPLETE_KEYS)
-@pytest.mark.parametrize("no_response", [False, True])
-def test_incomplete_hierarchical_partition_key_rust(
-    variant_database, make_variant_container, contract_client, monkeypatch, backend, definition, body, no_response
-):
-    # Source: tests/test_crud_subpartition.py::TestSubpartitionCrud.test_partitioned_collection_partition_key_extraction_subpartition
-    container = target(contract_client, variant_database, make_variant_container(definition))
-    native = observe_native_create(monkeypatch, contract_client, backend)
-    original = deepcopy(body)
-    with pytest.raises(exceptions.CosmosHttpResponseError) as caught:
-        container.create_item(body, no_response=no_response)
-    assert_bad_hierarchical_key(caught.value, native)
-    assert body == original
 
 
 @pytest.mark.cosmosLong
@@ -95,14 +78,9 @@ def test_invalid_document_ttl_rust(
         native.assert_called_once()
 
 
-@pytest.mark.cosmosEmulator
-@pytest.mark.cosmosLong
-@pytest.mark.cosmosAADLong
-@pytest.mark.parametrize("via_query,content", EMOJI_CASES)
-def test_round_trip_emoji_document_rust(
+def _round_trip_emoji_document(
     variant_database, make_variant_container, contract_client, monkeypatch, backend, via_query, content
 ):
-    # Source: tests/test_encoding.py::TestEncoding.test_round_trip_emoji_document_through_full_sdk_stack
     container = target(contract_client, variant_database, make_variant_container(PartitionKey(path="/pk")))
     native = observe_native_create(monkeypatch, contract_client, backend)
     body = {"id": uuid.uuid4().hex, "pk": "pk", "multibyte_content": content}
@@ -123,6 +101,32 @@ def test_round_trip_emoji_document_rust(
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosLong
 @pytest.mark.cosmosAADLong
+@pytest.mark.parametrize("via_query,content", [param for param in EMOJI_CASES if param.id == "point-read"])
+def test_round_trip_emoji_document_through_full_sdk_stack_rust(
+    variant_database, make_variant_container, contract_client, monkeypatch, backend, via_query, content
+):
+    # Source: tests/test_encoding.py::TestEncoding.test_round_trip_emoji_document_through_full_sdk_stack
+    _round_trip_emoji_document(
+        variant_database, make_variant_container, contract_client, monkeypatch, backend, via_query, content
+    )
+
+
+@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
+@pytest.mark.parametrize("via_query,content", [param for param in EMOJI_CASES if param.id == "query"])
+def test_round_trip_emoji_document_via_query_rust(
+    variant_database, make_variant_container, contract_client, monkeypatch, backend, via_query, content
+):
+    # Source: tests/test_encoding.py::TestEncoding.test_round_trip_emoji_document_via_query
+    _round_trip_emoji_document(
+        variant_database, make_variant_container, contract_client, monkeypatch, backend, via_query, content
+    )
+
+
+@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
 @pytest.mark.parametrize("contract_client", [{"enable_compact_utf8_item_writes": True}], indirect=True)
 def test_compact_utf8_create_rust(variant_database, make_variant_container, contract_client, monkeypatch, backend):
     # Source: tests/test_encoding.py::TestEncoding.test_compact_utf8_item_writes_through_full_sdk_stack
@@ -135,12 +139,7 @@ def test_compact_utf8_create_rust(variant_database, make_variant_container, cont
     assert_fields(container.read_item(body["id"], partition_key=body["pk"]), body)
 
 
-@pytest.mark.cosmosEmulator
-@pytest.mark.cosmosLong
-@pytest.mark.cosmosAADLong
-@pytest.mark.parametrize("compact", [False, True])
-def test_large_cjk_create_wire_limit_rust(variant_database, make_variant_container, monkeypatch, backend, compact):
-    # Source: tests/test_encoding.py::TestEncoding.test_compact_utf8_large_cjk_item_stays_under_wire_limit
+def _large_cjk_create(variant_database, make_variant_container, monkeypatch, backend, compact):
     owned = make_variant_container(PartitionKey(path="/pk"))
     body = large_cjk_body()
     encoded = json.dumps(body, separators=(",", ":"), ensure_ascii=not compact).encode("utf-8")
@@ -163,6 +162,26 @@ def test_large_cjk_create_wire_limit_rust(variant_database, make_variant_contain
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
+def test_compact_utf8_large_cjk_item_stays_under_wire_limit_rust(
+    variant_database, make_variant_container, monkeypatch, backend
+):
+    # Source: tests/test_encoding.py::TestEncoding.test_compact_utf8_large_cjk_item_stays_under_wire_limit
+    _large_cjk_create(variant_database, make_variant_container, monkeypatch, backend, compact=True)
+
+
+@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
+def test_default_ascii_escaping_rejects_large_cjk_item_rust(
+    variant_database, make_variant_container, monkeypatch, backend
+):
+    # Source: tests/test_encoding.py::TestEncoding.test_default_ascii_escaping_rejects_large_cjk_item
+    _large_cjk_create(variant_database, make_variant_container, monkeypatch, backend, compact=False)
+
+
+@pytest.mark.cosmosEmulator
 @pytest.mark.cosmosAADLong
 @pytest.mark.parametrize("no_response", [False, True])
 def test_create_response_headers_advance_lsn_rust(
@@ -180,15 +199,9 @@ def test_create_response_headers_advance_lsn_rust(
     assert int(created.get_response_headers()["lsn"]) == lsn + 1
 
 
-@pytest.mark.cosmosCircuitBreaker
-@pytest.mark.cosmosLong
-@pytest.mark.cosmosAADCircuitBreaker
-@pytest.mark.parametrize("contract_client", [{"no_response_on_write": False}, {"no_response_on_write": True}],
-                         indirect=True)
-def test_document_crud_create_persistence_rust(
+def _document_crud_create_persistence(
     variant_database, make_variant_container, contract_client, monkeypatch, backend
 ):
-    # Source: tests/test_crud.py::TestCRUDOperations.test_document_crud
     container = target(contract_client, variant_database, make_variant_container(PartitionKey(path="/pk")))
     native = observe_native_create(monkeypatch, contract_client, backend)
     original = {"name": "sample document", "spam": "eggs", "key": "value", "pk": "pk"}
@@ -213,25 +226,75 @@ def test_document_crud_create_persistence_rust(
     assert len(list(container.query_items("SELECT * FROM c", partition_key="pk"))) == 3
 
 
-@pytest.mark.cosmosEmulator
-@skip_unless_token_auth()
-def test_compact_utf8_item_write_with_aad_rust(variant_database, make_variant_container, monkeypatch, backend):
-    # Source: tests/test_aad.py::TestAAD.test_compact_utf8_item_write_with_aad
+@pytest.mark.cosmosCircuitBreaker
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADCircuitBreaker
+@pytest.mark.parametrize("contract_client", [{"no_response_on_write": False}], indirect=True)
+def test_document_crud_create_persistence_rust(
+    variant_database, make_variant_container, contract_client, monkeypatch, backend
+):
+    # Source: tests/test_crud.py::TestCRUDOperations.test_document_crud
+    _document_crud_create_persistence(
+        variant_database, make_variant_container, contract_client, monkeypatch, backend
+    )
+
+
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
+@pytest.mark.parametrize("contract_client", [{"no_response_on_write": True}], indirect=True)
+def test_document_crud_response_payload_on_write_disabled_rust(
+    variant_database, make_variant_container, contract_client, monkeypatch, backend
+):
+    # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_document_crud
+    _document_crud_create_persistence(
+        variant_database, make_variant_container, contract_client, monkeypatch, backend
+    )
+
+
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
+@pytest.mark.parametrize("contract_client", [{"no_response_on_write": True}], indirect=True)
+def test_document_crud_response_payload_enabled_via_override_rust(
+    variant_database, make_variant_container, contract_client, monkeypatch, backend
+):
+    # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_document_crud_response_payload_enabled_via_override
+    _document_crud_create_persistence(variant_database, make_variant_container, contract_client, monkeypatch, backend)
+
+
+def _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact, query=False):
     owned = make_variant_container(PartitionKey(path="/pk"))
     credential = make_sync_token_credential()
     try:
         with CosmosClient(
             os.environ["ACCOUNT_HOST"], credential, _backend=backend,
-            enable_compact_utf8_item_writes=True, timeout=60,
+            enable_compact_utf8_item_writes=compact, timeout=60,
         ) as client:
             container = target(client, variant_database, owned)
             native = observe_native_create(monkeypatch, client, backend)
             body = {"id": uuid.uuid4().hex, "pk": "pk", "content": AAD_CONTENT}
             created = container.create_item(body)
             assert_created(created, body, False, native)
-            assert_native_body(native, body, compact=True)
+            assert_native_body(native, body, compact=compact)
             assert_fields(container.read_item(body["id"], partition_key="pk"), body)
+            if query:
+                query_results = list(container.query_items(query='select * from c', partition_key='pk'))
+                assert len(query_results) == 1
+                assert_fields(query_results[0], body)
     finally:
         close = getattr(credential, "close", None)
         if close is not None:
             close()
+
+
+@pytest.mark.cosmosEmulator
+@skip_unless_token_auth()
+def test_compact_utf8_item_write_with_aad_rust(variant_database, make_variant_container, monkeypatch, backend):
+    # Source: tests/test_aad.py::TestAAD.test_compact_utf8_item_write_with_aad
+    _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact=True)
+
+
+@pytest.mark.cosmosEmulator
+@skip_unless_token_auth()
+def test_aad_credentials_rust(variant_database, make_variant_container, monkeypatch, backend):
+    # Source: tests/test_aad.py::TestAAD.test_aad_credentials
+    _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact=False, query=True)

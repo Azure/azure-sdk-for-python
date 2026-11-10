@@ -19,9 +19,9 @@ piece of that translation:
   ``CosmosHttpResponseError``).
 * The exception's metadata mirrors the response (status, sub-status,
   headers, decoded body, custom message).
-* ``extract_message_from_body`` digs the human-readable message out
-  of the JSON error body in the various shapes the service has
-  shipped over the years, and never raises on malformed input.
+* ``error_message_from_body`` returns the whole decoded error body as
+  ``http_error_message``, matching the legacy path, and never raises on
+  malformed input.
 * ``is_success_status`` agrees with the rest of the SDK on what
   counts as a success (the 2xx range, nothing else).
 * The ``_ResponseAdapter`` exposes the same surface customer
@@ -42,7 +42,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._helpers._exceptions import (
     _ResponseAdapter,
-    extract_message_from_body,
+    error_message_from_body,
     is_success_status,
     map_backend_response_to_exception,
 )
@@ -179,7 +179,7 @@ class TestRequestEntityTooLargeFormatting(unittest.TestCase):
             body=body,
             headers={"x-ms-activity-id": "activity", "x-ms-request-charge": "2.5"},
         )
-        message = extract_message_from_body(body)
+        message = error_message_from_body(body, 413)
         exc = map_backend_response_to_exception(response, message=message)
         self.assertEqual(exc.status_code, 413)
         self.assertEqual(exc.sub_status, 1001)
@@ -242,7 +242,7 @@ class TestRequestEntityTooLargeFormatting(unittest.TestCase):
             with self.subTest(status=status):
                 exc = map_backend_response_to_exception(
                     _make_response(status_code=status, body=body),
-                    message=extract_message_from_body(body),
+                    message=error_message_from_body(body, status),
                 )
                 self.assertEqual(exc.status_code, status)
                 self.assertIsNone(exc.error)
@@ -262,7 +262,7 @@ class TestRequestEntityTooLargeFormatting(unittest.TestCase):
         ):
             with self.subTest(body=body):
                 response = _make_response(status_code=413, body=body)
-                message = extract_message_from_body(body)
+                message = error_message_from_body(body, 413)
                 original = CosmosHttpResponseError(
                     status_code=413,
                     message=message,
@@ -274,47 +274,33 @@ class TestRequestEntityTooLargeFormatting(unittest.TestCase):
                 self.assertEqual(actual.response.body(), body)
 
 
-class TestExtractMessageFromBody(unittest.TestCase):
-    """Pull the human-readable error message out of a Cosmos JSON error body.
+class TestErrorMessageFromBody(unittest.TestCase):
+    """``http_error_message`` is the whole decoded error body, as on the legacy path.
 
-    The Cosmos service returns errors as JSON with a ``message`` (or
-    historically ``Message``) field. ``extract_message_from_body`` is
-    the best-effort parser the helper uses to populate the exception's
-    message. It must never raise — a malformed body should never mask
-    the underlying error.
+    Customer code may ``json.loads(e.http_error_message)``. It must never
+    raise; a malformed body should never mask the underlying error.
     """
 
-    def test_json_body_with_message_field_returned_rust(self):
-        """Lower-case ``message`` field is extracted."""
-        body = b'{"code":"Conflict","message":"Resource with specified id ..."}'
-        self.assertEqual(
-            extract_message_from_body(body),
-            "Resource with specified id ...",
-        )
+    def test_json_body_with_message_field_keeps_whole_body_rust(self):
+        body = b'{"code":"BadRequest","message":"Message: {\\"Errors\\":[\\"bad\\"]}"}'
+        message = error_message_from_body(body, 400)
+        self.assertEqual(message, body.decode("utf-8"))
+        self.assertEqual(json.loads(message)["code"], "BadRequest")
 
-    def test_json_body_with_capital_message_field_returned_rust(self):
-        """Upper-case ``Message`` field is also extracted (older service variant)."""
-        body = b'{"code":"Conflict","Message":"capital M variant"}'
-        self.assertEqual(extract_message_from_body(body), "capital M variant")
+    def test_exception_http_error_message_is_whole_body_rust(self):
+        body = b'{"code":"NotFound","message":"Resource Not Found"}'
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=404, body=body),
+            message=error_message_from_body(body, 404),
+        )
+        self.assertEqual(exc.http_error_message, body.decode("utf-8"))
 
     def test_empty_body_returns_empty_string_rust(self):
-        """Empty body → empty string (no synthetic placeholder)."""
-        self.assertEqual(extract_message_from_body(b""), "")
+        self.assertEqual(error_message_from_body(b"", 400), "")
 
-    def test_non_json_body_falls_back_to_utf8_decoded_string_rust(self):
-        """A non-JSON body is returned as its UTF-8 decoded string."""
-        self.assertEqual(extract_message_from_body(b"not json"), "not json")
-
-    def test_invalid_utf8_body_returns_repr_rust(self):
-        """An undecodable body still produces a non-empty string and never raises."""
-        result = extract_message_from_body(b"\xff\xfe invalid utf8")
-        self.assertIsInstance(result, str)
-        self.assertGreater(len(result), 0)
-
-    def test_json_body_without_message_field_falls_back_to_decoded_string_rust(self):
-        """JSON body with no ``message`` / ``Message`` field → the raw decoded body."""
-        body = b'{"code":"Conflict"}'
-        self.assertEqual(extract_message_from_body(body), '{"code":"Conflict"}')
+    def test_invalid_utf8_body_uses_replacement_characters_rust(self):
+        result = error_message_from_body(b"\xff\xfe invalid utf8", 400)
+        self.assertEqual(result, b"\xff\xfe invalid utf8".decode("utf-8", errors="replace"))
 
 
 class TestIsSuccessStatus(unittest.TestCase):

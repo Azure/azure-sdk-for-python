@@ -188,9 +188,9 @@ def test_caught_up_poll_and_resume_keep_per_fetch_ownership(
     if spans:
         assert [s.parent.span_id for s in spans] == parents
         assert all(s.status.status_code is trace.StatusCode.UNSET for s in spans)
-        assert all("cosmos.poc.request_count" not in s.attributes for s in spans)
-        assert all("cosmos.poc.retained_request_count" not in s.attributes for s in spans)
-        assert all(s.attributes["cosmos.poc.diagnostics_complete"] is False for s in spans)
+        assert all("azure.cosmosdb.operation.request_count" not in s.attributes for s in spans)
+        assert all("azure.cosmosdb.operation.retained_request_count" not in s.attributes for s in spans)
+        assert all(s.attributes["azure.cosmosdb.operation.diagnostics_complete"] is False for s in spans)
         assert [sum(a.parent.span_id == s.context.span_id for a in attempt_spans(recording)) for s in spans] == [
             2,
             2,
@@ -294,8 +294,8 @@ def test_diagnostic_failure_does_not_change_poll_result(polling, recording, monk
         assert f.next_page(pages) == [{"id": "a", "nested": [1]}]
     assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 1
     assert h.seen[0].outcome == ("error" if detail == "invalid-response" else "success")
-    assert "cosmos.poc.request_count" not in fetch_spans(recording)[0].attributes
-    assert "cosmos.poc.retained_request_count" not in fetch_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.request_count" not in fetch_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in fetch_spans(recording)[0].attributes
 
 
 def test_setup_retry_keeps_cursor_and_separate_completions(polling, recording):

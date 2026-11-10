@@ -59,10 +59,13 @@ _PROOF_RESOURCE = Resource(
 _PROOF_NAMES = frozenset(("checkout", "ContainerProxy.create_item", "ContainerProxy.read_item", "cosmosdb.request"))
 _PROOF_ATTRIBUTES = frozenset(
     (
-        "cosmos.poc.request_count",
-        "cosmos.poc.retained_request_count",
-        "cosmos.poc.driver_status_code",
-        "cosmos.poc.execution_context",
+        "azure.cosmosdb.operation.diagnostics_complete",
+        "azure.cosmosdb.operation.diagnostics_incomplete_reasons",
+        "azure.cosmosdb.operation.request_count",
+        "azure.cosmosdb.operation.retained_request_count",
+        "db.response.status_code",
+        "error.type",
+        "azure.cosmosdb.request.execution_context",
     )
 )
 _LOGGER = logging.getLogger(__name__)
@@ -235,10 +238,20 @@ async def run_proof(exporter, *, conflict=False, read=False, not_found=False, az
             expected_status = trace.StatusCode.ERROR if failed else trace.StatusCode.UNSET
             if operation.status.status_code is not expected_status:
                 raise AssertionError("The operation span status differs from the public outcome")
-            total = operation.attributes["cosmos.poc.request_count"]
-            retained = operation.attributes["cosmos.poc.retained_request_count"]
-            if not 0 < len(attempts) == retained <= total:
-                raise AssertionError("This proof requires complete retained attempt records")
+            if failed and operation.attributes.get("error.type") != str(expected_driver_status):
+                raise AssertionError("The operation error type differs from the driver status")
+            complete = operation.attributes.get("azure.cosmosdb.operation.diagnostics_complete")
+            if not isinstance(complete, bool):
+                raise AssertionError("The operation span has no request diagnostics")
+            # Counts are published only with complete coverage; partial coverage (for example
+            # metadata_diagnostics_unavailable on create_item) still has its available attempts.
+            total = operation.attributes.get("azure.cosmosdb.operation.request_count")
+            retained = operation.attributes.get("azure.cosmosdb.operation.retained_request_count")
+            reasons = list(operation.attributes.get("azure.cosmosdb.operation.diagnostics_incomplete_reasons", ()))
+            if complete and not 0 < len(attempts) == retained <= total:
+                raise AssertionError("Complete coverage must account for every visible attempt")
+            if not complete and (not attempts or not reasons or total is not None or retained is not None):
+                raise AssertionError("Partial coverage must show attempts and reasons, without totals")
             if operation.parent.span_id != checkout.get_span_context().span_id:
                 raise AssertionError("The operation must belong to checkout")
             for attempt in attempts:
@@ -249,7 +262,7 @@ async def run_proof(exporter, *, conflict=False, read=False, not_found=False, az
                 if attempt.kind is not trace.SpanKind.CLIENT:
                     raise AssertionError("Expected a client attempt span")
             terminal = max(attempts, key=lambda span: span.end_time)
-            if terminal.attributes["cosmos.poc.driver_status_code"] != expected_driver_status:
+            if terminal.attributes["db.response.status_code"] != str(expected_driver_status):
                 raise AssertionError("The last completed attempt has an unexpected driver status")
             if not response_headers.get("x-ms-cosmos-sdk-diagnostics"):
                 raise AssertionError("The response must retain diagnostic text")
@@ -263,6 +276,8 @@ async def run_proof(exporter, *, conflict=False, read=False, not_found=False, az
                 "expected_status": expected_driver_status,
                 "saved_order_verified": True,
                 "trace_id": f"{trace_id:032x}",
+                "diagnostics_complete": complete,
+                "diagnostics_incomplete_reasons": reasons,
                 "request_count": total,
                 "retained_request_count": retained,
                 "diagnostic_text_present": bool(response_headers.get("x-ms-cosmos-sdk-diagnostics")),
@@ -275,7 +290,7 @@ async def run_proof(exporter, *, conflict=False, read=False, not_found=False, az
                         "end_ns": span.end_time,
                         "status": span.status.status_code.name,
                         "attributes": {
-                            key: value for key, value in span.attributes.items() if key.startswith("cosmos.poc.")
+                            key: value for key, value in span.attributes.items() if key in _PROOF_ATTRIBUTES
                         },
                     }
                     for span in spans

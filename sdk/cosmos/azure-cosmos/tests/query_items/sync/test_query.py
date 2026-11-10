@@ -695,6 +695,34 @@ class TestQuery(unittest.TestCase):
                 self.assertEqual({row["id"] for row in rows}, expected)
 
     @pytest.mark.cosmosEmulator
+    def test_cross_partition_disabled_without_partition_key_matches_legacy_rust(self):
+        """Without partition_key, False runs only a query that the filter pins to one key."""
+        container = self._create_multi_partition_container()
+        self.assertGreater(len(list(container.read_feed_ranges())), 1)
+        for order_id, customer in (("order-1", "c-501"), ("order-2", "c-501"), ("order-3", "c-502")):
+            container.create_item({"id": order_id, "pk": customer})
+
+        def ids(query, **scope):
+            return sorted(row["id"] for row in container.query_items(
+                query=query, enable_cross_partition_query=False, **scope))
+
+        self.assertEqual(ids("SELECT c.id FROM c WHERE c.pk = 'c-501'"), ["order-1", "order-2"])
+        self.assertEqual(ids("SELECT c.id FROM c WHERE c.pk = 'c-501' ORDER BY c.id DESC"),
+                         ["order-1", "order-2"])
+        feed_range = container.feed_range_from_partition_key("c-501")
+        self.assertEqual(ids("SELECT c.id FROM c", feed_range=feed_range), ["order-1", "order-2"])
+        for query in (
+            "SELECT c.id FROM c",
+            "SELECT c.id FROM c WHERE c.id = 'order-1'",
+            "SELECT c.id FROM c WHERE c.pk IN ('c-501', 'c-502')",
+        ):
+            with self.subTest(query=query):
+                with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
+                    ids(query)
+                self.assertEqual(caught.exception.status_code, 400)
+                self.assertIn("Cross partition query is required but disabled", caught.exception.message)
+
+    @pytest.mark.cosmosEmulator
     def test_cross_partition_query_with_continuation_token_rust(self):
         """Original cross-partition continuation replay, using this test's isolated container."""
         # Source: tests/test_query.py::TestQuery.test_cross_partition_query_with_continuation_token

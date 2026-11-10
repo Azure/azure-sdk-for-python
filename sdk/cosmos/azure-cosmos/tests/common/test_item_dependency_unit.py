@@ -174,21 +174,19 @@ def test_rust_helper_never_repeats_public_create_preparation_rust(monkeypatch, a
 
 @pytest.mark.parametrize("async_mode", [False, True])
 def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(async_mode, monkeypatch):
-    """A container reuses one helper across calls, rebuilds it when its settings change, and
-    does not keep the container alive.
+    """A container reuses its helper until the context changes.
+
+    The helper does not retain the container.
 
     Two creates go through the same helper, constructed once for this context.
     Count construction directly: per-call option validation also reads the
     backend name, but that does not construct or replace a helper.
 
-    When the container's defaults are replaced the helper is rebuilt, because a
-    helper carries those defaults. Keeping the old one would leave the customer
-    changing a setting and seeing no effect.
+    Replacing the internal context with different defaults rebuilds the helper
+    so it does not retain the old defaults.
 
-    Finally the container is dropped and confirmed collected. A cached helper
-    that pointed back at its container would form a loop that keeps every
-    container object alive for the life of the program -- a slow leak in exactly
-    the applications that create containers dynamically.
+    Finally the container is dropped while the helpers remain referenced.
+    Confirming collection proves those helpers do not retain the container.
     """
     backend = AsyncBackend() if async_mode else Backend()
     proxy_type = AsyncContainerProxy if async_mode else ContainerProxy

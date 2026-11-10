@@ -4,12 +4,11 @@
 
 Like its database counterpart, this is purely local. It does not check that the
 container exists and must not make a request, because customers call it on every
-operation. Every test proves that by asserting the connection and the engine
+operation. Every test proves that by asserting the connection and the adapter
 recorded nothing at all.
 
-It runs under both engine names, since the container client carries the context
-that decides which engine its item operations will use, and that must survive
-being passed along whichever engine is configured.
+It runs with adapter names "core-python" and "rust", since the container client
+must retain the same context regardless of the selected adapter.
 
 The recurring guarantee is ownership: whatever form the container is named in,
 the client that comes back belongs to *this* database, and anything handed in is
@@ -35,10 +34,10 @@ from azure.cosmos._helpers._item_context import ItemClientContext
     ids=["sync", "aio"],
 )
 def database_and_proxy_type(request, backend_name):
-    """Build a sync or async database client whose connection and engine are stand-ins.
+    """Build a sync or async database client whose connection and adapter are stand-ins.
 
     After each test the fixture asserts three things: the connection recorded no
-    calls, the engine recorded none either, and no response headers were left
+    calls, the adapter recorded none either, and no response headers were left
     behind. Together they prove the call was entirely local -- not just that it
     sent nothing, but that it did not even touch the shared state a real request
     would update.
@@ -57,7 +56,7 @@ def database_and_proxy_type(request, backend_name):
 
 @pytest.fixture(params=["core-python", "rust"])
 def backend_name(request):
-    """Run every test under both engine names, so neither changes this local behavior."""
+    """Run every test under both adapter names, so neither changes this local behavior."""
     return request.param
 
 
@@ -97,10 +96,10 @@ def test_properties_id_is_converted_to_string_rust(database_and_proxy_type, mapp
 def test_string_name_is_preserved_without_checking_existence_rust(database_and_proxy_type, name):
     """A container name is used exactly as given, and existence is never checked.
 
-    One of the names is deliberately a container that does not exist, and the
-    call still succeeds. Getting a client is not a lookup: the failure, if any,
-    belongs to the first real operation. Checking here would cost a request
-    every time a customer reached for a container.
+    The name "does-not-exist" is illustrative; the mocked adapter cannot establish
+    whether a container exists in an account. The fixture's no-call assertions
+    prove that selection performs no lookup. Any service-side existence check
+    belongs to a later operation.
 
     Capitalization and leading zeros are preserved, since names are matched
     exactly. On the async client this is not something to wait on, and the

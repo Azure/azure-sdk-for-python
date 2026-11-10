@@ -90,46 +90,13 @@ class ClientLastResponseHeaders:
 class ItemClientContext(Generic[_BackendT]):
     """Group one client's adapter, defaults, header state and telemetry registrations.
 
-    Client state means the information retained for a client, not the
-    CosmosClient object itself. For a synchronous Rust-backed client with
-    priority="High", the Python wrapper retains these references::
+    Database and container proxies share this context and the client's existing
+    adapter rather than copy settings or create another adapter. The adapter
+    manages driver-handle acquisition and release; this context only retains
+    its reference. The same ownership applies to sync and async clients.
 
-        CosmosClient object
-            |
-            +-- _adapter -----------------------> BindingAdapter object
-            |                                         ^
-            +-- _item_context -> ItemClientContext    |
-                                     |                |
-                                     +-- adapter -----+
-                                     |
-                                     +-- defaults -> ItemClientDefaults
-                                     |                   priority = "High"
-                                     |
-                                     +-- response_state -> ClientLastResponseHeaders
-                                                               latest headers
-
-    There is one BindingAdapter object in this illustration, reached through
-    two references. ItemClientContext is a separate object, not another
-    CosmosClient. DatabaseProxy for "sales" and ContainerProxy for "orders"
-    retain this same context rather than copy the adapter or prepare client
-    settings again.
-
-    Sharing the adapter keeps the client's saved settings, acquired driver
-    handle, and closing state together. Operations on "sales" and "orders"
-    therefore use the adapter managed by their parent CosmosClient.
-
-    Creating another Python adapter would not necessarily create another
-    CosmosDriver: the binding may reuse a driver. However, that adapter
-    would manage its own acquisition and release of a driver handle.
-    Passing the existing adapter through this context avoids introducing
-    that separate ownership for each database or container object.
-
-    ItemClientContext carries the reference; it does not acquire or release
-    the driver handle itself.
-
-    The defaults hold values used when operations omit their own, and the
-    response_state holds the latest published headers. For an asynchronous
-    Rust-backed client, adapter refers to AsyncBindingAdapter instead.
+    Defaults supply omitted operation settings; response_state holds the latest
+    published headers, not per-operation response storage.
     """
 
     adapter: _BackendT

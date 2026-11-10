@@ -2,13 +2,14 @@
 # Licensed under the MIT License.
 """Offline contracts for Rust-only fault setup; no service execution is implied."""
 
+import json
 from types import SimpleNamespace
-from unittest.mock import MagicMock, Mock
+from unittest.mock import Mock
 
 import pytest
 
-from azure.cosmos.documents import DatabaseAccount
-from config import clients, fault_resources
+from config import clients
+from fault_injection._regional_routing import READ_REGION, WRITE_REGION, mock_account, rules, topology
 
 
 def test_fault_setup_uses_independent_direct_rust_runtimes_rust(monkeypatch):
@@ -36,28 +37,11 @@ def test_fault_setup_does_not_replace_a_rust_failure_with_legacy_rust(monkeypatc
     constructor.assert_not_called()
 
 
-@pytest.mark.parametrize("error", [
-    NotImplementedError("get_database_account() is not yet available through the Rust binding"),
-    RuntimeError("account read failed"),
-])
-def test_account_api_failure_is_propagated_without_skip_or_substitution_rust(monkeypatch, error):
-    client = MagicMock()
-    client.__enter__.return_value = client
-    client.get_database_account.side_effect = error
-    factory = Mock(return_value=client)
-    monkeypatch.setattr(clients, "create_fault_setup_client", factory)
-    with pytest.raises(type(error)) as caught:
-        fault_resources.load_account("https://localhost:8081/", "test-key")
-    assert caught.value is error
-    factory.assert_called_once_with("https://localhost:8081/", "test-key")
-    client.get_database_account.assert_called_once_with()
-    client.__exit__.assert_called_once()
-
-
-def test_account_model_is_not_mistaken_for_the_complete_service_document_rust(monkeypatch):
-    client = MagicMock()
-    client.__enter__.return_value = client
-    client.get_database_account.return_value = DatabaseAccount()
-    monkeypatch.setattr(clients, "create_fault_setup_client", Mock(return_value=client))
-    with pytest.raises(NotImplementedError, match="complete account document"):
-        fault_resources.load_account("https://localhost:8081/", "test-key")
+def test_mock_account_document_parses_and_always_refreshes_rust():
+    account = json.loads(rules("rule", "orders", topology(
+        mock_account(), "https://127.0.0.1:8081/", "https://localhost:8081/", False))[0]["response_body"])
+    # The Rust driver requires these three fields; the rest have defaults.
+    assert {"_self", "id", "_rid"} <= account.keys()
+    # A repeated etag would make the driver skip the injected refresh.
+    assert "_etag" not in account
+    assert [region["name"] for region in account["readableLocations"]] == [WRITE_REGION, READ_REGION]

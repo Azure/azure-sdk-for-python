@@ -643,14 +643,13 @@ def test_create_copies_use_configured_data_auth_rust(monkeypatch, mode, surface,
             "backend": "rust",
         }
         if entrypoint == "partition_keys":
-            function = module.test_partition_key_extraction_special_chars_rust
+            function = module.test_partitioned_collection_partition_key_extraction_special_chars_rust
             args.update(case=module.CASES[0], client_suppressed=False, options={}, suppressed=False)
         elif entrypoint == "unicode":
-            function = module.test_unicode_partition_key_and_separator_round_trip_rust
+            function = module.test_unicode_characters_in_partition_key_rust
             args["body"] = {"id": "offline", "pk": "\u00e9"}
         else:
-            function = module.test_large_cjk_create_wire_limit_rust
-            args["compact"] = True
+            function = module.test_compact_utf8_large_cjk_item_stays_under_wire_limit_rust
         if asynchronous:
             asyncio.run(function(**args))
         else:
@@ -725,13 +724,25 @@ def test_repaired_create_live_lane_marks_rust():
         for marker in ("cosmosEmulator", "cosmosQuery", "cosmosAADQuery"):
             assert f"pytest.mark.{marker}" in marks
         for name in (
-            "incomplete_hierarchical_partition_key", "create_illegal_characters", "round_trip_emoji_document",
-            "compact_utf8_create", "large_cjk_create_wire_limit", "document_crud_create_persistence",
+            "create_illegal_characters", "round_trip_emoji_document_through_full_sdk_stack",
+            "round_trip_emoji_document_via_query", "compact_utf8_create",
+            "compact_utf8_large_cjk_item_stays_under_wire_limit", "default_ascii_escaping_rejects_large_cjk_item",
+            "document_crud_create_persistence", "document_crud_response_payload_on_write_disabled",
         ):
             assert "pytest.mark.cosmosLong" in effective(
                 f"tests\\create_item\\{surface}\\test_legacy_contracts.py", f"test_{name}_rust"
             )
-        for name in ("partition_key_extraction_special_chars", "unicode_partition_key_and_separator_round_trip"):
+        for name in (
+            "partitioned_collection_partition_key_extraction_special_chars",
+            "partitioned_collection_partition_key_extraction",
+            "partitioned_collection_partition_key_value_types",
+            "partitioned_collection_partition_key_value_types_response_payload_on_write_disabled",
+            "partitioned_collection_partition_key_extraction_special_chars_subpartition",
+            "partitioned_collection_partition_key_extraction_subpartition",
+            "partitioned_collection_document_crud_and_query_subpartition",
+            "create_document_with_line_separator_para_seperator_next_line_unicodes",
+            "unicode_characters_in_partition_key",
+        ):
             assert "pytest.mark.cosmosLong" in effective(
                 f"tests\\create_item\\{surface}\\test_legacy_variants.py", f"test_{name}_rust"
             )

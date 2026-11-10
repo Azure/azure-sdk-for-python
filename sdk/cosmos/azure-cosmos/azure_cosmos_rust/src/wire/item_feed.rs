@@ -87,6 +87,41 @@ struct QueryRequest {
 struct QueryAdmissionPlan {
     hybrid_search_query_info: Option<HybridLimitWindow>,
     query_info: Option<QueryAggregateInfo>,
+    #[serde(default)]
+    query_ranges: Vec<QueryPlanRange>,
+}
+
+#[derive(Deserialize)]
+struct QueryPlanRange {
+    // Gateway plans use hex strings; native plans can use JSON values.
+    min: serde_json::Value,
+    max: serde_json::Value,
+}
+
+const CROSS_PARTITION_DISABLED_MESSAGE: &str = "Cross partition query is required but disabled. \
+     Please set x-ms-documentdb-query-enablecrosspartition to true, specify \
+     x-ms-documentdb-partitionkey, or revise your query to avoid this exception.";
+
+fn cross_partition_disabled_error() -> PyErr {
+    Python::with_gil(|py| {
+        match py
+            .import_bound("azure.cosmos.exceptions")
+            .and_then(|module| module.getattr("CosmosHttpResponseError"))
+        {
+            Ok(error_type) => {
+                let kwargs = PyDict::new_bound(py);
+                let built = kwargs
+                    .set_item("status_code", 400)
+                    .and_then(|_| kwargs.set_item("message", CROSS_PARTITION_DISABLED_MESSAGE))
+                    .and_then(|_| error_type.call((), Some(&kwargs)));
+                match built {
+                    Ok(error) => PyErr::from_value_bound(error),
+                    Err(error) => error,
+                }
+            }
+            Err(error) => error,
+        }
+    })
 }
 
 #[derive(Deserialize)]
@@ -121,6 +156,13 @@ impl QueryAdmissionPlan {
                 && matches!(info.aggregates.as_slice(), [aggregate] if aggregate == "Average" || aggregate == "Avg")
                 && info.group_by_expressions.is_empty()
         })
+    }
+
+    /// Legacy sends `enableCrossPartitionQuery=False` to the service backend,
+    /// which runs the query only when its filter selects one complete
+    /// partition key: the plan then has a single point range.
+    fn targets_one_partition_key(&self) -> bool {
+        matches!(self.query_ranges.as_slice(), [range] if range.min == range.max)
     }
 }
 
@@ -249,13 +291,12 @@ impl QueryRequest {
         if let Some(count) = self.max_item_count {
             operation = operation.with_max_item_count(count);
         }
-        if !self.allow_cross_partition && !operation.is_trivial() {
-            return Err(PyNotImplementedError::new_err(
-                "Rust query_items requires a complete partition_key when cross-partition execution \
-                 is disabled; SQL predicate inference is not used. No fallback was performed.",
-            ));
-        }
         Ok(operation)
+    }
+
+    /// A partition_key or feed_range already bounds the scope, as on legacy.
+    fn needs_cross_partition_admission(&self) -> bool {
+        !self.allow_cross_partition && self.partition_key.is_none() && self.feed_range.is_none()
     }
 }
 
@@ -531,7 +572,9 @@ async fn next_plan_page(
         let mut range_average = false;
         if let FeedRequest::Query(query) = &request {
             if !operation.is_trivial()
-                && (query.hybrid_search_max_items.is_some() || query.feed_range.is_some())
+                && (query.hybrid_search_max_items.is_some()
+                    || query.feed_range.is_some()
+                    || query.needs_cross_partition_admission())
             {
                 let admission =
                     match query_admission_plan(&driver, container.clone(), &operation, &options)
@@ -540,6 +583,10 @@ async fn next_plan_page(
                         Ok(plan) => plan,
                         Err(error) => return Ok((Err(error), None, false)),
                     };
+                if query.needs_cross_partition_admission() && !admission.targets_one_partition_key()
+                {
+                    return Err(cross_partition_disabled_error());
+                }
                 range_average = query.feed_range.is_some() && admission.is_value_average();
                 if let (Some(window), Some(limit)) = (
                     admission.hybrid_search_query_info,
@@ -967,7 +1014,7 @@ mod tests {
         rules: Vec<Arc<FaultInjectionRule>>,
         partition_count: u32,
     ) -> (Arc<InMemoryEmulatorHttpClient>, Arc<CosmosDriver>) {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://read-all.emulator.local").unwrap();
         let config =
             VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap();
@@ -1509,7 +1556,7 @@ mod tests {
 
     #[test]
     fn configured_buffer_guard_maps_only_its_typed_planning_error() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for maximum in [None, Some(0), Some(1), Some(50_000)] {
             for status in [
                 status_codes::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW,
@@ -1536,6 +1583,24 @@ mod tests {
                     assert_eq!(result.unwrap().status(), status);
                 }
             }
+        }
+    }
+
+    #[test]
+    fn disabled_cross_partition_admits_only_one_point_query_range() {
+        for body in [
+            br#"{"queryRanges":[{"min":"24AB","max":"24AB","isMinInclusive":true,"isMaxInclusive":true}]}"#.as_slice(),
+            br#"{"queryRanges":[{"min":["customer-501"],"max":["customer-501"]}]}"#,
+        ] {
+            assert!(decode_query_admission_plan(body).unwrap().targets_one_partition_key());
+        }
+        for body in [
+            br#"{"queryRanges":[{"min":"","max":"FF","isMinInclusive":true,"isMaxInclusive":false}]}"#.as_slice(),
+            br#"{"queryRanges":[{"min":"24AB","max":"24AB"},{"min":"5C01","max":"5C01"}]}"#,
+            br#"{"queryRanges":[]}"#,
+            br#"{}"#,
+        ] {
+            assert!(!decode_query_admission_plan(body).unwrap().targets_one_partition_key());
         }
     }
 
@@ -1629,7 +1694,7 @@ mod tests {
 
     #[test]
     fn hybrid_limit_uses_plan_metadata_and_legacy_take_not_offset_window() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for body in [
             br#"{"queryInfo":{"top":1}}"#.as_slice(),
             br#"{"queryInfo":{"top":1,"hasNonStreamingOrderBy":true}}"#,
@@ -1789,7 +1854,7 @@ mod tests {
 
     #[test]
     fn query_page_size_preserves_server_choice_and_checks_typed_limit() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         assert_eq!(query_page_size(None).unwrap(), None);
         assert_eq!(
             query_page_size(Some(-1)).unwrap(),
@@ -1806,7 +1871,7 @@ mod tests {
 
     #[test]
     fn query_inputs_preserve_body_bytes_and_read_scope_separately() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let namespace = py
                 .import_bound("types")
@@ -2212,7 +2277,10 @@ mod tests {
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0]["id"], "5");
         request.partition_key = None;
-        assert!(request.operation(container.clone()).is_err());
+        assert!(request.needs_cross_partition_admission());
+        request.feed_range = Some(("".into(), "FF".into()));
+        assert!(!request.needs_cross_partition_admission());
+        request.feed_range = None;
         request.allow_cross_partition = true;
         request.continuation_limit_kb = Some(1);
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;

@@ -354,7 +354,7 @@ mod tests {
 
     #[test]
     fn excluded_trigger_and_step_inputs_are_rejected() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for name in [
                 "X-MS-DOCUMENTDB-PRE-TRIGGER-INCLUDE",
@@ -411,7 +411,7 @@ mod tests {
 
     #[test]
     fn readonly_mappings_preserve_header_values_and_typed_precedence() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let request = prepared(py);
             let headers = PyDict::new_bound(py);
@@ -462,7 +462,7 @@ mod tests {
 
     #[test]
     fn boolean_header_casing_and_override_are_field_specific() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for value in [false, true] {
                 let request = prepared(py);
@@ -506,7 +506,7 @@ mod tests {
 
     #[test]
     fn every_service_field_is_read_and_serialized_once() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let request = prepared(py);
             let settings = request.getattr("settings").unwrap();
@@ -579,7 +579,7 @@ mod tests {
 
     #[test]
     fn invalid_values_and_protocols_fail_without_driver_access() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for field in [
                 "throughput_bucket",
@@ -613,7 +613,7 @@ mod tests {
 
     #[test]
     fn hedging_inheritance_disable_and_enable_are_distinct() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let request = prepared(py);
             assert!(extract_settings(&request)

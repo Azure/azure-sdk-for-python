@@ -23,6 +23,7 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos.aio._backend import binding_adapter as async_binding
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
+from common.rust_telemetry_payload import v2
 from telemetry.test_rust_telemetry_unit import (
     recording_setup,
 )  # pylint: disable=unused-import
@@ -87,8 +88,8 @@ def native(request, recording, monkeypatch):  # pylint: disable=unused-argument
         body = {"id": prepared.item_id} if h.status == 200 else {"message": "missing"}
         response = h.status, 0, {}, json.dumps(body).encode(), "diagnostic summary"
         end = time.time_ns()
-        payload = {
-            "schema_version": 1,
+        payload = v2({
+            "schema_version": 2,
             "complete": True,
             "incomplete_reasons": [],
             "request_count": 1,
@@ -102,7 +103,7 @@ def native(request, recording, monkeypatch):  # pylint: disable=unused-argument
                     "execution_context": "initial",
                 }
             ],
-        }
+        })
         return (response, payload) if include_attempts else response
 
     async def respond_async(*args, **kwargs):
@@ -244,14 +245,14 @@ def test_error_attempt_retains_attributes_and_actual_driver_facts(native, record
         native.read(
             tracing_attributes={
                 "bank.call": "42",
-                "cosmos.poc.driver_status_code": 200,
-                "cosmos.poc.execution_context": "invented",
+                "db.response.status_code": "200",
+                "azure.cosmosdb.request.execution_context": "invented",
             }
         )
     assert_attributes(recording, {"bank.call": "42"})
     attempt = next(span for span in recording.exporter.get_finished_spans() if span.name == "cosmosdb.request")
-    assert attempt.attributes["cosmos.poc.driver_status_code"] == 404
-    assert attempt.attributes["cosmos.poc.execution_context"] == "initial"
+    assert attempt.attributes["db.response.status_code"] == "404"
+    assert attempt.attributes["azure.cosmosdb.request.execution_context"] == "initial"
 
 
 def test_concurrent_calls_keep_their_own_attribute_values(native, recording):

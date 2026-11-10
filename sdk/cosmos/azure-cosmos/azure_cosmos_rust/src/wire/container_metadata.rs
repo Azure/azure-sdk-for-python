@@ -156,7 +156,7 @@ mod tests {
 
     #[tokio::test]
     async fn metadata_success_is_a_typed_tuple_and_missing_container_is_an_error() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://metadata.emulator.local").unwrap();
         let config =
             VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap();

@@ -389,7 +389,7 @@ mod tests {
     #[tokio::test]
     async fn account_scope_policy_matches_legacy_for_sync_and_async_credentials() {
         use azure_core::credentials::TokenCredential;
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for async_bridge in [false, true] {
             for scenario in [
                 "success",
@@ -530,7 +530,7 @@ def legacy(async_mode, scenario, override):
     #[tokio::test]
     async fn concurrent_account_refresh_shares_fallback_and_effective_scope_cache() {
         use std::sync::Arc;
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for async_bridge in [false, true] {
             let object = Python::with_gil(|py| {
                 let object = make_python_credential(
@@ -613,7 +613,7 @@ class Credential:
 
     #[test]
     fn get_token_caches_fresh_result() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let credential_obj = make_python_credential(
                 py,
@@ -653,7 +653,7 @@ class Credential:
 
     #[test]
     fn get_token_rejects_empty_token() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let credential_obj = make_python_credential(
                 py,
@@ -685,7 +685,7 @@ class Credential:
     async fn concurrent_refresh_is_single_flight_and_cache_is_scope_qualified() {
         use azure_core::credentials::TokenCredential;
         use std::sync::Arc;
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for async_bridge in [false, true] {
             let object = Python::with_gil(|py| {
                 let object = make_python_credential(
@@ -766,7 +766,7 @@ class Credential:
     #[tokio::test]
     async fn cancelled_blocking_refresh_keeps_ownership_until_python_finishes() {
         use std::sync::Arc;
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let object = Python::with_gil(|py| {
             make_python_credential(
                 py,
@@ -850,7 +850,7 @@ class Credential:
 
     #[tokio::test]
     async fn operation_deadline_cancels_async_token_future() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let object = Python::with_gil(|py| {
             make_python_credential(
                 py,
@@ -887,7 +887,7 @@ class Credential:
 
     #[tokio::test]
     async fn async_token_completion_converts_and_caches_result() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let object = Python::with_gil(|py| {
             make_python_credential(
                 py,
@@ -940,7 +940,7 @@ class Credential:
 
     #[tokio::test]
     async fn native_cancellation_reaches_real_async_credential_bridge() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let (bridge, customer) = Python::with_gil(|py| {
             let customer = make_python_credential(
                 py,

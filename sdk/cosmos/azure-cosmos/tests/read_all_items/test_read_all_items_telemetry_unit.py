@@ -185,11 +185,12 @@ def test_internal_fetch_owns_diagnostics_and_final_hook(
     assert len(spans) == (4 if mode in ("enabled", "no-handlers") else 0)
     if spans:
         assert [s.parent.span_id for s in spans] == parents
-        assert "cosmos.poc.request_count" not in spans[0].attributes
-        assert "cosmos.poc.retained_request_count" not in spans[0].attributes
-        assert spans[0].attributes["cosmos.poc.diagnostics_complete"] is False
-        assert all(s.attributes["cosmos.poc.request_count"] == 5 for s in spans[1:])
+        assert "azure.cosmosdb.operation.request_count" not in spans[0].attributes
+        assert "azure.cosmosdb.operation.retained_request_count" not in spans[0].attributes
+        assert spans[0].attributes["azure.cosmosdb.operation.diagnostics_complete"] is False
+        assert all(s.attributes["azure.cosmosdb.operation.request_count"] == 5 for s in spans[1:])
         assert all(s.status.status_code is trace.StatusCode.UNSET for s in spans)
+        assert all(s.attributes["db.namespace"] == "db" and s.attributes["db.collection.name"] == "c" for s in spans)
         assert all(
             len([a for a in attempt_spans(recording) if a.parent.span_id == s.context.span_id]) == 2 for s in spans
         )
@@ -220,7 +221,7 @@ def test_empty_fetches_share_deadline_and_local_exhaustion_is_not_a_response(rea
     assert h.calls[2][3] < h.calls[1][3]
     assert len(fetch_spans(recording)) == 4
     assert h.seen[-1].outcome == "success"
-    assert not any(key.startswith("cosmos.poc.") for key in fetch_spans(recording)[-1].attributes)
+    assert not any(key.startswith("azure.cosmosdb.") for key in fetch_spans(recording)[-1].attributes)
     assert not [a for a in attempt_spans(recording) if a.parent.span_id == fetch_spans(recording)[-1].context.span_id]
 
 
@@ -313,8 +314,8 @@ def test_diagnostics_failure_does_not_change_paging(reading, recording, monkeypa
         assert f.next_page(pages) == [{"id": "b"}]
     assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 1
     assert h.seen[0].outcome == ("error" if detail == "invalid-response" else "success")
-    assert "cosmos.poc.request_count" not in fetch_spans(recording)[0].attributes
-    assert "cosmos.poc.retained_request_count" not in fetch_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.request_count" not in fetch_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in fetch_spans(recording)[0].attributes
     assert len(attempt_spans(recording)) == (2 if detail == "partial" else 0)
 
 

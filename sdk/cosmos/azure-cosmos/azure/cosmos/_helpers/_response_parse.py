@@ -14,7 +14,7 @@ from azure.core.utils import CaseInsensitiveDict
 from copy import deepcopy
 from typing import Any, Callable, Mapping, Optional
 from ._exceptions import (
-    extract_message_from_body,
+    error_message_from_body,
     is_success_status,
     map_backend_response_to_exception,
 )
@@ -148,7 +148,7 @@ def parse_response_body(response: BackendResponse) -> Any:
     is_not_modified = response.status_code == 304
 
     if not is_not_modified and not is_success_status(response.status_code):
-        message = extract_message_from_body(response.body)
+        message = error_message_from_body(response.body, response.status_code)
         raise map_backend_response_to_exception(response, message=message)
 
     if not response.body:

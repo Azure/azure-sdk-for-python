@@ -9,11 +9,13 @@ Environment variables:
   WORKLOAD_USE_SYNC    use the sync client instead of async (default: false)
   WORKLOAD_READ_MEASUREMENT_SECONDS  opt-in serial async read duration after 3
                                     warm-up reads; report only after load (default: 0)
-  WORKLOAD_MEASUREMENT_SECONDS  equivalent mode for any single point operation;
+  WORKLOAD_MEASUREMENT_SECONDS  equivalent mode for any single operation;
                                writes require a saved ownership manifest (default: 0)
   WORKLOAD_MEASUREMENT_MANIFEST  ownership file created by profiling_restore_orders.py --initialize
   WORKLOAD_ITEM_NAMESPACE  namespace from that manifest; must be empty before a bounded write run
   WORKLOAD_DELETE_ITEM_COUNT  items prepared before bounded deletes, including warm-up (required for delete)
+  WORKLOAD_QUERY_MANIFEST  versioned query suite with policies, parameters and expected results
+  WORKLOAD_QUERY_SCENARIO  cross_partition, aggregate, full_text, vector or hybrid (bounded async only)
 """
 
 import asyncio
@@ -51,6 +53,8 @@ from workload_configs import (
     WORKLOAD_MANAGE_CLIENT_LIFECYCLE,
     WORKLOAD_READ_MEASUREMENT_SECONDS,
     WORKLOAD_MEASUREMENT_SECONDS,
+    WORKLOAD_QUERY_MANIFEST,
+    WORKLOAD_QUERY_SCENARIO,
     WORKLOAD_USE_PROXY,
     WORKLOAD_USE_SYNC,
 )
@@ -100,7 +104,7 @@ def _measurement_operation():
     return "read" if WORKLOAD_READ_MEASUREMENT_SECONDS else next(iter(WORKLOAD_OPERATIONS))
 
 
-def _start_reporter():
+def _start_reporter(query_scenario=None):
     """Return a started (Stats, PerfReporter) pair, or (None, None).
 
     Returns (None, None) when the optional perf dependencies are missing or when
@@ -118,6 +122,14 @@ def _start_reporter():
             report_after_load=True, measurement_seconds=_measurement_seconds(),
             measurement_operation=_measurement_operation(),
         )
+        if _measurement_operation() == "query":
+            from workload_queries import build_identity, load_scenario
+            query_scenario = query_scenario or load_scenario(WORKLOAD_QUERY_MANIFEST, WORKLOAD_QUERY_SCENARIO)
+            query_scenario.validate_results_target(perf_reporting_config)
+            perf_reporting_config["query_measurement"] = {
+                **query_scenario.metadata(),
+                "build": build_identity(query_scenario.manifest["expected_driver_commit"]),
+            }
     if perf_reporting_config["enabled"] and perf_reporting_config["results_endpoint"]:
         stats = Stats()
         reporter = PerfReporter(stats, perf_reporting_config)
@@ -160,6 +172,19 @@ def _wrap_backend_for_counting(client, is_async, client_logger):
     )
     if actual == "core-python":
         return
+
+    if is_async and _measurement_seconds() and _measurement_operation() == "query":
+        orig_execute_pages = backend.execute_pages
+
+        async def _counting_pages(prepared, *, deadline=None):
+            pages = orig_execute_pages(prepared, deadline=deadline)
+            try:
+                async for page in pages:
+                    backend_counters.record_page_fetch()
+                    yield page
+            finally:
+                await pages.aclose()
+        backend.execute_pages = _counting_pages
 
     orig_execute = backend.execute
     if is_async:
@@ -235,10 +260,12 @@ async def _run_bounded_operations(point, stats, reporter, stop_event, client_log
         nonlocal duration_elapsed
         duration_elapsed = True
 
-    timer = asyncio.get_running_loop().call_later(_measurement_seconds(), end_load)
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + _measurement_seconds()
+    timer = loop.call_later(_measurement_seconds(), end_load)
     monitor = asyncio.create_task(_loop_lag_monitor(stats)) if WORKLOAD_LOOP_LAG_MONITOR else None
     try:
-        while not stop_event.is_set() and not duration_elapsed:
+        while not stop_event.is_set() and not duration_elapsed and loop.time() < deadline:
             await point.run(stats)
         if stop_event.is_set():
             raise RuntimeError(f"{name} measurement interrupted; discard this run and restart")
@@ -258,10 +285,14 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
     """Async workload loop — default mode."""
     ops = WORKLOAD_OPERATIONS
     use_proxy = WORKLOAD_USE_PROXY
+    query_scenario = None
+    if _measurement_seconds() and _measurement_operation() == "query":
+        from workload_queries import load_scenario
+        query_scenario = load_scenario(WORKLOAD_QUERY_MANIFEST, WORKLOAD_QUERY_SCENARIO)
 
     owns_reporter = False
     if stats is None and stop_event is None:
-        stats, reporter = _start_reporter()
+        stats, reporter = _start_reporter(query_scenario) if query_scenario else _start_reporter()
         owns_reporter = stats is not None
 
     # A None stop_event means the single-client path, so install the handler here.
@@ -312,8 +343,12 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
 
             try:
                 if _measurement_seconds():
-                    from workload_isolation import PointMeasurement
-                    point = PointMeasurement(cont, _measurement_operation())
+                    if query_scenario is not None:
+                        from workload_queries import QueryMeasurement
+                        point = QueryMeasurement(cont, query_scenario)
+                    else:
+                        from workload_isolation import PointMeasurement
+                        point = PointMeasurement(cont, _measurement_operation())
                     try:
                         await point.prepare(stop_event)
                         await _run_bounded_operations(point, stats, reporter, stop_event, client_logger)

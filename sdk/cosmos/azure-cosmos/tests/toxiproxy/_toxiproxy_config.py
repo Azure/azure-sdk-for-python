@@ -10,7 +10,6 @@ import tempfile
 from urllib.parse import urlsplit
 from urllib.request import urlopen
 
-DRIVER_COMMIT = "84e2bb66c9911fa730dc9756c8fc3f9612456344"
 VERSION = "2.13.0"
 SERVER_SHA256 = "04b710eefd7690c89f7cc67289e3e14618f1ff3c26e4a5f752a34a879b895bab"
 SERVER_URL = f"https://github.com/Shopify/toxiproxy/releases/download/v{VERSION}/toxiproxy-server-windows-amd64.exe"

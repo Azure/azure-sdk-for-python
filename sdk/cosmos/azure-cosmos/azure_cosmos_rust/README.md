@@ -424,8 +424,8 @@ The legacy path is unchanged.
 `include_attempts=False`. Their opt-in envelope preserves ordinary results
 and errors. First-fetch diagnostics are marked incomplete because successful
 metadata resolution and planning do not return diagnostics through this
-path; available attempts are recorded without complete `cosmos.poc.*`
-totals. Local cursor exhaustion has no service response or request attempts.
+path; available attempts are recorded without complete
+`azure.cosmosdb.operation.*` request totals. Local cursor exhaustion has no service response or request attempts.
 The adapter enabled this collection for retained read-all calls in Bite 53;
 Bite 54 adds retained item queries and Bite 55 adds retained change-feed calls.
 
@@ -781,6 +781,18 @@ proof that the pipeline's selected toolchain works.
 Once `cargo check` is green, `maturin develop` (back at the outer
 directory) is what actually produces a fresh `_rust.pyd` and copies it
 into `azure/cosmos/` so Python can import it.
+
+## Native binding tests
+
+Use a Python environment containing this SDK and its Python dependencies, and
+set `PYO3_PYTHON` to that environment's interpreter. Run the native suite from
+the workspace root with `cargo test --locked -p azure_cosmos_rust`.
+
+Tests that use Python call `crate::test_support::prepare_python()` before their
+workload. It initializes the synchronous and asynchronous Python packages once
+so concurrent tests do not race their first imports. Waiting for initialization
+releases the GIL, including when a caller already holds it. Only initialization
+is serialized; the test workloads retain normal parallel execution.
 
 ## What this binding currently forwards on the wire
 

@@ -185,9 +185,9 @@ def test_batch_span_owns_preparation_result_and_hook_rust(batch, recording, mode
     if spans:
         assert spans[0].parent.span_id == parent.get_span_context().span_id
         assert spans[0].status.status_code is trace.StatusCode.UNSET
-        assert "cosmos.poc.request_count" not in spans[0].attributes
-        assert "cosmos.poc.retained_request_count" not in spans[0].attributes
-        assert spans[0].attributes["cosmos.poc.diagnostics_complete"] is False
+        assert "azure.cosmosdb.operation.request_count" not in spans[0].attributes
+        assert "azure.cosmosdb.operation.retained_request_count" not in spans[0].attributes
+        assert spans[0].attributes["azure.cosmosdb.operation.diagnostics_complete"] is False
         assert len(attempt_spans(recording)) == 2
         assert all(s.parent.span_id == spans[0].context.span_id for s in attempt_spans(recording))
     assert telemetry._OPERATION.get() is None
@@ -292,8 +292,8 @@ def test_reporting_failure_does_not_replace_batch_result_rust(batch, recording, 
     else:
         assert h.call()[0]["statusCode"] == 201
     assert len(h.calls) == len(h.seen) == len(operation_spans(recording)) == 1
-    assert "cosmos.poc.request_count" not in operation_spans(recording)[0].attributes
-    assert "cosmos.poc.retained_request_count" not in operation_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.request_count" not in operation_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in operation_spans(recording)[0].attributes
 
 
 def test_invalid_input_creates_no_attempts_rust(batch, recording):

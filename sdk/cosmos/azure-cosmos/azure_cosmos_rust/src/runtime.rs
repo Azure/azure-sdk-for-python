@@ -1030,7 +1030,7 @@ mod tests {
 
     #[test]
     fn fault_wait_budget_config_preserves_fractional_seconds() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let config = PyModule::import_bound(py, "types").unwrap()
                 .getattr("SimpleNamespace").unwrap().call0().unwrap();
@@ -1050,7 +1050,7 @@ mod tests {
         use super::{config_fingerprint, fault_rules_from_config};
         use azure_core::http::headers::HeaderName;
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let module = PyModule::from_code_bound(
                 py,
@@ -1113,7 +1113,7 @@ invalid = [
 
     #[test]
     fn fault_response_body_is_preserved_and_changes_driver_identity() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let module = PyModule::from_code_bound(py, r#"
 from types import SimpleNamespace
@@ -1150,7 +1150,7 @@ config = SimpleNamespace(fault_injection_rules=(rule,))
 
     #[test]
     fn client_headers_configure_driver_and_isolate_cached_clients() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let config = py.import_bound("types").unwrap()
                 .getattr("SimpleNamespace").unwrap().call0().unwrap();
@@ -1181,7 +1181,7 @@ config = SimpleNamespace(fault_injection_rules=(rule,))
 
     #[test]
     fn client_config_rejects_invalid_retries_and_regions() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let config = PyModule::import_bound(py, "types")
                 .unwrap()
@@ -1223,7 +1223,7 @@ config = SimpleNamespace(fault_injection_rules=(rule,))
 
     #[test]
     fn client_hedging_defaults_to_disabled_with_or_without_config() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let options = operation_options_from_config(None).unwrap();
             assert_eq!(
@@ -1264,7 +1264,7 @@ class ExplicitNone:
 
     #[test]
     fn client_hedging_enabled_preserves_default_and_custom_thresholds() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let types = PyModule::import_bound(py, "types").unwrap();
             for threshold_ms in [500_u64, 25] {
@@ -1283,7 +1283,7 @@ class ExplicitNone:
 
     #[test]
     fn client_hedging_rejects_invalid_threshold_instead_of_disabling_silently() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let config = PyModule::import_bound(py, "types")
                 .unwrap()
@@ -1350,7 +1350,7 @@ class ExplicitNone:
         use std::{collections::HashMap, sync::Arc};
         use url::Url;
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let endpoint = Url::parse("https://toggle.emulator.local").unwrap();
         let config =
             VirtualAccountConfig::new(vec![VirtualRegion::new("East US", endpoint.clone())])
@@ -1499,7 +1499,7 @@ class ExplicitNone:
 
     #[test]
     fn client_consistency_config_maps_levels_and_preserves_defaults() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let config = py
                 .import_bound("types")
@@ -1560,7 +1560,7 @@ class ExplicitNone:
 
     #[test]
     fn retired_client_network_settings_are_rejected_without_initialization() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let module = PyModule::from_code_bound(
                 py,
@@ -1588,7 +1588,7 @@ class Config:
     #[test]
     fn fault_transport_errors_preserve_response_rules_and_cache_isolation() {
         use super::{config_fingerprint, fault_rules_from_config, FaultInjectionErrorType};
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let module = PyModule::from_code_bound(
                 py,
@@ -1658,7 +1658,7 @@ config = SimpleNamespace(fault_injection_rules=(rule,))
 
     #[test]
     fn acquisition_identity_covers_config_and_credential_without_starting_driver() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let module = PyModule::from_code_bound(
                 py,
@@ -1752,7 +1752,7 @@ variants = [
             "unexpected error: {missing}"
         );
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let cred = PyString::new_bound(py, "token-credential").into_any();
             let both = validate_auth_inputs(Some("master-key"), Some(&cred))
@@ -1766,7 +1766,7 @@ variants = [
 
     #[test]
     fn get_config_opt_ignores_only_missing_attribute() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let module = PyModule::from_code_bound(
                 py,
@@ -1949,7 +1949,7 @@ class Config:
 
     #[test]
     fn concurrent_runtime_initializers_release_the_python_lock_while_waiting() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let barrier = std::sync::Arc::new(std::sync::Barrier::new(4));
         let (sender, receiver) = std::sync::mpsc::channel();
         let mut workers = Vec::new();
@@ -1979,7 +1979,7 @@ class Config:
 
     #[test]
     fn driver_work_uses_the_async_bridge_executor() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|_py| {
             let context = super::runtime_context();
             assert!(std::ptr::eq(
@@ -2016,7 +2016,7 @@ class Config:
         const WAIT: Duration = Duration::from_secs(10);
 
         fn entry() -> DriverEntry {
-            pyo3::prepare_freethreaded_python();
+            crate::test_support::prepare_python();
             let endpoint = Url::parse("https://driver-creation.emulator.local").unwrap();
             let config =
                 VirtualAccountConfig::new(vec![VirtualRegion::new("East US", endpoint.clone())])
@@ -2271,7 +2271,7 @@ class Config:
         };
         use crate::driver_runtime::RuntimeHandle;
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let endpoint = Url::parse("https://runtime-ownership.emulator.local").unwrap();
         let config = VirtualAccountConfig::new(vec![VirtualRegion::new(
             "East US", endpoint.clone(),
@@ -2319,7 +2319,7 @@ class Config:
         use std::sync::Arc;
         use url::Url;
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let endpoint = Url::parse(if shared_credential {
             "https://shared-token-credential.emulator.local"
         } else {
@@ -2409,7 +2409,7 @@ second = Credential()
 
     #[test]
     fn client_overall_deadline_is_distinct_from_connection_settings() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let module = PyModule::from_code_bound(py,
                 "from types import SimpleNamespace\nconfig = SimpleNamespace(operation_timeout_seconds=30)",

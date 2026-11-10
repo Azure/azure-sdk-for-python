@@ -16,7 +16,7 @@ import pytest
 from toxiproxy import run_toxiproxy
 from toxiproxy import _toxiproxy_config
 from toxiproxy._process_tree import OwnedProcessTree, run_owned_worker
-from toxiproxy._toxiproxy_config import DRIVER_COMMIT, digest
+from toxiproxy._toxiproxy_config import digest
 from toxiproxy._toxiproxy_config import validate_endpoint
 from fault_injection._regional_routing import assert_fields
 
@@ -80,6 +80,25 @@ def test_proxy_fixture_rejects_remote_endpoint_before_startup_rust(tmp_path, mon
         fixtures.proxy_route.__wrapped__(tmp_path, request, monkeypatch)
     start.assert_not_called()
     request.addfinalizer.assert_not_called()
+
+
+def test_proxy_fixture_accepts_current_driver_revision_rust(tmp_path, monkeypatch):
+    from azure.cosmos import _rust
+    from toxiproxy import conftest as fixtures
+
+    monkeypatch.setattr(_rust, "__rust_driver_commit__", "unit-test-revision")
+    monkeypatch.setenv("ACCOUNT_HOST", "https://localhost:8081/")
+    proxy = Mock(sdk_endpoint="127.0.0.1:19081")
+    tunnel = Mock(proxy_url="http://127.0.0.1:19082")
+    monkeypatch.setattr("toxiproxy._toxiproxy.OwnedProxy", Mock(return_value=proxy))
+    monkeypatch.setattr("toxiproxy._connect_tunnel.ConnectTunnel", Mock(return_value=tunnel))
+    configure = Mock()
+    monkeypatch.setattr("toxiproxy._connect_tunnel.configure_proxy_environment", configure)
+    request = SimpleNamespace(param="plain", addfinalizer=Mock())
+    assert fixtures.proxy_route.__wrapped__(tmp_path, request, monkeypatch) is proxy
+    proxy.start.assert_called_once_with()
+    tunnel.start.assert_called_once_with()
+    configure.assert_called_once_with(monkeypatch, tunnel)
 
 
 @pytest.mark.parametrize("endpoint", ["https://localhost:8081/", "https://127.0.0.1:8081"])
@@ -260,6 +279,29 @@ def test_worker_rejects_missing_ownership_release_rust():
     assert b"did not establish process-tree ownership" in result.stderr
 
 
+def test_worker_accepts_snapshot_driver_revision_rust(tmp_path, monkeypatch):
+    import azure
+    import azure.cosmos
+    from config.settings import TestSettings
+
+    base = tmp_path / "snapshot"
+    binary = base / "azure" / "cosmos" / "_rust.pyd"
+    binary.parent.mkdir(parents=True)
+    binary.write_bytes(b"test binary")
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps({"binary_sha256": digest(binary)}))
+    native = SimpleNamespace(__file__=str(binary), __rust_driver_commit__="unit-test-revision")
+    monkeypatch.setattr(azure.cosmos, "_rust", native)
+    monkeypatch.setattr(azure, "__path__", list(azure.__path__))
+    monkeypatch.setattr(sys, "stdin", SimpleNamespace(buffer=io.BytesIO(b"1")))
+    monkeypatch.setattr(TestSettings, "masterKey", "unit-test-key")
+    monkeypatch.delenv("ACCOUNT_KEY", raising=False)
+    execute = Mock(return_value=0)
+    monkeypatch.setattr(pytest, "main", execute)
+    assert run_toxiproxy.worker([str(base), str(manifest), str(tmp_path / "run")]) == 0
+    execute.assert_called_once()
+
+
 def test_runner_records_timeout_without_success_fallback_rust(tmp_path, monkeypatch):
     root, base = tmp_path / "package", tmp_path / "snapshot"
     for directory in (root, base):
@@ -282,7 +324,7 @@ def test_runner_records_timeout_without_success_fallback_rust(tmp_path, monkeypa
     manifest.write_text(
         json.dumps(
             {
-                "driver_source": f"git+https://github.com/Azure/azure-sdk-for-rust?rev={DRIVER_COMMIT}#{DRIVER_COMMIT}",
+                "driver_source": "unit-test-driver-source",
                 "binary_sha256": digest(base / "azure" / "cosmos" / "_rust.pyd"),
                 "sources": {},
             }

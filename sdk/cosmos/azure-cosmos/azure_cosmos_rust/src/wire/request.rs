@@ -554,7 +554,7 @@ mod tests {
 
     #[test]
     fn body_snapshot_is_copied_as_bytes_not_iterated_as_a_sequence() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let owned = Python::with_gil(|py| {
             let module = PyModule::from_code_bound(
                 py,
@@ -574,7 +574,7 @@ mod tests {
 
     #[test]
     fn body_snapshot_rejects_mutable_sequences() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let request = py.import_bound("types").unwrap()
                 .getattr("SimpleNamespace").unwrap().call0().unwrap();
@@ -653,7 +653,7 @@ mod tests {
 
     #[test]
     fn body_key_extraction_preserves_python_shapes_and_path_rules() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for (kind, paths, body, header) in [
             ("Hash", vec!["/pk"], r#"{"pk":"a"}"#, r#"["a"]"#),
             ("Hash", vec!["/pk"], r#"{"pk":null}"#, "[null]"),
@@ -717,7 +717,7 @@ mod tests {
 
     #[test]
     fn body_key_extraction_rejects_invalid_input_instead_of_guessing() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for (kind, path, body) in [
             ("Hash", "/pk", "not JSON"),
             ("Hash", "/pk", "[]"),
@@ -739,7 +739,7 @@ mod tests {
 
     #[test]
     fn body_key_extraction_ignores_unrelated_surrogates_without_changing_bytes() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for (kind, paths, body, header) in [
             (
                 "Hash",
@@ -864,7 +864,7 @@ mod tests {
 
     #[test]
     fn body_key_extraction_still_rejects_malformed_ignored_fields() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let definition = azure_data_cosmos_driver::models::PartitionKeyDefinition::from("/pk");
         for body in [
             br#"{"pk":"p","note":"\ud80"}"#.as_slice(),
@@ -887,7 +887,7 @@ mod tests {
 
     #[test]
     fn body_key_extraction_rejects_surrogates_in_selected_driver_strings() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let definition = azure_data_cosmos_driver::models::PartitionKeyDefinition::from("/pk");
         for body in [
             br#"{"pk":"\ud800"}"#.as_slice(),
@@ -1059,7 +1059,7 @@ mod tests {
 
     #[test]
     fn database_input_extraction_does_not_require_container_fields() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let attributes = PyDict::new_bound(py);
             attributes.set_item("protocol_version", 3).unwrap();
@@ -1089,7 +1089,7 @@ mod tests {
 
     #[test]
     fn account_input_extraction_requires_headers_and_options() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let attributes = PyDict::new_bound(py);
             attributes.set_item("protocol_version", 3).unwrap();

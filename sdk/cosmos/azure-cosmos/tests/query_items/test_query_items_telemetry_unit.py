@@ -118,6 +118,9 @@ def test_page_tracing_settings_are_snapshotted_until_consumption(querying, recor
     for span in spans:
         assert span.attributes["bank.component"] == "orders"
         assert span.attributes["bank.page"] == "first"
+    # Deferred fetches are owned by the page config, so labels come from its proxy.
+    for span in fetch_spans(recording):
+        assert span.attributes["db.namespace"] == "db" and span.attributes["db.collection.name"] == "c"
 
 
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "handler-only", "sampled-out", "no-handlers"])
@@ -192,9 +195,9 @@ def test_each_internal_fetch_owns_query_progress_and_final_hook(
     if spans:
         assert [s.parent.span_id for s in spans] == parents
         assert all(s.status.status_code is trace.StatusCode.UNSET for s in spans)
-        assert all("cosmos.poc.request_count" not in s.attributes for s in (spans[0], spans[-1]))
-        assert all("cosmos.poc.retained_request_count" not in s.attributes for s in (spans[0], spans[-1]))
-        assert all(s.attributes["cosmos.poc.request_count"] == 5 for s in spans[1:3])
+        assert all("azure.cosmosdb.operation.request_count" not in s.attributes for s in (spans[0], spans[-1]))
+        assert all("azure.cosmosdb.operation.retained_request_count" not in s.attributes for s in (spans[0], spans[-1]))
+        assert all(s.attributes["azure.cosmosdb.operation.request_count"] == 5 for s in spans[1:3])
         attempts = attempt_spans(recording)
         assert [sum(a.parent.span_id == s.context.span_id for a in attempts) for s in spans] == [2, 2, 2, 0]
     f.binding.query_items.assert_not_called()
@@ -315,8 +318,8 @@ def test_diagnostic_failures_do_not_change_query_outcomes(querying, recording, m
         assert f.next_page(pages) == [{"id": "a", "nested": [1]}]
     assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 1
     assert h.seen[0].outcome == ("error" if detail == "invalid-response" else "success")
-    assert "cosmos.poc.request_count" not in fetch_spans(recording)[0].attributes
-    assert "cosmos.poc.retained_request_count" not in fetch_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.request_count" not in fetch_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in fetch_spans(recording)[0].attributes
     assert len(attempt_spans(recording)) == (2 if detail == "partial" else 0)
 
 

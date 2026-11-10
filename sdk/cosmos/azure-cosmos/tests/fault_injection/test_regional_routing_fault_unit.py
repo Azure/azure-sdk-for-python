@@ -244,15 +244,18 @@ def test_missing_truncated_or_metadata_only_diagnostics_fail_rust(change):
 
 
 def test_guard_requires_rejection_named_application_and_matching_destination_rust():
-    error = exceptions.CosmosHttpResponseError(403, message="guard", sub_status=3)
+    error = exceptions.CosmosHttpResponseError(503, message="guard", sub_status=20311)
+    wire_status = exceptions.CosmosHttpResponseError(403, message="guard", sub_status=3)
     records = native_records(payload())
     assert_guard(error, records, "https://localhost:8081/", 1, "guard")
-    for error_value, hits, name in [(None, 1, "guard"), (error, 0, "guard"), (error, 1, "other")]:
+    for error_value, hits, name in [
+        (None, 1, "guard"), (error, 0, "guard"), (error, 1, "other"), (wire_status, 1, "guard"),
+    ]:
         with pytest.raises(AssertionError):
             assert_guard(error_value, records, "https://localhost:8081/", hits, name)
 
 
-def test_write_forbidden_exhaustion_is_not_silently_accepted_as_403_rust():
+def test_write_forbidden_reported_as_transport_error_is_rejected_rust():
     with pytest.raises(AssertionError, match="Guard did not reject"):
         assert_guard(ServiceResponseError("503/20311"), native_records(payload()),
                      "https://localhost:8081/", 1, "guard")

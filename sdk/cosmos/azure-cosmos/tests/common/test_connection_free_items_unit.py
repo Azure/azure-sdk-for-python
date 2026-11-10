@@ -702,9 +702,8 @@ def test_public_context_and_compatibility_bridge_rust(monkeypatch, async_mode, c
     seen by the context -- so existing code that inspects headers after a call
     keeps working.
 
-    Finally the defaults refuse to be modified, since they are shared by every
-    container in the program and an edit in one place would silently change all
-    of them.
+    Finally the defaults refuse to be modified, since they are shared by
+    containers belonging to this client. An edit would affect all of them.
     """
     backend = AsyncBackend() if async_mode else Backend()
     module = "azure.cosmos.aio._cosmos_client" if async_mode else "azure.cosmos.cosmos_client"

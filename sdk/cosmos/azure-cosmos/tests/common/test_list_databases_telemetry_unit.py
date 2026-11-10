@@ -247,7 +247,7 @@ def test_listing_page_telemetry_parent_boundary_and_replay(listing_telemetry, re
         assert all(s.name == f"CosmosClient.{h.operation}.fetch" for s in fetch)
         assert creation[0].parent.span_id == producer.context.span_id
         assert [s.parent.span_id for s in fetch] == parents
-        assert all(s.attributes["cosmos.poc.request_count"] == 5 for s in fetch)
+        assert all(s.attributes["azure.cosmosdb.operation.request_count"] == 5 for s in fetch)
         assert all(s.status.status_code is trace.StatusCode.UNSET for s in fetch)
         for span in fetch:
             assert len([s for s in attempt_spans(recording) if s.parent.span_id == span.context.span_id]) == 2
@@ -351,8 +351,8 @@ def test_listing_page_telemetry_optional_detail_never_repeats_fetch(listing_tele
     assert len(h.calls) == len(h.seen) == 1
     assert h.seen[0].outcome == "success"
     span = fetch_spans(recording)[0]
-    assert "cosmos.poc.request_count" not in span.attributes
-    assert "cosmos.poc.retained_request_count" not in span.attributes
+    assert "azure.cosmosdb.operation.request_count" not in span.attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in span.attributes
     assert len(attempt_spans(recording)) == (2 if detail == "partial" else 0)
 
 

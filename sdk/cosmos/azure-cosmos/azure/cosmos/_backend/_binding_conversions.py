@@ -157,7 +157,7 @@ def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseE
     Keep its headers on the exception without replacing the client's saved
     response headers.
     """
-    from .._helpers._exceptions import extract_message_from_body, map_backend_response_to_exception
+    from .._helpers._exceptions import error_message_from_body, map_backend_response_to_exception
     from .._helpers._response_parse import apply_response_diagnostics, apply_request_charge_format
 
     if len(error.args) != 1 or not isinstance(error.args[0], tuple) or len(error.args[0]) != 5:
@@ -169,7 +169,7 @@ def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseE
     apply_request_charge_format(headers)
     apply_response_diagnostics(headers, response.diagnostics)
     response = replace(response, headers=headers)
-    return map_backend_response_to_exception(response, message=extract_message_from_body(response.body))
+    return map_backend_response_to_exception(response, message=error_message_from_body(response.body, response.status_code))
 
 
 def normalize_response_headers(

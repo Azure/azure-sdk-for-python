@@ -11,6 +11,7 @@ Binding validation is simulated where needed; no service operations are made.
 import asyncio
 import concurrent.futures
 import inspect
+import logging
 import subprocess
 import sys
 import threading
@@ -477,24 +478,23 @@ def test_failed_constructor_does_not_release_another_clients_credential_hold_rus
 
 @pytest.mark.parametrize("cancelled", [False, True])
 @pytest.mark.parametrize("backend_name", ["core-python", "rust"])
-def test_async_entry_failure_closes_all_resources_rust(monkeypatch, cancelled, backend_name):
-    """If entering the async client fails, everything opened on the way in is closed
-    again.
+@pytest.mark.parametrize("cleanup_fails", [False, True])
+def test_async_entry_failure_closes_all_resources_rust(
+    monkeypatch, caplog, cancelled, backend_name, cleanup_fails
+):
+    """Failed or cancelled entry attempts every local cleanup step.
 
-    Legacy entry can fail during account setup; Rust entry can fail while preparing
-    the driver. The pipeline cleanup, the endpoint manager, and the routing
-    information are each closed or released exactly once, with the backend
-    marked closed and no reservation left on the account.
-
-    Cancellation is covered alongside an ordinary error because it arrives by a
-    different route and is easy to leave out of a cleanup path -- and the
-    likeliest cause is a caller's own timeout around startup, which is not rare.
-    A client abandoned there would hold its connections open until the program
-    ended.
+    A pipeline cleanup error is logged without replacing the original entry
+    error or skipping adapter and routing-state cleanup. The customer block
+    must not run. These assertions establish local cleanup, not service state.
     """
     error = asyncio.CancelledError() if cancelled else RuntimeError("discovery failed")
+    cleanup_error = RuntimeError("pipeline cleanup failed")
     connection = SimpleNamespace(
-        pipeline_client=SimpleNamespace(__aenter__=AsyncMock(), __aexit__=AsyncMock()),
+        pipeline_client=SimpleNamespace(
+            __aenter__=AsyncMock(),
+            __aexit__=AsyncMock(side_effect=cleanup_error if cleanup_fails else None),
+        ),
         _setup=AsyncMock(side_effect=error),
         _global_endpoint_manager=SimpleNamespace(close=AsyncMock()),
         _routing_map_provider=SimpleNamespace(release=MagicMock()),
@@ -510,10 +510,22 @@ def test_async_entry_failure_closes_all_resources_rust(monkeypatch, cancelled, b
     monkeypatch.setattr(client._adapter, "close", backend_close)
 
     async def run():
-        with pytest.raises(type(error)):
-            await client.__aenter__()
+        with pytest.raises(type(error)) as caught:
+            async with client:
+                pytest.fail("Customer block must not run after failed entry")
+        assert caught.value is error
 
-    asyncio.run(run())
+    with caplog.at_level(logging.WARNING, logger=async_client.__name__):
+        asyncio.run(run())
+    cleanup_records = [
+        record for record in caplog.records
+        if record.name == async_client.__name__
+        and record.getMessage() == "Failed cleanup after async client entry"
+    ]
+    assert len(cleanup_records) == int(cleanup_fails)
+    if cleanup_fails:
+        assert cleanup_records[0].levelno == logging.WARNING
+        assert cleanup_records[0].exc_info[1] is cleanup_error
     connection.pipeline_client.__aexit__.assert_awaited_once()
     connection._global_endpoint_manager.close.assert_awaited_once()
     connection._routing_map_provider.release.assert_called_once()

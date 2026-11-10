@@ -16,6 +16,7 @@ import threading
 
 _lock = threading.Lock()
 _execute_calls = 0
+_page_fetches = 0
 _runtime_backend = "core-python"
 
 
@@ -30,6 +31,18 @@ def execute_count() -> int:
     """Read the cumulative Python wrapper count for this process."""
     with _lock:
         return _execute_calls
+
+
+def record_page_fetch() -> None:
+    """Count a backend page returned to the wrapper, not its internal requests."""
+    global _page_fetches  # pylint: disable=global-statement
+    with _lock:
+        _page_fetches += 1
+
+
+def page_fetch_count() -> int:
+    with _lock:
+        return _page_fetches
 
 
 def set_runtime_backend(name: str) -> None:

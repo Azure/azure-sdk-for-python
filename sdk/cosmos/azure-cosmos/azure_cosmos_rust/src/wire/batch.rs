@@ -279,7 +279,7 @@ mod tests {
 
     #[test]
     fn batch_key_rejection_preserves_400_with_and_without_attempts() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let definition = PartitionKeyDefinition::new(vec!["/state".into(), "/city".into()])
             .with_kind(PartitionKeyKind::MultiHash);
         let error =
@@ -315,7 +315,7 @@ mod tests {
 
     // Obtain real diagnostics without relying on an external account.
     async fn response_and_metadata_error() -> (CosmosResponse, CosmosError) {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://batch.emulator.local").unwrap();
         let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
             VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),

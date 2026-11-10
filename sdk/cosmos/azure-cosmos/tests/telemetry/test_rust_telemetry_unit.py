@@ -21,6 +21,7 @@ from threading import Barrier
 from unittest.mock import AsyncMock, Mock
 
 import pytest
+from common.rust_telemetry_payload import expected_attempt_attributes, v2
 from common.typed_requests import wire_headers
 
 pytest.importorskip("opentelemetry.sdk.trace")
@@ -150,8 +151,8 @@ def item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
         if harness.error is not None:
             raise harness.error
         end = time.time_ns()
-        payload = {
-            "schema_version": 1,
+        payload = v2({
+            "schema_version": 2,
             "complete": True,
             "incomplete_reasons": [],
             "request_count": 5,
@@ -171,7 +172,7 @@ def item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
                     "execution_context": "retry",
                 },
             ],
-        }
+        })
         harness.payloads.append(payload)
         if harness.response_status == 408:
             # This is a driver error without a service response, not an HTTP 408 response.
@@ -297,12 +298,12 @@ def test_create_preserves_result_and_records_exact_sibling_attempts_rust(create,
     assert not any("attempt" in key or "telemetry" in key for key in create.calls[0][2])
     (operation,) = operation_spans(recording)
     assert operation.parent.span_id == checkout.get_span_context().span_id
-    assert operation.attributes["cosmos.poc.request_count"] == 5
-    assert operation.attributes["cosmos.poc.retained_request_count"] == 2
+    assert operation.attributes["azure.cosmosdb.operation.request_count"] == 5
+    assert operation.attributes["azure.cosmosdb.operation.retained_request_count"] == 2
     assert operation.status.status_code is trace.StatusCode.UNSET
     children = sorted(
         attempt_spans(recording),
-        key=lambda span: span.attributes["cosmos.poc.driver_status_code"],
+        key=lambda span: span.attributes["db.response.status_code"],
         reverse=True,
     )
     assert len(children) == 2
@@ -313,11 +314,17 @@ def test_create_preserves_result_and_records_exact_sibling_attempts_rust(create,
         assert child.end_time == row["end_ns"]
         assert operation.start_time <= child.start_time <= child.end_time <= operation.end_time
         assert child.kind is trace.SpanKind.CLIENT
-        assert dict(child.attributes) == {
-            "cosmos.poc.driver_status_code": row["driver_status_code"],
-            "cosmos.poc.execution_context": row["execution_context"],
-        }
+        assert dict(child.attributes) == expected_attempt_attributes(row, "create_item")
     assert telemetry._OPERATION.get() is None
+
+
+def test_failed_operation_without_driver_status_reports_other_error_type_rust(create, recording):
+    create.response_status = 409
+    create.transform = lambda result: (result[0], {**result[1], "status_code": None, "failed": True})
+    with pytest.raises(CosmosResourceExistsError):
+        asyncio.run(create.container.create_item(deepcopy(ORDER)))
+    (operation,) = operation_spans(recording)
+    assert operation.attributes["error.type"] == "_OTHER"
 
 
 @pytest.mark.parametrize("mode", ["disabled", "global-disabled", "merged", "nested", "sampled-out"])
@@ -358,7 +365,7 @@ def test_no_attempts_without_a_new_recording_operation_rust(create, recording, m
                 assert not hasattr(create.driver_error, "_cosmos_attempt_payload")
             else:
                 assert await call() == ORDER
-            assert not any(key.startswith("cosmos.poc.") for key in checkout.attributes)
+            assert not any(key.startswith("azure.cosmosdb.") for key in checkout.attributes)
 
     asyncio.run(run())
     assert len(create.calls) == 1
@@ -377,6 +384,11 @@ def test_no_attempts_without_a_new_recording_operation_rust(create, recording, m
         "backwards",
         "status",
         "reason",
+        "charge",
+        "failed",
+        "operation-failed",
+        "regions",
+        "region-total",
         "binding-error",
         "conversion-error",
     ],
@@ -403,6 +415,16 @@ def test_invalid_detail_reports_without_changing_the_write_rust(create, recordin
             payload["attempts"][0]["driver_status_code"] = 65536
         elif defect == "reason":
             payload["attempts"][0]["execution_context"] = ""
+        elif defect == "charge":
+            payload["attempts"][0]["request_charge"] = -1.0
+        elif defect == "failed":
+            payload["attempts"][0]["failed"] = "yes"
+        elif defect == "operation-failed":
+            payload["failed"] = 1
+        elif defect == "regions":
+            payload["contacted_regions"] = "West US 2"
+        elif defect == "region-total":
+            payload.update(requested_regions=["West US 2", "East US"], requested_regions_total=1)
         elif defect == "binding-error":
             payload["error"] = "PRIVATE"
         else:
@@ -476,8 +498,8 @@ def test_incomplete_attempt_keeps_counts_without_inventing_end_time_rust(create,
             assert asyncio.run(create.container.create_item(ORDER)) == ORDER
     assert len(attempt_spans(recording)) == 1
     (operation,) = operation_spans(recording)
-    assert operation.attributes["cosmos.poc.request_count"] == 5
-    assert operation.attributes["cosmos.poc.retained_request_count"] == 2
+    assert operation.attributes["azure.cosmosdb.operation.request_count"] == 5
+    assert operation.attributes["azure.cosmosdb.operation.retained_request_count"] == 2
     assert "without a completion time" in caplog.text
 
 
@@ -515,16 +537,16 @@ def test_instrumentation_exception_does_not_replace_write_result_rust(
     if failure == "attribute":
         original_emit = telemetry.emit_attempts
 
-        def emit(parent, payload, attributes=None):
+        def emit(parent, payload, attributes=None, **kwargs):
             original_set = parent.set_attribute
 
             def set_attribute(name, value):
-                if name.startswith("cosmos.poc."):
+                if name.startswith("azure.cosmosdb."):
                     fail()
                 return original_set(name, value)
 
             monkeypatch.setattr(parent, "set_attribute", set_attribute)
-            original_emit(parent, payload, attributes)
+            original_emit(parent, payload, attributes, **kwargs)
 
         monkeypatch.setattr(telemetry, "emit_attempts", emit)
     with caplog.at_level(logging.WARNING):
@@ -591,8 +613,8 @@ def test_failed_create_preserves_exception_and_diagnostics_rust(create, recordin
     assert operation.status.status_code is trace.StatusCode.ERROR
     children = attempt_spans(recording)
     if has_diagnostics:
-        assert operation.attributes["cosmos.poc.request_count"] == 5
-        assert operation.attributes["cosmos.poc.retained_request_count"] == 2
+        assert operation.attributes["azure.cosmosdb.operation.request_count"] == 5
+        assert operation.attributes["azure.cosmosdb.operation.retained_request_count"] == 2
         assert len(children) == 2
         for child, row in zip(children, create.payloads[0]["attempts"]):
             assert child.parent.span_id == operation.context.span_id
@@ -601,10 +623,7 @@ def test_failed_create_preserves_exception_and_diagnostics_rust(create, recordin
             assert child.end_time == row["end_ns"]
             assert operation.start_time <= child.start_time <= child.end_time <= operation.end_time
             assert child.kind is trace.SpanKind.CLIENT
-            assert dict(child.attributes) == {
-                "cosmos.poc.driver_status_code": row["driver_status_code"],
-                "cosmos.poc.execution_context": row["execution_context"],
-            }
+            assert dict(child.attributes) == expected_attempt_attributes(row, "create_item")
     else:
         assert not children
     assert telemetry._OPERATION.get() is None
@@ -807,8 +826,8 @@ def test_read_preserves_outcome_and_exact_attempts_rust(create, recording, statu
     (operation,) = [s for s in recording.exporter.get_finished_spans() if s.name == "ContainerProxy.read_item"]
     assert operation.parent.span_id == checkout.get_span_context().span_id
     assert operation.status.status_code is (trace.StatusCode.UNSET if status in (200, 304) else trace.StatusCode.ERROR)
-    assert operation.attributes["cosmos.poc.request_count"] == 5
-    assert operation.attributes["cosmos.poc.retained_request_count"] == 2
+    assert operation.attributes["azure.cosmosdb.operation.request_count"] == 5
+    assert operation.attributes["azure.cosmosdb.operation.retained_request_count"] == 2
     children = attempt_spans(recording)
     assert len(children) == 2
     for span, row in zip(children, create.payloads[0]["attempts"]):
@@ -818,10 +837,7 @@ def test_read_preserves_outcome_and_exact_attempts_rust(create, recording, statu
         assert span.end_time == row["end_ns"]
         assert operation.start_time <= span.start_time <= span.end_time <= operation.end_time
         assert span.kind is trace.SpanKind.CLIENT
-        assert dict(span.attributes) == {
-            "cosmos.poc.driver_status_code": row["driver_status_code"],
-            "cosmos.poc.execution_context": row["execution_context"],
-        }
+        assert dict(span.attributes) == expected_attempt_attributes(row, "read_item")
     assert telemetry._OPERATION.get() is None
 
 
@@ -1026,8 +1042,8 @@ def sync_item_harness(recording, monkeypatch):  # pylint: disable=unused-argumen
             harness.barrier.wait(timeout=5)
         if harness.error is not None:
             raise harness.error
-        payload = {
-            "schema_version": 1,
+        payload = v2({
+            "schema_version": 2,
             "complete": True,
             "incomplete_reasons": [],
             "request_count": 1,
@@ -1041,7 +1057,7 @@ def sync_item_harness(recording, monkeypatch):  # pylint: disable=unused-argumen
                     "execution_context": "initial",
                 }
             ],
-        }
+        })
         harness.payloads.append(payload)
         if harness.response_status == 408:
             harness.driver_error = harness.driver_error_type("driver failure")
@@ -1391,8 +1407,8 @@ def test_failed_logging_and_stderr_leave_a_reporting_failure_count_rust(monkeypa
 
 
 def contribution_response(total, start, count=2):
-    payload = {
-        "schema_version": 1,
+    payload = v2({
+        "schema_version": 2,
         "complete": True,
         "incomplete_reasons": [],
         "request_count": total,
@@ -1407,7 +1423,7 @@ def contribution_response(total, start, count=2):
             }
             for index in range(count)
         ],
-    }
+    })
     return (200, 0, {}, b"{}", None), payload
 
 
@@ -1450,8 +1466,8 @@ def test_aggregation_counts_once_bounds_detail_and_rejects_late_delivery_rust(re
     ]
     spans = recording.exporter.get_finished_spans()
     operation = next(span for span in spans if span.name == "combined")
-    assert operation.attributes["cosmos.poc.request_count"] == 12
-    assert operation.attributes["cosmos.poc.retained_request_count"] == 3
+    assert operation.attributes["azure.cosmosdb.operation.request_count"] == 12
+    assert operation.attributes["azure.cosmosdb.operation.retained_request_count"] == 3
     assert len(attempt_spans(recording)) == 3
     assert "duplicate or late" in caplog.text
     assert state.closed and state.collector.diagnostics is None
@@ -1493,10 +1509,10 @@ def test_incomplete_contributions_do_not_publish_partial_counts_as_totals_rust(r
     assert not completion.diagnostics.complete
     assert completion.diagnostics.request_count == 5
     operation = next(span for span in recording.exporter.get_finished_spans() if span.name == "combined")
-    assert "cosmos.poc.request_count" not in operation.attributes
-    assert "cosmos.poc.retained_request_count" not in operation.attributes
+    assert "azure.cosmosdb.operation.request_count" not in operation.attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in operation.attributes
     assert "missing_contribution" in completion.diagnostics.incomplete_reasons
-    assert operation.attributes["cosmos.poc.diagnostics_complete"] is False
+    assert operation.attributes["azure.cosmosdb.operation.diagnostics_complete"] is False
 
 
 def test_explicit_contributions_can_complete_on_other_threads_without_sharing_span_state_rust():
@@ -1875,7 +1891,7 @@ def test_feed_range_discovery_belongs_to_consumer_and_finishes_once(range_discov
         assert fetch[0].parent.span_id == consumer.get_span_context().span_id
         assert fetch[0].start_time >= creation[0].end_time
         assert fetch[0].status.status_code is trace.StatusCode.UNSET
-        assert not any(key.startswith("cosmos.poc.") for key in fetch[0].attributes)
+        assert not any(key.startswith("azure.cosmosdb.") for key in fetch[0].attributes)
     assert not attempt_spans(recording)
     harness.forbidden.assert_not_called()
     assert telemetry._OPERATION.get() is None
@@ -1944,8 +1960,8 @@ def test_feed_range_discovery_failure_preserves_attempts_and_public_error(range_
     assert seen[0].outcome == ("error" if expected else "success")
     (span,) = discovery_spans(recording)
     assert (span.status.status_code == trace.StatusCode.ERROR) == (expected is not None)
-    assert "cosmos.poc.request_count" not in span.attributes
-    assert "cosmos.poc.retained_request_count" not in span.attributes
+    assert "azure.cosmosdb.operation.request_count" not in span.attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in span.attributes
     assert len(attempt_spans(recording)) == (0 if failure in ("stop", "malformed-diagnostics") else 2)
     assert all(child.parent.span_id == span.context.span_id for child in attempt_spans(recording))
     assert telemetry._OPERATION.get() is None
@@ -2203,8 +2219,8 @@ def test_range_subset_records_operation_without_request_spans(range_subset, reco
         assert span.name == "ContainerProxy.is_feed_range_subset" and span.kind is trace.SpanKind.INTERNAL
         assert span.parent.span_id == outer.get_span_context().span_id
         assert span.status.status_code is trace.StatusCode.UNSET and not span.events
-        assert "cosmos.poc.request_count" not in span.attributes
-        assert "cosmos.poc.retained_request_count" not in span.attributes
+        assert "azure.cosmosdb.operation.request_count" not in span.attributes
+        assert "azure.cosmosdb.operation.retained_request_count" not in span.attributes
     assert not attempt_spans(recording)
     assert telemetry._OPERATION.get() is None
 
@@ -2311,8 +2327,8 @@ def test_range_subset_error_completion_does_not_replay(range_subset, recording, 
     assert seen[0].diagnostics is None
     (span,) = [s for s in recording.exporter.get_finished_spans() if s.name == "ContainerProxy.is_feed_range_subset"]
     assert (span.status.status_code == trace.StatusCode.ERROR) == (expected is not None)
-    assert "cosmos.poc.request_count" not in span.attributes
-    assert "cosmos.poc.retained_request_count" not in span.attributes
+    assert "azure.cosmosdb.operation.request_count" not in span.attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in span.attributes
     assert not attempt_spans(recording)
     assert telemetry._OPERATION.get() is None
 
@@ -2571,8 +2587,8 @@ def test_partition_key_range_owns_executed_steps(partition_key_range, recording,
         assert span.name == "ContainerProxy.feed_range_from_partition_key"
         assert span.parent.span_id == parent.get_span_context().span_id
         assert span.status.status_code is trace.StatusCode.UNSET
-        assert "cosmos.poc.request_count" not in span.attributes
-        assert "cosmos.poc.retained_request_count" not in span.attributes
+        assert "azure.cosmosdb.operation.request_count" not in span.attributes
+        assert "azure.cosmosdb.operation.retained_request_count" not in span.attributes
         assert "customer-17" not in repr((span.attributes, span.events))
         assert all(child.parent.span_id == span.context.span_id for child in attempt_spans(recording))
     assert len(attempt_spans(recording)) == (2 if metadata and spans else 0)
@@ -2628,8 +2644,8 @@ def test_partition_key_range_failure_keeps_prior_diagnostics(partition_key_range
         s for s in recording.exporter.get_finished_spans() if s.name == "ContainerProxy.feed_range_from_partition_key"
     ]
     assert (span.status.status_code is trace.StatusCode.ERROR) == (expected is not None)
-    assert "cosmos.poc.request_count" not in span.attributes
-    assert "cosmos.poc.retained_request_count" not in span.attributes
+    assert "azure.cosmosdb.operation.request_count" not in span.attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in span.attributes
     # Validation errors have no attached diagnostic conversion; malformed telemetry is rejected.
     expected_attempts = 2 * (metadata + (failure not in ("validation", "payload")))
     assert len(attempt_spans(recording)) == expected_attempts
@@ -2883,7 +2899,7 @@ def test_latest_session_token_records_only_local_execution(  # pylint: disable=t
         assert span.parent.span_id == parent.get_span_context().span_id
         assert span.context.trace_id == parent.get_span_context().trace_id
         assert (span.status.status_code == trace.StatusCode.ERROR) is failed
-        assert not any(key.startswith("cosmos.poc.") for key in span.attributes)
+        assert not any(key.startswith("azure.cosmosdb.") for key in span.attributes)
         exported = repr((span.attributes, span.events, span.status.description))
         for value in (
             "private-token-invalid",
@@ -3148,7 +3164,7 @@ def database_throughput_harness(database_read, monkeypatch):  # pylint: disable=
             "diagnostic-text",
         )
         response, payload = harness.transform((response, payload))
-        if include_attempts and isinstance(payload, dict) and payload.get("schema_version") == 1:
+        if include_attempts and isinstance(payload, dict) and payload.get("schema_version") == 2:
             harness.payloads.append(payload)
         if prepared.op in harness.returned_errors:
             error = harness.returned_errors[prepared.op]
@@ -3740,7 +3756,7 @@ def container_throughput_harness(item_runtime, monkeypatch, request):  # pylint:
             "diagnostic-text",
         )
         response, payload = harness.transform((response, payload))
-        if include_attempts and isinstance(payload, dict) and payload.get("schema_version") == 1:
+        if include_attempts and isinstance(payload, dict) and payload.get("schema_version") == 2:
             harness.payloads.append(payload)
         if index in harness.returned_errors:
             error = harness.returned_errors[index]
@@ -4779,7 +4795,7 @@ def test_database_throughput_repeated_calls_select_actual_cache_path_rust(databa
     assert harness.get_throughput().offer_throughput == 400
     assert harness.operations == ["read_database", "get_throughput", "get_throughput"]
     operations = [s for s in recording.exporter.get_finished_spans() if s.name == "DatabaseProxy.get_throughput"]
-    assert [s.attributes["cosmos.poc.request_count"] for s in operations] == [10, 5]
+    assert [s.attributes["azure.cosmosdb.operation.request_count"] for s in operations] == [10, 5]
     assert operations[0].context.span_id != operations[1].context.span_id
 
 
@@ -4901,11 +4917,131 @@ def test_expected_partial_coverage_emits_state_not_warning_rust(recording, caplo
     with trace.get_tracer("test").start_as_current_span("partial") as parent:
         telemetry.emit_attempts(parent, diagnostics)
     span = next(s for s in recording.exporter.get_finished_spans() if s.name == "partial")
-    assert span.attributes["cosmos.poc.diagnostics_complete"] is False
-    assert span.attributes["cosmos.poc.diagnostics_incomplete_reasons"] == (reason,)
-    assert "cosmos.poc.request_count" not in span.attributes
+    assert span.attributes["azure.cosmosdb.operation.diagnostics_complete"] is False
+    assert span.attributes["azure.cosmosdb.operation.diagnostics_incomplete_reasons"] == (reason,)
+    assert "azure.cosmosdb.operation.request_count" not in span.attributes
     assert len(attempt_spans(recording)) == 2
     assert not [r for r in caplog.records if r.name == telemetry.__name__ and r.levelno >= logging.WARNING]
+
+
+def test_operation_span_uses_rust_sdk_attribute_names_rust(recording):
+    response, payload = contribution_response(2, time.time_ns())
+    first, second = payload["attempts"]
+    first.update(driver_status_code=503, sub_status_code=21008, failed=True, request_charge=0.5)
+    second.update(execution_context="hedging", region="East US", request_charge=2.0, operation_name="ReadItem")
+    payload.update(
+        status_code=200,
+        request_charge=2.5,
+        contacted_regions=["West US 2", "East US"],
+        machine_id="vm-1",
+        hedging_started=True,
+        hedge_region="East US",
+        hedge_terminal_state="hedged_success",
+        requested_regions=["West US 2", "East US"],
+        requested_regions_total=3,
+        responded_regions=["East US"],
+        responded_regions_total=1,
+    )
+    collector = telemetry._DiagnosticCollector()
+    collector.reserve().response((response, payload))
+    _, diagnostics = collector.close()
+    with trace.get_tracer("test").start_as_current_span("operation") as parent:
+        telemetry.emit_attempts(
+            parent, diagnostics, {"bank.call": "42"}, operation="read_item", namespace="bank", collection="orders"
+        )
+    operation = next(s for s in recording.exporter.get_finished_spans() if s.name == "operation")
+    assert {k: v for k, v in operation.attributes.items() if not k.startswith("azure.cosmosdb.operation.")} == {
+        "db.system.name": "azure.cosmosdb",
+        "db.operation.name": "read_item",
+        "db.namespace": "bank",
+        "db.collection.name": "orders",
+        "db.response.status_code": "200",
+        "server.address": "alpha-bank-westus2.documents.azure.com",
+        "azure.cosmosdb.machine_id": "vm-1",
+    }
+    assert operation.attributes["azure.cosmosdb.operation.request_charge"] == 2.5
+    assert operation.attributes["azure.cosmosdb.operation.contacted_regions"] == ("West US 2", "East US")
+    assert operation.attributes["azure.cosmosdb.operation.hedging_started"] is True
+    assert operation.attributes["azure.cosmosdb.operation.hedge_region"] == "East US"
+    assert operation.attributes["azure.cosmosdb.operation.hedge_terminal_state"] == "hedged_success"
+    assert operation.attributes["azure.cosmosdb.operation.requested_regions"] == ("West US 2", "East US")
+    assert operation.attributes["azure.cosmosdb.operation.requested_regions_total"] == 3
+    assert operation.attributes["azure.cosmosdb.operation.responded_regions"] == ("East US",)
+    assert "azure.cosmosdb.operation.responded_regions_total" not in operation.attributes
+    assert operation.status.status_code is trace.StatusCode.UNSET
+    attempts = sorted(attempt_spans(recording), key=lambda span: span.start_time)
+    for span, row in zip(attempts, (first, second)):
+        assert dict(span.attributes) == {"bank.call": "42", **expected_attempt_attributes(row, "read_item")}
+    assert attempts[0].attributes["error.type"] == "503"
+    assert attempts[0].status.status_code is trace.StatusCode.ERROR
+    assert attempts[1].attributes["azure.cosmosdb.request.hedge"] is True
+    assert attempts[1].attributes["db.operation.name"] == "ReadItem"
+    assert attempts[1].status.status_code is trace.StatusCode.UNSET
+
+
+def test_operation_span_is_labelled_without_diagnostics_rust(recording):
+    with trace.get_tracer("test").start_as_current_span("operation") as parent:
+        telemetry.emit_attempts(parent, None, operation="read_database", namespace="bank")
+    (operation,) = recording.exporter.get_finished_spans()
+    assert dict(operation.attributes) == {
+        "db.system.name": "azure.cosmosdb",
+        "db.operation.name": "read_database",
+        "db.namespace": "bank",
+    }
+
+
+def test_composite_summaries_sum_charge_and_keep_final_status_rust():
+    first = telemetry._Summary(
+        status_code=410,
+        sub_status_code=1002,
+        request_charge=1.5,
+        contacted_regions=("West US 2",),
+        machine_id="vm-1",
+        hedging_started=True,
+        hedge_region="East US",
+        hedge_terminal_state="hedged_success",
+        requested_regions=("West US 2", "East US"),
+        requested_regions_total=2,
+    )
+    later = telemetry._Summary(
+        status_code=200,
+        request_charge=2.0,
+        contacted_regions=("East US", "West US 2"),
+        machine_id="vm-2",
+        requested_regions=("North Europe",),
+        requested_regions_total=1,
+    )
+    assert first.merge(later, limit=2) == telemetry._Summary(
+        status_code=200,
+        request_charge=3.5,
+        contacted_regions=("West US 2", "East US"),
+        machine_id="vm-1",
+        hedging_started=True,
+        hedge_region="East US",
+        hedge_terminal_state="hedged_success",
+        requested_regions=("West US 2", "North Europe"),
+        requested_regions_total=3,
+    )
+
+
+@pytest.mark.parametrize(
+    "owner, operation, args, kwargs, expected",
+    [
+        (SimpleNamespace(container_link="dbs/bank/colls/orders"), "read_item", (), {}, ("bank", "orders")),
+        (SimpleNamespace(database_link="/dbs/bank"), "read", (), {}, ("bank", None)),
+        (SimpleNamespace(proxy=SimpleNamespace(container_link="dbs/bank/colls/orders")), "query_items", (), {},
+         ("bank", "orders")),
+        (SimpleNamespace(), "create_database", ("bank",), {}, ("bank", None)),
+        (SimpleNamespace(), "delete_database", (), {"database": {"id": "bank"}}, ("bank", None)),
+        (SimpleNamespace(database_link="dbs/bank"), "create_container", (), {"id": "orders"}, ("bank", "orders")),
+        (SimpleNamespace(database_link="dbs/bank"), "delete_container", (SimpleNamespace(id="orders"),), {},
+         ("bank", "orders")),
+        (SimpleNamespace(container_link="PRIVATE"), "read_item", (), {}, (None, None)),
+        (object(), "create_database", (), {}, (None, None)),
+    ],
+)
+def test_resource_names_come_from_the_owner_or_target_argument_rust(owner, operation, args, kwargs, expected):
+    assert telemetry._resource_names(owner, operation, args, kwargs) == expected
 
 
 def test_recording_snapshot_copies_labels_not_logger_or_parent_rust():
@@ -5194,9 +5330,14 @@ def assert_item_attempts(harness, recording, parent, status, name, owner="Contai
     operation = operations[0]
     assert operation.parent.span_id == parent.get_span_context().span_id
     assert operation.status.status_code is (trace.StatusCode.UNSET if status < 400 else trace.StatusCode.ERROR)
+    # Rust SDK parity: a driver failure is classified by its status, not the exception class.
+    assert operation.attributes.get("error.type") == (str(status) if status >= 400 else None)
+    assert operation.attributes["db.namespace"] == "sales"
+    expected_collection = "orders" if owner == "ContainerProxy" or "container" in name else None
+    assert operation.attributes.get("db.collection.name") == expected_collection
     payload = harness.payloads[0]
-    assert operation.attributes["cosmos.poc.request_count"] == payload["request_count"]
-    assert operation.attributes["cosmos.poc.retained_request_count"] == len(attempts)
+    assert operation.attributes["azure.cosmosdb.operation.request_count"] == payload["request_count"]
+    assert operation.attributes["azure.cosmosdb.operation.retained_request_count"] == len(attempts)
     assert len(attempts) == payload["retained_request_count"]
     for span, row in zip(attempts, payload["attempts"]):
         assert span.parent.span_id == operation.context.span_id
@@ -6266,7 +6407,13 @@ def test_database_create_reporting_preserves_public_outcome_rust(
         attempts = attempt_spans(recording)
         assert bool(attempts) is (outcome != "binding-timeout")
         if outcome in ("hook-error", "proxy-error"):
-            assert attempts[-1].attributes["cosmos.poc.driver_status_code"] == 201
+            assert attempts[-1].attributes["db.response.status_code"] == "201"
+            # The driver succeeded, so the root keeps Azure Core's exception classification.
+            (operation,) = [s for s in recording.exporter.get_finished_spans() if s.name.endswith(".create_database")]
+            assert operation.attributes["error.type"] == "ValueError"
+        elif outcome == "returned-timeout":
+            (operation,) = [s for s in recording.exporter.get_finished_spans() if s.name.endswith(".create_database")]
+            assert operation.attributes["error.type"] == "408"
     harness.connection.CreateDatabase.assert_not_called()
     harness.connection.ReadDatabase.assert_not_called()
     assert telemetry._OPERATION.get() is None
@@ -6288,13 +6435,13 @@ def assert_composed_attempts(
     assert operation.parent.span_id == parent.context.span_id
     assert operation.status.status_code is (trace.StatusCode.ERROR if failed else trace.StatusCode.UNSET)
     if complete:
-        assert operation.attributes["cosmos.poc.request_count"] == sum(p["request_count"] for p in harness.payloads)
-        assert operation.attributes["cosmos.poc.retained_request_count"] == sum(
+        assert operation.attributes["azure.cosmosdb.operation.request_count"] == sum(p["request_count"] for p in harness.payloads)
+        assert operation.attributes["azure.cosmosdb.operation.retained_request_count"] == sum(
             p["retained_request_count"] for p in harness.payloads
         )
     else:
-        assert "cosmos.poc.request_count" not in operation.attributes
-        assert "cosmos.poc.retained_request_count" not in operation.attributes
+        assert "azure.cosmosdb.operation.request_count" not in operation.attributes
+        assert "azure.cosmosdb.operation.retained_request_count" not in operation.attributes
     rows = [row for payload in harness.payloads for row in payload["attempts"] if row["end_ns"] is not None]
     attempts = attempt_spans(recording)
     assert len(attempts) == len(rows)
@@ -6303,8 +6450,8 @@ def assert_composed_attempts(
         assert span.context.trace_id == operation.context.trace_id and span.kind is trace.SpanKind.CLIENT
         assert operation.start_time <= span.start_time == row["start_ns"]
         assert span.end_time == row["end_ns"] <= operation.end_time
-        assert span.attributes["cosmos.poc.driver_status_code"] == row["driver_status_code"]
-        assert span.attributes["cosmos.poc.execution_context"] == row["execution_context"]
+        assert span.attributes["db.response.status_code"] == str(row["driver_status_code"])
+        assert span.attributes["azure.cosmosdb.request.execution_context"] == row["execution_context"]
     return operation
 
 
@@ -6378,7 +6525,7 @@ def test_database_get_or_create_collects_each_executed_step_once_rust(  # pylint
             assert hooks == [DATABASE_PROPERTIES]
         assert trace.get_current_span() is parent
         if parent.is_recording():
-            assert not any(key.startswith("cosmos.poc.") for key in parent.attributes)
+            assert not any(key.startswith("azure.cosmosdb.") for key in parent.attributes)
     assert len(harness.calls) == len(statuses) and len(seen) == 1
     assert all(call[0] is collect and 0 < call[1] <= 10 for call in harness.calls)
     budgets = [call[1] for call in harness.calls]
@@ -6491,7 +6638,7 @@ def test_database_get_or_create_reporting_never_replays_work_rust(
             assert seen[0].diagnostics is None
         assert len(attempt_spans(recording)) == sum(p["retained_request_count"] for p in valid)
         operation = next(s for s in recording.exporter.get_finished_spans() if s.name.startswith("CosmosClient."))
-        assert "cosmos.poc.request_count" not in operation.attributes
+        assert "azure.cosmosdb.operation.request_count" not in operation.attributes
     harness.connection.CreateDatabase.assert_not_called()
     harness.connection.ReadDatabase.assert_not_called()
     assert telemetry._OPERATION.get() is None
@@ -7275,7 +7422,7 @@ def test_database_delete_reporting_preserves_public_outcome_rust(
         attempts = attempt_spans(recording)
         assert bool(attempts) is (outcome != "binding-timeout")
         if outcome == "hook-error":
-            assert attempts[-1].attributes["cosmos.poc.driver_status_code"] == 204
+            assert attempts[-1].attributes["db.response.status_code"] == "204"
     harness.connection.DeleteDatabase.assert_not_called()
     harness.connection.ReadDatabase.assert_not_called()
     assert telemetry._OPERATION.get() is None
@@ -7321,7 +7468,7 @@ def test_delete_preserves_outcome_and_records_only_its_owned_attempts_rust(delet
                 assert caught.value.__cause__ is delete.driver_error
         assert trace.get_current_span() is parent
         if parent.is_recording():
-            assert not any(key.startswith("cosmos.poc.") for key in parent.attributes)
+            assert not any(key.startswith("azure.cosmosdb.") for key in parent.attributes)
 
     assert len(delete.calls) == 1
     assert delete.calls[0][0] is (mode == "enabled")
@@ -7587,7 +7734,7 @@ def test_body_write_preserves_result_and_error_outcomes_rust(
                 assert caught.value.__cause__ is harness.driver_error
         assert trace.get_current_span() is parent
         if parent.is_recording():
-            assert not any(key.startswith("cosmos.poc.") for key in parent.attributes)
+            assert not any(key.startswith("azure.cosmosdb.") for key in parent.attributes)
     assert len(harness.calls) == 1
     assert harness.calls[0][0] is (mode == "enabled")
     if method == "patch" and harness.patch_timeout is not None:
@@ -7968,7 +8115,7 @@ def test_driver_returned_timeout_keeps_diagnostics_and_original_exception_rust(t
         original = caught.value.__cause__ if has_deadline else caught.value
         assert original is timeout_item.driver_error
         if parent.is_recording():
-            assert not any(key.startswith("cosmos.poc.") for key in parent.attributes)
+            assert not any(key.startswith("azure.cosmosdb.") for key in parent.attributes)
     hook.assert_not_called()
     assert len(timeout_item.calls) == len(seen) == 1
     assert seen[0].operation == timeout_item.operation and seen[0].outcome == "error"

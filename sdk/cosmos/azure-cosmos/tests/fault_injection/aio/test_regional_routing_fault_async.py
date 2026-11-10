@@ -16,7 +16,7 @@ from fault_injection._delayed_create import assert_route, emit
 from fault_injection._regional_routing import (
     READ_REGION, WRITE_REGION, READ_SECONDS, REGIONAL_ROUTING_CASES, TIMEOUT, assert_destination, assert_fields,
     assert_guard, capture_native, emulator_endpoints, isolate,
-    load_account, rules, topology, wait_topology_async,
+    mock_account, rules, topology, wait_topology_async,
 )
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -30,7 +30,7 @@ def test_swr_mrr_succeeds_async_rust(request, regional_target, monkeypatch, case
     database_id, observer = regional_target
     endpoint, key = os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"]
     write_endpoint, read_endpoint = emulator_endpoints(endpoint)
-    account = topology(load_account(endpoint, key), write_endpoint, read_endpoint, case != "routing")
+    account = topology(mock_account(), write_endpoint, read_endpoint, case != "routing")
     rule_id = "forbidden-write-" + uuid.uuid4().hex
     item_id = uuid.uuid4().hex
     item = {"id": item_id, "pk": item_id, "name": "sample document", "key": "value"}

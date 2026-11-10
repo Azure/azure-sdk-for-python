@@ -587,7 +587,7 @@ mod tests {
 
     #[test]
     fn read_targets_preserve_addresses_and_reject_invalid_links_before_driver_lookup() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let prepared = py
                 .import_bound("types")
@@ -679,7 +679,7 @@ mod tests {
 
     #[test]
     fn patch_guard_is_typed_and_removed_from_custom_headers() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for etag in ["\"v1\"", "*"] {
                 let mut modifiers = modifiers(py);
@@ -697,7 +697,7 @@ mod tests {
 
     #[test]
     fn binding_rejects_unsupported_guards_before_driver_lookup() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let prepared = py
                 .import_bound("types")
@@ -746,7 +746,7 @@ mod tests {
 
     #[test]
     fn filtered_patch_selects_server_side_without_losing_if_match() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for op in ["set", "incr"] {
                 let body = serde_json::to_vec(&serde_json::json!({
@@ -778,7 +778,7 @@ mod tests {
 
     #[tokio::test]
     async fn guarded_auto_patch_handles_server_and_client_side_mutations() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = azure_core::http::Url::parse("https://patch.emulator.local").unwrap();
         let config =
             VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap();

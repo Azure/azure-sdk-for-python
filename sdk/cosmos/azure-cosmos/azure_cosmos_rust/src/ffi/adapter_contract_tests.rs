@@ -31,7 +31,7 @@ fn exercise(
     attempts: bool,
     delayed: bool,
 ) {
-    pyo3::prepare_freethreaded_python();
+    crate::test_support::prepare_python();
     let endpoint = Url::parse("https://adapter-contract.emulator.local").unwrap();
     let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
         VirtualAccountConfig::new(vec![VirtualRegion::new("East US", endpoint.clone())]).unwrap(),

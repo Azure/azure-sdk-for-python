@@ -42,7 +42,7 @@ fn measure_request_boundary() {
     let script = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../tests/workloads/benchmark_request_boundary.py");
     let code = std::fs::read_to_string(&script).expect("read boundary benchmark script");
-    pyo3::prepare_freethreaded_python();
+    crate::test_support::prepare_python();
     Python::with_gil(|py| -> PyResult<()> {
         let module = PyModule::from_code_bound(
             py,

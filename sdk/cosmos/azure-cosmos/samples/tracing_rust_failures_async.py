@@ -94,7 +94,7 @@ def inspect_spans(exporter, trace_id, mode, failure, payload):
         if failure != "cancellation" and operation.status.status_code != trace.StatusCode.ERROR:
             raise AssertionError("Failed operation must have ERROR status")
     if mode == "enabled" and (failure == "connection" or payload is not None):
-        if not isinstance(payload, dict) or payload["schema_version"] != 1 or payload["error"] is not None:
+        if not isinstance(payload, dict) or payload["schema_version"] != 2 or payload["error"] is not None:
             raise AssertionError("Compiled exception must carry versioned diagnostics")
         complete, reasons = payload.get("complete"), payload.get("incomplete_reasons")
         if (
@@ -121,24 +121,24 @@ def inspect_spans(exporter, trace_id, mode, failure, payload):
             (
                 s.start_time,
                 s.end_time,
-                s.attributes["cosmos.poc.driver_status_code"],
-                s.attributes["cosmos.poc.execution_context"],
+                s.attributes["db.response.status_code"],
+                s.attributes["azure.cosmosdb.request.execution_context"],
             )
             for s in attempts
         )
         expected_fields = sorted(
-            (r["start_ns"], r["end_ns"], r["driver_status_code"], r["execution_context"]) for r in records
+            (r["start_ns"], r["end_ns"], str(r["driver_status_code"]), r["execution_context"]) for r in records
         )
         if actual_fields != expected_fields:
             raise AssertionError("Attempt fields differ from the compiled binding diagnostics")
-        if operation.attributes.get("cosmos.poc.diagnostics_complete") is not complete:
+        if operation.attributes.get("azure.cosmosdb.operation.diagnostics_complete") is not complete:
             raise AssertionError("Operation coverage differs from compiled diagnostics")
-        if not complete and operation.attributes.get("cosmos.poc.diagnostics_incomplete_reasons") != tuple(
+        if not complete and operation.attributes.get("azure.cosmosdb.operation.diagnostics_incomplete_reasons") != tuple(
             sorted(set(reasons))
         ):
             raise AssertionError("Operation coverage reasons differ from compiled diagnostics")
         for name in ("request_count", "retained_request_count"):
-            attribute = "cosmos.poc." + name
+            attribute = "azure.cosmosdb.operation." + name
             if complete:
                 if operation.attributes.get(attribute) != payload[name]:
                     raise AssertionError("Operation count differs from compiled diagnostics")
@@ -154,7 +154,7 @@ def inspect_spans(exporter, trace_id, mode, failure, payload):
             "start_ns": s.start_time,
             "end_ns": s.end_time,
             "status": s.status.status_code.name,
-            "attributes": {k: v for k, v in s.attributes.items() if k.startswith("cosmos.poc.")},
+            "attributes": {k: v for k, v in s.attributes.items() if k.startswith(("azure.cosmosdb.", "db.", "server.", "error."))},
         }
         for s in spans
     ]

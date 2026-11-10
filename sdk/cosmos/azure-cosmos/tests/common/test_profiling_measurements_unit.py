@@ -18,6 +18,8 @@ import threading
 
 import pytest
 
+from query_items.test_query_items_contract_unit import query as rust_query
+
 WORKLOADS = Path(__file__).resolve().parents[1] / "workloads"
 STAMP = "20260919-120000000"
 
@@ -159,7 +161,7 @@ def test_deferred_reporter_freezes_measurement_before_publication_rust(modules, 
     clock, calls, cpu = [0.0], [0], [0.0]
     monkeypatch.setattr(module.time, "monotonic", lambda: clock[0])
     monkeypatch.setattr(module, "_get_cpu_times", lambda process: (cpu[0], 0.0))
-    for name in ("execute_count", "binding_operation_count", "binding_attempt_count"):
+    for name in ("execute_count", "page_fetch_count", "binding_operation_count", "binding_attempt_count"):
         monkeypatch.setattr(module.backend_counters, name, lambda: calls[0])
     reporter = module.PerfReporter(stats, {
         "report_interval": 15, "workload_id": f"baseline-read-rust-{STAMP}",
@@ -188,6 +190,7 @@ def test_deferred_reporter_freezes_measurement_before_publication_rust(modules, 
     assert row["interval_duration_seconds"] == row["elapsed_seconds"] == 60
     assert row["cpu_seconds"] == 0.25
     assert row["rust_execute_calls"] == row["binding_calls"] == row["attempt_calls"] == 2
+    assert row["rust_page_fetches"] == 2
     assert row["max_ms"] == 3 and row["warmup_read_ms"] == [120.0, 12.0, 3.0]
     assert row["cold_first_ms"] == 120 and row["measured_first_n_ms"] == [2, 3]
     assert row["latency_population"] == "post_warmup"
@@ -589,6 +592,762 @@ def test_bounded_point_configuration_rejects_unsafe_modes_rust(modules, monkeypa
         monkeypatch.setenv(name, value)
     with pytest.raises(ValueError):
         runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+
+
+@pytest.fixture
+def query_suite(modules):
+    queries = importlib.import_module("workload_queries")
+    ordered = [{"id": f"product-{i:04d}", "tenantId": f"tenant-{i % 4}", "priceCents": i} for i in range(1000)]
+    aggregate = [499500]
+    ranked = [{"id": row["id"], "tenantId": row["tenantId"]} for row in ordered[:20]]
+    parameters = {
+        "cross_partition": {"@minPriceCents": 0},
+        "aggregate": {},
+        "full_text": {"@term": "travel"},
+        "vector": {"@vector": [1.0, 0.0, 0.0]},
+        "hybrid": {"@term": "travel", "@vector": [1.0, 0.0, 0.0]},
+    }
+    results = {
+        "cross_partition": ordered,
+        "aggregate": aggregate,
+        "full_text": ranked,
+        "vector": ranked,
+        "hybrid": ranked,
+    }
+    manifest = {
+        "version": 1,
+        "target": {"endpoint": "https://unused.invalid", "database": "query-db", "container": "products"},
+        "expected_driver_commit": "b" * 40,
+        "dataset": {"id": "offline-fixture-v1", "sha256": queries.fingerprint(ordered), "item_count": 1000},
+        "query_timeout_seconds": 30,
+        "query_options": {"max_item_count": 100, "full_text_score_scope": "Global"},
+        "container_properties": {
+            "partitionKey": {"paths": ["/tenantId"]},
+            "indexingPolicy": {
+                "indexingMode": "consistent",
+                "includedPaths": [{"path": "/*"}],
+                "fullTextIndexes": [{"path": "/text"}],
+                "vectorIndexes": [{"path": "/embedding", "type": "flat"}],
+                "compositeIndexes": [
+                    [{"path": "/priceCents", "order": "ascending"}, {"path": "/id", "order": "ascending"}]
+                ],
+            },
+            "vectorEmbeddingPolicy": {
+                "vectorEmbeddings": [
+                    {
+                        "path": "/embedding",
+                        "dimensions": 3,
+                        "dataType": "float32",
+                        "distanceFunction": "cosine",
+                    }
+                ]
+            },
+            "fullTextPolicy": {"defaultLanguage": "en-US", "fullTextPaths": [{"path": "/text", "language": "en-US"}]},
+        },
+        "scenarios": {
+            name: {
+                "parameters": parameters[name],
+                "expected": {
+                    "count": len(rows),
+                    **(
+                        {
+                            "mode": "ordered" if name == "cross_partition" else "unordered",
+                            "sha256": queries.result_fingerprint(rows, ordered=name == "cross_partition"),
+                        }
+                        if name in ("cross_partition", "aggregate")
+                        else {"mode": "rank_groups", "groups": [[row] for row in rows]}
+                    ),
+                },
+            }
+            for name, rows in results.items()
+        },
+    }
+    return queries, manifest, results
+
+
+@pytest.mark.parametrize("name", ["cross_partition", "aggregate", "full_text", "vector", "hybrid"])
+def test_query_scenarios_validate_complete_results_rust(query_suite, name):
+    queries, manifest, results = query_suite
+    scenario = queries.QueryScenario(manifest, name, manifest["target"])
+    scenario.validate(results[name])
+    assert scenario.kwargs["enable_cross_partition_query"] is True
+    assert "partition_key" not in scenario.kwargs
+    with pytest.raises(ValueError, match="result count"):
+        scenario.validate([])
+    if name == "aggregate":
+        changed = [results[name][0] + 1]
+    else:
+        changed = [dict(row) for row in results[name]]
+        changed[0]["id"] = "wrong"
+    with pytest.raises(ValueError, match="reference|ranking"):
+        scenario.validate(changed)
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "target",
+        "driver",
+        "vector_dimensions",
+        "parameter",
+        "policies",
+        "timeout",
+        "options",
+        "count",
+        "duplicate_reference",
+        "hybrid_inputs",
+    ],
+)
+def test_query_manifest_rejects_incompatible_inputs_rust(query_suite, defect):
+    queries, manifest, _ = query_suite
+    if defect == "target":
+        manifest["target"]["container"] = "orders"
+    elif defect == "driver":
+        manifest["expected_driver_commit"] = "unknown"
+    elif defect == "vector_dimensions":
+        manifest["scenarios"]["vector"]["parameters"]["@vector"] = [1]
+    elif defect == "parameter":
+        manifest["scenarios"]["aggregate"]["parameters"] = {"@ignored": 1}
+    elif defect == "policies":
+        manifest["container_properties"]["indexingPolicy"]["compositeIndexes"] = []
+    elif defect == "timeout":
+        manifest["query_timeout_seconds"] = float("nan")
+    elif defect == "options":
+        manifest["query_options"]["full_text_score_scope"] = "default"
+    elif defect == "count":
+        manifest["scenarios"]["cross_partition"]["expected"]["count"] = 0
+    elif defect == "duplicate_reference":
+        groups = manifest["scenarios"]["full_text"]["expected"]["groups"]
+        groups[-1] = groups[0]
+    else:
+        manifest["scenarios"]["hybrid"]["parameters"]["@term"] = "different"
+    with pytest.raises(ValueError):
+        queries.QueryScenario(
+            manifest,
+            "aggregate",
+            {
+                "endpoint": "https://unused.invalid",
+                "database": "query-db",
+                "container": "products",
+            },
+        )
+
+
+def test_query_ranking_ties_and_explicit_recall_rust(query_suite):
+    queries, manifest, results = query_suite
+    expected = manifest["scenarios"]["full_text"]["expected"]
+    expected["groups"] = [results["full_text"][:2], *expected["groups"][2:]]
+    scenario = queries.QueryScenario(manifest, "full_text", manifest["target"])
+    swapped = [results["full_text"][1], results["full_text"][0], *results["full_text"][2:]]
+    scenario.validate(swapped)
+    with pytest.raises(ValueError, match="ranking"):
+        scenario.validate(list(reversed(swapped)))
+    with pytest.raises(ValueError, match="duplicate"):
+        scenario.validate([swapped[0], *swapped[:-1]])
+    manifest["scenarios"]["vector"]["expected"].update(mode="recall", minimum_recall=0.95)
+    vector = queries.QueryScenario(manifest, "vector", manifest["target"])
+    replacement = {"id": "other", "tenantId": "tenant-0"}
+    vector.validate([replacement, *results["vector"][1:]])
+    with pytest.raises(ValueError, match="recall"):
+        vector.validate([replacement, {"id": "other-2", "tenantId": "tenant-0"}, *results["vector"][2:]])
+
+
+@pytest.mark.parametrize("rust_query", [True], indirect=True, ids=["async"])
+@pytest.mark.parametrize("name", ["aggregate", "vector"])
+def test_query_workload_consumes_real_sdk_pager_and_hooks_rust(modules, query_suite, rust_query, name):
+    queries, manifest, results = query_suite
+    scenario = queries.QueryScenario(manifest, name, manifest["target"])
+    rows = results[name]
+    rust_query.pages = [[], rows[:1], [], rows[1:], None]
+    rust_query.resumable = False
+    point = queries.QueryMeasurement(rust_query.proxy, scenario)
+    stats = modules["perf_stats"].Stats()
+    asyncio.run(point.run(stats))
+    asyncio.run(point.run(stats))
+    summary = stats.drain_all()[0][0]
+    assert summary["count"] == summary["ru_count"] == 2
+    assert summary["ru_sum"] == 16
+    assert summary["query_counts"]["response_hooks"] == 8
+    assert summary["query_counts"]["items"] == 2 * len(rows)
+    assert summary["query_counts"]["public_pages"] == (2 if name == "aggregate" else 4)
+    assert summary["query_counts"]["empty_public_pages"] == 0
+    assert len(rust_query.calls) == 10
+    assert len({id(cursor) for _, cursor, _ in rust_query.calls}) == 2
+    rust_query.connection.QueryItems.assert_not_called()
+
+
+def test_query_aggregate_passes_legacy_planning_gate_and_merges_partitions_rust(
+    query_suite,
+    monkeypatch,
+):
+    from types import SimpleNamespace
+    from azure.cosmos._execution_context.aio import execution_dispatcher as legacy
+    from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
+    from azure.cosmos.documents import _DistinctType
+
+    queries, manifest, _ = query_suite
+    scenario = queries.QueryScenario(manifest, "aggregate", manifest["target"])
+    client = SimpleNamespace()
+    proxy = legacy._ProxyQueryExecutionContext(
+        client,
+        "dbs/db/colls/products",
+        scenario.kwargs["query"],
+        {"enableCrossPartitionQuery": True},
+        None,
+        None,
+        "docs",
+    )
+    plan = _PartitionedQueryExecutionInfo(
+        {
+            "queryInfo": {
+                "hasSelectValue": scenario.kwargs["query"].split()[:2] == ["SELECT", "VALUE"],
+                "aggregates": ["Sum"],
+                "distinctType": _DistinctType.NoneType,
+            },
+        }
+    )
+
+    class PartitionResults:
+        def __init__(self, *args):
+            self.values = iter([[100000], [399500]])
+
+        async def _configure_partition_ranges(self):
+            pass
+
+        async def __anext__(self):
+            try:
+                return next(self.values)
+            except StopIteration:
+                raise StopAsyncIteration from None
+
+    monkeypatch.setattr(legacy.multi_execution_aggregator, "_MultiExecutionContextAggregator", PartitionResults)
+
+    async def run():
+        pipeline = await proxy._create_pipelined_execution_context(plan)
+        rows = await pipeline.fetch_next_block()
+        scenario.validate(rows)
+        assert await pipeline.fetch_next_block() == []
+
+    asyncio.run(run())
+
+
+def test_bounded_window_does_not_wait_for_a_delayed_timer_callback_rust(modules, monkeypatch):
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+
+    workload = importlib.import_module("workload")
+    clock, calls = [0.0], []
+    reporter = Mock()
+    stats = modules["perf_stats"].Stats()
+
+    async def operation(population):
+        calls.append(population)
+        if len(calls) > 4:
+            pytest.fail("A new query started after the measurement deadline")
+        population.record("QueryItems", 1)
+        if len(calls) == 4:
+            clock[0] = 61.0
+
+    monkeypatch.setattr(workload, "WORKLOAD_MEASUREMENT_SECONDS", 60)
+    monkeypatch.setattr(workload, "WORKLOAD_LOOP_LAG_MONITOR", False)
+    monkeypatch.setattr(workload, "_maybe_freeze_gc", lambda logger: None)
+
+    async def run():
+        loop = asyncio.get_running_loop()
+        monkeypatch.setattr(loop, "time", lambda: clock[0])
+        monkeypatch.setattr(loop, "call_later", lambda *args: Mock())
+        await workload._run_bounded_operations(
+            SimpleNamespace(operation="query", label="QueryItems", run=operation),
+            stats,
+            reporter,
+            asyncio.Event(),
+            Mock(),
+        )
+
+    asyncio.run(run())
+    assert len(calls) == 4 and calls[-1] is stats
+    reporter.finish_measurement.assert_called_once()
+
+
+@pytest.mark.parametrize("destination", ["same", "same_alias", "separate"])
+def test_query_reporting_cannot_modify_the_corpus_rust(modules, query_suite, monkeypatch, destination):
+    queries, manifest, _ = query_suite
+    scenario = queries.QueryScenario(manifest, "aggregate", manifest["target"])
+    workload = importlib.import_module("workload")
+    monkeypatch.setattr(workload, "WORKLOAD_OPERATIONS", {"query"})
+    monkeypatch.setattr(workload, "WORKLOAD_MEASUREMENT_SECONDS", 60)
+    monkeypatch.setattr(workload, "WORKLOAD_READ_MEASUREMENT_SECONDS", 0)
+    monkeypatch.setenv("PERF_ENABLED", "true")
+    monkeypatch.setattr(
+        workload,
+        "get_perf_config",
+        lambda: {
+            "enabled": True,
+            "results_endpoint": (
+                "https://UNUSED.invalid:443/" if destination == "same_alias" else manifest["target"]["endpoint"]
+            ),
+            "results_database": manifest["target"]["database"],
+            "results_container": "results" if destination == "separate" else manifest["target"]["container"],
+        },
+    )
+    monkeypatch.setattr(queries, "build_identity", lambda expected: {"driver_commit": expected})
+    if destination == "separate":
+        _, reporter = workload._start_reporter(scenario)
+        assert reporter._client is reporter._thread is None
+    else:
+        with pytest.raises(ValueError, match="corpus container"):
+            workload._start_reporter(scenario)
+
+
+@pytest.mark.parametrize("expose_empty", [True, False])
+@pytest.mark.parametrize("failure", [None, "no_hook", "missing_ru", "invalid_ru", "result", "fetch", "timeout"])
+def test_query_pages_and_whole_query_ru_are_not_point_samples_rust(
+    modules,
+    query_suite,
+    monkeypatch,
+    failure,
+    expose_empty,
+):
+    queries, manifest, results = query_suite
+    scenario = queries.QueryScenario(manifest, "vector", manifest["target"])
+    calls = []
+
+    class Pager:
+        @property
+        def continuation_token(self):
+            pytest.fail("The workload must not read a non-bookmarkable query's token")
+
+        async def by_page(self):
+            if failure == "timeout":
+                await asyncio.sleep(10)
+            for block in ([], results["vector"][:7], results["vector"][7:]):
+                if failure == "fetch" and block:
+                    raise RuntimeError("fetch failed")
+                if failure != "no_hook":
+                    calls[-1]["response_hook"](
+                        (
+                            {}
+                            if failure == "missing_ru"
+                            else {"x-ms-request-charge": "nan" if failure == "invalid_ru" else "2.5"}
+                        ),
+                        None,
+                    )
+
+                async def rows(values):
+                    for row in values:
+                        yield {"id": "wrong", "tenantId": "tenant-0"} if failure == "result" else row
+
+                if block or expose_empty:
+                    yield rows(block)
+
+    class Container:
+        def query_items(self, **kwargs):
+            calls.append(kwargs)
+            return Pager()
+
+    point = queries.QueryMeasurement(Container(), scenario)
+    stats = modules["perf_stats"].Stats()
+    if failure == "timeout":
+        scenario.timeout = 0.001
+    if failure:
+        with pytest.raises((ValueError, RuntimeError, asyncio.TimeoutError)):
+            asyncio.run(point.run(stats))
+        summary = stats.drain_all()[0][0]
+        assert summary["count"] == summary["ru_count"] == 0 and summary["errors"] == 1
+    else:
+        asyncio.run(point.run(stats))
+        asyncio.run(point.run(stats))
+        assert len(calls) == 2 and calls[0]["response_hook"] is not calls[1]["response_hook"]
+        summary = stats.drain_all()[0][0]
+        assert summary["count"] == summary["ru_count"] == 2
+        assert summary["ru_sum"] == 15 and summary["mean_ru"] == 7.5
+        assert summary["query_counts"] == {
+            "completed": 2,
+            "items": 40,
+            "public_pages": 6 if expose_empty else 4,
+            "empty_public_pages": 2 if expose_empty else 0,
+            "response_hooks": 6,
+        }
+        assert stats.drain_all() == ([], [])
+
+
+@pytest.mark.parametrize("page_size", [500, 1000])
+def test_query_ordered_scenario_requires_real_multi_page_consumption_rust(modules, query_suite, page_size):
+    queries, manifest, results = query_suite
+    scenario = queries.QueryScenario(manifest, "cross_partition", manifest["target"])
+
+    class Container:
+        def query_items(self, **kwargs):
+            class Pager:
+                async def by_page(self):
+                    for start in range(0, 1000, page_size):
+                        kwargs["response_hook"]({"x-ms-request-charge": "1"}, None)
+
+                        async def items(offset):
+                            for row in results["cross_partition"][offset : offset + page_size]:
+                                yield row
+
+                        yield items(start)
+
+            return Pager()
+
+    stats = modules["perf_stats"].Stats()
+    run = queries.QueryMeasurement(Container(), scenario).run(stats)
+    if page_size == 1000:
+        with pytest.raises(ValueError, match="multiple public pages"):
+            asyncio.run(run)
+    else:
+        asyncio.run(run)
+        assert stats.drain_all()[0][0]["query_counts"]["public_pages"] == 2
+
+
+@pytest.mark.parametrize("failure", [None, "warmup", "measured", "policy", "close"])
+def test_bounded_query_lifecycle_preserves_point_option_rust(
+    modules,
+    query_suite,
+    monkeypatch,
+    tmp_path,
+    failure,
+):
+    from unittest.mock import Mock
+
+    queries, manifest, results = query_suite
+    workload = importlib.import_module("workload")
+    events, timers = [], []
+    path = tmp_path / "suite.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    for name, value in {
+        "COSMOS_URI": manifest["target"]["endpoint"],
+        "COSMOS_DATABASE": "query-db",
+        "COSMOS_CONTAINER": "products",
+    }.items():
+        monkeypatch.setattr(queries.config, name, value)
+    monkeypatch.setattr(queries, "build_identity", lambda expected: {"driver_commit": expected})
+    monkeypatch.setattr(
+        workload,
+        "get_perf_config",
+        lambda: {
+            "enabled": True,
+            "results_endpoint": "https://unused.invalid",
+            "results_database": "results-db",
+            "results_container": "results",
+            "report_interval": 15,
+            "workload_id": "queries-aggregate-test",
+            "commit_sha": "a" * 40,
+            "driver_commit": "b" * 40,
+        },
+    )
+    rows = Rows()
+
+    def connect(reporter):
+        assert events[-1] == "close"
+        reporter._container = rows
+        events.append("report")
+
+    monkeypatch.setattr(modules["perf_reporter"].PerfReporter, "_ensure_container", connect)
+
+    class Client:
+        def __init__(self, *args, **kwargs):
+            self.queries = 0
+            events.append("construct")
+
+        async def __aenter__(self):
+            events.append("enter")
+            return self
+
+        async def __aexit__(self, *args):
+            events.append("close")
+            if failure == "close":
+                raise RuntimeError("close failed")
+
+        def get_database_client(self, name):
+            return self
+
+        def get_container_client(self, name):
+            return self
+
+        async def read(self, **kwargs):
+            events.append("policy")
+            return {} if failure == "policy" else manifest["container_properties"]
+
+        def query_items(self, **kwargs):
+            self.queries += 1
+            assert not rows.rows
+            assert bool(timers) == (self.queries > 3)
+            events.append("query")
+            owner = self
+
+            class Pager:
+                async def by_page(self):
+                    if failure == "warmup" and owner.queries == 1 or failure == "measured" and owner.queries == 4:
+                        raise RuntimeError("query failed")
+                    kwargs["response_hook"]({"x-ms-request-charge": "4"}, None)
+
+                    async def items():
+                        yield results["aggregate"][0]
+
+                    yield items()
+                    if owner.queries == 4:
+                        timers[0]()
+
+            return Pager()
+
+    for name, value in {
+        "AsyncClient": Client,
+        "WORKLOAD_MEASUREMENT_SECONDS": 60,
+        "WORKLOAD_READ_MEASUREMENT_SECONDS": 0,
+        "WORKLOAD_OPERATIONS": {"query"},
+        "WORKLOAD_QUERY_MANIFEST": str(path),
+        "WORKLOAD_QUERY_SCENARIO": "aggregate",
+        "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": True,
+        "WORKLOAD_USE_PROXY": False,
+        "WORKLOAD_LOOP_LAG_MONITOR": False,
+        "_install_async_stop": lambda event: None,
+        "_wrap_backend_for_counting": lambda *args, **kwargs: None,
+        "_maybe_freeze_gc": lambda logger: None,
+    }.items():
+        monkeypatch.setattr(workload, name, value)
+    original_sleep = asyncio.sleep
+
+    async def skip_setup_sleep(delay):
+        await original_sleep(0)
+
+    monkeypatch.setattr(workload.asyncio, "sleep", skip_setup_sleep)
+
+    async def run():
+        loop = asyncio.get_running_loop()
+        original_call_later = loop.call_later
+
+        def schedule(seconds, callback, *args, **kwargs):
+            if seconds != 60:
+                return original_call_later(seconds, callback, *args, **kwargs)
+            assert events.count("query") == 3
+            timers.append(callback)
+            return Mock()
+
+        monkeypatch.setattr(loop, "call_later", schedule)
+        await workload.run_workload_async("test", Mock())
+
+    if failure:
+        with pytest.raises((RuntimeError, ValueError), match="query failed|policies|close failed"):
+            asyncio.run(run())
+        assert rows.rows == [] and "close" in events
+    else:
+        asyncio.run(run())
+        assert events == ["construct", "enter", "policy", "query", "query", "query", "query", "close", "report"]
+        row, done = rows.rows
+        assert row["count"] == done["total_count"] == row["ru_count"] == 1
+        assert row["ru_sum"] == 4 and row["query_counts"]["items"] == 1
+        assert row["duration_kind"] == "whole_query" and row["warmup_count"] == 3
+        assert row["query_tail_support"]["p99_under_sampled"]
+        assert row["query_measurement"]["scenario"] == "aggregate"
+        assert done["query_measurement"] == row["query_measurement"]
+        assert "measurement_item_namespace" not in row
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {},
+        {"COSMOS_CONCURRENT_QUERIES": "2"},
+        {"WORKLOAD_QUERY_MANIFEST": ""},
+        {"WORKLOAD_QUERY_SCENARIO": ""},
+        {"COSMOS_PARTITION_KEY": "id"},
+        {"WORKLOAD_MEASUREMENT_MANIFEST": "ownership.json"},
+        {"WORKLOAD_OPERATIONS": "read"},
+        {"WORKLOAD_MEASUREMENT_SECONDS": "0"},
+    ],
+)
+def test_bounded_query_configuration_uses_same_serial_option_rust(modules, monkeypatch, changes):
+    for name, value in {
+        "WORKLOAD_MEASUREMENT_SECONDS": "60",
+        "WORKLOAD_READ_MEASUREMENT_SECONDS": "0",
+        "WORKLOAD_OPERATIONS": "query",
+        "COSMOS_CONCURRENT_REQUESTS": "1",
+        "COSMOS_CONCURRENT_QUERIES": "1",
+        "COSMOS_PARTITION_KEY": "tenantId",
+        "WORKLOAD_NUM_CLIENTS": "1",
+        "WORKLOAD_MIX": "",
+        "WORKLOAD_ARRIVAL_RATE": "0",
+        "WORKLOAD_USE_SYNC": "false",
+        "WORKLOAD_USE_PROXY": "false",
+        "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": "true",
+        "WORKLOAD_DOC_PROFILE": "default",
+        "WORKLOAD_ITEM_NAMESPACE": "",
+        "WORKLOAD_MEASUREMENT_MANIFEST": "",
+        "WORKLOAD_QUERY_MANIFEST": "suite.json",
+        "WORKLOAD_QUERY_SCENARIO": "aggregate",
+        **changes,
+    }.items():
+        monkeypatch.setenv(name, value)
+    if changes:
+        with pytest.raises(ValueError):
+            runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+    else:
+        config = runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+        assert config["WORKLOAD_OPERATIONS"] == {"query"} and config["WORKLOAD_MEASUREMENT_SECONDS"] == 60
+
+
+def test_query_build_identity_rejects_old_driver_and_tracks_loaded_files_rust(query_suite, monkeypatch, tmp_path):
+    from azure import cosmos
+    from types import SimpleNamespace
+
+    queries, _, _ = query_suite
+    source = tmp_path / "__init__.py"
+    binary = tmp_path / "_rust.pyd"
+    harness = tmp_path / "workloads"
+    harness.mkdir()
+    harness_file = harness / "workload_queries.py"
+    harness_file.write_text("harness-one", encoding="utf-8")
+    monkeypatch.setattr(queries, "__file__", str(harness_file))
+    source.write_text("wrapper-one", encoding="utf-8")
+    binary.write_bytes(b"native-one")
+    monkeypatch.setattr(cosmos, "__file__", str(source))
+    monkeypatch.setattr(
+        cosmos,
+        "_rust",
+        SimpleNamespace(
+            __file__=str(binary),
+            __rust_driver_commit__="b" * 40,
+        ),
+    )
+    with pytest.raises(ValueError, match="rebuild"):
+        queries.build_identity("a" * 40)
+    first = queries.build_identity("b" * 40)
+    source.write_text("wrapper-two", encoding="utf-8")
+    binary.write_bytes(b"native-two")
+    harness_file.write_text("harness-two", encoding="utf-8")
+    second = queries.build_identity("b" * 40)
+    assert first["wrapper_sha256"] != second["wrapper_sha256"]
+    assert first["native_sha256"] != second["native_sha256"]
+    assert first["harness_sha256"] != second["harness_sha256"]
+
+
+def test_query_backend_page_counter_closes_retained_fetch_generator_rust(modules, monkeypatch):
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+
+    workload = importlib.import_module("workload")
+    events = []
+
+    async def execute(*args, **kwargs):
+        pytest.fail("Query page fetch should not use execute")
+
+    async def pages(prepared, *, deadline=None):
+        assert prepared == "request" and deadline == 123
+        try:
+            yield "page"
+        finally:
+            events.append("closed")
+
+    backend = SimpleNamespace(name="rust", execute=execute, execute_pages=pages)
+    monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    monkeypatch.setattr(workload, "WORKLOAD_MEASUREMENT_SECONDS", 60)
+    monkeypatch.setattr(workload, "WORKLOAD_READ_MEASUREMENT_SECONDS", 0)
+    monkeypatch.setattr(workload, "WORKLOAD_OPERATIONS", {"query"})
+    monkeypatch.setattr(workload.backend_counters, "set_runtime_backend", lambda name: None)
+    monkeypatch.setattr(workload.backend_counters, "record_page_fetch", lambda: events.append("page"))
+    workload._wrap_backend_for_counting(SimpleNamespace(_adapter=backend), True, Mock())
+
+    async def run():
+        iterator = backend.execute_pages("request", deadline=123)
+        assert await iterator.__anext__() == "page"
+        await iterator.aclose()
+
+    asyncio.run(run())
+    assert events == ["page", "closed"]
+
+
+@pytest.mark.parametrize("fetches,binding,accepted", [(3, 1, True), (0, 100, False), (3, 0, False), (3, -1, False)])
+def test_query_backend_gate_does_not_assume_one_fetch_per_query_rust(modules, fetches, binding, accepted):
+    row = measurement(
+        modules,
+        operation="QueryItems",
+        count=100,
+        duration_kind="whole_query",
+        query_measurement={"scenario": "aggregate"},
+        rust_execute_calls=0,
+        rust_page_fetches=fetches,
+        binding_calls=binding,
+    )
+    ok, _ = modules["perf_validate"].check_backend_execution(Rows([row]), "", "")
+    assert ok is accepted
+    point = {**row, "operation": "ReadItem", "duration_kind": "sdk_call"}
+    assert not modules["perf_validate"].check_backend_execution(Rows([point]), "", "")[0]
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        None,
+        "scenario",
+        "suite",
+        "build",
+        "harness",
+        "missing_harness",
+        "options",
+        "ru",
+        "reused_workload_id",
+        "request_regions",
+        "gc",
+        "loop_monitor",
+        "diagnostics",
+    ],
+)
+def test_query_quality_keeps_scenarios_and_comparable_builds_separate_rust(modules, query_suite, defect):
+    from copy import deepcopy
+
+    queries, manifest, _ = query_suite
+    metadata = queries.QueryScenario(manifest, "aggregate", manifest["target"]).metadata()
+    metadata["build"] = {
+        "driver_commit": "b" * 40,
+        "wrapper_sha256": "c" * 64,
+        "native_sha256": "d" * 64,
+        "harness_sha256": "f" * 64,
+    }
+    legacy = measurement(
+        modules,
+        workload_id="q-aggregate-core-python",
+        config_backend="core-python",
+        operation="QueryItems",
+        duration_kind="whole_query",
+        query_measurement=metadata,
+        query_counts={"completed": 2},
+        ru_count=2,
+    )
+    rust = deepcopy(legacy)
+    rust.update(workload_id="q-aggregate-rust", config_backend="rust")
+    rows = [legacy, rust]
+    if defect == "scenario":
+        rust["query_measurement"]["scenario"] = "vector"
+    elif defect == "suite":
+        rust["query_measurement"]["suite_sha256"] = "e" * 64
+    elif defect == "build":
+        rust["query_measurement"]["build"]["native_sha256"] = "e" * 64
+    elif defect == "harness":
+        rust["query_measurement"]["build"]["harness_sha256"] = "e" * 64
+    elif defect == "missing_harness":
+        del legacy["query_measurement"]["build"]["harness_sha256"]
+        del rust["query_measurement"]["build"]["harness_sha256"]
+    elif defect in ("request_regions", "gc", "loop_monitor", "diagnostics"):
+        settings = rust["query_measurement"]["execution_settings"]
+        if defect == "request_regions":
+            settings["request_excluded_locations"] = ["West US"]
+        else:
+            field = {"gc": "gc_freeze", "loop_monitor": "loop_lag_monitor", "diagnostics": "diagnostics_logging"}[
+                defect
+            ]
+            settings[field] = not settings[field]
+    elif defect == "options":
+        rust["config_request_timeout"] = 20
+    elif defect == "ru":
+        rust["ru_count"] = 1
+    elif defect == "reused_workload_id":
+        extra = deepcopy(legacy)
+        extra["query_measurement"]["scenario"] = "vector"
+        rows.insert(0, extra)
+    ok, _ = modules["perf_validate"].check_quality(Rows(rows), "", "", ["core-python", "rust"])
+    assert ok is (defect is None)
 
 
 def test_terminal_throttles_not_limited_by_error_detail_buffer_rust(modules):

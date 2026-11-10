@@ -76,11 +76,73 @@ def _report(message: str, level: int = logging.WARNING) -> None:
 
 
 @dataclass(frozen=True)
-class _Attempt:
+class _Attempt:  # pylint: disable=too-many-instance-attributes
     start_ns: int
     end_ns: Optional[int]
     driver_status_code: int
     execution_context: str
+    sub_status_code: Optional[int] = None
+    failed: bool = False
+    request_charge: float = 0.0
+    region: Optional[str] = None
+    server_address: Optional[str] = None
+    activity_id: Optional[str] = None
+    operation_name: Optional[str] = None
+
+
+def _bounded(values: tuple[str, ...], limit: Optional[int]) -> tuple[str, ...]:
+    if limit is None or len(values) <= limit:
+        return values
+    head = (limit + 1) // 2
+    tail = limit - head
+    return values[:head] + (values[-tail:] if tail else ())
+
+
+@dataclass(frozen=True)
+class _Summary:  # pylint: disable=too-many-instance-attributes
+    """Operation-level driver facts, mirroring the Rust SDK's operation span."""
+
+    status_code: Optional[int] = None
+    sub_status_code: Optional[int] = None
+    failed: bool = False
+    request_charge: float = 0.0
+    contacted_regions: tuple[str, ...] = ()
+    machine_id: Optional[str] = None
+    hedging_started: bool = False
+    hedge_region: Optional[str] = None
+    hedge_terminal_state: Optional[str] = None
+    requested_regions: tuple[str, ...] = ()
+    requested_regions_total: int = 0
+    responded_regions: tuple[str, ...] = ()
+    responded_regions_total: int = 0
+
+    def merge(self, later: _Summary, limit: Optional[int] = None) -> _Summary:
+        """Combine ordered contributions; the later step supplies the final status.
+
+        :param later: The next contribution's summary.
+        :type later: _Summary
+        :param limit: Optional bound on region histories.
+        :type limit: int or None
+        :return: The combined summary.
+        :rtype: _Summary
+        """
+        status = later if later.status_code is not None or later.failed else self
+        hedge = later if later.hedge_terminal_state is not None else self
+        return _Summary(
+            status_code=status.status_code,
+            sub_status_code=status.sub_status_code,
+            failed=status.failed,
+            request_charge=self.request_charge + later.request_charge,
+            contacted_regions=tuple(dict.fromkeys(self.contacted_regions + later.contacted_regions)),
+            machine_id=self.machine_id or later.machine_id,
+            hedging_started=self.hedging_started or later.hedging_started,
+            hedge_region=hedge.hedge_region,
+            hedge_terminal_state=hedge.hedge_terminal_state,
+            requested_regions=_bounded(self.requested_regions + later.requested_regions, limit),
+            requested_regions_total=self.requested_regions_total + later.requested_regions_total,
+            responded_regions=_bounded(self.responded_regions + later.responded_regions, limit),
+            responded_regions_total=self.responded_regions_total + later.responded_regions_total,
+        )
 
 
 @dataclass(frozen=True)
@@ -89,6 +151,7 @@ class _Diagnostics:
     attempts: tuple[_Attempt, ...]
     complete: bool
     incomplete_reasons: tuple[str, ...] = ()
+    summary: Optional[_Summary] = None
 
 
 @dataclass(frozen=True)
@@ -155,6 +218,8 @@ class _AttemptSpanRecorder:
     caller: SpanContext
     attributes: Mapping[str, Any]
     parent: Optional[Span] = None
+    namespace: Optional[str] = None
+    collection: Optional[str] = None
 
     def start(self) -> bool:
         try:
@@ -171,7 +236,17 @@ class _AttemptSpanRecorder:
     def record(self, completion: OperationCompletion) -> None:
         parent, self.parent = self.parent, None
         if parent is not None:
-            emit_attempts(parent, completion.diagnostics, self.attributes)
+            emit_attempts(
+                parent,
+                completion.diagnostics,
+                self.attributes,
+                operation=completion.operation,
+                namespace=self.namespace,
+                collection=self.collection,
+            )
+            summary = completion.diagnostics.summary if completion.diagnostics is not None else None
+            if completion.outcome == "error" and summary is not None and summary.failed:
+                _pin_error_type(parent, "_OTHER" if summary.status_code is None else str(summary.status_code))
 
 
 @dataclass
@@ -239,6 +314,10 @@ class _DiagnosticCollector:
                         head = (self.retained_limit + 1) // 2
                         tail = self.retained_limit - head
                         attempts = attempts[:head] + (attempts[-tail:] if tail else ())
+                    if previous is not None and previous.summary is not None and diagnostics.summary is not None:
+                        summary = previous.summary.merge(diagnostics.summary, self.retained_limit)
+                    else:
+                        summary = diagnostics.summary or (previous.summary if previous else None)
                     self.diagnostics = _Diagnostics(
                         (previous.request_count if previous else 0) + diagnostics.request_count,
                         attempts,
@@ -249,6 +328,7 @@ class _DiagnosticCollector:
                                 | (set(previous.incomplete_reasons) if previous else set())
                             )
                         ),
+                        summary=summary,
                     )
         if rejected:
             _report("Rust telemetry rejected a duplicate or late diagnostic contribution, or a different owner")
@@ -267,6 +347,7 @@ class _DiagnosticCollector:
                     diagnostics.attempts,
                     complete=False,
                     incomplete_reasons=tuple(sorted(set(diagnostics.incomplete_reasons) | self.incomplete_reasons)),
+                    summary=diagnostics.summary,
                 )
             self.diagnostics = None
             return True, diagnostics
@@ -365,6 +446,7 @@ class _Contribution:
                     tuple(attempts),
                     complete=complete,
                     incomplete_reasons=tuple(sorted(set(reasons))),
+                    summary=_decode_summary(payload),
                 )
             except Exception:  # pylint: disable=broad-except
                 incomplete_reason = "invalid_diagnostics"
@@ -524,6 +606,7 @@ def _new_operation(
     operation: str,
     kwargs: Mapping[str, Any],
     binding_operation: Optional[_BindingOperation] = None,
+    args: tuple[Any, ...] = (),
 ) -> Optional[_Operation]:
     context = getattr(owner, "_item_context", None)
     handlers = getattr(context, "telemetry_handlers", ())
@@ -572,6 +655,7 @@ def _new_operation(
         return state
     try:
         recorder = _AttemptSpanRecorder(trace.get_current_span().get_span_context(), attributes)
+        recorder.namespace, recorder.collection = _resource_names(owner, operation, args, kwargs)
         if state is None:
             state = _Operation(operation, backend, _current_task(), get_ident(), binding_operation)
         state.handlers += (CompletionHandler(recorder.record, collect_attempts=True, start=recorder.start),)
@@ -587,9 +671,10 @@ def _operation_scope(
     operation: str,
     kwargs: Mapping[str, Any],
     binding_operation: Optional[_BindingOperation] = None,
+    args: tuple[Any, ...] = (),
 ) -> Iterator[None]:
     # Even a disabled call masks inherited state from an outer SDK operation.
-    token = _OPERATION.set(_new_operation(owner, operation, kwargs, binding_operation))
+    token = _OPERATION.set(_new_operation(owner, operation, kwargs, binding_operation, args))
     try:
         yield
     finally:
@@ -657,7 +742,7 @@ def trace_operation(
             owner = args[0] if args else kwargs.get("self")
             if _consume_delegated_call(owner, func.__name__):
                 return func(*args, **kwargs)
-            with _operation_scope(owner, operation_name or func.__name__, kwargs, binding_operation):
+            with _operation_scope(owner, operation_name or func.__name__, kwargs, binding_operation, args[1:]):
                 try:
                     return traced(*args, **kwargs)
                 except _LocalOperationError as error:
@@ -708,7 +793,7 @@ def trace_operation_async(
             owner = args[0] if args else kwargs.get("self")
             if _consume_delegated_call(owner, func.__name__):
                 return await func(*args, **kwargs)
-            with _operation_scope(owner, operation_name or func.__name__, kwargs, binding_operation):
+            with _operation_scope(owner, operation_name or func.__name__, kwargs, binding_operation, args[1:]):
                 try:
                     return await traced(*args, **kwargs)
                 except _LocalOperationError as error:
@@ -778,10 +863,42 @@ def _integer(value: object) -> int:
     return value
 
 
+def _optional_integer(value: object, maximum: int) -> Optional[int]:
+    if value is None:
+        return None
+    if _integer(value) > maximum:
+        raise ValueError("Integer is out of range")
+    return value  # type: ignore[return-value]
+
+
+def _charge(value: object) -> float:
+    if type(value) not in (int, float) or not 0 <= value < float("inf"):  # pylint: disable=unidiomatic-typecheck
+        raise ValueError("Invalid request charge")
+    return float(value)  # type: ignore[arg-type]
+
+
+def _optional_text(value: object) -> Optional[str]:
+    if value is not None and (not isinstance(value, str) or not value):
+        raise ValueError("Expected a nonempty string")
+    return value
+
+
+def _texts(value: object) -> tuple[str, ...]:
+    if not isinstance(value, list) or any(not isinstance(item, str) or not item for item in value):
+        raise ValueError("Expected a list of nonempty strings")
+    return tuple(value)
+
+
+def _flag(value: object) -> bool:
+    if not isinstance(value, bool):
+        raise ValueError("Expected a boolean")
+    return value
+
+
 def _decode_payload(payload: object) -> tuple[int, int, list[_Attempt]]:
     if not isinstance(payload, dict):
         raise ValueError("Missing attempt schema version")
-    if _integer(payload.get("schema_version")) != 1 or payload.get("error") is not None:
+    if _integer(payload.get("schema_version")) != 2 or payload.get("error") is not None:
         raise ValueError("Unsupported schema or binding timing failure")
     total = _integer(payload["request_count"])
     retained = _integer(payload["retained_request_count"])
@@ -798,16 +915,203 @@ def _decode_payload(payload: object) -> tuple[int, int, list[_Attempt]]:
         reason = row["execution_context"]
         if (end is not None and end < start) or status > 65535 or not isinstance(reason, str) or not reason:
             raise ValueError("Invalid attempt timing or execution context")
-        attempts.append(_Attempt(start, end, status, reason))
+        attempts.append(
+            _Attempt(
+                start,
+                end,
+                status,
+                reason,
+                sub_status_code=_optional_integer(row["sub_status_code"], 65535),
+                failed=_flag(row["failed"]),
+                request_charge=_charge(row["request_charge"]),
+                region=_optional_text(row["region"]),
+                server_address=_optional_text(row["server_address"]),
+                activity_id=_optional_text(row["activity_id"]),
+                operation_name=_optional_text(row["operation_name"]),
+            )
+        )
     return total, retained, attempts
+
+
+def _decode_summary(payload: Mapping[str, Any]) -> _Summary:
+    requested = _texts(payload["requested_regions"])
+    responded = _texts(payload["responded_regions"])
+    requested_total = _integer(payload["requested_regions_total"])
+    responded_total = _integer(payload["responded_regions_total"])
+    if requested_total < len(requested) or responded_total < len(responded):
+        raise ValueError("Inconsistent region totals")
+    return _Summary(
+        status_code=_optional_integer(payload["status_code"], 65535),
+        sub_status_code=_optional_integer(payload["sub_status_code"], 65535),
+        failed=_flag(payload["failed"]),
+        request_charge=_charge(payload["request_charge"]),
+        contacted_regions=_texts(payload["contacted_regions"]),
+        machine_id=_optional_text(payload["machine_id"]),
+        hedging_started=_flag(payload["hedging_started"]),
+        hedge_region=_optional_text(payload["hedge_region"]),
+        hedge_terminal_state=_optional_text(payload["hedge_terminal_state"]),
+        requested_regions=requested,
+        requested_regions_total=requested_total,
+        responded_regions=responded,
+        responded_regions_total=responded_total,
+    )
+
+
+# Methods whose target resource is an argument rather than the owner: keyword name and level.
+_RESOURCE_ARGUMENTS = {
+    "create_database": ("id", "namespace"),
+    "create_database_if_not_exists": ("id", "namespace"),
+    "delete_database": ("database", "namespace"),
+    "create_container": ("id", "collection"),
+    "create_container_if_not_exists": ("id", "collection"),
+    "replace_container": ("container", "collection"),
+    "delete_container": ("container", "collection"),
+}
+
+
+def _resource_id(value: object) -> Optional[str]:
+    if isinstance(value, str):
+        resource: object = value
+    elif isinstance(value, Mapping):
+        resource = value.get("id")
+    else:
+        resource = getattr(value, "id", None)
+    return resource if isinstance(resource, str) and resource else None
+
+
+def _resource_names(
+    owner: object,
+    operation: Optional[str] = None,
+    args: tuple[Any, ...] = (),
+    kwargs: Optional[Mapping[str, Any]] = None,
+) -> tuple[Optional[str], Optional[str]]:
+    """Return the database and container ids that an operation targets.
+
+    :param owner: The proxy, or a page configuration holding it as ``proxy``.
+    :type owner: object
+    :param operation: Public SDK method name.
+    :type operation: str or None
+    :param args: Positional arguments after ``self``.
+    :type args: tuple
+    :param kwargs: Keyword arguments of the call.
+    :type kwargs: Mapping[str, Any] or None
+    :return: Database id and container id, each None when not applicable.
+    :rtype: tuple[str or None, str or None]
+    """
+    namespace = collection = None
+    for candidate in (owner, getattr(owner, "proxy", None)):
+        link = getattr(candidate, "container_link", None)
+        if not isinstance(link, str):
+            link = getattr(candidate, "database_link", None)
+        if isinstance(link, str):
+            parts = link.strip("/").split("/")
+            if len(parts) >= 2 and parts[0] == "dbs" and parts[1]:
+                namespace = parts[1]
+                collection = parts[3] if len(parts) >= 4 and parts[2] == "colls" and parts[3] else None
+                break
+    target = _RESOURCE_ARGUMENTS.get(operation or "")
+    if target is not None:
+        keyword, level = target
+        resource = _resource_id(args[0] if args else (kwargs or {}).get(keyword))
+        if resource is not None:
+            if level == "namespace":
+                namespace = resource
+            else:
+                collection = resource
+    return namespace, collection
+
+
+_DB_SYSTEM = {"db.system.name": "azure.cosmosdb"}
+
+
+def _set_summary(parent: Span, summary: _Summary, attempts: tuple[_Attempt, ...]) -> None:
+    if summary.status_code is not None:
+        parent.set_attribute("db.response.status_code", str(summary.status_code))
+        if summary.sub_status_code is not None:
+            parent.set_attribute("azure.cosmosdb.response.sub_status_code", summary.sub_status_code)
+    parent.set_attribute("azure.cosmosdb.operation.request_charge", summary.request_charge)
+    if summary.contacted_regions:
+        parent.set_attribute("azure.cosmosdb.operation.contacted_regions", summary.contacted_regions)
+    if summary.hedging_started:
+        parent.set_attribute("azure.cosmosdb.operation.hedging_started", True)
+        if summary.hedge_terminal_state is not None:
+            if summary.hedge_region is not None:
+                parent.set_attribute("azure.cosmosdb.operation.hedge_region", summary.hedge_region)
+            parent.set_attribute("azure.cosmosdb.operation.hedge_terminal_state", summary.hedge_terminal_state)
+        for name, regions, total in (
+            ("requested_regions", summary.requested_regions, summary.requested_regions_total),
+            ("responded_regions", summary.responded_regions, summary.responded_regions_total),
+        ):
+            if regions:
+                parent.set_attribute(f"azure.cosmosdb.operation.{name}", regions)
+                if total > len(regions):
+                    parent.set_attribute(f"azure.cosmosdb.operation.{name}_total", total)
+    server = next((attempt.server_address for attempt in reversed(attempts) if attempt.server_address), None)
+    if server is not None:
+        parent.set_attribute("server.address", server)
+    if summary.machine_id is not None:
+        parent.set_attribute("azure.cosmosdb.machine_id", summary.machine_id)
+
+
+def _pin_error_type(span: Span, value: str) -> None:
+    """Record the Rust SDK's status-based ``error.type`` on the operation span.
+
+    Azure Core writes the exception class to ``error.type`` after this callback and
+    before it ends the span; this span instance keeps the driver status instead.
+
+    :param span: Owned public operation span.
+    :type span: ~opentelemetry.trace.Span
+    :param str value: The failing status code, or ``_OTHER`` when none was reported.
+    """
+    try:
+        span.set_attribute("error.type", value)
+        original = span.set_attribute
+
+        def set_attribute(key: str, attribute: Any) -> None:
+            if key != "error.type":
+                original(key, attribute)
+
+        span.set_attribute = set_attribute  # type: ignore[method-assign]
+    except Exception:  # pylint: disable=broad-except
+        _report("Rust telemetry could not record the operation error type; operation result is unchanged")
+
+
+def _attempt_attributes(attempt: _Attempt, operation: Optional[str]) -> dict[str, Any]:
+    status = str(attempt.driver_status_code)
+    values: dict[str, Any] = {
+        **_DB_SYSTEM,
+        "db.response.status_code": status,
+        "azure.cosmosdb.operation.request_charge": attempt.request_charge,
+        "azure.cosmosdb.request.execution_context": attempt.execution_context,
+    }
+    name = attempt.operation_name or operation
+    if name:
+        values["db.operation.name"] = name
+    if attempt.sub_status_code is not None:
+        values["azure.cosmosdb.response.sub_status_code"] = attempt.sub_status_code
+    if attempt.region is not None:
+        values["azure.cosmosdb.operation.contacted_regions"] = (attempt.region,)
+    if attempt.execution_context == "hedging":
+        values["azure.cosmosdb.request.hedge"] = True
+    if attempt.server_address is not None:
+        values["server.address"] = attempt.server_address
+    if attempt.activity_id is not None:
+        values["azure.cosmosdb.request.activity_id"] = attempt.activity_id
+    if attempt.failed:
+        values["error.type"] = status
+    return values
 
 
 def emit_attempts(
     parent: Span,
     payload: Optional[_Diagnostics],
     attributes: Optional[Mapping[str, Any]] = None,
+    *,
+    operation: Optional[str] = None,
+    namespace: Optional[str] = None,
+    collection: Optional[str] = None,
 ) -> None:
-    """Create sibling spans from the finalized, validated diagnostics.
+    """Add Rust SDK attribute names to the operation span and create attempt spans.
 
     :param parent: Owned public operation span.
     :type parent: ~opentelemetry.trace.Span
@@ -815,7 +1119,21 @@ def emit_attempts(
     :type payload: _Diagnostics or None
     :param attributes: Resolved customer attributes; recorded driver facts take precedence.
     :type attributes: Mapping[str, Any] or None
+    :keyword str operation: Public SDK method name, used for ``db.operation.name``.
+    :keyword str namespace: Database id, used for ``db.namespace``.
+    :keyword str collection: Container id, used for ``db.collection.name``.
     """
+    try:
+        for key, value in (
+            *_DB_SYSTEM.items(),
+            ("db.operation.name", operation),
+            ("db.namespace", namespace),
+            ("db.collection.name", collection),
+        ):
+            if value:
+                parent.set_attribute(key, value)
+    except Exception:  # pylint: disable=broad-except
+        _report("Rust telemetry could not label the operation span; operation result is unchanged")
     if payload is None:
         _report("Rust telemetry has no request diagnostics for this result", logging.DEBUG)
         return
@@ -824,11 +1142,15 @@ def emit_attempts(
         from opentelemetry import trace  # pylint: disable=import-outside-toplevel
 
         if payload.complete:
-            parent.set_attribute("cosmos.poc.request_count", payload.request_count)
-            parent.set_attribute("cosmos.poc.retained_request_count", len(payload.attempts))
-        parent.set_attribute("cosmos.poc.diagnostics_complete", payload.complete)
+            parent.set_attribute("azure.cosmosdb.operation.request_count", payload.request_count)
+            parent.set_attribute("azure.cosmosdb.operation.retained_request_count", len(payload.attempts))
+        parent.set_attribute("azure.cosmosdb.operation.diagnostics_complete", payload.complete)
         if not payload.complete:
-            parent.set_attribute("cosmos.poc.diagnostics_incomplete_reasons", payload.incomplete_reasons)
+            parent.set_attribute(
+                "azure.cosmosdb.operation.diagnostics_incomplete_reasons", payload.incomplete_reasons
+            )
+        if payload.summary is not None:
+            _set_summary(parent, payload.summary, payload.attempts)
         tracer = trace.get_tracer("azure.cosmos.rust")
         parent_context = trace.set_span_in_context(parent)
         for attempt in payload.attempts:
@@ -840,12 +1162,10 @@ def emit_attempts(
                 context=parent_context,
                 kind=trace.SpanKind.CLIENT,
                 start_time=attempt.start_ns,
-                attributes={
-                    **(attributes or {}),
-                    "cosmos.poc.driver_status_code": attempt.driver_status_code,
-                    "cosmos.poc.execution_context": attempt.execution_context,
-                },
+                attributes={**(attributes or {}), **_attempt_attributes(attempt, operation)},
             )
+            if attempt.failed:
+                span.set_status(trace.Status(trace.StatusCode.ERROR, "request failed"))
             span.end(end_time=attempt.end_ns)
     except Exception:  # pylint: disable=broad-except
         # Only instrumentation is inside this boundary, never the database call.

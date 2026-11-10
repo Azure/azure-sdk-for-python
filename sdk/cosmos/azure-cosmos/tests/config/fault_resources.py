@@ -12,18 +12,6 @@ from config import clients, resources
 from config.diagnostics import emit
 
 
-def load_account(endpoint, key):
-    """Require the real account document; propagate the missing Rust API error."""
-    with clients.create_fault_setup_client(endpoint, key) as client:
-        client.get_database_account()
-    # The public DatabaseAccount model does not retain the complete response.
-    raise NotImplementedError(
-        "Fault-test topology requires the complete account document through the Rust binding. "
-        "Implement raw account retrieval here when that capability is exposed; the public "
-        "DatabaseAccount model alone is insufficient."
-    )
-
-
 @pytest.fixture
 def owned_target(request):
     endpoint, key = os.environ.get("ACCOUNT_HOST"), os.environ.get("ACCOUNT_KEY")

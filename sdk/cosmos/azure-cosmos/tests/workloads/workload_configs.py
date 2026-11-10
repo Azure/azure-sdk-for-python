@@ -70,6 +70,8 @@ __all__ = [
     "WORKLOAD_MEASUREMENT_SECONDS",
     "WORKLOAD_MEASUREMENT_MANIFEST",
     "WORKLOAD_DELETE_ITEM_COUNT",
+    "WORKLOAD_QUERY_MANIFEST",
+    "WORKLOAD_QUERY_SCENARIO",
 ]
 
 
@@ -171,6 +173,8 @@ WORKLOAD_MEASUREMENT_SECONDS = _safe_float(
 )
 WORKLOAD_MEASUREMENT_MANIFEST = os.environ.get("WORKLOAD_MEASUREMENT_MANIFEST", "")
 WORKLOAD_DELETE_ITEM_COUNT = int(os.environ.get("WORKLOAD_DELETE_ITEM_COUNT", "0"))
+WORKLOAD_QUERY_MANIFEST = os.environ.get("WORKLOAD_QUERY_MANIFEST", "")
+WORKLOAD_QUERY_SCENARIO = os.environ.get("WORKLOAD_QUERY_SCENARIO", "")
 
 # Blended traffic. WORKLOAD_MIX="read=70,create=10,upsert=10,replace=5,patch=5"
 # makes one process issue a weighted BLEND of operations (a realistic app mix)
@@ -234,7 +238,9 @@ if REQUEST_TIMEOUT and not 1 <= REQUEST_TIMEOUT < 2**64:
     raise ValueError("COSMOS_REQUEST_TIMEOUT must be 0 (unset) or at least 1 and below 2**64 seconds")
 if not WORKLOAD_OPERATIONS and not WORKLOAD_MIX:
     raise ValueError("Select at least one workload operation")
-if PARTITION_KEY not in ("id", "pk"):
+if PARTITION_KEY not in ("id", "pk") and not (
+    PARTITION_KEY == "tenantId" and WORKLOAD_OPERATIONS == {"query"} and WORKLOAD_MEASUREMENT_SECONDS
+):
     raise ValueError("The seeded workload supports COSMOS_PARTITION_KEY=id or pk")
 if WORKLOAD_DOC_PROFILE == "orders" and PARTITION_KEY != "id":
     raise ValueError("The orders workload requires COSMOS_PARTITION_KEY=id")
@@ -266,23 +272,34 @@ if WORKLOAD_MEASUREMENT_SECONDS < 0 or WORKLOAD_DELETE_ITEM_COUNT < 0:
 if WORKLOAD_MEASUREMENT_SECONDS:
     if WORKLOAD_READ_MEASUREMENT_SECONDS:
         raise ValueError("Select WORKLOAD_MEASUREMENT_SECONDS or the read-only duration, not both")
-    if (
-        len(WORKLOAD_OPERATIONS) != 1 or not WORKLOAD_OPERATIONS <= _VALID_OPERATIONS - {"query"}
-        or WORKLOAD_MIX or WORKLOAD_USE_SYNC or WORKLOAD_USE_PROXY
-        or WORKLOAD_NUM_CLIENTS != 1 or CONCURRENT_REQUESTS != 1
-        or WORKLOAD_ARRIVAL_RATE or not WORKLOAD_MANAGE_CLIENT_LIFECYCLE
-    ):
+    if any((
+        len(WORKLOAD_OPERATIONS) != 1, WORKLOAD_MIX, WORKLOAD_USE_SYNC, WORKLOAD_USE_PROXY,
+        WORKLOAD_NUM_CLIENTS != 1, CONCURRENT_REQUESTS != 1,
+        WORKLOAD_ARRIVAL_RATE, not WORKLOAD_MANAGE_CLIENT_LIFECYCLE,
+    )):
         raise ValueError(
-            "Bounded measurements require one async point operation, one client, one concurrent request, "
+            "Bounded measurements require one async operation, one client, one concurrent request, "
             "zero arrival rate, no proxy/mix, and managed client lifecycle"
         )
-    if WORKLOAD_OPERATIONS != {"read"} and (
+    if WORKLOAD_OPERATIONS == {"query"} and any((
+        not WORKLOAD_QUERY_MANIFEST, not WORKLOAD_QUERY_SCENARIO, CONCURRENT_QUERIES != 1,
+        PARTITION_KEY != "tenantId", WORKLOAD_ITEM_NAMESPACE, WORKLOAD_MEASUREMENT_MANIFEST,
+    )):
+        raise ValueError(
+            "Bounded queries require a query manifest/scenario, COSMOS_PARTITION_KEY=tenantId, "
+            "one concurrent query and no write ownership settings"
+        )
+    if WORKLOAD_OPERATIONS not in ({"read"}, {"query"}) and (
         WORKLOAD_DOC_PROFILE != "orders" or not WORKLOAD_ITEM_NAMESPACE
         or not WORKLOAD_MEASUREMENT_MANIFEST
     ):
         raise ValueError("Bounded writes require the orders profile, an ownership namespace and its saved manifest")
     if WORKLOAD_OPERATIONS == {"delete"} and WORKLOAD_DELETE_ITEM_COUNT <= 3:
         raise ValueError("WORKLOAD_DELETE_ITEM_COUNT must cover three warm-up deletes and the measured sequence")
+if (WORKLOAD_QUERY_MANIFEST or WORKLOAD_QUERY_SCENARIO) and (
+    not WORKLOAD_MEASUREMENT_SECONDS or WORKLOAD_OPERATIONS != {"query"}
+):
+    raise ValueError("Query scenario settings require a bounded query-only workload")
 for _name in ("WORKLOAD_USE_SYNC", "WORKLOAD_USE_PROXY",
               "WORKLOAD_GC_FREEZE", "WORKLOAD_LOOP_LAG_MONITOR",
               "COSMOS_ENABLE_DIAGNOSTICS_LOGGING", "COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS"):

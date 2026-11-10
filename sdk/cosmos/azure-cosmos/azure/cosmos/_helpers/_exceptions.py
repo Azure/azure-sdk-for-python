@@ -22,12 +22,12 @@ a complete ``HttpResponse`` implementation or a guarantee of execution-path pari
 """
 from __future__ import annotations
 
-import json
 from typing import Any, Mapping, Optional
 
 from azure.core.exceptions import ODataV4Format
 
 from .._backend.contracts import BackendResponse
+from .._response_decoding import decode_response_body_for_status
 from ..exceptions import (
     CosmosAccessConditionFailedError,
     CosmosHttpResponseError,
@@ -153,38 +153,23 @@ def map_backend_response_to_exception(
     )
 
 
-def extract_message_from_body(body: bytes) -> str:
-    """Best-effort extraction of the server's error message from a JSON error body.
+def error_message_from_body(body: bytes, status_code: int) -> str:
+    """Return the error body text used as ``http_error_message``.
 
-    Cosmos error bodies are typically
-    ``{"code": "Conflict", "message": "..."}``. Returns the ``message``
-    or ``Message`` field when it is a string in a decoded JSON object; otherwise
-    returns the body decoded as UTF-8 (or its ``repr`` if the bytes are
-    not valid UTF-8). JSON ``ValueError``/``TypeError`` fall back to decoded text;
-    other failures are not caught here.
+    Matches the legacy path, which passes the whole decoded error body (for
+    example ``{"code":"NotFound","message":"..."}``) rather than only its
+    ``message`` field, so ``json.loads(e.http_error_message)`` keeps working.
+    Invalid UTF-8 in an error body is decoded with replacement characters.
 
     :param body: The response body bytes.
     :type body: bytes
-    :returns: A best-effort error message text.
+    :param int status_code: The HTTP status code of the error response.
+    :returns: The decoded error body, or an empty string for an empty body.
     :rtype: str
     """
     if not body:
         return ""
-    try:
-        text = body.decode("utf-8")
-    except UnicodeDecodeError:
-        return repr(body)
-
-    try:
-        parsed = json.loads(text)
-        if isinstance(parsed, Mapping):
-            message = parsed.get("message") or parsed.get("Message")
-            if isinstance(message, str):
-                return message
-    except (ValueError, TypeError):
-        pass
-
-    return text
+    return decode_response_body_for_status(body, status_code)
 
 
 def is_success_status(status_code: int) -> bool:

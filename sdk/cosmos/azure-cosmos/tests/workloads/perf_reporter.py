@@ -133,6 +133,7 @@ class PerfReporter:
         # (rust_execute_calls) and that the Rust binding counted (binding_calls).
         # None for binding means the extension has no counter; we store -1 then.
         self._last_execute_calls = backend_counters.execute_count()
+        self._last_page_fetches = backend_counters.page_fetch_count()
         self._last_binding_calls = backend_counters.binding_operation_count() or 0
         self._last_attempt_calls = backend_counters.binding_attempt_count() or 0
         self._last_retry_calls = backend_counters.binding_retry_count() or 0
@@ -198,6 +199,7 @@ class PerfReporter:
             "cpu_times": _get_cpu_times(self._process),
             "gc": _get_gc_stats(),
             "execute": backend_counters.execute_count(),
+            "page_fetches": backend_counters.page_fetch_count(),
             "binding": backend_counters.binding_operation_count(),
             "attempt": backend_counters.binding_attempt_count(),
             "retry": backend_counters.binding_retry_count(),
@@ -225,6 +227,8 @@ class PerfReporter:
         }
         if operation == "read":
             metadata.update(warmup_read_count=len(self._warmup_ms), warmup_read_ms=self._warmup_ms)
+        elif operation == "query":
+            metadata["query_measurement"] = self._config["query_measurement"]
         else:
             metadata["measurement_item_namespace"] = os.environ["WORKLOAD_ITEM_NAMESPACE"]
         return metadata
@@ -272,6 +276,7 @@ class PerfReporter:
         # Reset the backend-counter baselines at the same instant, so the first
         # post-warmup interval's execute/binding deltas line up with its duration.
         self._last_execute_calls = backend_counters.execute_count()
+        self._last_page_fetches = backend_counters.page_fetch_count()
         self._last_binding_calls = backend_counters.binding_operation_count() or 0
         self._last_attempt_calls = backend_counters.binding_attempt_count() or 0
         self._last_retry_calls = backend_counters.binding_retry_count() or 0
@@ -408,6 +413,9 @@ class PerfReporter:
         cur_execute_calls = self._metric("execute", backend_counters.execute_count)
         rust_execute_calls = max(0, cur_execute_calls - self._last_execute_calls)
         self._last_execute_calls = cur_execute_calls
+        cur_page_fetches = self._metric("page_fetches", backend_counters.page_fetch_count)
+        rust_page_fetches = max(0, cur_page_fetches - self._last_page_fetches)
+        self._last_page_fetches = cur_page_fetches
         cur_binding_raw = self._metric("binding", backend_counters.binding_operation_count)
         if cur_binding_raw is None:
             binding_calls = -1
@@ -526,6 +534,7 @@ class PerfReporter:
                 "config_backend": backend,
                 "runtime_backend": runtime_backend,
                 "rust_execute_calls": rust_execute_calls,
+                "rust_page_fetches": rust_page_fetches,
                 "binding_calls": binding_calls,
                 # Recorded native diagnostics counts, with the coverage limits
                 # described above. -1 means unavailable, not zero attempts/retries.
@@ -551,6 +560,16 @@ class PerfReporter:
             }
             if self._after_load:
                 doc["measured_first_n_ms"] = s["cold_first_n_ms"]
+            if "query_counts" in s:
+                if s["query_counts"]["completed"] != s["count"] or s["ru_count"] != s["count"]:
+                    raise RuntimeError("Whole-query result and RU populations do not match successful queries")
+                doc["query_counts"] = s["query_counts"]
+                doc["duration_kind"] = "whole_query"
+                doc["query_tail_support"] = {
+                    "minimum_nominal_tail_samples": 10,
+                    "p99_under_sampled": s["count"] < 1000,
+                    "p99_9_under_sampled": s["count"] < 10000,
+                }
             try:
                 self._container.upsert_item(doc)
             except Exception as e:

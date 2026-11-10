@@ -35,11 +35,11 @@ def recorded(request):
         context=trace.set_span_in_context(checkout),
         start_time=20,
         attributes={
-            "cosmos.poc.diagnostics_complete": complete,
+            "azure.cosmosdb.operation.diagnostics_complete": complete,
             **(
-                {"cosmos.poc.request_count": 1, "cosmos.poc.retained_request_count": 1}
+                {"azure.cosmosdb.operation.request_count": 1, "azure.cosmosdb.operation.retained_request_count": 1}
                 if complete
-                else {"cosmos.poc.diagnostics_incomplete_reasons": tuple(reasons)}
+                else {"azure.cosmosdb.operation.diagnostics_incomplete_reasons": tuple(reasons)}
             ),
         },
     )
@@ -48,14 +48,14 @@ def recorded(request):
         context=trace.set_span_in_context(operation),
         start_time=30,
         kind=trace.SpanKind.CLIENT,
-        attributes={"cosmos.poc.driver_status_code": 503, "cosmos.poc.execution_context": "initial"},
+        attributes={"db.response.status_code": "503", "azure.cosmosdb.request.execution_context": "initial"},
     )
     attempt.end(end_time=40)
     operation.set_status(trace.StatusCode.ERROR)
     operation.end(end_time=50)
     checkout.end(end_time=60)
     payload = {
-        "schema_version": 1,
+        "schema_version": 2,
         "complete": complete,
         "incomplete_reasons": reasons,
         "error": None,
@@ -99,7 +99,7 @@ def test_changed_or_incomplete_compiled_record_fails_proof_rust(recorded, field,
 @pytest.mark.parametrize(
     "field,value",
     [
-        ("schema_version", 2),
+        ("schema_version", 1),
         ("complete", None),
         ("complete", False),
         ("incomplete_reasons", None),

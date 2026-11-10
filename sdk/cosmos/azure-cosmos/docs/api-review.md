@@ -4406,8 +4406,8 @@ Tracing emission is a separate callback consumer. Valid partial coverage is
 reported through diagnostic state, not a warning; malformed payloads, unexpected
 owned work, and recording failures remain observable.
 
-For validated payloads, operation spans expose `cosmos.poc.diagnostics_complete`
-and, when partial, `cosmos.poc.diagnostics_incomplete_reasons`. Partial counts
+For validated payloads, operation spans expose `azure.cosmosdb.operation.diagnostics_complete`
+and, when partial, `azure.cosmosdb.operation.diagnostics_incomplete_reasons`. Partial counts
 are not published as operation totals. Missing diagnostics remain unavailable,
 not zero.
 

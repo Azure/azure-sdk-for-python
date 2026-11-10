@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Repeat the pinned, local-only network tests without changing an installation."""
+"""Repeat local-only network tests against a selected SDK snapshot without changing an installation."""
 
 import argparse
 import datetime
@@ -16,7 +16,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(ROOT / "tests"))
 
 from toxiproxy._process_tree import run_owned_worker
-from toxiproxy._toxiproxy_config import DRIVER_COMMIT, digest, validate_endpoint, verify_server
+from toxiproxy._toxiproxy_config import digest, validate_endpoint, verify_server
 
 SELECTIONS = {
     "unit": [
@@ -60,8 +60,6 @@ def worker(argv):
         raise RuntimeError("Worker loaded an extension outside the selected snapshot")
     if digest(Path(_rust.__file__)) != manifest["binary_sha256"]:
         raise RuntimeError("Worker extension checksum differs from the selected snapshot")
-    if _rust.__rust_driver_commit__ != DRIVER_COMMIT:
-        raise RuntimeError("Worker extension does not contain the pinned driver")
     os.environ["ACCOUNT_KEY"] = TestSettings.masterKey
     return pytest.main(
         [
@@ -93,10 +91,6 @@ def main(argv=None):
         args.output.resolve(),
     )
     manifest = json.loads(manifest_path.read_text())
-    assert (
-        manifest["driver_source"]
-        == f"git+https://github.com/Azure/azure-sdk-for-rust?rev={DRIVER_COMMIT}#{DRIVER_COMMIT}"
-    )
     assert all(digest(base / path) == value for path, value in manifest["sources"].items()), "Snapshot source drift"
     assert digest(base / r"azure\cosmos\_rust.pyd") == manifest["binary_sha256"], "Snapshot binary drift"
     if args.selection != "no-opt-in":

@@ -19,6 +19,7 @@ import argparse
 from contextlib import contextmanager
 import math
 import glob
+import json
 import os
 import re
 import sys
@@ -114,8 +115,24 @@ def check_quality(container, prefix: str, run_id: str, required_backends):
 
     # Aggregate per cell (workload_id), and remember which op/backend it is.
     agg = {}
+    query_contracts = {}
     for r in summary_rows(rows):
         wid = (r["workload_id"], r["operation"])
+        if r.get("duration_kind") == "whole_query":
+            metadata = r.get("query_measurement")
+            counts = r.get("query_counts", {})
+            if not isinstance(metadata, dict) or not all((
+                r["operation"] == "QueryItems", metadata.get("scenario"), metadata.get("suite_sha256"),
+                metadata.get("build"), metadata.get("execution_settings"),
+                counts.get("completed") == r["count"], r.get("ru_count") == r["count"],
+            )):
+                return False, ["  [BAD] incomplete whole-query metadata or result/RU populations"]
+            if not isinstance(metadata["build"], dict) or not all(
+                metadata["build"].get(field)
+                for field in ("driver_commit", "native_sha256", "wrapper_sha256", "harness_sha256")
+            ):
+                return False, ["  [BAD] incomplete query build identity"]
+            wid += (metadata["scenario"],)
         a = agg.setdefault(
             wid,
             {
@@ -127,9 +144,24 @@ def check_quality(container, prefix: str, run_id: str, required_backends):
         )
         a["count"] += int(r.get("count", 0) or 0)
         a["errors"] += int(r.get("errors", 0) or 0)
+        if r.get("duration_kind") == "whole_query":
+            a["op"] = f"QueryItems/{metadata['scenario']}"
+            contract = {
+                "query": metadata,
+                "configuration": {field: r.get(field) for field in (
+                    "config_concurrency", "config_num_clients", "config_use_sync", "config_proxy_enabled",
+                    "config_request_timeout", "config_application_region", "config_excluded_regions",
+                    "measurement_target_seconds", "warmup_count",
+                )},
+            }
+            query_contracts.setdefault(a["op"], set()).add(json.dumps(contract, sort_keys=True, allow_nan=False))
 
     lines = []
     all_ok = bool(agg)
+    for op, contracts in query_contracts.items():
+        if len(contracts) != 1:
+            all_ok = False
+            lines.append(f"  [BAD] {op}: query suite, build or execution settings differ across runs")
     backends_by_op = {}
     for wid in sorted(agg):
         a = agg[wid]
@@ -304,6 +336,9 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
                 "runtime": r.get("runtime_backend", "?"),
                 "count": 0,
                 "execute": 0,
+                "page_fetches": 0,
+                "query_rows": 0,
+                "rows": 0,
                 "binding": 0,
                 "binding_known": False,
                 "binding_unknown": False,
@@ -313,12 +348,18 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
             },
         )
         a["count"] += int(r.get("count", 0) or 0)
+        a["rows"] += 1
+        a["query_rows"] += int(
+            r.get("operation") == "QueryItems" and r.get("duration_kind") == "whole_query"
+            and bool(r.get("query_measurement"))
+        )
         a["runtimes"].add(r.get("runtime_backend"))
         a["labels"].add(r.get("config_backend"))
         if interval_key(r) in a["windows"]:
             continue
         a["windows"].add(interval_key(r))
         a["execute"] += int(r.get("rust_execute_calls", 0) or 0)
+        a["page_fetches"] += int(r.get("rust_page_fetches", 0) or 0)
         b = r.get("binding_calls", -1)
         b = int(b if b is not None else -1)
         if b >= 0:
@@ -350,12 +391,10 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
             # carry the document's proof, so it fails unless the caller
             # explicitly opts into the weaker evidence.
             known = a["binding_known"] and not a["binding_unknown"]
-            if known:
-                proof = a["binding"]
-                proof_name = "binding_calls"
-            else:
-                proof = a["execute"]
-                proof_name = "rust_execute_calls(binding unknown)"
+            proof, proof_name = (
+                (a["binding"], "binding_calls") if known
+                else (a["execute"], "rust_execute_calls(binding unknown)")
+            )
             min_expected = int(a["count"] * 0.99)
             cell_ok = (
                 proof > 0
@@ -365,11 +404,19 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
                 and a["runtimes"] <= EXPECTED_RUNTIME["rust"]
                 and a["labels"] == {"rust"}
             )
+            if a["query_rows"]:
+                # Retained queries use execute_pages; neither fetches nor binding
+                # entries have a fixed 1:1 relationship with completed queries.
+                cell_ok = (
+                    a["query_rows"] == a["rows"] and a["page_fetches"] > 0
+                    and known and a["binding"] > 0
+                    and a["runtimes"] <= EXPECTED_RUNTIME["rust"] and a["labels"] == {"rust"}
+                )
             flag = "OK " if cell_ok else "BAD"
             lines.append(
                 f"  [{flag}] {wid}: backend=rust runtime={a['runtime']} "
                 f"count={a['count']} {proof_name}={proof} "
-                f"rust_execute_calls={a['execute']}"
+                f"rust_execute_calls={a['execute']} rust_page_fetches={a['page_fetches']}"
             )
             if not cell_ok:
                 if not a["binding_known"] and not allow_unknown_binding:
@@ -389,7 +436,7 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
             cell_ok = (
                 label == "core-python" and a["labels"] == {"core-python"}
                 and a["runtimes"] <= EXPECTED_RUNTIME["core-python"]
-                and a["execute"] == 0 and a["binding"] == 0
+                and a["execute"] == 0 and a["binding"] == 0 and a["page_fetches"] == 0
             )
             flag = "OK " if cell_ok else "BAD"
             lines.append(

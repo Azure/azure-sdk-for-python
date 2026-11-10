@@ -358,7 +358,7 @@ mod tests {
     async fn setup(
         pages: Vec<CustomResponse>,
     ) -> (Arc<CosmosDriver>, Vec<Arc<FaultInjectionRule>>) {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://offers.emulator.local").unwrap();
         let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
             VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),

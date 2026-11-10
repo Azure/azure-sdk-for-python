@@ -30,11 +30,16 @@ extends:
   parameters:
     ServiceDirectory: cosmos
     TestMarkArgument: cosmosEmulator
+    # One existing test job also compiles and runs the Cargo tests.
+    TestTimeoutInMinutes: 240
     BeforeTestSteps:
     - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
       parameters:
         StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Session'
     AfterTestSteps:
+    - template: /sdk/cosmos/templates/rust-tests.yml
+      parameters:
+        ToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
     - template: /sdk/cosmos/templates/telemetry-tests.yml
     - template: /sdk/cosmos/templates/toxiproxy-tests.yml
     MatrixConfigs:

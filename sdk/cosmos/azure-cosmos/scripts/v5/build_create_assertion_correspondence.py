@@ -158,18 +158,23 @@ def disposition(path, symbol, kind, node):
     if "test_headers" in path:
         priority = "priority" in name
         column = "x-ms-cosmos-priority-level" if priority else "x-ms-cosmos-throughput-bucket"
-        refs = assertions("tests\\common\\test_connection_free_items_unit.py",
-                          "test_independent_items_inherit_client_defaults_rust", column)
-        mapped(
-            "Client defaults/request precedence are asserted by the shared fake backend for create on both surfaces. "
-            "Original bucket defaults 2/request 3 differ from helper vectors 3/5. This is not exact wire observation "
-            "or service scheduling under configured capacity.",
-            refs, partial=True, level="python-helper-fake",
-            pending=("exact-original-value-native-observation", "configured-capacity-service-scheduling"),
-        )
+        level_name = "client_level" if "client" in name else "request_precedence"
+        header_column = "priority" if priority else "throughput_bucket"
+        target = f"tests\\create_item\\{surface}\\test_headers.py"
+        suffix = "_async" if asynchronous else ""
+        if name.startswith(("test_client_level_", "test_request_precedence_")):
+            header_test = next(key for key in functions(target)[1]
+                               if key.endswith(f".test_{level_name}_{header_column}{suffix}_rust"))
+            mapped(
+                "Original client default/request precedence values are asserted at the typed native boundary "
+                "with a wrapped real create. Header conversion and service scheduling are separate from this "
+                "assertion.",
+                assertions(target, header_test, header_column), partial=True,
+                pending=("public-native-run", "native-wire-header-observation"),
+            )
         if "container_create_item_throughput_bucket" in name:
-            target = f"tests\\create_item\\{surface}\\test_headers.py"
-            target_symbol = next(key for key in functions(target)[1] if key.endswith("_rust"))
+            target_symbol = next(key for key in functions(target)[1]
+                                 if key.endswith(f".test_container_create_item_throughput_bucket{suffix}_rust"))
             mapped(
                 "Original request bucket 3 is asserted at the typed native boundary with a wrapped real create. "
                 "Header conversion and service scheduling are separate from this assertion.",
@@ -290,7 +295,7 @@ def disposition(path, symbol, kind, node):
         first_query = min(n.lineno for n in ast.walk(function) if isinstance(n, ast.Call)
                           and getattr(n.func, "attr", "") == "query_items")
         if node.lineno < first_query:
-            symbol2 = "test_document_crud_create_persistence_rust"
+            symbol2 = "_document_crud_create_persistence"
             suppressed_composite = "response_payload_on_write_disabled" in path
             if suppressed_composite and "assertIsNone(headerEnvelope.headers)" in text:
                 other("Before-create callback envelope initialization, not missing native create coverage.")
@@ -478,8 +483,14 @@ def disposition(path, symbol, kind, node):
         contexts.add((replacement_ref["path"], replacement_ref["symbol"]))
     if row["execution_level"] == "public-installed-native" and (
             "test_crud" in path or "test_cosmos_responses" in path):
-        test = ("test_create_response_headers_advance_lsn_rust" if "test_cosmos_responses" in path
-                else "test_document_crud_create_persistence_rust")
+        if "test_cosmos_responses" in path:
+            test = "test_create_response_headers_advance_lsn_rust"
+        elif "response_payload_on_write_disabled" not in path:
+            test = "test_document_crud_create_persistence_rust"
+        elif "enabled_via_override" in name:
+            test = "test_document_crud_response_payload_enabled_via_override_rust"
+        else:
+            test = "test_document_crud_response_payload_on_write_disabled_rust"
         contexts.add((replacement, test))
         contexts.add((replacement, "_contract_client_fixture"))
         contexts.add(("tests\\create_item\\_legacy_variants.py", "observe_native_create"))
@@ -742,13 +753,11 @@ def create_copy_annotation_audit(rows):
             path = f"tests\\fault_injection\\{surface}\\{module}{suffix}.py"
             outside.append((named(f"tests\\test_fault_injection_transport{suffix}.py", leaf + suffix),
                             named(path, leaf + suffix + "_rust")))
-        path = f"tests\\create_item\\{surface}\\test_legacy_contracts.py"
-        target = "test_compact_utf8_item_write_with_aad_rust"
-        outside.append((named(f"tests\\test_aad{suffix}.py", "test_aad_credentials" + suffix), named(path, target)))
     helper_pairs = set()
     for row in rows:
         for target in row["replacement_context"]:
-            if target["symbol"] == "test_independent_items_inherit_client_defaults_rust":
+            if target["path"] == "tests\\common\\test_connection_free_items_unit.py" \
+                    and target["symbol"].startswith("test_"):
                 source = row["source"]
                 if source["symbol"].split(".")[-1].startswith("test_"):
                     helper_pairs.add((source["path"], source["symbol"], target["path"], target["symbol"]))
@@ -766,34 +775,6 @@ def create_copy_annotation_audit(rows):
             key = source["path"], source["symbol"], target["path"], target["symbol"]
             if (target["path"], target["symbol"]) in target_keys and key not in pair_keys:
                 secondary[key] = "Selected shared/composite assertions only; original sequence is not assumed equivalent."
-    for surface in ("sync", "aio"):
-        suffix = "_async" if surface == "aio" else ""
-        for source_module, source_leaf, target_module, target_leaf, note in (
-            ("test_crud", "test_partitioned_collection_partition_key_value_types", "test_legacy_variants",
-             "partition_key_extraction_special_chars", "Six scalar success vectors only, not the missing-ID failure branch."),
-            ("test_crud_response_payload_on_write_disabled", "test_partitioned_collection_partition_key_value_types",
-             "test_legacy_variants", "partition_key_extraction_special_chars",
-             "Six scalar success vectors from client-suppressed suite; original case itself uses the key-auth database."),
-            ("test_crud_container", "test_partitioned_collection_partition_key_extraction", "test_legacy_variants",
-             "partition_key_extraction_special_chars", "Nested, object-leaf and missing-descendant hash vectors."),
-            ("test_crud_subpartition", "test_partitioned_collection_partition_key_extraction_subpartition",
-             "test_legacy_variants", "partition_key_extraction_special_chars", "Successful hierarchical nested vector."),
-            ("test_crud_subpartition", "test_partitioned_collection_partition_key_extraction_special_chars_subpartition",
-             "test_legacy_variants", "partition_key_extraction_special_chars", "Both hierarchical quoted-path vectors."),
-            ("test_crud_subpartition", "test_partitioned_collection_document_crud_and_query_subpartition",
-             "test_legacy_variants", "partition_key_extraction_special_chars", "Mixed-type hierarchical create vector only."),
-            ("test_crud_subpartition", "test_partitioned_collection_document_crud_and_query_subpartition",
-             "test_legacy_contracts", "incomplete_hierarchical_partition_key", "Incomplete city/zipcode create branch only."),
-            ("test_encoding", "test_unicode_characters_in_partition_key", "test_legacy_variants",
-             "unicode_partition_key_and_separator_round_trip", "Original multilingual partition-key parameter value."),
-            ("test_encoding", "test_round_trip_emoji_document_via_query", "test_legacy_contracts",
-             "round_trip_emoji_document", "Original via-query emoji parameter value."),
-            ("test_encoding", "test_default_ascii_escaping_rejects_large_cjk_item", "test_legacy_contracts",
-             "large_cjk_create_wire_limit", "Original noncompact large-CJK rejection branch."),
-        ):
-            source = named(f"tests\\{source_module}{suffix}.py", source_leaf + suffix)
-            target = named(f"tests\\create_item\\{surface}\\{target_module}.py", f"test_{target_leaf}_rust")
-            secondary[source["path"], source["symbol"], target["path"], target["symbol"]] = note
     pairs.extend((reference(path, symbol), reference(target_path, target_symbol))
                  for path, symbol, target_path, target_symbol in sorted(secondary))
     contexts = {}
@@ -858,12 +839,6 @@ def create_copy_annotation_audit(rows):
                 status, reason = "intentional-asyncio-run-wrapper", (
                     "The replacement is a synchronous pytest function owning asyncio.run(run()); adding an "
                     "asyncio marker would incorrectly annotate a synchronous wrapper."
-                )
-            elif "cosmosAAD" in snippet and "response_payload_on_write_disabled" in source["path"] \
-                    and "partition_key_value_types" in source["symbol"]:
-                status, reason = "missing-live-aad-selection-original-case-key-auth", (
-                    "Required inherited AADLong selection is absent. Restore the authorized category separately "
-                    "from authentication-execution evidence."
                 )
             elif "cosmosAAD" in snippet:
                 status, reason = "missing-live-aad-selection-and-credential-fixture", (
@@ -1118,7 +1093,11 @@ def build(discovery=None, reviewed_annotation_refresh=False):
                                  f"{original['path']}::{original['symbol']}")
         for section in ("annotation_audit", "create_copy_annotation_audit"):
             for context in prior.get(section, {}).get("contexts", []):
-                current = GUARD_MODULE._annotation_context(context["path"], context["symbol"])  # pylint: disable=protected-access
+                # A deleted file or function is a changed snapshot, not a crash.
+                try:
+                    current = GUARD_MODULE._annotation_context(context["path"], context["symbol"])  # pylint: disable=protected-access
+                except (FileNotFoundError, KeyError):
+                    current = None
                 if current != context and not reviewed_annotation_refresh:
                     raise ValueError(f"Review changed inherited annotations, fixture vectors or infrastructure before "
                                      f"regeneration: {context['path']}::{context['symbol']}")

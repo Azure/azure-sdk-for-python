@@ -266,7 +266,7 @@ def test_container_listing_telemetry_owns_fetch_and_hook(listing, recording, mod
         assert all(span.name == f"DatabaseProxy.{h.operation}.fetch" for span in fetch)
         assert [s.parent.span_id for s in fetch] == parents
         for span in fetch:
-            assert span.attributes["cosmos.poc.request_count"] == 5
+            assert span.attributes["azure.cosmosdb.operation.request_count"] == 5
             assert len([s for s in attempt_spans(recording) if s.parent.span_id == span.context.span_id]) == 2
     h.connection._CosmosClientConnection__Get.assert_not_called()
 
@@ -367,8 +367,8 @@ def test_container_listing_telemetry_diagnostics_fail_independently(listing, rec
         assert h.next(pages) == [{"id": "orders"}]
     assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 1
     assert h.seen[0].outcome == ("error" if detail == "invalid-response" else "success")
-    assert "cosmos.poc.request_count" not in fetch_spans(recording)[0].attributes
-    assert "cosmos.poc.retained_request_count" not in fetch_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.request_count" not in fetch_spans(recording)[0].attributes
+    assert "azure.cosmosdb.operation.retained_request_count" not in fetch_spans(recording)[0].attributes
     assert len(attempt_spans(recording)) == (2 if detail == "partial" else 0)
 
 
@@ -463,7 +463,7 @@ def test_container_listing_telemetry_nested_hook_owns_separate_state(listing, re
     assert all(state.closed for state in h.states)
     # Azure Core suppresses nested spans; their diagnostics must not enter the outer fetch.
     assert len(fetch_spans(recording)) == 1
-    assert fetch_spans(recording)[0].attributes["cosmos.poc.request_count"] == 5
+    assert fetch_spans(recording)[0].attributes["azure.cosmosdb.operation.request_count"] == 5
 
 
 def test_container_listing_telemetry_cross_thread_consumption(listing, recording):

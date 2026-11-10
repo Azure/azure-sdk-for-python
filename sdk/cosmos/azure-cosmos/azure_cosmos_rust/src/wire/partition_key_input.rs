@@ -190,7 +190,7 @@ mod tests {
 
     #[test]
     fn native_scalars_match_legacy_routing_keys() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let cases: Vec<(PyObject, &str)> = vec![
                 (py.None(), "[null]"),
@@ -265,7 +265,7 @@ mod tests {
 
     #[test]
     fn malformed_values_and_old_protocol_fail_before_driver_work() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         Python::with_gil(|py| {
             for value in [
                 f64::NAN.into_py(py),

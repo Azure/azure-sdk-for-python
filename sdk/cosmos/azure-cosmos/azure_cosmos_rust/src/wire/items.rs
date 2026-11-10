@@ -419,7 +419,7 @@ mod tests {
             }
         }
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://recreated-key.emulator.local").unwrap();
         let keys = Arc::new(WriteKeys::default());
         let emulator = Arc::new(
@@ -567,7 +567,7 @@ mod tests {
 
     #[tokio::test]
     async fn create_uses_lazy_resolution_and_driver_cached_session_policy() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for write_mode in [WriteMode::Single, WriteMode::Multi] {
             let url = Url::parse("https://create-session.emulator.local").unwrap();
             let observed = Arc::new(CreateSessionRequests::default());
@@ -677,7 +677,7 @@ mod tests {
 
     #[tokio::test]
     async fn create_v1_keys_match_long_and_unicode_routing_vectors() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://create-v1.emulator.local").unwrap();
         let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
             VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),
@@ -806,7 +806,7 @@ mod tests {
                 }
             }
         }
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let cases: Vec<serde_json::Value> = serde_json::from_str(include_str!(
             "../../../tests/create_item/legacy_partition_key_cases.json"
         ))
@@ -897,7 +897,7 @@ mod tests {
                 }
             }
         }
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://compact-body.emulator.local").unwrap();
         let observed = Arc::new(Writes::default());
         let emulator = Arc::new(
@@ -946,7 +946,7 @@ mod tests {
 
     #[tokio::test]
     async fn filtered_increment_reaches_transport_as_patch_with_condition() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://filtered-patch.emulator.local").unwrap();
         let observed = Arc::new(FilteredPatchRequests::default());
         let emulator = Arc::new(
@@ -1034,7 +1034,7 @@ mod tests {
 
     #[tokio::test]
     async fn surrogate_bodies_reach_write_transport_without_reencoding() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://surrogate-body.emulator.local").unwrap();
         let observed = Arc::new(SurrogateBodyRequests::default());
         let emulator = Arc::new(
@@ -1126,7 +1126,7 @@ mod tests {
 
     #[tokio::test]
     async fn create_preserves_duplicate_error_body_and_minimal_response_headers() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://create-review.emulator.local").unwrap();
         let observed = Arc::new(CreateRequests::default());
         let emulator = Arc::new(
@@ -1263,7 +1263,7 @@ mod tests {
         };
         use std::time::Duration;
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for (metadata_ms, write_ms, succeeds, expected_write_hits) in [
             (750, 125, true, 1),
             (1250, 0, false, 0),
@@ -1356,7 +1356,7 @@ mod tests {
             }
         }
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for (error_type, delay_ms, committed, expires, cancels) in [
             (
                 FaultInjectionErrorType::ResponseTimeout,
@@ -1583,7 +1583,7 @@ mod tests {
         };
         use std::time::Duration;
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let endpoint =
             Url::parse(&std::env::var("ACCOUNT_HOST").expect("ACCOUNT_HOST required")).unwrap();
         let key = std::env::var("ACCOUNT_KEY").expect("ACCOUNT_KEY required");
@@ -1792,7 +1792,7 @@ mod tests {
 
     #[test]
     fn self_link_preserves_name_and_rid_targets_and_rejects_invalid_shapes() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         assert!(matches!(
             ItemTarget::from_self_link("/dbs/sales/colls/orders/docs/actual/").unwrap(),
             ItemTarget::SelfLink { database, container, item, by_rid: false }
@@ -1875,7 +1875,7 @@ mod tests {
                 }
             }
         }
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://read-consistency.emulator.local").unwrap();
         let observed = Arc::new(Requests::default());
         let emulator = Arc::new(
@@ -2011,7 +2011,7 @@ mod tests {
                 }
             }
         }
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         for (level, expected) in [
             ("ConsistentPrefix", "Eventual"),
             ("BoundedStaleness", "LatestCommitted"),
@@ -2100,7 +2100,7 @@ mod tests {
 
     #[tokio::test]
     async fn read_preserves_conditions_response_headers_and_resource_address() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://read-review.emulator.local").unwrap();
         let observed = Arc::new(ReadRequests::default());
         let emulator = Arc::new(
@@ -2238,7 +2238,7 @@ mod tests {
 
     #[tokio::test]
     async fn item_exclusions_apply_to_cold_metadata_without_item_conditions() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let east = Url::parse("https://eastus.emulator.local").unwrap();
         let west = Url::parse("https://westus.emulator.local").unwrap();
         let observed = Arc::new(MetadataRequests::default());
@@ -2332,7 +2332,7 @@ mod tests {
             }
         }
 
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let w = Region::WEST_US;
         let r = Region::EAST_US;
         let third = Region::EAST_US_2;
@@ -2455,7 +2455,7 @@ mod tests {
 
     #[tokio::test]
     async fn all_six_items_use_binding_owned_metadata_and_preserve_error_phase() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let url = Url::parse("https://single-call.emulator.local").unwrap();
         let replacements = Arc::new(ReplacementPaths::default());
         let emulator = Arc::new(

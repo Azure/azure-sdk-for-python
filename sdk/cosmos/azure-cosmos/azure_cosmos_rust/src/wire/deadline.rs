@@ -184,7 +184,7 @@ mod tests {
 
     #[test]
     fn local_work_checks_expiration_before_and_after_computation() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let ran = AtomicBool::new(false);
         let expired = Some(std::time::Instant::now());
         let error = with_local_deadline(expired, || ran.store(true, Ordering::SeqCst)).unwrap_err();
@@ -203,7 +203,7 @@ mod tests {
 
     #[tokio::test(start_paused = true)]
     async fn page_deadline_returns_python_timeout_and_drops_pending_work() {
-        pyo3::prepare_freethreaded_python();
+        crate::test_support::prepare_python();
         let dropped = Arc::new(AtomicBool::new(false));
         let guard = Dropped(dropped.clone());
         let error = with_page_timeout(Some(Duration::from_millis(5)), async move {

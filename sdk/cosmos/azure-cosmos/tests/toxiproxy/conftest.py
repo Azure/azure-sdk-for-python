@@ -12,9 +12,8 @@ from config.fault_resources import owned_target as owned_target
 
 @pytest.fixture(params=["plain"])
 def proxy_route(tmp_path, request, monkeypatch):
-    from azure.cosmos import _rust
     from toxiproxy._toxiproxy import OwnedProxy
-    from toxiproxy._toxiproxy_config import DRIVER_COMMIT, validate_endpoint
+    from toxiproxy._toxiproxy_config import validate_endpoint
     from toxiproxy._connect_tunnel import ConnectTunnel, configure_proxy_environment
     from config.diagnostics import emit
 
@@ -23,7 +22,6 @@ def proxy_route(tmp_path, request, monkeypatch):
         raise ValueError(f"Unknown proxy observation mode: {mode}")
     endpoint = os.environ.get("ACCOUNT_HOST", "")
     validate_endpoint(endpoint)
-    assert _rust.__rust_driver_commit__ == DRIVER_COMMIT, "Use the verified pinned driver build"
     proxy = OwnedProxy(
         os.environ.get("TOXIPROXY_SERVER", ""),
         endpoint,

@@ -2359,157 +2359,69 @@ above. Until then, every supported target needs a compatible prebuilt wheel.
 
 ## 15. What still needs to be decided or proved before release
 
-The preceding sections explain how the build is configured and what a complete
-release should do. They do not establish that every target, test, or approval
-is complete.
+### Reuse the existing Python test job
 
-A **release approver** is the authorized person or group deciding whether the
-version, support policy, and final outputs are ready to publish. That owner
-must be identified.
+The copied tests are still Python tests under `tests/`. Calling the Rust-backed
+SDK does not make them Cargo tests or require a separate pipeline job.
+The normal wheel check installs the wheel and runs pytest. Its
+`cosmosEmulator` marker filter still selects the emulator tests; the package's
+collection rules exclude the preserved legacy originals.
+
+Two additional checks use the existing `AfterTestSteps` hook:
+
+- **Offline Python tests:** `run_rust_ci.py offline` selects the maintained unit
+  tests without the emulator marker filter, checks that the installed native
+  wheel is loaded, and fails missing execution or unexpected skips.
+- **Native Rust tests:** `run_rust_ci.py native` runs `cargo test` and checks
+  that test bodies actually ran. Building a wheel alone does not run them.
+
+These steps run only in the existing Windows Python 3.13 standard test job
+(`ChecksOverride=whl,sdist`). They reuse that job's checkout and downloaded
+wheels. The shared Rust installer prepares its compiler; Cargo tests compile
+test binaries from source, while the offline Python tests use the installed
+wheel. The test-job timeout is 240 minutes to allow this extra compilation;
+the other matrix jobs do not run these supplemental steps.
+
+The old standalone offline/service job definitions have been replaced with
+a step template. `rust-tests.yml` now groups the supplemental instructions;
+it is not needed to discover the copied Python tests and does not create jobs.
+It could be inlined into `ci.yml` without changing the execution model.
+
+**Service-test scope is unchanged.** Unmarked service tests and tests selected
+only by other markers are not automatically included in the emulator job.
+Their account requirements and pipeline selection still need review. The
+unfiltered `parity` runner is not added here.
+
+### SDK pipeline wiring and Central ownership
+
+These paths start at the repository root. Cosmos owns the files under
+`sdk/cosmos/templates/`; `sdk/cosmos/ci.yml` has Central reviewers. A folder
+named `templates` is not automatically Central-owned.
+
+| File | Current responsibility | Owner or reviewer |
+|---|---|---|
+| `sdk/cosmos/ci.yml` | Keep normal emulator selection, request native-wheel build settings, and connect the supplemental steps through existing hooks. | Cosmos-specific configuration with Central review |
+| `sdk/cosmos/templates/rust-tests.yml` | Run Cargo and offline Python checks once in an existing test job; publish offline results and save Cargo output. | Cosmos SDK team |
+| `sdk/cosmos/templates/telemetry-tests.yml` | Run diagnostic checks against the built wheel and require their results. | Cosmos SDK team |
+| `sdk/cosmos/templates/toxiproxy-tests.yml` | Install the network-fault tool, run the failure scenarios, and require their results. | Cosmos SDK team |
 
 ### Central changes still required
 
-The SDK owns the requested behavior and its package-side configuration.
-Central owns the shared code that must act on those requests. These changes
-remain pending:
+Central owns the shared implementation under `eng/`, including compiler
+installation, wheel provisioning, signing, and publication. Reusing an
+existing hook does not require changing those shared templates. A defect in
+shared tooling, such as the ARM64 PyO3 configuration losing the requested
+stable ABI, must be resolved separately; extra test steps cannot fix it.
+Central must also verify that release processing enforces the requested
+wheels-only publication policy.
 
-| Work | What Central must deliver |
-|---|---|
-| Synchronized version updates | Honor the SDK setting, update every version copy and stability label, and restore files if the update fails |
-| Documentation installation | Keep sdist sources for page generation but install a compatible built wheel for compiled packages |
-| Overloaded method documentation | Resolve types from the original method without changing SDK tracing or suppressing warnings |
-| Multi-wheel namespace inspection | Inspect one exact-version wheel instead of passing several files to a single-archive helper |
-| Wheels-only publication | Honor `skipPublishSdist` across all publication routes while preserving other packages' behavior |
+Pipeline wiring is not evidence that the checks have passed. Before release,
+the required jobs must actually run, their results must be available, and
+the final wheels must pass the platform and installation checks described
+above. Missing required offline Python results fail the job; Cargo failure or
+missing test execution fails its command.
 
-Each change needs regression tests and must be included in the source used
-by the pipeline. A saved patch or an SDK opt-in is not
-evidence that the shared implementation exists. The SDK team must complete
-the retained-test migration and provide the package-side runners. Central
-must integrate the required checks into the normal pipeline; the temporary
-job layout is not a requirement. The specific pipeline files are recorded in
-the [Central pipeline handoff](#pipeline-changes-for-central-to-implement).
-The current publishers still do not enforce the source-archive restriction.
-
-### Treat the Rust-backed release as a v5 upgrade
-
-Alpha Bank needs to distinguish an update that preserves the existing API from
-an upgrade that intentionally removes supported behavior. **This Rust-backed
-release targets SDK major version 5, not another compatible 4.x release.**
-The exact v5 version, preview or stable status, and release date still require
-approval.
-
-For example, a customer app using Cosmos resource tokens, one of the previous
-ways to supply access credentials, cannot move unchanged to this release.
-The release notes and migration guidance must explain that removal.
-They must explain the supported authentication choices and the access-model
-changes needed for migration, not present an account key or Microsoft Entra
-credential as a drop-in replacement. Other intentional removals need the same
-customer-facing treatment; their detailed contracts remain in the API review
-rather than being duplicated here.
-
-Before publication, the Cosmos SDK team and release approver must establish:
-
-| Requirement | Evidence needed |
-|---|---|
-| Approved v5 identity | The exact version and preview or stable status are approved; the breaking release is not labelled as 4.x. |
-| Synchronized source metadata | `_version.py`, `[project].version`, `api.metadata.yml`, and the newest changelog release heading carry that approved version; stability classifiers match the release status. |
-| Customer migration guidance | Release notes identify the intentional breaking changes and link to reviewed migration guidance. A major-version label alone does not explain how to migrate. |
-| Final artifact identity | Every final wheel and any approved source archive carries the approved v5 version; an installed wheel reports that same SDK version. |
-
-**These are release requirements, not an automated major-version gate.**
-The existing metadata check rejects disagreement between version files, but
-it would accept matching 4.x versions. Passing that check does not authorize
-publishing this breaking release under a 4.x version.
-
-### Keep the remaining decisions in one place
-
-| Area | What must be decided or proved | Owner |
-|---|---|---|
-| Existing production builds | Preserve the historical pure-Python production branch's build path; in the Rust-backed tree, keep setuptools metadata-only and build artifacts through Maturin | Cosmos SDK team and Central team |
-| Shared engineering integration | Complete the [pending Central changes](#central-changes-still-required), including pipeline-input support and publication enforcement | Central team, with SDK requirements and scenarios |
-| Release identity and migration | Complete the [v5 release requirements](#treat-the-rust-backed-release-as-a-v5-upgrade), including approved metadata, final artifact identity, and customer migration guidance | Cosmos SDK team and release approver |
-| Rust driver | Select the approved published driver for release, preserve required features, and review the synchronized lock | Cosmos SDK team and Rust driver team |
-| Compiler policy | Approve the release toolchain and validate or correct the declared compiler minimum | Cosmos SDK team and Central team |
-| Support policy | Approve Python versions, platform coverage, Linux baseline, and Windows/macOS minimums | Release approver, using SDK and Central evidence |
-| Multi-target builds | Build the intended source and inspect every required wheel; establish execution-test coverage including ARM64 | Central team and Cosmos SDK team |
-| QueryPlanInterop | Complete the [deferred library delivery and provider checks](#deferred-work-and-completion-criteria) | Producing team, Cosmos SDK team, and Central team |
-| Source installation | Keep sdists unpublished until [customer source installation](#why-customer-source-installation-is-not-supported-yet) is approved and validated | Release approver, Cosmos SDK team, and Central team |
-| Dependency maintenance | Confirm update automation covers both Cargo manifests and the lock | Repository maintainers and Cosmos SDK team |
-| Signing and publication | Apply approved signing, test final repacked wheels, and publish the complete set under one version | Central team and release approver |
-
-### Define what each test actually proves
-
-The test matrix from section 10 identifies the environments whose behavior
-must be demonstrated. Building one stable-ABI wheel reduces the number of
-files; it does not eliminate tests across supported Python versions.
-
-For every supported wheel, the SDK's tests and Central's execution environments
-must establish:
-
-| Check | Required evidence |
-|---|---|
-| Archive contents | Python source and data, exactly the intended extension, and any required QueryPlanInterop companions |
-| Identity and compatibility | Correct package name, version, dependencies, Python requirement, filename tags, and native-file architecture |
-| Clean installation | The SDK and extension import from the installed wheel, not the source checkout |
-| SDK functionality | Required Rust-backed operations actually execute successfully |
-| QueryPlanInterop behavior | The installed `native_ffi` provider loads and creates plans when promised |
-| Other planning paths | Eligible queries use `local_rust` without QueryPlanInterop; gateway fallback and `GatewayOnly` behave as required |
-| Final release processing | The final signed/repacked files retain correct contents, installation behavior, and SDK functionality |
-| Complete output set | All approved wheels and any approved sdist belong to the approved v5 release version |
-
-A missing required output or test result must stop publication. A successful
-build job, import, or query cannot stand in for the complete evidence.
-
-### Configuration tests catch different mistakes from runtime tests
-
-Configuration tests can reject a mismatched package version, a missing target,
-or a build route that omits the Rust extension before compilation starts.
-They can also check which library files the helper copies into the package.
-
-Those checks do not execute the resulting extension. A Windows ARM64 wheel
-still needs installation and operation tests in a compatible environment.
-A wheel promising QueryPlanInterop still needs a query test that demonstrates
-successful planning by that provider, not merely a library filename in the ZIP.
-
-The release needs both kinds of evidence: correct configuration and working
-final packages in the environments we promise to support.
-
-### Pipeline changes for Central to implement
-
-**The SDK team changes files inside `sdk/cosmos/azure-cosmos/`. Central changes
-the pipeline files outside that package.** We should not change root settings
-such as `.vscode/cspell.json` as part of this SDK work.
-
-Why do we need pipeline changes at all? The old package contained Python code.
-The new package also contains compiled Rust code. The pipeline must have the
-tools to build that code, put it in the wheel, and test the wheel that customers
-will install. Adding a test file to the package does not, by itself, tell the
-pipeline to run it.
-
-The four files below already have draft changes in this branch. Leave them
-unchanged for now. Central should review and implement the work they describe.
-These paths start at the repository root.
-
-| File | Why the change is needed | What Central needs to do |
-|---|---|---|
-| `sdk/cosmos/ci.yml` | The pipeline needs instructions for building and checking the new Rust-backed package. | Install the selected Rust compiler, build and sign the required wheels, connect the required tests, and prevent publication of a source archive until source installation is supported. |
-| `sdk/cosmos/templates/rust-tests.yml` | A wheel can build successfully and still contain broken or missing code. | Run the Rust tests and the Python tests against the installed wheel. Start the emulator for tests that need a service, and report failures. |
-| `sdk/cosmos/templates/telemetry-tests.yml` | Operations can succeed while the SDK's tracing or diagnostic reporting is broken. | Run the telemetry checks against the built wheel and save their results. Missing required results must not count as success. |
-| `sdk/cosmos/templates/toxiproxy-tests.yml` | Tests on a healthy connection do not show what happens when the network slows down or disconnects. | Install the network-fault test tool, run the package's failure scenarios against the built wheel and emulator, and save the results. |
-
-For example, Alpha Bank needs a wheel that installs, reads an order, reports
-useful diagnostics, and handles a broken connection as intended. These checks
-cover different parts of that promise.
-
-Central does not have to keep these exact four files or create separate jobs
-for every check. It can use the existing pipeline structure. What matters is
-that the required checks actually run against the right wheel and that their
-failures are visible. This note records the work for Central; it does not ask
-the SDK team to make more root or pipeline changes.
-
-The package keeps its technical
-terms in `sdk/cosmos/azure-cosmos/cspell.json`, without changing the root
-dictionary. The draft `rust-tests.yml` and `toxiproxy-tests.yml` files now
-contain file-local spelling annotations for their tool names and command-line
-flags. These comments do not change pipeline behavior. The package dictionary
-does not cover files outside the package.
+The package keeps technical terms in `sdk/cosmos/azure-cosmos/cspell.json`,
+without changing the root dictionary. The SDK templates use file-local
+spelling annotations where needed, since the package dictionary does not
+cover files outside the package.

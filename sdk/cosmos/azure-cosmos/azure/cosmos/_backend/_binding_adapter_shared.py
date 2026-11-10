@@ -375,27 +375,12 @@ class BindingAdapterShared:
     ) -> _DriverHandle:
         """Ask the binding to acquire a driver handle using this client's saved inputs.
 
-        Pass the saved account address, credential, PreparedClientConfig, and
-        supplied runtime reference to acquire_driver_handle. None lets the
-        binding obtain its default CosmosDriverRuntime. The binding may create
-        a CosmosDriver or reuse one for that runtime and client configuration;
-        this method's name does not imply a new object.
+        The binding may create or reuse a driver; runtime=None selects its default
+        runtime. The returned opaque handle retains that driver independently of
+        cache eviction.
 
-        The returned handle owns the retained driver. After the caller
-        stores it, the references look like this::
-
-            Python wrapper                         Binding
-            _driver_handle = H                     driver cache
-                             |                         key -> DriverEntry
-                             +-> CosmosDriver <----------------+
-
-        H is an illustrative opaque handle, not a string or the cache key.
-        A caller retaining H keeps that exact driver alive across cache eviction.
-
-        This method returns the handle without storing it. The caller decides
-        whether to retain it and coordinates acquisition with a concurrent close.
-        Acquiring the handle does not execute the pending database or item
-        operation.
+        This method returns the handle without storing it or executing the pending
+        operation. The caller coordinates with close to store or release the handle.
         """
         configure_packaged_query_plan_interop(binding)
         # A background acquisition retains its inputs even if close clears the adapter.

@@ -62,6 +62,21 @@ class Stats:
         self._timings: dict[tuple[str, str], dict] = {}
         self._latency_overflows: dict[str, int] = {}
         self._fixed_rate_schedules: list[dict] = []
+        self._query_counts: dict[str, dict[str, int]] = {}
+
+    def record_query_result(self, operation, items, pages, empty_pages, response_hooks):
+        """Record public query work, separately from internal fetches/service requests."""
+        values = {
+            "completed": 1, "items": items, "public_pages": pages,
+            "empty_public_pages": empty_pages, "response_hooks": response_hooks,
+        }
+        if any(not isinstance(value, int) or isinstance(value, bool) or value < 0
+               for value in values.values()) or empty_pages > pages:
+            raise ValueError("Query counts must be nonnegative and empty pages cannot exceed pages")
+        with self._lock:
+            current = self._query_counts.setdefault(operation, dict.fromkeys(values, 0))
+            for name, value in values.items():
+                current[name] += value
 
     def record_schedule(self, schedule: dict):
         """Keep one completed scheduling interval per client, not per result row."""
@@ -245,6 +260,7 @@ class Stats:
             ru_counts, self._ru_counts = self._ru_counts, {}
             timings, self._timings = self._timings, {}
             latency_overflows, self._latency_overflows = self._latency_overflows, {}
+            query_counts, self._query_counts = self._query_counts, {}
             error_details, self._errors = self._errors, deque(maxlen=2000)
             first_ms = {op: values[:50] for op, values in self._first_ms.items()}
 
@@ -326,6 +342,8 @@ class Stats:
             summary["throttled_429"] = throttled.get(op, 0)
             summary["cold_first_n_ms"] = first_ms.get(op, [])
             summary["latency_overflow_count"] = latency_overflows.get(op, 0)
+            if op in query_counts:
+                summary["query_counts"] = query_counts[op]
             summary["fixed_rate_timings"] = {}
             for outcome in ("success", "failure"):
                 series = timings.get((op, outcome))

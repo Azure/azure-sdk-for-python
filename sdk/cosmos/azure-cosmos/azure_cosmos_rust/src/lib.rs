@@ -73,6 +73,8 @@ mod feed_range_subset;
 #[path = "../query_plan_binary.rs"]
 mod query_plan_binary;
 mod runtime;
+#[cfg(test)]
+mod test_support;
 mod wire;
 
 use pyo3::prelude::*;
