@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python sample_voice_agent_generate.py
 
-    pip install "azure-ai-projects>=2.7.0" python-dotenv
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.

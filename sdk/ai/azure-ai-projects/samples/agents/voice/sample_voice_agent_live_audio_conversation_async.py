@@ -19,7 +19,7 @@ USAGE:
     - SAVE_AUDIO = True: save reply audio in a printed temporary folder.
       These files contain conversation content; remove them when finished.
 
-    pip install "azure-ai-projects[voice]" azure-identity python-dotenv
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
     pip install pyaudio  # Only required for microphone mode.
 
     Environment variables:
