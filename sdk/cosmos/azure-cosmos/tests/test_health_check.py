@@ -5,11 +5,18 @@ import unittest
 import uuid
 from time import sleep
 from typing import List
+from unittest.mock import patch
 
 import pytest
 import test_config
-from azure.cosmos import DatabaseAccount, _location_cache, CosmosClient, _global_endpoint_manager, \
-    _cosmos_client_connection
+from azure.cosmos import (
+    DatabaseAccount,
+    documents,
+    _location_cache,
+    CosmosClient,
+    _global_endpoint_manager,
+    _cosmos_client_connection,
+)
 
 from azure.cosmos._location_cache import RegionalRoutingContext
 
@@ -17,6 +24,13 @@ COLLECTION = "created_collection"
 REGION_1 = "East US"
 REGION_2 = "West US"
 REGIONS = [REGION_1, REGION_2]
+
+
+def _assert_startup_health_checks(probe, connection, expected_endpoints):
+    endpoints = [call.args[1] for call in probe.call_args_list if call.args[0] is connection]
+    assert len(endpoints) == 2, [(id(call.args[0]), call.args[1]) for call in probe.call_args_list]
+    assert set(endpoints) == set(expected_endpoints)
+
 
 @pytest.fixture()
 def setup():
@@ -48,28 +62,23 @@ class TestHealthCheck:
 
     def test_health_check_success(self, setup):
         # checks at startup that we perform a health check on all the necessary endpoints
-        self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_health_check = _cosmos_client_connection.CosmosClientConnection.health_check
-        mock_health_check = self.MockHealthCheckProbe()
-        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(REGIONS))
-        _cosmos_client_connection.CosmosClientConnection.health_check = mock_health_check
-        try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
-            # give some time for the health check to finish
-            sleep(3)
-        finally:
-            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection.CosmosClientConnection.health_check = self.original_health_check
-        expected_regional_routing_contexts = []
-
-        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        assert mock_health_check.counter == 2
-        expected_regional_routing_contexts.append(RegionalRoutingContext(locational_endpoint))
-        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        expected_regional_routing_contexts.append(RegionalRoutingContext(locational_endpoint))
-        read_regional_routing_contexts = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
-        assert read_regional_routing_contexts == expected_regional_routing_contexts
+        with patch.object(
+            _global_endpoint_manager._GlobalEndpointManager,
+            "_GetDatabaseAccountStub",
+            self.MockGetDatabaseAccount(REGIONS),
+        ), patch.object(_cosmos_client_connection.CosmosClientConnection, "health_check", autospec=True) as probe:
+            with CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS) as client:
+                manager = client.client_connection._global_endpoint_manager
+                assert manager._refresh_thread is not None
+                manager._refresh_thread.join(timeout=3)
+                assert not manager._refresh_thread.is_alive()
+                endpoints = [
+                    _location_cache.LocationCache.GetLocationalEndpoint(self.host, region) for region in REGIONS
+                ]
+                _assert_startup_health_checks(probe, client.client_connection, endpoints)
+                assert manager.location_cache.read_regional_routing_contexts == [
+                    RegionalRoutingContext(endpoint) for endpoint in endpoints
+                ]
 
     def test_health_check_failure(self, setup):
         # checks at startup that the health check will mark endpoints as unavailable if it gets an error
@@ -216,6 +225,44 @@ class TestHealthCheck:
 
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+
+@pytest.mark.cosmosEmulator
+@pytest.mark.unittest
+def test_health_check_probe_isolation():
+    connections = []
+    managers = []
+    try:
+        for regions in (REGIONS, [REGION_1]):
+            connection = object.__new__(_cosmos_client_connection.CosmosClientConnection)
+            connection.connection_policy = documents.ConnectionPolicy()
+            connection.connection_policy.PreferredLocations = regions
+            connection.url_connection = test_config.TestConfig.host
+            connections.append(connection)
+            managers.append(_global_endpoint_manager._GlobalEndpointManager(connection))
+
+        with patch.object(_cosmos_client_connection.CosmosClientConnection, "health_check", autospec=True) as probe:
+            for manager, regions in zip(managers, (REGIONS, [REGION_1])):
+                account = TestHealthCheck.MockGetDatabaseAccount(regions)(manager.DefaultEndpoint)
+                manager.force_refresh_on_startup(account)
+            for manager in managers:
+                assert manager._refresh_thread is not None
+                manager._refresh_thread.join(timeout=3)
+                assert not manager._refresh_thread.is_alive()
+
+            endpoints = [
+                _location_cache.LocationCache.GetLocationalEndpoint(test_config.TestConfig.host, region)
+                for region in REGIONS
+            ]
+            assert len(probe.call_args_list) == 3
+            _assert_startup_health_checks(probe, connections[0], endpoints)
+
+            connections[0].health_check(endpoints[0])
+            with pytest.raises(AssertionError):
+                _assert_startup_health_checks(probe, connections[0], endpoints)
+    finally:
+        for manager in managers:
+            manager.executor.shutdown(wait=False, cancel_futures=True)
 
 
 if __name__ == '__main__':
