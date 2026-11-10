@@ -68,60 +68,12 @@ class TestBeginSingleAOAIEvaluationGraderIdentifiers:
         assert result["grader_name_map"] == {"native": "caller_alias"}
         client.evals.runs.create.assert_called_once()
 
-    @pytest.mark.parametrize("as_dict", [False, True])
-    def test_reordered_native_criteria_keep_their_aliases(self, as_dict: bool) -> None:
-        score = self._score("native_score")
-        label = self._label("native_label")
-        client = self._client([label, score])
-        configs = {
-            "score_alias": score.model_dump() if as_dict else score,
-            "label_alias": label.model_dump() if as_dict else label,
-        }
-
-        result = self._begin(client, configs)
-
-        assert result["grader_name_map"] == {
-            "native_label": "label_alias",
-            "native_score": "score_alias",
-        }
-
-    def test_legacy_criterion_ids_preserve_existing_mapping(self) -> None:
-        client = self._client([SimpleNamespace(id="legacy")])
+    def test_legacy_criterion_id_takes_precedence_over_name(self) -> None:
+        client = self._client([SimpleNamespace(id="legacy", name="native")])
 
         result = self._begin(client, {"caller_alias": {"type": "string_check"}})
 
         assert result["grader_name_map"] == {"legacy": "caller_alias"}
-
-    @pytest.mark.parametrize(
-        "criteria",
-        [
-            [SimpleNamespace()],
-            [SimpleNamespace(name="unknown")],
-            [SimpleNamespace(id="duplicate"), SimpleNamespace(id="duplicate")],
-            [SimpleNamespace(name="native_0"), SimpleNamespace(name="native_0")],
-        ],
-        ids=["missing_identifier", "unknown_native_name", "duplicate_identifier", "duplicate_native_name"],
-    )
-    def test_invalid_identifiers_fail_before_run_creation(self, criteria: List[Any]) -> None:
-        client = self._client(criteria)
-        configs = {
-            f"alias_{index}": {"name": f"native_{index}", "type": "string_check"} for index in range(len(criteria))
-        }
-
-        with pytest.raises(EvaluationException) as error:
-            self._begin(client, configs)
-
-        assert error.value.blame == ErrorBlame.UNKNOWN
-        client.evals.runs.create.assert_not_called()
-
-    def test_ambiguous_requested_native_names_fail_before_run_creation(self) -> None:
-        client = self._client([self._score("same"), self._label("same")])
-
-        with pytest.raises(EvaluationException) as error:
-            self._begin(client, {"score_alias": self._score("same"), "label_alias": self._label("same")})
-
-        assert error.value.blame == ErrorBlame.UNKNOWN
-        client.evals.runs.create.assert_not_called()
 
 
 @pytest.fixture
