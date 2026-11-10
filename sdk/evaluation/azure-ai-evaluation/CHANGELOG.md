@@ -1,11 +1,5 @@
 # Release History
 
-## 1.18.13 (Unreleased)
-
-### Bugs Fixed
-
-- Fixed Azure OpenAI grader evaluations failing when the service returns named testing criteria without an `id`. Native grader names are mapped to the caller's evaluator aliases even when returned in a different order; legacy ID-based responses remain supported.
-
 ## 1.18.12 (2026-11-09)
 
 ### Bugs Fixed
