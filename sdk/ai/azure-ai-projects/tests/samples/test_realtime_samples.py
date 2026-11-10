@@ -17,7 +17,7 @@ from unittest.mock import AsyncMock, MagicMock, call
 import pytest
 
 from azure.ai.projects import models
-from azure.ai.projects.operations import BetaRealtimeConnection
+from azure.ai.projects.operations import RealtimeConnection
 
 pytestmark = pytest.mark.asyncio
 _SAMPLE_DIRECTORY = Path(__file__).resolve().parents[2].joinpath("samples", "agents", "voice")
@@ -152,7 +152,7 @@ def realtime_output_event(request):
         }
         transport = MagicMock()
         transport.recv.return_value = json.dumps(payload)
-        with BetaRealtimeConnection(transport) as connection:
+        with RealtimeConnection(transport) as connection:
             event = connection.recv()
         if request.param == "ga":
             assert type(event) is event_model

@@ -36,6 +36,7 @@ Breaking changes in beta methods:
 
 Breaking changes in beta classes:
 
+* Renamed `BetaRealtime`, `BetaRealtimeConnection`, and `BetaRealtimeConnectionManager` to `Realtime`, `RealtimeConnection`, and `RealtimeConnectionManager`, respectively, and their `AsyncBetaRealtime*` counterparts to `AsyncRealtime*`. The old exports were removed as Realtime becomes generally available.
 * Removed `CreateTelephonyBindingRequest`, `CreateTeamsPhoneExtensibilityTelephonyBindingRequest`, and `CreateTwilioTelephonyBindingRequest`. Use `TelephonyBinding`, `TeamsPhoneExtensibilityTelephonyBinding`, and `TwilioTelephonyBinding`, respectively.
 * Class `CreateTelephonyCallJobRequest` renamed to `TelephonyCallJobCreate`.
 * Removed `TelephonyOutboundDestination` and `TelephonyOutboundDestinationType`; use `TelephonyAddress` and `TelephonyAddressType`. The `source` and `destination` properties on `TelephonyCallJobCreate` and `TelephonyCallJob` now use `TelephonyAddress`; `source` no longer accepts a plain string.
@@ -119,6 +120,7 @@ Breaking changes in beta classes:
 ### Sample updates
 
 * Corrected workflow streaming sample type narrowing and access to Foundry-specific action fields without changing the streamed output.
+* Clarified preview Live examples and generated-audio readback prerequisites.
 * Updated Voice Agent samples to use the GA operation paths without `allow_preview=True`; GPT Live samples retain preview opt-in.
 * Added Live voice-agent samples under `samples/agents/voice/` for session lifecycle, text and audio conversations, local function tools, and same-project managed-agent delegation.
 * Added `sample_voice_agent_live_read_conversation.py` demonstrating stored Live conversation, transcript, and audio retrieval, with an optional temporary greeting session.

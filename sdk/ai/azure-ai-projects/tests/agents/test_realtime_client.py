@@ -25,10 +25,10 @@ import pytest
 from azure.core.credentials import AccessToken
 from websockets.typing import Subprotocol
 
-from azure.ai.projects import models
+from azure.ai.projects import AIProjectClient, models, operations
 from azure.ai.projects._realtime import (
-    BetaRealtime,
-    BetaRealtimeConnectionManager,
+    Realtime,
+    RealtimeConnectionManager,
     _assert_trusted_connection_url,
     _to_ws_url,
     _USER_AGENT,
@@ -38,7 +38,7 @@ from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
     RealtimeServerEventSessionCreated,
 )
-from azure.ai.projects.operations import BetaRealtimeConnection, ServerEvent
+from azure.ai.projects.operations import RealtimeConnection, ServerEvent
 
 _ENDPOINT = "https://my-account.services.ai.azure.com/api/projects/my-project"
 
@@ -57,13 +57,13 @@ def test_realtime_constructor_hides_config_in_kwargs():
     config = MagicMock()
     client = MagicMock(_config=config)
 
-    realtime = BetaRealtime(client)
+    realtime = Realtime(client)
 
     assert realtime._config is config
-    assert tuple(inspect.signature(BetaRealtime.__init__).parameters) == ("self", "args", "kwargs")
+    assert tuple(inspect.signature(Realtime.__init__).parameters) == ("self", "args", "kwargs")
 
 
-def _make_manager(**overrides) -> BetaRealtimeConnectionManager:
+def _make_manager(**overrides) -> RealtimeConnectionManager:
     kwargs = {
         "endpoint": _ENDPOINT,
         "credential": _FakeCredential(),
@@ -72,7 +72,7 @@ def _make_manager(**overrides) -> BetaRealtimeConnectionManager:
         "agent_name": "my-agent",
     }
     kwargs.update(overrides)
-    return BetaRealtimeConnectionManager(**kwargs)
+    return RealtimeConnectionManager(**kwargs)
 
 
 @contextmanager
@@ -89,8 +89,23 @@ def test_public_server_event_union_covers_generated_events_and_shared_error():
     expected_models = set(models.RealtimeServerEvent.__mapping__.values()) | {models.RealtimeServerEventError}
 
     assert set(get_args(ServerEvent)) == expected_models | {Mapping[str, Any]}
-    assert get_type_hints(BetaRealtimeConnection.recv)["return"] == ServerEvent
-    assert get_args(get_type_hints(BetaRealtimeConnection.__iter__)["return"]) == (ServerEvent,)
+    assert get_type_hints(RealtimeConnection.recv)["return"] == ServerEvent
+    assert get_args(get_type_hints(RealtimeConnection.__iter__)["return"]) == (ServerEvent,)
+
+
+def test_ga_realtime_public_types_are_used_by_the_client():
+    with AIProjectClient(_ENDPOINT, _FakeCredential()) as client:
+        assert type(client.voice_agents.realtime) is operations.Realtime
+        assert type(client.voice_agents.realtime).__name__ == "Realtime"
+        with patch("websockets.sync.client.connect", return_value=MagicMock()):
+            manager = client.voice_agents.realtime.connect(agent_name="my-agent")
+            assert type(manager) is operations.RealtimeConnectionManager
+            assert type(manager).__name__ == "RealtimeConnectionManager"
+            with manager as connection:
+                assert type(connection) is operations.RealtimeConnection
+                assert type(connection).__name__ == "RealtimeConnection"
+
+    assert not any(name.startswith("BetaRealtime") for name in dir(operations))
 
 
 class TestToWsUrl:
@@ -105,7 +120,7 @@ class TestToWsUrl:
 
     def test_non_https_endpoint_scheme_is_left_unchanged(self):
         # Regression test: _to_ws_url used to translate "http://" to "ws://", but
-        # BetaRealtimeConnectionManager.enter() unconditionally rejects any non-"wss://" URL to
+        # RealtimeConnectionManager.enter() unconditionally rejects any non-"wss://" URL to
         # protect the live Authorization token in transit, so that translated "ws://" URL could
         # never actually be used to connect. Leaving the scheme untouched here means the
         # downstream "wss://" check surfaces a clear error instead of an unreachable "ws://" path.
@@ -148,7 +163,7 @@ class TestAssertTrustedConnectionUrl:
 
 
 class TestRealtimeConnectionManagerEnter:
-    """Unit tests for ``BetaRealtimeConnectionManager.enter()``: URL/header construction and errors."""
+    """Unit tests for ``RealtimeConnectionManager.enter()``: URL/header construction and errors."""
 
     def test_enter_builds_bearer_auth_and_query(self):
         fake_connection = MagicMock()
@@ -228,7 +243,7 @@ class TestRealtimeConnectionManagerEnter:
         # SDK identification belongs to the authenticated transport shared by Live and Realtime.
         source = "\n".join(
             inspect.getsource(cls.__dict__[method])
-            for cls in BetaRealtimeConnectionManager.__mro__
+            for cls in RealtimeConnectionManager.__mro__
             for method in ("enter", "_get_query")
             if method in cls.__dict__
         )
@@ -335,7 +350,7 @@ class TestRealtimeConnectionManagerEnter:
 
 
 class TestRealtimeConnectionRecv:
-    """Unit tests for ``BetaRealtimeConnection.recv()``: event dispatch and error/timeout handling."""
+    """Unit tests for ``RealtimeConnection.recv()``: event dispatch and error/timeout handling."""
 
     @pytest.mark.parametrize(
         "event_type,event_model",
@@ -544,7 +559,7 @@ class TestRealtimeConnectionRecv:
 
 
 class TestRealtimeConnectionSend:
-    """Unit tests for ``BetaRealtimeConnection.send()``: model/str/mapping serialization."""
+    """Unit tests for ``RealtimeConnection.send()``: model/str/mapping serialization."""
 
     def test_send_serializes_typed_model(self, request):
         fake_connection = MagicMock()
