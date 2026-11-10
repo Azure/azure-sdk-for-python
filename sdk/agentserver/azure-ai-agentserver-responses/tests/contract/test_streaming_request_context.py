@@ -44,14 +44,15 @@ from azure.ai.agentserver.responses.streaming import ResponseEventStream
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 
 
-def test_original_subject_core_dependency_floor() -> None:
+def test_original_subject_and_snapshot_core_dependency_floor() -> None:
     requirements = (Requirement(value) for value in requires("azure-ai-agentserver-responses") or [])
     core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
     package_version = Version(version("azure-ai-agentserver-responses"))
     if package_version.pre and package_version.pre[0] == "a":
         assert core.specifier.contains(Version(version("azure-ai-agentserver-core")), prereleases=True)
     else:
-        assert "2.3.0" in core.specifier
+        assert "2.4.0b1" in core.specifier
+        assert "2.3.0" not in core.specifier
     assert "2.3.0b3" not in core.specifier
     assert "2.3.0b2" not in core.specifier
     assert "2.3.0b1" not in core.specifier
