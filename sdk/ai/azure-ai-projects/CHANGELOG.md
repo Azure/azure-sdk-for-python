@@ -5,6 +5,7 @@
 ### Features Added
 
 * Voice Agents are generally available without preview opt-in for Realtime sessions, stored Realtime conversations, agent generation, and Teams Phone Extensibility/Twilio telephony and call jobs. Use `.voice_agents.realtime`, `.voice_agents.conversations`, `.voice_agents.telephony`, and `.agents.create_from_prompt()`. GPT Live, inline subagent handoff, SIP, post-call delivery, and campaigns remain in preview.
+* External Agents are generally available. Creating and managing agents with `ExternalAgentDefinition` no longer requires `allow_preview=True`, and the `ExternalAgents=V1Preview` opt-in header is no longer sent.
 * Added preview `.beta.voice_agents.live.connect()` and `VoiceAgentLiveDefinition` for GPT Live sessions, with typed session, client/server event, tool, decision, and usage models, session updates, text and audio input, and Responses backend function-tool support.
 * Added Live delegation models for Responses backends, application-managed work, and same-project prompt agents: `VoiceAgentLiveResponsesDelegation`, `VoiceAgentLiveClientDelegation`, and `VoiceAgentLiveManagedAgentDelegation`.
 * Added `.beta.voice_agents.live_conversations` for listing, retrieving, and deleting stored Live conversations, retrieving conversation items, and retrieving or downloading item-level and conversation-level audio.
