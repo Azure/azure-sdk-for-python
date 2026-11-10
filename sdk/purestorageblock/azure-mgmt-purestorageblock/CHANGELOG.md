@@ -54,10 +54,10 @@
   - Added enum `VolumeSourceType`
   - Added model `VolumeUpdate`
   - Added model `VolumeUpdateProperties`
-  - Model `ReservationsOperations` added method `begin_link_saa_s`
-  - Model `ReservationsOperations` added method `latest_linked_saa_s`
-  - Model `StoragePoolsOperations` added method `configure_platform_console_auth`
-  - Model `StoragePoolsOperations` added method `list_platform_console_activation_code`
+  - Operation group `ReservationsOperations` added method `begin_link_saa_s`
+  - Operation group `ReservationsOperations` added method `latest_linked_saa_s`
+  - Operation group `StoragePoolsOperations` added method `configure_platform_console_auth`
+  - Operation group `StoragePoolsOperations` added method `list_platform_console_activation_code`
   - Added operation group `RecoverableVolumeGroupsOperations`
   - Added operation group `SaaSOperationGroupOperations`
   - Added operation group `VolumeGroupSnapshotsOperations`
