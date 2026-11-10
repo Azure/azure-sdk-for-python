@@ -72,12 +72,12 @@ with (
         pass
 
     try:
-        project_client.beta.skills.delete(SKILL_NAME)
+        project_client.skills.delete(SKILL_NAME)
         print(f"Deleted pre-existing skill `{SKILL_NAME}`")
     except ResourceNotFoundError:
         pass
 
-    skill_version = project_client.beta.skills.create(
+    skill_version = project_client.skills.create(
         name=SKILL_NAME,
         inline_content=SkillInlineContent(
             description="Inspect the runtime environment of a sandboxed shell container.",
@@ -92,7 +92,7 @@ with (
     print(f"Created skill `{skill_version.name}` (version {skill_version.version}).")
 
     skill_archive = b"".join(
-        project_client.beta.skills.download_version(name=skill_version.name, version=skill_version.version)
+        project_client.skills.download_version(name=skill_version.name, version=skill_version.version)
     )
     with zipfile.ZipFile(io.BytesIO(skill_archive)) as archive:
         skill_instructions = archive.read("SKILL.md").decode("utf-8")
@@ -160,7 +160,7 @@ with (
             pass
         finally:
             try:
-                project_client.beta.skills.delete(SKILL_NAME)
+                project_client.skills.delete(SKILL_NAME)
                 print(f"Deleted skill `{SKILL_NAME}`")
             except ResourceNotFoundError:
                 pass

@@ -22,9 +22,9 @@ from ._operations import (
 )
 from .. import models as _models
 from .._utils.model_base import _deserialize
-from .._utils.polling import AIProjectsLROBasePolling
 from ..models import AgentOptimizationLROPoller
 from ..models._patch import (
+    _AgentOptimizationLROBasePolling,
     _FOUNDRY_FEATURES_HEADER_NAME,
     _has_header_case_insensitive,
     _AGENT_OPERATION_FEATURE_HEADERS,
@@ -449,7 +449,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                AIProjectsLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                _AgentOptimizationLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

@@ -14,8 +14,8 @@ DESCRIPTION:
     description from the fetched default version to show that the default
     version pointer changes which content is returned.
 
-    Skills are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.beta.skills`.
+    Skills are generally available. In the Python SDK, you access
+    these operations via `project_client.skills`.
 
 USAGE:
     python sample_skills_crud_async.py
@@ -59,7 +59,7 @@ async def main() -> None:
         skill_name = "product-support-skill"
 
         try:
-            await project_client.beta.skills.delete(skill_name)
+            await project_client.skills.delete(skill_name)
             print(f"Skill `{skill_name}` deleted")
         except ResourceNotFoundError:
             pass
@@ -76,54 +76,54 @@ async def main() -> None:
             metadata={"revision": "2"},
         )
 
-        created = await project_client.beta.skills.create(
+        created = await project_client.skills.create(
             name=skill_name,
             inline_content=inline_content_v1,
         )
         print(f"Created skill: {created.name} revision 1 in version {created.version}")
 
-        created = await project_client.beta.skills.create(
+        created = await project_client.skills.create(
             name=skill_name,
             inline_content=inline_content_v2,
         )
         print(f"Created skill: {created.name} revision 2 in version {created.version}")
 
-        updated = await project_client.beta.skills.update(
+        updated = await project_client.skills.update(
             skill_name,
             default_version="2",
         )
         print(f"Updated skill: {updated.name} default version is now {updated.default_version}")
 
-        fetched = await project_client.beta.skills.get(name=skill_name)
+        fetched = await project_client.skills.get(name=skill_name)
         print(f"Retrieved skill with default version: {fetched.default_version}")
-        fetched_version = await project_client.beta.skills.get_version(
+        fetched_version = await project_client.skills.get_version(
             name=skill_name,
             version=fetched.default_version,
         )
         print_skill_version_description(fetched_version)
 
-        updated = await project_client.beta.skills.update(
+        updated = await project_client.skills.update(
             skill_name,
             default_version="1",
         )
         print(f"Updated skill: {updated.name} default version is now {updated.default_version}")
 
-        fetched = await project_client.beta.skills.get(name=skill_name)
+        fetched = await project_client.skills.get(name=skill_name)
         print(f"Retrieved skill with default version: {fetched.default_version}")
-        fetched_version = await project_client.beta.skills.get_version(
+        fetched_version = await project_client.skills.get_version(
             name=skill_name,
             version=fetched.default_version,
         )
         print_skill_version_description(fetched_version)
 
         skills = []
-        async for item in project_client.beta.skills.list():
+        async for item in project_client.skills.list():
             skills.append(item)
         print(f"Found {len(skills)} skills")
         for item in skills:
             print(f"  - {item.name} ({item.id})")
 
-        await project_client.beta.skills.delete(name=skill_name)
+        await project_client.skills.delete(name=skill_name)
         print("Skill deleted")
 
 

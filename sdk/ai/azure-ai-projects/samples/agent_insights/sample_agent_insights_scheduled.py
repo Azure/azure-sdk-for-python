@@ -10,8 +10,8 @@ DESCRIPTION:
     Insights monitor with a six-hour run interval and read the next scheduled
     run time. It does not wait for scheduled analysis.
 
-    Agent Insights is a preview feature. In the Python SDK, you access these
-    operations through `project_client.beta.agent_insight_monitors`.
+    Agent Insights is generally available. In the Python SDK, you access these
+    operations through `project_client.agent_insight_monitors`.
 
     This sample registers a temporary external agent and emits fictional traces;
     it does not execute tools or call a model to produce those traces. It waits
@@ -50,7 +50,6 @@ from agent_insights_util import cleanup, create_agent, seed_traces, wait_for_ing
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentInsightMonitorCreate, AgentInsightMonitorUpdate
 
 ANALYSIS_INTERVAL_HOURS = 6
 
@@ -68,7 +67,7 @@ def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
         LogsQueryClient(credential) as logs_client,
     ):
-        monitor_operations = project_client.beta.agent_insight_monitors
+        monitor_operations = project_client.agent_insight_monitors
 
         agent = None
         monitor = None
@@ -79,21 +78,17 @@ def main() -> None:
             wait_for_ingestion(logs_client, app_insights_resource_id, agent.name, expected_counts)
 
             monitor = monitor_operations.create(
-                AgentInsightMonitorCreate(
-                    agent_name=agent.name,
-                    model_deployment_name=model_deployment_name,
-                    enabled=False,
-                )
+                agent_name=agent.name,
+                model_deployment_name=model_deployment_name,
+                enabled=False,
             )
             print(f"Created disabled monitor `{monitor.id}` for agent `{monitor.agent_name}`.")
 
             # Set the analysis frequency and enable recurring runs in one update.
             scheduled_monitor = monitor_operations.update(
                 monitor.id,
-                AgentInsightMonitorUpdate(
-                    enabled=True,
-                    run_interval_hours=ANALYSIS_INTERVAL_HOURS,
-                ),
+                enabled=True,
+                run_interval_hours=ANALYSIS_INTERVAL_HOURS,
             )
 
             print(f"Scheduled monitor enabled: {scheduled_monitor.enabled}")

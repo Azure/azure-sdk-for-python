@@ -43,6 +43,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :vartype voice_agents: azure.ai.projects.aio.operations.VoiceAgentsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.aio.operations.AgentsOperations
+    :ivar agent_insight_monitors: AgentInsightMonitorsOperations operations
+    :vartype agent_insight_monitors: azure.ai.projects.aio.operations.AgentInsightMonitorsOperations
+    :ivar skills: SkillsOperations operations
+    :vartype skills: azure.ai.projects.aio.operations.SkillsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
     :vartype evaluation_rules: azure.ai.projects.aio.operations.EvaluationRulesOperations
     :ivar connections: ConnectionsOperations operations

@@ -26,6 +26,21 @@ git restore pyproject.toml
 #   recursive-include samples *.py *.md
 git restore MANIFEST.in
 
+# Repair same-module union references emitted as "_unions.Name" instead of "Name".
+# Reproduced with typespec-python 0.63.11 and tsp-location.yaml commit 96acdcdd5552f42b9d0c9a24cb18afd97327a040.
+# Follow up by reporting the nested-union reference defect to microsoft/typespec with these inputs.
+# Remove this workaround when regeneration emits valid local union references without repair.
+function Repair-UnionAliasReferences {
+    param([string]$Content)
+
+    $Content -creplace '\b_unions\.', ''
+}
+
+$f = 'azure\ai\projects\_unions.py'
+$c = Get-Content $f -Raw -ErrorAction Stop
+$c = Repair-UnionAliasReferences -Content $c
+Set-Content $f $c -NoNewline -ErrorAction Stop
+
 # Force streaming in get_session_log_stream for both sync and async operations.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {

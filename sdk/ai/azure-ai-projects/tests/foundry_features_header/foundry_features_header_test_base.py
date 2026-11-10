@@ -22,6 +22,7 @@ import tempfile
 from typing import Any, ClassVar, List, Tuple, Union, get_origin
 
 from azure.core.credentials import AccessToken
+from azure.ai.projects.operations import AgentInsightMonitorsOperations, SkillsOperations
 
 # Both sentinel values used to mark "required but unset" parameters.
 # The sync and async generated _operations modules define _Unset independently.
@@ -35,7 +36,6 @@ FOUNDRY_FEATURES_HEADER = "Foundry-Features"
 # If a new sub-client is added to .beta and is missing from this mapping, the test will
 # fail at collection time with a message asking you to add it here.
 EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
-    "agent_insight_monitors": "AgentInsights=V1Preview",
     "evaluation_taxonomies": "Evaluations=V1Preview",
     "evaluators": "Evaluations=V1Preview",
     "insights": "Insights=V1Preview",
@@ -44,10 +44,19 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "red_teams": "RedTeams=V1Preview",
     "routines": "Routines=V2Preview",
     "schedules": "Schedules=V1Preview",
-    "skills": "Skills=V1Preview",
     "voice_agents": "VoiceAgents=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
 }
+
+_GA_MIGRATED_OPERATION_TEST_CASES = [
+    (subclient_name, method_name)
+    for subclient_name, operation_type in (
+        ("agent_insight_monitors", AgentInsightMonitorsOperations),
+        ("skills", SkillsOperations),
+    )
+    for method_name, _ in inspect.getmembers(operation_type, predicate=inspect.isfunction)
+    if not method_name.startswith("_")
+]
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
 # therefore cannot be exercised by the generic header-injection test (which

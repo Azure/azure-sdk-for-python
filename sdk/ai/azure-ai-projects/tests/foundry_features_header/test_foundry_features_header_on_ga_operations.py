@@ -12,6 +12,7 @@ Foundry-Features header and verify both modes:
 """
 
 import inspect
+import json
 from typing import Any, ClassVar, Iterator, List, Tuple
 
 import pytest
@@ -24,6 +25,7 @@ from foundry_features_header_test_base import (
     FakeCredential,
     FoundryFeaturesHeaderTestBase,
     _NON_BETA_OPTIONAL_TEST_CASES,
+    _GA_MIGRATED_OPERATION_TEST_CASES,
     _RequestCaptured,
     _UNSET_SENTINELS,
 )
@@ -128,6 +130,44 @@ class TestFoundryFeaturesHeaderOnGaOperations(FoundryFeaturesHeaderTestBase):
     def _assert_header_absent(cls, label: str, call: Any) -> None:
         request = cls._capture(call)
         cls._record_header_absence_assertion(label, request)
+
+    @pytest.mark.parametrize("subclient_name,method_name", _GA_MIGRATED_OPERATION_TEST_CASES)
+    @pytest.mark.parametrize("preview_enabled", [False, True])
+    @pytest.mark.parametrize("custom_headers", [False, True])
+    def test_migrated_ga_operations(
+        self,
+        client_preview_enabled,
+        client_preview_disabled,
+        subclient_name,
+        method_name,
+        preview_enabled,
+        custom_headers,
+    ):
+        client = client_preview_enabled if preview_enabled else client_preview_disabled
+        assert not hasattr(client.beta, subclient_name)
+        operation = getattr(client, subclient_name)
+        headers = {FOUNDRY_FEATURES_HEADER: "caller-feature", "x-test": "test"} if custom_headers else {}
+        request = self._capture(self._make_fake_call(getattr(operation, method_name), {"headers": headers}))
+        assert "/beta/" not in request.url
+        if custom_headers:
+            assert request.headers[FOUNDRY_FEATURES_HEADER] == "caller-feature"
+            assert request.headers["x-test"] == "test"
+        else:
+            assert FOUNDRY_FEATURES_HEADER not in request.headers
+
+    @pytest.mark.parametrize(
+        "kwargs,expected_body",
+        [
+            ({}, {}),
+            ({"lookback_hours": 3}, {"lookback_hours": 3}),
+            ({"body": {"lookback_hours": 0.5}}, {"lookback_hours": 0.5}),
+        ],
+    )
+    def test_ga_monitor_run_inputs(self, client_preview_disabled, kwargs, expected_body):
+        request = self._capture(
+            lambda: client_preview_disabled.agent_insight_monitors.begin_create_run("monitor-test", **kwargs)
+        )
+        assert json.loads(request.body) == expected_body
 
     @pytest.mark.parametrize("method_name,expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
     def test_foundry_features_header_present_on_ga_operations_when_preview_enabled(
