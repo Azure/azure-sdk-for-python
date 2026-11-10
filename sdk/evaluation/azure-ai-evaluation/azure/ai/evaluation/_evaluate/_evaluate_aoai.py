@@ -254,34 +254,25 @@ def _map_aoai_grader_names(graders: Dict[str, AzureOpenAIGrader], testing_criter
     """Map native criterion names or legacy IDs to the caller's evaluator aliases."""
     aliases_by_name: Dict[str, List[str]] = {}
     for alias, grader in graders.items():
-        config = grader._grader_config
-        native_name = config.get("name") if isinstance(config, dict) else getattr(config, "name", None)
+        native_name = dict(grader._grader_config).get("name")
         if isinstance(native_name, str) and native_name:
             aliases_by_name.setdefault(native_name, []).append(alias)
 
     grader_name_map: Dict[str, str] = {}
     for legacy_alias, criterion in zip(graders, testing_criteria):
         identifier = getattr(criterion, "id", None)
-        alias = legacy_alias
+        matches = [legacy_alias]
         if not isinstance(identifier, str) or not identifier:
             identifier = getattr(criterion, "name", None)
             matches = aliases_by_name.get(identifier, []) if isinstance(identifier, str) else []
-            if len(matches) != 1:
-                raise EvaluationException(
-                    message="Returned native grader name does not uniquely match the requested graders.",
-                    blame=ErrorBlame.UNKNOWN,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=ErrorTarget.AOAI_GRADER,
-                )
-            alias = matches[0]
-        if identifier in grader_name_map:
+        if len(matches) != 1 or identifier in grader_name_map:
             raise EvaluationException(
-                message="Returned testing criteria contain duplicate grader identifiers.",
+                message="Returned testing criteria contain invalid, ambiguous, or duplicate grader identifiers.",
                 blame=ErrorBlame.UNKNOWN,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.AOAI_GRADER,
             )
-        grader_name_map[identifier] = alias
+        grader_name_map[identifier] = matches[0]
     return grader_name_map
 
 
