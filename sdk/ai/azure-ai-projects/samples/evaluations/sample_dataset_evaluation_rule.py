@@ -44,6 +44,7 @@ USAGE:
 import os
 import time
 from dotenv import load_dotenv
+from openai.types.evals.create_eval_completions_run_data_source_param import SourceFileContent, SourceFileContentContent
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -52,9 +53,7 @@ from azure.ai.projects.models import (
     EvaluationRule,
     DatasetEvaluationRuleAction,
     TargetCompletionEvalRunDataSource,
-    AzureAIAgentTarget,
-    EvalJsonlFileContentSource,
-    EvalJsonlFileContentSourceContent,
+    AzureAIAgentTargetParam,
     EvaluationRuleEventType,
     RecurrenceTrigger,
     DailyRecurrenceSchedule,
@@ -117,19 +116,21 @@ with (
     # Create a rule that sends the queries to the agent and scores its responses every day at 9 AM UTC
 
     agent_queries = TargetCompletionEvalRunDataSource(
-        source=EvalJsonlFileContentSource(
+        type="azure_ai_target_completions",
+        source=SourceFileContent(
+            type="file_content",
             content=[
-                EvalJsonlFileContentSourceContent(item={"query": "What is the capital of France?"}),
-                EvalJsonlFileContentSourceContent(item={"query": "How many legs does a spider have?"}),
-            ]
+                SourceFileContentContent(item={"query": "What is the capital of France?"}),
+                SourceFileContentContent(item={"query": "How many legs does a spider have?"}),
+            ],
         ),
-        input_messages={  # type: ignore
-            "type": "template",
+        input_messages={
+            "type": "template",  # type: ignore
             "template": [
                 {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
             ],
         },
-        target=AzureAIAgentTarget(name=agent.name, version=agent.version),
+        target=AzureAIAgentTargetParam(type="azure_ai_agent", name=agent.name, version=agent.version),
     )
 
     dataset_eval_rule = project_client.evaluation_rules.create_or_update(
