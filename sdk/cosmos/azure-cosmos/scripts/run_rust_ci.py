@@ -110,6 +110,8 @@ OFFLINE_SKIPS = {
 def discover_tests(root: Path, suite: str) -> list[Path]:
     """Include maintained matching modules, excluding local-only originals and comparisons.
 
+    The offline suite excludes modules selected by the dedicated telemetry suite.
+
     :param root: Package source directory.
     :type root: pathlib.Path
     :param suite: Offline, telemetry, Toxiproxy, or service selection (CLI name parity).
@@ -130,8 +132,13 @@ def discover_tests(root: Path, suite: str) -> list[Path]:
                 raise RuntimeError(f"Required telemetry module is missing: {path}")
         files = sorted(set(files) | set((tests / "telemetry").rglob("test_*_unit.py")))
     elif suite == "offline":
+        telemetry_paths = {tests / name for name in TELEMETRY_MODULES}
         files = sorted(
-            path for path in tests.rglob("test_*_unit.py") if not test_collection.exclude_module(path, tests_root=tests)
+            path
+            for path in tests.rglob("test_*_unit.py")
+            if path not in telemetry_paths
+            and not path.is_relative_to(tests / "telemetry")
+            and not test_collection.exclude_module(path, tests_root=tests)
         )
     else:
         files = sorted(

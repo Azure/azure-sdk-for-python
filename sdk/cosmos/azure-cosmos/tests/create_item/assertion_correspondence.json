@@ -18936,7 +18936,6 @@
     "all_applicable_annotations_preserved": true,
     "applicable_marker_mismatch_count": 0,
     "all_original_annotations_copied_literally": false,
-    "authorization": "User explicitly requested remaining AADLong/AADCircuitBreaker/CircuitBreaker categories be copied, then requested both key and configured-AAD execution. Existing auth-selection factories are reused; no global auth policy or SDK runtime is changed.",
     "scope": "Every test function in tests/create_item except this audit's own guard and concurrently owned test_service_failures.py is inventoried. All direct Source-comment copies plus explicitly named external create replacements receive lineage reviews, together with the original scalar/HPK/Unicode/emoji/noncompact-CJK parameter sources and mapped suppression composites. Tests without source lineage are not claimed copied. Secondary assertion equivalence remains separate.",
     "inventory": [
       {
@@ -45070,86 +45069,11 @@
         "sha256": "4e0a9b16b22e9c8d41a3bb2ccd5d767237acb5015ed9f209c5e1274ea00a74f6"
       }
     ],
-    "repairs": [
-      "Restored cosmosLong on six legacy-contract functions per sync/async surface (12 functions).",
-      "Restored cosmosLong on both legacy-variant modules (four functions).",
-      "Restored cosmosQuery and cosmosAADQuery on both response-hook classes; existing configured-auth factories make these applicable. No unconditional skip or xfail was introduced.",
-      "Restored all 39 AADLong, four AADCircuitBreaker and four CircuitBreaker source occurrences via class/module/function placement on their consolidated replacement tests. No TTL, token-only, or Unicode-only test receives an unrelated topology category.",
-      "Header generator specs preserve the restored class marks and key-owned/configured-data fixture split. Contracts, large-CJK and scalar/Unicode variants use existing config.clients data factories."
-    ],
-    "observed_validation": {
-      "recorded_at": "2026-11-05T00:10:16.9260206-06:00",
-      "level": "offline AST/vector/guard execution and collection only; not native or live-service execution",
-      "guard_command": ".venv\\Scripts\\python.exe -m pytest --noconftest -o pythonpath=<absolute tests> tests\\create_item\\test_assertion_correspondence_unit.py tests\\create_item\\test_legacy_correspondence_unit.py tests\\create_item\\test_routing_evidence_unit.py -q",
-      "guard_passed": 117,
-      "collection": "374 cases collected with --noconftest --collect-only from the six repaired copy files; this includes explicitly parameterized core-python comparison cases because the root Rust-only collection filter is intentionally disabled for this offline check.",
-      "lint": "Scoped --errors-only pylint passed on all eight edited Python files.",
-      "warnings": [
-        "Existing unknown pytest timeout option",
-        "Existing unknown pytest timeout_method option"
-      ],
-      "refresh_note": "This records observed validation, not an automatic claim that regeneration reruns tests."
-    },
-    "marker_and_auth_implementation_validation": {
-      "observed_date": "2026-11-05",
-      "offline": {
-        "passed": 50,
-        "golden_subtests_passed": 3,
-        "scope": "Correspondence guard, six existing enforcer checks scoped to the six changed copies, 20 sync/async key/AAD wiring cases, two no-key-fallback cases, existing create lineage checks and generated-file golden checks.",
-        "lint": "Scoped errors-only pylint passed on all nine edited Python files.",
-        "warnings": [
-          "Existing unknown pytest timeout option",
-          "Existing unknown pytest timeout_method option"
-        ]
-      },
-      "category_collection": {
-        "scope": "Six changed copies, separately collected in configured key and aad modes.",
-        "normal_conftest_rust_only_cases_per_mode": {
-          "cosmosAADLong": 174,
-          "cosmosAADCircuitBreaker": 124,
-          "cosmosCircuitBreaker": 124
-        },
-        "without_conftest_including_comparison_cases": {
-          "cosmosAADLong": 346,
-          "cosmosAADCircuitBreaker": 248,
-          "cosmosCircuitBreaker": 248
-        },
-        "normal_full_create_collection": {
-          "selected_cases": 652,
-          "actual_definitions": 138,
-          "all_names_end_rust": true,
-          "scope": "Includes main's new service definitions; collection only, not source review/execution."
-        },
-        "selection_note": "Normal collection excludes core-python comparison parameters. Both auth modes select the same categories; COSMOS_TEST_DATA_AUTH_MODE selects the credential."
-      },
-      "key_live_execution": {
-        "passed": 4,
-        "backend": "rust-only; native observer active and legacy CreateItem fallback forbidden",
-        "scope": [
-          "Sync/async test_unicode_partition_key_and_separator_round_trip_rust: unicode-partition-key.",
-          "Sync/async test_create_response_headers_advance_lsn_rust: no_response=False."
-        ],
-        "environment": "Configured remote account; uniquely owned resources and key-owned cleanup.",
-        "selection": "--noconftest with explicit backend=rust collection filtering; no legacy comparison ran."
-      },
-      "aad_live_execution": {
-        "attempted": 2,
-        "passed": 0,
-        "failed_prerequisite": 2,
-        "scope": "Sync/async Rust unicode-partition-key cases with COSMOS_TEST_DATA_AUTH_MODE=aad.",
-        "observed_failure": "401/20402 during native driver initialization: failed to acquire AAD token.",
-        "fresh_prerequisite_check": "Standard Azure environment credential fields and COSMOS_AAD token-lane fields were incomplete; configured DefaultAzureCredential was still actually attempted rather than assuming environment fields are the only provider.",
-        "provider_blocker": "DefaultAzureCredential exhausted providers. Azure CLI failed with Windows access denied while loading amg extension metadata; environment/workload/cache credentials were unavailable, and optional PowerShell/azd/broker providers unavailable.",
-        "fallback": "No key fallback, no unconditional skip/xfail, no claimed token-authenticated service pass.",
-        "prerequisites": "A functioning existing configured credential provider and appropriate Cosmos data permissions. No identity settings, roles, permissions, packages or account features were changed to bypass the blocker."
-      }
-    },
     "remaining_differences": [
       "Marker preservation is verified independently of live credential availability and service execution.",
       "Configured data factories retain the repository's existing emulator/key/AAD selection policy; on remote accounts an AAD-lane credential failure must not fall back to account-key data operations.",
       "Exclusion vector shape is exact, but region names move from account discovery to configured legacy region variables; native topology behavior and deployed multi-region execution are separate.",
-      "Primary Source-comment lineage does not imply all secondary scalar/HPK/shared-policy assertions or every original composite sequence is replaced, even where secondary annotations are reviewed. Four-write async suppression remains distinct from the three-write replacement despite expanded suppression parameterization.",
-      "Four bounded key-mode native cases passed. Both configured-AAD attempts failed token acquisition; live AAD and deployed multi-region lanes are not claimed passing. Parent-owned service tests/native code remain excluded from source inspection."
+      "Primary Source-comment lineage does not imply all secondary scalar/HPK/shared-policy assertions or every original composite sequence is replaced, even where secondary annotations are reviewed. Four-write async suppression remains distinct from the three-write replacement despite expanded suppression parameterization."
     ],
     "parameter_review": [
       "Excluded-location copies preserve all twelve logical write-routing vectors; a guard compares original input/output provider AST values directly, without importing live legacy modules.",

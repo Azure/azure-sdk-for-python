@@ -13,6 +13,7 @@ import shutil
 import statistics
 import subprocess
 import sys
+import sysconfig
 
 PACKAGE = Path(__file__).resolve().parents[2]
 ASSETS = Path(__file__).resolve().parent / "native_experiments"
@@ -231,7 +232,12 @@ class Experiment:
         self.environment = {
             **os.environ,
             "PYO3_PYTHON": sys.executable,
-            "PYTHONPATH": os.pathsep.join((str(self.assets), str(PACKAGE))),
+            "PYTHONPATH": os.pathsep.join(
+                dict.fromkeys(
+                    (str(self.assets), str(PACKAGE), sysconfig.get_path("purelib"), sysconfig.get_path("platlib"))
+                )
+            ),
+            "NATIVE_EXPERIMENT_PACKAGE": str(PACKAGE),
             "PYTHONHASHSEED": "0",
             "PYTHONOPTIMIZE": "0",
             "CARGO_TARGET_DIR": str(PACKAGE / "target" if args.reuse_build_cache else self.output / "target"),
@@ -423,6 +429,16 @@ class Experiment:
     def run(self):
         """Preserve both failures and source-integrity evidence."""
         try:
+            log = self.execute(
+                [
+                    sys.executable,
+                    "-c",
+                    "from native_experiment_metrics import python_source_json; print(python_source_json())",
+                ],
+                "python-source",
+                30,
+            )
+            self.summary["python_source"] = json.loads(log.read_text(encoding="utf-8"))
             instrument(self.source, self.assets, self.args.suite, sys.platform)
             for program in ("rustc", "cargo"):
                 log = self.execute([program, "--version"], f"{program}-version", 30)

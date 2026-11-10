@@ -23,6 +23,12 @@ invoking Python executable for PyO3. It copies `rust-toolchain.toml` when presen
 `--toolchain` is an explicit override, not an automatic fallback. For example,
 the initial Windows experiments used installed Rust 1.95.0.
 
+The runner passes that interpreter's package directories to embedded Python.
+Both the runner and native samples verify the loaded `azure.cosmos` source path.
+An editable SDK installation can shadow `PYTHONPATH`; if the source check fails,
+use a separate virtual environment with the development dependencies, without
+an editable Cosmos SDK installation pointing at a different checkout.
+
 The fixtures do not use a Cosmos account or perform live Cosmos service calls.
 Cargo can download build dependencies unless `--offline` is supplied.
 
@@ -129,6 +135,7 @@ allocator change, a Linux live-workload gain, query performance, or SDK p99.
 Do not pool these results with the bounded service workload measurements.
 No commit, push, deployment, account provisioning, or service seeding is performed.
 
-Initial packaging was smoke-qualified on Windows. Linux memory parsing and
-isolated manifest changes have offline unit coverage, but Linux native builds
-and execution still require qualification.
+Both experiments have passed native smoke qualification on Windows and Linux.
+Linux qualification used a separate virtual environment and the embedded-Python
+package paths and source-origin checks described above. These smoke runs qualify
+execution and correctness, not a performance improvement.

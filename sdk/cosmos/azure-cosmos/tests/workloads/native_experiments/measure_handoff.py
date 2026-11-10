@@ -11,6 +11,7 @@ from pathlib import Path
 import statistics
 import sys
 import time
+from native_experiment_metrics import python_source_json
 
 TAG = "_offline_handoff_slot"
 
@@ -170,7 +171,7 @@ def phase_distributions(observer, resumed_times):
     return stages, trace
 
 
-async def measure(native):
+async def measure(native, python_runtime):
     mode = os.environ["HANDOFF_MODE"]
     assert mode in ("control", "observed", "allocations", "conversion", "idle")
     count = int(os.environ["HANDOFF_ITERATIONS"])
@@ -228,6 +229,7 @@ async def measure(native):
         "wall_ns": wall_ns,
         "process_cpu_ns": cpu_ns,
         "event_loop": type(loop).__name__,
+        "python_runtime": python_runtime,
         "qualification": qualification,
         "cpu_ns_per_operation": None if mode == "idle" else cpu_ns / count,
         "submit_to_resume": None if mode == "idle" else distribution(durations),
@@ -258,4 +260,4 @@ def write_result(result, trace, durations):
 
 
 def run(native):
-    asyncio.run(measure(native))
+    asyncio.run(measure(native, json.loads(python_source_json())))

@@ -5,6 +5,8 @@
 import importlib
 import json
 from pathlib import Path
+import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -199,6 +201,8 @@ def test_malformed_sample_persists_failed_status(tooling, package, tmp_path, mon
     def fake_execute(_self, command, name, _timeout, _environment=None):
         log = tmp_path / f"{name}.txt"
         text = "test version" if command[0] in ("cargo", "rustc") else "ALLOCATOR_BENCHMARK=" + json.dumps(result)
+        if name == "python-source":
+            text = "{}"
         log.write_text(text, encoding="utf-8")
         return log
 
@@ -210,3 +214,17 @@ def test_malformed_sample_persists_failed_status(tooling, package, tmp_path, mon
     assert summary["status"] == "failed"
     assert summary["error"]
     assert summary["samples"] == []
+
+
+def test_python_source_guard_rejects_shadowing_editable_install(tooling, tmp_path, monkeypatch):
+    _, metrics = tooling
+    package = tmp_path / "selected"
+    source = package / "azure" / "cosmos" / "__init__.py"
+    monkeypatch.setenv("NATIVE_EXPERIMENT_PACKAGE", str(package))
+    monkeypatch.setitem(sys.modules, "azure.cosmos", SimpleNamespace(__file__=str(source)))
+    assert json.loads(metrics.python_source_json())["source"] == str(source.resolve())
+    monkeypatch.setitem(
+        sys.modules, "azure.cosmos", SimpleNamespace(__file__=str(tmp_path / "old-sdk" / "__init__.py"))
+    )
+    with pytest.raises(RuntimeError, match="Python SDK source mismatch"):
+        metrics.python_source_json()

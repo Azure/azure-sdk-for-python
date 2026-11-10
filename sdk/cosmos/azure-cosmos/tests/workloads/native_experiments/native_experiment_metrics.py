@@ -3,9 +3,21 @@
 """Process memory snapshots; platform-specific fields are deliberately distinct."""
 
 import ctypes
+import importlib
 import json
+import os
 from pathlib import Path
 import sys
+
+
+def python_source_json():
+    """Reject editable installs that silently shadow the selected wrapper."""
+    module = importlib.import_module("azure.cosmos")
+    actual = Path(module.__file__).resolve()
+    expected = Path(os.environ["NATIVE_EXPERIMENT_PACKAGE"]).resolve() / "azure" / "cosmos"
+    if not actual.is_relative_to(expected):
+        raise RuntimeError(f"Python SDK source mismatch: loaded {actual}, expected a module under {expected}")
+    return json.dumps({"source": str(actual), "version": sys.version, "prefix": sys.prefix})
 
 
 def kib_fields(text, required):

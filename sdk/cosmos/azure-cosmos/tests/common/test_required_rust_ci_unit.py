@@ -165,22 +165,49 @@ def test_network_discovery_requires_all_three_modules_rust(tmp_path):
         runner.discover_tests(tmp_path, "toxiproxy")
 
 
-def test_telemetry_discovery_requires_shared_and_operation_modules_rust(tmp_path):
+@pytest.mark.parametrize("extra_name", ["test_new_coverage_unit.py", "nested/test_new_coverage_unit.py"])
+def test_telemetry_discovery_requires_shared_and_operation_modules_rust(tmp_path, extra_name):
     for name in runner.TELEMETRY_MODULES:
         path = tmp_path / "tests" / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("def test_case(): pass\n", encoding="utf-8")
-    extra = tmp_path / "tests" / "telemetry" / "test_new_coverage_unit.py"
+    extra = tmp_path / "tests" / "telemetry" / extra_name
+    extra.parent.mkdir(parents=True, exist_ok=True)
     extra.write_text("def test_added(): pass\n", encoding="utf-8")
+    other_paths = {
+        tmp_path / "tests" / name
+        for name in (
+            "common/test_other_unit.py",
+            "common/test_telemetry_helper_unit.py",
+            "fault_injection/test_fault_unit.py",
+        )
+    }
+    for path in other_paths:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("def test_case(): pass\n", encoding="utf-8")
     paths = runner.discover_tests(tmp_path, "telemetry")
     assert {path.relative_to(tmp_path / "tests").as_posix() for path in paths} == {
         *runner.TELEMETRY_MODULES,
-        "telemetry/test_new_coverage_unit.py",
+        f"telemetry/{extra_name}",
     }
-    assert set(paths) <= set(runner.discover_tests(tmp_path, "offline"))
+    offline = set(runner.discover_tests(tmp_path, "offline"))
+    assert offline == other_paths
+    assert offline.isdisjoint(paths)
     (tmp_path / "tests" / runner.TELEMETRY_MODULES[0]).unlink()
     with pytest.raises(RuntimeError, match="Required telemetry module"):
         runner.discover_tests(tmp_path, "telemetry")
+    assert set(runner.discover_tests(tmp_path, "offline")) == other_paths
+
+
+def test_offline_and_telemetry_partition_maintained_unit_inventory_rust():
+    tests = PACKAGE / "tests"
+    maintained = {
+        path for path in tests.rglob("test_*_unit.py") if not runner.test_collection.exclude_module(path, tests_root=tests)
+    }
+    offline = set(runner.discover_tests(PACKAGE, "offline"))
+    telemetry = set(runner.discover_tests(PACKAGE, "telemetry"))
+    assert offline.isdisjoint(telemetry)
+    assert offline | telemetry == maintained
 
 
 @pytest.mark.parametrize(

@@ -2370,8 +2370,9 @@ collection rules exclude the preserved legacy originals.
 Two additional checks use the existing `AfterTestSteps` hook:
 
 - **Offline Python tests:** `run_rust_ci.py offline` selects the maintained unit
-  tests without the emulator marker filter, checks that the installed native
-  wheel is loaded, and fails missing execution or unexpected skips.
+  tests except those selected by the dedicated telemetry suite. It runs without
+  the emulator marker filter, checks that the installed native wheel is loaded,
+  and fails missing execution or unexpected skips.
 - **Native Rust tests:** `run_rust_ci.py native` runs `cargo test` and checks
   that test bodies actually ran. Building a wheel alone does not run them.
 
@@ -2386,6 +2387,12 @@ The old standalone offline/service job definitions have been replaced with
 a step template. `rust-tests.yml` now groups the supplemental instructions;
 it is not needed to discover the copied Python tests and does not create jobs.
 It could be inlined into `ci.yml` without changing the execution model.
+
+The dedicated `telemetry-tests.yml` step retains its tracing dependencies,
+Rust backend setting, strict skip checks, and separate results. Its selected
+modules, including operation-specific files outside `tests/telemetry`, do not
+run again in the general offline suite. `toxiproxy-tests.yml` retains the proxy
+installation and required network-failure checks.
 
 **Service-test scope is unchanged.** Unmarked service tests and tests selected
 only by other markers are not automatically included in the emulator job.

@@ -22,12 +22,12 @@ fn cpu_ns() -> u64 {
     })
 }
 
-fn memory() -> serde_json::Value {
+fn python_metrics(method: &str) -> serde_json::Value {
     Python::with_gil(|py| {
         let json: String = py
             .import_bound("native_experiment_metrics")
             .unwrap()
-            .call_method0("snapshot_json")
+            .call_method0(method)
             .unwrap()
             .extract()
             .unwrap();
@@ -142,6 +142,7 @@ async fn reads(driver: &Arc<CosmosDriver>, count: usize, concurrency: usize, exp
 fn measure_allocator_native_reads() {
     assert!(!cfg!(debug_assertions), "use --release");
     crate::test_support::prepare_python();
+    let python_runtime = python_metrics("python_source_json");
     let iterations: usize = std::env::var("ALLOCATOR_ITERATIONS")
         .unwrap()
         .parse()
@@ -171,13 +172,13 @@ fn measure_allocator_native_reads() {
     assert_eq!(item["id"], "order-17");
     assert_eq!(item["customerId"], "customer-17");
     runtime.block_on(reads(&driver, 512, concurrency, &expected));
-    let before = memory();
+    let before = python_metrics("snapshot_json");
     let cpu_start = cpu_ns();
     let start = Instant::now();
     runtime.block_on(reads(&driver, iterations, concurrency, &expected));
     let elapsed_ns = start.elapsed().as_nanos();
     let process_cpu_ns = cpu_ns() - cpu_start;
-    let after = memory();
+    let after = python_metrics("snapshot_json");
     println!(
         "ALLOCATOR_BENCHMARK={}",
         serde_json::json!({
@@ -186,6 +187,7 @@ fn measure_allocator_native_reads() {
             "warmup_operations": 512, "body_bytes": expected.len(),
             "read_future_bytes": future_size, "elapsed_ns": elapsed_ns,
             "process_cpu_ns": process_cpu_ns, "before": before, "after": after,
+            "python_runtime": python_runtime,
             "scope": "In-memory emulator plus native item future, Tokio spawn and Python tuple conversion; no asyncio bridge or public Python API; not network latency",
         })
     );
