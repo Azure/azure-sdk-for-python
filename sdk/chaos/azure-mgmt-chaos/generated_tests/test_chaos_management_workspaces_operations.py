@@ -37,7 +37,27 @@ class TestChaosManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
             workspace_name="str",
             resource={
                 "location": "str",
-                "properties": {"scopes": ["str"], "communicationEndpoint": "str", "provisioningState": "str"},
+                "properties": {
+                    "scopes": ["str"],
+                    "encryption": {
+                        "customerManagedKeyEncryption": {"keyEncryptionKeyUrl": "str", "keyVaultResourceId": "str"},
+                        "customerManagedKeyOnboarding": {"applicationId": "str"},
+                        "status": {
+                            "state": "str",
+                            "error": {
+                                "additionalInfo": [{"info": {}, "type": "str"}],
+                                "code": "str",
+                                "details": [...],
+                                "message": "str",
+                                "target": "str",
+                            },
+                            "lastCheckedAt": "2020-02-20 00:00:00",
+                            "observedKeyEncryptionKeyUrl": "str",
+                            "observedProtection": "str",
+                        },
+                    },
+                    "provisioningState": "str",
+                },
                 "id": "str",
                 "identity": {
                     "type": "str",
@@ -74,6 +94,11 @@ class TestChaosManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
                     "principalId": "str",
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
+                "properties": {
+                    "encryption": {
+                        "customerManagedKeyEncryption": {"keyEncryptionKeyUrl": "str", "keyVaultResourceId": "str"}
+                    }
                 },
                 "tags": {"str": "str"},
             },
