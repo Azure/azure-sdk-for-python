@@ -43,7 +43,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
 # This public re-export is not recognized by Pylint's import resolver.
-from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection  # pylint: disable=no-name-in-module
+from azure.ai.projects.aio.operations import AsyncRealtimeConnection  # pylint: disable=no-name-in-module
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeAudioFormatsAudioPcm,
@@ -124,7 +124,7 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
       a barge-in is dropped, stopping playback the instant the user speaks.
     """
 
-    def __init__(self, connection: "AsyncBetaRealtimeConnection") -> None:
+    def __init__(self, connection: "AsyncRealtimeConnection") -> None:
         self._conn = connection
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._audio = pyaudio.PyAudio()
