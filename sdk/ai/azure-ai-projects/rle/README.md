@@ -179,3 +179,33 @@ The registry selects `2.7.6b1` as `latest`, preserving all earlier versions and
 checksums. This is an RLE preview distribution, not a PyPI publication.
 Backend deployment, live gateway/training qualification and consumer image
 rebuilds are separate work.
+
+## Version 2.7.7b1
+
+This explicitly pinned preview preserves caller-safe grader causes from queued
+V3/V4 failed events, including attachment recovery and synthesized terminal
+delivery. `RLERolloutError` exposes `cause`, `service_message`, `attempt_id` and
+`sequence`. Unknown cause codes remain available as bounded metadata; arbitrary
+fields are discarded. Older failures without structured causes stay generic.
+No raw grader traceback or diagnostic is introduced by this change.
+
+The wheel is built from SDK source PR #15 commit
+`c2221797bf30457520ead8ba027bb80ad35e67c6` in
+`sujit-kamireddy/azure-sdk-for-python`, with only the staged package version
+overridden to `2.7.7b1`. That source includes the merged `2.7.6b1` source
+revision. V4 remains the default; consumers requiring V3 must continue to set
+`protocol_version="v3"` explicitly. Source PR #15 is not merged by this artifact
+publication.
+
+The wheel is 610379 bytes with SHA-256
+`d73422c1c21f0e9be3983c146dcc3373f1e0e69908c7c3ef900764dbf1e1f2ed`.
+All 291 offline rollout tests and 27 Loom WebSocket/breaker/report integration
+tests passed against an isolated installation of the wheel, without an SDK
+source-path override.
+
+`latest` deliberately remains `2.7.6b1`; this publication adds an opt-in version
+and preserves every existing wheel and checksum. The registry entry becomes
+usable through the upstream installer only after this artifact PR is merged
+into `rle-releases`. Immutable, hash-pinned public-fork artifact URLs can be
+consumed before that merge. This is not a PyPI release, upstream source merge,
+backend deployment, image publication or live training qualification.
