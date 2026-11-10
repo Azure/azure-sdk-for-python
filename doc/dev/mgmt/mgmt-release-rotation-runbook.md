@@ -132,7 +132,7 @@ an existing version to repair tracking.
 
 Automatic release completion uses the triggering SDK PR selected by
 `AutoReleasePrepare` to find the matching release plan. The
-[completion job](../../../eng/pipelines/templates/stages/release-artifact.yml)
+[completion job](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/pipelines/templates/stages/release-artifact.yml)
 imports that stage's SDK PR output before updating the plan. For manual releases
 with multiple active plans, supply the intended release plan ID instead of relying
 on the package name.
