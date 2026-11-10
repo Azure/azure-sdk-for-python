@@ -5,6 +5,7 @@
 ### Features Added
 
 * Voice Agents are generally available without preview opt-in for Realtime sessions, stored Realtime conversations, agent generation, and Teams Phone Extensibility/Twilio telephony and call jobs. Use `.voice_agents.realtime`, `.voice_agents.conversations`, `.voice_agents.telephony`, and `.agents.create_from_prompt()`. GPT Live, inline subagent handoff, SIP, post-call delivery, and campaigns remain in preview.
+* External Agents are generally available. Creating and managing agents with `ExternalAgentDefinition` no longer requires `allow_preview=True`, and the `ExternalAgents=V1Preview` opt-in header is no longer sent.
 * Added preview `.beta.voice_agents.live.connect()` and `VoiceAgentLiveDefinition` for GPT Live sessions, with typed session, client/server event, tool, decision, and usage models, session updates, text and audio input, and Responses backend function-tool support.
 * Added Live delegation models for Responses backends, application-managed work, and same-project prompt agents: `VoiceAgentLiveResponsesDelegation`, `VoiceAgentLiveClientDelegation`, and `VoiceAgentLiveManagedAgentDelegation`.
 * Added `.beta.voice_agents.live_conversations` for listing, retrieving, and deleting stored Live conversations, retrieving conversation items, and retrieving or downloading item-level and conversation-level audio.
@@ -36,6 +37,7 @@ Breaking changes in beta methods:
 
 Breaking changes in beta classes:
 
+* Renamed `BetaRealtime`, `BetaRealtimeConnection`, and `BetaRealtimeConnectionManager` to `Realtime`, `RealtimeConnection`, and `RealtimeConnectionManager`, respectively, and their `AsyncBetaRealtime*` counterparts to `AsyncRealtime*`. The old exports were removed as Realtime becomes generally available.
 * Removed `CreateTelephonyBindingRequest`, `CreateTeamsPhoneExtensibilityTelephonyBindingRequest`, and `CreateTwilioTelephonyBindingRequest`. Use `TelephonyBinding`, `TeamsPhoneExtensibilityTelephonyBinding`, and `TwilioTelephonyBinding`, respectively.
 * Class `CreateTelephonyCallJobRequest` renamed to `TelephonyCallJobCreate`.
 * Removed `TelephonyOutboundDestination` and `TelephonyOutboundDestinationType`; use `TelephonyAddress` and `TelephonyAddressType`. The `source` and `destination` properties on `TelephonyCallJobCreate` and `TelephonyCallJob` now use `TelephonyAddress`; `source` no longer accepts a plain string.
@@ -119,6 +121,7 @@ Breaking changes in beta classes:
 ### Sample updates
 
 * Corrected workflow streaming sample type narrowing and access to Foundry-specific action fields without changing the streamed output.
+* Clarified preview Live examples and generated-audio readback prerequisites.
 * Updated Voice Agent samples to use the GA operation paths without `allow_preview=True`; GPT Live samples retain preview opt-in.
 * Added Live voice-agent samples under `samples/agents/voice/` for session lifecycle, text and audio conversations, local function tools, and same-project managed-agent delegation.
 * Added `sample_voice_agent_live_read_conversation.py` demonstrating stored Live conversation, transcript, and audio retrieval, with an optional temporary greeting session.

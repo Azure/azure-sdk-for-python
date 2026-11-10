@@ -5,7 +5,7 @@
 
 """
 DESCRIPTION:
-    Create a temporary GPT Live agent, open a session, update its settings,
+    Create a temporary GPT-Live agent (preview), open a session, update its settings,
     add instructions, and close it. The sample deletes the agent version it
     creates. No user input or audio devices are needed. Silent audio frames
     advance the Live timeline while it acknowledges the appended instructions.
@@ -17,7 +17,7 @@ USAGE:
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live deployment name.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT-Live deployment name.
     3) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.
 
     Uses DefaultAzureCredential. Foundry starts the session automatically;

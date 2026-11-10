@@ -5,7 +5,7 @@
 
 """
 DESCRIPTION:
-    Send text through GPT Live and print the Responses backend's reply.
+    Send text through GPT-Live (preview) and print the Responses backend's reply.
     Set TEXT_PROMPTS to a list for multiple turns in one session.
     The sample deletes its temporary agent version when finished.
 
@@ -16,7 +16,7 @@ USAGE:
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live deployment name.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT-Live deployment name.
     3) FOUNDRY_MODEL_NAME (required) - A Responses deployment available to Live.
     4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.
 
