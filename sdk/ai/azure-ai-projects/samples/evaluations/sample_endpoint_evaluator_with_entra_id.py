@@ -21,28 +21,35 @@ DESCRIPTION:
     fields. Authentication is resolved server-side using a managed identity token acquired
     via the workspace connection.
 
+    This sample uses endpoint contract schema version 0.0.2. With 0.0.2, the evaluator must
+    define exactly one metric, of type "ordinal" or "continuous".
+
     Your endpoint must:
     - Accept POST requests with a JSON body like:
         {
-          "schema_version": "0.0.1",
+          "schema_version": "0.0.2",
           "evaluator_name": "...",
           "evaluator_version": "...",
-          "evaluation_level": "turn",
-          "data": {
-            "item": {"query": "...", "context": "..."},
-            "sample": {"response": "..."}
-          }
+          "evaluation_target": {"type": "last_turn", "response_start_index": 1},
+          "context": {"query": "...", "response": "...", "context": "..."},
+          "messages": [
+            {"role": "user", "content": [{"type": "text", "text": "..."}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "..."}]}
+          ],
+          "agent_definition": {"tool_definitions": []},
+          "metadata": {"run_type": "dataset"}
         }
+      The messages from response_start_index onward are the response to score. For
+      conversation-level evaluators, evaluation_target is {"type": "conversation"}.
     - Return a JSON response like:
         {
-          "schema_version": "0.0.1",
-          "score": 0.85,
+          "status": "completed",  // Valid values: "completed", "error", "skipped"
+          "score": 4,             // Required when completed; within the metric's range
+          "passed": true,         // Required when completed
           "reason": "Response is accurate and concise.",
-          "status": "Completed",  // Valid values: "Completed", "Error", "Skipped"
-          "properties": {"model_used": "gpt-4o", "custom_flag": true},
-          "threshold": null,
-          "passed": true
+          "properties": {"model_used": "gpt-4o"}
         }
+      Omit "score" and "passed" when status is "error" or "skipped". Unknown fields are rejected.
     - Validate incoming Bearer tokens (e.g., via Azure App Service Easy Auth or custom middleware)
 
 USAGE:
@@ -77,6 +84,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EndpointBasedEvaluatorDefinition,
+    EndpointEvaluatorSchemaVersion,
     EvaluatorCategory,
     EvaluatorMetric,
     EvaluatorType,
@@ -159,6 +167,7 @@ with (
             evaluator_type=EvaluatorType.CUSTOM,
             definition=EndpointBasedEvaluatorDefinition(
                 connection_name=connection_name,
+                schema_version=EndpointEvaluatorSchemaVersion.V0_0_2,
                 metrics={
                     "score": EvaluatorMetric(
                         type="ordinal",
