@@ -25,7 +25,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -46,6 +46,7 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    Dimension,
     EvaluatorCategory,
     EvaluatorDefinitionType,
     EvaluatorGenerationInputs,
@@ -114,25 +115,25 @@ with (
     # 2. Edit dimensions locally.
     # Domain-expert edits:
     #   * Always preserve the ALWAYS-ON `general_quality` residual dimension
-    #     exactly as-is (id, weight, description, always_applicable).
+    #     (id, weight, description, always_applicable).
     #   * Boost the most important editable dimension to weight 10.
     #   * Drop the lowest-weight editable dimension as redundant.
     #   * Add a new custom dimension specific to this assistant.
+    # Generated dimensions may leave `weight` unset and report the service-assigned
+    # weight in read-only `generated_weight`. Likert weights are all-or-none, so v2
+    # authors an explicit weight on every dimension, starting from the generated one.
+    def effective_weight(dim: Dimension) -> int:
+        if dim.weight is not None:
+            return dim.weight
+        return dim.generated_weight or 1
+
     editable = [d for d in v1_definition.dimensions if not d.always_applicable]
     always_on = [d for d in v1_definition.dimensions if d.always_applicable]
-    weights: dict[str, int] = {}
-    for dimension in v1_definition.dimensions:
-        if dimension.weight is None:
-            raise ValueError(
-                f"Dimension `{dimension.id}` has no configured weight. "
-                "This sample requires a weighted rubric to rank and edit dimensions."
-            )
-        weights[dimension.id] = dimension.weight
 
     edited_dimensions = []
     if editable:
-        top = max(editable, key=lambda d: weights[d.id])
-        lowest = min(editable, key=lambda d: weights[d.id])
+        top = max(editable, key=effective_weight)
+        lowest = min(editable, key=effective_weight)
         for dim in editable:
             if dim.id == lowest.id:
                 continue
@@ -140,7 +141,7 @@ with (
                 {
                     "id": dim.id,
                     "description": dim.description,
-                    "weight": 10 if dim.id == top.id else dim.weight,
+                    "weight": 10 if dim.id == top.id else effective_weight(dim),
                 }
             )
 
@@ -161,7 +162,7 @@ with (
             {
                 "id": dim.id,
                 "description": dim.description,
-                "weight": dim.weight,
+                "weight": effective_weight(dim),
                 "always_applicable": True,
             }
         )

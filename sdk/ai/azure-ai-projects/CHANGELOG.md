@@ -144,6 +144,9 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
+* Updated `sample_rubric_evaluator_manual.py` to show Likert, Boolean, and safety rubric evaluators with `scoring`, `pass_threshold`, and `allowed` dimensions.
+* Updated `sample_rubric_evaluator_generation_basic.py` to set the quality `category`, Likert `scoring`, and `pass_threshold`, and added a safety generation example to `sample_rubric_evaluator_generation_all_sources.py`.
+* Updated `sample_rubric_evaluator_generation_iterate.py` to start edited weights from the read-only `generated_weight` when a generated dimension has no authored `weight`.
 * Added `sample_voice_agent_campaign.py` demonstrating future-scheduled outbound campaign creation, automatic polling, conditional cancellation, and deletion.
 * Added `sample_voice_agent_live_read_conversation.py` demonstrating stored GPT Live conversation, transcript, and audio retrieval, with an optional temporary greeting session.
 * Added `sample_voice_agent_read_generated_audio.py` demonstrating retrieval of generated, unheard audio from an interrupted Realtime reply.
@@ -152,7 +155,7 @@ Breaking changes in beta classes:
 * Added `live_sample_utils.py`, `managed_agent_sample_utils.py`, and `realtime_interruption_utils.py` providing shared GPT Live lifecycle helpers, managed-agent audio and event handling, and Realtime interruption and recording helpers, respectively.
 * Updated Voice Agent and External Agent samples for their GA operation paths and preview opt-in requirements. Consolidated Realtime text-conversation and function-tool examples into asynchronous examples and removed the separate asynchronous basic-agent example.
 * Updated Agent Insights examples for the GA sub-client and flattened monitor, run, and insight-update arguments.
-* Updated optimization polling examples to use `AgentOptimizationJobStatus` and handle skipped jobs, and the rubric iteration example to validate optional dimension weights.
+* Updated optimization polling examples to use `AgentOptimizationJobStatus` and handle skipped jobs.
 
 ## 2.10.0 (2026-10-30)
 
