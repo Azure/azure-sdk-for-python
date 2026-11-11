@@ -14551,14 +14551,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.PromptOptimizationConfiguration(AgentOptimizationConfigurationBase, discriminator='prompt_optimization'):
-        context: Optional[list[SteeringPromptOptimizationContext]]
+        context: Optional[list[OptimizationContext]]
         type: Literal[AgentOptimizationConfigurationType.PROMPT_OPTIMIZATION]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                context: Optional[list[SteeringPromptOptimizationContext]] = ...
+                context: Optional[list[OptimizationContext]] = ...
             ) -> None: ...
 
         @overload

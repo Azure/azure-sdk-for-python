@@ -213,17 +213,13 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     @audioEvaluationsPreparer()
     @pytest.mark.parametrize(
         "sample_path",
-        get_sample_paths(
-            "evaluations", samples_to_test=["sample_audio_conversation_evaluation.py"]
-        ),
+        get_sample_paths("evaluations", samples_to_test=["sample_audio_conversation_evaluation.py"]),
     )
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_audio_conversation_sample(self, sample_path: str, **kwargs) -> None:
         sanitize_audio_evaluation_dataset()
-        executor = SyncSampleExecutor(
-            self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs
-        )
+        executor = SyncSampleExecutor(self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs)
         with patch("pprint.pprint") as output:
             executor.execute()
         assert_audio_evaluation_results(
@@ -242,9 +238,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_voice_agent_simulation_sample(self, sample_path: str, **kwargs) -> None:
-        executor = SyncSampleExecutor(
-            self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs
-        )
+        executor = SyncSampleExecutor(self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs)
         with patch("pprint.pprint") as output:
             executor.execute()
         assert_audio_evaluation_results(output.call_args_list, ("task_completion",))
