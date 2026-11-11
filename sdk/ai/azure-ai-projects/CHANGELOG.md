@@ -11,14 +11,14 @@
 * Added optimization trace selection through `AgentOptimizationFixedTraceWindow`, `AgentOptimizationTraceIdsTraceWindow`, and `AgentOptimizationAppInsightsTraceConnectionConfiguration`.
 * Added `.agents.download_optimization_job_file()` for downloading job or candidate artifacts, with file metadata exposed through `AgentOptimizationCandidateFile`. Added optional `error`, `execution_summary`, `files`, and `resolved_context` properties on `AgentOptimizationCandidate`.
 * Added terminal `SKIPPED` status through `AgentOptimizationJobStatus.SKIPPED` and `AgentOptimizationCandidateStatus.SKIPPED` for optimization inputs that are unavailable.
-* Added quality and safety rubric generation through `EvaluatorGenerationCategory`, Boolean and Likert scoring through `RubricScoring` and `RubricScoringMode`, and optional `Dimension.allowed` and read-only `Dimension.generated_weight`.
+* Added quality and safety rubric generation through `EvaluatorGenerationCategory`, Boolean and Likert scoring through `RubricScoring` and `RubricScoringMode`, and optional `Dimension.allowed` and read-only `Dimension.generated_weight`. `Dimension.weight` is now optional for unweighted rubrics.
 * Added optional `category`, `dimensions`, `pass_threshold`, and `scoring` properties on `EvaluatorGenerationInputs` and `EvaluatorGenerationJob`. `EvaluatorGenerationInputs.model` can now be omitted for safety generation, which uses service-managed capacity; quality generation still requires a model. `TracesEvaluatorGenerationJobSource` accepts explicit `trace_ids`.
 * Added preview `.beta.evaluators.list_diagnostics()` for retrieving evaluator publication lineage, with time, version, dimension, and diagnostic-type filters. Added `EvaluatorDiagnostic`, actor and change models, and evaluator health metric models.
 * Added optional `EndpointBasedEvaluatorDefinition.schema_version` and `EndpointEvaluatorSchemaVersion` for selecting the endpoint evaluator contract version.
 * Added scheduled dataset and trace evaluations through `DatasetEvaluationRuleAction` and `TraceEvaluationRuleAction`. `EvaluationRule` now exposes optional `schedule`, `provisioning_status`, and `error` properties, and `EvaluationRuleEventType` includes `TIMER_TRIGGER`.
 * Added typed evaluation input sources for JSONL, CSV, stored completions, target completions, conversation simulation, and agent traces, including `CreateEvalJsonlRunDataSource`, `EvalCsvRunDataSource`, `TargetCompletionEvalRunDataSource`, `UserConversationSimulationEvalRunDataSource`, and `AzureAITraceDataSourceEvalRunDataSource`.
 * Added `DataGenerationJobType.CONVERSATIONS`, `UserConversationSimulationDefaultConfiguration`, and optional `TracesDataGenerationJobConfiguration.generate_test_case_rubric`. `DataGenerationJobResult.warnings` now exposes `DataGenerationWarning` and `DataGenerationWarningCode`.
-* `DailyRecurrenceSchedule.hours` is now optional.
+* `DailyRecurrenceSchedule.hours` is now optional. When omitted, the service uses the current UTC hour at schedule creation time.
 * Added optional `MCPToolboxTool.request_header_bindings`, with `MCPToolboxRequestHeaderBinding` and `MCPToolboxRequestHeaderBindingSource`, for configuring client-supplied headers forwarded to an MCP server.
 * Added preview GPT Live sessions through `.beta.voice_agents.live.connect()` and `VoiceAgentLiveDefinition`, with typed session configuration, lifecycle and usage events, session updates, text and audio input, and Responses backend function tools.
 * Added GPT Live delegation through `VoiceAgentLiveResponsesDelegation`, `VoiceAgentLiveClientDelegation`, and `VoiceAgentLiveManagedAgentDelegation` for Responses backends, application-managed work, and same-project prompt agents.
@@ -41,14 +41,10 @@
 Breaking changes in GA methods and classes:
 
 * `AgentOptimizationJob.status` and the `status` argument of `.agents.list_optimization_jobs()` now use `AgentOptimizationJobStatus` instead of `JobStatus`. Update enum references. Job and candidate status consumers must handle terminal `AgentOptimizationJobStatus.SKIPPED` and `AgentOptimizationCandidateStatus.SKIPPED`, respectively, rather than assuming only the previous terminal statuses are possible.
-* `PromptOptimizationConfiguration.context` now accepts `list[SteeringPromptOptimizationContext]` instead of `list[OptimizationContext]`. Trace and skill-reference contexts belong to skill optimization configurations.
-* `Dimension.weight` is now optional and may be `None`. Code reading rubric weights must handle unweighted dimensions instead of assuming every weight is an integer.
-* `EvaluatorGenerationInputs.model` changed from `str` to `Optional[str]` and is no longer a required constructor argument. Code reading or forwarding generation inputs must handle `None` instead of assuming a model string. The service still requires a model for quality generation, including when `category` is omitted; safety generation uses service-managed capacity and ignores a supplied model.
 * `CompoundFilter.filters` now uses `list[Union[ComparisonFilter, CompoundFilter]]` instead of `list[Union[ComparisonFilter, Any]]`, narrowing its type annotations to supported recursive filter models.
 
 Breaking changes in shared model types:
 
-* `DailyRecurrenceSchedule.hours` changed from `list[int]` to `Optional[list[int]]`. Code reading schedules must handle `None` before iterating or indexing `hours`. Omitting it when creating a schedule uses the current UTC hour at creation time.
 * Renamed `ActivityProtocolAccessBoundary.READ1_ON1_*` and `WRITE1_ON1_*` members to `READ_1_ON1_*` and `WRITE_1_ON1_*`, respectively, for the `MANAGER`, `DEVELOPERS`, `ALLOWLISTED`, and `TENANT` boundaries. Wire values are unchanged.
 
 Breaking changes in beta methods:
@@ -82,6 +78,10 @@ Breaking changes in beta classes:
 * Renamed `VoiceAgentInputTranscriptionModel.GPT4_O_TRANSCRIBE`, `GPT4_O_MINI_TRANSCRIBE`, `GPT4_O_TRANSCRIBE_DIARIZE`, and `WHISPER1` to `GPT_4_O_TRANSCRIBE`, `GPT_4_O_MINI_TRANSCRIBE`, `GPT_4_O_TRANSCRIBE_DIARIZE`, and `WHISPER_1`, respectively. Wire values are unchanged.
 
 ### Bugs Fixed
+
+### Other Changes
+
+* Clarified `PromptOptimizationConfiguration.context` type annotations to use `SteeringPromptOptimizationContext`, the only concrete optimization-context variant supported in 2.10.0. Steering prompt contexts remain supported; the new trace and skill-reference contexts belong to `SkillOptimizationConfiguration`.
 
 ### Sample updates
 
