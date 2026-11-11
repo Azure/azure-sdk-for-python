@@ -6,6 +6,7 @@
 
 from importlib import import_module
 from importlib.util import find_spec
+import json
 import logging
 import os
 from pathlib import Path
@@ -29,7 +30,7 @@ RUN = subprocess.run
 @pytest.fixture
 def provision(tmp_path, monkeypatch):
     for name in list(os.environ):
-        if name.startswith("CIBW_") or name.startswith("AZURESDK_PYTHON_"):
+        if name.startswith(("CIBW_", "AZURESDK_PYTHON_", "PYO3_")):
             monkeypatch.delenv(name)
     monkeypatch.setattr(windows_wheels.sys, "platform", "win32")
     monkeypatch.setattr(windows_wheels.platform, "machine", lambda: "AMD64")
@@ -90,10 +91,6 @@ def selected_options(package, config="", environment=None):
     return Options(platform="windows", command_line_arguments=arguments, env=environment or os.environ)
 
 
-def read_pyo3_config(path):
-    return dict(line.split("=", 1) for line in path.read_text(encoding="utf-8").splitlines())
-
-
 def test_selected_versions_and_matching_arm64_libraries(provision, monkeypatch):
     package, calls = provision
     write_config(package)
@@ -111,7 +108,6 @@ def test_selected_versions_and_matching_arm64_libraries(provision, monkeypatch):
     monkeypatch.setenv("CIBW_ENVIRONMENT", 'KEEP="pipeline" EXTRA="$PYTHON_VERSION"')
     original = (package / "pyproject.toml").read_bytes()
     before = os.environ.copy()
-    pyo3_configs = []
 
     with windows_wheels.windows_wheel_config(package) as (arguments, kwargs):
         assert arguments[0] == "--config-file"
@@ -135,26 +131,23 @@ def test_selected_versions_and_matching_arm64_libraries(provision, monkeypatch):
                     / "libs"
                 )
                 assert Path(environment["PYTHON_ARM64_LIB_DIR"]) == expected
-                assert "PYO3_CROSS_LIB_DIR" not in environment
-                pyo3_config = Path(environment["PYO3_CONFIG_FILE"])
-                pyo3_configs.append(pyo3_config)
-                assert pyo3_config.is_file()
-                target = read_pyo3_config(pyo3_config)
+                assert Path(environment["PYO3_CROSS_LIB_DIR"]) == expected
+                assert "PYO3_CONFIG_FILE" not in environment
+                target = json.loads((expected / "build-details.json").read_text(encoding="utf-8"))
                 major, minor = configuration.version.split(".")[:2]
-                assert target["version"] == f"{major}.{minor}"
-                assert Path(target["lib_dir"]) == expected
-                assert target["ext_suffix"] == f".cp{major}{minor}-win_arm64.pyd"
-                assert target["build_flags"] == ""
-                assert "abiflags" not in target
+                assert environment["PYO3_CROSS_PYTHON_VERSION"] == f"{major}.{minor}"
+                assert target["language"]["version"] == f"{major}.{minor}"
+                assert target["implementation"]["name"] == "cpython"
+                assert target["abi"]["extension_suffix"] == f".cp{major}{minor}-win_arm64.pyd"
+                assert target["abi"]["flags"] == []
             else:
                 assert "PYO3_CROSS_LIB_DIR" not in environment
                 assert "PYTHON_ARM64_LIB_DIR" not in environment
                 assert "PYO3_CONFIG_FILE" not in environment
+                assert "PYO3_CROSS_PYTHON_VERSION" not in environment
         assert os.environ == before
 
     assert not config.exists()
-    assert pyo3_configs
-    assert not any(path.exists() for path in pyo3_configs)
     assert (package / "pyproject.toml").read_bytes() == original
     expected = {(configuration.version, configuration.arch) for configuration in configurations}
     actual = {
@@ -200,7 +193,8 @@ def test_package_overrides_and_windows_environment_are_preserved(provision, monk
             actual = options.build_options(configuration.identifier).environment.as_dictionary(previous)
             if configuration.arch == "ARM64":
                 actual.pop("PYTHON_ARM64_LIB_DIR")
-                actual.pop("PYO3_CONFIG_FILE")
+                actual.pop("PYO3_CROSS_LIB_DIR")
+                actual.pop("PYO3_CROSS_PYTHON_VERSION")
                 expected.pop("PYTHON_ARM64_LIB_DIR", None)
             assert actual == expected
 
@@ -246,14 +240,69 @@ def test_free_threaded_package_and_libraries_match(provision, monkeypatch):
         libraries = Path(environment["PYTHON_ARM64_LIB_DIR"])
         assert libraries.parent.parent.name == "pythonarm64-freethreaded.3.14.8"
         assert (libraries / "python314t.lib").is_file()
-        assert "PYO3_CROSS_LIB_DIR" not in environment
-        target = read_pyo3_config(Path(environment["PYO3_CONFIG_FILE"]))
-        assert target["version"] == "3.14"
-        assert Path(target["lib_dir"]) == libraries
-        assert target["build_flags"] == "Py_GIL_DISABLED"
-        assert target["abiflags"] == "t"
-        assert target["ext_suffix"] == ".cp314t-win_arm64.pyd"
+        assert Path(environment["PYO3_CROSS_LIB_DIR"]) == libraries
+        assert environment["PYO3_CROSS_PYTHON_VERSION"] == "3.14t"
+        assert "PYO3_CONFIG_FILE" not in environment
+        target = json.loads((libraries / "build-details.json").read_text(encoding="utf-8"))
+        assert target["language"]["version"] == "3.14"
+        assert target["abi"]["flags"] == ["t"]
+        assert target["abi"]["extension_suffix"] == ".cp314t-win_arm64.pyd"
     assert {command[2] for command in calls} == {"python-freethreaded", "pythonarm64-freethreaded"}
+
+
+@pytest.mark.parametrize("features", [["extension-module", "abi3-py310"], ["extension-module"]])
+def test_arm64_does_not_override_package_abi_mode(provision, features):
+    package, calls = provision
+    write_config(package, build="cp310-*")
+    cargo = package / "Cargo.toml"
+    cargo.write_text(
+        '[package]\nname = "native-test"\nversion = "1.0.0"\n'
+        f'[dependencies]\npyo3 = {{ version = "0.22", features = {json.dumps(features)} }}\n',
+        encoding="utf-8",
+    )
+    original = cargo.read_bytes()
+    with windows_wheels.windows_wheel_config(package) as (arguments, kwargs):
+        options = selected_options(package, arguments[1], kwargs["env"])
+        for identifier in ("cp310-win_amd64", "cp310-win_arm64"):
+            environment = options.build_options(identifier).environment.as_dictionary({})
+            assert "PYO3_CONFIG_FILE" not in environment
+            assert "PYO3_NO_PYTHON" not in environment
+            if identifier.endswith("arm64"):
+                assert environment["PYO3_CROSS_PYTHON_VERSION"] == "3.10"
+                libraries = Path(environment["PYO3_CROSS_LIB_DIR"])
+                details = json.loads((libraries / "build-details.json").read_text(encoding="utf-8"))
+                assert details["language"]["version"] == "3.10"
+                assert details["abi"]["flags"] == []
+            else:
+                assert "PYO3_CROSS_PYTHON_VERSION" not in environment
+                assert "PYO3_CROSS_LIB_DIR" not in environment
+        assert not list(Path(arguments[1]).parent.glob("pyo3-*.txt"))
+    assert cargo.read_bytes() == original
+    assert {command[2] for command in calls} == {"python", "pythonarm64"}
+
+
+def test_existing_interpreter_metadata_is_not_overwritten(tmp_path):
+    path = tmp_path / "build-details.json"
+    original = '{"schema_version":"1.0","provided_by":"interpreter"}\n'
+    path.write_text(original, encoding="utf-8")
+    configuration = SimpleNamespace(identifier="cp310-win_arm64", version="3.10.11")
+    windows_wheels._write_build_details(configuration, tmp_path)
+    assert path.read_text(encoding="utf-8") == original
+
+
+def test_package_pyo3_config_remains_authoritative(provision):
+    package, calls = provision
+    write_config(package, build="cp310-*")
+    config = package / "pyproject.toml"
+    config.write_text(
+        config.read_text(encoding="utf-8") + '\n[[tool.cibuildwheel.overrides]]\nselect = "*-win_arm64"\n'
+        'environment = { PYO3_CONFIG_FILE = "package-owned-config.txt" }\n',
+        encoding="utf-8",
+    )
+    with windows_wheels.windows_wheel_config(package) as (arguments, kwargs):
+        options = selected_options(package, arguments[1], kwargs["env"])
+        environment = options.build_options("cp310-win_arm64").environment.as_dictionary({})
+        assert environment["PYO3_CONFIG_FILE"] == "package-owned-config.txt"
 
 
 def test_native_arm64_host_does_not_provision_amd64(provision, monkeypatch):
