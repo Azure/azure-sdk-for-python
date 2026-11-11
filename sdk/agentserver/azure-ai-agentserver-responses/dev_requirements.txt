@@ -1,5 +1,6 @@
 -e ../../../eng/tools/azure-sdk-tools
 -e ../azure-ai-agentserver-core
+-e ../azure-ai-agentserver-invocations
 ../../monitor/azure-monitor-query
 azure-identity>=1.17.0,<2.0.0
 httpx>=0.27.0,<1.0.0
