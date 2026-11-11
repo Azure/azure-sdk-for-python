@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.7b1
+python install_rle_sdk.py --version 2.7.8b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -205,6 +205,38 @@ Packaged Python files match the pinned merged source except for the release
 version.
 
 The registry selects `2.7.7b1` as `latest`, preserving all seven earlier
+versions and checksums. This is an RLE preview distribution, not a PyPI
+publication. Backend deployment, live gateway/training qualification and
+consumer image rebuilds are separate work.
+
+## Version 2.7.8b1
+
+This preview adds optional top-level `phase="train"` or `phase="eval"` to
+rollout requests, synchronous/asynchronous HTTP operations, and shared async
+rollout clients. Omitted values remain absent; invalid values fail before
+submission. A backend that accepts the phase field is required.
+
+Legacy terminal failures preserve an explicit boolean retry hint on
+`RLERolloutError.retryable`. Missing/nonboolean hints and unknown outcomes
+remain nonretryable. Queued V3/V4 dependency `cause.retryable=true` does not
+authorize fresh execution and never sets this terminal retry property.
+The SDK does not automatically replay executions.
+
+The wheel also includes merged model/renderer catalog preflight and bounded
+structured queued failure causes. V4 defaults, protected full-result retrieval,
+dual credentials, admission at 32, and original-ID attachment remain unchanged.
+
+The wheel is built from merged SDK source
+`6cdd9afe512e826355a861338c2b0179d0cf7fb1` in
+`sujit-kamireddy/azure-sdk-for-python`, including source PR #18. Only the staged
+package version is overridden to `2.7.8b1`. The wheel is 612970 bytes with SHA-256
+`eba805b4d5a7e8d665328903fe23bb865738bd43985462ab09a4aa278d9476b6`.
+All 595 offline rollout/model tests passed against an isolated installation
+of this wheel. All 63 packaged Python files match the merged source except
+for the release version, and all nine registry wheels pass integrity and
+checksum validation.
+
+The registry selects `2.7.8b1` as `latest`, preserving all eight earlier
 versions and checksums. This is an RLE preview distribution, not a PyPI
 publication. Backend deployment, live gateway/training qualification and
 consumer image rebuilds are separate work.
