@@ -5,7 +5,9 @@
 """
 DESCRIPTION:
     Download generated, unheard audio from an existing interrupted Realtime
-    reply. This read-only REST sample never creates or deletes resources.
+    reply. This GA, read-only REST sample never creates or deletes resources.
+    The item must already have a generated-audio artifact; a stored conversation
+    alone is insufficient, and cancelling a response does not guarantee an artifact.
 
 USAGE:
     python sample_voice_agent_read_generated_audio.py

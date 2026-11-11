@@ -158,6 +158,21 @@ class TestFoundryFeaturesHeaderOnGaOperationsAsync(FoundryFeaturesHeaderTestBase
         method = getattr(sc, method_attr)
         await self._assert_header_absent_async(method_name, self._make_fake_call(method))
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("subclient_name", ["agent_insight_monitors"])
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    async def test_promoted_operations_do_not_require_preview_async(
+        self,
+        async_client_preview_enabled: AsyncAIProjectClient,
+        async_client_preview_disabled: AsyncAIProjectClient,
+        subclient_name: str,
+        allow_preview: bool,
+    ) -> None:
+        client = async_client_preview_enabled if allow_preview else async_client_preview_disabled
+        assert not hasattr(client.beta, subclient_name)
+        subclient = getattr(client, subclient_name)
+        await self._assert_header_absent_async(f"{subclient_name}.get", lambda: subclient.get("resource-test"))
+
 
 # ---------------------------------------------------------------------------
 # Tests: caller-controlled header override / augmentation on GA operations (async)

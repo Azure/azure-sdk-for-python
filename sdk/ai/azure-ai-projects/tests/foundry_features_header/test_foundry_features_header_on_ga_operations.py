@@ -153,6 +153,20 @@ class TestFoundryFeaturesHeaderOnGaOperations(FoundryFeaturesHeaderTestBase):
         method = getattr(sc, method_attr)
         self._assert_header_absent(method_name, self._make_fake_call(method))
 
+    @pytest.mark.parametrize("subclient_name", ["agent_insight_monitors"])
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    def test_promoted_operations_do_not_require_preview(
+        self,
+        client_preview_enabled: AIProjectClient,
+        client_preview_disabled: AIProjectClient,
+        subclient_name: str,
+        allow_preview: bool,
+    ) -> None:
+        client = client_preview_enabled if allow_preview else client_preview_disabled
+        assert not hasattr(client.beta, subclient_name)
+        subclient = getattr(client, subclient_name)
+        self._assert_header_absent(f"{subclient_name}.get", lambda: subclient.get("resource-test"))
+
 
 # ---------------------------------------------------------------------------
 # Tests: caller-controlled header override / augmentation on GA operations

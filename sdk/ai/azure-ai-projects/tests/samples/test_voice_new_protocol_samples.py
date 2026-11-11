@@ -28,6 +28,32 @@ def _environment(monkeypatch):
     monkeypatch.delenv("FOUNDRY_VOICE_RECORDING_OUTPUT_PATH", raising=False)
 
 
+def test_version_sample_opts_only_draft_creation_into_draft_agents(monkeypatch):
+    _environment(monkeypatch)
+    monkeypatch.setenv("FOUNDRY_VOICE_AGENT_NAME", "version-sample-test")
+    client = MagicMock()
+    client.__enter__.return_value = client
+    versions = [SimpleNamespace(version=str(index), created_at="test-time", draft=index == 3) for index in range(1, 4)]
+    client.agents.create_version.side_effect = versions
+    client.agents.list_versions.side_effect = [versions[:2], versions]
+    client.agents.get_version.return_value = SimpleNamespace(
+        version="2", definition=SimpleNamespace(instructions="Stored instructions.")
+    )
+    client_factory = MagicMock(return_value=client)
+    monkeypatch.setattr("azure.ai.projects.AIProjectClient", client_factory)
+    monkeypatch.setattr("azure.identity.DefaultAzureCredential", MagicMock())
+
+    runpy.run_path(str(_SAMPLES / "sample_voice_agent_versions.py"), run_name="__main__")
+
+    assert client_factory.call_args.kwargs.get("allow_preview", False) is False
+    calls = client.agents.create_version.call_args_list
+    assert len(calls) == 3
+    assert all("headers" not in call.kwargs and not call.kwargs.get("draft") for call in calls[:2])
+    assert calls[2].kwargs["draft"] is True
+    assert calls[2].kwargs["headers"] == {"Foundry-Features": "DraftAgents=V1Preview"}
+    assert [call.kwargs["agent_version"] for call in client.agents.delete_version.call_args_list] == ["3", "2", "1"]
+
+
 @pytest.fixture
 def websocket_sample(monkeypatch):
     _environment(monkeypatch)

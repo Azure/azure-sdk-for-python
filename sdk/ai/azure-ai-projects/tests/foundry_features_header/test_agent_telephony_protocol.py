@@ -23,9 +23,11 @@ from azure.core.pipeline.transport import HttpTransport
 from azure.ai.projects import AIProjectClient
 
 from foundry_features_header_test_base import (
+    CONDITIONAL_VOICE_TELEPHONY_METHODS,
     FAKE_ENDPOINT,
     FakeCredential,
     FoundryFeaturesHeaderTestBase,
+    GA_VOICE_OPERATION_PATHS,
     _RequestCaptured,
 )
 
@@ -105,28 +107,47 @@ class TestAgentTelephonyProtocol(FoundryFeaturesHeaderTestBase):
         assert "Foundry-Features" not in request.headers
 
     @pytest.mark.parametrize("allow_preview", [False, True])
-    @pytest.mark.parametrize("headers", [{}, {"foundry-features": "Custom=V1Preview", "x-test": "preserved"}])
-    def test_conditional_preview_headers(self, allow_preview: bool, headers: dict) -> None:
+    @pytest.mark.parametrize("method_name", CONDITIONAL_VOICE_TELEPHONY_METHODS)
+    def test_preview_opt_in_on_conditional_writes(self, allow_preview: bool, method_name: str) -> None:
         with AIProjectClient(
             endpoint=FAKE_ENDPOINT,
             credential=FakeCredential(),
             allow_preview=allow_preview,
             transport=CapturingTransport(),
         ) as client:
-            request = self._capture(
-                lambda: client.voice_agents.telephony.create_call_job(
-                    "agent", {}, idempotency_key="test-key", headers=headers.copy()
-                )
-            )
-        expected = headers.get("foundry-features", "VoiceAgents=V1Preview" if allow_preview else None)
+            method = getattr(client.voice_agents.telephony, method_name)
+            request = self._capture(self._make_fake_call(method))
+        assert request.headers.get("Foundry-Features") == ("VoiceAgents=V1Preview" if allow_preview else None)
+
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    @pytest.mark.parametrize("method_name", ["create_call_job", "list_call_jobs"])
+    @pytest.mark.parametrize("headers", [{}, {"foundry-features": "Custom=V1Preview", "x-test": "preserved"}])
+    def test_conditional_preview_headers(self, allow_preview: bool, method_name: str, headers: dict) -> None:
+        with AIProjectClient(
+            endpoint=FAKE_ENDPOINT,
+            credential=FakeCredential(),
+            allow_preview=allow_preview,
+            transport=CapturingTransport(),
+        ) as client:
+            method = getattr(client.voice_agents.telephony, method_name)
+            request = self._capture(self._make_fake_call(method, extra_kwargs={"headers": headers.copy()}))
+        automatic = "VoiceAgents=V1Preview" if allow_preview and method_name == "create_call_job" else None
+        expected = headers.get("foundry-features", automatic)
         assert request.headers.get("Foundry-Features") == expected
         if headers:
             assert request.headers["x-test"] == "preserved"
 
-    @pytest.mark.parametrize("operation_path", ["agents.create_from_prompt", "voice_agents.conversations.get"])
-    def test_ga_voice_requests_without_preview(self, client: AIProjectClient, operation_path: str) -> None:
-        operation = client
-        for attribute in operation_path.split("."):
-            operation = getattr(operation, attribute)
-        request = self._capture(self._make_fake_call(operation))
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    @pytest.mark.parametrize("operation_path", GA_VOICE_OPERATION_PATHS)
+    def test_ga_voice_requests_without_preview(self, allow_preview: bool, operation_path: str) -> None:
+        with AIProjectClient(
+            endpoint=FAKE_ENDPOINT,
+            credential=FakeCredential(),
+            allow_preview=allow_preview,
+            transport=CapturingTransport(),
+        ) as client:
+            operation = client
+            for attribute in operation_path.split("."):
+                operation = getattr(operation, attribute)
+            request = self._capture(self._make_fake_call(operation))
         assert "Foundry-Features" not in request.headers

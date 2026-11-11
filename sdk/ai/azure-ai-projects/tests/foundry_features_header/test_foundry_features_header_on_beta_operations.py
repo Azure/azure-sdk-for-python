@@ -240,6 +240,19 @@ class TestFoundryFeaturesHeaderOnBetaOperations(FoundryFeaturesHeaderTestBase):
                 label = f".beta.voice_agents.{subclient_name}.{method_name}()"
                 self._assert_header(label, self._make_fake_call(method), EXPECTED_FOUNDRY_FEATURES["voice_agents"])
 
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    def test_skills_preview_header_is_always_sent(self, allow_preview: bool) -> None:
+        with AIProjectClient(
+            endpoint=FAKE_ENDPOINT,
+            credential=FakeCredential(),
+            allow_preview=allow_preview,
+            transport=CapturingTransport(),
+        ) as client:
+            assert not hasattr(client, "skills")
+            self._assert_header(
+                ".beta.skills.get()", lambda: client.beta.skills.get("skill-test"), EXPECTED_FOUNDRY_FEATURES["skills"]
+            )
+
 
 # ---------------------------------------------------------------------------
 # Pick the first discovered beta method (reuses _TEST_CASES, no extra I/O)
