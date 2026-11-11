@@ -1,8 +1,9 @@
 # Azure AI Fine-Tuning Sessions client library for Python
 
-Preview client library for interactive supervised and reinforcement fine-tuning
-in Microsoft Foundry. Create sessions, submit training and sampling requests,
-and save checkpoints with synchronous or asynchronous Python clients.
+Preview client library for Programmed Training in Microsoft Foundry, supporting
+interactive supervised and reinforcement fine-tuning through fine-tuning sessions.
+Create sessions, submit training and sampling requests, and save checkpoints
+with synchronous or asynchronous Python clients.
 
 For general background, see the [Microsoft Foundry fine-tuning overview][overview].
 Availability of fine-tuning sessions and individual features depends on your

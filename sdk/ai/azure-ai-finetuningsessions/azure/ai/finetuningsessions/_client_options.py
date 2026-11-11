@@ -191,8 +191,7 @@ def _is_local_endpoint(endpoint: str) -> bool:
     """Return True when ``endpoint`` is an HTTP URL for a loopback host.
 
     Used to bound ``allow_insecure_http``: skipping HTTPS enforcement is only
-    ever appropriate against a local dev server, never against a real regional
-    ``loom_api`` reached on the direct (non-APIM) path.
+    appropriate for a local development server, never for a remote service.
 
     :param endpoint: Endpoint URL to inspect.
     :type endpoint: str

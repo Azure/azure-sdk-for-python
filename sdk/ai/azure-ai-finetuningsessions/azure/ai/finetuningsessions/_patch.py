@@ -889,14 +889,12 @@ _POLL_LOG_DEDUP_SEC = 30.0
 
 def _resolve_poll_warn_sec() -> float:
     """Seconds a single request may stay pending before INFO poll logs escalate
-    to WARNING. A long-pending request is usually a healthy-but-slow op (e.g. a
-    cold inference fleet warming a large base model), but it is also the first
-    visible symptom of a wedged run -- a WARNING makes it stand out instead of
-    being buried in INFO. Override via LOOM_POLL_WARN_SEC; <= 0 disables
-    escalation. Default 600s (10 min).
+    to WARNING. A long-pending request may still be healthy, but warning logs
+    help identify requests that need investigation. The supported polling-warning
+    environment override controls this threshold. Default 600s (10 min).
 
-    :return: Pending-duration warning threshold in seconds from ``LOOM_POLL_WARN_SEC``,
-        or 600 seconds if it is unset or cannot be parsed as a float. A non-positive
+    :return: Pending-duration warning threshold in seconds, or 600 seconds if the
+        environment override is unset or cannot be parsed as a float. A non-positive
         threshold disables escalation.
     :rtype: float
     """

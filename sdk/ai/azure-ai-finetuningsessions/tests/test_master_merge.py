@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 """Protect master's SDK contracts while retaining the pinned generated base."""
 
+import ast
 import inspect
 import json
 from pathlib import Path
@@ -23,7 +24,7 @@ from azure.ai.finetuningsessions.models import (
 from azure.ai.finetuningsessions._utils.model_base import SdkJSONEncoder
 
 PUBLIC_DOC_INTERNAL_TERMS = re.compile(
-    r"\b(?:loom|COGS|M365|PuPr)\b|SPEC_FOUNDRY|https?://dev\.azure\.com/",
+    r"loom|\b(?:COGS|M365|PuPr)\b|SPEC_FOUNDRY|https?://dev\.azure\.com/",
     re.IGNORECASE,
 )
 
@@ -126,3 +127,20 @@ def test_public_documentation_excludes_internal_release_material(filename):
 )
 def test_public_api_docstrings_exclude_internal_release_material(public_api):
     assert PUBLIC_DOC_INTERNAL_TERMS.search(inspect.getdoc(public_api) or "") is None
+
+
+def test_distributed_runtime_docstrings_exclude_internal_release_material():
+    package = Path(__file__).resolve().parents[1]
+    source_root = package / "azure" / "ai" / "finetuningsessions"
+    for source in source_root.rglob("*.py"):
+        tree = ast.parse(source.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if (
+                isinstance(node, ast.Expr)
+                and isinstance(node.value, ast.Constant)
+                and isinstance(node.value.value, str)
+            ):
+                assert PUBLIC_DOC_INTERNAL_TERMS.search(node.value.value) is None, (
+                    source.relative_to(package),
+                    node.lineno,
+                )
