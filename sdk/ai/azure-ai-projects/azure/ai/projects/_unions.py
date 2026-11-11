@@ -23,7 +23,7 @@ UserConversationSimulationSource: TypeAlias = Union[
     "_models.UserConversationSimulationInlineTestCasesSource",
 ]
 EvalItemContentItem: TypeAlias = Union[str, "_models.EvalItemContentItemObject"]
-EvalItemContent: TypeAlias = Union["_unions.EvalItemContentItem", list["_unions.EvalItemContentItem"]]
+EvalItemContent: TypeAlias = Union[EvalItemContentItem, list[EvalItemContentItem]]
 DatasetEvaluationSource: TypeAlias = Union[
     "_models.CreateEvalJsonlRunDataSource",
     "_models.EvalCsvRunDataSource",

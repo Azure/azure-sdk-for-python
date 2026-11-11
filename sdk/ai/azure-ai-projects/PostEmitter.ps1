@@ -225,6 +225,21 @@ foreach ($f in $files) {
     Set-Content $f $out
 }
 
+# Repair same-module references to the preceding EvalItemContentItem alias.
+# The OpenAI schema permits one item or a list; no schema change is needed.
+# The producing emitter version is unverified. Report with tsp-location.yaml inputs to
+# microsoft/typespec and remove this workaround once unpatched output passes the regression test.
+function Repair-EvalItemContentAlias {
+    param([string]$Content)
+
+    $Content -replace '(["''])_unions\.EvalItemContentItem\1', 'EvalItemContentItem'
+}
+
+$f = 'azure\ai\projects\_unions.py'
+$c = Get-Content $f -Raw -ErrorAction Stop
+$c = Repair-EvalItemContentAlias -Content $c
+Set-Content $f $c -NoNewline -ErrorAction Stop
+
 # Regenerate API review artifacts and the public method inventory.
 $pythonExecutable = (Get-Command python -ErrorAction Stop).Source
 & $pythonExecutable -m pip install --no-deps --editable .
