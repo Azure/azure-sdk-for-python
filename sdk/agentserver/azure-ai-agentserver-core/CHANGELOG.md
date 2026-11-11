@@ -1,5 +1,91 @@
 # Release History
 
+## 2.4.0b1 (Unreleased)
+
+### Features Added
+
+- Apply protocol-specific runtime requirements to deferred snapshot activation,
+  preserving independent Invocations/Responses opt-in and owning-host recovery
+  callback bindings.
+- Allow decorated task submission inside `after_restore_handler`, preparing the
+  session-bound TaskManager before the callback and starting automatic recovery
+  only after application dependencies are ready.
+- Separate process-side task registration from session-bound task activation.
+  `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers enabled tasks during capture until
+  after-restore; absent or false keeps ordinary cold startup. Resilience opt-out
+  remains disabled for both initialization paths. Preserve
+  best-effort recovery, checkpoint initialization phases by restore ID, wait for
+  owned workers to stop before incompatible configuration rollback, and stop
+  managers created after startup at shutdown.
+
+### Bugs Fixed
+
+- Track task identity throughout inline start/run claims and positional active-
+  run lookup, preventing recovery from dispatching work before claim registration.
+- Coordinate same-task producers across lease claims and worker registration,
+  preventing duplicate execution when inline lookup follows a committed recovery
+  claim whose provider response is still pending. Nested calls from the same
+  producer remain reentrant, and cancelled waiters release their admission.
+- Unpublish incompatible prepared task runtimes before failed or cancelled
+  restore configuration rollback, even when no workers started, preventing
+  subsequent submissions from using the failed provider or session binding.
+- Interrupt blocked recovery reads when shutdown begins, so admission can drain
+  before scanner cancellation while accepted creates and claims settle safely.
+  Host shutdown signals an activating manager before waiting for the serialized
+  manager lock, so a blocked after-restore recovery read cannot stall cleanup.
+- Wait for cancelled task workers during host teardown while a restore rollback is
+  still pending, so their async cleanup cannot observe session or provider
+  configuration reverted underneath it. Preserve unfinished records and inputs
+  before shutdown wakes workers, so a failed restore can recover them on retry.
+  Ordinary shutdown otherwise stays non-joining.
+- Keep the lease instance consistent with live task workers and accepted
+  submissions across compatible in-place restores with a new restore ID.
+  Idle runtimes without owned task work still rotate their lease instance.
+- Validate live provider overrides before publishing restored configuration or
+  rotating lease identity, and defer accepted task callers cancelled during
+  initial watchdog setup before their handlers start.
+- Reject live session GUID changes before rotating lease identity, prevent
+  steering dispatch across shutdown bookkeeping, and defer queued/promoted
+  steering callers without removing their recoverable inputs.
+- Include agent identity and the resolved default task directory in runtime
+  compatibility, preventing rollback from retaining incompatible lease owners
+  or providers rooted in an overridden home directory.
+- Close task admission during manager shutdown and settle accepted submissions
+  before worker snapshots, preventing cancellation cleanup from launching
+  untracked child tasks.
+- Quiesce failed-restore workers before provider configuration rollback even
+  when the session ID/GUID is unchanged, preserving their original task records
+  and allowing retries with omitted provider overrides.
+- Rebuild inactive task providers when hydrated configuration changes, and
+  recreate disposed runtimes for cached restore requests without replaying
+  completed application callbacks.
+- Preserve sanitized lifecycle error responses when required restore cleanup
+  fails, retaining pending rollback state for retry.
+- Preserve environment and configuration rollback snapshots across failed
+  restore cleanup retries so sparse overrides retain the captured baseline.
+- Retry interrupted restore rollback cleanup before activating a replacement
+  TaskManager, retaining queued-input reconciliation handles across transient
+  storage failures.
+- Reset task startup admission when reusing a host across sequential lifespans.
+- Reconcile interrupted steering transitions before restore rollback completes,
+  retaining queued work as recoverable without dispatching a new turn.
+- Preserve unfinished task records and saved inputs when failed restore
+  activation stops workers before rolling back session configuration.
+- Keep the lease instance stable on same-restore retries, retain worker and
+  lease handles until workers finish, and defer steering execution during
+  rollback while keeping queued input eligible for recovery.
+- Close internally created hosted task providers and their credentials before
+  discarding a stopped TaskManager after failed restores or inactive provider
+  replacement, keeping the manager for a cleanup retry if the close fails.
+  Ordinary host shutdown closes after cancelled workers finish. Injected
+  providers remain caller-owned.
+- Let handlers start during the ordinary shutdown grace period so they can defer
+  with `ctx.exit_for_recovery()`, instead of cancelling retried or accepted work
+  before dispatch and deleting one-shot records. Rollback cleanup still retains
+  that work without dispatching it.
+- Release the lease of a steering input staged during ordinary shutdown, making
+  it recoverable without waiting for lease expiry.
+
 ## 2.3.1b1 (2026-11-02)
 
 ### Bugs Fixed
