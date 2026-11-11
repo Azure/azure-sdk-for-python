@@ -16,6 +16,9 @@ extends:
       # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
       MaxParallel: 2
       ServiceDirectory: storage
+      InstallMsRustToolchain: true
+      MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/storage/azure-storage-extensions-transfer
+      MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
       InjectedPackages: $(InjectedPackages)
       Packages: ${{ parameters.Services }}
       MatrixReplace:
