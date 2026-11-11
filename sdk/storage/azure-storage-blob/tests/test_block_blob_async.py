@@ -19,7 +19,14 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
-from test_block_blob import _assert_unique_ordered_block_ids
+from test_block_blob import (
+    _assert_unique_ordered_block_ids,
+    _block_list_entries,
+    _capture_block_list,
+    _CapturedBlockList,
+    _mixed_state_block_list,
+    EXPECTED_MIXED_STATE_ENTRIES,
+)
 from test_content_validation import _deterministic_urandom
 from test_helpers_async import (
     NonSeekableStream,
@@ -2330,6 +2337,18 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         block_ids = asyncio.run(run())
         # Substream path uses os.urandom(9) -> 12-char block IDs (matches old length).
         _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
+
+    def test_commit_block_list_sends_each_block_under_its_state(self):
+        # Each BlobBlock must be sent in the Put Block List element matching its state;
+        # the service treats Committed/Uncommitted/Latest differently.
+        async def run():
+            async with BlobClient("https://example.blob.core.windows.net", "container", "blob") as blob:
+                await blob.commit_block_list(_mixed_state_block_list(), raw_request_hook=_capture_block_list)
+
+        with pytest.raises(_CapturedBlockList) as captured:
+            asyncio.run(run())
+
+        assert _block_list_entries(captured.value.body) == EXPECTED_MIXED_STATE_ENTRIES
 
 
 # ------------------------------------------------------------------------------

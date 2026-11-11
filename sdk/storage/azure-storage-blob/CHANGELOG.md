@@ -4,6 +4,9 @@
 
 ### Features Added
 
+### Bugs Fixed
+- Fixed an issue where `BlobClient.commit_block_list` sent every block in the `Latest` list of the request, ignoring `BlobBlock.state`. Blocks with `BlockState.COMMITTED` or `BlockState.UNCOMMITTED` are now sent as `Committed` or `Uncommitted`.
+
 ## 12.32.0b1 (2026-11-05)
 
 ### Breaking Changes

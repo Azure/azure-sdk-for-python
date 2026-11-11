@@ -38,6 +38,7 @@ from ._models import (
     BlobBlock,
     BlobProperties,
     BlobType,
+    BlockState,
     DelimitedJsonDialect,
     DelimitedTextDialect,
     PremiumPageBlobTier,
@@ -760,9 +761,9 @@ def _commit_block_list_options(
     block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
     for block in block_list:
         if isinstance(block, BlobBlock):
-            if block.state.value == "committed":
+            if block.state == BlockState.COMMITTED:
                 cast(List[str], block_lookup.committed).append(encode_base64(str(block.id)))
-            elif block.state.value == "uncommitted":
+            elif block.state == BlockState.UNCOMMITTED:
                 cast(List[str], block_lookup.uncommitted).append(encode_base64(str(block.id)))
             elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
