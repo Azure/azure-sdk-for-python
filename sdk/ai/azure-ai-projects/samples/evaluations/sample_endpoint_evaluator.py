@@ -7,85 +7,87 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates the end-to-end workflow for
-    running an evaluation using an endpoint-based evaluator with Entra ID (managed identity)
-    authentication:
+    running an evaluation using an endpoint-based evaluator:
 
-    1. Create a workspace connection with AAD auth type
-    2. Register an endpoint evaluator backed by the connection
-    3. Create an evaluation with the endpoint evaluator as testing criteria
-    4. Run the evaluation with inline data
-    5. Poll for results and display output
+    1. Register an endpoint evaluator backed by an existing project connection
+    2. Create an evaluation with the endpoint evaluator as testing criteria
+    3. Run the evaluation with inline data
+    4. Poll for results and display output
 
     Endpoint evaluators allow you to bring your own HTTP endpoint for evaluation. The service
-    POSTs each evaluation row to your endpoint and expects a JSON response with score/reason
-    fields. Authentication is resolved server-side using a managed identity token acquired
-    via the workspace connection.
+    POSTs each evaluation row to your endpoint and expects a JSON response with a score and
+    optional reasoning fields. Authentication is resolved server-side from a project
+    connection, so the same code works with API key or Microsoft Entra ID authentication.
 
-    Your endpoint must:
-    - Accept POST requests with a JSON body like:
+    This sample uses endpoint contract schema version 0.0.2, which is recommended for new
+    evaluators. With 0.0.2, the evaluator must define exactly one metric, of type "ordinal" or
+    "continuous". For endpoints that still implement schema 0.0.1, see
+    sample_endpoint_evaluator_schema_0_0_1.py.
+
+    Your endpoint must accept POST requests with a JSON body like:
         {
-          "schema_version": "0.0.1",
+          "schema_version": "0.0.2",
           "evaluator_name": "...",
           "evaluator_version": "...",
-          "evaluation_level": "turn",
-          "data": {
-            "item": {"query": "...", "context": "..."},
-            "sample": {"response": "..."}
-          }
+          "evaluation_target": {"type": "last_turn", "response_start_index": 1},
+          "context": {"query": "...", "response": "...", "context": "..."},
+          "messages": [
+            {"role": "user", "content": [{"type": "text", "text": "..."}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "..."}]}
+          ],
+          "agent_definition": {"tool_definitions": []},
+          "metadata": {"run_type": "dataset"}
         }
-    - Return a JSON response like:
+    The messages from response_start_index onward are the response to score. For
+    conversation-level evaluators, evaluation_target is {"type": "conversation"}.
+
+    And return a JSON response like:
         {
-          "schema_version": "0.0.1",
-          "score": 0.85,
+          "status": "completed",  // Valid values: "completed", "error", "skipped"
+          "score": 4,             // Required when completed; within the metric's range
+          "passed": true,         // Required when completed
           "reason": "Response is accurate and concise.",
-          "status": "Completed",  // Valid values: "Completed", "Error", "Skipped"
-          "properties": {"model_used": "gpt-4o", "custom_flag": true},
-          "threshold": null,
-          "passed": true
+          "properties": {"model_used": "gpt-4o"}
         }
-    - Validate incoming Bearer tokens (e.g., via Azure App Service Easy Auth or custom middleware)
+    Omit "score" and "passed" when status is "error" or "skipped". Unknown fields are rejected.
 
 USAGE:
-    python sample_endpoint_evaluator_with_entra_id.py
+    python sample_endpoint_evaluator.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-mgmt-cognitiveservices python-dotenv
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_SUBSCRIPTION_ID - Required. The Azure subscription ID containing your project.
-    3) AZURE_RESOURCE_GROUP - Required. The resource group containing your Azure AI account.
-    4) ENDPOINT_URL - Required. The URL of your scoring endpoint
-       (e.g., https://my-scoring-endpoint.azurewebsites.net/api/evaluate).
-    5) ENDPOINT_APP_ID - Required. The Application (client) ID of the Azure App Registration
-       protecting your scoring endpoint. The service acquires a managed identity token scoped
-       to this app ID.
+    2) ENDPOINT_CONNECTION_NAME - Required. The name of the project connection to your scoring endpoint.
 
 PREREQUISITES:
-    - An Azure App Registration for your scoring endpoint, with Easy Auth or token validation enabled.
-    - The evaluation service's managed identity must be allowed to call the endpoint
-      (e.g., added to the App Registration's allowedClientApplications in Easy Auth config).
+    - A scoring endpoint that implements the contract above.
+    - A project connection to your scoring endpoint. Its target is the endpoint URL. Use one of:
+        * API key authentication: the connection stores the endpoint's API key, and the service
+          sends it in the ``api-key`` header.
+        * Microsoft Entra ID authentication: the connection's ``Audience`` metadata is
+          ``api://<app-id>``, where <app-id> is the Application (client) ID of the App
+          Registration protecting the endpoint. The service sends a managed identity token as a
+          Bearer token. Your endpoint must validate it (e.g., with Azure App Service Easy Auth),
+          and the evaluation service's managed identity must be allowed to call the endpoint
+          (e.g., added to allowedClientApplications in the Easy Auth config).
 """
 
 import os
 import time
-from urllib.parse import urlparse
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EndpointBasedEvaluatorDefinition,
+    EndpointEvaluatorSchemaVersion,
     EvaluatorCategory,
-    EvaluatorMetric,
     EvaluatorType,
     EvaluatorVersion,
-)
-from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
-from azure.mgmt.cognitiveservices.models import (
-    ConnectionPropertiesV2BasicResource,
-    AADAuthTypeConnectionProperties,
+    EvaluatorMetric,
 )
 
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
@@ -101,18 +103,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
-resource_group = os.environ["AZURE_RESOURCE_GROUP"]
-endpoint_url = os.environ["ENDPOINT_URL"]
-endpoint_app_id = os.environ["ENDPOINT_APP_ID"]
-
-# Derive account name from the project endpoint URL
-# e.g., https://accountname.services.ai.azure.com/api/projects/default -> "accountname"
-hostname = urlparse(endpoint).hostname
-if not hostname:
-    raise ValueError(f"Could not parse hostname from endpoint: {endpoint}")
-account_name = hostname.split(".")[0]
-connection_name = "my-endpoint-entra-connection"
+connection_name = os.environ["ENDPOINT_CONNECTION_NAME"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -120,45 +111,19 @@ with (
     project_client.get_openai_client() as client,
 ):
 
-    # ── Step 1: Create a workspace connection with AAD auth ─────────────
-    # The connection stores the endpoint URL and the App Registration's client ID
-    # (Audience). At evaluation time, the service acquires a managed identity
-    # token scoped to this audience and sends it as a Bearer token to your endpoint.
-    # Note: create is idempotent — it creates or updates the connection if it already exists.
-    print("[1/5] Creating workspace connection with Entra ID (AAD) auth...")
-
-    mgmt_client = CognitiveServicesManagementClient(
-        credential=credential,
-        subscription_id=subscription_id,
-    )
-    connection = ConnectionPropertiesV2BasicResource(
-        properties=AADAuthTypeConnectionProperties(
-            category="CustomKeys",
-            target=endpoint_url,
-            metadata={"Audience": f"api://{endpoint_app_id}"},
-        ),
-    )
-    mgmt_client.account_connections.create(
-        resource_group_name=resource_group,
-        account_name=account_name,
-        connection_name=connection_name,
-        connection=connection,
-    )
-    print(f"  Connection created: {connection_name}")
-
-    # ── Step 2: Register an endpoint-based evaluator ────────────────────
-    # The evaluator references the workspace connection created above. At evaluation
-    # time, the service acquires a managed identity token and passes it as a Bearer
-    # token to your endpoint.
-    print("[2/5] Registering endpoint-based evaluator with Entra ID auth...")
+    # ── Step 1: Register an endpoint-based evaluator ────────────────────
+    # The evaluator references your project connection. The service
+    # resolves the endpoint URL and credentials at evaluation time.
+    print("[1/4] Registering endpoint-based evaluator...")
 
     evaluator = project_client.evaluators.create_version(
-        name="my-endpoint-evaluator-entra",
+        name="my-endpoint-evaluator",
         evaluator_version=EvaluatorVersion(
             categories=[EvaluatorCategory.QUALITY],
             evaluator_type=EvaluatorType.CUSTOM,
             definition=EndpointBasedEvaluatorDefinition(
                 connection_name=connection_name,
+                schema_version=EndpointEvaluatorSchemaVersion.V0_0_2,
                 metrics={
                     "score": EvaluatorMetric(
                         type="ordinal",
@@ -167,15 +132,17 @@ with (
                     )
                 },
             ),
-            display_name="Endpoint Evaluator (Entra ID)",
-            description="Custom scoring endpoint authenticated with Entra ID managed identity",
+            display_name="Endpoint Evaluator",
+            description="Custom scoring endpoint",
         ),
+        # Endpoint evaluators are still in preview, so the service requires this opt-in header.
+        headers={"Foundry-Features": "Evaluations=V1Preview"},
     )
 
     print(f"  Created evaluator: name={evaluator.name}, version={evaluator.version}")
 
-    # ── Step 3: Create an evaluation ────────────────────────────────────
-    print("[3/5] Creating evaluation...")
+    # ── Step 2: Create an evaluation ────────────────────────────────────
+    print("[2/4] Creating evaluation...")
 
     data_source_config = DataSourceConfigCustom(
         {
@@ -196,8 +163,8 @@ with (
     testing_criteria = [
         {
             "type": "azure_ai_evaluator",
-            "name": "endpoint_eval_entra",
-            "evaluator_name": "my-endpoint-evaluator-entra",
+            "name": "endpoint_eval",
+            "evaluator_name": "my-endpoint-evaluator",
             "data_mapping": {
                 "query": "{{item.query}}",
                 "response": "{{item.response}}",
@@ -207,19 +174,19 @@ with (
     ]
 
     eval_object = client.evals.create(
-        name="endpoint-evaluator-entra-test",
+        name="endpoint-evaluator-test",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,  # type: ignore
     )
 
     print(f"  Evaluation created: id={eval_object.id}")
 
-    # ── Step 4: Run the evaluation with inline data ─────────────────────
-    print("[4/5] Running evaluation with inline data...")
+    # ── Step 3: Run the evaluation with inline data ─────────────────────
+    print("[3/4] Running evaluation with inline data...")
 
     eval_run = client.evals.runs.create(
         eval_id=eval_object.id,
-        name="endpoint-entra-run",
+        name="endpoint-evaluator-run",
         data_source=CreateEvalJSONLRunDataSourceParam(
             type="jsonl",
             source=SourceFileContent(
@@ -260,8 +227,8 @@ with (
 
     print(f"  Eval run created: id={eval_run.id}")
 
-    # ── Step 5: Poll for results ────────────────────────────────────────
-    print("[5/5] Waiting for evaluation run to complete...")
+    # ── Step 4: Poll for results ────────────────────────────────────────
+    print("[4/4] Waiting for evaluation run to complete...")
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
@@ -275,15 +242,9 @@ with (
         print(f"  Status: {run.status} — polling again...")
 
     # ── Cleanup ────────────────────────────────────────────────────────
-    # The connection, evaluator, and evaluation are left in place so you can
+    # The evaluator and evaluation are left in place so you can
     # inspect results in the Foundry portal. Uncomment the following to delete them:
-    # mgmt_client.account_connections.delete(
-    #     resource_group_name=resource_group,
-    #     account_name=account_name,
-    #     connection_name=connection_name,
-    # )
-    # print(f"  Connection deleted: {connection_name}")
-    # project_client.evaluators.delete(name="my-endpoint-evaluator-entra")
-    # print("  Evaluator deleted: my-endpoint-evaluator-entra")
+    # project_client.evaluators.delete(name="my-endpoint-evaluator")
+    # print("  Evaluator deleted: my-endpoint-evaluator")
     # client.evals.delete(eval_id=eval_object.id)
     # print(f"  Evaluation deleted: {eval_object.id}")

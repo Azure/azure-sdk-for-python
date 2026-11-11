@@ -154,6 +154,8 @@ These samples require additional setup or Azure services:
 | [sample_evaluations_builtin_with_traces.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_traces.py) | Evaluate against Application Insights traces | Connected Application Insights on Foundry Project |
 | [sample_scheduled_evaluations.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_scheduled_evaluations.py) | Schedule recurring evaluations | RBAC setup |
 | [sample_continuous_evaluation_rule.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_continuous_evaluation_rule.py) | Set up continuous evaluation rules | RBAC Setup |
+| [sample_trace_evaluation_rule.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_trace_evaluation_rule.py) | Evaluate an agent's traces on a recurring schedule with an evaluation rule | RBAC setup, connected Application Insights, existing agent |
+| [sample_dataset_evaluation_rule.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_dataset_evaluation_rule.py) | Evaluate an agent on a fixed set of queries on a recurring schedule with an evaluation rule | RBAC setup |
 | [sample_evaluations_score_model_grader_with_image.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_image.py) | Evaluate with image data | Image file |
 | [sample_evaluations_score_model_grader_with_image_model_target.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_image_model_target.py) | Evaluate image data using a model as the target | Image file, vision-capable model deployment |
 | [sample_evaluations_score_model_grader_with_audio.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_audio.py) | Evaluate with audio data | Audio file, audio-capable model deployment |
@@ -208,8 +210,8 @@ Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-pytho
 
 | Sample | Description | Requirements |
 |--------|-------------|--------------|
-| [sample_endpoint_evaluator_with_api_key.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_with_api_key.py) | Bring your own HTTP endpoint as an evaluator, authenticated with an API key | Scoring endpoint, `azure-mgmt-cognitiveservices` |
-| [sample_endpoint_evaluator_with_entra_id.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_with_entra_id.py) | Bring your own HTTP endpoint as an evaluator, authenticated with Entra ID managed identity | Scoring endpoint with Easy Auth, `azure-mgmt-cognitiveservices` |
+| [sample_endpoint_evaluator.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator.py) | Bring your own HTTP endpoint as an evaluator, authenticated with an API key or Entra ID | Scoring endpoint, project connection |
+| [sample_endpoint_evaluator_schema_0_0_1.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_schema_0_0_1.py) | Register an endpoint evaluator for an existing endpoint that uses the older 0.0.1 contract. Use 0.0.2 for new evaluators | Scoring endpoint, project connection |
 
 ### Evaluation Result Insights & Analysis
 
