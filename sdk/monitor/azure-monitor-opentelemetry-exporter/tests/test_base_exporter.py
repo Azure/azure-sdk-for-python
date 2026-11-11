@@ -217,6 +217,26 @@ class TestBaseExporter(unittest.TestCase):
         self.assertIs(mock_client.call_args.kwargs["pipeline"], pipeline)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_custom_authentication_policy(self, mock_client):
+        with mock.patch.dict(
+            os.environ, {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"}
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            with self.assertRaisesRegex(ValueError, "Custom authentication policies are not supported"):
+                BaseExporter(authentication_policy=HeadersPolicy())
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_custom_authentication_policy_is_unchanged_without_routing(self, mock_client):
+        policy = HeadersPolicy()
+        BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            credential=None,
+            disable_offline_storage=True,
+            authentication_policy=policy,
+        )
+        self.assertIn(policy, mock_client.call_args.kwargs["policies"])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
     def test_multi_endpoint_routing_rejects_custom_retry_policy(self, mock_client):
         with mock.patch.dict(
             os.environ,

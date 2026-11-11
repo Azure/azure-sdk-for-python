@@ -8,6 +8,13 @@
 
 ### Bugs Fixed
 
+- Isolate multi-endpoint Microsoft Entra authentication from the host connection
+  string's audience. Configure routed audiences with
+  `APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE`; the default is the public cloud.
+  Reject custom authentication policies in routing mode and refuse credential-bearing,
+  port-changing, or untrusted routed redirects. Preserve the complete path of accepted
+  routed redirects. Single-endpoint behavior is unchanged.
+
 ### Other Changes
 
 ## 1.0.0b59 (2026-11-05)

@@ -58,6 +58,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
                             "keyEncryptionKeyUrl": "str",
                         }
                     },
+                    "firewallRules": [{"name": "str", "sourceAddressPrefix": "str"}],
                     "highAvailability": "str",
                     "hostName": "str",
                     "maintenanceConfiguration": {
@@ -137,6 +138,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperations(AzureMgmtRecordedTe
                             "keyEncryptionKeyUrl": "str",
                         }
                     },
+                    "firewallRules": [{"name": "str", "sourceAddressPrefix": "str"}],
                     "highAvailability": "str",
                     "hostName": "str",
                     "maintenanceConfiguration": {
