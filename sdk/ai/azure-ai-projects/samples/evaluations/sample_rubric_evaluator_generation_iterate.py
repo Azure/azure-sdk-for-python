@@ -119,9 +119,12 @@ with (
     #   * Boost the most important editable dimension to weight 10.
     #   * Drop the lowest-weight editable dimension as redundant.
     #   * Add a new custom dimension specific to this assistant.
-    # Generated dimensions may leave `weight` unset and report the service-assigned
-    # weight in read-only `generated_weight`. Likert weights are all-or-none, so v2
-    # authors an explicit weight on every dimension, starting from the generated one.
+    # A dimension's weight controls how much it contributes to the final score.
+    # Generated dimensions can omit `weight` and instead suggest a value in
+    # `generated_weight`. We use `weight` if set, otherwise the suggestion,
+    # or 1 if neither is available.
+    # For Likert scoring, either every dimension must have a weight or none
+    # can. Because we change one weight, we set weights on all dimensions.
     def effective_weight(dim: Dimension) -> int:
         if dim.weight is not None:
             return dim.weight

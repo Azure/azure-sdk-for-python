@@ -13,9 +13,11 @@ DESCRIPTION:
       1. Creates an `EvaluatorGenerationJob` whose only source is an inline
          natural-language description of the application's purpose, capabilities,
          and tools. The service synthesizes a rubric tailored to that application.
-         The job explicitly requests a quality rubric with Likert scoring and a
-         custom pass threshold. These are the defaults, shown here for clarity.
-         Use `RubricScoringMode.BOOLEAN` for pass/fail dimensions instead.
+         The job requests a quality rubric with Likert scoring: each dimension
+         receives a rating from 1 to 5 rather than a pass/fail result. The
+         overall score is normalized to 0-1 and compared with the configured
+         pass threshold (0.6 here; the default is 0.5). Use
+         `RubricScoringMode.BOOLEAN` for pass/fail dimensions instead.
       2. Calls `begin_create_generation_job` and reports the standard LRO
          poller's status until it returns the generated `EvaluatorVersion`.
       3. Creates an OpenAI evaluation referencing the generated evaluator as a
