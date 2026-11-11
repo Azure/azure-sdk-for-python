@@ -8,7 +8,7 @@ include _metadata.json
 include apiview-properties.json
 include tsp-location.yaml
 recursive-include doc *.rst
-prune tests
+recursive-include tests *.py
 prune review_tests
 prune scripts
 prune eng

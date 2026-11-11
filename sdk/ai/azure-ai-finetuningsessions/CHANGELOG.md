@@ -25,6 +25,7 @@
 
 - Clarify session lifecycle, service-selected training tiers, checkpoint preparation limits, and differences between raw operations and convenience methods.
 - Improve generated request-model documentation without changing supported message roles, function-only tools, or request payloads.
+- Restore the standard README sections and include public test sources in source distributions while keeping archived review material excluded.
 
 ## 1.0.0b1 (2026-09-24)
 

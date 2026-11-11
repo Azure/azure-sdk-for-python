@@ -129,9 +129,10 @@ def test_public_api_docstrings_exclude_internal_release_material(public_api):
     assert PUBLIC_DOC_INTERNAL_TERMS.search(inspect.getdoc(public_api) or "") is None
 
 
-def test_distributed_runtime_docstrings_exclude_internal_release_material():
+@pytest.mark.parametrize("relative_root", [("azure", "ai", "finetuningsessions"), ("tests",)])
+def test_distributed_python_docstrings_exclude_internal_release_material(relative_root):
     package = Path(__file__).resolve().parents[1]
-    source_root = package / "azure" / "ai" / "finetuningsessions"
+    source_root = package.joinpath(*relative_root)
     for source in source_root.rglob("*.py"):
         tree = ast.parse(source.read_text(encoding="utf-8"))
         for node in ast.walk(tree):

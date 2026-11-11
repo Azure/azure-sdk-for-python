@@ -59,9 +59,10 @@ The package README and changelog both appear in its PyPI long description.
 
 Distribution inputs are explicitly allowlisted in `MANIFEST.in`.
 Customer documentation, public API metadata, public generation inputs, and
-runtime modules are included. Historical review notes, private-source audit
-records, archived tests, and unrelated maintainer utilities are not release
-inputs.
+runtime modules are included. Source distributions also include the active
+public test sources required by SDK validation; wheels do not install them.
+Historical review notes, private-source audit records, archived tests, and
+unrelated maintainer utilities are not release inputs.
 
 Public documentation must not expose internal project names, deployment
 architecture, capacity routing, private repository links, or validation

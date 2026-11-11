@@ -79,6 +79,8 @@ sends no tier and the service selects the default. Explicit choices remain
 subject to service eligibility and capacity; the SDK does not select a
 different tier when the requested one is unavailable.
 
+## Examples
+
 ### Client and session lifetime
 
 `FineTuningSession.create(...)` waits for initialization and returns a session
@@ -284,6 +286,12 @@ removed in b2 because Agent Insights no longer requires that preview opt-in.
 Explicit references must be removed. Fine-tuning continues using the unchanged
 `Foundry-Features: FineTuningSessions=V1Preview` value.
 
+## Next steps
+
+Review the [Microsoft Foundry fine-tuning overview][overview] for service
+guidance. For questions or bug reports, use the
+[Azure SDK for Python issue tracker][issues].
+
 ## Contributing
 
 See the [Azure SDK for Python contribution guide][contributing] and
@@ -292,5 +300,6 @@ See the [Azure SDK for Python contribution guide][contributing] and
 <!-- LINKS -->
 [overview]: https://learn.microsoft.com/azure/foundry-classic/concepts/fine-tuning-overview
 [subscription]: https://azure.microsoft.com/free/
+[issues]: https://github.com/Azure/azure-sdk-for-python/issues
 [contributing]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
 [code-of-conduct]: https://opensource.microsoft.com/codeofconduct/
