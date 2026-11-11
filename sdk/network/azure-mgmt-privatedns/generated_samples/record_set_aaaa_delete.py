@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2024-06-01/RecordSetAAAADelete.json
+# x-ms-original-file: 2026-06-01-preview/RecordSetAAAADelete.json
 if __name__ == "__main__":
     main()
