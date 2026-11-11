@@ -136,6 +136,7 @@ Breaking changes in preview classes:
 
 ### Sample updates
 
+* Added sync/async recorded-conversation and voice-agent simulation evaluation samples using built-in audio evaluators, distinct target/simulator/judge configuration, and bounded polling with cleanup.
 * Added `sample_log_from_voice_agent.py` in `samples/logs`, demonstrating Voice Agent realtime diagnostics through the `azure.ai.projects.realtime` logger without OpenTelemetry setup.
 * Fixed the realtime audio conversation sample to enable input transcription, count only successfully sent audio payloads, and finish pending capture sends before printing transfer totals.
 * Fixed the conversation deletion snippet to handle the API's no-content response.
