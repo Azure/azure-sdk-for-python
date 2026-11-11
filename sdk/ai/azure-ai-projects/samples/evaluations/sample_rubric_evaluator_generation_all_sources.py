@@ -265,7 +265,10 @@ with (
             safety_evaluator_version = evaluator.version or ""
             print(f"Safety evaluator `{evaluator.name}` v{evaluator.version}:")
             for dimension in definition.dimensions:
-                behavior = "allowed" if dimension.allowed else "disallowed"
+                if dimension.allowed is None:
+                    behavior = "unspecified"
+                else:
+                    behavior = "allowed" if dimension.allowed else "disallowed"
                 print(f"  - [{behavior}] {dimension.id}: {dimension.description}")
         except Exception as e:  # pylint: disable=broad-except
             print(f"Safety job failed: {e}")

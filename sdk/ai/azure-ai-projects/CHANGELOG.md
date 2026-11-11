@@ -146,7 +146,7 @@ Breaking changes in beta classes:
 
 * Updated `sample_rubric_evaluator_manual.py` to show Likert, Boolean, and safety rubric evaluators with `scoring`, `pass_threshold`, and `allowed` dimensions.
 * Updated `sample_rubric_evaluator_generation_basic.py` to set the quality `category`, Likert `scoring`, and `pass_threshold`, and added a safety generation example to `sample_rubric_evaluator_generation_all_sources.py`.
-* Updated `sample_rubric_evaluator_generation_iterate.py` to start edited weights from the read-only `generated_weight` when a generated dimension has no authored `weight`.
+* Updated `sample_rubric_evaluator_generation_iterate.py` to rank dimensions using configured or generated weights while preserving the always-on dimension and Likert scoring.
 * Added `sample_voice_agent_campaign.py` demonstrating future-scheduled outbound campaign creation, automatic polling, conditional cancellation, and deletion.
 * Added `sample_voice_agent_live_read_conversation.py` demonstrating stored GPT Live conversation, transcript, and audio retrieval, with an optional temporary greeting session.
 * Added `sample_voice_agent_read_generated_audio.py` demonstrating retrieval of generated, unheard audio from an interrupted Realtime reply.

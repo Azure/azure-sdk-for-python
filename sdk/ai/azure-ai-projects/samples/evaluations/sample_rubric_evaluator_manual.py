@@ -57,6 +57,7 @@ USAGE:
 import os
 import time
 import uuid
+from contextlib import ExitStack
 from datetime import datetime, timezone
 from typing import Union
 from dotenv import load_dotenv
@@ -99,6 +100,7 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
+    ExitStack() as cleanup,
 ):
 
     def create_rubric_evaluator(
@@ -115,6 +117,7 @@ with (
                 "definition": {"type": EvaluatorDefinitionType.RUBRIC, **definition},
             },
         )
+        cleanup.callback(project_client.evaluators.delete_version, name=name, version=created.version)
         # `isinstance` narrows the discriminated `definition` to the rubric subtype.
         created_definition = created.definition
         assert isinstance(created_definition, RubricBasedEvaluatorDefinition)
@@ -254,6 +257,7 @@ with (
             for evaluator in evaluators
         ],
     )
+    cleanup.callback(openai_client.evals.delete, eval_id=eval_object.id)
 
     # 3. Run the evaluation against inline JSONL sample data.
     eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
@@ -321,8 +325,5 @@ with (
                 scores.append(f"{name}={score}")
             print(f"  item {idx} ({item.status}): {', '.join(scores)}")
 
-    # 4. Clean up.
+    # 4. The exit stack cleans up the evaluation and evaluators, even on failure.
     print("Cleaning up.")
-    openai_client.evals.delete(eval_id=eval_object.id)
-    for evaluator in evaluators:
-        project_client.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
