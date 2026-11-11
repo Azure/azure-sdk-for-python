@@ -44,13 +44,9 @@ class TestSamplesAsync(AzureRecordedTestCase):
     )
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
-    async def test_audio_conversation_sample_async(
-        self, sample_path: str, **kwargs
-    ) -> None:
+    async def test_audio_conversation_sample_async(self, sample_path: str, **kwargs) -> None:
         sanitize_audio_evaluation_dataset()
-        executor = AsyncSampleExecutor(
-            self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs
-        )
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs)
         with patch("pprint.pprint") as output:
             await executor.execute_async()
         assert_audio_evaluation_results(
@@ -69,12 +65,8 @@ class TestSamplesAsync(AzureRecordedTestCase):
     )
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
-    async def test_voice_agent_simulation_sample_async(
-        self, sample_path: str, **kwargs
-    ) -> None:
-        executor = AsyncSampleExecutor(
-            self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs
-        )
+    async def test_voice_agent_simulation_sample_async(self, sample_path: str, **kwargs) -> None:
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs)
         with patch("pprint.pprint") as output:
             await executor.execute_async()
         assert_audio_evaluation_results(output.call_args_list, ("task_completion",))

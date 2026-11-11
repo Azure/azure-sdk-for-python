@@ -17,7 +17,9 @@ from llm_instructions import (
     resource_management_instructions,
 )
 
-_AUDIO_DATASET_ID = "azureai://accounts/sanitized-account-name/projects/sanitized-project-name/data/audio-conversations/versions/1"
+_AUDIO_DATASET_ID = (
+    "azureai://accounts/sanitized-account-name/projects/sanitized-project-name/data/audio-conversations/versions/1"
+)
 
 audioEvaluationsPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -41,9 +43,7 @@ voiceSimulationPreparer = functools.partial(
 
 def sanitize_audio_evaluation_dataset():
     # Account/project sanitizers run before the preparer's full-ID replacement.
-    add_body_key_sanitizer(
-        json_path="data_source.source.id", value=_AUDIO_DATASET_ID, function_scoped=True
-    )
+    add_body_key_sanitizer(json_path="data_source.source.id", value=_AUDIO_DATASET_ID, function_scoped=True)
 
 
 def assert_audio_evaluation_results(output_calls, metrics):

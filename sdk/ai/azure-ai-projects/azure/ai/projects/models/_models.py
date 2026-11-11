@@ -26854,13 +26854,13 @@ class PromptOptimizationConfiguration(
     :vartype type: str or ~azure.ai.projects.models.AgentOptimizationConfigurationType
     :ivar context: Steering context for prompt optimization. Agent trace and skill reference
      context are supported only by skill optimization. Omitted when no context is supplied.
-    :vartype context: list[~azure.ai.projects.models.SteeringPromptOptimizationContext]
+    :vartype context: list[~azure.ai.projects.models.OptimizationContext]
     """
 
     type: Literal[AgentOptimizationConfigurationType.PROMPT_OPTIMIZATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Optimization type discriminator. Required. One-shot prompt optimization that generates a single
      candidate."""
-    context: Optional[list["_models.SteeringPromptOptimizationContext"]] = rest_field(
+    context: Optional[list["_models.OptimizationContext"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Steering context for prompt optimization. Agent trace and skill reference context are supported
@@ -26870,7 +26870,7 @@ class PromptOptimizationConfiguration(
     def __init__(
         self,
         *,
-        context: Optional[list["_models.SteeringPromptOptimizationContext"]] = None,
+        context: Optional[list["_models.OptimizationContext"]] = None,
     ) -> None: ...
 
     @overload
