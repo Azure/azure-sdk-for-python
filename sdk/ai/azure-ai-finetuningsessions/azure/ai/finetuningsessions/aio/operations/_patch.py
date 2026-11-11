@@ -10,6 +10,7 @@ replacements, not unchecked implementation or arbitrary API changes.
 """
 
 from collections.abc import MutableMapping
+from os import PathLike
 from typing import Any, IO, Literal, Optional, Union, overload
 
 from azure.core.polling import AsyncLROPoller
@@ -17,6 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ...models._enums import FoundryFeaturesOptInKeys
+from ..._checkpoint_download import _prepare_checkpoint_download_async, _validate_checkpoint_output_path
 from ..._operation_compat import _begin_async, _read_async, _build_sampling_request
 from ...operations import _operations as _builders
 from . import _operations as _generated
@@ -278,6 +280,35 @@ class TrainingOperations(_generated.TrainingOperations):
 
 
 class CheckpointsOperations(_generated.CheckpointsOperations):
+    async def download_weights(
+        self, session_id: str, checkpoint_id: str, output_path: Union[str, PathLike[str]]
+    ) -> None:
+        """Validate the local destination and prepare checkpoint weights on the service.
+
+        First check ``output_path/<session_id>/<checkpoint_id>``. The checkpoint directory must
+        be empty or absent; parent directories may contain unrelated entries.
+        Identifiers are used verbatim and must be single portable directory names.
+        Resolved session/checkpoint paths must remain inside the output root.
+        Then poll the canonical download preparation API and validate its complete private
+        file manifest. No directories are created, files written, or weights transferred.
+
+        :param str session_id: Identifier of the session that owns the checkpoint.
+        :param str checkpoint_id: Identifier of the checkpoint within the session.
+        :param output_path: Local output root, which may already contain other files.
+        :type output_path: str or ~os.PathLike[str]
+        :return: None after server-side preparation, not confirmation of file delivery.
+        :rtype: None
+        :raises TypeError: If an identifier or output path has an incompatible type.
+        :raises ValueError: If an identifier is unsafe, a path escapes the output root,
+            the checkpoint directory is nonempty, or a request option is invalid.
+        :raises OSError: If a needed directory is a file or another filesystem check fails.
+        :raises ~azure.ai.finetuningsessions.FineTuningSessionsError: If preparation fails.
+        :raises ~azure.core.exceptions.HttpResponseError: If a service request fails.
+        :raises ~azure.ai.finetuningsessions.MalformedResponseError: If preparation status or file metadata is invalid.
+        """
+        _validate_checkpoint_output_path(session_id, checkpoint_id, output_path)
+        await _prepare_checkpoint_download_async(self, session_id, checkpoint_id)
+
     # Preserve the published preview 'body' keyword across overloads and implementation.
     @overload  # type: ignore[override]
     async def begin_save(  # pylint: disable=arguments-renamed
