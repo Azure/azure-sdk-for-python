@@ -757,7 +757,7 @@ class BaseExporter:
                     # Mark as not retryable because we already write to storage here
                     result = ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
-                if self._route is not None:
+                if self._route is not None and not _is_redirect_code(response_error.status_code):
                     status_code = (
                         response_error.status_code if isinstance(response_error.status_code, int) else "unknown"
                     )

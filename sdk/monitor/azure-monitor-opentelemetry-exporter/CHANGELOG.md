@@ -7,6 +7,7 @@
 - Add actionable multi-endpoint routing diagnostics
   for invalid routing attributes, export/storage failures, retention evictions,
   and capacity limits, without including sensitive routing or telemetry values.
+  ([#49946](https://github.com/Azure/azure-sdk-for-python/pull/49946))
 
 ### Breaking Changes
 
@@ -18,6 +19,7 @@
   Reject custom authentication policies in routing mode and refuse credential-bearing,
   port-changing, or untrusted routed redirects. Preserve the complete path of accepted
   routed redirects. Single-endpoint behavior is unchanged.
+  ([#49875](https://github.com/Azure/azure-sdk-for-python/pull/49875))
 
 ### Other Changes
 
