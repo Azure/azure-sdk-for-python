@@ -10,12 +10,13 @@
 * Added skill optimization through `SkillOptimizationConfiguration`, with trace-based learning, skill references, optional evaluation, and typed execution, validation, and result models. Added `AgentTracesOptimizationContext`, `SkillReferencesOptimizationContext`, and `SkillOptimizationEvaluationConfiguration`.
 * Added optimization trace selection through `AgentOptimizationFixedTraceWindow`, `AgentOptimizationTraceIdsTraceWindow`, and `AgentOptimizationAppInsightsTraceConnectionConfiguration`.
 * Added `.agents.download_optimization_job_file()` and `AgentOptimizationCandidateFile` for downloading optimization artifacts. Added optional `error`, `execution_summary`, `files`, and `resolved_context` properties on `AgentOptimizationCandidate`, and `AgentOptimizationCandidateStatus.SKIPPED`.
+* Added shared `JobStatus.SKIPPED` for Agent Insights runs, agent optimization, data generation, evaluator generation, and telephony campaign operations. Agent optimization job and Agent Insights run status filters also accept this value.
 * Added quality and safety rubric generation through `EvaluatorGenerationCategory`, Boolean and Likert scoring through `RubricScoring` and `RubricScoringMode`, and optional `Dimension.allowed` and read-only `Dimension.generated_weight`. `Dimension.weight` is now optional.
 * Added optional `category`, `dimensions`, `pass_threshold`, and `scoring` properties on `EvaluatorGenerationInputs` and `EvaluatorGenerationJob`. `EvaluatorGenerationInputs.model` is now optional for safety generation. Added optional `TracesEvaluatorGenerationJobSource.trace_ids` and `RubricBasedEvaluatorDefinition.scoring`.
 * Added preview `.beta.evaluators.list_diagnostics()` for evaluator publication lineage and diagnostics, with actor, change, and health metric models.
 * Added optional `EndpointBasedEvaluatorDefinition.schema_version` and `EndpointEvaluatorSchemaVersion` for selecting an endpoint evaluator contract version.
 * Added scheduled dataset and trace evaluations through `DatasetEvaluationRuleAction` and `TraceEvaluationRuleAction`. `EvaluationRule` now exposes optional `schedule`, `provisioning_status`, and `error` properties, and `EvaluationRuleEventType` includes `TIMER_TRIGGER`.
-* Added typed evaluation input sources for JSONL, CSV, stored completions, target completions, conversation simulation, and agent traces, including `CreateEvalJsonlRunDataSource`, `CsvEvalRunDataSource`, `TargetCompletionEvalRunDataSource`, `UserConversationSimulationEvalRunDataSource`, and `TraceSourceEvalRunDataSource`.
+* Added typed evaluation input sources for JSONL, CSV, stored completions, target completions, conversation simulation, and agent traces, including `CreateEvalJsonlRunDataSource`, `CsvEvalRunDataSource`, `TargetCompletionEvalRunDataSource`, `UserConversationSimulationEvalRunDataSource`, `TraceSourceEvalRunDataSource`, and `TraceSourcePreviewEvalRunDataSource`. Evaluation-rule annotations and the `DatasetEvaluationSource` and `TraceEvaluationSource` unions use these model names; wire discriminator values are unchanged.
 * Added `DataGenerationJobType.CONVERSATIONS`, `UserConversationSimulationDefaultConfiguration`, and optional `TracesDataGenerationJobConfiguration.generate_test_case_rubric`. `DataGenerationJobResult.warnings` now exposes `DataGenerationWarning` and `DataGenerationWarningCode`.
 * `DailyRecurrenceSchedule.hours` is now optional; when omitted, the service uses the current UTC hour at schedule creation.
 * Added optional `MCPToolboxTool.request_header_bindings`, with `MCPToolboxRequestHeaderBinding` and `MCPToolboxRequestHeaderBindingSource`, for forwarding client-supplied headers to an MCP server.
@@ -36,10 +37,6 @@
 * Added explicit recursive typing for nested `CompoundFilter` instances in `CompoundFilter.filters`, while retaining support for arbitrary values.
 
 ### Breaking Changes
-
-Breaking changes in shared model types:
-
-* Renamed `ActivityProtocolAccessBoundary.READ1_ON1_*` and `WRITE1_ON1_*` members to `READ_1_ON1_*` and `WRITE_1_ON1_*`, respectively, for the `MANAGER`, `DEVELOPERS`, `ALLOWLISTED`, and `TENANT` boundaries. Wire values are unchanged.
 
 Breaking changes in beta methods:
 
@@ -68,6 +65,14 @@ Breaking changes in beta classes:
 * Constructor argument `timestamp_type` on `VoiceAgentServerEventResponseAudioTimestampDelta` is now required; use `VoiceAgentAudioTimestampType.WORD`. Constructor arguments `left` and `right` on `VoiceRecordingChannelLayout` are now required; use `VoiceAudioRole.USER` and `VoiceAudioRole.AGENT`.
 * Renamed `VoiceAgentInputTranscriptionModel.GPT4_O_TRANSCRIBE`, `GPT4_O_MINI_TRANSCRIBE`, `GPT4_O_TRANSCRIBE_DIARIZE`, and `WHISPER1` to `GPT_4_O_TRANSCRIBE`, `GPT_4_O_MINI_TRANSCRIBE`, `GPT_4_O_TRANSCRIBE_DIARIZE`, and `WHISPER_1`, respectively. Wire values are unchanged.
 
+### Bugs Fixed
+
+* Fixed the GPT Live sample helper to enforce the overall event-wait deadline when sending silence audio. Stalled audio sends are now cancelled and raise `TimeoutError` instead of hanging indefinitely.
+
+### Dependency update
+
+* Added Python 3.15 to the package's supported-version classifiers. The minimum Python version remains 3.10.
+
 ### Sample updates
 
 * Added `sample_voice_agent_campaign.py` demonstrating future-scheduled outbound campaign creation, polling, cancellation, and deletion.
@@ -82,7 +87,7 @@ Breaking changes in beta classes:
 * Added `sample_endpoint_evaluator.py` demonstrating endpoint-evaluator registration through a project connection and inline-data evaluation, and `sample_endpoint_evaluator_schema_0_0_1.py` demonstrating the older endpoint contract. Removed the separate API-key and Entra ID samples after consolidating their scenarios.
 * Updated rubric examples for Likert, Boolean, and safety scoring, pass thresholds, allowed dimension values, and generated weights.
 * Updated Agent Insights examples for the GA client and flattened operation arguments, and External Agent and Voice Agent examples for GA paths and preview opt-in requirements.
-* Updated optimization examples to use `JobStatus` while retaining handling for the extensible `skipped` status.
+* Updated optimization polling examples to handle skipped jobs as terminal outcomes with no optimization result.
 * Updated Realtime audio, conversation, logging, and configuration examples. Consolidated the synchronous Realtime text-conversation example into the asynchronous example, moved the function-tool example to an asynchronous sample, and removed the separate basic asynchronous Voice Agent sample.
 * Updated installation instructions in samples added or modified for this release to require `azure-ai-projects>=2.11.0`, and refreshed the datasets and evaluations sample READMEs.
 
