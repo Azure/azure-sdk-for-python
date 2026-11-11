@@ -24,6 +24,7 @@ from typing import (
 )
 
 from azure.ai.evaluation._legacy._adapters.utils import async_run_allowing_running_loop
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidLLMOutputError
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
 from azure.ai.evaluation._exceptions import (
@@ -618,6 +619,22 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     ) -> None:
         """Allow a model-backed evaluator to retain completed-turn metadata on a later failure."""
 
+    async def _do_eval_reporting_evaluator_errors(self, eval_input: Any) -> DoEvalResult[T_EvalValue]:
+        """Run ``_do_eval`` and report invalid model output as an evaluator error.
+
+        The evaluator error is built after the ``except`` block so it does not capture the original error.
+
+        :param eval_input: The input to evaluate.
+        :type eval_input: Any
+        :return: The evaluation result.
+        :rtype: DoEvalResult[T_EvalValue]
+        """
+        try:
+            return await self._do_eval(eval_input)
+        except InvalidLLMOutputError as error:
+            invalid_output = error
+        raise invalid_output.for_evaluator()
+
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
@@ -636,7 +653,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Evaluate all inputs.
         for eval_input in eval_input_list:
             try:
-                result = await self._do_eval(eval_input)
+                result = await self._do_eval_reporting_evaluator_errors(eval_input)
             except (EvaluationException, asyncio.CancelledError) as error:
                 self._on_evaluation_error(error, per_turn_results)
                 raise

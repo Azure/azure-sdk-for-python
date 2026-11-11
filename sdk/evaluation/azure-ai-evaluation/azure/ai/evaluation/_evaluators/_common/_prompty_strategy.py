@@ -4,12 +4,69 @@ import re
 from typing import Any, Callable, Dict, NoReturn, Optional, Tuple
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
-from azure.ai.evaluation._common.utils import check_score_is_valid, parse_quality_evaluator_reason_score
+from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.ai.evaluation._legacy.prompty._exceptions import invalid_llm_output_message
+from azure.ai.evaluation._legacy.prompty._exceptions import (
+    InvalidLLMOutputError,
+    RESPONSE_EMPTY,
+    RESPONSE_NO_VALID_SCORE,
+    RESPONSE_NOT_JSON_OBJECT,
+    RESPONSE_UNEXPECTED_TYPE,
+)
 from ._base_model_eval import ModelEvaluatorBase, not_applicable_result
 
-_NO_VALID_SCORE = "the judge model response had no valid numeric score"
+
+def _to_number(value: Any) -> Tuple[Optional[float], bool]:
+    """Convert a score to a float, returning ``(None, False)`` when it is not numeric.
+
+    The conversion error is not kept, because its message can quote judge text.
+
+    :param value: The score.
+    :type value: Any
+    :return: The number, or None, and whether it was an integer too large for a float.
+    :rtype: Tuple[Optional[float], bool]
+    """
+    try:
+        return float(value), False
+    except (TypeError, ValueError):
+        return None, False
+    except OverflowError:
+        return None, True
+
+
+def invalid_output_error(output: Any = None, cause: Optional[str] = None, target: Any = ErrorTarget.EVALUATE):
+    """Build the error for an unusable judge output, with only the prompty envelope's metadata.
+
+    :param output: The prompty output, either the envelope that holds ``llm_output`` or the answer itself.
+    :type output: Any
+    :param cause: A fixed cause. When omitted it is derived from the answer's type.
+    :type cause: Optional[str]
+    :param target: The error target.
+    :type target: Any
+    :return: The error.
+    :rtype: InvalidLLMOutputError
+    """
+    # Runtime metadata is only trusted from a prompty envelope; a bare answer dict comes from the judge.
+    envelope = output if isinstance(output, dict) and "llm_output" in output else {}
+    if cause is None:
+        answer = envelope.get("llm_output") if envelope else output
+        if answer is None or answer == "" or answer == {}:
+            cause = RESPONSE_EMPTY
+        elif isinstance(answer, str):
+            cause = RESPONSE_NOT_JSON_OBJECT
+        else:
+            cause = RESPONSE_UNEXPECTED_TYPE.format(type(answer).__name__)
+    usage = envelope.get("reported_usage")
+    if not isinstance(usage, dict):
+        usage = {
+            "prompt_tokens": envelope.get("input_token_count"),
+            "completion_tokens": envelope.get("output_token_count"),
+            "total_tokens": envelope.get("total_token_count"),
+            "model": envelope.get("model_id"),
+        }
+    return InvalidLLMOutputError(
+        cause, finish_reason=envelope.get("finish_reason"), usage=usage, subject="Evaluator", target=target
+    )
 
 
 def _describe_score(score: Any) -> str:
@@ -76,7 +133,7 @@ class PromptyEvaluationStrategy:
         if not self.strict and isinstance(answer, str):
             try:
                 parsed = json.loads(answer)
-            except (json.JSONDecodeError, TypeError):
+            except (ValueError, TypeError, RecursionError):
                 parsed = None
             if isinstance(parsed, dict) and parsed:
                 answer = parsed
@@ -118,19 +175,13 @@ class PromptyEvaluationStrategy:
                     has_score = True
         if self.score_range:
             minimum, maximum = self.score_range
-            score_for_error = None
-            try:
-                valid_score = (
-                    has_score and not isinstance(score, bool) and check_score_is_valid(score, minimum, maximum)
-                )
-            except OverflowError:
-                valid_score = False
-                # Formatting an oversized integer can also exceed Python's decimal digit limit.
-                score_for_error = "<numeric overflow>"
-            if not valid_score:
+            numeric, overflow = _to_number(score) if has_score and not isinstance(score, bool) else (None, False)
+            if not overflow and (numeric is None or math.isnan(numeric)):
+                self._invalid_output(output, RESPONSE_NO_VALID_SCORE, self.score_error_target)
+            if overflow or not minimum <= numeric <= maximum:
                 raise EvaluationException(
                     message=(
-                        f"Invalid score value: {score_for_error or _describe_score(score)}. "
+                        f"Invalid score value: {'<numeric overflow>' if overflow else _describe_score(score)}. "
                         f"Expected a number in range [{minimum}, {maximum}]."
                     ),
                     internal_message="Invalid score value.",
@@ -138,14 +189,14 @@ class PromptyEvaluationStrategy:
                     target=self.score_error_target,
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
-        elif self.strict and not has_score:
-            self._invalid_output(output, _NO_VALID_SCORE)
-        try:
-            score = float(score) if self.strict or score is not None else math.nan
-        except (TypeError, ValueError):
-            self._invalid_output(output, _NO_VALID_SCORE)
-        if self.strict and (isinstance(answer.get("score"), bool) or not math.isfinite(score)):
-            self._invalid_output(output, _NO_VALID_SCORE)
+            score = numeric
+        elif self.strict or score is not None:
+            numeric, _ = _to_number(score) if has_score or not self.strict else (None, False)
+            if numeric is None or (self.strict and (isinstance(score, bool) or not math.isfinite(numeric))):
+                self._invalid_output(output, RESPONSE_NO_VALID_SCORE)
+            score = numeric
+        else:
+            score = math.nan
         cutoff = self.threshold if self.binary_cutoff is None else self.binary_cutoff
         if math.isnan(score) and self.binary_cutoff is None:
             verdict = "unknown"
@@ -181,22 +232,5 @@ class PromptyEvaluationStrategy:
             result.update({f"{self.result_key}_{key}": value for key, value in metadata.items()})
         return result
 
-    def _invalid_output(self, output: Any = None, cause: Optional[str] = None) -> NoReturn:
-        # Runtime metadata is only trusted from a prompty envelope; a bare answer dict comes from the judge.
-        envelope = output if isinstance(output, dict) and "llm_output" in output else {}
-        if cause is None:
-            answer = envelope.get("llm_output") if envelope else output
-            if answer is None or answer == "" or answer == {}:
-                cause = "the judge model returned an empty response"
-            elif isinstance(answer, str):
-                cause = "the judge model response was not a JSON object"
-            else:
-                cause = f"the judge model response had unexpected type {type(answer).__name__}"
-        message = invalid_llm_output_message(cause, envelope.get("finish_reason"), envelope.get("output_token_count"))
-        raise EvaluationException(
-            message=message,
-            internal_message=message,
-            blame=ErrorBlame.SYSTEM_ERROR,
-            category=ErrorCategory.FAILED_EXECUTION,
-            target=self.error_target,
-        )
+    def _invalid_output(self, output: Any = None, cause: Optional[str] = None, target: Any = None) -> NoReturn:
+        raise invalid_output_error(output, cause, target or self.error_target)

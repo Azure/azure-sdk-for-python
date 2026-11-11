@@ -4,8 +4,11 @@
 
 ### Bugs Fixed
 
-- Prompty-based evaluators that request JSON output now report why the judge model output could not be used, such as truncation at the output token limit, content filtering, an empty response, or invalid JSON, along with the finish reason and output token count, instead of a raw JSON decoding error. The message does not include the model output.
-- `PromptyEvaluationStrategy` reports a missing, non-numeric, or non-finite score as invalid output rather than scoring a strict binary evaluator as 0, and no longer includes non-numeric score text in error messages.
+- Prompty-based evaluators now say why the model response could not be used instead of raising a raw JSON decoding error or `Evaluator returned invalid output.` with no cause. The message names one cause, such as truncation at the output token limit, content filtering, an empty response, invalid JSON with the parser's position, a response that is not a JSON object, or no valid numeric score, followed by the finish reason and output token count, for example `Evaluator returned invalid output: the model response was truncated at the output token limit (finish_reason=length, output_tokens=800).` A token count the service did not report reads `unknown` rather than 0. The message, the exception's chained and captured exceptions, and its traceback never include the model response.
+- A model response blocked by the content filter is reported as a user error rather than a system error, because the evaluated content triggered the filter.
+- A row whose model response could not be used keeps its token usage and model name, so `per_model_usage` counts the tokens that were spent, and its error reports the blame and the `FAILED_EXECUTION` code.
+- Evaluators configured with a score range report a missing or non-numeric score as invalid output rather than `Invalid score value: None`. An out-of-range score is still reported as an invalid score value.
+- `_TaskCompletionEvaluator` and other strict binary evaluators report a missing, non-numeric, or non-finite score as invalid output rather than scoring the row 0 (fail). Such a row is now an error, and errors are left out of the pass rate, so the pass rate of a run with such rows can rise. A non-strict evaluator now also reports an integer score too large for a float as invalid output rather than raising `OverflowError`.
 
 ## 1.18.12 (2026-11-09)
 

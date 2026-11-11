@@ -26,6 +26,7 @@ from azure.ai.evaluation._evaluators._common._model_runners import DecisionModel
 from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidLLMOutputError, RESPONSE_TRUNCATED
 
 pytestmark = pytest.mark.unittest
 
@@ -535,6 +536,27 @@ class TestDecisionBatchPersistence:
                 "cached_tokens": 0,
             }
         ]
+
+    @pytest.mark.parametrize(
+        "finish_reason, blame", [("length", "SystemError"), ("content_filter", "UserError")], ids=["length", "filter"]
+    )
+    def test_invalid_judge_output_retains_usage_and_blame(self, batch_client, tmp_path, finish_reason, blame):
+        async def judge(query):
+            raise InvalidLLMOutputError(
+                RESPONSE_TRUNCATED,
+                finish_reason=finish_reason,
+                usage={"prompt_tokens": 120, "completion_tokens": 800, "total_tokens": 920, "model": "judge-model"},
+                subject="Evaluator",
+            )
+
+        summary, rows = convert_batch(batch_client, judge, tmp_path)
+        result = next(item for item in rows[0]["results"] if item["name"] == "judge")
+        assert result["status"] == "error" and result["score"] is None and result["passed"] is None
+        assert result["sample"]["error"]["blame"] == blame
+        assert result["sample"]["error"]["code"] == "FAILED_EXECUTION"
+        assert result["sample"]["usage"] == {"prompt_tokens": 120, "completion_tokens": 800, "total_tokens": 920}
+        assert result["sample"]["model"] == "judge-model"
+        assert summary["judge"]["failed_lines"] == 1
 
     @pytest.mark.parametrize("status, expected", [(0.9, "completed"), (0.1, "skipped")])
     def test_success_and_skip_are_not_stamped_as_errors(self, batch_client, tmp_path, status, expected):

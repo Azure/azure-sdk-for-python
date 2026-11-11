@@ -46,7 +46,12 @@ from azure.ai.evaluation._legacy.prompty._exceptions import (
     InvalidLLMOutputError,
     JinjaTemplateError,
     PromptyException,
-    invalid_llm_output_message,
+    RESPONSE_CONTENT_FILTERED,
+    RESPONSE_EMPTY,
+    RESPONSE_NOT_JSON,
+    RESPONSE_NOT_JSON_OBJECT,
+    RESPONSE_TRUNCATED,
+    RESPONSE_UNEXPECTED_TYPE,
 )
 
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml
@@ -644,42 +649,44 @@ async def format_llm_response(
     :rtype: Union[str, dict, Response]
     """
 
-    def format_choice(item: str) -> Union[str, Mapping[str, Any]]:
+    def parse_choice(content: Any, finish_reason: str = "", usage: Optional[Mapping[str, Any]] = None) -> Any:
         # response_format is one of text or json_object.
         # https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format
         if not is_json_format:
-            return item
-
-        result_dict = json.loads(item)
+            return content
+        # The cause is decided inside the except block but raised after it, so that the new error does not
+        # capture the decoding error, whose document and message can hold the model output.
+        cause = None
+        try:
+            parsed = json.loads(content)
+        except (ValueError, TypeError, RecursionError) as error:
+            if finish_reason == "length":
+                cause = RESPONSE_TRUNCATED
+            elif finish_reason == "content_filter":
+                cause = RESPONSE_CONTENT_FILTERED
+            elif content is None or (isinstance(content, str) and not content.strip()):
+                cause = RESPONSE_EMPTY
+            elif isinstance(error, json.JSONDecodeError):
+                # The decoder's msg and pos describe the failure without echoing the response content.
+                cause = f"{RESPONSE_NOT_JSON} ({error.msg}, position {error.pos})"
+            elif isinstance(error, TypeError):
+                cause = RESPONSE_UNEXPECTED_TYPE.format(type(content).__name__)
+            else:
+                cause = RESPONSE_NOT_JSON
+        if cause is None and outputs and not isinstance(parsed, dict):
+            cause = RESPONSE_NOT_JSON_OBJECT
+        if cause is not None:
+            raise InvalidLLMOutputError(cause, finish_reason=finish_reason or None, usage=usage)
         if not outputs:
-            return result_dict
+            return parsed
 
         # return the keys in outputs
         output_results = {}
         for key in outputs:
-            if key not in result_dict:
-                raise InvalidInputError(f"Cannot find '{key}' in response {list(result_dict.keys())}")
-            output_results[key] = result_dict[key]
+            if key not in parsed:
+                raise InvalidInputError(f"Cannot find '{key}' in response {list(parsed.keys())}")
+            output_results[key] = parsed[key]
         return output_results
-
-    def parse_choice(content: Any, finish_reason: str = "", output_tokens: Any = None) -> Any:
-        try:
-            return format_choice(content)
-        except (json.JSONDecodeError, TypeError) as error:
-            if finish_reason == "length":
-                cause = "the judge model response was truncated at the output token limit"
-            elif finish_reason == "content_filter":
-                cause = "the judge model response was blocked by the content filter"
-            elif content is None or (isinstance(content, str) and not content.strip()):
-                cause = "the judge model returned an empty response"
-            elif isinstance(error, json.JSONDecodeError):
-                # The decoder's msg and pos describe the failure without echoing the response content.
-                cause = f"the judge model response was not valid JSON ({error.msg} at character {error.pos})"
-            else:
-                cause = f"the judge model response had unexpected type {type(content).__name__}"
-            raise InvalidLLMOutputError(
-                invalid_llm_output_message(cause, finish_reason or None, output_tokens)
-            ) from None
 
     async def format_stream(llm_response: AsyncStream[ChatCompletionChunk]) -> AsyncGenerator[str, None]:
         cur_index = None
@@ -748,11 +755,19 @@ async def format_llm_response(
         response_content = response.model_dump()["choices"][0]["message"]
     else:
         response_content = getattr(response.choices[0].message, "content", "")
-    result = parse_choice(response_content, finish_reason, output_token_count)
+    # Missing usage stays None, so an invalid-output error reports it as unknown rather than 0.
+    reported_usage = {
+        "prompt_tokens": response.usage.prompt_tokens if response.usage else None,
+        "completion_tokens": response.usage.completion_tokens if response.usage else None,
+        "total_tokens": response.usage.total_tokens if response.usage else None,
+        "model": model_id,
+    }
+    result = parse_choice(response_content, finish_reason, reported_usage)
     to_ret["llm_output"] = result
     to_ret["input_token_count"] = input_token_count
     to_ret["output_token_count"] = output_token_count
     to_ret["total_token_count"] = total_token_count
+    to_ret["reported_usage"] = reported_usage
     to_ret["finish_reason"] = finish_reason
     to_ret["model_id"] = model_id
     to_ret["sample_input"] = sample_input

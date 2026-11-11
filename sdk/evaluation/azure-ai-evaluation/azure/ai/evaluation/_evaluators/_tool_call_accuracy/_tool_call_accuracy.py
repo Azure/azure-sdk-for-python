@@ -349,7 +349,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # If there is an error message, return not applicable result
             return self._return_not_applicable_result(eval_input.get("error_message"), self._threshold)
         # Do the evaluation
-        result = await self._do_eval(eval_input)
+        result = await self._do_eval_reporting_evaluator_errors(eval_input)
         # Return the result
         return result
 

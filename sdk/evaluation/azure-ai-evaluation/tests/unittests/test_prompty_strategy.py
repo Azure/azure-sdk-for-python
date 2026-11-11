@@ -7,6 +7,9 @@ import pytest
 
 from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidLLMOutputError, RESPONSE_NO_VALID_SCORE
+
+NO_VALID_SCORE = RESPONSE_NO_VALID_SCORE
 
 
 def strategy(**kwargs):
@@ -82,11 +85,19 @@ def test_strict_rejects_non_dict_answer(output):
     assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
 
 
-@pytest.mark.parametrize("score", [None, 0, -1, 6, "bad", math.nan, math.inf])
+@pytest.mark.parametrize("score", [0, -1, 6, math.inf])
 def test_score_range_errors(score):
     with pytest.raises(EvaluationException, match="Invalid score value") as error:
         strategy(score_range=(1, 5), error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR).parse({"score": score})
     assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+
+
+@pytest.mark.parametrize("score", [None, "bad", math.nan, True])
+def test_score_range_reports_a_missing_or_non_numeric_score_as_invalid_output(score):
+    with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE) as error:
+        strategy(score_range=(1, 5), error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR).parse({"score": score})
+    assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+    assert error.value.blame == ErrorBlame.SYSTEM_ERROR
 
 
 @pytest.mark.parametrize("strict", [True, False])
@@ -144,7 +155,7 @@ def test_zero_inclusive_range_accepts_an_explicit_zero(strict, score):
 )
 def test_zero_inclusive_range_rejects_missing_or_invalid_scores(strict, missing_score, answer):
     """A default fallback must not manufacture a valid ranged grade."""
-    with pytest.raises(EvaluationException, match="Invalid score value"):
+    with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE):
         strategy(strict=strict, missing_score=missing_score, score_range=(0, 1)).parse({"llm_output": answer})
 
 
@@ -197,7 +208,7 @@ def test_quality_text_zero_is_distinct_from_a_missing_grade(answer, valid):
     if valid:
         assert configured.parse({"llm_output": answer})["fluency"] == 0.0
     else:
-        with pytest.raises(EvaluationException, match="Invalid score value"):
+        with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE):
             configured.parse({"llm_output": answer})
 
 
@@ -224,25 +235,71 @@ def test_missing_completion_score_and_binary_rule():
         with pytest.raises(EvaluationException) as exc_info:
             completion.parse(answer)
         message = str(exc_info.value)
-        assert "Evaluator returned invalid output: the judge model response had no valid numeric score" in message
+        assert f"Evaluator returned invalid output: {NO_VALID_SCORE}" in message
         assert "SECRET" not in message
 
 
 def test_invalid_output_reports_only_runtime_metadata():
-    with pytest.raises(EvaluationException) as exc_info:
-        strategy().parse({"llm_output": "SECRET", "finish_reason": "length", "output_token_count": 800})
+    with pytest.raises(InvalidLLMOutputError) as exc_info:
+        strategy().parse(
+            {
+                "llm_output": "SECRET",
+                "finish_reason": "length",
+                "input_token_count": 10,
+                "output_token_count": 800,
+                "total_token_count": 810,
+                "model_id": "judge",
+            }
+        )
     assert exc_info.value.args[0] == (
-        "Evaluator returned invalid output: the judge model response was not a JSON object "
+        "Evaluator returned invalid output: the model response was not a JSON object "
         "(finish_reason=length, output_tokens=800)."
     )
+    assert exc_info.value.properties == {
+        "prompt_tokens": 10,
+        "completion_tokens": 800,
+        "total_tokens": 810,
+        "model": "judge",
+    }
 
-    with pytest.raises(EvaluationException) as exc_info:
+    with pytest.raises(InvalidLLMOutputError) as exc_info:
         strategy(binary_cutoff=1).parse({"finish_reason": "length", "output_token_count": 800})
     assert "(finish_reason=unknown, output_tokens=unknown)" in str(exc_info.value)
+    assert exc_info.value.properties == {}
+
+
+@pytest.mark.parametrize("strict", [True, False])
+def test_invalid_score_error_does_not_capture_the_conversion_error(strict):
+    with pytest.raises(InvalidLLMOutputError) as exc_info:
+        strategy(strict=strict).parse({"llm_output": {"score": "SECRET"}})
+    assert exc_info.value.__context__ is None
+    assert exc_info.value.exc_value is None
+    assert "SECRET" not in exc_info.value.exc_msg
+
+
+def test_non_strict_oversized_integer_score_is_invalid_output():
+    with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE):
+        strategy(strict=False).parse({"llm_output": {"score": 10**400}})
+
+
+def test_unreported_usage_is_unknown_when_the_score_is_missing():
+    envelope = {
+        "llm_output": {"reason": "no score"},
+        "input_token_count": 0,
+        "output_token_count": 0,
+        "total_token_count": 0,
+        "finish_reason": "stop",
+        "model_id": "judge",
+        "reported_usage": {"prompt_tokens": None, "completion_tokens": None, "total_tokens": None, "model": "judge"},
+    }
+    with pytest.raises(InvalidLLMOutputError) as exc_info:
+        strategy().parse(envelope)
+    assert "(finish_reason=stop, output_tokens=unknown)." in str(exc_info.value)
+    assert exc_info.value.properties == {"model": "judge"}
 
 
 def test_non_numeric_scores_are_not_echoed():
-    with pytest.raises(EvaluationException, match=r"Invalid score value: <non-numeric str>\.") as exc_info:
+    with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE) as exc_info:
         strategy(score_range=(1, 5)).parse({"llm_output": {"score": "SECRET"}})
     assert "SECRET" not in str(exc_info.value)
     with pytest.raises(EvaluationException, match="Evaluator returned invalid output") as exc_info:

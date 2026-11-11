@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidLLMOutputError, RESPONSE_TRUNCATED
 
 
 # Mock flow side effect that mimics the output of the prompty (the _flow call)
@@ -250,28 +251,51 @@ class TestTaskCompletionEvaluator:
 
         assert "Evaluator returned invalid output" in str(exc_info.value)
 
-    def test_default_success_value(self, mock_model_config):
-        """Test that default success value is 0 when not provided"""
+    @pytest.mark.parametrize("score", [None, "SECRET", True, float("nan"), float("inf")])
+    def test_missing_or_invalid_score_is_invalid_output(self, mock_model_config, score):
+        """A missing or non-numeric score is an error, not a silent 0 (fail)."""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
+        llm_output = {"reason": "No score field provided", "properties": {}}
+        if score is not None:
+            llm_output["score"] = score
 
         async def no_success_flow(timeout, **kwargs):
-            return {
-                "llm_output": {
-                    "reason": "No score field provided",
-                    "properties": {},
-                }
-            }
+            return {"llm_output": llm_output, "finish_reason": "stop", "output_token_count": 5}
 
         evaluator._flow = MagicMock(side_effect=no_success_flow)
 
-        query = "Complete this task"
-        response = "Task response"
-        result = evaluator(query=query, response=response)
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query="Complete this task", response="Task response")
 
-        key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._RESULT_KEY
-        assert result[key] == 0
-        assert result[f"{prefix}_passed"] is False
+        message = str(exc_info.value)
+        assert (
+            "Evaluator returned invalid output: the model response had no valid numeric score "
+            "(finish_reason=stop, output_tokens=5)." in message
+        )
+        assert "SECRET" not in message
+
+    def test_model_invalid_output_is_reported_as_evaluator_error(self, mock_model_config):
+        evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
+
+        async def truncated_flow(timeout, **kwargs):
+            raise InvalidLLMOutputError(
+                RESPONSE_TRUNCATED, finish_reason="length", usage={"completion_tokens": 800, "model": "judge"}
+            )
+
+        evaluator._flow = MagicMock(side_effect=truncated_flow)
+
+        with pytest.raises(InvalidLLMOutputError) as exc_info:
+            evaluator(query="Complete this task", response="Task response")
+
+        error = exc_info.value
+        assert error.args[0] == (
+            f"Evaluator returned invalid output: {RESPONSE_TRUNCATED} (finish_reason=length, output_tokens=800)."
+        )
+        assert error.properties == {"completion_tokens": 800, "model": "judge"}
+        assert error.__cause__ is None
+        assert error.__context__ is None
+        assert error.exc_value is None
+        assert "Model returned" not in (error.exc_msg or "")
 
     def test_complex_response_with_tool_calls(self, mock_model_config):
         """Test evaluation with response containing tool calls"""

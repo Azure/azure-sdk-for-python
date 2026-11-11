@@ -310,7 +310,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             return self._return_not_applicable_result(eval_input.get("error_message"), self._threshold)
 
-        result = await self._do_eval(eval_input)
+        result = await self._do_eval_reporting_evaluator_errors(eval_input)
 
         return result
 

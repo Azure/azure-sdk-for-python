@@ -2,15 +2,32 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Optional
+from typing import Any, Dict, Mapping, Optional
 from openai import OpenAIError
 from azure.ai.evaluation._exceptions import ErrorCategory, ErrorBlame, ErrorTarget, EvaluationException
 
 _KNOWN_FINISH_REASONS = ("stop", "length", "content_filter", "tool_calls", "function_call")
 
+# Fixed causes for InvalidLLMOutputError. They must never include model output.
+RESPONSE_TRUNCATED = "the model response was truncated at the output token limit"
+RESPONSE_CONTENT_FILTERED = "the model response was blocked by the content filter"
+RESPONSE_EMPTY = "the model returned an empty response"
+RESPONSE_NOT_JSON = "the model response was not valid JSON"
+RESPONSE_NOT_JSON_OBJECT = "the model response was not a JSON object"
+RESPONSE_UNEXPECTED_TYPE = "the model response had unexpected type {}"
+RESPONSE_NO_VALID_SCORE = "the model response had no valid numeric score"
 
-def invalid_llm_output_message(cause: str, finish_reason: Any = None, output_tokens: Any = None) -> str:
-    """Build an actionable invalid judge output message from non-content metadata only.
+_USAGE_KEYS = ("prompt_tokens", "completion_tokens", "total_tokens")
+
+
+def _known_count(value: Any) -> Optional[int]:
+    return value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
+
+
+def invalid_llm_output_message(
+    cause: str, finish_reason: Any = None, output_tokens: Any = None, subject: str = "Model"
+) -> str:
+    """Build an actionable invalid model output message from non-content metadata only.
 
     :param cause: A fixed description of why the output was unusable. Must not contain model output.
     :type cause: str
@@ -18,16 +35,17 @@ def invalid_llm_output_message(cause: str, finish_reason: Any = None, output_tok
     :type finish_reason: Any
     :param output_tokens: The completion token count. Non-integer values are reported as ``unknown``.
     :type output_tokens: Any
+    :param subject: What returned the output, such as ``Model`` or ``Evaluator``.
+    :type subject: str
     :return: The error message.
     :rtype: str
     """
     if finish_reason not in _KNOWN_FINISH_REASONS:
         finish_reason = "unknown"
-    if isinstance(output_tokens, bool) or not isinstance(output_tokens, int):
-        output_tokens = "unknown"
+    output_tokens = _known_count(output_tokens)
     return (
-        f"Evaluator returned invalid output: {cause} "
-        f"(finish_reason={finish_reason}, output_tokens={output_tokens})."
+        f"{subject} returned invalid output: {cause} "
+        f"(finish_reason={finish_reason}, output_tokens={'unknown' if output_tokens is None else output_tokens})."
     )
 
 
@@ -86,14 +104,70 @@ class NotSupportedError(PromptyException):
 
 
 class InvalidLLMOutputError(PromptyException):
-    """Exception raised when the LLM response cannot be parsed into the requested response format."""
+    """Exception raised when the LLM response cannot be used, such as when it cannot be parsed as requested.
 
-    def __init__(self, message: str, **kwargs):
+    The message is built only from ``cause`` and response metadata, never from the model output. The known token
+    usage and model name are kept in ``properties`` so that a failed result row can still report them.
+
+    :param cause: A fixed description of why the output was unusable. Must not contain model output.
+    :type cause: str
+    :keyword finish_reason: The completion finish reason.
+    :paramtype finish_reason: Any
+    :keyword usage: The response's ``prompt_tokens``, ``completion_tokens``, ``total_tokens`` and ``model``.
+    :paramtype usage: Optional[Mapping[str, Any]]
+    :keyword subject: What returned the output, such as ``Model`` or ``Evaluator``.
+    :paramtype subject: str
+    """
+
+    def __init__(
+        self,
+        cause: str,
+        *,
+        finish_reason: Any = None,
+        usage: Optional[Mapping[str, Any]] = None,
+        subject: str = "Model",
+        **kwargs,
+    ):
+        usage = usage or {}
+        self.cause = cause
+        self.finish_reason = finish_reason
+        self.usage = dict(usage)
+        self.subject = subject
+        message = invalid_llm_output_message(cause, finish_reason, usage.get("completion_tokens"), subject)
+        properties: Dict[str, Any] = {
+            key: usage[key] for key in _USAGE_KEYS if _known_count(usage.get(key)) is not None
+        }
+        model = usage.get("model")
+        if isinstance(model, str) and model.strip():
+            properties["model"] = model
         kwargs.setdefault("category", ErrorCategory.FAILED_EXECUTION)
         kwargs.setdefault("target", ErrorTarget.EVAL_RUN)
-        kwargs.setdefault("blame", ErrorBlame.SYSTEM_ERROR)
+        # A response withheld by the content filter is caused by the evaluated content, as a filtered prompt is.
+        kwargs.setdefault(
+            "blame", ErrorBlame.USER_ERROR if finish_reason == "content_filter" else ErrorBlame.SYSTEM_ERROR
+        )
         kwargs.setdefault("internal_message", message)
+        kwargs.setdefault("properties", properties)
         super().__init__(message, **kwargs)
+
+    def for_evaluator(self) -> "InvalidLLMOutputError":
+        """Return the same error worded as an evaluator's.
+
+        :return: The error with the subject ``Evaluator``.
+        :rtype: InvalidLLMOutputError
+        """
+        if self.subject == "Evaluator":
+            return self
+        return InvalidLLMOutputError(
+            self.cause,
+            finish_reason=self.finish_reason,
+            usage=self.usage,
+            subject="Evaluator",
+            category=self.category,
+            target=self.target,
+            blame=self.blame,
+            properties=self.properties,
+        )
 
 
 class WrappedOpenAIError(PromptyException):

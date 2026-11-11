@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from azure.ai.evaluation import ToolCallAccuracyEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorTarget
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidLLMOutputError, RESPONSE_TRUNCATED
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
@@ -76,6 +77,26 @@ async def flow_side_effect(timeout, **kwargs):
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestToolCallAccuracyEvaluator:
+    def test_invalid_model_output_is_reported_as_evaluator_error(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+
+        async def truncated_flow(timeout, **kwargs):
+            raise InvalidLLMOutputError(RESPONSE_TRUNCATED, finish_reason="length", usage={"completion_tokens": 800})
+
+        evaluator._flow = MagicMock(side_effect=truncated_flow)
+        tool_definitions = [
+            {"name": "fetch_weather", "type": "function", "description": "Fetches weather.", "parameters": {}}
+        ]
+        tool_calls = [{"type": "tool_call", "tool_call_id": "call_1", "name": "fetch_weather", "arguments": {}}]
+
+        with pytest.raises(InvalidLLMOutputError) as exc_info:
+            evaluator(query="Weather?", tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        error = exc_info.value
+        assert error.args[0].startswith("Evaluator returned invalid output:")
+        assert error.__context__ is None
+        assert error.exc_value is None
+
     def test_evaluate_tools_valid1(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
