@@ -1,6 +1,7 @@
 import asyncio
 import json
 import math
+import traceback
 from unittest.mock import AsyncMock
 
 import pytest
@@ -252,7 +253,7 @@ def test_invalid_output_reports_only_runtime_metadata():
             }
         )
     assert exc_info.value.args[0] == (
-        "Evaluator returned invalid output: the model response was not a JSON object "
+        "Evaluator returned invalid output: the model response was truncated at the output token limit "
         "(finish_reason=length, output_tokens=800)."
     )
     assert exc_info.value.properties == {
@@ -266,6 +267,73 @@ def test_invalid_output_reports_only_runtime_metadata():
         strategy(binary_cutoff=1).parse({"finish_reason": "length", "output_token_count": 800})
     assert "(finish_reason=unknown, output_tokens=unknown)" in str(exc_info.value)
     assert exc_info.value.properties == {}
+
+
+@pytest.mark.parametrize(
+    "answer,finish_reason,cause",
+    [
+        ("SECRET", "length", "the model response was truncated at the output token limit"),
+        ("", "content_filter", "the model response was blocked by the content filter"),
+    ],
+)
+def test_invalid_output_cause_prefers_finish_reason(answer, finish_reason, cause):
+    with pytest.raises(InvalidLLMOutputError, match=cause):
+        strategy().parse({"llm_output": answer, "finish_reason": finish_reason, "output_token_count": 800})
+
+
+def test_invalid_score_cause_prefers_truncation_finish_reason():
+    with pytest.raises(InvalidLLMOutputError, match="truncated at the output token limit"):
+        strategy().parse({"llm_output": {"score": None}, "finish_reason": "length"})
+
+
+def test_strategy_rewords_model_invalid_output_without_capturing_it():
+    configured = strategy()
+
+    async def truncated_flow(**kwargs):
+        raise InvalidLLMOutputError(
+            "the model response was truncated at the output token limit",
+            finish_reason="length",
+            usage={"completion_tokens": 800},
+        )
+
+    configured.runner.side_effect = truncated_flow
+    with pytest.raises(InvalidLLMOutputError) as exc_info:
+        asyncio.run(configured.evaluate({"query": "q"}))
+
+    error = exc_info.value
+    assert error.subject == "Evaluator"
+    assert error.__context__ is None
+    assert error.exc_value is None
+    assert "Evaluator returned invalid output:" in str(error)
+
+
+@pytest.mark.parametrize("runner_raises", [True, False])
+def test_strategy_does_not_capture_an_active_caller_exception(runner_raises):
+    configured = strategy()
+
+    async def truncated_flow(**kwargs):
+        if runner_raises:
+            raise InvalidLLMOutputError(RESPONSE_NO_VALID_SCORE)
+        return {"llm_output": []}
+
+    configured.runner.side_effect = truncated_flow
+
+    async def evaluate_while_handling_another_error():
+        try:
+            raise ValueError("CALLER_SECRET")
+        except ValueError:
+            await configured.evaluate({"query": "q"})
+
+    with pytest.raises(InvalidLLMOutputError) as exc_info:
+        asyncio.run(evaluate_while_handling_another_error())
+
+    error = exc_info.value
+    formatted_traceback = "".join(traceback.format_exception(type(error), error, error.__traceback__))
+    assert error.__context__ is None
+    assert error.exc_value is None
+    assert error.exc_traceback is None
+    assert "CALLER_SECRET" not in error.exc_msg
+    assert "CALLER_SECRET" not in formatted_traceback
 
 
 @pytest.mark.parametrize("strict", [True, False])

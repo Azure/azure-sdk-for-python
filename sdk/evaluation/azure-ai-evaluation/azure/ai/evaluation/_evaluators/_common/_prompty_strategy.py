@@ -8,10 +8,13 @@ from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_sco
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._legacy.prompty._exceptions import (
     InvalidLLMOutputError,
+    RESPONSE_CONTENT_FILTERED,
     RESPONSE_EMPTY,
     RESPONSE_NO_VALID_SCORE,
     RESPONSE_NOT_JSON_OBJECT,
+    RESPONSE_TRUNCATED,
     RESPONSE_UNEXPECTED_TYPE,
+    raise_invalid_output_for_evaluator,
 )
 from ._base_model_eval import ModelEvaluatorBase, not_applicable_result
 
@@ -48,7 +51,11 @@ def invalid_output_error(output: Any = None, cause: Optional[str] = None, target
     """
     # Runtime metadata is only trusted from a prompty envelope; a bare answer dict comes from the judge.
     envelope = output if isinstance(output, dict) and "llm_output" in output else {}
-    if cause is None:
+    if envelope.get("finish_reason") == "length":
+        cause = RESPONSE_TRUNCATED
+    elif envelope.get("finish_reason") == "content_filter":
+        cause = RESPONSE_CONTENT_FILTERED
+    elif cause is None:
         answer = envelope.get("llm_output") if envelope else output
         if answer is None or answer == "" or answer == {}:
             cause = RESPONSE_EMPTY
@@ -117,7 +124,16 @@ class PromptyEvaluationStrategy:
 
     async def evaluate(self, eval_input: Dict[str, Any]) -> Dict[str, Any]:
         runner = self.flow_resolver() if self.flow_resolver else self.runner
-        return self.parse(await runner(timeout=self.timeout, **eval_input))
+        try:
+            output = await runner(timeout=self.timeout, **eval_input)
+        except InvalidLLMOutputError as error:
+            invalid_output = error
+        else:
+            try:
+                return self.parse(output)
+            except InvalidLLMOutputError as error:
+                invalid_output = error
+        raise_invalid_output_for_evaluator(invalid_output)
 
     def skipped(self, reason: str, threshold: Optional[float] = None) -> Dict[str, Any]:
         result = not_applicable_result(self.result_key, reason, self.threshold if threshold is None else threshold)

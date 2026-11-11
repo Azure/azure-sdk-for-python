@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Dict, Mapping, NoReturn, Optional
 from openai import OpenAIError
 from azure.ai.evaluation._exceptions import ErrorCategory, ErrorBlame, ErrorTarget, EvaluationException
 
@@ -149,6 +149,11 @@ class InvalidLLMOutputError(PromptyException):
         kwargs.setdefault("internal_message", message)
         kwargs.setdefault("properties", properties)
         super().__init__(message, **kwargs)
+        # AzureError captures the active exception, which may contain model or caller data.
+        self.exc_type = type(None)
+        self.exc_value = None
+        self.exc_traceback = None
+        self.exc_msg = f"{message}, NoneType: None"
 
     def for_evaluator(self) -> "InvalidLLMOutputError":
         """Return the same error worded as an evaluator's.
@@ -168,6 +173,15 @@ class InvalidLLMOutputError(PromptyException):
             blame=self.blame,
             properties=self.properties,
         )
+
+
+def raise_invalid_output_for_evaluator(error: InvalidLLMOutputError) -> NoReturn:
+    """Raise an invalid-output error without chaining an ambient caller exception."""
+    try:
+        raise error.for_evaluator() from None
+    except InvalidLLMOutputError as invalid_output:
+        invalid_output.__context__ = None
+        raise
 
 
 class WrappedOpenAIError(PromptyException):

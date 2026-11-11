@@ -24,7 +24,7 @@ from typing import (
 )
 
 from azure.ai.evaluation._legacy._adapters.utils import async_run_allowing_running_loop
-from azure.ai.evaluation._legacy.prompty._exceptions import InvalidLLMOutputError
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidLLMOutputError, raise_invalid_output_for_evaluator
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
 from azure.ai.evaluation._exceptions import (
@@ -633,7 +633,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             return await self._do_eval(eval_input)
         except InvalidLLMOutputError as error:
             invalid_output = error
-        raise invalid_output.for_evaluator()
+        raise_invalid_output_for_evaluator(invalid_output)
 
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
