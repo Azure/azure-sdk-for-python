@@ -10,6 +10,7 @@ transparently, and that PKRange namedtuples are compatible with all async operat
 
 import unittest
 import uuid
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 
@@ -18,7 +19,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos._routing.aio.routing_map_provider import (
     PartitionKeyRangeCache,
     _shared_routing_map_cache,
-    _shared_cache_lock,
+    _shared_cache_refcounts,
 )
 
 
@@ -48,20 +49,6 @@ class TestSharedCacheIntegrationAsync(unittest.IsolatedAsyncioTestCase):
             except Exception:
                 pass
         await self.client1.close()
-        # Release module-level shared routing-map state between async tests so
-        # the test order cannot affect cache contents observed by a later test.
-        # Clear ALL four shared-cache globals (not just the routing-map dict)
-        # to keep refcount/lock state consistent.
-        from azure.cosmos._routing.aio.routing_map_provider import (
-            _shared_collection_locks,
-            _shared_locks_locks,
-            _shared_cache_refcounts,
-        )
-        with _shared_cache_lock:
-            _shared_routing_map_cache.pop(self.host, None)
-            _shared_collection_locks.pop(self.host, None)
-            _shared_locks_locks.pop(self.host, None)
-            _shared_cache_refcounts.pop(self.host, None)
 
     def _get_routing_provider(self, client):
         return client.client_connection._routing_map_provider
@@ -209,6 +196,37 @@ class TestSharedCacheIntegrationAsync(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(len(all_results) > 0, "Cross-partition change feed should return results")
 
         await self.container.delete_item(cf_id, partition_key="cf-pk")
+
+
+@pytest.mark.asyncio
+async def test_shared_cache_teardown_preserves_other_client_lifetime():
+    endpoint = "https://shared-cache-teardown.documents.azure.com:443/"
+    connection = Mock(url_connection=endpoint)
+    retained = PartitionKeyRangeCache(connection)
+    owned = PartitionKeyRangeCache(connection)
+    following = None
+    case = TestSharedCacheIntegrationAsync("test_clear_cache_triggers_repopulation_async")
+    case.host = endpoint
+    case.container = Mock(delete_item=AsyncMock())
+    case.client1 = Mock(close=AsyncMock(side_effect=owned.release))
+
+    try:
+        await case.asyncTearDown()
+        following = PartitionKeyRangeCache(connection)
+        retained.release()
+        cache = following._collection_routing_map_by_item
+        cache["collection"] = "routing-map"
+        following.clear_cache()
+        assert len(cache) == 0
+        assert cache is retained._collection_routing_map_by_item
+        assert _shared_routing_map_cache[endpoint] is cache
+        assert _shared_cache_refcounts[endpoint] == 1
+        case.client1.close.assert_awaited_once()
+    finally:
+        owned.release()
+        retained.release()
+        if following is not None:
+            following.release()
 
 
 if __name__ == "__main__":
