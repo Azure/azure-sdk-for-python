@@ -8486,7 +8486,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          Default value is None.
         :paramtype before: str
         :keyword status: Filter to jobs in this lifecycle state. Known values are: "queued",
-         "in_progress", "succeeded", "failed", and "cancelled". Default value is None.
+         "in_progress", "succeeded", "failed", "cancelled", and "skipped". Default value is None.
         :paramtype status: str or ~azure.ai.projects.models.JobStatus
         :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
         :paramtype agent_name: str
@@ -12692,7 +12692,7 @@ class AgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-param
          and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword status: Filter runs by status. Known values are: "queued", "in_progress", "succeeded",
-         "failed", and "cancelled". Default value is None.
+         "failed", "cancelled", and "skipped". Default value is None.
         :paramtype status: str or ~azure.ai.projects.models.JobStatus
         :keyword trigger: Filter runs by trigger. Known values are: "on_demand" and "scheduled".
          Default value is None.

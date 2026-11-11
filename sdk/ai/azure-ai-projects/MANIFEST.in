@@ -3,8 +3,5 @@ include LICENSE
 include azure/ai/projects/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
-include assets.json
-include tests/recordings/agents/assets.json
-include samples/agents/voice/audio/question.wav
 include azure/__init__.py
 include azure/ai/__init__.py

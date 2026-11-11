@@ -2112,7 +2112,7 @@ class AgentInsightRun(_Model):  # pylint: disable=docstring-keyword-should-match
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.AgentInsightRunResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", and "cancelled".
+     "succeeded", "failed", "cancelled", and "skipped".
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Error details — populated only on failure.
     :vartype error: ~azure.ai.projects.models.ApiError
@@ -2150,7 +2150,7 @@ class AgentInsightRun(_Model):  # pylint: disable=docstring-keyword-should-match
     """Result produced on success."""
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
     """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
-     \"succeeded\", \"failed\", and \"cancelled\"."""
+     \"succeeded\", \"failed\", \"cancelled\", and \"skipped\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Error details — populated only on failure."""
     monitor_id: str = rest_field(visibility=["read"])
@@ -3823,7 +3823,7 @@ class AgentOptimizationJob(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.AgentOptimizationJobResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", and "cancelled".
+     "succeeded", "failed", "cancelled", and "skipped".
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Failure or skip reason; status distinguishes the outcomes. Omitted otherwise.
     :vartype error: ~azure.ai.projects.models.ApiError
@@ -3860,7 +3860,7 @@ class AgentOptimizationJob(_Model):  # pylint: disable=docstring-keyword-should-
     """Result produced on success."""
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
     """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
-     \"succeeded\", \"failed\", and \"cancelled\"."""
+     \"succeeded\", \"failed\", \"cancelled\", and \"skipped\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Failure or skip reason; status distinguishes the outcomes. Omitted otherwise."""
     display_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10158,7 +10158,7 @@ class DataGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-mat
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.DataGenerationJobResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", and "cancelled".
+     "succeeded", "failed", "cancelled", and "skipped".
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Error details — populated only on failure.
     :vartype error: ~azure.ai.projects.models.ApiError
@@ -10188,7 +10188,7 @@ class DataGenerationJob(_Model):  # pylint: disable=docstring-keyword-should-mat
     """Result produced on success."""
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
     """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
-     \"succeeded\", \"failed\", and \"cancelled\"."""
+     \"succeeded\", \"failed\", \"cancelled\", and \"skipped\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Error details — populated only on failure."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -12554,7 +12554,7 @@ class EvaluationDataGenerationJob(
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.DataGenerationJobResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", and "cancelled".
+     "succeeded", "failed", "cancelled", and "skipped".
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Error details — populated only on failure.
     :vartype error: ~azure.ai.projects.models.ApiError
@@ -13519,7 +13519,7 @@ class EvaluatorGenerationJob(_Model):  # pylint: disable=docstring-keyword-shoul
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.EvaluatorVersion
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", and "cancelled".
+     "succeeded", "failed", "cancelled", and "skipped".
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Error details — populated only on failure.
     :vartype error: ~azure.ai.projects.models.ApiError
@@ -13586,7 +13586,7 @@ class EvaluatorGenerationJob(_Model):  # pylint: disable=docstring-keyword-shoul
     """Result produced on success."""
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
     """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
-     \"succeeded\", \"failed\", and \"cancelled\"."""
+     \"succeeded\", \"failed\", \"cancelled\", and \"skipped\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Error details — populated only on failure."""
     sources: list["_models.EvaluatorGenerationJobSource"] = rest_field(
@@ -32576,7 +32576,7 @@ class ReinforcementFineTuningDataGenerationJob(
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.DataGenerationJobResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", and "cancelled".
+     "succeeded", "failed", "cancelled", and "skipped".
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Error details — populated only on failure.
     :vartype error: ~azure.ai.projects.models.ApiError
@@ -35163,7 +35163,7 @@ class SupervisedFineTuningDataGenerationJob(
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.DataGenerationJobResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", and "cancelled".
+     "succeeded", "failed", "cancelled", and "skipped".
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Error details — populated only on failure.
     :vartype error: ~azure.ai.projects.models.ApiError
@@ -36917,7 +36917,7 @@ class TelephonyCampaignOperation(_Model):
     :ivar id: Server-assigned unique identifier. Required.
     :vartype id: str
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", and "cancelled".
+     "succeeded", "failed", "cancelled", and "skipped".
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Error details — populated only on failure.
     :vartype error: ~azure.ai.projects.models.ApiError
@@ -36934,7 +36934,7 @@ class TelephonyCampaignOperation(_Model):
     """Server-assigned unique identifier. Required."""
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
     """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
-     \"succeeded\", \"failed\", and \"cancelled\"."""
+     \"succeeded\", \"failed\", \"cancelled\", and \"skipped\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Error details — populated only on failure."""
     kind: Union[str, "_models.TelephonyCampaignOperationKind"] = rest_field(visibility=["read"])
