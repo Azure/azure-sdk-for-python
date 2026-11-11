@@ -74,7 +74,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         if self.is_live and self._need_creation:
             self.client = self.create_mgmt_client(ResourceManagementClient)
             parameters = {"location": self.location}
-            expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
+            expiry = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) + self.delete_after_tag_timedelta
             parameters["tags"] = {"DeleteAfter": expiry.replace(microsecond=0).isoformat()}
 
             parameters["tags"]["BuildId"] = os.environ.get("BUILD_BUILDID", "local")
