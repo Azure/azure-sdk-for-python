@@ -4,28 +4,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-"""Handwritten convenience layer on top of the generated FineTuningSessionClient.
+"""Convenience methods for fine-tuning session workflows.
 
-``FineTuningSession`` wraps a live session and exposes the hero-code API from
-SPEC_FOUNDRY_AICLIENT.md:
+``FineTuningSession`` provides training, sampling, checkpoint, and lifecycle
+methods. Request-based operations submit work and poll the returned request
+identifier until completion. Successful submission does not establish that
+the requested work has completed.
 
-    session = FineTuningSession(client, session_id="session_xxx")
-    fb_result  = session.forward_backward(batch, loss_fn="cross_entropy")
-    opt_result = session.optim_step(AdamParams(learning_rate=1e-4))
-    ckpt_result    = session.save_weights("my_checkpoint")
-    sampler_result = session.save_weights_for_sampler(seq_id=0, sampling_session_seq_id=0)
-    sample_result  = session.sample(prompt_tokens, sampling_params, checkpoint_id=sampler_result.checkpoint_id, num_samples=4)
-    session.close()
-
-Each mutating method follows loom's two-step protocol:
-  1. POST to the action endpoint — loom returns **200** with
-     ``{request_id, session_id, status: "pending"}``.
-  2. GET ``/fine_tuning/sessions/{sessionId}/request/{requestId}`` — the server
-     long-polls (up to 5 minutes) and returns the typed result when the GPU finishes.
-
-Note: the generated ``begin_*`` methods on sub-clients use the Azure LRO (202 +
-Operation-Location header) pattern and will **not** work against loom, which returns
-200.  Always use ``FineTuningSession`` methods for training operations.
+The raw operation groups also support request-ID polling through their default
+``begin_*`` methods. Convenience methods additionally provide session
+heartbeats, chunking, result normalization, and service-specific error handling.
 """
 
 from __future__ import annotations
@@ -114,8 +102,8 @@ if TYPE_CHECKING:
 # This installs no handler and is idempotent.
 _install_default_logging()
 
-# ── Loom wire-format → OperationResult discriminator map ─────────────────────
-# Maps the last path segment of a Loom action URL to the SDK's "type" value.
+# ── Wire-format → OperationResult discriminator map ────────────────────────────
+# Maps the last path segment of an action URL to the SDK's "type" value.
 # Forward and forward_backward share the same output shape. Forward-only
 # responses omit the aggregate training loss.
 _LOOM_SUBPATH_TO_OP_TYPE: dict[str, str] = {
@@ -469,7 +457,7 @@ def _combine_fwd_bwd_results(
         if r.per_datum_logprobs:
             combined_logprobs.extend(r.per_datum_logprobs)
     # Combine loss_fn_outputs (extra JSON field carrying per-datum logprobs
-    # from the Loom server).  The cookbook reads this field first, falling
+    # from the service).  The cookbook reads this field first, falling
     # back to per_datum_logprobs only when it is absent.
     combined_lfo: list = []
     for r in results:
@@ -492,14 +480,14 @@ def _combine_fwd_bwd_results(
 
 
 def _normalize_loom_result(data: dict, op_type: str, request_id: str) -> dict:
-    """Normalize the Loom poll-endpoint wire format into an OperationResult dict.
+    """Normalize a polling result into an OperationResult dictionary.
 
-    The Loom server returns raw engine results (no ``"type"`` discriminator, metrics
-    under namespaced keys like ``"total_loss:sum"``).  This function injects the
+    Responses can omit the ``"type"`` discriminator and report metrics
+    under namespaced keys like ``"total_loss:sum"``. This function supplies the
     discriminator and promotes metric fields so ``_deserialize(OperationResult, ...)``
     returns the correct typed subclass.
 
-    :param data: Engine result dictionary returned by the Loom poll endpoint.
+    :param data: Result dictionary returned by the polling endpoint.
     :type data: dict[str, typing.Any]
     :param op_type: SDK operation discriminator used to supply missing result
         fields and select operation-specific normalization.
@@ -1074,47 +1062,21 @@ def _log_http(direction: str, method: str, url: str, status: Optional[int] = Non
         _logger.info("[HTTP] <-- %s %s  status=%d%s", method, url, status or 0, body_str)
 
 
-#: Headers Loom reads off every request, and the env var each is sourced from on
-#: the direct (non-APIM) path. Derived mechanically from what ``loom_api`` reads:
-#:   grep -rhno "headers\.get([^)]*)" --include=*.py loom_api/src/
-#: Keep this list in sync with docs/command-job-direct-loom-api-design.md.
+#: Compatibility mappings for explicitly configured resource-context headers.
 _DIRECT_PATH_HEADER_ENV: tuple[tuple[str, str], ...] = (
-    # Parsed by loom_api's worker_affinity as a Cognitive Services ARM path.
-    # Absent -> affinity silently resolves to the GENERAL worker pool.
     ("azure-resource-id", "LOOM_AZURE_RESOURCE_ID"),
-    # Populates TenantContext.tenant_id, which drives ECS allow-list gating.
-    # Absent -> tenant-gated features silently evaluate as ungated.
     ("azure-resource-tenant-id", "LOOM_AZURE_RESOURCE_TENANT_ID"),
-    # Region. HARD 400 on create-session once checkpoint_cmk_storage_enabled is
-    # on; also feeds training-SKU / datazone validation.
     ("azure-resource-location", "LOOM_AZURE_RESOURCE_LOCATION"),
-    # Workspace metadata used for checkpoint registration.
     ("X-Workspace-Resource-Id", "LOOM_WORKSPACE_RESOURCE_ID"),
 )
 
 
 def _base_headers(extra: Optional[dict] = None) -> dict:
-    """Build the common headers for every Loom request.
+    """Build preview and explicitly configured request-context headers.
 
-    Loom derives the caller's identity entirely from headers -- it performs no
-    token validation on these values. On the APIM path APIM injects them. On the
-    direct path (command job -> regional ``loom_api``, used when the customer's
-    Foundry resource sits in their VNet) there is no APIM in between, so the
-    caller must supply the same set itself.
-
-    Every header is read from the environment and sent only when present, which
-    keeps the APIM path byte-for-byte unchanged.
-
-    ``apim-subscription-id`` is the identity: ``ApiAccessControlMiddleware``
-    resolves it to the caller's API-ring scopes and model allowlist, and
-    ``LOOM_SETUP_MODE=prod`` returns ``401`` when it is absent. Read from
-    ``X_COGNITIVE_SUBSCRIPTION_ID`` (or ``COGNITIVE_SUBSCRIPTION_ID`` /
-    ``AZURE_SUBSCRIPTION_ID`` as fallbacks) -- same as ``clean_remote.sh``,
-    which sets ``X_COGNITIVE_SUBSCRIPTION_ID=local-sub``.
-
-    The rest are listed in :data:`_DIRECT_PATH_HEADER_ENV`. Only
-    ``azure-resource-location`` fails loudly; the others degrade silently, which
-    is why they are plumbed explicitly rather than left to chance.
+    Optional compatibility headers are included only when configured.
+    Caller overrides are merged last. Authentication is applied separately
+    by the client's HTTP pipeline.
 
     :param extra: Optional header overrides merged after the default and
         environment-derived headers.
@@ -1199,8 +1161,8 @@ class FineTuningSessionClient(FineTuningSessionClientGenerated):  # pylint: disa
 class FineTuningSession:
     """Convenience wrapper around a single fine-tuning session.
 
-    Mirrors the hero-code surface from SPEC_FOUNDRY_AICLIENT.md so callers
-    can write training loops without constructing raw request bodies.
+    Provides training, sampling, checkpoint, and lifecycle methods without
+    requiring callers to construct raw request bodies.
 
     :param client: The generated ``FineTuningSessionClient``.
     :type client: ~azure.ai.finetuningsessions.FineTuningSessionClient
@@ -1530,8 +1492,8 @@ class FineTuningSession:
     ) -> "FineTuningSession":
         """Create a session resumed from a saved training checkpoint.
 
-        Accepts a source-session/checkpoint path or a loom:// source-session
-        weights path. The source weights, optimizer state, and scheduler step
+        Accepts a source-session/checkpoint reference. The source weights,
+        optimizer state, and scheduler step
         are restored by the service through the create operation.
 
         :param client: Client used to create the resumed session.
@@ -1755,9 +1717,9 @@ class FineTuningSession:
         *,
         on_submit: Optional[Callable[[str], None]] = None,
     ) -> OperationResult:
-        """POST to a Loom action endpoint, then poll its request to completion.
+        """Submit an action, then poll its request to completion.
 
-        Loom returns 200 (not 202) with ``{request_id, session_id, status}``
+        The service returns 200 (not 202) with ``{request_id, session_id, status}``
         from mutating operations. The poll endpoint returns a
         ``{status, result, error}`` envelope immediately; pending responses
         are polled again with adaptive backoff.
@@ -1878,10 +1840,10 @@ class FineTuningSession:
             (_time.monotonic() - submit_started) * 1000.0,
         )
 
-        # Long-poll the result directly so we can normalize the Loom wire format
+        # Long-poll the result directly so we can normalize the service response
         # before deserializing.  The generated operations.get() passes the raw JSON
         # straight to _deserialize(OperationResult, ...) which expects a "type"
-        # discriminator field — but the Loom server returns its own engine format
+        # discriminator field — but the service returns an operation-specific format
         # (no "type", metrics under namespaced keys).  We do the GET ourselves,
         # normalize, then deserialize.
         poll_req = _HttpRequest(

@@ -16,10 +16,16 @@ from azure.ai.finetuningsessions.models import (
     LoRAConfig,
     ModelInput,
     ModelInputChunk,
+    SampleOperationResult,
     SampleRequest,
     SamplingParams,
 )
 from azure.ai.finetuningsessions._utils.model_base import SdkJSONEncoder
+
+PUBLIC_DOC_INTERNAL_TERMS = re.compile(
+    r"\b(?:loom|COGS|M365|PuPr)\b|SPEC_FOUNDRY|https?://dev\.azure\.com/",
+    re.IGNORECASE,
+)
 
 
 @pytest.mark.parametrize(
@@ -100,3 +106,23 @@ def test_current_generation_pin_matches_provenance():
     pin = re.search(r"(?m)^commit:\s*([0-9a-f]{40})\s*$", pointer)
     assert pin is not None
     assert pin.group(1) == provenance["typespec"]["commit"]
+
+
+@pytest.mark.parametrize("filename", ["README.md", "CHANGELOG.md", "GENERATION.md"])
+def test_public_documentation_excludes_internal_release_material(filename):
+    package = Path(__file__).resolve().parents[1]
+    text = (package / filename).read_text(encoding="utf-8")
+    assert PUBLIC_DOC_INTERNAL_TERMS.search(text) is None
+
+
+@pytest.mark.parametrize(
+    "public_api",
+    [
+        FineTuningSession,
+        FineTuningSession.create_from_checkpoint,
+        FineTuningSessionClient.create_session_from_checkpoint,
+        SampleOperationResult,
+    ],
+)
+def test_public_api_docstrings_exclude_internal_release_material(public_api):
+    assert PUBLIC_DOC_INTERNAL_TERMS.search(inspect.getdoc(public_api) or "") is None

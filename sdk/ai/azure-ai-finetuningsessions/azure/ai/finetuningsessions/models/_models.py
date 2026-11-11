@@ -258,11 +258,9 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar ejectable: Opt the session into idle hibernation. Default False.
     :vartype ejectable: bool
     :ivar training_type: Training tier. Set this property explicitly to select the tier. If
-     omitted, tier selection is left to the service: sessions assigned to the M365 worker pool
-     default to DatazoneStandard; other pools retain the GlobalStandard baseline. Existing
-     DeveloperTier metadata selection and explicit tier choices are preserved. No client-side
-     default is applied. Known values are: "GlobalStandard", "DatazoneStandard", and
-     "DeveloperTier".
+     omitted, the service selects the default for the account and available capacity. Explicit tier
+     choices are preserved. No client-side default is applied. Known values are: "GlobalStandard",
+     "DatazoneStandard", and "DeveloperTier".
     :vartype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType
     """
 
@@ -279,11 +277,10 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
     training_type: Optional[Union[str, "_models.TrainingType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Training tier. Set this property explicitly to select the tier. If omitted, tier selection is
-     left to the service: sessions assigned to the M365 worker pool default to DatazoneStandard;
-     other pools retain the GlobalStandard baseline. Existing DeveloperTier metadata selection and
-     explicit tier choices are preserved. No client-side default is applied. Known values are:
-     \"GlobalStandard\", \"DatazoneStandard\", and \"DeveloperTier\"."""
+    """Training tier. Set this property explicitly to select the tier. If omitted, the service selects
+     the default for the account and available capacity. Explicit tier choices are preserved. No
+     client-side default is applied. Known values are: \"GlobalStandard\", \"DatazoneStandard\", and
+     \"DeveloperTier\"."""
 
     @overload
     def __init__(
@@ -1092,8 +1089,8 @@ class SampleOperationResult(
      where logprobs were not computed (e.g. the first prompt token). Note: over the wire each pair
      is a JSON array, so at runtime pairs are lists, not tuples.
     :vartype topk_prompt_logprobs: list[list[list[any]]]
-    :ivar metrics: Per-call prefill and sample token COGS, including counts, duration, throughput,
-     and prefill cache-hit tokens when supported.
+    :ivar metrics: Service-reported sampling metrics, including token counts, duration, throughput,
+     and prompt cache-hit counts when supported.
     :vartype metrics: dict[str, any]
     """
 
@@ -1112,8 +1109,8 @@ class SampleOperationResult(
      computed (e.g. the first prompt token). Note: over the wire each pair is a JSON array, so at
      runtime pairs are lists, not tuples."""
     metrics: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Per-call prefill and sample token COGS, including counts, duration, throughput, and prefill
-     cache-hit tokens when supported."""
+    """Service-reported sampling metrics, including token counts, duration, throughput, and prompt
+     cache-hit counts when supported."""
 
     @overload
     def __init__(

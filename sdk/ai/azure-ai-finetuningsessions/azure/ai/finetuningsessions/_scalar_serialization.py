@@ -1,11 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Preserve Loom's scalar fast path without modifying generated model utilities.
-
-The shared Python generator 0.39.0 still probes temporal protocols for plain
-JSON scalars. Remove this maintained customization when unmodified generation
-passes tests/test_model_primitive_serialization.py.
-"""
+"""Serialize JSON scalars efficiently while preserving model serialization semantics."""
 
 from functools import wraps
 from typing import Any, Optional

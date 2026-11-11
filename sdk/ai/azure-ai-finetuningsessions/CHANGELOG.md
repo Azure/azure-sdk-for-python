@@ -4,96 +4,49 @@
 
 ### Features Added
 
-- Add opt-in text-only sampling and opaque-reference training, including public function-call messages, safely classified invalid completions, and scalar-only training results. Availability remains controlled by the service.
-- Support optional model-specific `reasoning_effort` values `low`, `medium`, and `high` for text-only sampling. Omission or `None` preserves the codec default; unsupported labels fail before submission.
-- Add synchronous and asynchronous checkpoint preparation methods that validate the local destination, poll server-side preparation, and validate the returned file inventory. These methods do not create local directories, transfer weights, or enable download access.
-- Add async `FineTuningSessionClient.attach_session(session_id)` to start the existing per-client heartbeat for an externally created session, without creation or initialization polling. Repeated attach is idempotent; existing client/session shutdown and heartbeat policies are unchanged.
-
-### Bugs Fixed
-
-- Replace trainer-loss messages with actionable continual fine-tuning (CFT) and checkpoint-resume guidance, including legacy HTTP and polling responses. Keep `engine_dead` terminal even when a malformed response advertises automatic retry; preserve exception aliases and diagnostic metadata.
-- Limit CFT guidance to terminal trainer interruptions; preserve HTTP `engine_oom` smaller-batch guidance and other nonterminal engine messages without changing exception types or retry behavior.
-- Retry successful sampling submissions missing `request_id` within the existing bounded fault budget, then raise `MalformedResponseError` after exhaustion. Preserve separate throttle/JWT recovery and the default no-POST transport retry policy.
-- Preserve the latest Loom polling, sampling-limit, heartbeat shutdown, and scalar/tensor serialization behavior. Protected training is not blindly resubmitted after ambiguous submission or completion failures.
-- Generate raw operations against canonical `/fine_tuning_sessions` routes while retaining existing Python token-native constructors and convenience compatibility hooks.
+- Add opt-in text-only sampling with public conversation messages and function tools, plus reference-based training using opaque sample references and scalar advantages.
+- Support optional model-specific text-only `reasoning_effort` values `low`, `medium`, and `high`. Omission or `None` preserves the model default.
+- Add async `FineTuningSessionClient.attach_session(session_id)` to start a heartbeat for an existing session without creating or loading it.
+- Add synchronous and asynchronous checkpoint preparation helpers. These validate paths and file inventories but do not transfer weights or write local files.
 
 ### Breaking Changes
 
-- Remove `FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW` to follow the shared Foundry contract after Agent Insights became generally available. This obsolete opt-in is no longer needed. Callers explicitly referencing the constant must remove that reference; fine-tuning continues to use the unchanged `FINETUNING_SESSIONS_V1_PREVIEW` value.
+- Remove `FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW` because Agent Insights no longer requires the obsolete preview opt-in. Remove explicit references to that constant. The fine-tuning preview header is unchanged.
+
+### Bugs Fixed
+
+- Provide actionable checkpoint-resume guidance for terminal training-engine interruptions while preserving error codes and diagnostic identifiers.
+- Preserve out-of-memory and timeout guidance for nonterminal engine errors.
+- Retry sampling responses missing `request_id` within a bounded fault budget, then raise `MalformedResponseError`.
+- Improve polling budgets, sampling limits, heartbeat shutdown, and scalar serialization while preserving protected-training replay safeguards.
+- Use canonical `/fine_tuning_sessions` routes in generated operations while retaining existing Python convenience APIs.
 
 ### Other Changes
 
-- Pin discriminated TypeSpec request-message and tool-definition hierarchies. Existing request JSON, four supported roles, function-only tools, and Python API/runtime remain unchanged; add sync/async regression checks rejecting unsupported tool definitions.
-- Remove unused TypeSpec sampling-output scaffolding and document the existing choices on the generic polling result. Service responses, Python result classes, and safety checks are unchanged; no valid-choice `outcome` field is added.
-- Pin the removal of an unused TypeSpec training-result declaration, retaining its scalar-result documentation on the generic polling field without changing the Python API or safety validation.
-- Keep checkpoint preparation states extensible in TypeSpec. Known labels, Python API, safety validation, and preparation-state handling remain unchanged.
-- Pin the discriminated TypeSpec tool-call hierarchy while preserving the function-only payload, Python API, and runtime. Add sync/async regression coverage rejecting unsupported call kinds.
-- Refresh generation with main's shared Python emitter 0.63.11 and generator 0.40.0, correcting generated documentation type references without changing executable code or public signatures.
-- Pin the TypeSpec correction that explicitly marks all fine-tuning operations as preview. The wire API version remains `v1`, and the SDK API and runtime are unchanged.
-- Clarify service-side training-tier selection: an omitted tier uses `DatazoneStandard` for the effective M365 worker pool and the `GlobalStandard` baseline for other pools. The SDK still sends no tier when omitted and preserves explicit choices.
-- Use absolute repository links in package generation documentation to satisfy Azure SDK link guidance.
+- Clarify session lifecycle, service-selected training tiers, checkpoint preparation limits, and differences between raw operations and convenience methods.
+- Improve generated request-model documentation without changing supported message roles, function-only tools, or request payloads.
 
 ## 1.0.0b1 (2026-09-24)
 
 ### Features Added
 
-- Add the generated `InputChunk` hierarchy and `InputChunkType`. Existing `ModelInputChunk` keyword/mapping calls remain valid and now emit `type="text"`; image inputs retain their existing serialization and validation.
-- Reuse the current 12-member canonical shared `FoundryFeaturesOptInKeys`, preserving six original member names/values with six canonical additions. The fine-tuning preview header is unchanged.
-- Add optional `SamplingParams.response_format` for compatible sampling providers and the friendly `SamplingOperationResult` alias for `SampleOperationResult`.
-- Include Loom's maintained read-only `SampleOperationResult.prompt_tokens: Optional[int]` for backend-reported evidence, counted once per prompt. Accept only exact non-negative integers; missing or invalid evidence is `None`, with no boolean/float/string coercion or inferred counts. The identical `SamplingOperationResult` alias and existing constructor keywords/overloads are unchanged.
-- Support `AZURE_AI_FINETUNING_MAX_CHUNK_BYTES` as an import-time positive-integer override for the approximate request chunk-size budget. Unset or invalid values keep the 5,000,000-byte default; invalid values log a warning. Service-side limits are unchanged.
-- Add the string-backed `TrainingType` enum, reusing the REST training-tier definition. Existing string inputs and omission behavior remain supported.
-- Initial preview of interactive fine-tuning sessions with synchronous and asynchronous clients.
-- Forward-only requests, checkpoint resume and deletion, JSON-valued session metadata, and training-tier selection.
-- Multimodal image input, vision/projector LoRA settings, nullable prompt log-probabilities, and per-operation metrics.
-- Bounded retries, preserved session identifiers, typed service errors, and operation progress logging.
+- Initial preview of interactive fine-tuning sessions with synchronous and asynchronous Python clients.
+- Support forward/backward training, forward-only requests, sampling, optimizer steps, checkpoint save/resume, session unload and deletion.
+- Support text/image input chunks, vision/projector LoRA configuration, JSON-valued session metadata, and training-tier selection.
+- Add optional structured sampling responses, prompt log-probabilities, and read-only prompt-token counts when reported by the service.
+- Add `SamplingOperationResult` as an alias for `SampleOperationResult`.
+- Support the import-time `AZURE_AI_FINETUNING_MAX_CHUNK_BYTES` override for the approximate request chunk-size budget.
 
 ### Breaking Changes
 
-- Require Python 3.10 or later; Python 3.9 is no longer supported.
-- Remove `AGENTS_OPTIMIZATION_V2_PREVIEW` from the historical 13-member enum snapshot to follow its removal from the upstream canonical definition; the six original fine-tuning SDK members remain available.
-- Require an explicit `lora_config` with `LoRAConfig.rank` in session creation and checkpoint-resume methods, and in `CreateSessionRequest`. No implicit rank or empty configuration is supplied.
-- The distribution is named `azure-ai-finetuningsessions` and Python imports now use `azure.ai.finetuningsessions`. Remove older preview installations and update imports/dependency files before installing this build.
-- The preview baseline replaces the earlier regenerated-only surface with the established preview API plus explicitly documented contract changes. Callers of earlier raw models, operation methods, or keyword adapters should check the current signatures when migrating.
+- Require Python 3.10 or later.
+- Use distribution name `azure-ai-finetuningsessions` and import namespace `azure.ai.finetuningsessions`. Uninstall the older `azure-ai-finetuning-sessions` distribution before migrating.
+- Require explicit LoRA configuration, including `LoRAConfig.rank`, for session creation and checkpoint resume.
+- Remove the obsolete `AGENTS_OPTIMIZATION_V2_PREVIEW` feature constant.
 
 ### Bugs Fixed
 
-- Preserve credential redirect protections with the declared minimum Azure Core 1.37.0 as well as current versions; handle the cleanup flag location change in Azure Core 1.38.3.
-- Drain async heartbeat tasks before session/client shutdown, including concurrent cancellation; share the sync client's pipeline so custom policies work and all transports close normally.
-- Bound creation and sustained-error retry sleeps; tolerate bounded request-store propagation after creation and reject unexpected polling states immediately.
-- Reject empty training batches and incomplete sampler identifiers; bound synchronous chunk workers and offload async forward chunking.
-- Preserve generic handling for explicit non-batch payload limits and typed errors for malformed capacity retry hints; reject unhandled redirects during deletion.
-- Propagate direct-route context headers through default raw-operation pipelines with endpoint scoping and caller overrides; omit response payloads from normal INFO logs.
-- Preserve the sync heartbeat thread when shutdown has not completed, validate mapping-form image inputs, and return actual completed Tasks from async multichunk/wave methods as documented.
-- Handle nested HTTP 503 error details while preserving flat-response compatibility.
-- Map `engine_dead` polling failures to `TrainingEngineError`, preserving error codes and diagnostic references without retrying lost engine state.
-- Handle non-object error bodies safely, ignore invalid or non-finite retry hints, and validate positional image mappings consistently with keyword inputs.
-- Require HTTPS and configured-origin scoping for default API-key authentication, with explicit configured-loopback HTTP opt-in only. Remove SDK-default direct-route headers outside their origin/path scope, including prepopulated defaults, while preserving distinct caller overrides.
-- Disable automatic POST transport retries in default sync/async policies, including heartbeats. Explicit retry policies remain caller-owned; this does not guarantee deduplication or change convenience-level recovery decisions.
-- Make default raw `begin_*` pollers use HTTP 200 acceptance and session/request-ID GET polling in both clients, without POST replay or synthetic HTTP 202. Preserve result callbacks, custom polling, no-polling, and strategy-specific continuation behavior.
-
-### Other Changes
-
-- Reuse 18 canonical TypeSpec aliases, including `ModelInput`, while retaining 22 compatibility models and three compatibility unions for intentional Python-only contracts. Correct LoRA, sampling, and training-tier documentation without changing service behavior.
-- Move Python-only TypeSpec compatibility definitions to [session-finetuning/models-custom-code.tsp](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp), imported only by SDK generation. Retain the existing SDK namespace, public types, and generated type identities; the move does not add these projections to REST.
-- Keep the input-chunk migration SDK-first: normalize legacy token-only `ModelInput` mappings only when `type` is absent and preserve unknown explicit tags. Production service behavior is unchanged; strict discriminator enforcement and compatibility policy are deferred to public preview (PuPr).
-- Refresh TypeSpec provenance after snake_case training-tier member naming and service-grounded identifier minimum lengths; training-tier wire values are unchanged.
-- Use the Foundry required-preview operation contract and documented schema defaults with supported Python customization hooks for request query ordering and established convenience behavior.
-- Use the repository's shared Python emitter `0.63.8`, backend `0.38.0`, compiler `1.16.0`, and client generator core `0.72.2`. Genuine regeneration incorporates the upstream unused-import fix; generated files are not manually patched to pass CI.
-- Remove the package-local emitter override. Keep standalone tooling archives and validation records under the package's engineering directory, and verification commands under its scripts directory; standard README and generation guidance remain at the package root.
-- Record the unchanged 48-file historical oracle at source commit `485774df502642879fdf3a53777be4a0d95155dc` in [eng/generation/reference.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/reference.json). See [GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md) for current guidance, exact reviewed contracts, and historical evidence.
-- Retain `/fine_tuning/sessions` routes and established convenience APIs. The earlier `use_legacy_routes` option is not included in this preview.
-- Use AST overload inspection on all supported Python versions rather than importing Python 3.11-only `typing.get_overloads`; retain the assertions on Python 3.10.
-- Correct the spelling pipeline failure on Python's global-namespace keyword in the surface verifier without changing runtime behavior or weakening validation.
-- Preserve the separately committed preview baseline and record intentional changes in [eng/generation/review-deltas.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/review-deltas.json). Background heartbeat startup remains unchanged; opt-in-only startup is still deferred.
-
-The current refresh has two matching isolated emissions and a passing public
-source-test run. Final test totals and gate outcomes must come from final
-validation records; final Loom, installed-wheel, and public CI results are not
-yet verified. No commands or builds were run for this documentation-only update.
-
-Historical local validation, before the input-chunk and shared-enum changes:
-**1,637 SDK tests passed on Python 3.13.14**. The
-comparison and negative-guard counts, generation method, and limitations are in
-[GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md). These results do not validate the final combined changes or claim a new final-wheel run,
-validation of the new tests on Python 3.10, remote CI success, or release approval.
+- Scope default credentials and request-context headers to the configured endpoint and preserve credential protections during redirects.
+- Disable automatic POST transport retries by default and support HTTP 200 request-ID polling in raw `begin_*` operations.
+- Drain async heartbeat tasks during shutdown and bound synchronous heartbeat cleanup.
+- Validate empty batches, sampler identifiers, image content, malformed error responses, and retry hints before accepting results or replaying operations.

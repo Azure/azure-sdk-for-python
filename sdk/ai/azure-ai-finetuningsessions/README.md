@@ -1,515 +1,295 @@
 # Azure AI Fine-Tuning Sessions client library for Python
 
 Preview client library for interactive supervised and reinforcement fine-tuning
-in Microsoft Foundry. Create a session, submit training or sampling requests,
+in Microsoft Foundry. Create sessions, submit training and sampling requests,
 and save checkpoints with synchronous or asynchronous Python clients.
 
-For general background, see the [Microsoft Foundry (classic) fine-tuning
-overview][fine-tuning-overview]. That article covers general fine-tuning
-workflows; it is not documentation for this fine-tuning sessions preview SDK.
-
-The client combines TypeSpec-generated operations and models with maintained
-Python customizations for polling, lifecycle, and error handling. See the
-[generation and validation guide][generation-guide] for source provenance,
-generation instructions, and recorded validation results.
+For general background, see the [Microsoft Foundry fine-tuning overview][overview].
+Availability of fine-tuning sessions and individual features depends on your
+account, region, model, and service configuration.
 
 ## Getting started
 
 ### Install the package
 
 ```bash
-python -m pip install azure-ai-finetuningsessions
+python -m pip install --pre azure-ai-finetuningsessions
+python -m pip install azure-identity
 ```
 
-The distribution name is `azure-ai-finetuningsessions`. Python imports are now
-`azure.ai.finetuningsessions`, including the asynchronous `aio` namespace.
-Update earlier `azure.ai.finetuning_sessions` imports to the new spelling.
+### Prerequisites
 
-If an earlier preview was installed as `azure-ai-finetuning-sessions`, uninstall
-that distribution **before** installing this one:
+- Python 3.10 or later.
+- An [Azure subscription][subscription].
+- A Foundry project with access to fine-tuning sessions and compatible capacity.
+- The project endpoint supplied for the service, for example
+  `https://<account>.services.ai.azure.com/api/projects/<project>`.
 
-```bash
-python -m pip uninstall azure-ai-finetuning-sessions
-python -m pip install azure-ai-finetuningsessions
-```
+### Authenticate and create a session
 
-Update dependency files and lockfiles to use `azure-ai-finetuningsessions` as
-well. A distribution-only preview used this same distribution name with the old
-Python namespace and the same version number. If upgrading from that snapshot,
-uninstall it before installing the new build so pip does not leave stale modules
-or skip the reinstall. Do not rely on both preview distributions being installed.
-
-#### Prerequisites
-
-- Python 3.10 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- A Foundry project with access to fine-tuning sessions and compatible model capacity.
-- A service endpoint supporting canonical `/fine_tuning_sessions` routes.
-
-#### Authenticate with Microsoft Entra ID
-
-Install [azure-identity][azure_identity_pip] with [pip][pip], then supply a
-[token credential][authenticate_with_token] from the
-[Azure Identity library][azure_identity_credentials]. For example, use
-[DefaultAzureCredential][default_azure_credential]:
+Use an Azure Identity credential such as `DefaultAzureCredential`.
+Session creation requires an explicit LoRA configuration and adapter rank.
+Use a base model and configuration supported by your account.
 
 ```python
-from azure.ai.finetuningsessions import FineTuningSessionClient
+from azure.ai.finetuningsessions import FineTuningSession, FineTuningSessionClient
+from azure.ai.finetuningsessions.models import LoRAConfig
 from azure.identity import DefaultAzureCredential
 
-client = FineTuningSessionClient(
-    endpoint="https://<account>.services.ai.azure.com/api/projects/<project>",
-    credential=DefaultAzureCredential(),
-)
+endpoint = "https://<account>.services.ai.azure.com/api/projects/<project>"
+
+with DefaultAzureCredential() as credential:
+    with FineTuningSessionClient(endpoint=endpoint, credential=credential) as client:
+        session = FineTuningSession.create(
+            client,
+            base_model="<supported-base-model>",
+            lora_config=LoRAConfig(rank=16),
+            user_metadata={"experiment": "example"},
+        )
+        try:
+            checkpoint = session.save_weights_for_sampler(
+                sampling_session_seq_id=0,
+                seq_id=0,
+            )
+            print(checkpoint.checkpoint_id)
+        finally:
+            session.close()
 ```
 
-`AzureKeyCredential` is also supported when API-key authentication is enabled for
-the endpoint. Default API-key authentication requires HTTPS and sends the key
-only to the configured origin (scheme, host, and effective port). For local
-development only, `allow_insecure_http=True` permits the configured HTTP
-loopback origin: `localhost`, `127.0.0.1`, or `[::1]`. It does not permit remote
-plaintext authentication. Use HTTPS and non-production credentials for testing.
+`AzureKeyCredential` is also supported when API-key authentication is enabled
+for the endpoint. Use HTTPS. Default API-key authentication sends credentials
+only to the configured origin. For local testing, `allow_insecure_http=True`
+allows HTTP only for the configured loopback endpoint; it does not permit
+remote plaintext authentication.
 
 ## Key concepts
 
-- A **session** holds model and adapter state for training and sampling.
-- A **request** is submitted and then polled until its result is available;
-  a successful HTTP submission does not mean GPU work has completed.
-- A **checkpoint** persists training state or sampler weights. Sampling requires
+- A **session** holds model and adapter state between requests.
+- A **request** is submitted and polled until its result is available.
+  Successful submission does not mean the requested work has completed.
+- A **checkpoint** saves training state or sampler weights. Sampling requires
   a completed sampler checkpoint identifier.
-- Heartbeats keep sessions active. Close/delete sessions explicitly and close
-  clients or use their context managers to release HTTP resources.
+- A **heartbeat** refreshes an active session during gaps between requests.
+  Convenience creation starts background heartbeats automatically.
 
-### Opt-in text-only operations
+`training_type` accepts `TrainingType` members or strings. Known values are
+`GlobalStandard`, `DatazoneStandard`, and `DeveloperTier`. If omitted, the SDK
+sends no tier and the service selects the default. Explicit choices remain
+subject to service eligibility and capacity; the SDK does not select a
+different tier when the requested one is unavailable.
 
-The maintained sampling and training convenience methods accept
-`text_only_input` in place of token-native inputs. Sampling uses public
-`system`, `user`, `assistant`, and `tool` messages and optional function
-definitions. Training consumes opaque `sample_ref` values and finite scalar
-advantages, rather than exposing private token evidence.
+### Client and session lifetime
 
-A text-only sampling result contains valid public assistant choices or safely
-classified invalid choices. Invalid choices have no public message but can
-still carry trainable references; they are not automatically operation failures.
-Text-only sampling does not support prompt log-probabilities, caller-selected
-stopping criteria, or structured-output `response_format`.
+`FineTuningSession.create(...)` waits for initialization and returns a session
+wrapper. Its background heartbeat uses a thread. Calling `session.close()`
+stops that heartbeat and requests session unload. Closing the HTTP client
+alone does not unload the session or stop a synchronous wrapper's heartbeat.
 
-For supported model codecs, `text_only_input` can include `reasoning_effort`
-with `"low"`, `"medium"`, `"high"`, or `None`. Omit it or use `None` to retain
-the codec's default. Unsupported labels are rejected before any request is
-submitted; this option does not grant access to additional models.
-
-These are opt-in service capabilities. Installing this package does not grant
-model eligibility or access. Existing token-native convenience calls and raw
-request constructors remain supported.
-
-### Checkpoint preparation is not file delivery
-
-`client.checkpoints.download_weights(session_id, checkpoint_id, output_path)`
-and its asynchronous counterpart currently validate the destination, poll
-server-side preparation, and validate the complete file manifest. They return
-`None` after preparation and **do not create directories, write files, or
-transfer weights**. Do not interpret that return value as confirmation that
-weights were downloaded.
-
-Preparation remains subject to server-side download admission and checkpoint
-ownership checks. This package does not enable download access or change those
-policies.
-
-## Examples
-
-### Create a session
+The asynchronous client returns a session ID from `await client.create_session(...)`.
+Its methods accept that ID:
 
 ```python
-from azure.ai.finetuningsessions import FineTuningSession
-from azure.ai.finetuningsessions.models import LoRAConfig, TrainingType
+from azure.ai.finetuningsessions.aio import FineTuningSessionClient
+from azure.ai.finetuningsessions.models import LoRAConfig
+from azure.identity.aio import DefaultAzureCredential
 
-session = FineTuningSession.create(
-    client,
-    base_model="<supported-base-model>",
-    lora_config=LoRAConfig(rank=16),
-    user_metadata={"experiment": "example", "enabled": True},
-    training_type=TrainingType.GLOBAL_STANDARD,
-)
-try:
-    sampler = session.save_weights_for_sampler(seq_id=0, sampling_session_seq_id=0)
-    print(sampler.checkpoint_id)
-finally:
-    session.close()
-    client.close()
+async def run():
+    async with DefaultAzureCredential() as credential:
+        async with FineTuningSessionClient(
+            endpoint="https://<account>.services.ai.azure.com/api/projects/<project>",
+            credential=credential,
+        ) as client:
+            session_id = await client.create_session(
+                base_model="<supported-base-model>",
+                lora_config=LoRAConfig(rank=16),
+            )
+            try:
+                checkpoint_task = await client.save_weights_for_sampler_async(
+                    session_id,
+                    name="example-sampler",
+                )
+                checkpoint = await checkpoint_task
+                print(checkpoint.checkpoint_id)
+            finally:
+                await client.close_session(session_id)
 ```
 
-The asynchronous entry point is `azure.ai.finetuningsessions.aio.FineTuningSessionClient`.
-Its `create_session` method returns a session ID after initialization; training,
-sampling, checkpoint, and deletion methods accept that ID. Creation supports
-`from_checkpoint`, JSON-valued `user_metadata`, and `training_type`. Session
-creation and checkpoint-resume methods require an explicit `lora_config` with
-a `rank`, including `FineTuningSession.create`, `FineTuningSession.create_from_checkpoint`,
-`async_client.create_session`, and `async_client.create_session_from_checkpoint`.
-Use values supported by the selected model; no client-side rank default is supplied.
+Closing the async client drains its heartbeat tasks and closes the transport,
+but does not unload or delete remote sessions. Use `close_session` explicitly.
+Keep the event loop responsive so background heartbeats can run.
 
-Choose the creation API according to the lifecycle behavior needed:
+The async `save_weights_for_sampler_async` method returns a task after
+submission. Await both the method and its returned task before using the
+checkpoint, as shown above.
 
-| API | Completion and heartbeat behavior |
-|---|---|
-| `client.sessions.create(...)` / `await async_client.sessions.create(...)` | Returns the HTTP 200 submission JSON, not an initialized session. Does not poll or start a heartbeat. |
-| `client.sessions.begin_create(...)` / `await async_client.sessions.begin_create(...)` | Returns a sync/async poller. Use `poller.result()` / `await poller.result()` for request completion. Does not start a heartbeat. |
-| `FineTuningSession.create(...)` / `await async_client.create_session(...)` | Waits for initialization, then starts the existing background heartbeat. Returns a session object / session ID. |
+`session.delete()` and `await async_client.delete_session(session_id)` stop the
+associated heartbeat and request deletion of the session and its resources.
+They treat an already absent session as successfully deleted. Deletion differs
+from unloading and does not wait for background storage cleanup.
 
-Automatic heartbeat startup in convenience creation is unchanged; an opt-in-only
-heartbeat lifecycle has not been implemented.
+### Attach an existing session
 
-`training_type` accepts `TrainingType` members or strings. The known wire values
-remain `GlobalStandard`, `DatazoneStandard`, and `DeveloperTier`; future strings
-are passed through without client-side validation. Set the property explicitly
-to select a tier. If omitted, the SDK leaves selection to the service.
+For synchronous use, `FineTuningSession(client, session_id)` wraps an existing
+session and starts its heartbeat. Repeated wrappers own separate heartbeat
+threads, so manage their lifetimes explicitly.
 
-When the service resolves a new session to the M365 worker pool, an omitted
-tier defaults to `DatazoneStandard`; other pools retain the `GlobalStandard`
-baseline. Explicit tier choices and existing Developer Tier metadata selection
-are preserved. The SDK does not infer a worker pool or inject a training tier,
-and existing sessions are not migrated. Datazone availability and admission
-checks remain server-side; there is no automatic fallback to a global tier.
+For asynchronous use, call `await async_client.attach_session(session_id)`.
+It registers one best-effort heartbeat per client/session and returns `None`.
+The first heartbeat is sent after 30 seconds; registration itself makes no
+HTTP request and does not verify existence, readiness, or access. Client close
+stops these tasks without unloading the remote session.
 
-### Attach an existing session (async)
+### Training and sampling
 
-Call `await async_client.attach_session(session_id)` before using a session
-created elsewhere. It starts the existing best-effort heartbeat every 30 seconds
-on that client, without creating, loading, polling, or checking the session.
-Repeated attachment on the same client does not duplicate its heartbeat task.
-Canonical, legacy `model_`, and bare IDs use existing lifecycle normalization
-and resource routing; the method returns `None` and does not replace the ID.
-
-Client `close()` or async context exit drains its heartbeat tasks and closes
-the transport, without unloading/deleting sessions. Explicit `close_session`
-and `delete_session` retain their existing unload/delete behavior. Other clients'
-heartbeats are independent. Normal operation/poll endpoints also refresh session
-liveness, but periodic heartbeats cover long gaps between those requests, such
-as local rollout work. Keep the event loop responsive during blocking local work.
-No heartbeat retry policy or service expiration behavior changes.
-
-The async logger distinguishes `task registered` (local scheduling only),
-`first HTTP success` (one INFO message per task, after HTTP 200), and
-`task stopped` (shutdown drained). Registration does not confirm authentication
-or server liveness. Messages include canonical `SessionId`; registration and
-first success also include the wire `ResourceSessionId` for legacy/bare IDs.
-Subsequent successful ticks are silent; failures remain warnings with a status
-code or exception type, not transport exception details. Enable INFO on the
-normal application console logger to see these messages; HTTP payload logging
-is not required. Missing first-success output alone does not establish expiry.
-
-### Text and image input chunks
-
-`ModelInput` reuses the canonical service model with an ordered list of
-`InputChunk` objects. The generated hierarchy uses `type` as its discriminator;
-`InputChunkType` names the known `text` and `image` values, while the wire type
-remains open to future strings.
-
-| Input | Serialization and compatibility |
-|---|---|
-| `ModelInputChunk(tokens=...)` and mapping constructors | Existing calls remain valid; text chunks now serialize with `type="text"`. |
-| Legacy token-only mappings inside `ModelInput` | Gain `type="text"` only when no explicit `type` is present. Unknown explicit tags are preserved, not reclassified as text. |
-| `ImageChunk` | Existing keyword and mapping calls remain valid. The maintained class extends the generated image variant and retains bytes/base64 handling and validation. |
-
-Image checks still cover the 10,000,000-byte limit, matching JPEG/PNG/WebP
-signatures and formats, positive `expected_tokens`, and at most 64 images per
-example. Unknown chunk tags remaining extensible in the SDK does not guarantee
-that a service accepts every future variant.
-
-This is an **SDK-first** change, not a production parser rollout. Local checks
-against the checked-out service schemas accept both tagged and untagged text;
-strict service discriminator enforcement and the compatibility policy are
-deferred to public preview (PuPr). See the [generation guide][generation-guide]
-for the offline evidence and its limits.
-
-### Sampling options and results
-
-`SamplingParams.response_format` has type `Optional[Dict[str, Any]]` and requests
-a response format from compatible sampling providers. It is omitted when not
-supplied; supported formats depend on the selected model and provider.
-
-`SamplingOperationResult` is a friendly alias for `SampleOperationResult`.
-Both names identify the same result model; the existing name remains available.
-
-#### Sampling prompt token evidence
-
-`SampleOperationResult.prompt_tokens` is a read-only `Optional[int]` from the
-API's top-level `prompt_tokens` result field, populated from backend
-`usage.prompt_tokens`. It counts the single prompt once, even when `num_samples`
-(`n`) is greater than one. Only exact non-negative Python `int` values are
-accepted; booleans, floats, and strings are not coerced. Missing, ambiguous, or
-invalid evidence is `None` (unverified), including responses from older services.
-The SDK does not infer this count from request length, prompt log-probabilities,
-or COGS metrics. The identical `SamplingOperationResult` alias exposes the same
-field; existing constructor keywords and overloads are unchanged.
-
-### Checkpoint weight download (preparation only)
-
-`client.checkpoints.download_weights(session_id, checkpoint_id, output_path)`
-and `await async_client.checkpoints.download_weights(session_id, checkpoint_id, output_path)`
-first validate the local path, then poll the bodyless
-`POST /fine_tuning_sessions/{session_id}/checkpoints/{checkpoint_id}/download`
-while `Pending`. They honor `Retry-After` or the client's `polling_interval`
-(waits capped at 60s), return `None` on `Succeeded`, and raise on failed,
-malformed, HTTP/auth, or transport responses without HTTP retries or redirects.
-Successful preparation requires a complete private manifest with unique file IDs,
-portable relative filenames (nested paths preserved), exact nonnegative sizes,
-strong ETags, and same-origin, resource/version-preserving Loom file locators.
-Invalid metadata, case/Unicode filename aliases, and file/directory conflicts
-raise `MalformedResponseError`; no entries are skipped or flattened.
-The API enforces gating and ownership; credentials use the existing client pipeline.
-**Success means server-side preparation only, not local file delivery.**
-No directories are created, files written, or weights transferred.
-
-This requires a compatible canonical-download API/proxy deployment; there is no
-fallback to `/fine_tuning/sessions`. Existing delegated Entra or API-key credential
-policies are unchanged. Service-side default-project binding, admission, API-key
-DataAction allowlists, and download/ownership checks remain authoritative; SDK
-credential support does not grant access. Other SDK operation routes are unchanged.
-
-The checked destination is `output_path/<session_id>/<checkpoint_id>`. That
-checkpoint directory must be empty or absent. The output root and session
-directory may already contain unrelated files, other checkpoints, and sessions.
-`output_path` accepts a string or `os.PathLike[str]`, including relative paths.
-Identifiers in the local path are used verbatim; each must
-be a nonempty portable directory name, not `.`/`..`, a path, a Windows device
-name, or a name containing ASCII characters 0-31, `<>:"/\|?*`, or a trailing dot
-or space. Resolved session/checkpoint paths must stay inside the output root,
-including through symlinks.
-
-Invalid identifiers, escaping paths, and nonempty checkpoint directories raise
-`ValueError`; incompatible argument types raise `TypeError`. A file in place of
-a needed directory raises `NotADirectoryError`; other filesystem errors propagate.
-Validation runs before any preparation request and is a point-in-time check,
-not a reservation of the destination. HTTP requests retain the existing
-session-ID normalization for bare and legacy model IDs; it does not change the
-local path. Actual file transfer remains deferred to a subsequent PR.
-
-### Forward-only passes and session deletion
-
-Both capabilities are available through maintained convenience methods. In the
-table below, `session` is a `FineTuningSession` and `async_client` is an
-`azure.ai.finetuningsessions.aio.FineTuningSessionClient`.
+Use the convenience methods for complete workflows:
 
 | Operation | Synchronous API | Asynchronous API |
 |---|---|---|
-| Forward-only pass | `session.forward(batch)` | `await async_client.forward(session_id, batch)` |
-| Delete a session | `session.delete()` | `await async_client.delete_session(session_id)` |
+| Forward/backward | `session.forward_backward(batch)` | `await client.forward_backward(session_id, batch)` |
+| Forward only | `session.forward(batch)` | `await client.forward(session_id, batch)` |
+| Optimizer step | `session.optim_step(adam_params)` | `await client.optim_step(session_id, adam_params)` |
+| Save training state | `session.save_weights(path)` | `await client.save_weights(session_id, path)` |
+| Sample | `session.sample(...)` | `await client.sample(session_id, ...)` |
 
-Forward-only passes do not accumulate gradients. These forward methods split
-large batches into chunks, submit requests, and poll request IDs until the
-completed result is available. Alternatively,
-`await async_client.forward_async(session_id, batch)` returns an awaitable for
-the result; await that returned object to obtain the completed result.
+Forward-only passes do not accumulate gradients. Training and sampling helpers
+submit work, poll request IDs, normalize results, and apply their documented
+batching and error-handling behavior.
+
+`ModelInput` accepts ordered text and image chunks. `ModelInputChunk(tokens=...)`
+represents token IDs; `ImageChunk` accepts validated JPEG, PNG, or WebP data.
+Image validation checks the 10,000,000-byte limit, matching content and format,
+positive `expected_tokens`, and at most 64 images per example. Legacy token-only
+mappings remain accepted; unknown explicit chunk tags are not reclassified.
+Support for any particular chunk variant still depends on the service.
 
 Set `AZURE_AI_FINETUNING_MAX_CHUNK_BYTES` before importing the SDK to override
-the approximate per-request chunk-size budget. The value must be a positive
-integer; unset or invalid values retain the 5,000,000-byte default, and invalid
-values log a warning. This setting does not change service-side request limits.
+the approximate per-request chunk-size budget. Unset or invalid values retain
+the 5,000,000-byte default; invalid values log a warning. This does not change
+the service's request limits.
 
-The delete methods stop the session heartbeat, send HTTP DELETE, and return
-`None`. They treat HTTP 404 as success, so deleting an already absent session is
-safe to repeat. The service handles cascading deletion of the session's models,
-checkpoints, and sampling sessions; the SDK does not wait for background storage
-cleanup. Deletion is distinct from `session.close()` or
-`await async_client.close_session(session_id)`, which unload the session.
+`SamplingParams.response_format` requests a response format from compatible
+models and providers. `SamplingOperationResult` is an alias for
+`SampleOperationResult`. Its read-only `prompt_tokens` reports the service's
+prompt count once per prompt, not once per sampled sequence. Missing or
+invalid counts remain `None`; the SDK does not estimate them from other data.
 
-## Generated operations versus convenience methods
+### Opt-in text-only operations
 
-Use `FineTuningSession` or the async client's convenience methods for training,
-sampling, checkpoints, and session lifecycle operations. For request-ID-based
-operations, they submit work, receive HTTP 200 acceptance, poll the returned
-request identifier, and normalize results with convenience-level recovery,
-chunking, heartbeats, and error handling. Deletion sends HTTP DELETE directly;
-it does not poll a request ID.
+Sampling and training convenience methods accept `text_only_input` instead
+of token-native inputs. Sampling accepts public `system`, `user`, `assistant`,
+and `tool` messages and optional function definitions. Only function tools are
+supported. Training accepts opaque `sample_ref` values and finite scalar
+advantages without exposing underlying token evidence.
 
-The raw operation-group methods `client.sessions.delete()` and
-`client.training.forward()` are intentionally not generated in this preview.
-The convenience entry points above preserve the established preview API and
-provide the lifecycle, chunking, and polling behavior described above.
-Their supported Python customization hooks are included during SDK
-regeneration; the REST specification still defines both operations. Adding raw
-operation-group entry points would be a separate additive API change.
+Text-only sampling results contain valid assistant choices or safely classified
+invalid choices. Invalid choices have no public message but can still have
+trainable references; they are not automatically operation failures. Keep
+references opaque and use the exact returned value for subsequent training.
+Reference training exposes scalar metrics rather than private per-token output.
 
-The raw operation groups provide lower-level access. Their accepted inputs and
-return types can differ from the convenience methods. Prefer convenience APIs
-for end-to-end session workflows.
+For compatible models, `reasoning_effort` accepts `"low"`, `"medium"`, `"high"`,
+or `None`. Omission or `None` preserves the model default. Unsupported values
+are rejected before submission. Text-only sampling does not support prompt
+log-probabilities, caller-selected stopping criteria, or `response_format`.
+Installing the SDK does not enable these capabilities or grant model access.
 
-Default raw `begin_*` pollers now accept the real HTTP 200 response in both
-sync and async clients, then GET the returned request ID within its session
-until completion. They do not invent HTTP 202 or an `Operation-Location` header,
-replay the POST, or start a heartbeat. Results retain `OperationResult`
-deserialization and the `cls` callback. The default strategy disables transport
-retries and redirects for both submission and polling; errors are surfaced.
-Its continuation token resumes the existing request with GET only.
+### Checkpoint preparation only
 
-Explicit custom polling strategies and `polling=False` (`NoPolling` or
-`AsyncNoPolling`) retain their own completion, callback, and continuation
-semantics. Disabling polling does not establish that GPU work completed.
+`client.checkpoints.download_weights(session_id, checkpoint_id, output_path)`
+and its async counterpart currently **prepare a checkpoint on the service;
+they do not download files**. They validate the destination, poll preparation,
+validate the returned inventory, and return `None` after successful preparation.
+They do not create directories, write files, or transfer weights.
 
-All generated and convenience requests use `/fine_tuning/sessions`. No route
-selection flag or gateway rewrite is needed. The earlier `use_legacy_routes`
-option is not included in this preview.
+These methods require service support and authorized checkpoint access.
+Preparation failure, unknown states, invalid inventories, and HTTP/transport
+errors are surfaced; unknown states are never treated as success.
 
-## Compatibility with earlier previews
+The checked destination is `output_path/<session_id>/<checkpoint_id>`.
+That checkpoint directory must be empty or absent. Identifiers must be portable
+directory names, and resolved paths must remain inside the output root,
+including through symlinks. Validation happens before the preparation request
+and does not reserve the destination. Do not interpret a successful return as
+confirmation of a local download.
 
-The renamed import is an intentional migration. The established convenience
-methods, typed exceptions, convenience-level recovery, chunking, session-ID
-handling, checkpoint helpers, and environment-variable names remain available.
+### Raw operations and convenience methods
 
-Requiring `lora_config` and `LoRAConfig.rank` is an intentional breaking change
-from earlier previews that allowed omission. Update creation and checkpoint-resume
-calls to pass `LoRAConfig(rank=...)`; an empty configuration is not a supported
-default. `CreateSessionRequest` also requires `lora_config` with a rank.
+The raw operation groups provide lower-level access with explicit request
+models and per-call API versions. Generated requests use canonical
+`/fine_tuning_sessions` routes. Some maintained convenience paths retain
+compatibility routes using `/fine_tuning/sessions`; use a service endpoint
+that supports the operations you call rather than manually rewriting URLs.
 
-The raw operation groups retain the established `body`, `operation_id`, and
-explicit per-call `api_version` arguments. Check the current operation signatures
-when migrating from an earlier regenerated-only preview. `ApiError`,
-`ApiErrorResponse`, and the top-level typed exceptions remain available.
+Raw `create` methods return submission results without waiting for initialization.
+Default raw `begin_*` methods return pollers that accept HTTP 200 submissions
+and poll the returned request ID. They do not start a heartbeat. Use
+`poller.result()` or `await poller.result()` to obtain completion.
+Explicit custom polling or `polling=False` retains the chosen strategy's
+semantics; disabling polling does not confirm that work completed.
 
-Async lifecycle methods now await heartbeat shutdown before sending close/delete,
-and closing the async client drains its heartbeat tasks. Empty batches and sampler
-requests missing both a path and sampling-session ordinal are rejected locally
-rather than producing an invalid request or a false successful no-op.
-
-`FoundryFeaturesOptInKeys` now reuses the canonical shared Foundry definition.
-The current 12-member inventory preserves the six original member names and
-values, with six canonical additions. The earlier 13-member inventory is
-historical: upstream removed `AGENTS_OPTIMIZATION_V2_PREVIEW`.
-This does not activate other preview features or change the
-fine-tuning header `Foundry-Features: FineTuningSessions=V1Preview`.
+Raw `client.training.forward` and `client.sessions.delete` methods are not
+provided in this preview. Use their session/convenience equivalents.
 
 ## Troubleshooting
 
-### Resuming after a training engine interruption
+### Training engine interruptions
 
-A `TrainingEngineError` (also available as `EngineDeadError`) with code
-`engine_dead` or `worker_crashed` indicates a terminal training interruption.
-Legacy trainer-loss messages receive the same recovery guidance. Resume the run
-with **continual fine-tuning (CFT)** in a **new session** initialized from the
-latest **completed training checkpoint**. Saved checkpoints remain usable after
-the trainer stops.
+`TrainingEngineError` (also available as `EngineDeadError`) with code
+`engine_dead` or `worker_crashed` indicates a terminal interruption. Resume in
+a **new session** from the latest completed training checkpoint using
+`FineTuningSession.create_from_checkpoint(...)` or
+`await async_client.create_session_from_checkpoint(...)`.
 
-- Sync: use `FineTuningSession.create_from_checkpoint(client,
-  checkpoint_path="<source_session_id>/<checkpoint_name>", base_model=...,
-  lora_config=...)`.
-- Async: use `await client.create_session(base_model=..., lora_config=...,
-  from_checkpoint=FromCheckpoint(source_session_id=..., checkpoint_id=...))`.
-- Keep the source base model and LoRA configuration. Use a training checkpoint
-  saved with `save_weights`, not sampler-only or ephemeral inference weights.
-- Resume the recipe's dataset cursor and client-side learning-rate schedule
-  separately. The SDK restores neither. Progress after the checkpoint is not
-  restored; without a completed training checkpoint, restart from the base model.
+Keep the source base model and LoRA configuration. Restore the dataset cursor
+and client-side learning-rate schedule separately; the SDK does not restore
+them. Progress after the checkpoint is not recovered. Without a completed
+training checkpoint, restart from the base model.
 
-Do not resubmit training operations on the interrupted session. The
-`engine_dead` code stays terminal even if a response incorrectly advertises
-`should_retry=true`; session IDs and support references remain on the exception.
+Do not resubmit training on the interrupted session. Terminal interruption
+errors remain terminal even if a response includes a retry hint.
+`engine_oom` and `engine_timeout` do not by themselves mean the trainer is
+terminally interrupted; follow the error's guidance, such as reducing batch
+size or sequence length for an out-of-memory error.
 
-The HTTP compatibility path also uses `TrainingEngineError` for `engine_oom`
-and `engine_timeout`. These codes do not by themselves indicate a terminal
-interruption. Follow the service's original guidance: for `engine_oom`, try a
-smaller batch or shorter sequences instead of creating a new session for CFT.
+### Transport, retries, and logging
 
-### Inference error codes
+Default transport policies do not retry POST requests, including heartbeats.
+Convenience operations have separate bounded recovery for supported service
+responses. An explicit `retry_policy` remains caller-owned; the SDK does not
+guarantee deduplication or exactly-once execution. Default raw pollers disable
+transport retries and redirects for their own submission and polling requests.
 
-Retryable inference failures use `request_timeout`, `request_orphaned`,
-`inference_request_rate_limited`, and `inference_unavailable`. The SDK exposes
-the server's code on `RequestRetryableError.error_code`. Convenience polling
-uses `should_retry` to decide whether to resubmit, honoring `retry_after_sec`;
-it does not match inference code names. Terminal `engine_dead` and unavailable
-operation-result codes take precedence over retry hints. Default raw pollers
-surface the error instead.
-Older inference codes remain supported by the same mechanism. `invalid_request`
-and `internal_error` remain terminal.
+Default API-key authentication is removed on cross-origin redirects.
+Callers supplying custom policies or pipelines are responsible for their
+authentication, retry, and redirect configuration.
 
-### Retry and transport safety
+Normal INFO logs contain progress and identifiers rather than complete request
+or response bodies. `FINETUNING_VERBOSE_HTTP=1` enables body logging; **do not
+enable it for sensitive data**. Avoid logging credentials, training inputs,
+generated messages, or checkpoint contents.
 
-The default sync and async transport retry policies never retry POST requests,
-including heartbeats, even if retry counts or method lists are supplied.
-Ordinary GET retry behavior is retained. Supplying an explicit `retry_policy`
-opts ordinary requests into that policy's behavior; the caller owns mutation
-replay safety. The default raw `begin_*` strategy additionally disables retries
-and redirects for its own requests, as described above.
+## Compatibility and migration
 
-This does not change convenience-level recovery decisions, ordinary redirect
-handling, or the service's `should_retry` contract. No server deduplication or
-exactly-once guarantee is implied; resubmitting an ambiguous mutation can still
-duplicate work.
+The distribution is `azure-ai-finetuningsessions` and imports use
+`azure.ai.finetuningsessions`, including its `aio` namespace. If an older
+`azure-ai-finetuning-sessions` distribution is installed, uninstall it before
+installing this package and update dependency/import declarations.
 
-Default pipelines remove SDK API-key authentication on cross-origin redirects.
-Direct-route context headers are scoped to the configured origin and session
-path, including prepopulated values equal to SDK defaults; those values are
-removed outside that scope. Distinct caller header overrides are preserved.
-An explicitly supplied value identical to an SDK default is scoped as a default.
+Creation and checkpoint-resume calls require `lora_config=LoRAConfig(rank=...)`.
+No implicit rank or empty LoRA configuration is supplied.
 
-Normal INFO progress logs include status and identifiers, not full create or
-completion payloads. `FINETUNING_VERBOSE_HTTP=1` explicitly enables body logging;
-do not enable it for sensitive customer data.
-
-When supplying a custom `policies` list or prebuilt pipeline, the caller owns
-header, authentication, redirect, and retry configuration; the SDK does not
-replace that pipeline or promise that its defaults protect caller-owned policies.
-
-Malformed or non-object error bodies retain typed error handling rather than
-causing an attribute error. Retry hints must be finite and non-negative.
-Mapping-form image inputs undergo the same image validation as keyword inputs.
-A session-creation HTTP 403 with the service's subscription-authorization detail
-raises `SubscriptionNotAuthorizedError`; enable the Azure subscription for
-training in the region before creating a new session.
-
-## Next steps
-
-Use the returned sampler checkpoint ID with `FineTuningSession.sample`, and save
-training checkpoints before unloading a session. Review the
-[generation and validation guide][generation-guide] before changing maintained
-customizations or regenerating the package.
-
-### Local development
-
-From the Azure SDK for Python repository root, install this package in editable
-mode (after removing any older-named preview as described above):
-
-```bash
-python -m pip install --editable ./sdk/ai/azure-ai-finetuningsessions
-```
-
-Run the package's tests with `pytest`; the package configuration enables asyncio
-tests. The [reference verifier][snapshot-check] verifies the immutable upstream
-Git blobs and manifest. Intentional review deltas are recorded separately from
-the reproducible baseline; current runtime is not claimed to be byte-identical
-to that historical reference.
-
-The [generation verifier][generation-check] emits TypeSpec twice with maintained
-customizations pre-seeded and compares the complete runtime. It uses the SDK
-repository's shared emitter manifest and lock, not a package-local override.
-A changed or extra generated file is a failure, not an allowed review delta.
+The obsolete `FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW` constant is
+removed in b2 because Agent Insights no longer requires that preview opt-in.
+Explicit references must be removed. Fine-tuning continues using the unchanged
+`Foundry-Features: FineTuningSessions=V1Preview` value.
 
 ## Contributing
 
-This project welcomes contributions and suggestions. Most contributions require
-you to agree to a Contributor License Agreement (CLA) declaring that you have
-the right to, and actually do, grant us the rights to use your contribution.
-For details, visit https://cla.microsoft.com.
-
-When you submit a pull request, a CLA-bot will automatically determine whether
-you need to provide a CLA and decorate the PR appropriately (e.g., label,
-comment). Simply follow the instructions provided by the bot. You will only
-need to do this once across all repos using our CLA.
-
-This project has adopted the
-[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
-additional questions or comments.
+See the [Azure SDK for Python contribution guide][contributing] and
+[Microsoft Open Source Code of Conduct][code-of-conduct].
 
 <!-- LINKS -->
-[fine-tuning-overview]: https://learn.microsoft.com/azure/foundry-classic/concepts/fine-tuning-overview
-[generation-guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md
-[snapshot-check]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/verify_reference_snapshot.py
-[generation-check]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/verify_generation.py
-[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[authenticate_with_token]: https://learn.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[pip]: https://pypi.org/project/pip/
-[azure_sub]: https://azure.microsoft.com/free/
+[overview]: https://learn.microsoft.com/azure/foundry-classic/concepts/fine-tuning-overview
+[subscription]: https://azure.microsoft.com/free/
+[contributing]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
+[code-of-conduct]: https://opensource.microsoft.com/codeofconduct/

@@ -225,11 +225,10 @@ def _deserialize_prompt_tokens(value: Any) -> Optional[int]:
 
 
 class SampleOperationResult(_models.SampleOperationResult, discriminator="sample"):
-    """Sampling result with the tested preview's nested nullable annotations.
+    """Sampling result with optional prompt-level evidence and log probabilities.
 
-    The pinned emitter cannot represent nested nullable tuple arrays. These
-    two fields therefore use the supported model override, not generated-file
-    rewriting. Wire pairs remain JSON arrays, just as in the Loom preview.
+    Log-probability entries can be absent at individual prompt positions.
+    Token/log-probability pairs are represented as JSON arrays on the wire.
 
     :ivar prompt_tokens: Backend ``usage.prompt_tokens`` for the single prompt,
         counted once regardless of the number of sampled sequences. Missing or

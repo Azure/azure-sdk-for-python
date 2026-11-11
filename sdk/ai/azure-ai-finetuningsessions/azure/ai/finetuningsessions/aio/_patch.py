@@ -19,9 +19,12 @@ Concurrency:
 Usage::
 
     from azure.ai.finetuningsessions.aio import FineTuningSessionClient
+    from azure.ai.finetuningsessions.models import AdamParams, LoRAConfig
 
     async with FineTuningSessionClient(endpoint, credential) as client:
-        session_id = await client.create_session(base_model="Llama-3.1-8B")
+        session_id = await client.create_session(
+            base_model="<supported-base-model>", lora_config=LoRAConfig(rank=16)
+        )
         fb = await client.forward_backward(session_id, batch, loss_fn="cross_entropy")
         opt = await client.optim_step(session_id, AdamParams(learning_rate=1e-4))
         await client.close_session(session_id)
@@ -1530,8 +1533,8 @@ async def create_session_from_checkpoint(
 ) -> str:
     """Create a session resumed from a previously saved training checkpoint.
 
-    :keyword checkpoint_path: Format: ``"<source_session_id>/<checkpoint_name>"``
-        or ``"loom://<source_session_id>/weights/<checkpoint_name>"``.
+    :keyword checkpoint_path: Source checkpoint reference in the form
+        ``"<source_session_id>/<checkpoint_name>"``.
     :paramtype checkpoint_path: str
     :keyword base_model: Base model name.
     :paramtype base_model: str
@@ -2358,15 +2361,8 @@ async def forward_backward_async(
         # Multiple chunks: await GPU completion of all chunks NOW so that
         # the caller can safely post optim_step after this returns.
         #
-        # Why: the engine polls the DB on a 0.5-2s cadence.  If we fire
-        # chunk1-POST, chunk2-POST, optim-POST in ~600ms, the engine can
-        # poll between chunk1 and chunk2, see chunk1 with no barrier, and
-        # process chunk1 + optim_step before chunk2 lands — applying
-        # gradients from only half the batch.
-        #
-        # Waiting for GPU completion of all chunks before posting
-        # optim_step eliminates the race at the cost of one extra engine
-        # poll cycle (~0.5-2s) of latency.
+        # Await every chunk before the caller can apply an optimizer step;
+        # otherwise gradients from an incomplete batch could be applied.
         _logger.info(
             "[forward_backward_async] multi-chunk (%d): awaiting all chunk results before returning",
             len(pending._posted),
@@ -2596,10 +2592,9 @@ async def save_weights_for_sampler_async(
     session_id: str,
     name: str,
 ) -> "asyncio.Task[OperationResult]":
-    """Save sampler weights and persist them to blob storage.
+    """Save a named, persisted sampler checkpoint.
 
-    The engine persists the checkpoint because ``sampling_session_seq_id``
-    is not set.
+    Await the returned task before using the checkpoint for sampling.
 
     :param session_id: The session ID.
     :type session_id: str
@@ -2623,12 +2618,9 @@ async def save_weights_and_get_sampling_client_async(
     session_id: str,
     name: str,
 ) -> "asyncio.Task[OperationResult]":
-    """Sync current LoRA weights to the sampler (ephemeral — not persisted).
+    """Make current LoRA weights available to the sampler without persisting them.
 
-    Used every training step to push weights for rollout sampling.
-    The engine skips blob persistence because ``sampling_session_seq_id``
-    is set. The SDK maintains an internal per-session counter — the user
-    never sees it.
+    Await the returned task before using the updated sampling weights.
 
     :param session_id: The session ID.
     :type session_id: str

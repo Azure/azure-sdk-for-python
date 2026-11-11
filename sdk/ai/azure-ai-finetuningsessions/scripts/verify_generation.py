@@ -3,8 +3,8 @@
 """Emit twice in temporary directories and compare the checked-in generated SDK.
 
 Only supported maintained hooks are supplied to each fresh emission. All other
-runtime files must be emitter output. Full assembled runtime equality, including
-the hooks, is checked separately from the immutable Loom API/behavior comparison.
+runtime files must be emitter output. Full assembled runtime equality includes
+all maintained hooks as well as generated modules.
 
 This check never updates the package, installs dependencies, or changes Git state.
 Run with --spec-repo pointing to the public azure-rest-api-specs working tree.
