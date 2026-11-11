@@ -77,8 +77,6 @@ Breaking changes in beta classes:
 * Constructor arguments `left` and `right` on `VoiceRecordingChannelLayout` are now required; use `VoiceAudioRole.USER` and `VoiceAudioRole.AGENT`, respectively.
 * Renamed `VoiceAgentInputTranscriptionModel.GPT4_O_TRANSCRIBE`, `GPT4_O_MINI_TRANSCRIBE`, `GPT4_O_TRANSCRIBE_DIARIZE`, and `WHISPER1` to `GPT_4_O_TRANSCRIBE`, `GPT_4_O_MINI_TRANSCRIBE`, `GPT_4_O_TRANSCRIBE_DIARIZE`, and `WHISPER_1`, respectively. Wire values are unchanged.
 
-### Bugs Fixed
-
 ### Sample updates
 
 * Added `sample_voice_agent_campaign.py` demonstrating future-scheduled outbound campaign creation, automatic polling, conditional cancellation, and deletion, with a matching asynchronous sample.
