@@ -210,8 +210,8 @@ Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-pytho
 
 | Sample | Description | Requirements |
 |--------|-------------|--------------|
-| [sample_endpoint_evaluator_with_api_key.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_with_api_key.py) | Bring your own HTTP endpoint as an evaluator, authenticated with an API key | Scoring endpoint, `azure-mgmt-cognitiveservices` |
-| [sample_endpoint_evaluator_with_entra_id.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_with_entra_id.py) | Bring your own HTTP endpoint as an evaluator, authenticated with Entra ID managed identity | Scoring endpoint with Easy Auth, `azure-mgmt-cognitiveservices` |
+| [sample_endpoint_evaluator.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator.py) | Bring your own HTTP endpoint as an evaluator, authenticated with an API key or Entra ID | Scoring endpoint, project connection |
+| [sample_endpoint_evaluator_schema_0_0_1.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_schema_0_0_1.py) | Register an endpoint evaluator for an existing endpoint that uses the older 0.0.1 contract. Use 0.0.2 for new evaluators | Scoring endpoint, project connection |
 
 ### Evaluation Result Insights & Analysis
 
