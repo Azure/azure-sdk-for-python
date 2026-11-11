@@ -14,12 +14,14 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
+    remove_batch_sanitizers,
 )
 
 load_dotenv()
 
 SANITIZED_RESOURCE_GROUP = "sanitized-resource-group"
 SANITIZED_ACCOUNT_NAME = "sanitized-cognitive-account"
+SANITIZED_PROJECT_NAME = "sanitized-project"
 
 
 # aovid record sensitive identity information in recordings
@@ -47,10 +49,16 @@ def add_sanitizers(test_proxy):
     )
     resource_group_name = os.environ.get("AZURE_RESOURCE_GROUP")
     account_name = os.environ.get("AZURE_COGNITIVE_SERVICES_ACCOUNT")
+    project_name = os.environ.get("AZURE_COGNITIVE_SERVICES_PROJECT")
     if resource_group_name:
         add_general_regex_sanitizer(regex=re.escape(resource_group_name), value=SANITIZED_RESOURCE_GROUP)
     if account_name:
         add_general_regex_sanitizer(regex=re.escape(account_name), value=SANITIZED_ACCOUNT_NAME)
+    if project_name:
+        add_general_regex_sanitizer(regex=re.escape(project_name), value=SANITIZED_PROJECT_NAME)
+
+    # Preserve generated cost-control names; environment-specific names are sanitized above.
+    remove_batch_sanitizers(["AZSDK3493"])
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
