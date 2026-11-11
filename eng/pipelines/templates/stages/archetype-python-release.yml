@@ -45,7 +45,7 @@ stages:
     # to releasable packages via this repo's package detection, and emits ReleaseArtifact_<safeName> outputs.
     # It fails closed: any error or missing/unlabeled PR leaves every artifact marked 'false'. Python has no
     # Signing stage, so DependsOn is overridden to the Build stage.
-    - ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+    - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/test/auto-release-handoff-49941') }}:
         - template: /eng/common/pipelines/templates/stages/archetype-auto-release-prepare.yml
           parameters:
             DependsOn:

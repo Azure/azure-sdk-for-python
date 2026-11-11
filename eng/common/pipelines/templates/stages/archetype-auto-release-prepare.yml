@@ -70,7 +70,7 @@ stages:
               scriptLocation: scriptPath
               scriptPath: $(System.DefaultWorkingDirectory)/eng/common/scripts/Resolve-AutoReleasePackages.ps1
               arguments: >
-                -CommitSha "$(Build.SourceVersion)"
+                -CommitSha "c80a550d7e92809f396a4aa4ae2477130a7a7cf6"
                 -RepoId "$(Build.Repository.Name)"
                 -PipelineUrl "$(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
                 -AzsdkExePath "$(AZSDK)"
