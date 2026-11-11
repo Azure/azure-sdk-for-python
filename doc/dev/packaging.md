@@ -198,13 +198,27 @@ On Windows, `sdk_build` provisions only the package's selected CPython targets
 from the approved Azure SDK NuGet feed. Exact interpreter versions and package
 names come from the installed `cibuildwheel`, including native interpreters needed
 to cross-compile ARM64 wheels.
-For Microsoft Rust toolchain builds, `PYTHON_ARM64_LIB_DIR`,
-`PYO3_CROSS_LIB_DIR`, and `PYO3_CROSS_PYTHON_VERSION` are set only for ARM64 targets,
-using that target's Python import libraries. The cached library directory also
-contains interpreter `build-details.json` metadata for Maturin 1.15 or later.
-The helper does not generate `PYO3_CONFIG_FILE`: Maturin generates that configuration
-using the package's resolved Cargo features, preserving stable-ABI minimum versions
-and version-specific builds instead of forcing either ABI mode.
+For Microsoft Rust toolchain builds, `PYTHON_ARM64_LIB_DIR` and a temporary
+`PYO3_CONFIG_FILE` are set only for ARM64 targets, using that target's Python
+import libraries. Explicit target metadata avoids Maturin inspecting an
+incompatible AMD64 host interpreter. Generated configs default to version-specific
+builds (`abi3=false`), including free-threaded builds.
+Packages using stable ABI must explicitly set their Cargo feature's minimum in
+`pyproject.toml`, for example for PyO3's `abi3-py310`:
+
+```toml
+[tool.azure-sdk-build]
+pyo3-abi3-minimum = "3.10"
+```
+
+This writes `abi3=true` and `version=3.10` into generated ARM64 configs.
+The helper does not infer Cargo features: the package must keep this setting
+aligned with its Rust configuration and retain its strict ABI audit.
+The minimum must not exceed the selected interpreter version, and selecting it
+with a free-threaded ARM64 target fails explicitly; use a separate version-specific
+configuration for those builds. A package-owned `PYO3_CONFIG_FILE` in the
+resolved cibuildwheel environment or inherited process environment is preserved
+instead of generating a config; that file owns its ABI settings.
 A temporary cibuildwheel configuration preserves the resolved
 package environment and hooks without changing the checked-in package configuration
 or setting a single library path for the entire job.
