@@ -4,9 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest, os
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import AzureRecordedTestCase, RecordedTransport
+from devtools_testutils import AzureRecordedTestCase, RecordedTransport, is_live
 from test_base import servicePreparer, modelsServicePreparer
 from sample_executor import (
     AdditionalSampleTestDetail,
@@ -24,10 +24,16 @@ from test_samples_helpers import (
 )
 
 
-@pytest.mark.usefixtures("patch_async_sleep")
+@pytest.fixture
+def patch_async_evaluation_sleep(monkeypatch):
+    if not is_live():
+        monkeypatch.setattr("asyncio.sleep", AsyncMock())
+
+
 class TestSamplesAsync(AzureRecordedTestCase):
     """Async test cases for samples."""
 
+    @pytest.mark.usefixtures("patch_async_evaluation_sleep")
     @audioEvaluationsPreparer()
     @pytest.mark.parametrize(
         "sample_path",
@@ -52,6 +58,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
             ("task_completion", "groundedness", "customer_satisfaction", "coherence"),
         )
 
+    @pytest.mark.usefixtures("patch_async_evaluation_sleep")
     @voiceSimulationPreparer()
     @pytest.mark.parametrize(
         "sample_path",
