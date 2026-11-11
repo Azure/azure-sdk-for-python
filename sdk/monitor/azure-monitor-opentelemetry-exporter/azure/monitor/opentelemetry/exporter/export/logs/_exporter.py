@@ -131,7 +131,10 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
                 groups.setdefault(key, []).append(self._log_to_envelope(log))
             return _get_log_export_result(self._transmit_routed(groups))
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting routed logs.")
+            _logger.error(
+                "Multi-endpoint routing: Failed to export routed logs. "
+                "Check telemetry conversion and exporter configuration.",
+            )
             return LogRecordExportResult.FAILURE
 
     def force_flush(self, timeout_millis: float = 10_000) -> bool:
