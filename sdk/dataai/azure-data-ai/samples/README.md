@@ -33,7 +33,7 @@ For the async sample, install `aiohttp`. The Entra samples only need
 ## Multimodal embedding
 
 - `python samples/multi_modal_embedding.py`: synchronous Microsoft Entra example. It embeds a document as a dense
-  vector and prints its token count and any truncation warning, then embeds a query with `vector_type="both"`.
+  vector and prints its token count and any truncation warning, then embeds a query with `vector_kind="dense_multi"`.
   If `AZURE_DATA_AI_IMAGE_URL` and `AZURE_DATA_AI_IMAGE_SAS` are set, it also embeds that blob image as base64
   multi-vectors, decodes them with `shape`, and reads the same image's results through a result link.
 - `python samples/multi_modal_embedding_async.py`: asynchronous example that embeds a document and a query
@@ -46,9 +46,10 @@ allows them. Each result item is a `MultimodalDenseEmbedding` (`embedding`), a
 `MultimodalMultiVectorEmbedding` (`multi_embedding` and `shape`) or a `MultimodalDenseAndMultiVectorEmbedding`
 (both), selected by its `kind`. A SAS, including a result link's `sas_token`, is a credential: don't log it.
 
-Pass the items in `contents` and the options as keyword arguments, such as `vector_type`, `encoding_format` and
-`delivery`. Items are `EmbeddingContentItem` models; `multi_modal_embed` also accepts the whole request as a
-dictionary with the service's JSON names (`vectorType`, `sasToken`, ...), typed by `azure.data.ai.types.MultiModalEmbedRequest`.
+Pass the items in `inputs` and the options as keyword arguments, such as `vector_kind`, `encoding_format` and
+`delivery`. Items are plain dictionaries with `kind`, `content`, `url` and `sasToken` fields;
+`get_embeddings` also accepts the whole request as a
+dictionary with the service's JSON names (`vectorKind`, `sasToken`, ...), typed by `azure.data.ai.types.EmbedRequest`.
 
 Both clients accept `AzureKeyCredential` or the appropriate sync/async token
 credential. Wrap raw keys with `AzureKeyCredential`. Key authentication uses `Ocp-Apim-Subscription-Key` and requires a

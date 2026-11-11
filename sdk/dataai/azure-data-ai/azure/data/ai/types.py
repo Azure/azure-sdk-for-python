@@ -6,73 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
     from .models import (
-        EmbeddingContentType,
         EmbeddingDelivery,
         EmbeddingEncodingFormat,
-        EmbeddingOutputDataType,
-        EmbeddingVectorType,
+        EmbeddingOutputDataKind,
+        EmbeddingVectorKind,
         SemanticRerankingDocumentType,
     )
-
-
-class EmbeddingContentItem(TypedDict, total=False):
-    """One item to embed: its ``type``, an optional ``id``, and exactly one source: ``content``, or
-    ``url`` with ``sasToken``.
-
-    :ivar id: A caller-chosen identifier, up to 256 characters, echoed on the matching result.
-    :vartype id: str
-    :ivar type: What the item is: a document (``text``), a search query (``query``) or a document
-     image (``image``). Required. Known values are: "text", "query", and "image".
-    :vartype type: Union[str, "EmbeddingContentType"]
-    :ivar content: The item, inline. For ``text`` and ``query``: the text, up to 100,000
-     characters; text over the model's token limit (currently 8,192 tokens) isn't rejected: only its
-     start is embedded, and the result is flagged with ``truncated`` and an
-     ``EMBEDDING_INPUT_TRUNCATED`` warning. For ``image``, only where the endpoint accepts inline
-     images (off by default): a ``data:image/...;base64,`` URI or raw base64. The service never
-     fetches URLs in ``content``.
-    :vartype content: str
-    :ivar url: For ``text`` and ``image`` items, from Microsoft Entra callers, where enabled: the
-     Azure Blob Storage URL of the blob to embed,
-     ``https://{account}.blob.core.windows.net/{container}/{blob}``, with no query string. This is
-     how images are sent by default. Text blobs are read as UTF-8, currently up to 1 MiB. Queries
-     must be sent inline.
-    :vartype url: str
-    :ivar sasToken: Required with ``url``: a user delegation SAS for that one blob (its query
-     string, with or without a leading ``?``): read-only (``sp=r``), for the blob (``sr=b``),
-     https-only (``spr=https``), and signed by the identity that calls this API. A SAS valid for
-     more than 15 minutes is accepted with warning ``EMBEDDING_SAS_LONG_LIVED``. The service uses it
-     for one read and never stores, logs or returns it.
-    :vartype sasToken: str
-    """
-
-    id: str
-    """A caller-chosen identifier, up to 256 characters, echoed on the matching result."""
-    type: Required[Union[str, "EmbeddingContentType"]]
-    """What the item is: a document (``text``), a search query (``query``) or a document image
-     (``image``). Required. Known values are: \"text\", \"query\", and \"image\"."""
-    content: str
-    """The item, inline. For ``text`` and ``query``: the text, up to 100,000 characters; text over the
-     model's token limit (currently 8,192 tokens) isn't rejected: only its start is embedded, and
-     the result is flagged with ``truncated`` and an ``EMBEDDING_INPUT_TRUNCATED`` warning. For
-     ``image``, only where the endpoint accepts inline images (off by default): a
-     ``data:image/...;base64,`` URI or raw base64. The service never fetches URLs in ``content``."""
-    url: str
-    """For ``text`` and ``image`` items, from Microsoft Entra callers, where enabled: the Azure Blob
-     Storage URL of the blob to embed,
-     ``https://{account}.blob.core.windows.net/{container}/{blob}``, with no query string. This is
-     how images are sent by default. Text blobs are read as UTF-8, currently up to 1 MiB. Queries
-     must be sent inline."""
-    sasToken: str
-    """Required with ``url``: a user delegation SAS for that one blob (its query string, with or
-     without a leading ``?``): read-only (``sp=r``), for the blob (``sr=b``), https-only
-     (``spr=https``), and signed by the identity that calls this API. A SAS valid for more than 15
-     minutes is accepted with warning ``EMBEDDING_SAS_LONG_LIVED``. The service uses it for one read
-     and never stores, logs or returns it."""
 
 
 class SemanticRerankingInferenceContent(TypedDict, total=False):
@@ -127,38 +71,38 @@ class SemanticRerankingInferenceContent(TypedDict, total=False):
     """Whether to return sentence-level scores in the response."""
 
 
-class MultiModalEmbedRequest(TypedDict, total=False):
-    """MultiModalEmbedRequest.
+class EmbedRequest(TypedDict, total=False):
+    """EmbedRequest.
 
-    :ivar contents: The items to embed, in order: 1 to 32 items. Currently a request can have at
-     most one ``text`` or ``query`` item and at most 8 images. Images can be up to 20 MiB and 50
+    :ivar inputs: The items to embed, in order: 1 to 32 items. Currently a request can have at most
+     one ``text`` or ``query`` item and at most 8 images. Images can be up to 20 MiB and 50
      megapixels each (JPEG, PNG, GIF or WebP), with at most 20 MiB of images per request. The
      request body can be up to 30,000,000 bytes. Required.
-    :vartype contents: list["EmbeddingContentItem"]
+    :vartype inputs: list[dict[str, Any]]
     :ivar model: The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft Embedding
      1-large).
     :vartype model: str
     :ivar modelVersion: The model version. Defaults to the latest; the response always names the
      version used.
     :vartype modelVersion: str
-    :ivar vectorType: The kind of vectors to return. Defaults to ``dense``. Known values are:
-     "dense", "multi", and "both".
-    :vartype vectorType: Union[str, "EmbeddingVectorType"]
-    :ivar dimensions: The number of dimensions per vector; with ``both``, of the dense vector. Must
-     be a value the model supports for the requested vector type; the model's native width is the
-     default.
+    :ivar vectorKind: The kind of vectors to return. Defaults to ``dense``. Known values are:
+     "dense", "multi", and "dense_multi".
+    :vartype vectorKind: Union[str, "EmbeddingVectorKind"]
+    :ivar dimensions: The number of dimensions per vector; with ``dense_multi``, of the dense
+     vector. Must be a value the model supports for the requested vector kind; the model's native
+     width is the default.
     :vartype dimensions: int
-    :ivar multiDimensions: For ``both`` only: the number of dimensions per multi-vector. Must be a
-     value the model supports for multi-vectors; the model's native multi-vector width is the
-     default.
+    :ivar multiDimensions: For ``dense_multi`` only: the number of dimensions per multi-vector.
+     Must be a value the model supports for multi-vectors; the model's native multi-vector width is
+     the default.
     :vartype multiDimensions: int
-    :ivar maxNumVectors: For ``multi`` and ``both`` only: the most multi-vectors to return per
-     item.
-    :vartype maxNumVectors: int
-    :ivar outputDtype: The numeric type of the returned values, for every vector in the response.
-     Defaults to ``float32`` for ``dense`` and ``float16`` for ``multi`` and ``both``. Known values
-     are: "float32" and "float16".
-    :vartype outputDtype: Union[str, "EmbeddingOutputDataType"]
+    :ivar maxVectorCount: For ``multi`` and ``dense_multi`` only: the most multi-vectors to return
+     per item.
+    :vartype maxVectorCount: int
+    :ivar outputDataKind: The numeric type of the returned values, for every vector in the
+     response. Defaults to ``float32`` for ``dense`` and ``float16`` for ``multi`` and
+     ``dense_multi``. Known values are: "float32" and "float16".
+    :vartype outputDataKind: Union[str, "EmbeddingOutputDataKind"]
     :ivar encodingFormat: How vectors are encoded in the response. Defaults to ``float``. Known
      values are: "float" and "base64".
     :vartype encodingFormat: Union[str, "EmbeddingEncodingFormat"]
@@ -168,7 +112,7 @@ class MultiModalEmbedRequest(TypedDict, total=False):
     :vartype delivery: Union[str, "EmbeddingDelivery"]
     """
 
-    contents: Required[list["EmbeddingContentItem"]]
+    inputs: Required[list[dict[str, Any]]]
     """The items to embed, in order: 1 to 32 items. Currently a request can have at most one ``text``
      or ``query`` item and at most 8 images. Images can be up to 20 MiB and 50 megapixels each
      (JPEG, PNG, GIF or WebP), with at most 20 MiB of images per request. The request body can be up
@@ -177,20 +121,20 @@ class MultiModalEmbedRequest(TypedDict, total=False):
     """The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft Embedding 1-large)."""
     modelVersion: str
     """The model version. Defaults to the latest; the response always names the version used."""
-    vectorType: Union[str, "EmbeddingVectorType"]
+    vectorKind: Union[str, "EmbeddingVectorKind"]
     """The kind of vectors to return. Defaults to ``dense``. Known values are: \"dense\", \"multi\",
-     and \"both\"."""
+     and \"dense_multi\"."""
     dimensions: int
-    """The number of dimensions per vector; with ``both``, of the dense vector. Must be a value the
-     model supports for the requested vector type; the model's native width is the default."""
+    """The number of dimensions per vector; with ``dense_multi``, of the dense vector. Must be a value
+     the model supports for the requested vector kind; the model's native width is the default."""
     multiDimensions: int
-    """For ``both`` only: the number of dimensions per multi-vector. Must be a value the model
+    """For ``dense_multi`` only: the number of dimensions per multi-vector. Must be a value the model
      supports for multi-vectors; the model's native multi-vector width is the default."""
-    maxNumVectors: int
-    """For ``multi`` and ``both`` only: the most multi-vectors to return per item."""
-    outputDtype: Union[str, "EmbeddingOutputDataType"]
+    maxVectorCount: int
+    """For ``multi`` and ``dense_multi`` only: the most multi-vectors to return per item."""
+    outputDataKind: Union[str, "EmbeddingOutputDataKind"]
     """The numeric type of the returned values, for every vector in the response. Defaults to
-     ``float32`` for ``dense`` and ``float16`` for ``multi`` and ``both``. Known values are:
+     ``float32`` for ``dense`` and ``float16`` for ``multi`` and ``dense_multi``. Known values are:
      \"float32\" and \"float16\"."""
     encodingFormat: Union[str, "EmbeddingEncodingFormat"]
     """How vectors are encoded in the response. Defaults to ``float``. Known values are: \"float\" and

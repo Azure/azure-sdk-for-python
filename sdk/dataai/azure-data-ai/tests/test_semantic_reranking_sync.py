@@ -38,7 +38,7 @@ def test_public_api_exposes_generated_models():
     assert find_spec("azure.data.ai.models") is not None
     assert find_spec("azure.data.ai.types") is not None
     assert hasattr(InferenceClient, "semantic_rerank")
-    assert hasattr(InferenceClient, "multi_modal_embed")
+    assert hasattr(InferenceClient, "get_embeddings")
     assert not hasattr(InferenceClient, "get_multi_modal_embedding_output")
     assert not hasattr(InferenceClient, "generate_embeddings")
     assert hasattr(InferenceClient, "send_request")

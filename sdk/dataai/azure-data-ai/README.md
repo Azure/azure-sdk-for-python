@@ -158,37 +158,37 @@ inclusive range 0–1. Sentence indices are not capped at 2.
 
 ### Multimodal embedding
 
-Call `client.multi_modal_embed(contents=[...], ...)` to embed text documents (`type="text"`), search queries
-(`type="query"`) and document images (`type="image"`) with Microsoft Embedding 1-large
-(`microsoft-embedding-1-large`). Items are `EmbeddingContentItem` models, and the request options (`model`,
-`dimensions`, `vector_type`, `delivery`, ...) are keyword arguments. A request can currently have at most one text or
+Call `client.get_embeddings(inputs=[...], ...)` to embed text documents (`kind="text"`), search queries
+(`kind="query"`) and document images (`kind="image"`) with Microsoft Embedding 1-large
+(`microsoft-embedding-1-large`). Items are plain dictionaries using JSON field names, and the request options (`model`,
+`dimensions`, `vector_kind`, `delivery`, ...) are keyword arguments. A request can currently have at most one text or
 query item and up to 8 images. You can also pass the whole request as a dictionary with the service's JSON names.
 
 - **Text and queries** are sent inline in `content`. Text over the model's token limit (currently 8,192 tokens)
   isn't rejected: only its start is embedded, the item has `truncated=True` and `input_tokens`, and
   `result.warnings` has an entry with code `EmbeddingWarningCode.INPUT_TRUNCATED` (number 1001).
 - **Images** are read from your Azure Blob Storage, where the endpoint enables blob inputs: send the blob's `url`
-  and, in `sas_token`, a user delegation SAS for that blob. The SAS must be read-only (`sp=r`), https-only and
+  and, in `sasToken`, a user delegation SAS for that blob. The SAS must be read-only (`sp=r`), https-only and
   signed by the same Microsoft Entra identity that calls the API; a SAS valid for more than 15 minutes is accepted
   with warning `EmbeddingWarningCode.SAS_LONG_LIVED` (number 1002). Inline images (a `data:` URI or base64 in
   `content`) work only where the endpoint allows them, which is off by default.
 - **Vectors:** each item in `result.data` is a `MultimodalDenseEmbedding` (`embedding`), a
-  `MultimodalMultiVectorEmbedding` (`multi_embedding` with `shape`) or, with `vector_type="both"`, a
+  `MultimodalMultiVectorEmbedding` (`multi_embedding` with `shape`) or, with `vector_kind="dense_multi"`, a
   `MultimodalDenseAndMultiVectorEmbedding` with both from one model run (`multi_dimensions` sets the
-  multi-vector width). With `encoding_format="base64"`, vectors are little-endian values of `output_data_type`.
+  multi-vector width). With `encoding_format="base64"`, vectors are little-endian values of `output_data_kind`.
 - **Usage:** items report `tokens` (and `visual_tokens` for images); `result.usage` reports `prompt_tokens`,
   `text_tokens`, `visual_tokens` and `image_count`. A request body can be up to 30,000,000 bytes.
 
 ```python
-from azure.data.ai.models import EmbeddingContentItem, MultimodalDenseEmbedding
+from azure.data.ai.models import MultimodalDenseEmbedding
 
-result = client.multi_modal_embed(
-    contents=[EmbeddingContentItem(id="doc-1", type="text", content="Invoice terms: net 30.")],
+result = client.get_embeddings(
+    inputs=[{"id": "doc-1", "kind": "text", "content": "Invoice terms: net 30."}],
     dimensions=1536,
 )
 item = result.data[0]
 if isinstance(item, MultimodalDenseEmbedding):
-    print(item.id, len(item.embedding), result.usage.text_tokens)
+    print(item.id, len(item.embedding))
 ```
 
 To embed an image, make a user delegation SAS for the blob with the identity that calls the API. For example,
@@ -197,7 +197,6 @@ with `azure-storage-blob` (not a dependency of this package):
 ```python
 import datetime as dt
 
-from azure.data.ai.models import EmbeddingContentItem
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobSasPermissions, BlobServiceClient, generate_blob_sas
 
@@ -211,15 +210,15 @@ sas_token = generate_blob_sas(
     protocol="https", start=now - dt.timedelta(minutes=5), expiry=now + dt.timedelta(minutes=15),
 )
 
-result = client.multi_modal_embed(
-    contents=[
-        EmbeddingContentItem(type="query", content="When is the invoice due?"),
-        EmbeddingContentItem(
-            id="page-1",
-            type="image",
-            url=f"https://{account}.blob.core.windows.net/{container}/{blob}",
-            sas_token=sas_token,
-        ),
+result = client.get_embeddings(
+    inputs=[
+        {"kind": "query", "content": "When is the invoice due?"},
+        {
+            "id": "page-1",
+            "kind": "image",
+            "url": f"https://{account}.blob.core.windows.net/{container}/{blob}",
+            "sasToken": sas_token,
+        },
     ],
     delivery="inline",
 )
@@ -236,14 +235,14 @@ import hashlib
 import json
 import urllib.request
 
-from azure.data.ai.models import MultimodalEmbeddingResult
+from azure.data.ai.models import EmbeddingResult
 
 output = result.output  # from a request with delivery="link"
 with urllib.request.urlopen(f"{output.url}?{output.sas_token}") as response:
     data = response.read()
-if len(data) != output.bytes or hashlib.sha256(data).hexdigest() != output.sha256:
-    raise ValueError("The result file doesn't match output.bytes and output.sha256.")
-results = MultimodalEmbeddingResult(json.loads(data))
+if len(data) != output.size_in_bytes or hashlib.sha256(data).hexdigest() != output.sha256:
+    raise ValueError("The result file doesn't match output.size_in_bytes and output.sha256.")
+results = EmbeddingResult(json.loads(data))
 ```
 
 ## Examples

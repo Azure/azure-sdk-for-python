@@ -15,7 +15,7 @@ from azure.data.ai.aio import InferenceClient as AsyncInferenceClient
 from azure.data.ai.models import (
     MultimodalDenseAndMultiVectorEmbedding,
     MultimodalDenseEmbedding,
-    MultimodalEmbeddingResult,
+    EmbeddingResult,
     MultimodalMultiVectorEmbedding,
 )
 
@@ -37,26 +37,26 @@ def _query(request):
 
 
 def test_embedding_operation_is_coroutine():
-    assert inspect.iscoroutinefunction(AsyncInferenceClient.multi_modal_embed)
+    assert inspect.iscoroutinefunction(AsyncInferenceClient.get_embeddings)
     assert not hasattr(AsyncInferenceClient, "get_multi_modal_embedding_output")
 
 
 @pytest.mark.asyncio
 async def test_embed_sends_keyword_arguments_and_returns_dense_vectors(async_transport, async_respond):
     async_respond((200, DENSE_RESULT, {}))
-    contents = [{"id": "doc-1", "type": "text", "content": "Invoice terms: net 30."}]
+    inputs = [{"id": "doc-1", "kind": "text", "content": "Invoice terms: net 30."}]
 
     async with AsyncInferenceClient(
         ENDPOINT, AzureKeyCredential("test-key"), transport=async_transport, retry_total=0
     ) as client:
-        result = await client.multi_modal_embed(contents=contents, vector_type="dense", dimensions=1536)
+        result = await client.get_embeddings(inputs=inputs, vector_kind="dense", dimensions=1536)
 
     sent = async_transport.send.call_args.args[0]
     assert sent.method == "POST"
     assert urlparse(sent.url).path == "/inference/embedding"
     assert _query(sent)["api-version"] == ["2026-11-01-preview"]
-    assert json.loads(sent.content) == {"contents": contents, "vectorType": "dense", "dimensions": 1536}
-    assert isinstance(result, MultimodalEmbeddingResult)
+    assert json.loads(sent.content) == {"inputs": inputs, "vectorKind": "dense", "dimensions": 1536}
+    assert isinstance(result, EmbeddingResult)
     assert isinstance(result.data[0], MultimodalDenseEmbedding)
     assert result.data[0].embedding == [0.25, -0.5, 0.75]
     assert result.usage.text_tokens == 11
@@ -65,12 +65,12 @@ async def test_embed_sends_keyword_arguments_and_returns_dense_vectors(async_tra
 @pytest.mark.asyncio
 async def test_blob_image_returns_multi_vectors(async_transport, async_respond, async_token_credential):
     async_respond((200, MULTI_RESULT, {}))
-    request = {"contents": [_blob_image()], "vectorType": "multi", "encodingFormat": "base64", "delivery": "inline"}
+    request = {"inputs": [_blob_image()], "vectorKind": "multi", "encodingFormat": "base64", "delivery": "inline"}
 
     async with AsyncInferenceClient(
         ENDPOINT, async_token_credential, transport=async_transport, retry_total=0
     ) as client:
-        result = await client.multi_modal_embed(request)
+        result = await client.get_embeddings(request)
 
     assert json.loads(async_transport.send.call_args.args[0].content) == request
     item = result.data[0]
@@ -87,7 +87,9 @@ async def test_both_returns_dense_and_multi_vectors(async_transport, async_respo
     async with AsyncInferenceClient(
         ENDPOINT, AzureKeyCredential("test-key"), transport=async_transport, retry_total=0
     ) as client:
-        result = await client.multi_modal_embed({"contents": [{"type": "query", "content": "q"}], "vectorType": "both"})
+        result = await client.get_embeddings(
+            {"inputs": [{"kind": "query", "content": "q"}], "vectorKind": "dense_multi"}
+        )
 
     item = result.data[0]
     assert isinstance(item, MultimodalDenseAndMultiVectorEmbedding)
@@ -102,11 +104,11 @@ async def test_link_result_has_output(async_transport, async_respond, async_toke
     async with AsyncInferenceClient(
         ENDPOINT, async_token_credential, transport=async_transport, retry_total=0
     ) as client:
-        result = await client.multi_modal_embed({"contents": [_blob_image()], "delivery": "link"})
+        result = await client.get_embeddings({"inputs": [_blob_image()], "delivery": "link"})
 
     assert result.data == []
     assert result.output.sas_token == SAS_TOKEN
-    assert result.output.records == 4
+    assert result.output.record_count == 4
 
 
 @pytest.mark.asyncio
@@ -116,24 +118,24 @@ async def test_truncated_text_returns_warning(async_transport, async_respond):
     async with AsyncInferenceClient(
         ENDPOINT, AzureKeyCredential("test-key"), transport=async_transport, retry_total=0
     ) as client:
-        result = await client.multi_modal_embed({"contents": [{"type": "text", "content": "t"}]})
+        result = await client.get_embeddings({"inputs": [{"kind": "text", "content": "t"}]})
 
     assert result.data[0].truncated is True
     assert result.data[0].input_tokens == 23171
-    assert [(w.code, w.number, w.index) for w in result.warnings] == [("EMBEDDING_INPUT_TRUNCATED", 1001, 0)]
+    assert [(w.code, w.code_number, w.index) for w in result.warnings] == [("EMBEDDING_INPUT_TRUNCATED", 1001, 0)]
 
 
 @pytest.mark.asyncio
 async def test_blob_read_error_exposes_service_error_code(async_transport, async_respond, async_token_credential):
-    message = "The model service couldn't read the blob: contents[0].url: storage returned 404 (BlobNotFound)"
-    async_respond((400, {"code": "EMBEDDING_BLOB_READ_FAILED", "message": message}, {}))
+    message = "The model service couldn't read the blob: inputs[0].url: storage returned 404 (BlobNotFound)"
+    async_respond((400, {"error": {"code": "EMBEDDING_BLOB_READ_FAILED", "message": message}}, {}))
 
     async with AsyncInferenceClient(
         ENDPOINT, async_token_credential, transport=async_transport, retry_total=0
     ) as client:
         with pytest.raises(HttpResponseError) as caught:
-            await client.multi_modal_embed({"contents": [_blob_image()]})
+            await client.get_embeddings({"inputs": [_blob_image()]})
 
     assert caught.value.status_code == 400
-    assert caught.value.model.code == "EMBEDDING_BLOB_READ_FAILED"
-    assert caught.value.model.message == message
+    assert caught.value.model.error.code == "EMBEDDING_BLOB_READ_FAILED"
+    assert caught.value.model.error.message == message

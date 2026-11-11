@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class EmbeddingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EmbeddingContentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of an item to embed."""
 
     TEXT = "text"
@@ -19,6 +19,17 @@ class EmbeddingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A search query. Queries are embedded for retrieval against documents and must be sent inline."""
     IMAGE = "image"
     """A document image, such as a scanned page."""
+
+
+class EmbeddingDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The implementation of an embedding result item."""
+
+    MULTIMODAL_DENSE = "multimodal_dense"
+    """One dense vector from a multimodal model."""
+    MULTIMODAL_MULTI_VECTOR = "multimodal_multi"
+    """One vector per token from a multimodal model."""
+    MULTIMODAL_DENSE_AND_MULTI_VECTOR = "multimodal_dense_multi"
+    """A dense vector and one vector per token from a multimodal model."""
 
 
 class EmbeddingDelivery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -41,31 +52,6 @@ class EmbeddingEncodingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A base64 string of little-endian values; row-major for multi-vectors."""
 
 
-class EmbeddingErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A machine-readable embedding error code."""
-
-    INVALID_REQUEST = "InvalidRequest"
-    """The request isn't supported on this endpoint, for example ``contents`` isn't enabled."""
-    INVALID_REQUEST_BODY = "InvalidRequestBody"
-    """The request body isn't valid for this operation: malformed JSON, a wrong type, an unknown or
-    snake_case field, or a value outside its allowed set. ``details`` describes each problem."""
-    INPUT_INVALID = "EMBEDDING_INPUT_INVALID"
-    """An item or option isn't valid: its type, source, size, format or count, or an unknown model or
-    version. Text over the model's token limit isn't an error; see ``EMBEDDING_INPUT_TRUNCATED``."""
-    URL_NOT_ALLOWED = "EMBEDDING_URL_NOT_ALLOWED"
-    """A URL or SAS the service won't use: ``input_images``, a link in an image's ``content``, a
-    ``url`` where blob inputs are off or from an API-key caller, or a ``sasToken`` that isn't a
-    read-only, https-only user delegation SAS for one blob signed by the caller. Nothing is read."""
-    BLOB_READ_FAILED = "EMBEDDING_BLOB_READ_FAILED"
-    """A blob couldn't be read: Storage refused it (for example, an expired SAS or a missing blob),
-    it's over its size limit, or Storage failed or didn't answer in time. Returned with status 400,
-    413, 502 or 504."""
-    DELIVERY_NOT_SUPPORTED = "EMBEDDING_DELIVERY_NOT_SUPPORTED"
-    """``delivery: link`` isn't enabled on this endpoint. Use ``inline``."""
-    OUTPUT_WRITE_FAILED = "EMBEDDING_OUTPUT_WRITE_FAILED"
-    """A ``delivery: link`` result couldn't be stored. Try again, or use ``delivery: inline``."""
-
-
 class EmbeddingImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format of an embedded image."""
 
@@ -79,23 +65,30 @@ class EmbeddingImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WebP."""
 
 
-class EmbeddingOutputDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EmbeddingOutputDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The numeric type of the returned vector values."""
 
     FLOAT32 = "float32"
     """32-bit floating point. The default for dense vectors."""
     FLOAT16 = "float16"
-    """16-bit floating point. The default for ``multi`` and ``both``."""
+    """16-bit floating point. The default for ``multi`` and ``dense_multi``."""
 
 
-class EmbeddingVectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EmbeddingUsageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The implementation that reported embedding usage."""
+
+    MULTIMODAL = "multimodal"
+    """Usage from a multimodal embedding model."""
+
+
+class EmbeddingVectorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of vectors to return."""
 
     DENSE = "dense"
     """One vector per item."""
     MULTI = "multi"
     """One vector per token, for late-interaction (MaxSim) scoring."""
-    BOTH = "both"
+    DENSE_AND_MULTI = "dense_multi"
     """Both, from one model run: one dense vector (``dimensions`` wide) and one vector per token
     (``multiDimensions`` wide) for each item."""
 

@@ -21,11 +21,11 @@ import urllib.request
 
 from azure.data.ai import InferenceClient
 from azure.data.ai.models import (
-    EmbeddingContentItem,
     EmbeddingWarningCode,
     MultimodalDenseAndMultiVectorEmbedding,
     MultimodalDenseEmbedding,
-    MultimodalEmbeddingResult,
+    EmbeddingResult,
+    MultimodalEmbeddingUsage,
     MultimodalMultiVectorEmbedding,
 )
 from azure.identity import DefaultAzureCredential
@@ -33,28 +33,31 @@ from azure.identity import DefaultAzureCredential
 
 def embed_text(client: InferenceClient) -> None:
     # A request has at most one text or query item.
-    result = client.multi_modal_embed(
-        contents=[
-            EmbeddingContentItem(
-                id="doc-1", type="text", content="Invoice terms: net 30, 2% discount if paid within 10 days."
-            )
+    result = client.get_embeddings(
+        inputs=[
+            {
+                "id": "doc-1",
+                "kind": "text",
+                "content": "Invoice terms: net 30, 2% discount if paid within 10 days.",
+            }
         ],
         dimensions=1536,
     )
     item = result.data[0]
     if isinstance(item, MultimodalDenseEmbedding) and isinstance(item.embedding, list):
         print(f"{result.model} v{result.model_version}: {item.id}, {len(item.embedding)} dimensions")
-    print(f"  usage: {result.usage.text_tokens} text tokens")
+    if isinstance(result.usage, MultimodalEmbeddingUsage):
+        print(f"  usage: {result.usage.text_tokens} text tokens")
     # Text over the model's token limit is embedded from its start and reported here, not rejected.
     for warning in result.warnings or []:
         if warning.code == EmbeddingWarningCode.INPUT_TRUNCATED:
-            print(f"  contents[{warning.index}]: embedded {warning.tokens} of {warning.input_tokens} tokens")
+            print(f"  inputs[{warning.index}]: embedded {warning.tokens} of {warning.input_tokens} tokens")
 
 
 def embed_query_dense_and_multi(client: InferenceClient) -> None:
-    item = client.multi_modal_embed(
-        contents=[EmbeddingContentItem(id="query-1", type="query", content="When is the invoice due?")],
-        vector_type="both",
+    item = client.get_embeddings(
+        inputs=[{"id": "query-1", "kind": "query", "content": "When is the invoice due?"}],
+        vector_kind="dense_multi",
     ).data[0]
     if isinstance(item, MultimodalDenseAndMultiVectorEmbedding) and isinstance(item.embedding, list):
         rows, dims = item.shape
@@ -62,23 +65,23 @@ def embed_query_dense_and_multi(client: InferenceClient) -> None:
 
 
 def embed_blob_image(client: InferenceClient, url: str, sas_token: str) -> None:
-    page = client.multi_modal_embed(
-        contents=[EmbeddingContentItem(id="page-1", type="image", url=url, sas_token=sas_token)],
-        vector_type="multi",
+    page = client.get_embeddings(
+        inputs=[{"id": "page-1", "kind": "image", "url": url, "sasToken": sas_token}],
+        vector_kind="multi",
         encoding_format="base64",
         delivery="inline",
     ).data[0]
     if isinstance(page, MultimodalMultiVectorEmbedding) and isinstance(page.multi_embedding, str):
         rows, dims = page.shape
-        # Base64 vectors are little-endian values of `outputDtype` (float16 for multi-vectors), row-major in `shape`.
+        # Base64 vectors are little-endian values of `outputDataKind` (float16 for multi-vectors), row-major in `shape`.
         values = struct.unpack(f"<{rows * dims}e", base64.b64decode(page.multi_embedding))
         print(f"  {page.id}: {page.width}x{page.height} {page.format}, {rows} vectors of {dims}")
         print(f"  first vector starts {values[:3]}")
 
 
 def embed_blob_image_by_link(client: InferenceClient, url: str, sas_token: str) -> None:
-    output = client.multi_modal_embed(
-        contents=[EmbeddingContentItem(id="page-1", type="image", url=url, sas_token=sas_token)],
+    output = client.get_embeddings(
+        inputs=[{"id": "page-1", "kind": "image", "url": url, "sasToken": sas_token}],
         delivery="link",
     ).output
     if output is None:
@@ -86,10 +89,12 @@ def embed_blob_image_by_link(client: InferenceClient, url: str, sas_token: str) 
     # The link is url plus a read-only SAS for this one file, valid until expires_at; any HTTP client can read it.
     with urllib.request.urlopen(f"{output.url}?{output.sas_token}") as response:
         data = response.read()
-    if len(data) != output.bytes or hashlib.sha256(data).hexdigest() != output.sha256:
-        raise ValueError("The result file doesn't match output.bytes and output.sha256.")
-    results = MultimodalEmbeddingResult(json.loads(data))
-    print(f"  result link: {output.records} records, {output.bytes} bytes, valid until {output.expires_at}")
+    if len(data) != output.size_in_bytes or hashlib.sha256(data).hexdigest() != output.sha256:
+        raise ValueError("The result file doesn't match output.size_in_bytes and output.sha256.")
+    results = EmbeddingResult(json.loads(data))
+    print(
+        f"  result link: {output.record_count} records, {output.size_in_bytes} bytes, valid until {output.expires_at}"
+    )
     print(f"  {results.data[0].id}: {results.data[0].kind} vectors")
 
 

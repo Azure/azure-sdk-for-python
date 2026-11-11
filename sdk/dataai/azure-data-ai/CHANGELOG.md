@@ -5,23 +5,23 @@
 ### Features Added
 
 - Added support for service API version `2026-11-01-preview`, now the default.
-- Added synchronous and asynchronous `InferenceClient.multi_modal_embed` to embed text, search queries and document
-  images with `microsoft-embedding-1-large`. Pass the `EmbeddingContentItem` items in `contents` and the options
-  (`model`, `model_version`, `vector_type`, `dimensions`, `delivery`, ...) as keyword arguments, or the whole request as
-  a dictionary (`azure.data.ai.types.MultiModalEmbedRequest`). A request has at most one text or query item. Results
-  are `MultimodalDenseEmbedding`, `MultimodalMultiVectorEmbedding` or, with `vector_type="both"` (and
+- Added synchronous and asynchronous `InferenceClient.get_embeddings` to embed text, search queries and document
+  images with `microsoft-embedding-1-large`. Pass plain dictionaries in `inputs` and the options
+  (`model`, `model_version`, `vector_kind`, `dimensions`, `delivery`, ...) as keyword arguments, or the whole request as
+  a dictionary (`azure.data.ai.types.EmbedRequest`). A request has at most one text or query item. Results
+  are `MultimodalDenseEmbedding`, `MultimodalMultiVectorEmbedding` or, with `vector_kind="dense_multi"` (and
   `multi_dimensions`), `MultimodalDenseAndMultiVectorEmbedding` items, selected by `kind`.
-- Images are read from Azure Blob Storage: `EmbeddingContentItem.url` plus a caller-signed user delegation SAS in
-  `sas_token` (`content` is now optional). Inline images are off by default.
-- Added `delivery` (`EmbeddingDelivery`) and `MultimodalEmbeddingResult.output`
+- Images are read from Azure Blob Storage: the input dictionary's `url` plus a caller-signed user delegation SAS in
+  `sasToken` (`content` is optional). Inline images are off by default.
+- Added `delivery` (`EmbeddingDelivery`) and `EmbeddingResult.output`
   (`MultimodalEmbeddingOutput`): with `delivery` `link`, the results come back as a read-only link to a JSON file,
   valid for up to 15 minutes.
 - Embedding results include per-item `tokens` and `visual_tokens`, and `MultimodalEmbeddingUsage.text_tokens`. Text
   over the model's token limit is embedded from its start and flagged with `truncated`, `input_tokens` and a
-  `MultimodalEmbeddingResult.warnings` entry with code `EmbeddingWarningCode.INPUT_TRUNCATED`.
+  `EmbeddingResult.warnings` entry with code `EmbeddingWarningCode.INPUT_TRUNCATED`.
 - Added warning `EmbeddingWarningCode.SAS_LONG_LIVED` and error codes `EMBEDDING_BLOB_READ_FAILED`,
   `EMBEDDING_DELIVERY_NOT_SUPPORTED` and `EMBEDDING_OUTPUT_WRITE_FAILED`. Embedding errors with status 413, 502, 503
-  and 504 are deserialized as `EmbeddingError`.
+  and 504 are deserialized into status-specific result models containing a `ProblemDetails` error.
 
 ### Breaking Changes
 
@@ -52,4 +52,3 @@
 - Reranking options for model selection, batching, sorting, and JSON document paths.
 - Document and sentence-level scoring, response metadata, and standard Azure
   Core error handling and retry policies.
-

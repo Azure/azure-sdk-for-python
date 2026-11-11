@@ -15,40 +15,40 @@ namespace azure.data.ai
         def close(self) -> None: ...
 
         @overload
-        def multi_modal_embed(
+        def get_embeddings(
                 self, 
                 *, 
                 content_type: str = "application/json", 
-                contents: list[EmbeddingContentItem], 
                 delivery: Optional[Union[str, EmbeddingDelivery]] = ..., 
                 dimensions: Optional[int] = ..., 
                 encoding_format: Optional[Union[str, EmbeddingEncodingFormat]] = ..., 
-                max_num_vectors: Optional[int] = ..., 
+                inputs: list[dict[str, Any]], 
+                max_vector_count: Optional[int] = ..., 
                 model: Optional[str] = ..., 
                 model_version: Optional[str] = ..., 
                 multi_dimensions: Optional[int] = ..., 
-                output_data_type: Optional[Union[str, EmbeddingOutputDataType]] = ..., 
-                vector_type: Optional[Union[str, EmbeddingVectorType]] = ..., 
+                output_data_kind: Optional[Union[str, EmbeddingOutputDataKind]] = ..., 
+                vector_kind: Optional[Union[str, EmbeddingVectorKind]] = ..., 
                 **kwargs: Any
-            ) -> MultimodalEmbeddingResult: ...
+            ) -> EmbeddingResult: ...
 
         @overload
-        def multi_modal_embed(
+        def get_embeddings(
                 self, 
-                body: MultiModalEmbedRequest, 
+                body: EmbedRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> MultimodalEmbeddingResult: ...
+            ) -> EmbeddingResult: ...
 
         @overload
-        def multi_modal_embed(
+        def get_embeddings(
                 self, 
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> MultimodalEmbeddingResult: ...
+            ) -> EmbeddingResult: ...
 
         @overload
         def semantic_rerank(
@@ -102,40 +102,40 @@ namespace azure.data.ai.aio
         async def close(self) -> None: ...
 
         @overload
-        async def multi_modal_embed(
+        async def get_embeddings(
                 self, 
                 *, 
                 content_type: str = "application/json", 
-                contents: list[EmbeddingContentItem], 
                 delivery: Optional[Union[str, EmbeddingDelivery]] = ..., 
                 dimensions: Optional[int] = ..., 
                 encoding_format: Optional[Union[str, EmbeddingEncodingFormat]] = ..., 
-                max_num_vectors: Optional[int] = ..., 
+                inputs: list[dict[str, Any]], 
+                max_vector_count: Optional[int] = ..., 
                 model: Optional[str] = ..., 
                 model_version: Optional[str] = ..., 
                 multi_dimensions: Optional[int] = ..., 
-                output_data_type: Optional[Union[str, EmbeddingOutputDataType]] = ..., 
-                vector_type: Optional[Union[str, EmbeddingVectorType]] = ..., 
+                output_data_kind: Optional[Union[str, EmbeddingOutputDataKind]] = ..., 
+                vector_kind: Optional[Union[str, EmbeddingVectorKind]] = ..., 
                 **kwargs: Any
-            ) -> MultimodalEmbeddingResult: ...
+            ) -> EmbeddingResult: ...
 
         @overload
-        async def multi_modal_embed(
+        async def get_embeddings(
                 self, 
-                body: MultiModalEmbedRequest, 
+                body: EmbedRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> MultimodalEmbeddingResult: ...
+            ) -> EmbeddingResult: ...
 
         @overload
-        async def multi_modal_embed(
+        async def get_embeddings(
                 self, 
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> MultimodalEmbeddingResult: ...
+            ) -> EmbeddingResult: ...
 
         @overload
         async def semantic_rerank(
@@ -175,32 +175,62 @@ namespace azure.data.ai.aio
 
 namespace azure.data.ai.models
 
-    class azure.data.ai.models.EmbeddingContentItem(_Model):
-        content: Optional[str]
-        id: Optional[str]
-        sas_token: Optional[str]
-        type: Union[str, EmbeddingContentType]
-        url: Optional[str]
+    class azure.data.ai.models.EmbeddingBadGatewayResult(_Model):
+        error: ProblemDetails
 
         @overload
         def __init__(
                 self, 
                 *, 
-                content: Optional[str] = ..., 
-                id: Optional[str] = ..., 
-                sas_token: Optional[str] = ..., 
-                type: Union[str, EmbeddingContentType], 
-                url: Optional[str] = ...
+                error: ProblemDetails
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.data.ai.models.EmbeddingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    class azure.data.ai.models.EmbeddingBadRequestResult(_Model):
+        error: ProblemDetails
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: ProblemDetails
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.data.ai.models.EmbeddingContentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         IMAGE = "image"
         QUERY = "query"
         TEXT = "text"
+
+
+    class azure.data.ai.models.EmbeddingData(_Model):
+        id: Optional[str]
+        index: int
+        kind: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                index: int, 
+                kind: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.data.ai.models.EmbeddingDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MULTIMODAL_DENSE = "multimodal_dense"
+        MULTIMODAL_DENSE_AND_MULTI_VECTOR = "multimodal_dense_multi"
+        MULTIMODAL_MULTI_VECTOR = "multimodal_multi"
 
 
     class azure.data.ai.models.EmbeddingDelivery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -213,32 +243,32 @@ namespace azure.data.ai.models
         FLOAT = "float"
 
 
-    class azure.data.ai.models.EmbeddingError(_Model):
-        code: Union[str, EmbeddingErrorCode]
-        details: Optional[str]
-        message: str
+    class azure.data.ai.models.EmbeddingForbiddenResult(_Model):
+        error: ProblemDetails
 
         @overload
         def __init__(
                 self, 
                 *, 
-                code: Union[str, EmbeddingErrorCode], 
-                details: Optional[str] = ..., 
-                message: str
+                error: ProblemDetails
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.data.ai.models.EmbeddingErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        BLOB_READ_FAILED = "EMBEDDING_BLOB_READ_FAILED"
-        DELIVERY_NOT_SUPPORTED = "EMBEDDING_DELIVERY_NOT_SUPPORTED"
-        INPUT_INVALID = "EMBEDDING_INPUT_INVALID"
-        INVALID_REQUEST = "InvalidRequest"
-        INVALID_REQUEST_BODY = "InvalidRequestBody"
-        OUTPUT_WRITE_FAILED = "EMBEDDING_OUTPUT_WRITE_FAILED"
-        URL_NOT_ALLOWED = "EMBEDDING_URL_NOT_ALLOWED"
+    class azure.data.ai.models.EmbeddingGatewayTimeoutResult(_Model):
+        error: ProblemDetails
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: ProblemDetails
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.data.ai.models.EmbeddingImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -248,14 +278,91 @@ namespace azure.data.ai.models
         WEBP = "webp"
 
 
-    class azure.data.ai.models.EmbeddingOutputDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    class azure.data.ai.models.EmbeddingOutputDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FLOAT16 = "float16"
         FLOAT32 = "float32"
 
 
-    class azure.data.ai.models.EmbeddingVectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        BOTH = "both"
+    class azure.data.ai.models.EmbeddingPayloadTooLargeResult(_Model):
+        error: ProblemDetails
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: ProblemDetails
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.data.ai.models.EmbeddingResult(_Model):
+        data: list[EmbeddingData]
+        model: str
+        model_version: str
+        object: Literal["list"]
+        output: Optional[MultimodalEmbeddingOutput]
+        output_data_kind: Union[str, EmbeddingOutputDataKind]
+        usage: EmbeddingUsage
+        warnings: Optional[list[MultimodalEmbeddingWarning]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data: list[EmbeddingData], 
+                model: str, 
+                model_version: str, 
+                output: Optional[MultimodalEmbeddingOutput] = ..., 
+                output_data_kind: Union[str, EmbeddingOutputDataKind], 
+                usage: EmbeddingUsage, 
+                warnings: Optional[list[MultimodalEmbeddingWarning]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.data.ai.models.EmbeddingServiceUnavailableResult(_Model):
+        error: ProblemDetails
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: ProblemDetails
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.data.ai.models.EmbeddingUsage(_Model):
+        kind: str
+        prompt_tokens: Optional[int]
+        total_tokens: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                kind: str, 
+                prompt_tokens: Optional[int] = ..., 
+                total_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.data.ai.models.EmbeddingUsageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MULTIMODAL = "multimodal"
+
+
+    class azure.data.ai.models.EmbeddingVectorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DENSE = "dense"
+        DENSE_AND_MULTI = "dense_multi"
         MULTI = "multi"
 
 
@@ -312,26 +419,28 @@ namespace azure.data.ai.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.data.ai.models.MultimodalDenseAndMultiVectorEmbedding(MultimodalEmbeddingData, discriminator='both'):
+    class azure.data.ai.models.MultimodalDenseAndMultiVectorEmbedding(EmbeddingData, discriminator='multimodal_dense_multi'):
+        content_kind: Union[str, EmbeddingContentKind]
         embedding: EmbeddingVector
-        format: Union[str, EmbeddingImageFormat]
-        height: int
+        format: Optional[Union[str, EmbeddingImageFormat]]
+        height: Optional[int]
         id: str
         index: int
-        input_tokens: int
-        kind: Literal[EmbeddingVectorType.BOTH]
+        input_tokens: Optional[int]
+        kind: Literal[EmbeddingDataKind.MULTIMODAL_DENSE_AND_MULTI_VECTOR]
         multi_embedding: MultiEmbeddingVector
         shape: list[int]
-        tokens: int
-        truncated: bool
-        type: Union[str, EmbeddingContentType]
-        visual_tokens: int
-        width: int
+        tokens: Optional[int]
+        truncated: Optional[bool]
+        vector_kind: Literal[EmbeddingVectorKind.DENSE_AND_MULTI]
+        visual_tokens: Optional[int]
+        width: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                content_kind: Union[str, EmbeddingContentKind], 
                 embedding: EmbeddingVector, 
                 format: Optional[Union[str, EmbeddingImageFormat]] = ..., 
                 height: Optional[int] = ..., 
@@ -342,7 +451,7 @@ namespace azure.data.ai.models
                 shape: list[int], 
                 tokens: Optional[int] = ..., 
                 truncated: Optional[bool] = ..., 
-                type: Union[str, EmbeddingContentType], 
+                vector_kind: Literal[EmbeddingVectorKind.DENSE_AND_MULTI], 
                 visual_tokens: Optional[int] = ..., 
                 width: Optional[int] = ...
             ) -> None: ...
@@ -351,24 +460,26 @@ namespace azure.data.ai.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.data.ai.models.MultimodalDenseEmbedding(MultimodalEmbeddingData, discriminator='dense'):
+    class azure.data.ai.models.MultimodalDenseEmbedding(EmbeddingData, discriminator='multimodal_dense'):
+        content_kind: Union[str, EmbeddingContentKind]
         embedding: EmbeddingVector
-        format: Union[str, EmbeddingImageFormat]
-        height: int
+        format: Optional[Union[str, EmbeddingImageFormat]]
+        height: Optional[int]
         id: str
         index: int
-        input_tokens: int
-        kind: Literal[EmbeddingVectorType.DENSE]
-        tokens: int
-        truncated: bool
-        type: Union[str, EmbeddingContentType]
-        visual_tokens: int
-        width: int
+        input_tokens: Optional[int]
+        kind: Literal[EmbeddingDataKind.MULTIMODAL_DENSE]
+        tokens: Optional[int]
+        truncated: Optional[bool]
+        vector_kind: Literal[EmbeddingVectorKind.DENSE]
+        visual_tokens: Optional[int]
+        width: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                content_kind: Union[str, EmbeddingContentKind], 
                 embedding: EmbeddingVector, 
                 format: Optional[Union[str, EmbeddingImageFormat]] = ..., 
                 height: Optional[int] = ..., 
@@ -377,41 +488,7 @@ namespace azure.data.ai.models
                 input_tokens: Optional[int] = ..., 
                 tokens: Optional[int] = ..., 
                 truncated: Optional[bool] = ..., 
-                type: Union[str, EmbeddingContentType], 
-                visual_tokens: Optional[int] = ..., 
-                width: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.data.ai.models.MultimodalEmbeddingData(_Model):
-        format: Optional[Union[str, EmbeddingImageFormat]]
-        height: Optional[int]
-        id: Optional[str]
-        index: int
-        input_tokens: Optional[int]
-        kind: str
-        tokens: Optional[int]
-        truncated: Optional[bool]
-        type: Union[str, EmbeddingContentType]
-        visual_tokens: Optional[int]
-        width: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                format: Optional[Union[str, EmbeddingImageFormat]] = ..., 
-                height: Optional[int] = ..., 
-                id: Optional[str] = ..., 
-                index: int, 
-                input_tokens: Optional[int] = ..., 
-                kind: str, 
-                tokens: Optional[int] = ..., 
-                truncated: Optional[bool] = ..., 
-                type: Union[str, EmbeddingContentType], 
+                vector_kind: Literal[EmbeddingVectorKind.DENSE], 
                 visual_tokens: Optional[int] = ..., 
                 width: Optional[int] = ...
             ) -> None: ...
@@ -421,26 +498,26 @@ namespace azure.data.ai.models
 
 
     class azure.data.ai.models.MultimodalEmbeddingOutput(_Model):
-        bytes: int
         content_type: str
         expires_at: datetime
         id: str
-        records: int
+        record_count: int
         sas_token: str
         sha256: str
+        size_in_bytes: int
         url: str
 
         @overload
         def __init__(
                 self, 
                 *, 
-                bytes: int, 
                 content_type: str, 
                 expires_at: datetime, 
                 id: str, 
-                records: int, 
+                record_count: int, 
                 sas_token: str, 
                 sha256: str, 
+                size_in_bytes: int, 
                 url: str
             ) -> None: ...
 
@@ -448,38 +525,12 @@ namespace azure.data.ai.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.data.ai.models.MultimodalEmbeddingResult(_Model):
-        data: list[MultimodalEmbeddingData]
-        model: str
-        model_version: str
-        object: Literal["list"]
-        output: Optional[MultimodalEmbeddingOutput]
-        output_data_type: Union[str, EmbeddingOutputDataType]
-        usage: MultimodalEmbeddingUsage
-        warnings: Optional[list[MultimodalEmbeddingWarning]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                data: list[MultimodalEmbeddingData], 
-                model: str, 
-                model_version: str, 
-                output: Optional[MultimodalEmbeddingOutput] = ..., 
-                output_data_type: Union[str, EmbeddingOutputDataType], 
-                usage: MultimodalEmbeddingUsage, 
-                warnings: Optional[list[MultimodalEmbeddingWarning]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.data.ai.models.MultimodalEmbeddingUsage(_Model):
+    class azure.data.ai.models.MultimodalEmbeddingUsage(EmbeddingUsage, discriminator='multimodal'):
         image_count: int
-        prompt_tokens: Optional[int]
+        kind: Literal[EmbeddingUsageKind.MULTIMODAL]
+        prompt_tokens: int
         text_tokens: Optional[int]
-        total_tokens: Optional[int]
+        total_tokens: int
         visual_tokens: Optional[int]
 
         @overload
@@ -499,10 +550,10 @@ namespace azure.data.ai.models
 
     class azure.data.ai.models.MultimodalEmbeddingWarning(_Model):
         code: Union[str, EmbeddingWarningCode]
+        code_number: Optional[int]
         index: int
         input_tokens: Optional[int]
         message: str
-        number: Optional[int]
         tokens: Optional[int]
 
         @overload
@@ -510,10 +561,10 @@ namespace azure.data.ai.models
                 self, 
                 *, 
                 code: Union[str, EmbeddingWarningCode], 
+                code_number: Optional[int] = ..., 
                 index: int, 
                 input_tokens: Optional[int] = ..., 
                 message: str, 
-                number: Optional[int] = ..., 
                 tokens: Optional[int] = ...
             ) -> None: ...
 
@@ -521,25 +572,27 @@ namespace azure.data.ai.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.data.ai.models.MultimodalMultiVectorEmbedding(MultimodalEmbeddingData, discriminator='multi'):
-        format: Union[str, EmbeddingImageFormat]
-        height: int
+    class azure.data.ai.models.MultimodalMultiVectorEmbedding(EmbeddingData, discriminator='multimodal_multi'):
+        content_kind: Union[str, EmbeddingContentKind]
+        format: Optional[Union[str, EmbeddingImageFormat]]
+        height: Optional[int]
         id: str
         index: int
-        input_tokens: int
-        kind: Literal[EmbeddingVectorType.MULTI]
+        input_tokens: Optional[int]
+        kind: Literal[EmbeddingDataKind.MULTIMODAL_MULTI_VECTOR]
         multi_embedding: MultiEmbeddingVector
         shape: list[int]
-        tokens: int
-        truncated: bool
-        type: Union[str, EmbeddingContentType]
-        visual_tokens: int
-        width: int
+        tokens: Optional[int]
+        truncated: Optional[bool]
+        vector_kind: Literal[EmbeddingVectorKind.MULTI]
+        visual_tokens: Optional[int]
+        width: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                content_kind: Union[str, EmbeddingContentKind], 
                 format: Optional[Union[str, EmbeddingImageFormat]] = ..., 
                 height: Optional[int] = ..., 
                 id: Optional[str] = ..., 
@@ -549,7 +602,7 @@ namespace azure.data.ai.models
                 shape: list[int], 
                 tokens: Optional[int] = ..., 
                 truncated: Optional[bool] = ..., 
-                type: Union[str, EmbeddingContentType], 
+                vector_kind: Literal[EmbeddingVectorKind.MULTI], 
                 visual_tokens: Optional[int] = ..., 
                 width: Optional[int] = ...
             ) -> None: ...
@@ -727,40 +780,27 @@ namespace azure.data.ai.models
 
 namespace azure.data.ai.types
 
-    class azure.data.ai.types.EmbeddingContentItem(TypedDict, total=False):
-        key "content": str
-        key "id": str
-        key "sasToken": str
-        key "type": Required[Union[str, EmbeddingContentType]]
-        key "url": str
-        content: str
-        id: str
-        sasToken: str
-        type: Union[str, EmbeddingContentType]
-        url: str
-
-
-    class azure.data.ai.types.MultiModalEmbedRequest(TypedDict, total=False):
-        key "contents": Required[list[EmbeddingContentItem]]
+    class azure.data.ai.types.EmbedRequest(TypedDict, total=False):
         key "delivery": Union[str, EmbeddingDelivery]
         key "dimensions": int
         key "encodingFormat": Union[str, EmbeddingEncodingFormat]
-        key "maxNumVectors": int
+        key "inputs": Required[list[dict[str, Any]]]
+        key "maxVectorCount": int
         key "model": str
         key "modelVersion": str
         key "multiDimensions": int
-        key "outputDtype": Union[str, EmbeddingOutputDataType]
-        key "vectorType": Union[str, EmbeddingVectorType]
-        contents: list[EmbeddingContentItem]
+        key "outputDataKind": Union[str, EmbeddingOutputDataKind]
+        key "vectorKind": Union[str, EmbeddingVectorKind]
         delivery: Union[str, EmbeddingDelivery]
         dimensions: int
         encodingFormat: Union[str, EmbeddingEncodingFormat]
-        maxNumVectors: int
+        inputs: list[dict[str, Any]]
+        maxVectorCount: int
         model: str
         modelVersion: str
         multiDimensions: int
-        outputDtype: Union[str, EmbeddingOutputDataType]
-        vectorType: Union[str, EmbeddingVectorType]
+        outputDataKind: Union[str, EmbeddingOutputDataKind]
+        vectorKind: Union[str, EmbeddingVectorKind]
 
 
     class azure.data.ai.types.SemanticRerankingInferenceContent(TypedDict, total=False):
