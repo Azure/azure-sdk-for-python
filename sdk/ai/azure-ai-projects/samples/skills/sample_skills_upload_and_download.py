@@ -15,7 +15,8 @@ DESCRIPTION:
     4) Download the package with `download(...)` to the temp folder.
     5) Delete the uploaded skill.
 
-    Skills operations are in preview through `project_client.beta.skills`.
+    Skills are a preview feature. In the Python SDK, you access
+    these operations via `project_client.beta.skills`.
 
 USAGE:
     python sample_skills_upload_and_download.py

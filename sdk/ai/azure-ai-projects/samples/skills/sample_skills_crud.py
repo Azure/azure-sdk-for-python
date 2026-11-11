@@ -14,7 +14,8 @@ DESCRIPTION:
     description from the fetched default version to show that the default
     version pointer changes which content is returned.
 
-    Skills operations are in preview through `project_client.beta.skills`.
+    Skills are currently a preview feature. In the Python SDK, you access
+    these operations via `project_client.beta.skills`.
 
 USAGE:
     python sample_skills_crud.py

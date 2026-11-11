@@ -406,7 +406,7 @@ voice_logger.addHandler(handler)
 # handler.setFormatter(formatter)
 ```
 
-The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. The `azure.ai.projects.realtime` and `azure.ai.projects.live` loggers record connection and close events and the type and byte count of each event sent or received at `DEBUG` level. They do not log event payloads, URL query strings, request headers, or authentication tokens.
+The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. At `DEBUG` level, the Voice Agent logger records connection and close events and the type and byte count of each event sent or received. It does not log event payloads, URL query strings, request headers, or authentication tokens.
 
 By default, logs redact URL query values, some HTTP request and response headers (including `Authorization`), and request and response payloads. To create HTTP pipeline logs without redaction, add `logging_enable=True` to the client constructor:
 
