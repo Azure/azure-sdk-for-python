@@ -37,6 +37,8 @@ if TYPE_CHECKING:
         SkuFamily,
         SkuName,
         StoragePermissions,
+        TokenBindingMode,
+        TokenBindingStrength,
         VaultProvisioningState,
     )
 
@@ -1265,6 +1267,29 @@ class SystemData(TypedDict, total=False):
     """The timestamp of resource last modification (UTC)."""
 
 
+class TokenBindingParameters(TypedDict, total=False):
+    """Configuration for Token Binding for Entra tokens.
+
+    :ivar mode: This specifies whether token binding is disabled, enabled or enforced. Known values
+     are: "Enforced" and "NotEnforced".
+    :vartype mode: Union[str, "TokenBindingMode"]
+    :ivar minimumTokenBindingStrength: Must be one of the following values "NoValidation",
+     "Unattested", "AttestedTrustedLaunch", "AttestedConfidential". Strength of the token binding
+     increases with each value in that order. Known values are: "NoValidation", "Unattested",
+     "AttestedTrustedLaunch", and "AttestedConfidential".
+    :vartype minimumTokenBindingStrength: Union[str, "TokenBindingStrength"]
+    """
+
+    mode: Union[str, "TokenBindingMode"]
+    """This specifies whether token binding is disabled, enabled or enforced. Known values are:
+     \"Enforced\" and \"NotEnforced\"."""
+    minimumTokenBindingStrength: Union[str, "TokenBindingStrength"]
+    """Must be one of the following values \"NoValidation\", \"Unattested\",
+     \"AttestedTrustedLaunch\", \"AttestedConfidential\". Strength of the token binding increases
+     with each value in that order. Known values are: \"NoValidation\", \"Unattested\",
+     \"AttestedTrustedLaunch\", and \"AttestedConfidential\"."""
+
+
 class Trigger(TypedDict, total=False):
     """Trigger.
 
@@ -1359,6 +1384,8 @@ class VaultCheckNameAvailabilityParameters(TypedDict, total=False):
 class VaultCreateOrUpdateParameters(TypedDict, total=False):
     """Parameters for creating or updating a vault.
 
+    :ivar identity: Managed service identity assigned to the vault.
+    :vartype identity: "ManagedServiceIdentity"
     :ivar location: The supported Azure location where the key vault should be created. Required.
     :vartype location: str
     :ivar tags: The tags that will be assigned to the key vault.
@@ -1367,6 +1394,8 @@ class VaultCreateOrUpdateParameters(TypedDict, total=False):
     :vartype properties: "VaultProperties"
     """
 
+    identity: "ManagedServiceIdentity"
+    """Managed service identity assigned to the vault."""
     location: Required[str]
     """The supported Azure location where the key vault should be created. Required."""
     tags: dict[str, str]
@@ -1378,12 +1407,16 @@ class VaultCreateOrUpdateParameters(TypedDict, total=False):
 class VaultPatchParameters(TypedDict, total=False):
     """Parameters for creating or updating a vault.
 
+    :ivar identity: Managed service identity assigned to the vault.
+    :vartype identity: "ManagedServiceIdentity"
     :ivar tags: The tags that will be assigned to the key vault.
     :vartype tags: dict[str, str]
     :ivar properties: Properties of the vault.
     :vartype properties: "VaultPatchProperties"
     """
 
+    identity: "ManagedServiceIdentity"
+    """Managed service identity assigned to the vault."""
     tags: dict[str, str]
     """The tags that will be assigned to the key vault."""
     properties: "VaultPatchProperties"
@@ -1439,6 +1472,26 @@ class VaultPatchProperties(TypedDict, total=False):
      originates from trusted services will be blocked. This will override the set firewall rules,
      meaning that even if the firewall rules are present we will not honor the rules.
     :vartype publicNetworkAccess: str
+    :ivar tokenBindingParameters: Configuration for Token Binding for Entra tokens.
+    :vartype tokenBindingParameters: "TokenBindingParameters"
+    :ivar enableCrossTenantAccessProtection: Whether cross-tenant access protection is enabled for
+     this vault. When enabled, changes to the vault tenant ID must use the subscription's home
+     tenant ID. Once enabled, this protection cannot be disabled. If omitted, the existing value is
+     preserved.
+    :vartype enableCrossTenantAccessProtection: bool
+    :ivar protectionKeysWrappingKey: Configures an external Managed HSM key used to wrap the
+     vault's protection keys. When configured, this property is returned in create, update, get, and
+     list responses. Responses contain the persisted key reference and authentication mechanism, not
+     key material or credentials. It can be supplied when enabling wrapping on an existing vault.
+     This property is available starting with API version 2026-10-01-preview, when the
+     protection-key wrapping capability is available for the target vault. Reapplying an equivalent
+     configuration is supported; replacing or removing it is not. A versionless reference can match
+     the persisted versioned reference; resubmitting it does not rotate the key. After
+     configuration, vault availability depends on the persisted Managed HSM key version remaining
+     usable and accessible to the service. Disabling or deleting that key version, or revoking the
+     service's access, can make the vault unavailable. Omitting this property preserves the existing
+     configuration.
+    :vartype protectionKeysWrappingKey: "WrappingKeyConfiguration"
     """
 
     tenantId: str
@@ -1485,6 +1538,24 @@ class VaultPatchProperties(TypedDict, total=False):
      'disabled' all traffic except private endpoint traffic and that that originates from trusted
      services will be blocked. This will override the set firewall rules, meaning that even if the
      firewall rules are present we will not honor the rules."""
+    tokenBindingParameters: "TokenBindingParameters"
+    """Configuration for Token Binding for Entra tokens."""
+    enableCrossTenantAccessProtection: bool
+    """Whether cross-tenant access protection is enabled for this vault. When enabled, changes to the
+     vault tenant ID must use the subscription's home tenant ID. Once enabled, this protection
+     cannot be disabled. If omitted, the existing value is preserved."""
+    protectionKeysWrappingKey: "WrappingKeyConfiguration"
+    """Configures an external Managed HSM key used to wrap the vault's protection keys. When
+     configured, this property is returned in create, update, get, and list responses. Responses
+     contain the persisted key reference and authentication mechanism, not key material or
+     credentials. It can be supplied when enabling wrapping on an existing vault. This property is
+     available starting with API version 2026-10-01-preview, when the protection-key wrapping
+     capability is available for the target vault. Reapplying an equivalent configuration is
+     supported; replacing or removing it is not. A versionless reference can match the persisted
+     versioned reference; resubmitting it does not rotate the key. After configuration, vault
+     availability depends on the persisted Managed HSM key version remaining usable and accessible
+     to the service. Disabling or deleting that key version, or revoking the service's access, can
+     make the vault unavailable. Omitting this property preserves the existing configuration."""
 
 
 class VaultProperties(TypedDict, total=False):
@@ -1549,6 +1620,27 @@ class VaultProperties(TypedDict, total=False):
      originates from trusted services will be blocked. This will override the set firewall rules,
      meaning that even if the firewall rules are present we will not honor the rules.
     :vartype publicNetworkAccess: str
+    :ivar tokenBindingParameters: Configuration for Token Binding for Entra tokens.
+    :vartype tokenBindingParameters: "TokenBindingParameters"
+    :ivar enableCrossTenantAccessProtection: Whether cross-tenant access protection is enabled for
+     this vault. When enabled, the vault tenant ID can only be set or changed to the subscription's
+     home tenant ID. Once enabled, this protection cannot be disabled. If omitted when creating a
+     vault, protection is disabled. If omitted when updating a vault, the existing value is
+     preserved.
+    :vartype enableCrossTenantAccessProtection: bool
+    :ivar protectionKeysWrappingKey: Configures an external Managed HSM key used to wrap the
+     vault's protection keys. When configured, this property is returned in create, update, get, and
+     list responses. Responses contain the persisted key reference and authentication mechanism, not
+     key material or credentials. It can be supplied when creating a vault or enabling wrapping on
+     an existing vault. This property is available starting with API version 2026-10-01-preview,
+     when the protection-key wrapping capability is available for the target vault. Reapplying an
+     equivalent configuration is supported; replacing or removing it is not. A versionless reference
+     can match the persisted versioned reference; resubmitting it does not rotate the key. After
+     configuration, vault availability depends on the persisted Managed HSM key version remaining
+     usable and accessible to the service. Disabling or deleting that key version, or revoking the
+     service's access, can make the vault unavailable. Omitting this property preserves the existing
+     configuration.
+    :vartype protectionKeysWrappingKey: "WrappingKeyConfiguration"
     """
 
     tenantId: Required[str]
@@ -1606,6 +1698,26 @@ class VaultProperties(TypedDict, total=False):
      'disabled' all traffic except private endpoint traffic and that that originates from trusted
      services will be blocked. This will override the set firewall rules, meaning that even if the
      firewall rules are present we will not honor the rules."""
+    tokenBindingParameters: "TokenBindingParameters"
+    """Configuration for Token Binding for Entra tokens."""
+    enableCrossTenantAccessProtection: bool
+    """Whether cross-tenant access protection is enabled for this vault. When enabled, the vault
+     tenant ID can only be set or changed to the subscription's home tenant ID. Once enabled, this
+     protection cannot be disabled. If omitted when creating a vault, protection is disabled. If
+     omitted when updating a vault, the existing value is preserved."""
+    protectionKeysWrappingKey: "WrappingKeyConfiguration"
+    """Configures an external Managed HSM key used to wrap the vault's protection keys. When
+     configured, this property is returned in create, update, get, and list responses. Responses
+     contain the persisted key reference and authentication mechanism, not key material or
+     credentials. It can be supplied when creating a vault or enabling wrapping on an existing
+     vault. This property is available starting with API version 2026-10-01-preview, when the
+     protection-key wrapping capability is available for the target vault. Reapplying an equivalent
+     configuration is supported; replacing or removing it is not. A versionless reference can match
+     the persisted versioned reference; resubmitting it does not rotate the key. After
+     configuration, vault availability depends on the persisted Managed HSM key version remaining
+     usable and accessible to the service. Disabling or deleting that key version, or revoking the
+     service's access, can make the vault unavailable. Omitting this property preserves the existing
+     configuration."""
 
 
 class VirtualNetworkRule(TypedDict, total=False):
@@ -1627,3 +1739,56 @@ class VirtualNetworkRule(TypedDict, total=False):
     ignoreMissingVnetServiceEndpoint: bool
     """Property to specify whether NRP will ignore the check if parent subnet has serviceEndpoints
      configured."""
+
+
+class WrappingKeyAuthenticationData(TypedDict, total=False):
+    """Authentication mechanism for accessing the external wrapping key.
+
+    :ivar authType: Authentication mechanism. Only ServiceIdentity is supported. A caller-supplied
+     vault managed identity is not required. Required. Default value is "ServiceIdentity".
+    :vartype authType: Literal["ServiceIdentity"]
+    """
+
+    authType: Required[Literal["ServiceIdentity"]]
+    """Authentication mechanism. Only ServiceIdentity is supported. A caller-supplied vault managed
+     identity is not required. Required. Default value is \"ServiceIdentity\"."""
+
+
+class WrappingKeyConfiguration(TypedDict, total=False):
+    """Configuration of the external key used to wrap a vault's protection keys. Unsupported
+    properties in this configuration and its nested objects are rejected. Unsupported API versions
+    or a feature that is not enabled result in HTTP 400 with NotSupported. Invalid configurations
+    or attempted replacement result in HTTP 400 with BadRequest or InvalidParameter. Protection key
+    wrapping throttling results in HTTP 429 with InternalError. Other protection key wrapping
+    failures result in HTTP 503 with InternalError. Errors use the existing CloudError response.
+
+    :ivar keyValue: Identifies the external wrapping key. Required.
+    :vartype keyValue: "WrappingKeyValue"
+    :ivar keyAuthenticationData: Specifies how the service authenticates to the external wrapping
+     key. Required.
+    :vartype keyAuthenticationData: "WrappingKeyAuthenticationData"
+    """
+
+    keyValue: Required["WrappingKeyValue"]
+    """Identifies the external wrapping key. Required."""
+    keyAuthenticationData: Required["WrappingKeyAuthenticationData"]
+    """Specifies how the service authenticates to the external wrapping key. Required."""
+
+
+class WrappingKeyValue(TypedDict, total=False):
+    """Reference to an external Managed HSM wrapping key.
+
+    :ivar url: Absolute HTTPS URL of a key on a supported Managed HSM endpoint. The path must be
+     /keys/{key-name} or /keys/{key-name}/{key-version}. User information, query strings, fragments,
+     and non-default ports are not supported. Required.
+    :vartype url: str
+    :ivar kty: Wrapping key type. Only oct is supported. Required. Default value is "oct".
+    :vartype kty: Literal["oct"]
+    """
+
+    url: Required[str]
+    """Absolute HTTPS URL of a key on a supported Managed HSM endpoint. The path must be
+     /keys/{key-name} or /keys/{key-name}/{key-version}. User information, query strings, fragments,
+     and non-default ports are not supported. Required."""
+    kty: Required[Literal["oct"]]
+    """Wrapping key type. Only oct is supported. Required. Default value is \"oct\"."""
