@@ -125,8 +125,13 @@ def _is_valid_route(attributes: Mapping[str, object] | None) -> bool:
     try:
         _get_instrumentation_key(attributes)
         _get_ingestion_endpoint(attributes)
-    except ValueError as error:
-        _logger.debug("Dropping telemetry with invalid multi-endpoint routing attributes: %s", error)
+    except ValueError:
+        _logger.debug(
+            "Multi-endpoint routing: Dropping telemetry with invalid routing attributes. "
+            "Set microsoft.instrumentation_key to a nonempty string (at most 200 characters) and "
+            "microsoft.ingestion_endpoint to an absolute HTTPS URL without credentials, query, or fragment "
+            "(at most 2048 characters)."
+        )
         return False
     return True
 
