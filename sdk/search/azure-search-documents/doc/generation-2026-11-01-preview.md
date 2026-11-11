@@ -64,6 +64,24 @@ The spec revision above advances the original pin
 `2c0ca3a8b788bc866d2312b72bc05b49b048973d` only for topic-graph descriptions and
 an example correction; it does not change the wire contract or SDK version.
 
+## Query-hint TypedDict metadata
+
+The pinned `models-knowledgebase.tsp` removes request-time `queryHintOverrides`
+from Blob, File, indexed OneLake, indexed SharePoint, and indexed SQL source
+parameters in October and does not restore them in November. Only the search-index
+source parameters restore that field. The generated `knowledgebases/types.py`
+already follows this contract and imports its query-hint type under `TYPE_CHECKING`.
+
+The handwritten `patch_sdk()` previously injected a fully qualified string annotation
+into all six TypedDicts at import time. This advertised unsupported fields in APIView
+without adding corresponding optional keys, and replaced the valid search-index
+forward reference with an unbound `azure` name. The obsolete injection is removed;
+neither the service specification nor the emitter needs a workaround for these fields.
+Parameterized offline regressions cover the five absent fields and resolution of
+the retained search-index hint type. Refresh the API snapshot after this change.
+SDK compatibility customizations must not resurrect fields excluded by the final
+service contract.
+
 ## Retrieval stream contract
 
 With the generation inputs recorded above, both generated `retrieve_stream`

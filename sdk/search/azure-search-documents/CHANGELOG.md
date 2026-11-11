@@ -55,6 +55,8 @@
 
 ### Bugs Fixed
 
+- Removed obsolete retrieval TypedDict annotation overrides that advertised unsupported
+  `queryHintOverrides` fields and prevented resolution of the generated search-index query-hint type.
 - Serialized asynchronous buffered uploads and waited for active uploads before
   closing the client.
 - Closed typed retrieval streams when a response callback raises, including

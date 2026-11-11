@@ -69,9 +69,18 @@ pip install azure-search-documents
 * Custom HTTP requests (SearchIndexClient): [sample_index_client_custom_request.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_index_client_custom_request.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_index_client_custom_request_async.py))
 * Knowledge base agentic retrieval: [sample_agentic_retrieval.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_agentic_retrieval.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_agentic_retrieval_async.py))
 
-### Preview samples (2026-08-01-preview)
+### Preview samples (2026-11-01-preview)
 
-The following samples target an `azure-search-documents` build whose default API version is `2026-08-01-preview`. Behavior of preview APIs may change before GA.
+The following samples target an `azure-search-documents` build whose default API version is
+`2026-11-01-preview`. Use a matching November-preview SDK build; a stable package or an older preview
+does not provide these contracts. For the unreleased changes in this branch, run the following from
+`sdk/search/azure-search-documents/` in your checked-out repository:
+
+```bash
+python -m pip install -e .
+```
+
+Behavior of preview APIs may change before GA.
 
 Knowledge base and retrieval:
 

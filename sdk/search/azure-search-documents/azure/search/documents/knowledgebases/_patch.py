@@ -13,7 +13,6 @@ from typing import Any, Union
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 from ._client import KnowledgeBaseRetrievalClient as _KnowledgeBaseRetrievalClient
-from . import types
 from ._stream import KnowledgeBaseRetrievalEvent, KnowledgeBaseRetrievalEventData, KnowledgeBaseRetrievalStream
 
 
@@ -60,15 +59,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    query_parameter_types = (
-        types.AzureBlobKnowledgeSourceParams,
-        types.FileKnowledgeSourceParams,
-        types.IndexedOneLakeKnowledgeSourceParams,
-        types.IndexedSharePointKnowledgeSourceParams,
-        types.IndexedSqlKnowledgeSourceParams,
-        types.SearchIndexKnowledgeSourceParams,
-    )
-    for parameter_type in query_parameter_types:
-        parameter_type.__annotations__["queryHintOverrides"] = (
-            "azure.search.documents.indexes.types.SearchIndexKnowledgeSourceQueryHints"
-        )

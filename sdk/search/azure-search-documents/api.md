@@ -14485,7 +14485,6 @@ namespace azure.search.documents.knowledgebases.types
         knowledgeSourceName: str
         maxOutputDocuments: int
         neverQuerySource: bool
-        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
         topicGraph: ForwardRef('VectorQueryTopicGraph', module='types')
@@ -14562,7 +14561,6 @@ namespace azure.search.documents.knowledgebases.types
         knowledgeSourceName: str
         maxOutputDocuments: int
         neverQuerySource: bool
-        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
 
@@ -14588,7 +14586,6 @@ namespace azure.search.documents.knowledgebases.types
         knowledgeSourceName: str
         maxOutputDocuments: int
         neverQuerySource: bool
-        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
 
@@ -14614,7 +14611,6 @@ namespace azure.search.documents.knowledgebases.types
         knowledgeSourceName: str
         maxOutputDocuments: int
         neverQuerySource: bool
-        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
 
@@ -14640,7 +14636,6 @@ namespace azure.search.documents.knowledgebases.types
         knowledgeSourceName: str
         maxOutputDocuments: int
         neverQuerySource: bool
-        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
 
@@ -14832,7 +14827,7 @@ namespace azure.search.documents.knowledgebases.types
         knowledgeSourceName: str
         maxOutputDocuments: int
         neverQuerySource: bool
-        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
+        queryHintOverrides: ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
         topicGraph: ForwardRef('VectorQueryTopicGraph', module='types')

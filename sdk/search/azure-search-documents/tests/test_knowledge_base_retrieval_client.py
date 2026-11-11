@@ -6,6 +6,7 @@
 
 import json
 from types import SimpleNamespace
+from typing import get_type_hints, TypedDict
 from unittest import mock
 
 import pytest
@@ -67,6 +68,32 @@ class TestKnowledgeBaseRetrievalClientConstructor:
         assert client._config.endpoint == ENDPOINT
         assert client._config.knowledge_base_name == KNOWLEDGE_BASE_NAME
         assert client._config.credential_scopes == ["https://search.azure.com/.default"]
+
+
+class TestKnowledgeBaseRetrievalTypes:
+    @pytest.mark.parametrize(
+        "parameter_type_name",
+        [
+            "AzureBlobKnowledgeSourceParams",
+            "FileKnowledgeSourceParams",
+            "IndexedOneLakeKnowledgeSourceParams",
+            "IndexedSharePointKnowledgeSourceParams",
+            "IndexedSqlKnowledgeSourceParams",
+            "SearchIndexKnowledgeSourceParams",
+        ],
+    )
+    def test_knowledge_source_params_preserve_generated_query_hint_contract(self, parameter_type_name):
+        require_capability(f"azure.search.documents.knowledgebases.types.{parameter_type_name}")
+        from azure.search.documents.indexes import types as index_types
+        from azure.search.documents.knowledgebases import types
+
+        parameter_type = getattr(types, parameter_type_name)
+        if "queryHintOverrides" in parameter_type.__optional_keys__:
+            contract = TypedDict("QueryHintsContract", {"hints": parameter_type.__annotations__["queryHintOverrides"]})
+            annotations = get_type_hints(contract, globalns=vars(index_types), localns=vars(index_types))
+            assert annotations["hints"] is index_types.SearchIndexKnowledgeSourceQueryHints
+        else:
+            assert "queryHintOverrides" not in parameter_type.__annotations__
 
 
 class TestKnowledgeBaseRetrievalStream:
