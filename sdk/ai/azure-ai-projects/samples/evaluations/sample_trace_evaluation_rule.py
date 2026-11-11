@@ -10,21 +10,12 @@ DESCRIPTION:
 
     The rule uses a `TraceEvaluationRuleAction` with the `timerTrigger` event type.
     On each scheduled occurrence, the service reads the agent's recent traces from
-    Application Insights and adds an evaluation run to the given eval.
+    Application Insights and adds an evaluation run to the given eval. The project must
+    have Application Insights connected, and the agent must already have traces.
 
     The OpenAI compatible Evals calls in this sample are made using
     the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference
     for more information.
-
-PREREQUISITE:
-    1) The Foundry project must have an Application Insights resource connected, and the agent
-       must have produced traces.
-    2) Assign the project managed identity the "Foundry User" role:
-       a) Open https://portal.azure.com
-       b) Search for the AI Foundry project from search bar
-       c) Choose "Access control (IAM)" -> "Add"
-       d) In "Add role assignment", search for "Foundry User"
-       e) Choose "User, group, or service principal" or "Managed Identity", add your AI Foundry project managed identity
 
 USAGE:
     python sample_trace_evaluation_rule.py
