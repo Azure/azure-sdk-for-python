@@ -3,6 +3,7 @@
 
 import os
 import shutil
+import threading
 import unittest
 from unittest import mock
 from datetime import datetime, timedelta, timezone
@@ -765,14 +766,11 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmit_http_error_redirect(self):
         response = HttpResponse(None, None)
         response.status_code = 307
-        # Redirect target whose host differs from the default ingestion host
-        # (`dc.services.visualstudio.com`) only in the leftmost DNS label, with
-        # the same number of labels and a 3-label shared suffix, so the
-        # cross-origin redirect guard permits it.
         response.headers = {"location": "https://westus.services.visualstudio.com"}
         prev_redirects = self._base.client._config.redirect_policy.max_redirects
         self._base.client._config.redirect_policy.max_redirects = 2
         prev_host = self._base.client._config.host
+        prev_endpoint, prev_region = self._base._endpoint, self._base._region
         error = HttpResponseError(response=response)
         with mock.patch.object(AzureMonitorClient, "track") as post:
             post.side_effect = error
@@ -785,6 +783,7 @@ class TestBaseExporter(unittest.TestCase):
             )
         self._base.client._config.redirect_policy.max_redirects = prev_redirects
         self._base.client._config.host = prev_host
+        self._base._endpoint, self._base._region = prev_endpoint, prev_region
 
     def test_transmit_http_error_redirect_refuses_cross_origin(self):
         """A redirect to a different registered domain must be refused so the
@@ -824,11 +823,148 @@ class TestBaseExporter(unittest.TestCase):
         # suffix (and vice versa).
         self.assertFalse(same("dc.services.visualstudio.com", "attacker.example.invalid"))
         self.assertFalse(same("legit-ingestion.example.invalid", "dc.services.visualstudio.com"))
-        # Mixing two different trusted suffixes is rejected.
-        self.assertFalse(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
+        # Different trusted suffixes are allowed only within the same cloud.
+        self.assertTrue(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("dc.applicationinsights.azure.us", "usgovvirginia.monitor.azure.us"))
+        self.assertTrue(same("dc.applicationinsights.azure.cn", "chinanorth.monitor.azure.cn"))
+        self.assertFalse(same("dc.services.visualstudio.com", "westus.monitor.azure.us"))
+        self.assertFalse(same("dc.monitor.azure.us", "chinanorth.monitor.azure.cn"))
+        self.assertFalse(same("dc.services.visualstudio.com", "evilapplicationinsights.azure.com"))
+        self.assertFalse(same("dc.services.visualstudio.com", "westeurope.monitor.azure.com.attacker.com"))
+        self.assertTrue(same("DC.SERVICES.VISUALSTUDIO.COM.:443", "westeurope.monitor.azure.com"))
+        self.assertFalse(same("dc.services.visualstudio.com:444", "westeurope.monitor.azure.com"))
+        self.assertFalse(same("custom.example:443", "custom.example:444"))
+        self.assertTrue(same("[::1]:444", "[::1]:444"))
+        self.assertFalse(same("[::1]", "[::2]"))
+        self.assertFalse(same("dc.services.visualstudio.com", "westeurope.monitor.azure.com:invalid"))
+        self.assertFalse(same("dc.services.visualstudio.com", "user@westeurope.monitor.azure.com"))
         # Empty inputs are treated as not-same.
         self.assertFalse(same("", "applicationinsights.azure.com"))
         self.assertFalse(same("applicationinsights.azure.com", ""))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_statsbeat_manager")
+    def test_redirect_updates_statsbeat_before_retry(self, get_manager):
+        for status in (307, 308):
+            with self.subTest(status=status):
+                exporter = BaseExporter(disable_offline_storage=True)
+                target = "https://westeurope-5.in.applicationinsights.azure.com"
+                response = HttpResponse(None, None)
+                response.status_code = status
+                response.headers = {"location": target + "/v2.1/track"}
+                calls = []
+                get_manager.return_value._update_endpoint.side_effect = lambda endpoint: calls.append(endpoint)
+
+                def track(*args, **kwargs):
+                    calls.append(exporter.client._config.host)
+                    if len(calls) == 1:
+                        raise HttpResponseError(response=response)
+                    self.assertEqual(exporter._endpoint, target)
+                    self.assertEqual(exporter._region, "westeurope")
+                    return TrackResponse(items_received=1, items_accepted=1, errors=[])
+
+                with mock.patch.object(exporter, "_should_collect_stats", return_value=True), mock.patch.object(
+                    exporter.client, "track", side_effect=track
+                ):
+                    self.assertEqual(exporter._transmit(self._envelopes_to_export), ExportResult.SUCCESS)
+                self.assertEqual(calls, ["https://dc.services.visualstudio.com", target, target])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_statsbeat_manager")
+    def test_rejected_redirect_leaves_both_routes_unchanged(self, get_manager):
+        targets = (
+            "http://westeurope.monitor.azure.com",
+            "https://westeurope.monitor.azure.us",
+            "https://westeurope.monitor.azure.com.attacker.example",
+            "https://user@westeurope.monitor.azure.com",
+            "https://@westeurope.monitor.azure.com",
+            "https://westeurope.monitor.azure.com:444",
+            "https://westeurope.monitor.azure.com:invalid",
+            "https://[invalid",
+            "/relative",
+            "",
+        )
+        for target in targets:
+            with self.subTest(target=target):
+                exporter = BaseExporter(disable_offline_storage=True)
+                original_endpoint = exporter._endpoint
+                response = HttpResponse(None, None)
+                response.status_code = 307
+                response.headers = {"location": target}
+                with mock.patch.object(exporter, "_should_collect_stats", return_value=True), mock.patch.object(
+                    exporter.client, "track", side_effect=HttpResponseError(response=response)
+                ) as track:
+                    self.assertEqual(exporter._transmit(self._envelopes_to_export), ExportResult.FAILED_NOT_RETRYABLE)
+                track.assert_called_once()
+                self.assertEqual(exporter.client._config.host, original_endpoint)
+                self.assertEqual(exporter._endpoint, original_endpoint)
+        get_manager.assert_not_called()
+
+    def test_redirect_limit_is_per_export_chain(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.client._config.redirect_policy.max_redirects = 2
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location": "https://westeurope-5.in.applicationinsights.azure.com"}
+        redirect = HttpResponseError(response=response)
+        success = TrackResponse(items_received=1, items_accepted=1, errors=[])
+        with mock.patch.object(exporter.client, "track", side_effect=[redirect, redirect, redirect, success]) as track:
+            self.assertEqual(exporter._transmit(self._envelopes_to_export), ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(exporter._transmit(self._envelopes_to_export), ExportResult.SUCCESS)
+        self.assertEqual(track.call_count, 4)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_statsbeat_manager")
+    def test_concurrent_nested_redirects_keep_route_and_retry_together(self, get_manager):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.client._config.redirect_policy.max_redirects = 3
+        first_retry = threading.Event()
+        second_response = threading.Event()
+        calls = []
+        counts = {}
+        results = []
+        eu = "https://westeurope-5.in.applicationinsights.azure.com"
+        row = "https://westus-1.in.applicationinsights.azure.com"
+        nested = "https://germanynorth-1.in.applicationinsights.azure.com"
+        get_manager.return_value._update_endpoint.side_effect = lambda endpoint: calls.append(("update", endpoint))
+
+        def track(envelopes, **kwargs):
+            name = threading.current_thread().name
+            counts[name] = counts.get(name, 0) + 1
+            count = counts[name]
+            if name == "second" and count == 1:
+                self.assertTrue(first_retry.wait(5))
+                second_response.set()
+                target = row
+            elif name == "first" and count == 1:
+                target = eu
+            elif name == "first" and count == 2:
+                first_retry.set()
+                self.assertTrue(second_response.wait(5))
+                calls.append(("retry", exporter.client._config.host))
+                target = nested
+            else:
+                calls.append(("retry", exporter.client._config.host))
+                return TrackResponse(items_received=1, items_accepted=1, errors=[])
+            response = HttpResponse(None, None)
+            response.status_code = 307
+            response.headers = {"location": target}
+            raise HttpResponseError(response=response)
+
+        def transmit():
+            results.append(exporter._transmit(self._envelopes_to_export))
+
+        with mock.patch.object(exporter, "_should_collect_stats", return_value=True), mock.patch.object(
+            exporter.client, "track", side_effect=track
+        ):
+            threads = [threading.Thread(target=transmit, name=name, daemon=True) for name in ("first", "second")]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(10)
+                self.assertFalse(thread.is_alive())
+        self.assertEqual(results, [ExportResult.SUCCESS, ExportResult.SUCCESS])
+        self.assertEqual(
+            calls,
+            [("update", eu), ("retry", eu), ("update", nested), ("retry", nested), ("update", row), ("retry", row)],
+        )
 
     def test_transmit_http_error_redirect_missing_headers(self):
         response = HttpResponse(None, None)

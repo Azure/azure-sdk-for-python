@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fixed Statsbeat routing after accepted ingestion redirects so EU SDK statistics use the EU destination, including Germany North, without resetting metric collection.
+- Allowed ingestion redirects across trusted Azure Monitor domain suffixes within the same cloud.
+
 ### Other Changes
 
 ## 1.0.0b55 (2026-07-01)

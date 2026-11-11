@@ -1,17 +1,28 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import os
+import threading
 import unittest
 from unittest import mock
 from unittest.mock import Mock, patch
 
+from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.transport import HttpResponse
+from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem, TrackResponse
+from azure.monitor.opentelemetry.exporter.export._base import BaseExporter, ExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatConfig, StatsbeatManager
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQUESTS_MAP,
     _STATSBEAT_STATE,
     _STATSBEAT_STATE_LOCK,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL,
+    _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
+    _DEFAULT_EU_STATS_CONNECTION_STRING,
+    _DEFAULT_NON_EU_STATS_CONNECTION_STRING,
+    _REQ_SUCCESS_NAME,
 )
 
 # cSpell:disable
@@ -121,14 +132,16 @@ class TestStatsbeatConfig(unittest.TestCase):
         self.assertIsNone(config)
 
     def test_from_exporter_missing_region(self):
-        """Test creating config from exporter missing region."""
+        """A global ingestion endpoint can collect Statsbeat before a redirect."""
         exporter = mock.Mock()
-        exporter._endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        exporter._endpoint = "https://dc.services.visualstudio.com"
         exporter._region = None
         exporter._instrumentation_key = "test-key"
 
         config = StatsbeatConfig.from_exporter(exporter)
-        self.assertIsNone(config)
+        self.assertIsNotNone(config)
+        self.assertIsNone(config.region)
+        self.assertEqual(config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config")
     def test_from_config_valid(self, mock_get_cs_for_region):
@@ -331,7 +344,7 @@ class TestStatsbeatManager(unittest.TestCase):
         config = StatsbeatConfig(
             endpoint="https://westus-1.in.applicationinsights.azure.com/", region="", instrumentation_key="test-key"
         )
-        self.assertFalse(StatsbeatManager._validate_config(config))
+        self.assertTrue(StatsbeatManager._validate_config(config))
 
     def test_validate_config_missing_connection_string(self):
         """Test _validate_config with missing connection string."""
@@ -735,3 +748,299 @@ class TestStatsbeatManager(unittest.TestCase):
         # Config is intact for potential re-initialization
         self.assertEqual(self.manager._config, config_mock)
         mock_meter_provider.shutdown.assert_called_once()
+
+    def _initialize_routing(self):
+        patches = (
+            patch.dict(
+                os.environ,
+                {
+                    _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
+                    "APPLICATIONINSIGHTS_SDKSTATS_DISABLED": "true",
+                },
+            ),
+            patch.dict(
+                _STATSBEAT_STATE,
+                {
+                    "FEATURE_ATTRIBUTE_BITS": 0,
+                    "CUSTOM_EVENTS_FEATURE_SET": False,
+                    "LIVE_METRICS_FEATURE_SET": False,
+                    "CUSTOMER_SDKSTATS_FEATURE_SET": False,
+                    "BROWSER_SDK_LOADER_FEATURE_SET": False,
+                },
+            ),
+            patch.dict(_REQUESTS_MAP, clear=True),
+            patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer"),
+            patch(
+                "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics."
+                "_StatsbeatMetrics._get_azure_compute_metadata",
+                return_value=False,
+            ),
+            patch(
+                "azure.monitor.opentelemetry.exporter._generated.exporter.AzureMonitorClient.track",
+                return_value=TrackResponse(items_received=1, items_accepted=1, errors=[]),
+            ),
+        )
+        for patcher in patches:
+            mocked = patcher.start()
+            self.addCleanup(patcher.stop)
+        config = StatsbeatConfig(
+            endpoint="https://dc.services.visualstudio.com",
+            region=None,
+            instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+        )
+        self.assertTrue(self.manager.initialize(config))
+        return mocked
+
+    def test_redirect_preserves_collection_and_routes_all_metrics_to_eu(self):
+        track = self._initialize_routing()
+        metrics = self.manager._metrics
+        provider = self.manager._meter_provider
+        reader = provider._metric_readers[0]
+        exporter = self.manager._exporter
+        timer = self.manager._warmup_timer
+        interval_counts = dict(metrics._long_interval_count_map)
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 5
+        original_config = self.manager.get_current_config()
+        old_sender = exporter._exporter
+        target = "https://germanynorth-1.in.applicationinsights.azure.com"
+
+        with patch.object(old_sender, "shutdown", wraps=old_sender.shutdown) as shutdown, patch.object(
+            old_sender.client, "close", wraps=old_sender.client.close
+        ) as close:
+            self.manager._update_endpoint(target)
+            shutdown.assert_called_once()
+            close.assert_called_once()
+        self.assertIs(self.manager._metrics, metrics)
+        self.assertIs(self.manager._meter_provider, provider)
+        self.assertIs(provider._metric_readers[0], reader)
+        self.assertIs(self.manager._warmup_timer, timer)
+        self.assertIs(self.manager._exporter, exporter)
+        self.assertEqual(metrics._long_interval_count_map, interval_counts)
+        self.assertEqual(_REQUESTS_MAP[_REQ_SUCCESS_NAME[1]], 5)
+        self.assertEqual(metrics._NETWORK_ATTRIBUTES, {"endpoint": "breeze", "host": "germanynorth-1"})
+        config = self.manager.get_current_config()
+        self.assertEqual(config.connection_string, _DEFAULT_EU_STATS_CONNECTION_STRING)
+        self.assertEqual(config.endpoint, target)
+        self.assertEqual(config.region, "germanynorth")
+
+        # A subsequently constructed logs/traces exporter must not restore the global route.
+        self.assertTrue(self.manager.initialize(original_config))
+        self.assertEqual(self.manager.get_current_config().endpoint, target)
+        provider.force_flush()
+        envelopes = track.call_args.args[0]
+        names = {envelope.data.base_data.metrics[0].name for envelope in envelopes}
+        self.assertTrue({"Attach", "Feature", "Request_Success_Count"}.issubset(names))
+        eu = ConnectionStringParser(_DEFAULT_EU_STATS_CONNECTION_STRING)
+        self.assertTrue(all(envelope.instrumentation_key == eu.instrumentation_key for envelope in envelopes))
+        self.assertEqual(exporter._exporter.client._config.host, eu.endpoint)
+
+    def test_redirect_within_boundary_reuses_sender_and_cross_boundary_replaces_it(self):
+        self._initialize_routing()
+        self.manager._update_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
+        eu_sender = self.manager._exporter._exporter
+        self.manager._update_endpoint("https://northeurope-2.in.applicationinsights.azure.com")
+        self.assertIs(self.manager._exporter._exporter, eu_sender)
+        self.assertEqual(self.manager._metrics._NETWORK_ATTRIBUTES["host"], "northeurope-2")
+        self.manager._update_endpoint("https://eastus-1.in.applicationinsights.azure.com")
+        self.assertIsNot(self.manager._exporter._exporter, eu_sender)
+        self.assertEqual(self.manager.get_current_config().connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
+
+    def test_redirect_respects_stats_connection_string_override(self):
+        self._initialize_routing()
+        custom = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://custom.example"
+        with patch.dict(os.environ, {_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: custom}):
+            self.manager._update_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
+            sender = self.manager._exporter._exporter
+            self.manager._update_endpoint("https://eastus-1.in.applicationinsights.azure.com")
+        self.assertIs(self.manager._exporter._exporter, sender)
+        self.assertEqual(self.manager.get_current_config().connection_string, custom)
+        self.assertEqual(sender.client._config.host, "https://custom.example")
+        self.assertEqual(self.manager._metrics._NETWORK_ATTRIBUTES["host"], "eastus-1")
+
+    def test_redirect_does_not_initialize_or_revive_statsbeat(self):
+        target = "https://westeurope-5.in.applicationinsights.azure.com"
+        self.manager._update_endpoint(target)
+        self.assertFalse(self.manager.is_initialized())
+        self._initialize_routing()
+        self.manager.shutdown()
+        self.manager._update_endpoint(target)
+        self.assertFalse(self.manager.is_initialized())
+        self.assertIsNone(self.manager._exporter)
+
+    def test_redirect_waits_for_inflight_export_and_storage_replay(self):
+        self._initialize_routing()
+        exporter = self.manager._exporter
+        sender = exporter._exporter
+        sender.storage = Mock()
+        replay_started = threading.Event()
+        finish_replay = threading.Event()
+        update_started = threading.Event()
+        updated = threading.Event()
+        errors = []
+
+        def replay(*args):
+            replay_started.set()
+            if not finish_replay.wait(5):
+                raise AssertionError("Replay was not released")
+
+        def update():
+            update_started.set()
+            try:
+                self.manager._update_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
+            except Exception as exc:
+                errors.append(exc)
+            finally:
+                updated.set()
+
+        with patch.object(sender, "_handle_transmit_from_storage", side_effect=replay), patch.object(
+            sender, "shutdown", wraps=sender.shutdown
+        ) as shutdown:
+            export_thread = threading.Thread(target=self.manager._meter_provider.force_flush, daemon=True)
+            update_thread = threading.Thread(target=update, daemon=True)
+            export_thread.start()
+            try:
+                self.assertTrue(replay_started.wait(5))
+                update_thread.start()
+                self.assertTrue(update_started.wait(5))
+                self.assertFalse(updated.wait(0.1))
+                shutdown.assert_not_called()
+            finally:
+                finish_replay.set()
+                export_thread.join(10)
+                if update_thread.ident:
+                    update_thread.join(10)
+            self.assertFalse(export_thread.is_alive())
+            self.assertFalse(update_thread.is_alive())
+            self.assertEqual(errors, [])
+            shutdown.assert_called_once()
+            sender.storage.close.assert_called_once()
+            self.assertIsNot(exporter._exporter, sender)
+
+    def test_statsbeat_redirect_during_customer_route_update_does_not_deadlock(self):
+        self._initialize_routing()
+        sender = self.manager._exporter._exporter
+        stats_started = threading.Event()
+        update_started = threading.Event()
+        results = []
+        success = TrackResponse(items_received=1, items_accepted=1, errors=[])
+
+        def redirect(endpoint):
+            response = HttpResponse(None, None)
+            response.status_code = 307
+            response.headers = {"location": endpoint}
+            return HttpResponseError(response=response)
+
+        def stats_track(*args, **kwargs):
+            if not stats_started.is_set():
+                stats_started.set()
+                self.assertTrue(update_started.wait(5))
+                raise redirect("https://westus-2.in.applicationinsights.azure.com")
+            return success
+
+        update_endpoint = self.manager._update_endpoint
+
+        def update(endpoint):
+            update_started.set()
+            update_endpoint(endpoint)
+
+        with patch.object(BaseExporter, "_should_collect_stats", return_value=False), patch.object(
+            BaseExporter, "_should_collect_customer_sdkstats", return_value=False
+        ):
+            customer = BaseExporter(
+                connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+                disable_offline_storage=True,
+            )
+        with patch.object(sender.client, "track", side_effect=stats_track), patch.object(
+            customer.client,
+            "track",
+            side_effect=[redirect("https://westeurope-5.in.applicationinsights.azure.com"), success],
+        ), patch.object(customer, "_should_collect_stats", return_value=True), patch.object(
+            customer, "_should_collect_customer_sdkstats", return_value=False
+        ), patch.object(
+            self.manager, "_update_endpoint", side_effect=update
+        ), patch(
+            "azure.monitor.opentelemetry.exporter.export._base.get_statsbeat_manager", return_value=self.manager
+        ):
+            stats_thread = threading.Thread(target=self.manager._meter_provider.force_flush, daemon=True)
+            customer_thread = threading.Thread(
+                target=lambda: results.append(customer._transmit([TelemetryItem(name="test")])), daemon=True
+            )
+            stats_thread.start()
+            self.assertTrue(stats_started.wait(5))
+            customer_thread.start()
+            stats_thread.join(10)
+            customer_thread.join(10)
+            self.assertFalse(stats_thread.is_alive())
+            self.assertFalse(customer_thread.is_alive())
+        self.assertEqual(results, [ExportResult.SUCCESS])
+        self.assertEqual(self.manager.get_current_config().connection_string, _DEFAULT_EU_STATS_CONNECTION_STRING)
+
+    def test_redirect_replacement_failure_preserves_route(self):
+        self._initialize_routing()
+        config = self.manager.get_current_config()
+        sender = self.manager._exporter._exporter
+        host = self.manager._metrics._NETWORK_ATTRIBUTES["host"]
+        with patch(
+            "azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter",
+            side_effect=ValueError("Invalid replacement"),
+        ):
+            with self.assertRaisesRegex(ValueError, "Invalid replacement"):
+                self.manager._update_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
+        self.assertIs(self.manager._exporter._exporter, sender)
+        self.assertEqual(self.manager.get_current_config(), config)
+        self.assertEqual(self.manager._metrics._NETWORK_ATTRIBUTES["host"], host)
+
+    def test_shutdown_during_reconfiguration_does_not_revive_collection(self):
+        self._initialize_routing()
+        config = self.manager.get_current_config()
+        config.connection_string = _DEFAULT_EU_STATS_CONNECTION_STRING
+        with patch.object(
+            self.manager._meter_provider, "force_flush", side_effect=lambda **kwargs: self.manager.shutdown()
+        ), patch.object(self.manager, "_do_initialize") as initialize:
+            self.assertFalse(self.manager.initialize(config))
+        initialize.assert_not_called()
+        self.assertFalse(self.manager.is_initialized())
+
+    def test_redirect_waits_for_configuration_update(self):
+        self._initialize_routing()
+        config = self.manager.get_current_config()
+        config.connection_string = _DEFAULT_EU_STATS_CONNECTION_STRING
+        flush_started = threading.Event()
+        finish_flush = threading.Event()
+        update_started = threading.Event()
+        updated = threading.Event()
+        results = []
+
+        def flush(**kwargs):
+            flush_started.set()
+            self.assertTrue(finish_flush.wait(5))
+
+        def update():
+            update_started.set()
+            self.manager._update_endpoint("https://eastus-1.in.applicationinsights.azure.com")
+            updated.set()
+
+        with patch.object(self.manager._meter_provider, "force_flush", side_effect=flush):
+            configure_thread = threading.Thread(
+                target=lambda: results.append(self.manager.initialize(config)), daemon=True
+            )
+            update_thread = threading.Thread(target=update, daemon=True)
+            configure_thread.start()
+            try:
+                self.assertTrue(flush_started.wait(5))
+                update_thread.start()
+                self.assertTrue(update_started.wait(5))
+                self.assertFalse(updated.wait(0.1))
+            finally:
+                finish_flush.set()
+                configure_thread.join(10)
+                if update_thread.ident:
+                    update_thread.join(10)
+            self.assertFalse(configure_thread.is_alive())
+            self.assertFalse(update_thread.is_alive())
+        self.assertEqual(results, [True])
+        self.assertTrue(updated.is_set())
+        current = self.manager.get_current_config()
+        self.assertEqual(current.endpoint, "https://eastus-1.in.applicationinsights.azure.com")
+        self.assertEqual(current.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)

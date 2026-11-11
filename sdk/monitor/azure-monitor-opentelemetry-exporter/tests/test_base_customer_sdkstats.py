@@ -311,8 +311,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         """Test that track_dropped_items is called on circular redirect errors"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
-        # Mock the consecutive redirects counter to simulate exceeding max redirects
-        exporter._consecutive_redirects = 10  # Set to a high value to simulate circular redirects
+        exporter.client._config.redirect_policy.max_redirects = 1
 
         # Simulate redirect responses that would cause circular redirects
         with mock.patch.object(AzureMonitorClient, "track") as track_mock:

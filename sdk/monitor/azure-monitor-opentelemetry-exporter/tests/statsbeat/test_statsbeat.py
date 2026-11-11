@@ -10,6 +10,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter.statsbeat import StatsbeatConfig, _statsbeat
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import _get_stats_connection_string
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatFeature, _StatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
@@ -55,6 +56,22 @@ class TestStatsbeat(unittest.TestCase):
         # Reset singleton state - only clear StatsbeatManager instances
         if StatsbeatManager in StatsbeatManager._instances:
             del StatsbeatManager._instances[StatsbeatManager]
+
+    def test_stats_connection_string_uses_hostname_region(self):
+        cases = (
+            ("https://germanynorth-1.in.applicationinsights.azure.com", _DEFAULT_EU_STATS_CONNECTION_STRING),
+            ("https://WESTEUROPE-5.in.applicationinsights.azure.com", _DEFAULT_EU_STATS_CONNECTION_STRING),
+            ("https://northeurope-2.livediagnostics.monitor.azure.com", _DEFAULT_EU_STATS_CONNECTION_STRING),
+            ("https://eastus-1.in.applicationinsights.azure.com/westeurope", _DEFAULT_NON_EU_STATS_CONNECTION_STRING),
+            ("https://dc.services.visualstudio.com/?region=westeurope", _DEFAULT_NON_EU_STATS_CONNECTION_STRING),
+            ("https://notwesteurope.in.applicationinsights.azure.com", _DEFAULT_NON_EU_STATS_CONNECTION_STRING),
+            ("not a url", _DEFAULT_NON_EU_STATS_CONNECTION_STRING),
+            ("https://[invalid", _DEFAULT_NON_EU_STATS_CONNECTION_STRING),
+        )
+        with mock.patch.dict(os.environ, {_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: ""}):
+            for endpoint, expected in cases:
+                with self.subTest(endpoint=endpoint):
+                    self.assertEqual(_get_stats_connection_string(endpoint), expected)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
