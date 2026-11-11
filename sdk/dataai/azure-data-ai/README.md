@@ -130,7 +130,7 @@ for score in result.scores or []:
 | `batchSize`           | `int`       | Optional. Number of documents processed per batch, from 1 to 2147483647.                                                                               |
 | `sort`                | `bool`      | Optional. Return scores sorted by relevance.                                                                                                           |
 | `documentType`        | `str`       | Optional document format, such as `text` or `json`. JSON documents are JSON-encoded strings.                                                           |
-| `targetPaths`         | `str`       | Required for JSON documents. Use dot notation for nested properties, such as `meta.content`, and commas for multiple paths, such as `meta.content,id`. |
+| `targetPaths`         | `str`       | Required for JSON documents. Up to 100 comma-separated paths in dot notation, such as `meta.content,id`. The model's `target_paths` takes a list.      |
 | `returnSentenceScore` | `bool`      | Optional. Include sentence-level scores.                                                                                                               |
 
 Put these options inside the request dictionary, not in method keyword arguments.

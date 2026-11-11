@@ -132,6 +132,10 @@ class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates that the key can be used to wrap another key."""
     UNWRAP_KEY = "unwrapKey"
     """Indicates that the key can be used to unwrap another key."""
+    SECURE_WRAP_KEY = "secureWrapKey"
+    """Indicates that the key can be used to securely wrap another key."""
+    SECURE_UNWRAP_KEY = "secureUnwrapKey"
+    """Indicates that the key can be used to securely unwrap another key."""
     IMPORT = "import"
     """Indicates that the key can be imported during creation."""
     EXPORT = "export"
@@ -235,9 +239,9 @@ class KeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CKM_RSA_AES_KEY_WRAP = "CKM_RSA_AES_KEY_WRAP"
     """The CKM_RSA_AES_KEY_WRAP key wrap mechanism."""
-    RSA_AES_KEY_WRAP256 = "RSA_AES_KEY_WRAP_256"
+    RSA_AES_KEY_WRAP_256 = "RSA_AES_KEY_WRAP_256"
     """The RSA_AES_KEY_WRAP_256 key wrap mechanism."""
-    RSA_AES_KEY_WRAP384 = "RSA_AES_KEY_WRAP_384"
+    RSA_AES_KEY_WRAP_384 = "RSA_AES_KEY_WRAP_384"
     """The RSA_AES_KEY_WRAP_384 key wrap mechanism."""
 
 
