@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.6b1
+python install_rle_sdk.py --version 2.7.7b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -175,12 +175,41 @@ All 404 offline rollout and model tests passed against an isolated installation
 of this wheel. Packaged Python files match the pinned merged source except for
 the release version.
 
-The registry selects `2.7.6b1` as `latest`, preserving all earlier versions and
-checksums. This is an RLE preview distribution, not a PyPI publication.
+Version `2.7.6b1` remains available for explicit installation.
+This is an RLE preview distribution, not a PyPI publication.
 Backend deployment, live gateway/training qualification and consumer image
 rebuilds are separate work.
 
 ## Version 2.7.7b1
+
+This preview adds optional per-rollout model sampling defaults to
+`SamplingOptions`: `max_completion_tokens`, `temperature`, `top_p`, `top_k`,
+and `seed`. Pass `sampling=SamplingOptions(...)` to HTTP or shared-session
+`execute_rollout()` calls. Explicit model-request values override these
+defaults; service/provider ceilings and remaining model context still apply.
+Training capture requires neutral `top_p=1` and `top_k=-1` or `0`. Provider
+support varies, and a seed does not guarantee reproducibility.
+
+V4 remains the default for asynchronous rollout sessions, with authenticated
+full-result retrieval and the configurable 32 MiB download budget. Explicit
+V3/legacy selections and one-shot HTTP defaults are unchanged.
+
+The wheel is built from merged SDK source
+`ead8557db7474a94c38d3fce3564e249642c3da6` in
+`sujit-kamireddy/azure-sdk-for-python`, including source PR #11. Only the staged
+package version is overridden to `2.7.7b1`. The wheel is 604885 bytes with SHA-256
+`09319d1f7a5a2889677c03ac9ca952fd89913d93a80f441e9fbf52611b30f470`.
+All 406 offline rollout and model tests passed against an isolated installation
+of this wheel, including sampling serialization over HTTP and WebSocket.
+Packaged Python files match the pinned merged source except for the release
+version.
+
+The registry selects `2.7.7b1` as `latest`, preserving all seven earlier
+versions and checksums. This is an RLE preview distribution, not a PyPI
+publication. Backend deployment, live gateway/training qualification and
+consumer image rebuilds are separate work.
+
+## Version 2.7.8b1 (opt-in grader-cause preview)
 
 This explicitly pinned preview preserves caller-safe grader causes from queued
 V3/V4 failed events, including attachment recovery and synthesized terminal
@@ -192,20 +221,26 @@ No raw grader traceback or diagnostic is introduced by this change.
 The wheel is built from SDK source PR #15 commit
 `c2221797bf30457520ead8ba027bb80ad35e67c6` in
 `sujit-kamireddy/azure-sdk-for-python`, with only the staged package version
-overridden to `2.7.7b1`. That source includes the merged `2.7.6b1` source
-revision. V4 remains the default; consumers requiring V3 must continue to set
+overridden to `2.7.8b1`. That source includes the merged `2.7.6b1` source
+revision, but not the sampling-default additions in the separate `2.7.7b1`
+release. This is a separate opt-in preview, not a cumulative replacement for
+`2.7.7b1`. V4 remains the default; consumers requiring V3 must continue to set
 `protocol_version="v3"` explicitly. Source PR #15 is not merged by this artifact
 publication.
 
-The wheel is 610379 bytes with SHA-256
-`d73422c1c21f0e9be3983c146dcc3373f1e0e69908c7c3ef900764dbf1e1f2ed`.
-All 291 offline rollout tests and 27 Loom WebSocket/breaker/report integration
-tests passed against an isolated installation of the wheel, without an SDK
-source-path override.
+The wheel is 610378 bytes with SHA-256
+`e1b0bc742d2d209f7e2b0913d8d756f4571d5686b55a2b6be4e85722d022d0b7`.
+All 291 offline rollout tests passed against an isolated installation of this
+wheel. One recovery-deadline case timed out in the first run; the subsequent
+complete run passed without code changes. Packaged Python files match the pinned
+source except for the release version, and wheel metadata and RECORD were checked.
+Version `2.7.7b1` was independently published with sampling defaults while this
+PR was open; its wheel and checksum are preserved unchanged. The earlier grader
+preview at immutable commit `bc59c6e85490d3cc22d54fa8a8fba9a9da79d8ae`
+remains in Git history, but is not the registry's `2.7.7b1` artifact.
 
-`latest` deliberately remains `2.7.6b1`; this publication adds an opt-in version
-and preserves every existing wheel and checksum. The registry entry becomes
-usable through the upstream installer only after this artifact PR is merged
-into `rle-releases`. Immutable, hash-pinned public-fork artifact URLs can be
-consumed before that merge. This is not a PyPI release, upstream source merge,
-backend deployment, image publication or live training qualification.
+`latest` deliberately remains the upstream `2.7.7b1`. Install this preview with
+`python install_rle_sdk.py --version 2.7.8b1` after the artifact PR is merged
+into `rle-releases`, or use an immutable, hash-pinned artifact URL beforehand.
+This is not a PyPI release, upstream source merge, backend deployment, image
+publication or live training qualification.
