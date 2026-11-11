@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-# Parsed YAML contracts for optional release IDs and the shared SDK PR fallback.
+# Parsed YAML contracts for optional release IDs and the triggering SDK PR handoff.
 # Requires Pester 5 and powershell-yaml; no Python runtime or cloud access.
 # Run Invoke-Pester -Path this file. This does not expand Azure Pipelines templates.
 
@@ -78,11 +78,13 @@ Describe 'Python template completion correlation' {
         $completion.parameters.Contains('SdkPullRequest') | Should -BeFalse
     }
 
-    It 'does not bind prepare-stage SDK PR outputs in the release completion job' {
+    It 'imports the triggering SDK PR only for post-merge CI on main' {
         @($stage.variables | Where-Object { $_['name'] -eq 'AutoReleaseSdkPullRequestUrl' }).Count | Should -Be 0
-        $binding = @(Find-YamlMap $stage.jobs name AutoReleaseSdkPullRequestUrl)
-        $binding.Count | Should -Be 0
-        $completionJob.Contains('variables') | Should -BeFalse
+        $completionJob.Contains('variables') | Should -BeTrue
+        @($completionJob.variables.Keys) | Should -Be @($autoGuard)
+        $binding = $completionJob.variables[$autoGuard]
+        @($binding.Keys) | Should -Be @('AutoReleaseSdkPullRequestUrl')
+        $binding.AutoReleaseSdkPullRequestUrl | Should -BeExactly '$[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs[''resolve.AutoReleaseSdkPullRequestUrl''] ]'
         $clientRelay.parameters.Contains('TestPipeline') | Should -BeFalse
         $clientRelay.parameters[$templateGuard].TestPipeline | Should -BeTrue
         $artifactRelay.parameters.TestPipeline | Should -BeExactly '${{ parameters.TestPipeline }}'

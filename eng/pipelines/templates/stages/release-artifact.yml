@@ -245,6 +245,9 @@ stages:
       - job: MarkPackageReleaseCompletion
         displayName: "Mark package release completion"
         dependsOn: PublishPackage
+        variables:
+          ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+            AutoReleaseSdkPullRequestUrl: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
 
         pool:
           image: ubuntu-24.04
