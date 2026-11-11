@@ -66,6 +66,7 @@ To report an issue with the client library, or request additional features, plea
 * Python 3.10 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
+* An [Application Insights resource connected to your Foundry project](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-setup) for agent tracing.
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
 * Client authentication is done using Entra ID. To authenticate, your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
@@ -162,6 +163,7 @@ See the **responses** folder in the [samples][samples] for additional samples in
 See Foundry documentation:
 
 * **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quick-starts.
+* **[Quickstart: Set up Microsoft Foundry resources](https://learn.microsoft.com/azure/foundry/tutorials/quickstart-create-foundry-resources)** — create a project, deploy a model, and connect Application Insights for agent tracing.
 * **[Runtime components](https://learn.microsoft.com/azure/foundry/agents/concepts/runtime-components?tabs=python)** — deep-dive into agent architecture.
 * **[Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog)** — all available tools and agent capabilities.
 * **[SDK samples folder][samples]** — fully runnable Python code for synchronous and asynchronous clients covering all operations below.
@@ -195,10 +197,40 @@ The table below lists the operation groups supported by the client library, with
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
 | Voice agents (preview) | | `samples/agents/voice/` |
 
+### Voice Agent realtime transport (preview)
+
+Select the connection transport with the optional `transport` keyword. The SDK constructs the wire
+query internally; callers do not need to put the transport in `extra_query`. Omitting the option
+preserves the service's default WebSocket behavior.
+
+```python
+from azure.ai.projects.models import VoiceAgentTransport
+
+with project_client.beta.voice_agents.realtime.connect(
+    agent_name="my-voice-agent",
+    transport=VoiceAgentTransport.WEBSOCKET,
+) as connection:
+    print("Voice Agent connection is ready.")
+```
+
+The asynchronous client uses the same keyword:
+
+```python
+async with async_project_client.beta.voice_agents.realtime.connect(
+    agent_name="my-voice-agent",
+    transport=VoiceAgentTransport.WEBSOCKET,
+) as connection:
+    print("Voice Agent connection is ready.")
+```
+
+`VoiceAgentTransport.WEBRTC` selects WebRTC signaling over the WebSocket. The application must manage
+the peer connection, media, and SDP offer/answer exchange using `rtc.call.sdp.create` and
+`rtc.call.sdp.created` events. Selecting this value does not automatically create a WebRTC media client.
 
 ## Client-side tracing
 
 See [Add client-side tracing to Foundry agents (preview)](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python).
+The same global Foundry tracing configuration applies to Voice Agents REST and realtime tracing.
 
 **Important:** GenAI tracing instrumentation is an experimental preview feature. Spans, attributes, and events may be modified in future versions. 
 
@@ -286,7 +318,7 @@ project_client = AIProjectClient(
 
 Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
 
-See the logging samples in the `samples/logs/` folder for complete end-to-end examples, including console logging, file logging, and OpenAI transport logging.
+See the logging samples in the `samples/logs/` folder for complete end-to-end examples, including console logging, file logging, OpenAI transport logging, and Voice Agent realtime logging.
 
 Be sure to protect non-redacted logs to avoid compromising security.
 

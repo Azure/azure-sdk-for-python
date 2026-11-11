@@ -2,10 +2,167 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for the POST /invocations invoke dispatch."""
+import asyncio
 import json
 import uuid
+from importlib.metadata import requires, version
+from urllib.parse import unquote
 
 import pytest
+import httpx
+from opentelemetry import context as otel_context
+from packaging.requirements import Requirement
+from packaging.version import Version
+from starlette.requests import Request
+from starlette.responses import JSONResponse, StreamingResponse
+
+from azure.ai.agentserver.core import (
+    FoundryAgentRequestContext,
+    get_request_context,
+    reset_request_context,
+    set_request_context,
+)
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.invocations import _invocation
+
+
+def test_original_subject_core_dependency_floor():
+    requirements = (Requirement(value) for value in requires("azure-ai-agentserver-invocations") or [])
+    core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
+    package_version = Version(version("azure-ai-agentserver-invocations"))
+    if package_version.pre and package_version.pre[0] == "a":
+        assert core.specifier.contains(Version(version("azure-ai-agentserver-core")), prereleases=True)
+    else:
+        assert "2.3.0" in core.specifier
+    assert "2.3.0b3" not in core.specifier
+    assert "2.3.0b2" not in core.specifier
+    assert "2.3.0b1" not in core.specifier
+    assert "2.1.0" not in core.specifier
+    assert callable(FoundryAgentRequestContext.model_attribution_headers)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["invoke", "get", "cancel"])
+@pytest.mark.parametrize("fields", [
+    [("x-ms-original-subject", "malformed")],
+    [("x-ms-original-subject", 'oid="one", oid="two"')],
+    [("x-ms-original-subject", 'unknown="value"')],
+    [("x-ms-original-subject", 'oid="one";parameter')],
+    [("x-ms-original-subject", 'oid="one"'), ("x-ms-original-subject", 'tid="two"')],
+])
+async def test_malformed_original_subject_preserves_ambient_context(operation, fields):
+    app = InvocationAgentServerHost(configure_observability=None)
+
+    async def unexpected_dispatch(_request):
+        pytest.fail("Malformed attribution must not reach a handler.")
+
+    app.invoke_handler(unexpected_dispatch)
+    request = Request({
+        "type": "http",
+        "method": "POST" if operation != "get" else "GET",
+        "path": "/invocations",
+        "path_params": {"invocation_id": "invocation-test"},
+        "query_string": b"",
+        "headers": [(name.encode(), value.encode()) for name, value in fields],
+    })
+    outer = FoundryAgentRequestContext(call_id="outer-call")
+    token = set_request_context(outer)
+    baggage = otel_context.get_current()
+    invocation_id = _invocation._invocation_id_var.get()
+    session_id = _invocation._session_id_var.get()
+    try:
+        if operation == "invoke":
+            response = await app._create_invocation_endpoint(request)
+        else:
+            response = await app._traced_invocation_endpoint(request, operation, unexpected_dispatch)
+        assert response.status_code == 400
+        assert response.headers["x-platform-error-source"] == "platform"
+        assert response.headers["x-platform-error-detail"] == "invalid_original_subject"
+        assert get_request_context() is outer
+        assert otel_context.get_current() == baggage
+        assert _invocation._invocation_id_var.get() == invocation_id
+        assert _invocation._session_id_var.get() == session_id
+    finally:
+        reset_request_context(token)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("stream", [False, True])
+async def test_invoke_original_subject_is_available_during_body_iteration(stream):
+    app = InvocationAgentServerHost()
+
+    @app.invoke_handler
+    async def handler(_request):
+        if stream:
+
+            async def body():
+                yield json.dumps(get_request_context().model_attribution_headers())
+
+            return StreamingResponse(body(), media_type="application/json")
+        return JSONResponse(get_request_context().model_attribution_headers())
+
+    subject = {
+        "x-ms-original-subject": 'oid="original-oid", tid="original-tid", idtype="app"',
+    }
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
+        response = await client.post("/invocations", headers={**subject, "x-agent-user-id": "state-key"})
+        assert response.status_code == 200
+        forwarded = response.json()
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
+        assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
+        assert len(forwarded) == 1
+        response = await client.post("/invocations")
+        assert response.status_code == 200
+        assert response.json() == {}
+    assert get_request_context().original_subject is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("stream", [False, True])
+async def test_concurrent_invocations_keep_baggage_bound_to_each_body(stream):
+    app = InvocationAgentServerHost(configure_observability=None)
+    both_bound = asyncio.Event()
+    bound = 0
+
+    async def current_headers():
+        nonlocal bound
+        bound += 1
+        if bound == 2:
+            both_bound.set()
+        await asyncio.wait_for(both_bound.wait(), timeout=10)
+        return get_request_context().model_attribution_headers({"x-ms-foundry-baggage": "application=shared"})
+
+    @app.invoke_handler
+    async def handler(_request):
+        if stream:
+
+            async def body():
+                yield json.dumps(await current_headers())
+
+            return StreamingResponse(body(), media_type="application/json")
+        return JSONResponse(await current_headers())
+
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
+
+        async def invoke(oid):
+            subject = f'oid="{oid}", tid="tenant-{oid}", idtype="user"'
+            response = await client.post(
+                "/invocations",
+                headers={
+                    "x-ms-original-subject": subject,
+                    "x-agent-foundry-call-id": f"call-{oid}",
+                },
+            )
+            assert response.status_code == 200
+            forwarded = response.json()
+            assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
+            assert forwarded["x-agent-foundry-call-id"] == f"call-{oid}"
+            members = forwarded["x-ms-foundry-baggage"].split(",")
+            assert members[1] == "application=shared"
+            assert unquote(members[0].split("=", 1)[1]) == subject
+
+        await asyncio.gather(invoke("alice"), invoke("bob"))
+    assert get_request_context().original_subject is None
 
 
 # ---------------------------------------------------------------------------

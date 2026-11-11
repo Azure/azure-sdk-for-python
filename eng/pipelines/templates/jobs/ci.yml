@@ -29,6 +29,12 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
+  - name: BuildTimeoutInMinutes
+    type: number
+    default: 90
+  - name: SbomGenerationTimeoutInMinutes
+    type: number
+    default: 30
   - name: InjectedPackages
     type: string
     default: ''
@@ -61,10 +67,26 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build_Linux'
-    timeoutInMinutes: 90
+    # Native multi-target builds retain a minimum 240-minute budget.
+    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(LINUXPOOL)
@@ -86,11 +108,19 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: linux
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Windows'
-    timeoutInMinutes: 90
+    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(WINDOWSPOOL)
@@ -105,11 +135,19 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: windows
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_MacOS'
-    timeoutInMinutes: 90
+    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(MACPOOL)
@@ -131,8 +169,13 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: mac
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Extended'
     displayName: Build Extended
@@ -141,7 +184,7 @@ jobs:
       - 'Build_Windows'
       - 'Build_MacOS'
 
-    timeoutInMinutes: 90
+    timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(LINUXPOOL)
@@ -171,6 +214,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: false
         RunApiStubGen: true
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
 
@@ -181,7 +225,7 @@ jobs:
       - 'Build_Windows'
       - 'Build_MacOS'
 
-    timeoutInMinutes: 90
+    timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(LINUXPOOL)
@@ -213,6 +257,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         RunApiStubGen: false
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
 
   - job: 'Analyze'
     condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))
@@ -228,6 +273,12 @@ jobs:
       os: linux
 
     steps:
+    # APIView compares the PR source with origin/<target>, including their merge base.
+    - checkout: self
+      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        fetchDepth: 0
+        fetchTags: false
+
     - task: UsePythonVersion@0
       displayName: "Use Python $(PythonVersion)"
       condition: succeededOrFailed()
@@ -317,78 +368,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BeforeTestSteps:
-          # PR jobs use ServiceDirectory=auto, so locate services from the job's package batch.
-          - pwsh: |
-              $ErrorActionPreference = 'Stop'
-              $sdkRoot = Join-Path "$(Build.SourcesDirectory)" "sdk"
-              $serviceDirectories = @()
-              if ("${{ parameters.ServiceDirectory }}" -eq "auto" -or "${{ parameters.ServiceDirectory }}" -eq "") {
-                $targets = "$(TargetingString)".Split(',') | ForEach-Object { $_.Trim() } | Where-Object { $_ }
-                foreach ($service in Get-ChildItem -Path $sdkRoot -Directory) {
-                  $packages = Get-ChildItem -Path $service.FullName -Directory
-                  foreach ($target in $targets) {
-                    if ($packages | Where-Object { $_.Name -like $target }) {
-                      $serviceDirectories += $service.FullName
-                      break
-                    }
-                  }
-                }
-              }
-              else {
-                $serviceDirectories = "${{ parameters.ServiceDirectory }}".Split('|') `
-                  | Where-Object { $_ } `
-                  | ForEach-Object { Join-Path $sdkRoot $_.Trim() }
-              }
-              $found = @()
-              foreach ($root in $serviceDirectories) {
-                if (-not (Test-Path $root)) { continue }
-                $found += Get-ChildItem -Path $root -Filter pyproject.toml -Recurse `
-                  | Where-Object { (Get-Content $_.FullName -Raw) -match '(?m)^\[tool\.cibuildwheel\]' }
-              }
-              if ($found) {
-                $found | ForEach-Object { Write-Host "Found compiled package: $($_.Directory.Name)" }
-                Write-Host "##vso[task.setvariable variable=CIBUILDWHEEL_DEV_REQ]true"
-              }
-              else {
-                Write-Host "No [tool.cibuildwheel] packages in targeted services; nothing to configure."
-                Write-Host "##vso[task.setvariable variable=CIBUILDWHEEL_DEV_REQ]false"
-              }
-            displayName: 'Check for compiled dev requirements'
-
-          - pwsh: |
-              Write-Host "##vso[task.setvariable variable=CIBW_ARCHS]native"
-              Write-Host "##vso[task.setvariable variable=CIBW_SKIP]pp* *musllinux*"
-              Write-Host "##vso[task.setvariable variable=CIBW_TEST_SKIP]*"
-              # Passing the feed URL preserves the package's own cibuildwheel environment (CFLAGS).
-              Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL"
-            displayName: 'Configure cibuildwheel for dev requirement builds'
-            condition: and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
-
-          # Populate cibuildwheel's CPython cache from CFS instead of public NuGet.
-          - task: NuGetAuthenticate@1
-            displayName: 'Authenticate to NuGet feed'
-            condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
-
-          - pwsh: |
-              $ErrorActionPreference = 'Stop'
-              $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
-              $version = "3.10.11"
-              $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
-              $nugetCpython = Join-Path $cache "nuget-cpython"
-              New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
-              $nuget = (Get-Command nuget).Source
-              & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
-              if ($LASTEXITCODE) {
-                Write-Error "Failed to download python $version"
-                exit 1
-              }
-              Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
-            displayName: 'Pre-provision CPython for cibuildwheel'
-            condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
-
-          - ${{ each step in parameters.BeforeTestSteps }}:
-            - ${{ step }}
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}

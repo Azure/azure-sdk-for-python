@@ -158,7 +158,7 @@ class ComputesOperations(_ComputesOperationsGenerated):
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_create_or_update(
         self,

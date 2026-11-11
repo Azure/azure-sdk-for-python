@@ -67,7 +67,10 @@ class TestDataProtectionMgmtBackupVaultsOperationsAsync(AzureMgmtRecordedTestCas
                                 "keyVaultProperties": {"keyUri": "str"},
                                 "state": "str",
                             },
-                            "immutabilitySettings": {"state": "str"},
+                            "immutabilitySettings": {
+                                "configuration": {"durationInDays": 0, "type": "str"},
+                                "state": "str",
+                            },
                             "softDeleteSettings": {"retentionDurationInDays": 0.0, "state": "str"},
                         },
                         "storageSettings": [{"datastoreType": "str", "type": "str"}],
@@ -127,7 +130,10 @@ class TestDataProtectionMgmtBackupVaultsOperationsAsync(AzureMgmtRecordedTestCas
                                 "keyVaultProperties": {"keyUri": "str"},
                                 "state": "str",
                             },
-                            "immutabilitySettings": {"state": "str"},
+                            "immutabilitySettings": {
+                                "configuration": {"durationInDays": 0, "type": "str"},
+                                "state": "str",
+                            },
                             "softDeleteSettings": {"retentionDurationInDays": 0.0, "state": "str"},
                         },
                     },

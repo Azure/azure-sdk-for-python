@@ -577,7 +577,7 @@ namespace azure.mgmt.sql.aio.operations
             ) -> DataMaskingRule: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2025-02-01-preview': ['skip']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview'])
+        @api_version_validation(params_added_on={'2025-02-01-preview': ['skip']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_database(
                 self, 
                 resource_group_name: str, 
@@ -1960,7 +1960,7 @@ namespace azure.mgmt.sql.aio.operations
             ) -> AsyncItemPaged[Database]: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2025-02-01-preview': ['top', 'skip', 'filter', 'orderby']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview'])
+        @api_version_validation(params_added_on={'2025-02-01-preview': ['top', 'skip', 'filter', 'orderby']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 resource_group_name: str, 
@@ -4394,12 +4394,15 @@ namespace azure.mgmt.sql.aio.operations
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_location(
                 self, 
                 location_name: str, 
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
@@ -4417,6 +4420,7 @@ namespace azure.mgmt.sql.aio.operations
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_resource_group_location(
                 self, 
                 resource_group_name: str, 
@@ -4424,10 +4428,13 @@ namespace azure.mgmt.sql.aio.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_resource_group_server(
                 self, 
                 resource_group_name: str, 
@@ -4436,10 +4443,13 @@ namespace azure.mgmt.sql.aio.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 location_name: str, 
@@ -4447,6 +4457,8 @@ namespace azure.mgmt.sql.aio.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
@@ -7697,10 +7709,14 @@ namespace azure.mgmt.sql.aio.operations
             ) -> RestorableDroppedDatabase: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
+                *, 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[RestorableDroppedDatabase]: ...
 
@@ -10898,6 +10914,8 @@ namespace azure.mgmt.sql.models
 
     class azure.mgmt.sql.models.BackupShortTermRetentionPolicyProperties(_Model):
         diff_backup_interval_in_hours: Optional[Union[int, DiffBackupIntervalInHours]]
+        immutability_status: Optional[Union[str, ImmutabilityStatus]]
+        lock_immutability: Optional[bool]
         retention_days: Optional[int]
 
         @overload
@@ -10905,6 +10923,7 @@ namespace azure.mgmt.sql.models
                 self, 
                 *, 
                 diff_backup_interval_in_hours: Optional[Union[int, DiffBackupIntervalInHours]] = ..., 
+                lock_immutability: Optional[bool] = ..., 
                 retention_days: Optional[int] = ...
             ) -> None: ...
 
@@ -11502,6 +11521,7 @@ namespace azure.mgmt.sql.models
         is_managed_identity_in_use: Optional[bool]
         is_storage_secondary_key_in_use: Optional[bool]
         queue_delay_ms: Optional[int]
+        required_fields: Optional[list[str]]
         retention_days: Optional[int]
         state: Union[str, BlobAuditingPolicyState]
         storage_account_access_key: Optional[str]
@@ -11517,6 +11537,7 @@ namespace azure.mgmt.sql.models
                 is_managed_identity_in_use: Optional[bool] = ..., 
                 is_storage_secondary_key_in_use: Optional[bool] = ..., 
                 queue_delay_ms: Optional[int] = ..., 
+                required_fields: Optional[list[str]] = ..., 
                 retention_days: Optional[int] = ..., 
                 state: Union[str, BlobAuditingPolicyState], 
                 storage_account_access_key: Optional[str] = ..., 
@@ -12498,6 +12519,9 @@ namespace azure.mgmt.sql.models
         instance_availability_group_name: Optional[str]
         instance_link_role: Optional[Union[str, LinkRole]]
         link_mode: Optional[Union[str, LinkModeType]]
+        most_recent_error: Optional[str]
+        most_recent_error_message: Optional[str]
+        most_recent_error_time: Optional[datetime]
         partner_availability_group_name: Optional[str]
         partner_endpoint: Optional[str]
         partner_link_role: Optional[Union[str, LinkRole]]
@@ -13071,6 +13095,7 @@ namespace azure.mgmt.sql.models
         is_storage_secondary_key_in_use: Optional[bool]
         predicate_expression: Optional[str]
         queue_delay_ms: Optional[int]
+        required_fields: Optional[list[str]]
         retention_days: Optional[int]
         state: Union[str, BlobAuditingPolicyState]
         storage_account_access_key: Optional[str]
@@ -13087,6 +13112,7 @@ namespace azure.mgmt.sql.models
                 is_storage_secondary_key_in_use: Optional[bool] = ..., 
                 predicate_expression: Optional[str] = ..., 
                 queue_delay_ms: Optional[int] = ..., 
+                required_fields: Optional[list[str]] = ..., 
                 retention_days: Optional[int] = ..., 
                 state: Union[str, BlobAuditingPolicyState], 
                 storage_account_access_key: Optional[str] = ..., 
@@ -13132,6 +13158,7 @@ namespace azure.mgmt.sql.models
         is_storage_secondary_key_in_use: Optional[bool]
         predicate_expression: Optional[str]
         queue_delay_ms: Optional[int]
+        required_fields: Optional[list[str]]
         retention_days: Optional[int]
         state: Union[str, BlobAuditingPolicyState]
         storage_account_access_key: Optional[str]
@@ -13149,6 +13176,7 @@ namespace azure.mgmt.sql.models
                 is_storage_secondary_key_in_use: Optional[bool] = ..., 
                 predicate_expression: Optional[str] = ..., 
                 queue_delay_ms: Optional[int] = ..., 
+                required_fields: Optional[list[str]] = ..., 
                 retention_days: Optional[int] = ..., 
                 state: Union[str, BlobAuditingPolicyState], 
                 storage_account_access_key: Optional[str] = ..., 
@@ -13475,6 +13503,12 @@ namespace azure.mgmt.sql.models
         SYSTEM_ASSIGNED = "SystemAssigned"
         SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
         USER_ASSIGNED = "UserAssigned"
+
+
+    class azure.mgmt.sql.models.ImmutabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
+        LOCKED = "Locked"
 
 
     class azure.mgmt.sql.models.ImplementationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -14931,12 +14965,15 @@ namespace azure.mgmt.sql.models
 
 
     class azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicyProperties(_Model):
+        immutability_status: Optional[Union[str, ImmutabilityStatus]]
+        lock_immutability: Optional[bool]
         retention_days: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                lock_immutability: Optional[bool] = ..., 
                 retention_days: Optional[int] = ...
             ) -> None: ...
 
@@ -15717,8 +15754,12 @@ namespace azure.mgmt.sql.models
         backup_time: Optional[datetime]
         database_deletion_time: Optional[datetime]
         database_name: Optional[str]
+        is_backup_immutable: Optional[bool]
+        legal_hold_immutability: Optional[Union[str, SetLegalHoldImmutability]]
         managed_instance_create_time: Optional[datetime]
         managed_instance_name: Optional[str]
+        time_based_immutability: Optional[Union[str, TimeBasedImmutability]]
+        time_based_immutability_mode: Optional[Union[str, TimeBasedImmutabilityMode]]
 
 
     class azure.mgmt.sql.models.ManagedInstanceLongTermRetentionPolicy(ProxyResource):
@@ -15754,6 +15795,8 @@ namespace azure.mgmt.sql.models
     class azure.mgmt.sql.models.ManagedInstanceLongTermRetentionPolicyProperties(_Model):
         backup_storage_access_tier: Optional[Union[str, BackupStorageAccessTier]]
         monthly_retention: Optional[str]
+        time_based_immutability: Optional[Union[str, TimeBasedImmutability]]
+        time_based_immutability_mode: Optional[Union[str, TimeBasedImmutabilityMode]]
         week_of_year: Optional[int]
         weekly_retention: Optional[str]
         yearly_retention: Optional[str]
@@ -15764,6 +15807,8 @@ namespace azure.mgmt.sql.models
                 *, 
                 backup_storage_access_tier: Optional[Union[str, BackupStorageAccessTier]] = ..., 
                 monthly_retention: Optional[str] = ..., 
+                time_based_immutability: Optional[Union[str, TimeBasedImmutability]] = ..., 
+                time_based_immutability_mode: Optional[Union[str, TimeBasedImmutabilityMode]] = ..., 
                 week_of_year: Optional[int] = ..., 
                 weekly_retention: Optional[str] = ..., 
                 yearly_retention: Optional[str] = ...
@@ -18290,6 +18335,7 @@ namespace azure.mgmt.sql.models
         is_managed_identity_in_use: Optional[bool]
         is_storage_secondary_key_in_use: Optional[bool]
         queue_delay_ms: Optional[int]
+        required_fields: Optional[list[str]]
         retention_days: Optional[int]
         state: Union[str, BlobAuditingPolicyState]
         storage_account_access_key: Optional[str]
@@ -18306,6 +18352,7 @@ namespace azure.mgmt.sql.models
                 is_managed_identity_in_use: Optional[bool] = ..., 
                 is_storage_secondary_key_in_use: Optional[bool] = ..., 
                 queue_delay_ms: Optional[int] = ..., 
+                required_fields: Optional[list[str]] = ..., 
                 retention_days: Optional[int] = ..., 
                 state: Union[str, BlobAuditingPolicyState], 
                 storage_account_access_key: Optional[str] = ..., 
@@ -20638,7 +20685,7 @@ namespace azure.mgmt.sql.operations
             ) -> DataMaskingRule: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2025-02-01-preview': ['skip']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview'])
+        @api_version_validation(params_added_on={'2025-02-01-preview': ['skip']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_database(
                 self, 
                 resource_group_name: str, 
@@ -22021,7 +22068,7 @@ namespace azure.mgmt.sql.operations
             ) -> ItemPaged[Database]: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2025-02-01-preview': ['top', 'skip', 'filter', 'orderby']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview'])
+        @api_version_validation(params_added_on={'2025-02-01-preview': ['top', 'skip', 'filter', 'orderby']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 resource_group_name: str, 
@@ -24455,12 +24502,15 @@ namespace azure.mgmt.sql.operations
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_location(
                 self, 
                 location_name: str, 
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
@@ -24478,6 +24528,7 @@ namespace azure.mgmt.sql.operations
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_resource_group_location(
                 self, 
                 resource_group_name: str, 
@@ -24485,10 +24536,13 @@ namespace azure.mgmt.sql.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_resource_group_server(
                 self, 
                 resource_group_name: str, 
@@ -24497,10 +24551,13 @@ namespace azure.mgmt.sql.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 location_name: str, 
@@ -24508,6 +24565,8 @@ namespace azure.mgmt.sql.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
@@ -27758,10 +27817,14 @@ namespace azure.mgmt.sql.operations
             ) -> RestorableDroppedDatabase: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
+                *, 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[RestorableDroppedDatabase]: ...
 
@@ -30766,8 +30829,12 @@ namespace azure.mgmt.sql.types
 
     class azure.mgmt.sql.types.BackupShortTermRetentionPolicyProperties(TypedDict, total=False):
         key "diffBackupIntervalInHours": Union[int, DiffBackupIntervalInHours]
+        key "immutabilityStatus": Union[str, ImmutabilityStatus]
+        key "lockImmutability": bool
         key "retentionDays": int
         diffBackupIntervalInHours: Union[int, DiffBackupIntervalInHours]
+        immutabilityStatus: Union[str, ImmutabilityStatus]
+        lockImmutability: bool
         retentionDays: int
 
 
@@ -30997,6 +31064,7 @@ namespace azure.mgmt.sql.types
         isManagedIdentityInUse: bool
         isStorageSecondaryKeyInUse: bool
         queueDelayMs: int
+        requiredFields: list[str]
         retentionDays: int
         state: Union[str, BlobAuditingPolicyState]
         storageAccountAccessKey: str
@@ -31441,6 +31509,9 @@ namespace azure.mgmt.sql.types
         key "instanceAvailabilityGroupName": str
         key "instanceLinkRole": Union[str, LinkRole]
         key "linkMode": Union[str, LinkModeType]
+        key "mostRecentError": str
+        key "mostRecentErrorMessage": str
+        key "mostRecentErrorTime": str
         key "partnerAvailabilityGroupName": str
         key "partnerEndpoint": str
         key "partnerLinkRole": Union[str, LinkRole]
@@ -31453,6 +31524,9 @@ namespace azure.mgmt.sql.types
         instanceAvailabilityGroupName: str
         instanceLinkRole: Union[str, LinkRole]
         linkMode: Union[str, LinkModeType]
+        mostRecentError: str
+        mostRecentErrorMessage: str
+        mostRecentErrorTime: str
         partnerAvailabilityGroupName: str
         partnerEndpoint: str
         partnerLinkRole: Union[str, LinkRole]
@@ -31644,6 +31718,7 @@ namespace azure.mgmt.sql.types
         isStorageSecondaryKeyInUse: bool
         predicateExpression: str
         queueDelayMs: int
+        requiredFields: list[str]
         retentionDays: int
         state: Union[str, BlobAuditingPolicyState]
         storageAccountAccessKey: str
@@ -31683,6 +31758,7 @@ namespace azure.mgmt.sql.types
         isStorageSecondaryKeyInUse: bool
         predicateExpression: str
         queueDelayMs: int
+        requiredFields: list[str]
         retentionDays: int
         state: Union[str, BlobAuditingPolicyState]
         storageAccountAccessKey: str
@@ -32263,7 +32339,11 @@ namespace azure.mgmt.sql.types
 
 
     class azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicyProperties(TypedDict, total=False):
+        key "immutabilityStatus": Union[str, ImmutabilityStatus]
+        key "lockImmutability": bool
         key "retentionDays": int
+        immutabilityStatus: Union[str, ImmutabilityStatus]
+        lockImmutability: bool
         retentionDays: int
 
 
@@ -32600,11 +32680,15 @@ namespace azure.mgmt.sql.types
     class azure.mgmt.sql.types.ManagedInstanceLongTermRetentionPolicyProperties(TypedDict, total=False):
         key "backupStorageAccessTier": Union[str, BackupStorageAccessTier]
         key "monthlyRetention": str
+        key "timeBasedImmutability": Union[str, TimeBasedImmutability]
+        key "timeBasedImmutabilityMode": Union[str, TimeBasedImmutabilityMode]
         key "weekOfYear": int
         key "weeklyRetention": str
         key "yearlyRetention": str
         backupStorageAccessTier: Union[str, BackupStorageAccessTier]
         monthlyRetention: str
+        timeBasedImmutability: Union[str, TimeBasedImmutability]
+        timeBasedImmutabilityMode: Union[str, TimeBasedImmutabilityMode]
         weekOfYear: int
         weeklyRetention: str
         yearlyRetention: str
@@ -33372,6 +33456,7 @@ namespace azure.mgmt.sql.types
         isManagedIdentityInUse: bool
         isStorageSecondaryKeyInUse: bool
         queueDelayMs: int
+        requiredFields: list[str]
         retentionDays: int
         state: Union[str, BlobAuditingPolicyState]
         storageAccountAccessKey: str

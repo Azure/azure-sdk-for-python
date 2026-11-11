@@ -41,6 +41,7 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                     "id": "str",
                     "name": "str",
                     "properties": {
+                        "requireZonalResiliency": bool,
                         "errorDetails": {
                             "additionalInfo": [{"info": {}, "type": "str"}],
                             "code": "str",
@@ -48,13 +49,8 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                             "message": "str",
                             "target": "str",
                         },
-                        "goalAssignmentType": "str",
-                        "goalTemplateId": "str",
                         "provisioningState": "str",
-                        "requireZonalResiliency": bool,
-                        "serviceLevelResources": [
-                            {"serviceLevelIndicatorResourceId": "str", "serviceLevelObjectiveResourceId": "str"}
-                        ],
+                        "serviceLevelResources": [{"serviceLevelIndicatorResourceId": "str"}],
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -83,6 +79,7 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                     "id": "str",
                     "name": "str",
                     "properties": {
+                        "requireZonalResiliency": bool,
                         "errorDetails": {
                             "additionalInfo": [{"info": {}, "type": "str"}],
                             "code": "str",
@@ -90,13 +87,8 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                             "message": "str",
                             "target": "str",
                         },
-                        "goalAssignmentType": "str",
-                        "goalTemplateId": "str",
                         "provisioningState": "str",
-                        "requireZonalResiliency": bool,
-                        "serviceLevelResources": [
-                            {"serviceLevelIndicatorResourceId": "str", "serviceLevelObjectiveResourceId": "str"}
-                        ],
+                        "serviceLevelResources": [{"serviceLevelIndicatorResourceId": "str"}],
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -128,21 +120,7 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                             "name": "str",
                             "properties": {
                                 "resourceArmId": "str",
-                                "disasterRecoveryAttestationStatus": "str",
-                                "disasterRecoveryGoalParticipation": "str",
-                                "exclusionReasonForDisasterRecoveryGoals": "str",
-                                "exclusionReasonForHighAvailabilityGoals": "str",
-                                "highAvailabilityAttestationStatus": "str",
-                                "highAvailabilityGoalParticipation": "str",
                                 "provisioningState": "str",
-                                "serviceGroupMemberships": [{"membershipType": "str", "serviceGroupId": "str"}],
-                                "userConfirmationForHighAvailability": [
-                                    {
-                                        "confirmationStatus": "str",
-                                        "solutionDisplayName": "str",
-                                        "reasonForRequestingConfirmation": "str",
-                                    }
-                                ],
                                 "zonalResiliency": {
                                     "attestationStatus": "str",
                                     "exclusionReason": "str",

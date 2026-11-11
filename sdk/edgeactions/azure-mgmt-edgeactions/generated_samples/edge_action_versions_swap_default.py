@@ -33,10 +33,10 @@ def main():
     client.edge_action_versions.begin_swap_default(
         resource_group_name="testrg",
         edge_action_name="edgeAction1",
-        version="1.0",
+        version="version1",
     ).result()
 
 
-# x-ms-original-file: 2025-12-01-preview/EdgeActionVersions_SwapDefault.json
+# x-ms-original-file: 2026-10-01/EdgeActionVersions_SwapDefault.json
 if __name__ == "__main__":
     main()

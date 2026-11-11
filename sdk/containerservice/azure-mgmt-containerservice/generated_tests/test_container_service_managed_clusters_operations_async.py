@@ -284,6 +284,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 "workloadRuntime": "str",
                             }
                         ],
+                        "agentSandboxProfile": {"enabled": bool},
                         "aiToolchainOperatorProfile": {"enabled": bool},
                         "apiServerAccessProfile": {
                             "authorizedIPRanges": ["str"],
@@ -397,12 +398,19 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                     "transitEncryption": {"type": "str"},
                                 },
                             },
-                            "bastionProfile": {
-                                "bastionId": "str",
-                                "enabled": bool,
-                                "publicIpAddressId": "str",
-                                "scaleUnits": 0,
-                                "sku": "str",
+                            "clusterAPIConnectivityProfile": {
+                                "bastion": {
+                                    "bastionId": "str",
+                                    "enabled": bool,
+                                    "publicIpAddressId": "str",
+                                    "scaleUnits": 0,
+                                    "sku": "str",
+                                },
+                                "cloudShell": {
+                                    "mode": "str",
+                                    "network": {"relayNamespaceId": "str", "subnetId": "str"},
+                                    "storage": {"fileShareName": "str", "mode": "str", "storageAccountId": "str"},
+                                },
                             },
                             "dnsServiceIP": "str",
                             "ipFamilies": ["str"],
@@ -481,6 +489,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 {"name": "str", "namespace": "str", "podLabels": {"str": "str"}}
                             ],
                         },
+                        "podSnapshotProfile": {"enabled": bool},
                         "powerState": {"code": "str"},
                         "privateFQDN": "str",
                         "privateLinkResources": [
@@ -565,7 +574,13 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         },
                         "storageProfile": {
                             "blobCSIDriver": {"enabled": bool},
-                            "diskCSIDriver": {"enabled": bool},
+                            "diskCSIDriver": {
+                                "enabled": bool,
+                                "quickAttachDetach": {
+                                    "enabled": bool,
+                                    "identity": {"clientId": "str", "objectId": "str", "resourceId": "str"},
+                                },
+                            },
                             "fileCSIDriver": {"enabled": bool},
                             "snapshotController": {"enabled": bool},
                         },

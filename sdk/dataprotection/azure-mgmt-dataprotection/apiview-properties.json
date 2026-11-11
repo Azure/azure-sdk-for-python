@@ -98,6 +98,7 @@
         "azure.mgmt.dataprotection.models.GenericRestoreDatasourceCriteria": "Microsoft.DataProtection.GenericRestoreDatasourceCriteria",
         "azure.mgmt.dataprotection.models.IdentityDetails": "Microsoft.DataProtection.IdentityDetails",
         "azure.mgmt.dataprotection.models.ImmediateCopyOption": "Microsoft.DataProtection.ImmediateCopyOption",
+        "azure.mgmt.dataprotection.models.ImmutabilityConfiguration": "Microsoft.DataProtection.ImmutabilityConfiguration",
         "azure.mgmt.dataprotection.models.ImmutabilitySettings": "Microsoft.DataProtection.ImmutabilitySettings",
         "azure.mgmt.dataprotection.models.InnerError": "Microsoft.DataProtection.InnerError",
         "azure.mgmt.dataprotection.models.RestoreTargetInfoBase": "Microsoft.DataProtection.RestoreTargetInfoBase",
@@ -122,9 +123,11 @@
         "azure.mgmt.dataprotection.models.PatchResourceRequestInput": "Microsoft.DataProtection.PatchResourceRequestInput",
         "azure.mgmt.dataprotection.models.PolicyInfo": "Microsoft.DataProtection.PolicyInfo",
         "azure.mgmt.dataprotection.models.PolicyParameters": "Microsoft.DataProtection.PolicyParameters",
+        "azure.mgmt.dataprotection.models.PostgreSqlFlexibleServerBackupDatasourceParameters": "Microsoft.DataProtection.PostgreSqlFlexibleServerBackupDatasourceParameters",
         "azure.mgmt.dataprotection.models.ProtectionStatusDetails": "Microsoft.DataProtection.ProtectionStatusDetails",
         "azure.mgmt.dataprotection.models.RangeBasedItemLevelRestoreCriteria": "Microsoft.DataProtection.RangeBasedItemLevelRestoreCriteria",
         "azure.mgmt.dataprotection.models.RecoveryPointDataStoreDetails": "Microsoft.DataProtection.RecoveryPointDataStoreDetails",
+        "azure.mgmt.dataprotection.models.RecoveryPointImmutabilityProperties": "Microsoft.DataProtection.RecoveryPointImmutabilityProperties",
         "azure.mgmt.dataprotection.models.ResourceDeletionInfo": "Microsoft.DataProtection.ResourceDeletionInfo",
         "azure.mgmt.dataprotection.models.ResourceGuard": "Microsoft.DataProtection.ResourceGuard",
         "azure.mgmt.dataprotection.models.ResourceGuardOperation": "Microsoft.DataProtection.ResourceGuardOperation",
@@ -173,6 +176,7 @@
         "azure.mgmt.dataprotection.models.BlobBackupRuleMode": "Microsoft.DataProtection.BlobBackupRuleMode",
         "azure.mgmt.dataprotection.models.BlobBackupPatternType": "Microsoft.DataProtection.BlobBackupPatternType",
         "azure.mgmt.dataprotection.models.AKSVolumeTypes": "Microsoft.DataProtection.AKSVolumeTypes",
+        "azure.mgmt.dataprotection.models.BackupSolutionType": "Microsoft.DataProtection.BackupSolutionType",
         "azure.mgmt.dataprotection.models.Status": "Microsoft.DataProtection.Status",
         "azure.mgmt.dataprotection.models.CurrentProtectionState": "Microsoft.DataProtection.CurrentProtectionState",
         "azure.mgmt.dataprotection.models.SecretStoreType": "Microsoft.DataProtection.SecretStoreType",
@@ -190,6 +194,7 @@
         "azure.mgmt.dataprotection.models.ResourceMoveState": "Microsoft.DataProtection.ResourceMoveState",
         "azure.mgmt.dataprotection.models.SoftDeleteState": "Microsoft.DataProtection.SoftDeleteState",
         "azure.mgmt.dataprotection.models.ImmutabilityState": "Microsoft.DataProtection.ImmutabilityState",
+        "azure.mgmt.dataprotection.models.ImmutabilityType": "Microsoft.DataProtection.ImmutabilityType",
         "azure.mgmt.dataprotection.models.EncryptionState": "Microsoft.DataProtection.EncryptionState",
         "azure.mgmt.dataprotection.models.IdentityType": "Microsoft.DataProtection.IdentityType",
         "azure.mgmt.dataprotection.models.InfrastructureEncryptionState": "Microsoft.DataProtection.InfrastructureEncryptionState",
@@ -359,5 +364,5 @@
         "azure.mgmt.dataprotection.operations.BackupInstancesExtensionRoutingOperations.list": "Microsoft.DataProtection.BackupInstancesExtensionRoutingOperationGroup.list",
         "azure.mgmt.dataprotection.aio.operations.BackupInstancesExtensionRoutingOperations.list": "Microsoft.DataProtection.BackupInstancesExtensionRoutingOperationGroup.list"
     },
-    "CrossLanguageVersion": "cb99eef1dbd7"
+    "CrossLanguageVersion": "332966f982f0"
 }

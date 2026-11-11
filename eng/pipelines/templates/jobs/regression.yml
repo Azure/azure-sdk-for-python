@@ -82,9 +82,9 @@ jobs:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.10'
+        displayName: 'Use Python 3.11'
         inputs:
-          versionSpec: '3.10'
+          versionSpec: '3.11'
 
       - template: /eng/pipelines/templates/steps/use-venv.yml
 

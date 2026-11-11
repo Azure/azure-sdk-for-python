@@ -52,6 +52,15 @@ class AlertsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DISABLED."""
 
 
+class BackupSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backup solution types for PostgreSQL Flexible Server."""
+
+    LOGICAL_BACKUP = "LogicalBackup"
+    """Logical backup type."""
+    PHYSICAL_BACKUP = "PhysicalBackup"
+    """Physical backup type."""
+
+
 class BCDRSecurityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Security Level of Backup Vault."""
 
@@ -254,6 +263,15 @@ class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNLOCKED."""
     LOCKED = "Locked"
     """LOCKED."""
+
+
+class ImmutabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of immutability configuration."""
+
+    AS_PER_POLICY = "AsPerPolicy"
+    """Immutability is enforced as per the backup policy retention."""
+    TIME_BASED = "TimeBased"
+    """Time-based immutability with a configurable duration window."""
 
 
 class InfrastructureEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

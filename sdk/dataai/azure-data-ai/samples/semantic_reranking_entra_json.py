@@ -7,7 +7,7 @@ import json
 import os
 
 from azure.data.ai import InferenceClient
-from azure.data.ai.types import SemanticRerankingInferenceContent
+from azure.data.ai.models import SemanticRerankingInferenceContent
 from azure.identity import DefaultAzureCredential
 
 
@@ -33,19 +33,19 @@ def main() -> None:
             "metadata": {"category": "database"},
         },
     ]
-    request: SemanticRerankingInferenceContent = {
-        "query": "How does Azure Cosmos DB scale globally?",
+    request = SemanticRerankingInferenceContent(
+        query="How does Azure Cosmos DB scale globally?",
         # Each document is a JSON-encoded string, not a dictionary.
-        "documents": [json.dumps(document) for document in documents],
-        "topK": 2,
-        "returnDocuments": True,
-        "returnSentenceScore": True,
-        "batchSize": len(documents),
-        "sort": True,
-        "documentType": "json",
-        "targetPaths": "title,description",
-        "model": "aisearch-reranker",
-    }
+        documents=[json.dumps(document) for document in documents],
+        top_k=2,
+        return_documents=True,
+        return_sentence_score=True,
+        batch_size=len(documents),
+        sort=True,
+        document_type="json",
+        target_paths=["title", "description"],
+        model="aisearch-reranker",
+    )
     with DefaultAzureCredential() as credential:
         with InferenceClient(endpoint=endpoint, credential=credential) as client:
             result = client.semantic_rerank(request)

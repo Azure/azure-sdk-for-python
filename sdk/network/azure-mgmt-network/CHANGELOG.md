@@ -1,5 +1,45 @@
 # Release History
 
+## 33.1.0 (2026-10-09)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added operation group `express_route_lag_authorizations`
+  - Client `NetworkManagementClient` added operation group `virtual_network_appliance_capabilities`
+  - Model `DdosCustomPolicyPropertiesFormat` added property `mitigation_rules`
+  - Model `ExpressRouteLagPropertiesFormat` added property `authorizations`
+  - Model `VirtualNetworkAppliancePropertiesFormat` added property `capacity_provider`
+  - Added model `ArmProxyResource`
+  - Added model `ArmResource`
+  - Added enum `DdosContinent`
+  - Added model `DdosGeoMatch`
+  - Added model `DdosMitigationRule`
+  - Added model `DdosMitigationRulePropertiesFormat`
+  - Added enum `DdosMitigationTrafficScope`
+  - Added model `DdosSourceMatchConditions`
+  - Added model `DdosSourcePolicyAction`
+  - Added enum `DdosSourcePolicyActionType`
+  - Added model `DdosSourcePolicyOverride`
+  - Added model `DdosTcpDefaultMitigations`
+  - Added model `DdosTcpPerSourceConnectionRateLimitPolicy`
+  - Added model `DdosTcpPerSourceRateLimitPolicy`
+  - Added model `DdosUdpDefaultMitigations`
+  - Added model `DdosUdpPerSourceRateLimitPolicy`
+  - Added model `ExpressRouteLagAuthorization`
+  - Added model `ExpressRouteLagAuthorizationPropertiesFormat`
+  - Added enum `ExpressRouteLagAuthorizationUseStatus`
+  - Added model `Nat64Capability`
+  - Added model `PLGatewayCapability`
+  - Added model `PLGatewayFastpathCapability`
+  - Added model `PLIPForwardersCapability`
+  - Added model `ProxyResourceVirtualNetworkApplianceCapabilityProperties`
+  - Added model `VirtualNetworkApplianceCapability`
+  - Added enum `VirtualNetworkApplianceCapabilityIpVersion`
+  - Added enum `VirtualNetworkApplianceCapabilityKind`
+  - Added model `VirtualNetworkApplianceCapabilityProperties`
+  - Added operation group `ExpressRouteLagAuthorizationsOperations`
+  - Added operation group `VirtualNetworkApplianceCapabilitiesOperations`
+
 ## 33.0.0 (2026-09-17)
 
 ### Features Added

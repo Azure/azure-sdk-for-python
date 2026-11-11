@@ -401,6 +401,7 @@
     "prevsnapshot",
     "prompty",
     "pschema",
+    "pscustomobject",
     "PSECRET",
     "pstn",
     "pydantic",
@@ -590,6 +591,28 @@
         "mltable",
         "wsid",
         "runid"
+      ]
+    },
+    {
+      "filename": [
+        "sdk/ai/azure-ai-projects/tests.yml",
+        "sdk/ai/azure-ai-projects/tests/samples/ci/**",
+        "sdk/ai/azure-ai-projects/tests/samples/sample_log.py"
+      ],
+      "words": [
+        "axpy",
+        "bicepparam",
+        "caphostproj",
+        "cnotin",
+        "DEFINITIONID",
+        "foundy",
+        "idtyp",
+        "Nlcjpw",
+        "opusr",
+        "pscore",
+        "pytrace",
+        "retagged",
+        "unconfigured"
       ]
     },
     {
@@ -2205,7 +2228,7 @@
     },
     {
       "filename": ".github/**",
-      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily"]
+      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily", "pygen"]
     },
     {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",

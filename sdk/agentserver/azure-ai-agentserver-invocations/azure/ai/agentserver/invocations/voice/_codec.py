@@ -17,10 +17,10 @@ from azure.ai.agentserver.core import experimental
 
 from ._models import (
     AgentError,
-    BargeIn,
     EndCall,
     EndCallMode,
     InboundVoiceMessage,
+    InputDataPart,
     InputTextPart,
     OutboundVoiceMessage,
     ResponseAccepted,
@@ -30,6 +30,7 @@ from ._models import (
     ResponseDone,
     ResponseDropped,
     ResponseNone,
+    ResponseOutputDataDone,
     ResponseOutputTextDelta,
     ResponseOutputTextDone,
     ResponseTimeout,
@@ -38,6 +39,7 @@ from ._models import (
     SessionReady,
     SessionRejected,
     SessionStart,
+    UserBargeIn,
     UserMessage,
     UserNoInput,
     UserSpeechStarted,
@@ -134,6 +136,7 @@ _OUTBOUND_TYPES = {
     "response.created",
     "response.done",
     "response.none",
+    "response.output_data.done",
     "response.output_text.delta",
     "response.output_text.done",
     "session.ready",
@@ -197,8 +200,8 @@ def decode_inbound_message(frame: str) -> InboundVoiceMessage | None:  # pylint:
         )
     if message_type == "user.speech_started":
         return UserSpeechStarted(**common)
-    if message_type == "barge_in":
-        return BargeIn(
+    if message_type == "user.barge_in":
+        return UserBargeIn(
             **common,
             response_id=_prefixed_identifier(payload, "response_id", "r_"),
             item_id=_optional_prefixed_identifier(payload, "item_id", "it_"),
@@ -249,6 +252,7 @@ def encode_outbound_message(message: OutboundVoiceMessage) -> str:
             SessionRejected,
             ResponseCreated,
             ResponseNone,
+            ResponseOutputDataDone,
             ResponseOutputTextDelta,
             ResponseOutputTextDone,
             ResponseDone,
@@ -271,15 +275,7 @@ def encode_outbound_message(message: OutboundVoiceMessage) -> str:
         )
         _put_optional_string(payload, "message", message.message)
     elif isinstance(message, ResponseCreated):
-        payload["response_id"] = _validate_prefixed_identifier_value(message.response_id, "response_id", "r_")
-        if message.in_reply_to is not None:
-            payload["in_reply_to"] = _validate_input_prefix(message.in_reply_to)
-            if message.admission_timeout_ms is not None or message.supersede_key is not None:
-                raise ValueError("reply response.created cannot contain proactive admission controls")
-        else:
-            if message.admission_timeout_ms is not None:
-                payload["admission_timeout_ms"] = _validate_admission_timeout_ms(message.admission_timeout_ms)
-            _put_optional_string(payload, "supersede_key", message.supersede_key, non_empty=True)
+        _put_response_created_fields(payload, message)
     elif isinstance(message, ResponseNone):
         payload["in_reply_to"] = _validate_input_prefix(message.in_reply_to)
         _put_optional_string(payload, "reason", message.reason)
@@ -297,6 +293,12 @@ def encode_outbound_message(message: OutboundVoiceMessage) -> str:
             text=_validate_string_value(message.text, "text"),
         )
         _put_optional_voice(payload, message.voice)
+    elif isinstance(message, ResponseOutputDataDone):
+        payload.update(
+            response_id=_validate_prefixed_identifier_value(message.response_id, "response_id", "r_"),
+            item_id=_validate_prefixed_identifier_value(message.item_id, "item_id", "it_"),
+            data=_thaw_json(message.data),
+        )
     elif isinstance(message, ResponseDone):
         payload["response_id"] = _validate_prefixed_identifier_value(message.response_id, "response_id", "r_")
     elif isinstance(message, ResponseCancel):
@@ -335,6 +337,27 @@ def encode_outbound_message(message: OutboundVoiceMessage) -> str:
     return frame
 
 
+def _put_response_created_fields(payload: dict[str, Any], message: ResponseCreated) -> None:
+    """Validate response admission fields without owning response lifecycle state.
+
+    :param payload: Outbound frame fields to populate.
+    :type payload: dict[str, Any]
+    :param message: Response creation message to validate.
+    :type message: ResponseCreated
+    :return: None.
+    :rtype: None
+    """
+    payload["response_id"] = _validate_prefixed_identifier_value(message.response_id, "response_id", "r_")
+    if message.in_reply_to is not None:
+        payload["in_reply_to"] = _validate_input_prefix(message.in_reply_to)
+        if message.admission_timeout_ms is not None or message.supersede_key is not None:
+            raise ValueError("reply response.created cannot contain proactive admission controls")
+        return
+    if message.admission_timeout_ms is not None:
+        payload["admission_timeout_ms"] = _validate_admission_timeout_ms(message.admission_timeout_ms)
+    _put_optional_string(payload, "supersede_key", message.supersede_key, non_empty=True)
+
+
 def _parse_session_start(payload: Mapping[str, Any], common: Mapping[str, str]) -> SessionStart:
     timeout_payload = _required_mapping(payload, "response_timeouts")
     reconnect = payload.get("reconnect")
@@ -370,13 +393,15 @@ def _parse_user_message(payload: Mapping[str, Any], common: Mapping[str, str]) -
     raw_content = payload.get("content")
     if not isinstance(raw_content, list) or not raw_content:
         raise VoiceProtocolError("user.message content must be a non-empty array")
-    content: list[InputTextPart] = []
+    content: list[InputTextPart | InputDataPart] = []
     for raw_part in raw_content:
         if not isinstance(raw_part, dict):
             raise VoiceProtocolError("user.message content parts must be objects")
         part_type = raw_part.get("type")
         if part_type == "input_text":
             content.append(InputTextPart(text=_required_string(raw_part, "text")))
+        elif part_type == "input_data":
+            content.append(InputDataPart(data=_required_mapping(raw_part, "data")))
         elif part_type == "input_image":
             raise VoiceUnsupportedMessageError("Image content is not supported by this profile")
         elif not isinstance(part_type, str):

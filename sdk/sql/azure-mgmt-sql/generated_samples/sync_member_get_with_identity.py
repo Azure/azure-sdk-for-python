@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/SyncMemberGetWithIdentity.json
+# x-ms-original-file: 2026-08-01-preview/SyncMemberGetWithIdentity.json
 if __name__ == "__main__":
     main()

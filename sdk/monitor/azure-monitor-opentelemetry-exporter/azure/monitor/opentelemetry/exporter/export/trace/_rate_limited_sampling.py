@@ -96,10 +96,9 @@ class RateLimitedSampler(Sampler):
         links: Optional[Sequence["Link"]] = None,
         trace_state: Optional["TraceState"] = None,
     ) -> "SamplingResult":
-        if parent_context is not None:
-            parent_result = parent_context_sampling(parent_context, attributes)
-            if parent_result is not None:
-                return parent_result
+        parent_result = parent_context_sampling(parent_context, attributes)
+        if parent_result is not None:
+            return parent_result
 
         sampling_percentage = self._sampling_percentage_generator.get()
         sampling_score = _get_DJB2_sample_score(format_trace_id(trace_id).lower()) * 100.0

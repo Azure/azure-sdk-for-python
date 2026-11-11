@@ -4,19 +4,23 @@
     "ActivityLogAlertsApi": "2023-01-01-preview",
     "ActivityLogsApi": "2015-04-01",
     "AlertRulesIncidentsApi": "2016-03-01",
-    "AutoScaleApi": "2022-10-01",
+    "AutoScaleApi": "2025-09-01-preview",
     "DataCollectionApi": "2024-03-11",
+    "DiagnosticsSettings": "2021-05-01-preview",
     "LogProfilesApi": "2016-03-01",
-    "MetricAlertApi": "2024-03-01-preview",
+    "MetricAlertApi": "2026-01-01",
     "MetricBaselinesApi": "2019-03-01",
     "MetricsApi": "2024-02-01",
     "NetworkSecurityPerimeterApi": "2021-10-01",
     "PrivateLinkScopesApi": "2023-06-01-preview",
     "ScheduledQueryRuleApi": "2025-01-01-preview",
-    "ServiceDiagnosticsSettingsApi": "2016-09-01"
+    "ServiceDiagnosticsSettingsApi": "2016-09-01",
+    "TenantActionGroups": "2023-05-01-preview",
+    "VmInsightsOnboarding": "2018-11-27-preview"
   },
-  "commit": "84ee97f0cd82f3432f0ff0185e4deeb58624aac6",
+  "commit": "ba3eef39e5be55cd5ed1a2e5c6c9bb1a17c36b9a",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/monitor/resource-manager/Microsoft.Insights/Insights",
-  "emitterVersion": "0.63.0"
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }

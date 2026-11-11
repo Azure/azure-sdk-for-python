@@ -159,6 +159,7 @@ def main():
                                                 "loadBalancerBackendAddressPools": [{"id": "str"}],
                                                 "loadBalancerInboundNatPools": [{"id": "str"}],
                                                 "primary": bool,
+                                                "privateIPAddressPrefixLength": 0,
                                                 "privateIPAddressVersion": "str",
                                                 "publicIPAddressConfiguration": {
                                                     "name": "str",

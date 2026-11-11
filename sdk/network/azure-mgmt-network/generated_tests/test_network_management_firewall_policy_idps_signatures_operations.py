@@ -31,7 +31,7 @@ class TestNetworkManagementFirewallPolicyIdpsSignaturesOperations(AzureMgmtRecor
                 "search": "str",
                 "skip": 0,
             },
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

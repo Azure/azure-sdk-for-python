@@ -1,5 +1,18 @@
 # Release History
 
+## 7.15.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed a pyAMQP session-window error after many outgoing management requests on a long-lived receiver. The client now replenishes its outgoing session window before it can become negative, and unsigned AMQP fields reject negative values rather than encoding them as positive values. ([#49232](https://github.com/Azure/azure-sdk-for-python/issues/49232))
+- Fixed pyAMQP receive-window recovery after a link handler raises or is cancelled. Replenishment happens after delivery and only while the session is mapped, so closing sessions do not advertise new receive capacity.
+
+### Other Changes
+
 ## 7.15.0 (2026-10-06)
 
 ### Features Added
@@ -17,7 +30,7 @@
 
 ### Bugs Fixed
 
-- Fixed a pyAMQP session-window error after many outgoing management requests on a long-lived receiver. The client now replenishes its outgoing session window before it can become negative, and unsigned AMQP fields reject negative values rather than encoding them as positive values. ([#49232](https://github.com/Azure/azure-sdk-for-python/issues/49232))
+- Fixed a leak of `aiohttp.ClientSession` instances when the async `AmqpOverWebsocket` transport could not connect or its WebSocket failed while closing. ([#49131](https://github.com/Azure/azure-sdk-for-python/issues/49131))
 - Fixed a bug where the async `AutoLockRenewer` never released completed renewal futures from its internal collection, so a long-lived renewer accumulated one entry per registered message for its whole lifetime (memory growth proportional to the total messages processed, reclaimed only on `close()`). Each renewal future is now removed as soon as it completes, keeping the collection bounded by the number of active renewals. ([#48366](https://github.com/Azure/azure-sdk-for-python/issues/48366))
 - Bounded the nesting depth of AMQP compound types (lists, maps, arrays, and described types) in the pyAMQP decoder to a maximum of 64. A payload nested deeper than that is now rejected early with a `ValueError`; previously such payloads were bounded only by the Python recursion limit and raised `RecursionError`.
 - Management, send and receive operations now bound AMQP link acquisition by the caller's timeout, rather than timing only the operation that follows it. Previously a link that never became ready could block indefinitely even when a timeout was supplied. Management and send deduct the time spent from the operation itself, so one attempt shares a single budget.

@@ -57,6 +57,7 @@ if TYPE_CHECKING:
         HybridSecondaryUsage,
         HybridSecondaryUsageDetected,
         IdentityType,
+        ImmutabilityStatus,
         ImplementationMethod,
         InaccessibilityReason,
         InstanceFailoverGroupReplicationRole,
@@ -430,6 +431,12 @@ class BackupShortTermRetentionPolicyProperties(TypedDict, total=False):
      interval hours between each differential backup will be supported. This is only applicable to
      live databases but not dropped databases. Known values are: 12 and 24.
     :vartype diffBackupIntervalInHours: Union[int, "DiffBackupIntervalInHours"]
+    :ivar lockImmutability: Whether to lock the immutability of the backups governed by this short
+     term retention policy.
+    :vartype lockImmutability: bool
+    :ivar immutabilityStatus: The immutability status of the backups governed by this short term
+     retention policy. Known values are: "Disabled", "Enabled", and "Locked".
+    :vartype immutabilityStatus: Union[str, "ImmutabilityStatus"]
     """
 
     retentionDays: int
@@ -439,6 +446,11 @@ class BackupShortTermRetentionPolicyProperties(TypedDict, total=False):
     """The differential backup interval in hours. This is how many interval hours between each
      differential backup will be supported. This is only applicable to live databases but not
      dropped databases. Known values are: 12 and 24."""
+    lockImmutability: bool
+    """Whether to lock the immutability of the backups governed by this short term retention policy."""
+    immutabilityStatus: Union[str, "ImmutabilityStatus"]
+    """The immutability status of the backups governed by this short term retention policy. Known
+     values are: \"Disabled\", \"Enabled\", and \"Locked\"."""
 
 
 class CertificateInfo(TypedDict, total=False):
@@ -853,6 +865,11 @@ class DatabaseBlobAuditingPolicyProperties(TypedDict, total=False):
     :ivar isManagedIdentityInUse: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype isManagedIdentityInUse: bool
+    :ivar requiredFields: Specifies the required fields to include in audit events (optional). Each
+     item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype requiredFields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: Union[str, "BlobAuditingPolicyState"]
@@ -975,6 +992,10 @@ class DatabaseBlobAuditingPolicyProperties(TypedDict, total=False):
      be processed. The default minimum value is 1000 (1 second). The maximum is 2,147,483,647."""
     isManagedIdentityInUse: bool
     """Specifies whether Managed Identity is used to access blob storage."""
+    requiredFields: list[str]
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Required[Union[str, "BlobAuditingPolicyState"]]
     """Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: \"Enabled\" and
@@ -2529,6 +2550,13 @@ class DistributedAvailabilityGroupProperties(TypedDict, total=False):
     :ivar linkMode: Specifies whether the link operates in single-database or multi-database mode.
      Known values are: "SingleDatabase" and "MultiDatabase".
     :vartype linkMode: Union[str, "LinkModeType"]
+    :ivar mostRecentError: Most recent error code for the distributed availability group.
+    :vartype mostRecentError: str
+    :ivar mostRecentErrorTime: Time of the most recent error for the distributed availability
+     group.
+    :vartype mostRecentErrorTime: str
+    :ivar mostRecentErrorMessage: Most recent error message for the distributed availability group.
+    :vartype mostRecentErrorMessage: str
     :ivar databases: Databases in the distributed availability group.
     :vartype databases: list["DistributedAvailabilityGroupDatabase"]
     """
@@ -2559,6 +2587,12 @@ class DistributedAvailabilityGroupProperties(TypedDict, total=False):
     linkMode: Union[str, "LinkModeType"]
     """Specifies whether the link operates in single-database or multi-database mode. Known values
      are: \"SingleDatabase\" and \"MultiDatabase\"."""
+    mostRecentError: str
+    """Most recent error code for the distributed availability group."""
+    mostRecentErrorTime: str
+    """Time of the most recent error for the distributed availability group."""
+    mostRecentErrorMessage: str
+    """Most recent error message for the distributed availability group."""
     databases: list["DistributedAvailabilityGroupDatabase"]
     """Databases in the distributed availability group."""
 
@@ -3071,6 +3105,11 @@ class ExtendedDatabaseBlobAuditingPolicyProperties(TypedDict, total=False):  # p
     :ivar isManagedIdentityInUse: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype isManagedIdentityInUse: bool
+    :ivar requiredFields: Specifies the required fields to include in audit events (optional). Each
+     item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype requiredFields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: Union[str, "BlobAuditingPolicyState"]
@@ -3195,6 +3234,10 @@ class ExtendedDatabaseBlobAuditingPolicyProperties(TypedDict, total=False):  # p
      be processed. The default minimum value is 1000 (1 second). The maximum is 2,147,483,647."""
     isManagedIdentityInUse: bool
     """Specifies whether Managed Identity is used to access blob storage."""
+    requiredFields: list[str]
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Required[Union[str, "BlobAuditingPolicyState"]]
     """Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: \"Enabled\" and
@@ -3366,6 +3409,11 @@ class ExtendedServerBlobAuditingPolicyProperties(TypedDict, total=False):  # pyl
     :ivar isManagedIdentityInUse: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype isManagedIdentityInUse: bool
+    :ivar requiredFields: Specifies the required fields to include in audit events (optional). Each
+     item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype requiredFields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: Union[str, "BlobAuditingPolicyState"]
@@ -3507,6 +3555,10 @@ class ExtendedServerBlobAuditingPolicyProperties(TypedDict, total=False):  # pyl
      be processed. The default minimum value is 1000 (1 second). The maximum is 2,147,483,647."""
     isManagedIdentityInUse: bool
     """Specifies whether Managed Identity is used to access blob storage."""
+    requiredFields: list[str]
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Required[Union[str, "BlobAuditingPolicyState"]]
     """Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: \"Enabled\" and
@@ -4781,11 +4833,22 @@ class ManagedBackupShortTermRetentionPolicyProperties(TypedDict, total=False):  
     :ivar retentionDays: The backup retention period in days. This is how many days Point-in-Time
      Restore will be supported.
     :vartype retentionDays: int
+    :ivar lockImmutability: Whether to lock the immutability of the backups governed by this short
+     term retention policy.
+    :vartype lockImmutability: bool
+    :ivar immutabilityStatus: The immutability status of the backups governed by this short term
+     retention policy. Known values are: "Disabled", "Enabled", and "Locked".
+    :vartype immutabilityStatus: Union[str, "ImmutabilityStatus"]
     """
 
     retentionDays: int
     """The backup retention period in days. This is how many days Point-in-Time Restore will be
      supported."""
+    lockImmutability: bool
+    """Whether to lock the immutability of the backups governed by this short term retention policy."""
+    immutabilityStatus: Union[str, "ImmutabilityStatus"]
+    """The immutability status of the backups governed by this short term retention policy. Known
+     values are: \"Disabled\", \"Enabled\", and \"Locked\"."""
 
 
 class ManagedDatabase(TrackedResource):
@@ -5510,6 +5573,15 @@ class ManagedInstanceLongTermRetentionPolicyProperties(TypedDict, total=False): 
     :ivar backupStorageAccessTier: The BackupStorageAccessTier for the LTR backups. Known values
      are: "Hot" and "Archive".
     :vartype backupStorageAccessTier: Union[str, "BackupStorageAccessTier"]
+    :ivar timeBasedImmutability: The setting for whether to enable time-based immutability for
+     future backups. When set, future backups will have TimeBasedImmutability enabled. Known values
+     are: "Enabled" and "Disabled".
+    :vartype timeBasedImmutability: Union[str, "TimeBasedImmutability"]
+    :ivar timeBasedImmutabilityMode: The setting for time-based immutability mode for future backup
+     (Value can be either Locked or UnLocked. Only effective if TimeBasedImmutability is enabled).
+     Caution: Immutability of LTR backup cannot be removed if TimeBasedImmutabilityMode is Locked.
+     Known values are: "Locked" and "Unlocked".
+    :vartype timeBasedImmutabilityMode: Union[str, "TimeBasedImmutabilityMode"]
     :ivar weeklyRetention: The weekly retention policy for an LTR backup in an ISO 8601 format.
     :vartype weeklyRetention: str
     :ivar monthlyRetention: The monthly retention policy for an LTR backup in an ISO 8601 format.
@@ -5522,6 +5594,15 @@ class ManagedInstanceLongTermRetentionPolicyProperties(TypedDict, total=False): 
 
     backupStorageAccessTier: Union[str, "BackupStorageAccessTier"]
     """The BackupStorageAccessTier for the LTR backups. Known values are: \"Hot\" and \"Archive\"."""
+    timeBasedImmutability: Union[str, "TimeBasedImmutability"]
+    """The setting for whether to enable time-based immutability for future backups. When set, future
+     backups will have TimeBasedImmutability enabled. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    timeBasedImmutabilityMode: Union[str, "TimeBasedImmutabilityMode"]
+    """The setting for time-based immutability mode for future backup (Value can be either Locked or
+     UnLocked. Only effective if TimeBasedImmutability is enabled). Caution: Immutability of LTR
+     backup cannot be removed if TimeBasedImmutabilityMode is Locked. Known values are: \"Locked\"
+     and \"Unlocked\"."""
     weeklyRetention: str
     """The weekly retention policy for an LTR backup in an ISO 8601 format."""
     monthlyRetention: str
@@ -7306,6 +7387,11 @@ class ServerBlobAuditingPolicyProperties(TypedDict, total=False):
     :ivar isManagedIdentityInUse: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype isManagedIdentityInUse: bool
+    :ivar requiredFields: Specifies the required fields to include in audit events (optional). Each
+     item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype requiredFields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: Union[str, "BlobAuditingPolicyState"]
@@ -7445,6 +7531,10 @@ class ServerBlobAuditingPolicyProperties(TypedDict, total=False):
      be processed. The default minimum value is 1000 (1 second). The maximum is 2,147,483,647."""
     isManagedIdentityInUse: bool
     """Specifies whether Managed Identity is used to access blob storage."""
+    requiredFields: list[str]
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Required[Union[str, "BlobAuditingPolicyState"]]
     """Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: \"Enabled\" and

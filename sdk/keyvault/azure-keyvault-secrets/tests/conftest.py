@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import base64
 import os
 import pytest
 from unittest import mock
@@ -31,6 +32,8 @@ from devtools_testutils import (
     test_proxy,
     add_oauth_response_sanitizer,
     add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_remove_header_sanitizer,
     remove_batch_sanitizers,
     set_custom_default_matcher,
 )
@@ -48,6 +51,12 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
     set_custom_default_matcher(ignored_headers="Accept")
     add_oauth_response_sanitizer()
+    add_remove_header_sanitizer(headers="x-ms-keyvault-network-info")
+    add_body_key_sanitizer(
+        json_path="$.value",
+        value=base64.b64encode(b"sanitized-backup-payload").decode(),
+        condition={"uriRegex": r"/secrets/(?:[^/?]+/backup|restore)(?:\?|$)"},
+    )
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
