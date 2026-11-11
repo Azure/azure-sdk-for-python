@@ -39,6 +39,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_custom_events_feature_set,
     get_statsbeat_customer_sdkstats_feature_set,
     get_statsbeat_browser_sdk_loader_feature_set,
+    get_statsbeat_gen_ai_input_output_limit_increase_feature_set,
+    get_statsbeat_multi_endpoint_routing_feature_set,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _get_additional_observations,
@@ -88,6 +90,8 @@ class _StatsbeatFeature:
     LIVE_METRICS = 16
     CUSTOMER_SDKSTATS = 32
     BROWSER_SDK_LOADER = 64
+    GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE = 128
+    MULTI_ENDPOINT_ROUTING = 256
 
 
 class _AttachTypes:
@@ -155,6 +159,10 @@ class _StatsbeatMetrics:
             self._feature |= _StatsbeatFeature.CUSTOMER_SDKSTATS
         if get_statsbeat_browser_sdk_loader_feature_set():
             self._feature |= _StatsbeatFeature.BROWSER_SDK_LOADER
+        if get_statsbeat_gen_ai_input_output_limit_increase_feature_set():
+            self._feature |= _StatsbeatFeature.GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE
+        if get_statsbeat_multi_endpoint_routing_feature_set():
+            self._feature |= _StatsbeatFeature.MULTI_ENDPOINT_ROUTING
         self._ikey = instrumentation_key
         self._meter_provider = meter_provider
         self._meter = self._meter_provider.get_meter(__name__)
@@ -293,6 +301,14 @@ class _StatsbeatMetrics:
             set_statsbeat_feature_attribute_bits(self._feature)
         if get_statsbeat_browser_sdk_loader_feature_set():
             self._feature |= _StatsbeatFeature.BROWSER_SDK_LOADER
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+            set_statsbeat_feature_attribute_bits(self._feature)
+        if get_statsbeat_gen_ai_input_output_limit_increase_feature_set():
+            self._feature |= _StatsbeatFeature.GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+            set_statsbeat_feature_attribute_bits(self._feature)
+        if get_statsbeat_multi_endpoint_routing_feature_set():
+            self._feature |= _StatsbeatFeature.MULTI_ENDPOINT_ROUTING
             _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
             set_statsbeat_feature_attribute_bits(self._feature)
 

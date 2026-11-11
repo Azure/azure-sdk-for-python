@@ -3,6 +3,7 @@
 ## 1.0.0b60 (Unreleased)
 
 ### Features Added
+- Track accepted experimental feature opt-ins through existing Statsbeat feature metrics.
 
 - Add actionable multi-endpoint routing diagnostics
   for invalid routing attributes, export/storage failures, retention evictions,
