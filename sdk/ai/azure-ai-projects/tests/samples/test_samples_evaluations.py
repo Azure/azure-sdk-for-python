@@ -148,6 +148,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     Complex prerequisites (require manual portal setup):
     - sample_continuous_evaluation_rule.py: Requires manual RBAC assignment in Azure
       Portal to enable continuous evaluation.
+    - sample_trace_evaluation_rule.py, sample_dataset_evaluation_rule.py: Require the
+      same RBAC assignment for scheduled evaluation rules.
     """
 
     # To run this test with a specific sample, use:
@@ -170,6 +172,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_scheduled_evaluations.py",  # Missing dependency azure.mgmt.resource (ModuleNotFoundError)
                 "sample_evaluations_builtin_with_dataset_id.py",  # Requires dataset upload / Blob Storage prerequisite
                 "sample_continuous_evaluation_rule.py",  # Requires manual RBAC assignment in Azure Portal
+                "sample_trace_evaluation_rule.py",  # Requires manual RBAC assignment and an existing agent with traces
+                "sample_dataset_evaluation_rule.py",  # Requires manual RBAC assignment in Azure Portal
                 "sample_evaluations_builtin_with_csv.py",  # Requires CSV file upload prerequisite
                 "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
@@ -187,8 +191,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_rubric_evaluator_generation_iterate.py",  # PR #47057: recording not yet available
                 "sample_agent_trace_evaluation_smart_filter.py",  # PR #47217: recording not yet available
                 "sample_scheduled_agent_traces_evaluation_smart_filter.py",  # PR #47217: recording not yet available
-                "sample_endpoint_evaluator_with_api_key.py",  # Requires external scoring endpoint and azure-mgmt-cognitiveservices
-                "sample_endpoint_evaluator_with_entra_id.py",  # Requires external scoring endpoint with Easy Auth and azure-mgmt-cognitiveservices
+                "sample_endpoint_evaluator.py",  # Requires external scoring endpoint and project connection
+                "sample_endpoint_evaluator_schema_0_0_1.py",  # Requires external scoring endpoint and project connection
             ],
         ),
     )
