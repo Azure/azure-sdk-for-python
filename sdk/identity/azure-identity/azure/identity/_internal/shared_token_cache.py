@@ -227,17 +227,32 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         raise CredentialUnavailableError(message=message)
 
     def _get_cached_access_token(
-        self, scopes: Iterable[str], account: CacheItem, is_cae: bool = False
+        self,
+        scopes: Iterable[str],
+        account: CacheItem,
+        is_cae: bool = False,
+        tenant_id: Optional[str] = None,
     ) -> Optional[AccessTokenInfo]:
         if "home_account_id" not in account:
             return None
 
         cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
+        query: Dict[str, str] = {"home_account_id": account["home_account_id"]}
+        if tenant_id:
+            # A home_account_id can have cached access tokens from more than one
+            # realm (tenant) -- e.g. a user signed in to their home tenant whose
+            # refresh token is also used to get tokens in tenants they're a guest
+            # in. Without this, a cache hit could silently return a token for a
+            # different tenant than the one the caller explicitly asked for, the
+            # same way msal.ClientApplication's own cache lookup includes "realm"
+            # in its query (see _acquire_token_silent_from_cache_and_possibly_refresh_it).
+            query["realm"] = tenant_id
+
         try:
             cache_entries = cache.search(
                 msal.TokenCache.CredentialType.ACCESS_TOKEN,
                 target=list(scopes),
-                query={"home_account_id": account["home_account_id"]},
+                query=query,
             )
             for token in cache_entries:
                 expires_on = int(token["expires_on"])
