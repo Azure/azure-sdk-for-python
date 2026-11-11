@@ -866,7 +866,9 @@ def test_cache_process_diagnostics_only_report_counts():
             "client_id": "cache-client",
             "scope": ["scope"],
             "token_endpoint": "https://login.microsoftonline.com/tenant-id/oauth2/v2.0/token",
-            "response": build_aad_response(access_token="not-for-diagnostics", refresh_token="also-not-for-diagnostics"),
+            "response": build_aad_response(
+                access_token="not-for-diagnostics", refresh_token="also-not-for-diagnostics"
+            ),
         }
     )
     assert cache_lookup_counts(cache, "cache-client") == {
