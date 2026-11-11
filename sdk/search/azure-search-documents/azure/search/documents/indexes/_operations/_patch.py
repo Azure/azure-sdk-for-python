@@ -292,7 +292,7 @@ class _SearchIndexClientOperationsMixin(
     @distributed_trace
     def create_or_update_knowledge_base(
         self,
-        knowledge_base: Union[_models.KnowledgeBase, _types.KnowledgeBase, JSON],
+        knowledge_base: Union[_models.KnowledgeBase, _types.KnowledgeBase, _types.KnowledgeBaseInput, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -300,7 +300,9 @@ class _SearchIndexClientOperationsMixin(
         """Creates a new knowledge base or updates a knowledge base if it already exists.
 
         :param knowledge_base: The KnowledgeBase object to create or update. Required.
-        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or JSON
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBaseInput or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: KnowledgeBase

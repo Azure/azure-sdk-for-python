@@ -215,17 +215,112 @@ REPLACEMENTS = (
     ),
     Replacement(
         "azure/search/documents/indexes/types.py",
-        "accept all knowledge-base model variants in dictionary-style inputs",
-        '        "models": list["KnowledgeBaseModel"],\n',
+        "preserve the GA knowledge-base model-list field",
         '        "models": Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]],\n',
+        '        "models": list["KnowledgeBaseModel"],\n',
     ),
     Replacement(
         "azure/search/documents/indexes/types.py",
-        "document the complete knowledge-base model input union",
-        ':vartype models: list["KnowledgeBaseModel"]\n',
+        "preserve the GA knowledge-base model-list documentation",
         ':vartype models: Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]]\n',
+        ':vartype models: list["KnowledgeBaseModel"]\n',
     ),
 )
+
+REPLACEMENTS += tuple(
+    replacement
+    for path, model_namespace, types_namespace, kwargs_comma in (
+        ("azure/search/documents/indexes/_operations/_operations.py", "_models1", "_types_models1", ","),
+        ("azure/search/documents/indexes/aio/_operations/_operations.py", "_models2", "_types_models2", ""),
+    )
+    for replacement in (
+        Replacement(
+            path,
+            "accept expanded knowledge-base inputs in the generated create overload",
+            f"        self, knowledge_base: {types_namespace}.KnowledgeBase, "
+            '*, content_type: str = "application/json", **kwargs: Any\n',
+            "        self,\n"
+            f"        knowledge_base: Union[{types_namespace}.KnowledgeBase, {types_namespace}.KnowledgeBaseInput],\n"
+            "        *,\n"
+            '        content_type: str = "application/json",\n'
+            f"        **kwargs: Any{kwargs_comma}\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded knowledge-base inputs in the generated create implementation",
+            f"        self, knowledge_base: Union[{model_namespace}.KnowledgeBase, "
+            f"{types_namespace}.KnowledgeBase, IO[bytes]], **kwargs: Any\n",
+            "        self,\n"
+            "        knowledge_base: Union[\n"
+            f"            {model_namespace}.KnowledgeBase, {types_namespace}.KnowledgeBase, "
+            f"{types_namespace}.KnowledgeBaseInput, IO[bytes]\n"
+            "        ],\n"
+            f"        **kwargs: Any{kwargs_comma}\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded knowledge-base inputs in the generated update overload",
+            "        name: str,\n" f"        knowledge_base: {types_namespace}.KnowledgeBase,\n",
+            "        name: str,\n"
+            f"        knowledge_base: Union[{types_namespace}.KnowledgeBase, {types_namespace}.KnowledgeBaseInput],\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded knowledge-base inputs in the generated update implementation",
+            "        name: str,\n"
+            f"        knowledge_base: Union[{model_namespace}.KnowledgeBase, "
+            f"{types_namespace}.KnowledgeBase, IO[bytes]],\n",
+            "        name: str,\n"
+            "        knowledge_base: Union[\n"
+            f"            {model_namespace}.KnowledgeBase, {types_namespace}.KnowledgeBase, "
+            f"{types_namespace}.KnowledgeBaseInput, IO[bytes]\n"
+            "        ],\n",
+        ),
+        Replacement(
+            path,
+            "document expanded knowledge-base inputs in the generated create overload",
+            "        :type knowledge_base: ~azure.search.documents.indexes.types.KnowledgeBase\n",
+            "        :type knowledge_base: ~azure.search.documents.indexes.types.KnowledgeBase or\n"
+            "         ~azure.search.documents.indexes.types.KnowledgeBaseInput\n",
+        ),
+        Replacement(
+            path,
+            "document expanded knowledge-base inputs in the generated implementations",
+            "         ~azure.search.documents.indexes.types.KnowledgeBase or IO[bytes]\n",
+            "         ~azure.search.documents.indexes.types.KnowledgeBase or\n"
+            "         ~azure.search.documents.indexes.types.KnowledgeBaseInput or IO[bytes]\n",
+            expected_count=2,
+        ),
+    )
+)
+
+
+def _add_knowledge_base_input(source: str) -> tuple[str, bool]:
+    declaration = "KnowledgeBase = TypedDict(\n"
+    documentation = 'KnowledgeBase.__doc__ = """'
+    if source.count(declaration) != 1 or source.count(documentation) != 1:
+        raise RuntimeError("Unexpected emitter output while locating the KnowledgeBase TypedDict")
+    start = source.index(declaration)
+    end = source.index('"""', source.index(documentation, start) + len(documentation)) + 3
+    legacy = source[start:end]
+    if legacy.count('list["KnowledgeBaseModel"]') != 2:
+        raise RuntimeError("Unexpected emitter output for the legacy KnowledgeBase model-list contract")
+    expanded = (
+        legacy.replace("KnowledgeBase = TypedDict(", "KnowledgeBaseInput = TypedDict(", 1)
+        .replace('    "KnowledgeBase",', '    "KnowledgeBaseInput",', 1)
+        .replace("KnowledgeBase.__doc__", "KnowledgeBaseInput.__doc__", 1)
+        .replace('list["KnowledgeBaseModel"]', 'list["KnowledgeBaseModelInput"]')
+        .replace(
+            "Represents a knowledge base definition.",
+            "Dictionary-style knowledge-base input supporting all model variants.",
+            1,
+        )
+    )
+    if source.count(expanded) == 1 and source.count("KnowledgeBaseInput = TypedDict(") == 1:
+        return source, False
+    if "KnowledgeBaseInput = TypedDict(" in source:
+        raise RuntimeError("Unexpected existing KnowledgeBaseInput definition; regenerate before applying workarounds")
+    return source[:end] + "\n\n" + expanded + source[end:], True
 
 
 def update_sources(*, check: bool) -> int:
@@ -250,6 +345,11 @@ def update_sources(*, check: bool) -> int:
                 f"Unexpected emitter output in {replacement.path} while attempting to "
                 f"{replacement.description}; expected exactly {replacement.expected_count} generated or patched snippets"
             )
+
+    path = PACKAGE_ROOT / "azure/search/documents/indexes/types.py"
+    sources[path], added = _add_knowledge_base_input(sources[path])
+    if added:
+        pending.append("add a separate complete KnowledgeBaseInput without widening the GA TypedDict")
 
     if check:
         if pending:

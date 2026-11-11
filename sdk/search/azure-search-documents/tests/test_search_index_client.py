@@ -111,20 +111,24 @@ class TestSearchIndexClientKnowledgeBase:
         assert isinstance(submitted.models[0], KnowledgeBaseAzureOpenAIModel)
         assert submitted.as_dict()["models"] == [model]
 
-    @pytest.mark.parametrize("kind", ["microsoftRetriever1", "openAICompatible"])
-    def test_create_or_update_knowledge_base_accepts_preview_model_inputs(self, kind):
+    @pytest.mark.parametrize("kind", ["azureOpenAI", "microsoftRetriever1", "openAICompatible"])
+    @pytest.mark.parametrize("method", ["create_knowledge_base", "create_or_update_knowledge_base"])
+    def test_knowledge_base_submission_accepts_expanded_model_inputs(self, kind, method):
         from azure.search.documents.indexes import types
         from azure.search.documents.indexes.models import KnowledgeBaseModelKind
 
         require_capability(
+            "azure.search.documents.indexes.types.KnowledgeBaseInput",
             "azure.search.documents.indexes.types.KnowledgeBaseModelInput",
-            (
-                "azure.search.documents.indexes.types.KnowledgeBaseMicrosoftRetriever1Model"
-                if kind == "microsoftRetriever1"
-                else "azure.search.documents.indexes.types.KnowledgeBaseOpenAICompatibleModel"
-            ),
+            "azure.search.documents.indexes.types.KnowledgeBaseMicrosoftRetriever1Model",
+            "azure.search.documents.indexes.types.KnowledgeBaseOpenAICompatibleModel",
         )
-        if kind == "microsoftRetriever1":
+        if kind == "azureOpenAI":
+            model = types.KnowledgeBaseAzureOpenAIModel(
+                kind=KnowledgeBaseModelKind.AZURE_OPEN_AI,
+                azureOpenAIParameters={"resourceUri": "https://example.openai.azure.com", "deploymentId": "query"},
+            )
+        elif kind == "microsoftRetriever1":
             model = types.KnowledgeBaseMicrosoftRetriever1Model(kind=KnowledgeBaseModelKind.MICROSOFT_RETRIEVER1)
         else:
             model = types.KnowledgeBaseOpenAICompatibleModel(
@@ -135,12 +139,19 @@ class TestSearchIndexClientKnowledgeBase:
                     "headers": {"api-key": "synthetic-key"},
                 },
             )
-        base = types.KnowledgeBase(name="owned-base", knowledgeSources=[], models=[model])
+        base = types.KnowledgeBaseInput(name="owned-base", knowledgeSources=[], models=[model])
+        response = mock.Mock()
+        response.http_response.status_code = 201
+        response.http_response.headers = {}
+        response.http_response.json.return_value = base
         with _client() as client:
-            with mock.patch.object(client, "_create_or_update_knowledge_base") as operation:
-                client.create_or_update_knowledge_base(base)
+            with mock.patch.object(client._client._pipeline, "run", return_value=response) as operation:
+                submitted = getattr(client, method)(base)
 
-        submitted = operation.call_args.kwargs["knowledge_base"]
+        operation.assert_called_once()
+        request = operation.call_args.args[0]
+        assert request.method == ("POST" if method == "create_knowledge_base" else "PUT")
+        assert json.loads(request.content)["models"] == [model]
         assert submitted.models[0].kind == kind
         assert submitted.as_dict()["models"] == [model]
 

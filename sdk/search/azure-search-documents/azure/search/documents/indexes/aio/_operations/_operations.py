@@ -1999,7 +1999,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_knowledge_base(
         self,
         name: str,
-        knowledge_base: _types_models2.KnowledgeBase,
+        knowledge_base: Union[_types_models2.KnowledgeBase, _types_models2.KnowledgeBaseInput],
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2022,7 +2022,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_knowledge_base(
         self,
         name: str,
-        knowledge_base: Union[_models2.KnowledgeBase, _types_models2.KnowledgeBase, IO[bytes]],
+        knowledge_base: Union[
+            _models2.KnowledgeBase, _types_models2.KnowledgeBase, _types_models2.KnowledgeBaseInput, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2035,7 +2037,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :param knowledge_base: The definition of the knowledge base to create or update. Is either a
          KnowledgeBase type or a IO[bytes] type. Required.
         :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or
-         ~azure.search.documents.indexes.types.KnowledgeBase or IO[bytes]
+         ~azure.search.documents.indexes.types.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBaseInput or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2394,12 +2397,17 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def create_knowledge_base(
-        self, knowledge_base: _types_models2.KnowledgeBase, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        knowledge_base: Union[_types_models2.KnowledgeBase, _types_models2.KnowledgeBaseInput],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models2.KnowledgeBase:
         """Creates a new knowledge base.
 
         :param knowledge_base: The definition of the knowledge base to create. Required.
-        :type knowledge_base: ~azure.search.documents.indexes.types.KnowledgeBase
+        :type knowledge_base: ~azure.search.documents.indexes.types.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBaseInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2426,14 +2434,19 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_knowledge_base(
-        self, knowledge_base: Union[_models2.KnowledgeBase, _types_models2.KnowledgeBase, IO[bytes]], **kwargs: Any
+        self,
+        knowledge_base: Union[
+            _models2.KnowledgeBase, _types_models2.KnowledgeBase, _types_models2.KnowledgeBaseInput, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models2.KnowledgeBase:
         """Creates a new knowledge base.
 
         :param knowledge_base: The definition of the knowledge base to create. Is either a
          KnowledgeBase type or a IO[bytes] type. Required.
         :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or
-         ~azure.search.documents.indexes.types.KnowledgeBase or IO[bytes]
+         ~azure.search.documents.indexes.types.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBaseInput or IO[bytes]
         :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -3214,7 +3214,7 @@ KnowledgeBase = TypedDict(
         "name": Required[str],
         "knowledgeSources": Required[list["KnowledgeSourceReference"]],
         "tools": list["KnowledgeBaseTool"],
-        "models": Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]],
+        "models": list["KnowledgeBaseModel"],
         "retrievalReasoningEffort": "KnowledgeRetrievalReasoningEffort",
         "outputMode": Union[str, "KnowledgeRetrievalOutputMode"],
         "@odata.etag": str,
@@ -3240,7 +3240,69 @@ KnowledgeBase.__doc__ = """Represents a knowledge base definition.
  in this API version clears existing tools.
 :vartype tools: list["KnowledgeBaseTool"]
 :ivar models: Contains configuration options on how to connect to AI models.
-:vartype models: Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]]
+:vartype models: list["KnowledgeBaseModel"]
+:ivar retrievalReasoningEffort: The retrieval reasoning effort configuration.
+:vartype retrievalReasoningEffort: "KnowledgeRetrievalReasoningEffort"
+:ivar outputMode: The output mode for the knowledge base. Known values are: "extractiveData"
+ and "answerSynthesis".
+:vartype outputMode: Union[str, "KnowledgeRetrievalOutputMode"]
+:ivar ``@odata.etag``: The ETag of the knowledge base.
+:vartype ``@odata.etag``: str
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
+:vartype encryptionKey: "SearchResourceEncryptionKey"
+:ivar description: The description of the knowledge base.
+:vartype description: str
+:ivar tags: User-defined key-value pairs for categorizing the knowledge base and attributing
+ its usage and costs.
+:vartype tags: dict[str, str]
+:ivar retrievalInstructions: Instructions considered by the knowledge base when developing
+ query plan.
+:vartype retrievalInstructions: str
+:ivar answerInstructions: Instructions considered by the knowledge base when generating
+ answers.
+:vartype answerInstructions: str
+:ivar corsOptions: Options to control Cross-Origin Resource Sharing (CORS) for the knowledge
+ base.
+:vartype corsOptions: "CorsOptions"
+:ivar retrieveDefaults: Persisted request-wide retrieve defaults for this knowledge base. These
+ values apply to retrieve requests that omit the corresponding fields; request-time values take
+ precedence when present.
+:vartype retrieveDefaults: "KnowledgeBaseRetrieveDefaults"
+"""
+
+KnowledgeBaseInput = TypedDict(
+    "KnowledgeBaseInput",
+    {
+        "name": Required[str],
+        "knowledgeSources": Required[list["KnowledgeSourceReference"]],
+        "tools": list["KnowledgeBaseTool"],
+        "models": list["KnowledgeBaseModelInput"],
+        "retrievalReasoningEffort": "KnowledgeRetrievalReasoningEffort",
+        "outputMode": Union[str, "KnowledgeRetrievalOutputMode"],
+        "@odata.etag": str,
+        "encryptionKey": Optional["SearchResourceEncryptionKey"],
+        "description": str,
+        "tags": dict[str, str],
+        "retrievalInstructions": str,
+        "answerInstructions": str,
+        "corsOptions": "CorsOptions",
+        "retrieveDefaults": "KnowledgeBaseRetrieveDefaults",
+    },
+    total=False,
+)
+KnowledgeBaseInput.__doc__ = """Dictionary-style knowledge-base input supporting all model variants.
+
+:ivar name: The name of the knowledge base. Required.
+:vartype name: str
+:ivar knowledgeSources: Knowledge sources referenced by this knowledge base. Required.
+:vartype knowledgeSources: list["KnowledgeSourceReference"]
+:ivar tools: Named retrieval tools, each limited to a subset of this knowledge base's sources.
+ When configured, MCP advertises these tools in addition to the built-in knowledge_base_retrieve
+ tool, which retrieves from the full knowledge base. Omitting tools or supplying an empty array
+ in this API version clears existing tools.
+:vartype tools: list["KnowledgeBaseTool"]
+:ivar models: Contains configuration options on how to connect to AI models.
+:vartype models: list["KnowledgeBaseModelInput"]
 :ivar retrievalReasoningEffort: The retrieval reasoning effort configuration.
 :vartype retrievalReasoningEffort: "KnowledgeRetrievalReasoningEffort"
 :ivar outputMode: The output mode for the knowledge base. Known values are: "extractiveData"

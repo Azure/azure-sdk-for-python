@@ -479,6 +479,7 @@ for _owner, _kwargs in (
     ("azure.search.documents.indexes.models.RandomScoringParameters", ()),
     ("azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHintAutoConfiguration", ()),
     ("azure.search.documents.indexes.models.KnowledgeBase", ("tools",)),
+    ("azure.search.documents.indexes.types.KnowledgeBaseInput", ()),
     ("azure.search.documents.indexes.types.KnowledgeBaseModelInput", ()),
     ("azure.search.documents.indexes.types.KnowledgeBaseMicrosoftRetriever1Model", ()),
     ("azure.search.documents.indexes.types.KnowledgeBaseOpenAICompatibleModel", ()),

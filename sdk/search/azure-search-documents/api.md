@@ -753,7 +753,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_knowledge_base(
                 self, 
-                knowledge_base: KnowledgeBase, 
+                knowledge_base: Union[KnowledgeBase, KnowledgeBaseInput], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -817,7 +817,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_knowledge_base(
                 self, 
-                knowledge_base: Union[KnowledgeBase, KnowledgeBase, JSON], 
+                knowledge_base: Union[KnowledgeBase, KnowledgeBase, KnowledgeBaseInput, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -1584,7 +1584,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_knowledge_base(
                 self, 
-                knowledge_base: KnowledgeBase, 
+                knowledge_base: Union[KnowledgeBase, KnowledgeBaseInput], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1648,7 +1648,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_knowledge_base(
                 self, 
-                knowledge_base: Union[KnowledgeBase, KnowledgeBase, JSON], 
+                knowledge_base: Union[KnowledgeBase, KnowledgeBase, KnowledgeBaseInput, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -10034,7 +10034,6 @@ namespace azure.search.documents.indexes.types
         key "description": str
         key "encryptionKey": Optional[SearchResourceEncryptionKey]
         key "knowledgeSources": Required[list[KnowledgeSourceReference]]
-        key "models": Union[list[KnowledgeBaseModel], list[KnowledgeBaseModelInput]]
         key "name": Required[str]
         key "outputMode": Union[str, KnowledgeRetrievalOutputMode]
         key "retrievalInstructions": str
@@ -10044,7 +10043,7 @@ namespace azure.search.documents.indexes.types
         description: str
         encryptionKey: SearchResourceEncryptionKey
         knowledgeSources: list[KnowledgeSourceReference]
-        models: Union[list[KnowledgeBaseModel], list[KnowledgeBaseModelInput]]
+        models: list[KnowledgeBaseModel]
         name: str
         outputMode: Union[str, KnowledgeRetrievalOutputMode]
         retrievalInstructions: str
@@ -10059,6 +10058,31 @@ namespace azure.search.documents.indexes.types
         key "kind": Required[Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI]]
         azureOpenAIParameters: AzureOpenAIVectorizerParameters
         kind: Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI]
+
+
+    class azure.search.documents.indexes.types.KnowledgeBaseInput(TypedDict):
+        key "@odata.etag": str
+        key "answerInstructions": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "knowledgeSources": Required[list[KnowledgeSourceReference]]
+        key "name": Required[str]
+        key "outputMode": Union[str, KnowledgeRetrievalOutputMode]
+        key "retrievalInstructions": str
+        ``@odata.etag``: str
+        answerInstructions: str
+        corsOptions: ForwardRef('CorsOptions', module='types')
+        description: str
+        encryptionKey: SearchResourceEncryptionKey
+        knowledgeSources: list[KnowledgeSourceReference]
+        models: list[KnowledgeBaseModelInput]
+        name: str
+        outputMode: Union[str, KnowledgeRetrievalOutputMode]
+        retrievalInstructions: str
+        retrievalReasoningEffort: ForwardRef('KnowledgeRetrievalReasoningEffort', module='types')
+        retrieveDefaults: ForwardRef('KnowledgeBaseRetrieveDefaults', module='types')
+        tags: dict[str, str]
+        tools: list[KnowledgeBaseTool]
 
 
     class azure.search.documents.indexes.types.KnowledgeBaseMicrosoftRetriever1Model(TypedDict, total=False):

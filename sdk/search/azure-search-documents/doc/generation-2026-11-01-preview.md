@@ -104,18 +104,49 @@ not callable. The legacy alias remains unchanged so existing
 `KnowledgeBaseModel(...)` construction continues to work. A separate public
 `indexes.types.KnowledgeBaseModelInput` union includes Azure OpenAI, Microsoft
 Retriever 1, and OpenAI-compatible models. The `indexes.types.KnowledgeBase.models`
-annotation accepts both a list of the legacy alias and a list of this full union,
-preserving pre-typed GA lists despite mutable-list invariance. Callers construct
-the concrete TypedDicts rather than calling the input union.
+annotation remains `list[KnowledgeBaseModel]`. An earlier union-of-lists
+annotation accepted pre-typed GA input lists but broke GA callers reading that
+field as the narrow legacy list, and rejected appending new variants.
+The same caller passed MyPy against exact merged October source
+`c143a045142bf8e56416b6023f25230d301f56b3` and failed against that widened field.
+A separate `indexes.types.KnowledgeBaseInput` exposes the same fields and
+requiredness, with `models: list[KnowledgeBaseModelInput]`. Callers use this new
+TypedDict for the full November union and construct concrete model TypedDicts
+rather than calling the union. Both create and create-or-update accept either
+TypedDict, synchronously and asynchronously; requests and response models are
+unchanged.
 
 The original generated union correctly represents the November spec. Separating
 the input union from the callable legacy alias is an SDK-owned compatibility
 choice, not a service-spec defect or an emitter bug. The package-owned
-post-generation rewriter preserves both aliases and the input annotation.
-Sync/async regressions exercise submitting the legacy constructor and both new
-variants; regeneration tests verify the full input union and idempotence.
+post-generation rewriter preserves both aliases, copies the generated definition
+into the separate statically declared input TypedDict, and updates generated
+submission annotations without changing the generation inputs.
+Sync/async regressions exercise submitting the legacy constructor and all three
+variants; regeneration tests verify the separate field contracts, requiredness,
+and idempotence. Caller typing checks include GA list read-back and mutable
+November input lists.
 Keep this compatibility customization until unmodified generated output
 preserves both GA construction and complete November input typing.
+The new public input type and alias remain subject to Python API review;
+neither the similar RP .NET customization nor local validation constitutes
+architect approval.
+The customization MCP attempt applied no patches because its global dependency
+build failed on `azure-search-nspkg`; the approved fallback uses this existing
+rewriter and the package venv, not manual edits to generated files.
+The checked-in static caller regression is included explicitly when running
+MyPy from the package directory:
+
+```powershell
+python -m mypy --config-file mypy.ini azure tests\test_generator_workarounds.py
+```
+
+For this typing revision, API snapshots were parsed from an isolated extraction
+of the freshly built wheel after byte-comparing its 77 packaged source files
+with the workspace. The parser API bypassed the wrapper's cached same-version
+installation; the standard markdown exporter and metadata extractor produced
+`api.md` and `api.metadata.yml`. Operation and wrapper runtime ASTs remain
+unchanged after excluding annotations and docstrings.
 
 The four additional offline completed File-poller continuation cases were
 removed at the user's request while the azure-core/generated-response mismatch
