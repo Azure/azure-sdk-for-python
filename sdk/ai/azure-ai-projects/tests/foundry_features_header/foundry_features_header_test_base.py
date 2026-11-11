@@ -35,7 +35,6 @@ FOUNDRY_FEATURES_HEADER = "Foundry-Features"
 # If a new sub-client is added to .beta and is missing from this mapping, the test will
 # fail at collection time with a message asking you to add it here.
 EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
-    "agent_insight_monitors": "AgentInsights=V1Preview",
     "evaluation_taxonomies": "Evaluations=V1Preview",
     "evaluators": "Evaluations=V1Preview",
     "insights": "Insights=V1Preview",
@@ -92,7 +91,7 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,GitHubCopilot=V1Preview,Skills=V1Preview,MicrosoftCopilot=V1Preview,ModelRouterControls=V1Preview",
+        "WorkflowAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,GitHubCopilot=V1Preview,Skills=V1Preview,MicrosoftCopilot=V1Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",

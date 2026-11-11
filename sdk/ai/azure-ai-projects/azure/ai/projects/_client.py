@@ -17,6 +17,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import AIProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AgentInsightMonitorsOperations,
     AgentsOperations,
     BetaOperations,
     ConnectionsOperations,
@@ -51,6 +52,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
     :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
+    :ivar agent_insight_monitors: AgentInsightMonitorsOperations operations
+    :vartype agent_insight_monitors: azure.ai.projects.operations.AgentInsightMonitorsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar deployments: DeploymentsOperations operations
@@ -117,6 +120,9 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
             self._client, self._config, self._serialize, self._deserialize
         )
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agent_insight_monitors = AgentInsightMonitorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)

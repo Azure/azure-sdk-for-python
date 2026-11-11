@@ -22,7 +22,7 @@ from .._realtime import (
 )
 from .._live import BetaLive, BetaLiveConnection, BetaLiveConnectionManager, LiveClientEvent, LiveServerEvent
 from ._patch_agents import AgentsOperations
-from ._patch_agent_insights import BetaAgentInsightMonitorsOperations
+from ._patch_agent_insights import AgentInsightMonitorsOperations
 from ._patch_datasets import DatasetsOperations
 from ._patch_evaluators import EvaluatorsOperations
 from ._patch_evaluation_rules import EvaluationRulesOperations
@@ -217,8 +217,6 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
-    agent_insight_monitors: BetaAgentInsightMonitorsOperations
-    """:class:`~azure.ai.projects.operations.BetaAgentInsightMonitorsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations` operations"""
     insights: BetaInsightsOperations
@@ -244,10 +242,6 @@ class BetaOperations(GeneratedBetaOperations):
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        # Replace with patched class that returns AgentInsightRunLROPoller
-        self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         # Replace with patched class that wires up the hand-written realtime client
         self.voice_agents = BetaVoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
@@ -261,7 +255,7 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
-    "BetaAgentInsightMonitorsOperations",
+    "AgentInsightMonitorsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",

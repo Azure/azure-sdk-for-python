@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Any, List
 from ._patch_agents_async import AgentsOperations
-from ._patch_agent_insights_async import BetaAgentInsightMonitorsOperations
+from ._patch_agent_insights_async import AgentInsightMonitorsOperations
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_evaluators_async import EvaluatorsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
@@ -122,8 +122,6 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
-    agent_insight_monitors: BetaAgentInsightMonitorsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
     insights: BetaInsightsOperations
@@ -149,10 +147,6 @@ class BetaOperations(GeneratedBetaOperations):
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        # Replace with patched class that returns AsyncAgentInsightRunLROPoller
-        self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         # Replace with patched class that wires up the hand-written realtime client
         self.voice_agents = BetaVoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
@@ -174,7 +168,7 @@ __all__: List[str] = [
     "AsyncBetaLiveConnectionManager",
     "LiveClientEvent",
     "LiveServerEvent",
-    "BetaAgentInsightMonitorsOperations",
+    "AgentInsightMonitorsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
