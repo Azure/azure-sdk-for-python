@@ -722,7 +722,7 @@ namespace azure.ai.projects.aio.operations
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, AgentOptimizationJobStatus]] = ..., 
+                status: Optional[Union[str, JobStatus]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentOptimizationJob]: ...
 
@@ -4783,7 +4783,7 @@ namespace azure.ai.projects.models
         optimization_model_configuration: AgentOptimizationModelConfiguration
         result: Optional[AgentOptimizationJobResult]
         run_duration_ms: timedelta
-        status: Union[str, AgentOptimizationJobStatus]
+        status: Union[str, JobStatus]
         target_configuration: Optional[AgentOptimizationTargetConfiguration]
         updated_at: datetime
         warnings: Optional[list[str]]
@@ -4840,15 +4840,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.AgentOptimizationJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELLED = "cancelled"
-        FAILED = "failed"
-        IN_PROGRESS = "in_progress"
-        QUEUED = "queued"
-        SKIPPED = "skipped"
-        SUCCEEDED = "succeeded"
 
 
     class azure.ai.projects.models.AgentOptimizationJobTokenUsage(_Model):
@@ -6856,14 +6847,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.CompoundFilter(_Model):
-        filters: list[Union[ComparisonFilter, CompoundFilter]]
+        filters: list[Union[ComparisonFilter, CompoundFilter, Any]]
         type: Literal["and", "or"]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                filters: list[Union[ComparisonFilter, CompoundFilter]], 
+                filters: list[Union[ComparisonFilter, CompoundFilter, Any]], 
                 type: Literal["and", "or"]
             ) -> None: ...
 
@@ -24713,7 +24704,7 @@ namespace azure.ai.projects.operations
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, AgentOptimizationJobStatus]] = ..., 
+                status: Optional[Union[str, JobStatus]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[AgentOptimizationJob]: ...
 
