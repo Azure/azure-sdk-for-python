@@ -4,6 +4,10 @@
 
 ### Features Added
 
+- Add actionable multi-endpoint routing diagnostics
+  for invalid routing attributes, export/storage failures, retention evictions,
+  and capacity limits, without including sensitive routing or telemetry values.
+
 ### Breaking Changes
 
 ### Bugs Fixed

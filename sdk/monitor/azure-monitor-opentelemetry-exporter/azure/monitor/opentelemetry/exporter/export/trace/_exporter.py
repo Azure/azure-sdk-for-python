@@ -193,7 +193,10 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
                 envelopes.extend(self._span_events_to_envelopes(span))
             return _get_trace_export_result(self._transmit_routed(groups))
         except Exception:  # pylint: disable=broad-except
-            _logger.exception("Exception occurred while exporting routed spans.")  # pylint: disable=C4769
+            _logger.error(
+                "Multi-endpoint routing: Failed to export routed spans. "
+                "Check telemetry conversion and exporter configuration.",
+            )
             return SpanExportResult.FAILURE
 
     def shutdown(self) -> None:
