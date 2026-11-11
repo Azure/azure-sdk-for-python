@@ -19,6 +19,30 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AuthorizationScopeFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Azure Resource Graph Authorization Scope Filter parameter."""
+
+    AT_SCOPE_AND_BELOW = "AtScopeAndBelow"
+    """Returns assignments for the given scope and all child scopes."""
+    AT_SCOPE_AND_ABOVE = "AtScopeAndAbove"
+    """Returns assignments for the given scope and all parent scopes, but not child scopes."""
+    AT_SCOPE_ABOVE_AND_BELOW = "AtScopeAboveAndBelow"
+    """Returns assignments for the given scope, all parent scopes, and all child scopes."""
+    AT_SCOPE_EXACT = "AtScopeExact"
+    """Returns assignments only for the given scope; no parent or child scopes are included."""
+
+
+class AzureExtensionResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Azure extension resource type."""
+
+    ROLE_ASSIGNMENTS = "role-assignments"
+    """The Azure role assignment extension resource type."""
+    LOCKS = "locks"
+    """The Azure lock extension resource type."""
+    DIAGNOSTIC_SETTINGS = "diagnostic-settings"
+    """The Azure diagnostic settings extension resource type."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -47,14 +71,19 @@ class TargetProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The target Azure Terraform Provider."""
 
     AZURERM = "azurerm"
-    """https://registry.terraform.io/providers/hashicorp/azurerm/latest"""
+    """`https://registry.terraform.io/providers/hashicorp/azurerm/latest
+    <https://registry.terraform.io/providers/hashicorp/azurerm/latest>`_."""
     AZAPI = "azapi"
-    """https://registry.terraform.io/providers/Azure/azapi/latest"""
+    """`https://registry.terraform.io/providers/Azure/azapi/latest
+    <https://registry.terraform.io/providers/Azure/azapi/latest>`_."""
 
 
 class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The parameter type."""
 
     EXPORT_RESOURCE = "ExportResource"
+    """EXPORT_RESOURCE."""
     EXPORT_RESOURCE_GROUP = "ExportResourceGroup"
+    """EXPORT_RESOURCE_GROUP."""
     EXPORT_QUERY = "ExportQuery"
+    """EXPORT_QUERY."""

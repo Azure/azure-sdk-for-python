@@ -17,7 +17,10 @@ if TYPE_CHECKING:
 
 
 class DeviceUpdateClient(DeviceUpdateClientGenerated):
-    """Device Update for IoT Hub client.
+    """Client for the Azure Device Update for IoT Hub service.
+
+    Device Update enables customers to publish updates to the cloud and deploy them to groups of
+    IoT devices managed and provisioned in IoT Hub.
 
     This override preserves the constructor parameter order shipped in 1.0.0
     (``endpoint``, ``instance_id``, ``credential``). The TypeSpec-generated client

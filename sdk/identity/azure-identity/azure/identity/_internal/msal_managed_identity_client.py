@@ -27,7 +27,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
         self, *, client_id: Optional[str] = None, identity_config: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> None:
         self._settings = {"client_id": client_id, "identity_config": identity_config or {}}
-        self._client = MsalClient(**kwargs)
+        self._client = self._create_http_client(**kwargs)
         managed_identity = self.get_managed_identity()
         self._msal_client = msal.ManagedIdentityClient(managed_identity, http_client=self._client)
 
@@ -44,6 +44,9 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
 
     def close(self) -> None:
         self.__exit__()
+
+    def _create_http_client(self, **kwargs: Any) -> Any:
+        return MsalClient(**kwargs)
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         if not scopes:

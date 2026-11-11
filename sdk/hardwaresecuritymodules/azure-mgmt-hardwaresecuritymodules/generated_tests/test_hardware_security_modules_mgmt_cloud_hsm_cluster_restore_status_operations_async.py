@@ -21,14 +21,12 @@ class TestHardwareSecurityModulesMgmtCloudHsmClusterRestoreStatusOperationsAsync
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_cloud_hsm_cluster_restore_status_begin_get(self, resource_group):
-        response = await (
-            await self.client.cloud_hsm_cluster_restore_status.begin_get(
-                resource_group_name=resource_group.name,
-                cloud_hsm_cluster_name="str",
-                job_id="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
+    async def test_cloud_hsm_cluster_restore_status_get(self, resource_group):
+        response = await self.client.cloud_hsm_cluster_restore_status.get(
+            resource_group_name=resource_group.name,
+            cloud_hsm_cluster_name="str",
+            job_id="str",
+        )
 
         # please add some check logic here by yourself
         # ...

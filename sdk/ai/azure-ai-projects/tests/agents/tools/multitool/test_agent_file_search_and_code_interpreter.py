@@ -27,7 +27,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
     """Tests for agents using File Search + Code Interpreter combination."""
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_find_and_analyze_data(self, **kwargs):
         """
         Test finding data with File Search and analyzing with Code Interpreter.
@@ -109,7 +109,7 @@ End of sensor log.
         openai_client.vector_stores.delete(vector_store.id)
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_analyze_code_file(self, **kwargs):
         """
         Test finding code file and running it with Code Interpreter.

@@ -12,10 +12,14 @@ from azure.ai.ml.entities import (
     AzureDataLakeGen1Datastore,
     AzureDataLakeGen2Datastore,
     AzureFileDatastore,
+    CertificateConfiguration,
+    NoneCredentialConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
 )
 from azure.ai.ml.entities._datastore.one_lake import LakeHouseArtifact, OneLakeDatastore
+from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
+from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosPasswordCredentials
 
 
 def build_blob_datastore_account_key():
@@ -98,11 +102,61 @@ def build_one_lake_datastore():
     )
 
 
+def build_adls_gen2_datastore_certificate():
+    """AzureDataLakeGen2Datastore with a certificate credential.
+
+    NOTE: ``resource_url``/``authority_url`` are intentionally NOT set. Pre-migration the entity passed
+    ``resource_uri`` to the msrest ``CertificateDatastoreCredentials``, which silently dropped it (not a
+    known attribute), so it never reached the wire. The migration fixed this to the correct ``resource_url``
+    (wire key ``resourceUrl``) so it is now honored -- a latent bug-fix that changes the wire only when the
+    value is set. Omitting it here keeps the guard on the substantive cert wire (tenant/client/cert/thumbprint).
+    """
+    return AzureDataLakeGen2Datastore(
+        name="smoke-gen2-cert-ds",
+        account_name="smokeaccount",
+        filesystem="smoke-filesystem",
+        credentials=CertificateConfiguration(
+            tenant_id="00000000-0000-0000-0000-000000000000",
+            client_id="11111111-1111-1111-1111-111111111111",
+            certificate="smoke-certificate-pem",
+            thumbprint="SMOKE-THUMBPRINT",
+        ),
+    )
+
+
+def build_blob_datastore_none_credential():
+    """AzureBlobDatastore with no credential (credential-less / identity-based access)."""
+    return AzureBlobDatastore(
+        name="smoke-blob-none-ds",
+        account_name="smokeaccount",
+        container_name="smoke-container",
+        credentials=NoneCredentialConfiguration(),
+    )
+
+
+def build_hdfs_datastore_kerberos_password():
+    """HdfsDatastore (arm-absent, hand-built JSON-direct wire) with Kerberos password credentials."""
+    return HdfsDatastore(
+        name="smoke-hdfs-ds",
+        name_node_address="hdfs-namenode.smoke.local",
+        protocol="https",
+        credentials=KerberosPasswordCredentials(
+            kerberos_realm="SMOKE.LOCAL",
+            kerberos_kdc_address="kdc.smoke.local",
+            kerberos_principal="smoke@SMOKE.LOCAL",
+            kerberos_password="smoke-kerberos-password",
+        ),
+    )
+
+
 DATASTORE_BUILDERS = {
     "blob_datastore_account_key": build_blob_datastore_account_key,
     "blob_datastore_sas": build_blob_datastore_sas,
+    "blob_datastore_none_credential": build_blob_datastore_none_credential,
     "file_datastore": build_file_datastore,
     "adls_gen1_datastore": build_adls_gen1_datastore,
     "adls_gen2_datastore": build_adls_gen2_datastore,
+    "adls_gen2_datastore_certificate": build_adls_gen2_datastore_certificate,
     "one_lake_datastore": build_one_lake_datastore,
+    "hdfs_datastore_kerberos_password": build_hdfs_datastore_kerberos_password,
 }

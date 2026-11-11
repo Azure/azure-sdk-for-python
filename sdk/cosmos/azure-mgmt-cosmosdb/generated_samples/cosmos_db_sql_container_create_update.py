@@ -53,6 +53,14 @@ def main():
                     },
                     "computedProperties": [{"name": "cp_lowerName", "query": "SELECT VALUE LOWER(c.name) FROM c"}],
                     "conflictResolutionPolicy": {"conflictResolutionPath": "/path", "mode": "LastWriterWins"},
+                    "dataMaskingPolicy": {
+                        "excludedPaths": [{"path": "/id"}],
+                        "includedPaths": [
+                            {"path": "/"},
+                            {"length": 10, "path": "/contact/phones", "startPosition": 3, "strategy": "MaskSubstring"},
+                        ],
+                        "isPolicyEnabled": True,
+                    },
                     "defaultTtl": 100,
                     "fullTextPolicy": {
                         "defaultLanguage": "1033",
@@ -115,6 +123,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBSqlContainerCreateUpdate.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBSqlContainerCreateUpdate.json
 if __name__ == "__main__":
     main()

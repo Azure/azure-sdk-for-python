@@ -26,7 +26,10 @@ from typing import Dict, Optional
 from dotenv import load_dotenv
 from devtools_testutils.aio import recorded_by_proxy_async
 from conftest import SANITIZED_CONTAINER_SAS_URL
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+)
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
@@ -59,7 +62,11 @@ def _get_training_data_sas_url() -> str:
     container = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER")
     if storage_account and container:
         from azure.identity import DefaultAzureCredential
-        from azure.storage.blob import BlobServiceClient, ContainerSasPermissions, generate_container_sas
+        from azure.storage.blob import (
+            BlobServiceClient,
+            ContainerSasPermissions,
+            generate_container_sas,
+        )
 
         credential = DefaultAzureCredential()
         blob_service_client = BlobServiceClient(
@@ -200,7 +207,7 @@ class TestSampleCreateAnalyzerWithLabelsAsync(ContentUnderstandingClientTestBase
             config=ContentAnalyzerConfig(enable_layout=True, enable_ocr=True),
             field_schema=field_schema,
             models={
-                "completion": "gpt-4.1",
+                "completion": "gpt-5.2",
                 "embedding": "text-embedding-3-large",
             },
             knowledge_sources=[labeled_source],
@@ -275,9 +282,7 @@ class TestSampleCreateAnalyzerWithLabelsAsync(ContentUnderstandingClientTestBase
                 )
 
                 content_obj = analyze_result.contents[0]
-                assert isinstance(
-                    content_obj, DocumentContent
-                ), "First content should be DocumentContent"
+                assert isinstance(content_obj, DocumentContent), "First content should be DocumentContent"
                 if content_obj.fields:
                     print(f"[PASS] Extracted fields: {len(content_obj.fields)}")
                     merchant_field = content_obj.fields.get("MerchantName")

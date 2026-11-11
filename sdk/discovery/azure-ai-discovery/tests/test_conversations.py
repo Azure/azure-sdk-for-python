@@ -8,10 +8,11 @@ Covers all 5 methods on WorkspaceClient.conversations:
   - get, create, update, delete
   - list (Paged)
 """
+
 import pytest
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
-from azure.ai.discovery._workspace.azure.ai.discovery.models import Conversation
+from azure.ai.discovery.models import Conversation
 from .testcase import DiscoveryWorkspaceTestCase
 from .constants import investigation_path
 
@@ -42,13 +43,16 @@ class TestConversations(DiscoveryWorkspaceTestCase):
 
     @recorded_by_proxy
     def test_list(self):
-        """Test listing conversations."""
+        """Test listing conversations.
+
+        ``conversations.list`` returns a ``PagedConversation`` envelope
+        """
         found_test_conversation_id = False
         client = self.create_workspace_client()
-        conversations = list(client.conversations.list(project_name=self.project_name))
-        assert isinstance(conversations, list)
-        assert len(conversations) > 0
-        for conv in conversations:
+        page = client.conversations.list(project_name=self.project_name)
+        assert page.value is not None
+        assert len(page.value) > 0
+        for conv in page.value:
             assert conv.project_name == self.project_name
             assert conv.created_at is not None
             assert conv.investigation_name is not None
@@ -85,10 +89,10 @@ class TestConversations(DiscoveryWorkspaceTestCase):
         assert conversation.created_at is not None
 
     @recorded_by_proxy
-    def test_update(self):
+    def test_stable_update(self):
         """Test updating a conversation (PATCH)."""
         client = self.create_workspace_client()
-        updated = client.conversations.update(
+        updated = client.conversations.stable_update(
             conversation_name=TestConversations.test_conversation_id,
             resource=Conversation(display_name="Updated conversation"),
         )

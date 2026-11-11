@@ -1,0 +1,22 @@
+{
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "location": "westus",
+  "properties": {
+    "managedResourceGroupTags": {
+      "tag1": "value1"
+    },
+    "publicNetworkAccess": "Enabled",
+    "regionDetails": [
+      {
+        "acrDetails": [],
+        "location": "westus",
+        "storageAccountDetails": []
+      }
+    ]
+  },
+  "tags": {
+    "tag1": "value1"
+  }
+}

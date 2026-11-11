@@ -1,5 +1,32 @@
 # Release History
 
+## 2.0.0 (2026-07-14)
+
+### Features Added
+
+  - Client `MicrosoftSerialConsoleClient` added parameter `cloud_setting` in method `__init__`
+  - Client `MicrosoftSerialConsoleClient` added method `send_request`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `SerialPort` added property `system_data`
+  - Added model `CloudError`
+  - Added enum `CreatedByType`
+  - Added enum `SerialPortConnectionState`
+  - Added model `SystemData`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `DisableSerialConsoleResult` moved instance variable `disabled` under property `properties` whose type is `DisableSerialConsoleResultProperties`
+  - Model `EnableSerialConsoleResult` moved instance variable `disabled` under property `properties` whose type is `EnableSerialConsoleResultProperties`
+  - Renamed operation group `MicrosoftSerialConsoleClientOperationsMixin` to `_MicrosoftSerialConsoleClientOperationsMixin`
+  - Model `SerialConsoleStatus` moved instance variable `disabled` under property `properties` whose type is `SerialConsoleStatusProperties`
+  - Model `SerialPort` moved instance variable `state` under property `properties` whose type is `SerialPortProperties`
+  - Deleted or renamed method `SerialPortsOperations.delete`
+  - Method `MicrosoftSerialConsoleClient.disable_console` changed return type from `Union[DisableSerialConsoleResult, GetSerialConsoleSubscriptionNotFound]` to `DisableSerialConsoleResult`
+  - Method `MicrosoftSerialConsoleClient.enable_console` changed return type from `Union[EnableSerialConsoleResult, GetSerialConsoleSubscriptionNotFound]` to `EnableSerialConsoleResult`
+  - Method `MicrosoftSerialConsoleClient.get_console_status` changed return type from `Union[SerialConsoleStatus, GetSerialConsoleSubscriptionNotFound]` to `SerialConsoleStatus`
+
 ## 1.1.0b2 (2026-05-26)
 
 ### Features Added

@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.cloud_hsm_cluster_restore_status.begin_get(
+    response = client.cloud_hsm_cluster_restore_status.get(
         resource_group_name="rgcloudhsm",
         cloud_hsm_cluster_name="chsm1",
         job_id="572a45927fc240e1ac075de27371680b",
-    ).result()
+    )
+    print(response)
 
 
-# x-ms-original-file: 2025-03-31/CloudHsmCluster_Restore_Pending_MaximumSet_Gen.json
+# x-ms-original-file: 2025-12-01-preview/CloudHsmCluster_Restore_Pending_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -1,6 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import os
 import unittest
 import uuid
 
@@ -22,9 +21,11 @@ from test_per_partition_circuit_breaker_sm_mrr import \
 COLLECTION = "created_collection"
 @pytest.fixture(scope="class", autouse=True)
 def setup_teardown():
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
-    yield
-    os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
+    previous_env = test_config.set_environment_variables(AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER="True")
+    try:
+        yield
+    finally:
+        test_config.restore_environment_variables(previous_env)
 
 def create_custom_transport_mm():
     custom_transport = FaultInjectionTransport()
@@ -217,7 +218,7 @@ class TestCircuitBreakerEmulator:
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
         _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
-        os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "80"
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED="80")
         try:
             # writes should fail but still be tracked and mark unavailable a partition after crossing threshold
             for i in range(10):
@@ -245,7 +246,7 @@ class TestCircuitBreakerEmulator:
             validate_unhealthy_partitions_mm(global_endpoint_manager, 1)
 
         finally:
-            os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
+            test_config.restore_environment_variables(previous_env)
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
 
@@ -258,7 +259,7 @@ class TestCircuitBreakerEmulator:
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
         _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
-        os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "80"
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED="80")
         try:
             # writes should fail but still be tracked and mark unavailable a partition after crossing threshold
             for i in range(10):
@@ -286,7 +287,7 @@ class TestCircuitBreakerEmulator:
             validate_unhealthy_partitions_sm_mrr(global_endpoint_manager, 0)
 
         finally:
-            os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
+            test_config.restore_environment_variables(previous_env)
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
 

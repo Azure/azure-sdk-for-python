@@ -1074,7 +1074,7 @@ def try_enable_internal_components(*, force=False) -> bool:
     references _internal.
 
     :keyword force: Force enable internal components even if enabled before.
-    :type force: bool
+    :paramtype force: bool
     :return: True if internal components are enabled, False otherwise.
     :rtype: bool
     """
@@ -1094,7 +1094,7 @@ def is_internal_component_data(data: Dict[str, Any], *, raise_if_not_enabled: bo
     :type data: Dict[str, Any]
     :keyword raise_if_not_enabled: Raise exception if the data is an internal component data but
         internal components is not enabled.
-    :type raise_if_not_enabled: bool
+    :paramtype raise_if_not_enabled: bool
     :return: True if the data is an internal component data, False otherwise.
     :rtype: bool
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the data is an internal component data but

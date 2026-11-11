@@ -20,7 +20,7 @@ class TestAgentResponsesCrud(TestBase):
     # To run this test:
     # pytest tests/agents/test_agent_responses_crud.py::TestAgentResponsesCrud::test_agent_responses_crud -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_responses_crud(self, **kwargs):
         """
         Test two-turn Responses with Agent reference and Conversation.
@@ -155,7 +155,7 @@ class TestAgentResponsesCrud(TestBase):
     # To run this test:
     # pytest tests\agents\test_agent_responses_crud.py::TestAgentResponsesCrud::test_agent_responses_with_structured_output -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_responses_with_structured_output(self, **kwargs):
         model = kwargs.get("foundry_model_name")
 

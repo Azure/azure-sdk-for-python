@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/autonomousDatabase_restore.json
+# x-ms-original-file: 2025-11-01-preview/autonomousDatabase_restore.json
 if __name__ == "__main__":
     main()

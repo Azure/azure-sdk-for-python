@@ -30,9 +30,7 @@ _SCRIPT_PATH = (
 
 
 def _load_router():
-    spec = importlib.util.spec_from_file_location(
-        "_skill_create_and_test_router", _SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("_skill_create_and_test_router", _SCRIPT_PATH)
     assert spec and spec.loader, "could not load router script"
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -135,9 +133,7 @@ def test_wire_inner_ids_errors_on_extra_inner():
             },
         },
     }
-    patched, errors = router._wire_inner_ids(
-        outer, {"invoice": "real-invoice-id", "extra": "unused-id"}
-    )
+    patched, errors = router._wire_inner_ids(outer, {"invoice": "real-invoice-id", "extra": "unused-id"})
     assert any("extra" in e and "no category" in e for e in errors)
 
 
@@ -156,9 +152,7 @@ def test_wire_inner_ids_passes_through_prebuilt_analyzer_ids():
             },
         },
     }
-    patched, errors = router._wire_inner_ids(
-        outer, {"loan_application": "real-loan-id"}
-    )
+    patched, errors = router._wire_inner_ids(outer, {"loan_application": "real-loan-id"})
     assert errors == []
     cats = patched["config"]["contentCategories"]
     # prebuilts unchanged

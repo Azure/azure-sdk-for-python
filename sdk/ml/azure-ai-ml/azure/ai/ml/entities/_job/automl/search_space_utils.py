@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import re
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 
 from marshmallow import fields
 
@@ -138,10 +138,12 @@ def _get_type_inferred_value(value: str) -> Union[bool, int, float, str]:
 
 
 def _convert_from_rest_object(
-    sweep_distribution_str: str,
+    sweep_distribution_str: Optional[str],
 ) -> Any:
     # sweep_distribution_str can be a distribution like "choice('vitb16r224', 'vits16r224')" or
     # a single value like "True", "1", "1.0567", "vitb16r224"
+    if sweep_distribution_str is None:
+        return None
 
     sweep_distribution_str = sweep_distribution_str.strip()
     # Filter by the delimiters and remove splits that are empty strings

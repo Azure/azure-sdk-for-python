@@ -1,4 +1,4 @@
 directory: specification/purestorage/PureStorage.Block.Management
-commit: 5f272067844826380939c0b3f24ca3cc99dbe308
+commit: 4e4e3db9215718d25d91aa5d0bf971ab922db5a8
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

@@ -6,7 +6,6 @@ import json
 import logging
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import ComputeConfiguration as RestComputeConfiguration
 from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -17,18 +16,18 @@ module_logger = logging.getLogger(__name__)
 class ComputeConfiguration(RestTranslatableMixin, DictMixin):
     """Compute resource configuration
 
-    :param target: The compute target.
-    :type target: Optional[str]
-    :param instance_count: The number of instances.
-    :type instance_count: Optional[int]
-    :param is_local: Specifies if the compute will be on the local machine.
-    :type is_local: Optional[bool]
-    :param location: The location of the compute resource.
-    :type location: Optional[str]
-    :param properties: The resource properties
-    :type properties: Optional[Dict[str, Any]]
-    :param deserialize_properties: Specifies if property bag should be deserialized. Defaults to False.
-    :type deserialize_properties: bool
+    :keyword target: The compute target.
+    :paramtype target: Optional[str]
+    :keyword instance_count: The number of instances.
+    :paramtype instance_count: Optional[int]
+    :keyword is_local: Specifies if the compute will be on the local machine.
+    :paramtype is_local: Optional[bool]
+    :keyword location: The location of the compute resource.
+    :paramtype location: Optional[str]
+    :keyword properties: The resource properties
+    :paramtype properties: Optional[Dict[str, Any]]
+    :keyword deserialize_properties: Specifies if property bag should be deserialized. Defaults to False.
+    :paramtype deserialize_properties: bool
     """
 
     def __init__(
@@ -56,7 +55,9 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
                     # keep serialized string if load fails
                     pass
 
-    def _to_rest_object(self) -> RestComputeConfiguration:
+    def _to_rest_object(self) -> Dict[str, Any]:
+        # ``ComputeConfiguration`` is not modeled on arm_ml_service; emit the wire body as a plain dict
+        # (JSON-direct), byte-identical to the legacy ``RestComputeConfiguration(...).serialize()`` output.
         if self.properties:
             serialized_properties = {}
             for key, value in self.properties.items():
@@ -72,24 +73,35 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
                     pass
         else:
             serialized_properties = None
-        return RestComputeConfiguration(
-            target=self.target if not self.is_local else None,
-            is_local=self.is_local,
-            instance_count=self.instance_count,
-            instance_type=self.instance_type,
-            location=self.location,
-            properties=serialized_properties,
-        )
+
+        rest_object: Dict[str, Any] = {"isLocal": self.is_local}
+        target = self.target if not self.is_local else None
+        if target is not None:
+            rest_object["target"] = target
+        if self.instance_count is not None:
+            rest_object["instanceCount"] = self.instance_count
+        if self.instance_type is not None:
+            rest_object["instanceType"] = self.instance_type
+        if self.location is not None:
+            rest_object["location"] = self.location
+        if serialized_properties is not None:
+            rest_object["properties"] = serialized_properties
+        return rest_object
 
     @classmethod
-    def _from_rest_object(cls, obj: RestComputeConfiguration) -> "ComputeConfiguration":
+    def _from_rest_object(cls, obj: Any) -> "ComputeConfiguration":
+        def _get(field: str, wire: str) -> Any:
+            if isinstance(obj, dict):
+                return obj.get(wire)
+            return getattr(obj, field, None)
+
         return ComputeConfiguration(
-            target=obj.target,
-            is_local=obj.is_local,
-            instance_count=obj.instance_count,
-            location=obj.location,
-            instance_type=obj.instance_type,
-            properties=obj.properties,
+            target=_get("target", "target"),
+            is_local=_get("is_local", "isLocal"),
+            instance_count=_get("instance_count", "instanceCount"),
+            location=_get("location", "location"),
+            instance_type=_get("instance_type", "instanceType"),
+            properties=_get("properties", "properties"),
             deserialize_properties=True,
         )
 

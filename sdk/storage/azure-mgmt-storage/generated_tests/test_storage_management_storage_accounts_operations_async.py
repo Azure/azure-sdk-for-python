@@ -62,6 +62,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                     "properties": {
                         "accessTier": "str",
                         "allowBlobPublicAccess": bool,
+                        "allowCrossTenantDelegationSas": bool,
                         "allowCrossTenantReplication": bool,
                         "allowSharedKeyAccess": bool,
                         "allowSharedKeyAccessForServices": {
@@ -145,7 +146,12 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                             "publishMicrosoftEndpoints": bool,
                             "routingChoice": "str",
                         },
-                        "sasPolicy": {"expirationAction": "str", "sasExpirationPeriod": "str"},
+                        "sasPolicy": {
+                            "expirationAction": "str",
+                            "sasExpirationPeriod": "str",
+                            "requireUserBoundUserDelegationSas": bool,
+                            "requireUserBoundUserDelegationSasAction": "str",
+                        },
                         "supportsHttpsTrafficOnly": bool,
                     },
                     "tags": {"str": "str"},
@@ -175,6 +181,7 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                 "properties": {
                     "accessTier": "str",
                     "allowBlobPublicAccess": bool,
+                    "allowCrossTenantDelegationSas": bool,
                     "allowCrossTenantReplication": bool,
                     "allowSharedKeyAccess": bool,
                     "allowSharedKeyAccessForServices": {
@@ -256,7 +263,12 @@ class TestStorageManagementStorageAccountsOperationsAsync(AzureMgmtRecordedTestC
                         "publishMicrosoftEndpoints": bool,
                         "routingChoice": "str",
                     },
-                    "sasPolicy": {"expirationAction": "str", "sasExpirationPeriod": "str"},
+                    "sasPolicy": {
+                        "expirationAction": "str",
+                        "sasExpirationPeriod": "str",
+                        "requireUserBoundUserDelegationSas": bool,
+                        "requireUserBoundUserDelegationSasAction": "str",
+                    },
                     "supportsHttpsTrafficOnly": bool,
                 },
                 "sku": {"name": "str", "tier": "str"},

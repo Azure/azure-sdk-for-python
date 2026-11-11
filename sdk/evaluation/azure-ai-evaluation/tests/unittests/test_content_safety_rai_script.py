@@ -3,6 +3,7 @@ import math
 import os
 import pathlib
 import json, html, re
+from itertools import chain, repeat
 from typing import Any, Iterator, MutableMapping, Optional
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -17,6 +18,7 @@ from azure.ai.evaluation._common.rai_service import (
     evaluate_with_rai_service_sync_multimodal,
     fetch_or_reuse_token,
     fetch_result,
+    fetch_result_onedp,
     get_common_headers,
     get_rai_svc_url,
     parse_response,
@@ -125,9 +127,163 @@ class MockAsyncHttpResponse(AsyncHttpResponse):
         raise NotImplementedError()
 
 
+class PollingClock:
+    """Advance only the annotation poller's clock instead of waiting."""
+
+    def __init__(self) -> None:
+        """Start a deterministic polling clock with no elapsed time."""
+        self.elapsed = 0.0
+        self.sleeps: list[float] = []
+
+    def time(self) -> float:
+        """Return elapsed virtual time for the existing timeout checks."""
+        return self.elapsed
+
+    async def sleep(self, seconds: float) -> None:
+        """Record the requested polling delay without sleeping."""
+        self.sleeps.append(seconds)
+        self.elapsed += seconds
+
+
 @pytest.mark.usefixtures("mock_project_scope")
 @pytest.mark.unittest
 class TestContentSafetyEvaluator:
+    @pytest.fixture
+    def polling_clock(self) -> Iterator[PollingClock]:
+        """Replace clock dependencies without replacing either polling loop."""
+        clock = PollingClock()
+        with (
+            patch("azure.ai.evaluation._common.rai_service.time", clock),
+            patch("azure.ai.evaluation._common.rai_service.asyncio", clock),
+        ):
+            yield clock
+
+    @staticmethod
+    def _terminal_poll_response() -> MockAsyncHttpResponse:
+        """Create a terminal validation response containing safe diagnostics."""
+        payload = {
+            "error": {
+                "code": "UserError",
+                "message": "The annotation input exceeds the token limit.",
+                "innererror": {"code": "OperationFailedUserError"},
+            }
+        }
+        return MockAsyncHttpResponse(
+            400,
+            json=payload,
+            text=json.dumps(payload),
+            content_type="application/json",
+            headers={"x-ms-request-id": "test-request-id"},
+            request=HttpRequest("GET", "https://example.org/operations/op-id"),
+        )
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("pending_first", [False, True])
+    async def test_fetch_result_stops_on_terminal_bad_request(
+        self, pending_first: bool, polling_clock: PollingClock, mock_token: str, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """Preserve terminal errors instead of replacing them with timeouts."""
+        response = self._terminal_poll_response()
+        pending = [MockAsyncHttpResponse(202)] if pending_first else []
+        with patch(
+            "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
+            side_effect=chain(pending, repeat(response)),
+        ) as get:
+            with pytest.raises(HttpResponseError) as caught:
+                await fetch_result("op-id", "https://example.org", None, mock_token)
+
+        assert get.await_count == 1 + int(pending_first)
+        assert polling_clock.sleeps == ([2] if pending_first else [])
+        self._assert_terminal_response(caught.value, response)
+        self._assert_terminal_poll_log(caplog, 1 + int(pending_first), polling_clock.elapsed, mock_token)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("pending_first", [False, True])
+    async def test_fetch_result_onedp_stops_on_terminal_bad_request(
+        self, pending_first: bool, polling_clock: PollingClock, mock_token: str, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """Reraise the original OneDP exception, including its response."""
+        response = self._terminal_poll_response()
+        original_error = HttpResponseError(response=response)
+        pending = [HttpResponseError(response=MockAsyncHttpResponse(202))] if pending_first else []
+        client = MagicMock()
+        client.evaluations.operation_results.side_effect = chain(pending, repeat(original_error))
+
+        with pytest.raises(HttpResponseError) as caught:
+            await fetch_result_onedp(client, "op-id", mock_token)
+
+        assert caught.value is original_error
+        assert client.evaluations.operation_results.call_count == 1 + int(pending_first)
+        assert polling_clock.sleeps == ([2] if pending_first else [])
+        self._assert_terminal_response(caught.value, response)
+        self._assert_terminal_poll_log(caplog, 1 + int(pending_first), polling_clock.elapsed, mock_token)
+
+    @staticmethod
+    def _assert_terminal_poll_log(
+        caplog: pytest.LogCaptureFixture, poll_count: int, elapsed: float, token: str
+    ) -> None:
+        """Log one diagnostic without recording credentials or error content."""
+        records = [
+            record
+            for record in caplog.records
+            if record.name == "azure.ai.evaluation._common.rai_service" and record.levelname == "WARNING"
+        ]
+        assert len(records) == 1
+        message = records[0].getMessage()
+        assert "HTTP 400" in message
+        assert "operation_id=op-id" in message
+        assert f"poll_count={poll_count}" in message
+        assert f"elapsed_seconds={elapsed:.2f}" in message
+        assert token not in message
+        assert "annotation input exceeds" not in message
+        assert "example.org" not in message
+
+    @staticmethod
+    def _assert_terminal_response(error: HttpResponseError, response: MockAsyncHttpResponse) -> None:
+        """Keep the service message, body, status and request correlation."""
+        assert error.status_code == 400
+        assert error.response is response
+        assert "annotation input exceeds the token limit" in str(error)
+        assert error.response.json()["error"]["innererror"]["code"] == "OperationFailedUserError"
+        assert error.response.headers["x-ms-request-id"] == "test-request-id"
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status_code", [202, 404, 408, 429, 500, 503])
+    async def test_fetch_result_other_statuses_keep_polling(
+        self, status_code: int, polling_clock: PollingClock, mock_token: str, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """The narrow bad-request fix leaves other polling behavior unchanged."""
+        responses = [MockAsyncHttpResponse(status_code), MockAsyncHttpResponse(200, json={"result": "done"})]
+        with patch("azure.ai.evaluation._http_utils.AsyncHttpPipeline.get", side_effect=responses) as get:
+            result = await fetch_result("op-id", "https://example.org", None, mock_token)
+
+        assert result == {"result": "done"}
+        assert get.await_count == 2
+        assert polling_clock.sleeps == [2]
+        assert not any(record.name == "azure.ai.evaluation._common.rai_service" for record in caplog.records)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status_code", [202, 404, 408, 429, 500, 503, None])
+    async def test_fetch_result_onedp_other_errors_keep_polling(
+        self,
+        status_code: Optional[int],
+        polling_clock: PollingClock,
+        mock_token: str,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Pending/transient and statusless errors retain the existing path."""
+        response = MockAsyncHttpResponse(status_code) if status_code is not None else None
+        error = HttpResponseError(response=response) if response else HttpResponseError(message="Unknown status")
+        client = MagicMock()
+        client.evaluations.operation_results.side_effect = [error, {"result": "done"}]
+
+        result = await fetch_result_onedp(client, "op-id", mock_token)
+
+        assert result == {"result": "done"}
+        assert client.evaluations.operation_results.call_count == 2
+        assert polling_clock.sleeps == [2]
+        assert not any(record.name == "azure.ai.evaluation._common.rai_service" for record in caplog.records)
+
     def test_rai_subscript_functions(self):
         # ensure_service_availability()
 

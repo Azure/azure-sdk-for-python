@@ -1,5 +1,47 @@
 # Release History
 
+## 12.0.0 (2026-07-29)
+
+### Features Added
+
+  - Client `EventHubManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `EventHubManagementClient` added method `send_request`
+  - Model `NetworkSecurityPerimeterConfiguration` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Enum `TlsVersion` added member `ONE3`
+  - Added model `ConfidentialCompute`
+  - Added enum `IpAddressType`
+  - Added enum `Mode`
+  - Added model `PlatformCapabilities`
+  - Operation group `NetworkSecurityPerimeterConfigurationsOperations` added method `get_resource_association_name`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ApplicationGroup` moved instance variable `client_app_group_identifier`, `is_enabled` and `policies` under property `properties` whose type is `ApplicationGroupProperties`
+  - Model `ArmDisasterRecovery` moved instance variable `alternate_name`, `partner_namespace`, `pending_replication_operations_count`, `provisioning_state` and `role` under property `properties` whose type is `ArmDisasterRecoveryProperties`
+  - Model `AuthorizationRule` moved instance variable `rights` under property `properties` whose type is `AuthorizationRuleProperties`
+  - Model `Cluster` moved instance variable `created_at`, `metric_id`, `provisioning_state`, `status`, `supports_scaling` and `updated_at` under property `properties` whose type is `ClusterProperties`
+  - Model `ConsumerGroup` moved instance variable `created_at`, `updated_at` and `user_metadata` under property `properties` whose type is `ConsumerGroupProperties`
+  - Model `Destination` moved instance variable `archive_name_format`, `blob_container`, `data_lake_account_name`, `data_lake_folder_path`, `data_lake_subscription_id` and `storage_account_resource_id` under property `properties` whose type is `DestinationProperties`
+  - Model `EHNamespace` moved instance variable `alternate_name`, `cluster_arm_id`, `created_at`, `disable_local_auth`, `encryption`, `geo_data_replication`, `is_auto_inflate_enabled`, `kafka_enabled`, `maximum_throughput_units`, `metric_id`, `minimum_tls_version`, `private_endpoint_connections`, `provisioning_state`, `public_network_access`, `service_bus_endpoint`, `status`, `updated_at` and `zone_redundant` under property `properties` whose type is `EHNamespaceProperties`
+  - Model `Eventhub` moved instance variable `capture_description`, `created_at`, `identifier`, `message_retention_in_days`, `message_timestamp_description`, `partition_count`, `partition_ids`, `retention_description`, `status`, `updated_at` and `user_metadata` under property `properties` whose type is `EventhubProperties`
+  - Model `FailOver` moved instance variable `force` and `primary_location` under property `properties` whose type is `FailOverProperties`
+  - Model `NetworkRuleSet` moved instance variable `default_action`, `ip_rules`, `public_network_access`, `trusted_service_access_enabled` and `virtual_network_rules` under property `properties` whose type is `NetworkRuleSetProperties`
+  - Model `NetworkSecurityPerimeterConfiguration` moved instance variable `applicable_features`, `is_backing_resource`, `network_security_perimeter`, `parent_association_name`, `profile`, `provisioning_issues`, `provisioning_state`, `resource_association` and `source_resource_id` under property `properties` whose type is `NetworkSecurityPerimeterConfigurationProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `ProxyResource` deleted or renamed its instance variable `location`
+  - Model `RetentionDescription` renamed its instance variable `min_compaction_lag_in_mins` to `min_compaction_lag_time_in_minutes`
+  - Model `SchemaGroup` moved instance variable `created_at_utc`, `e_tag`, `group_properties`, `schema_compatibility`, `schema_type` and `updated_at_utc` under property `properties` whose type is `SchemaGroupProperties`
+  - Method `NetworkSecurityPerimeterConfigurationsOperations.begin_create_or_update` changed return type from `LROPoller[None]` to `LROPoller[NetworkSecurityPerimeterConfiguration]`
+
+### Other Changes
+
+  - Deleted model `ApplicationGroupListResult`/`ArmDisasterRecoveryListResult`/`AuthorizationRuleListResult`/`ClusterListResult`/`ConsumerGroupListResult`/`EHNamespaceListResult`/`EventHubListResult`/`OperationListResult`/`PrivateEndpointConnectionListResult`/`SchemaGroupListResult` which actually were not used by SDK users
+  - Deleted model `ErrorDetailAutoGenerated`/`ErrorResponseAutoGenerated`/`TrackedResource` which actually were not used by SDK users
+
 ## 12.0.0b2 (2026-07-07)
 
 ### Features Added

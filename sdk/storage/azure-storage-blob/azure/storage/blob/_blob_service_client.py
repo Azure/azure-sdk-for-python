@@ -120,7 +120,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:
@@ -363,7 +363,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def set_service_properties(
+    def set_service_properties(  # pylint: disable=protected-access
         self,
         analytics_logging: Optional["BlobAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,
@@ -440,13 +440,23 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             raise ValueError("set_service_properties should be called with at least one parameter")
 
         props = StorageServiceProperties(
-            logging=analytics_logging,
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
+            logging=(
+                analytics_logging._to_generated() if analytics_logging else None
+            ),  # pylint: disable=protected-access
+            hour_metrics=hour_metrics._to_generated() if hour_metrics else None,  # pylint: disable=protected-access
+            minute_metrics=(
+                minute_metrics._to_generated() if minute_metrics else None  # pylint: disable=protected-access
+            ),
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
             default_service_version=target_version,
-            delete_retention_policy=delete_retention_policy,
-            static_website=static_website,
+            delete_retention_policy=(
+                delete_retention_policy._to_generated()  # pylint: disable=protected-access
+                if delete_retention_policy
+                else None
+            ),
+            static_website=(
+                static_website._to_generated() if static_website else None
+            ),  # pylint: disable=protected-access
         )
         timeout = kwargs.pop("timeout", None)
         try:
@@ -695,7 +705,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         except AttributeError:
             kwargs["source_lease_id"] = lease
         try:
-            renamed_container._client.container.rename(name, **kwargs)  # pylint: disable = protected-access
+            renamed_container._client.container.rename(  # pylint: disable=protected-access
+                source_container_name=name, **kwargs
+            )
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)

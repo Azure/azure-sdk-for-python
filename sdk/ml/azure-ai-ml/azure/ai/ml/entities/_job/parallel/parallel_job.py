@@ -72,10 +72,10 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     :type partition_keys: list
     :param input_data: The input data.
     :type input_data: str
-    :param inputs: Inputs of the job.
-    :type inputs: dict
-    :param outputs: Outputs of the job.
-    :type outputs: dict
+    :keyword inputs: Inputs of the job.
+    :paramtype inputs: dict
+    :keyword outputs: Outputs of the job.
+    :paramtype outputs: dict
     """
 
     def __init__(

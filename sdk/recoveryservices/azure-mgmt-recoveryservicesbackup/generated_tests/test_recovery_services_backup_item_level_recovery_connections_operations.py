@@ -64,3 +64,19 @@ class TestRecoveryServicesBackupItemLevelRecoveryConnectionsOperations(AzureMgmt
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_item_level_recovery_connections_list_instant_item_recovery_operation_result(self, resource_group):
+        response = self.client.item_level_recovery_connections.list_instant_item_recovery_operation_result(
+            resource_group_name=resource_group.name,
+            vault_name="str",
+            fabric_name="str",
+            container_name="str",
+            protected_item_name="str",
+            recovery_point_id="str",
+            body={"provisionInstantItemRecoveryOperationId": "str"},
+        )
+
+        # please add some check logic here by yourself
+        # ...

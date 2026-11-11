@@ -13,8 +13,8 @@ urlFragment: textanalytics-samples
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
 
-You can authenticate your client with a Language API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity]:
-* See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
+You can authenticate your client through Microsoft Entra ID with a token credential from [azure-identity][azure_identity]:
+* See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for authentication examples.
 
 These sample programs show common scenarios for the Text Analytics client's offerings.
 
@@ -24,6 +24,12 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_recognize_entities.py][recognize_entities] and [sample_recognize_entities_async.py][recognize_entities_async]|Recognize named entities in documents|
 |[sample_recognize_linked_entities.py][recognize_linked_entities] and [sample_recognize_linked_entities_async.py][recognize_linked_entities_async]|Recognize linked entities in documents|
 |[sample_recognize_pii_entities.py][recognize_pii_entities] and [sample_recognize_pii_entities_async.py][recognize_pii_entities_async]|Recognize personally identifiable information in documents|
+|[sample_recognize_pii_entities_with_confidence_score.py][recognize_pii_entities_with_confidence_score] and [sample_recognize_pii_entities_with_confidence_score_async.py][recognize_pii_entities_with_confidence_score_async]|Recognize personally identifiable information using confidence thresholds|
+|[sample_recognize_pii_entities_with_redaction_policies.py][recognize_pii_entities_with_redaction_policies] and [sample_recognize_pii_entities_with_redaction_policies_async.py][recognize_pii_entities_with_redaction_policies_async]|Recognize personally identifiable information using redaction policies|
+|[sample_recognize_pii_entities_with_synonyms.py][recognize_pii_entities_with_synonyms] and [sample_recognize_pii_entities_with_synonyms_async.py][recognize_pii_entities_with_synonyms_async]|Recognize personally identifiable information using entity synonyms|
+|[sample_recognize_pii_entities_with_value_exclusion.py][recognize_pii_entities_with_value_exclusion] and [sample_recognize_pii_entities_with_value_exclusion_async.py][recognize_pii_entities_with_value_exclusion_async]|Recognize personally identifiable information using value exclusions|
+|[sample_recognize_pii_entities_with_excluded_categories.py][recognize_pii_entities_with_excluded_categories] and [sample_recognize_pii_entities_with_excluded_categories_async.py][recognize_pii_entities_with_excluded_categories_async]|Recognize personally identifiable information while excluding selected categories|
+|[sample_analyze_text_job_with_cancel_after.py][analyze_text_job_with_cancel_after] and [sample_analyze_text_job_with_cancel_after_async.py][analyze_text_job_with_cancel_after_async]|Cancel a PII analysis job automatically if it exceeds a specified duration|
 |[sample_extract_key_phrases.py][extract_key_phrases] and [sample_extract_key_phrases_async.py][extract_key_phrases_async]|Extract key phrases from documents|
 |[sample_analyze_sentiment.py][analyze_sentiment] and [sample_analyze_sentiment_async.py][analyze_sentiment_async]|Analyze the sentiment of documents|
 |[sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] and [sample_analyze_healthcare_entities_async.py][analyze_healthcare_entities_sample_async]|Analyze healthcare entities|
@@ -79,6 +85,18 @@ what you can do with the Azure Text Analytics client library.
 [recognize_linked_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
 [recognize_pii_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
 [recognize_pii_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
+[recognize_pii_entities_with_confidence_score]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities_with_confidence_score.py
+[recognize_pii_entities_with_confidence_score_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_with_confidence_score_async.py
+[recognize_pii_entities_with_redaction_policies]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities_with_redaction_policies.py
+[recognize_pii_entities_with_redaction_policies_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_with_redaction_policies_async.py
+[recognize_pii_entities_with_synonyms]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities_with_synonyms.py
+[recognize_pii_entities_with_synonyms_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_with_synonyms_async.py
+[recognize_pii_entities_with_value_exclusion]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities_with_value_exclusion.py
+[recognize_pii_entities_with_value_exclusion_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_with_value_exclusion_async.py
+[recognize_pii_entities_with_excluded_categories]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities_with_excluded_categories.py
+[recognize_pii_entities_with_excluded_categories_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_with_excluded_categories_async.py
+[analyze_text_job_with_cancel_after]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_text_job_with_cancel_after.py
+[analyze_text_job_with_cancel_after_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_text_job_with_cancel_after_async.py
 [extract_key_phrases]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_extract_key_phrases.py
 [extract_key_phrases_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py
 [analyze_sentiment]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_sentiment.py

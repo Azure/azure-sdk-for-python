@@ -32,17 +32,23 @@ def main():
 
     response = client.chat_model_deployments.begin_create_or_update(
         resource_group_name="rgdiscovery",
-        workspace_name="eb2204766409e111d9",
-        chat_model_deployment_name="d1844ae17cc93bd299",
+        workspace_name="f3ed10c1c617387d5d",
+        chat_model_deployment_name="2143036f84d477b367",
         resource={
             "location": "uksouth",
-            "properties": {"modelFormat": "tcttsgevrsuflt", "modelName": "nvwdoluhukiachlyrdnpxusxsc"},
-            "tags": {"key4822": "fpesmhjievwzxmhxszcgpztivcgw"},
+            "properties": {
+                "capacity": 8,
+                "modelFormat": "zo",
+                "modelName": "ijzwlirrkr",
+                "modelVersion": "seiduxog",
+                "skuName": "dymgademiauwwacz",
+            },
+            "tags": {"key984": "sqzgsgykyhltqwmpgvhlyp"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/ChatModelDeployments_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ChatModelDeployments_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

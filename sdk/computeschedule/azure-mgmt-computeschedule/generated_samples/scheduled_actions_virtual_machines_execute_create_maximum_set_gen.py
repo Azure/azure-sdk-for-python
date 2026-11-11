@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,82 +32,139 @@ def main():
     )
 
     response = client.scheduled_actions.virtual_machines_execute_create(
-        locationparameter="oslhbouzgevzpeydssyelhw",
+        locationparameter="eastus2",
         request_body={
-            "correlationid": "dfe927c5-16a6-40b7-a0f7-8524975ed642",
-            "executionParameters": {"retryPolicy": {"retryCount": 5, "retryWindowInMinutes": 40}},
+            "correlationid": "01234567-89ab-cdef-0123-456789abcdef",
+            "executionParameters": {
+                "optimizationPreference": "Cost",
+                "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 3, "retryWindowInMinutes": 30},
+            },
             "resourceConfigParameters": {
-                "baseProfile": {
+                "resourceCount": 3,
+                "resourcePrefix": "myBulkVm",
+                "virtualMachineBaseProfile": {
                     "computeApiVersion": "2024-07-01",
-                    "hardwareProfile": {"name": "F1"},
-                    "provisioningState": 0,
-                    "resourcegroupName": "RG5ABF491C-3164-42A6-8CB5-BF3CB53B018B",
-                    "storageProfile": {"osDisk": {"osType": 0}},
+                    "identity": {"type": "SystemAssigned"},
+                    "name": "baseVmConfig",
+                    "properties": {
+                        "additionalCapabilities": {"hibernationEnabled": False, "ultraSSDEnabled": False},
+                        "diagnosticsProfile": {"bootDiagnostics": {"enabled": True}},
+                        "networkProfile": {
+                            "networkInterfaces": [
+                                {
+                                    "id": "/subscriptions/732116BD-AF31-4E74-9283-B387C44B4A44/resourceGroups/myResourceGroup/providers/Microsoft.Network/networkInterfaces/myNic",
+                                    "properties": {"deleteOption": "Delete", "primary": True},
+                                }
+                            ]
+                        },
+                        "osProfile": {
+                            "adminUsername": "azureuser",
+                            "allowExtensionOperations": True,
+                            "computerName": "myVM",
+                            "linuxConfiguration": {
+                                "disablePasswordAuthentication": True,
+                                "patchSettings": {
+                                    "assessmentMode": "AutomaticByPlatform",
+                                    "patchMode": "AutomaticByPlatform",
+                                },
+                                "provisionVMAgent": True,
+                                "ssh": {
+                                    "publicKeys": [
+                                        {
+                                            "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQ...",
+                                            "path": "/home/azureuser/.ssh/authorized_keys",
+                                        }
+                                    ]
+                                },
+                            },
+                        },
+                        "securityProfile": {
+                            "securityType": "TrustedLaunch",
+                            "uefiSettings": {"secureBootEnabled": True, "vTpmEnabled": True},
+                        },
+                        "storageProfile": {
+                            "dataDisks": [
+                                {
+                                    "caching": "ReadOnly",
+                                    "createOption": "Empty",
+                                    "deleteOption": "Delete",
+                                    "diskSizeGB": 256,
+                                    "lun": 0,
+                                    "managedDisk": {"storageAccountType": "Premium_LRS"},
+                                    "name": "myDataDisk-0",
+                                }
+                            ],
+                            "diskControllerType": "SCSI",
+                            "imageReference": {
+                                "offer": "0001-com-ubuntu-server-jammy",
+                                "publisher": "Canonical",
+                                "sku": "22_04-lts-gen2",
+                                "version": "latest",
+                            },
+                            "osDisk": {
+                                "caching": "ReadWrite",
+                                "createOption": "FromImage",
+                                "deleteOption": "Delete",
+                                "diskSizeGB": 128,
+                                "managedDisk": {"storageAccountType": "Premium_LRS"},
+                                "name": "myOsDisk",
+                                "osType": "Linux",
+                            },
+                        },
+                    },
+                    "resourceGroupName": "myResourceGroup",
+                    "tags": {"department": "engineering", "environment": "production"},
                     "vmExtensions": [
                         {
-                            "autoUpgradeMinorVersion": True,
-                            "enableAutomaticUpgrade": True,
-                            "protectedSettings": "SomeDecryptedSecretValue",
-                            "provisioningState": 0,
-                            "publisher": "Microsoft.Azure.Monitor",
-                            "type": "AzureMonitorLinuxAgent",
-                            "typeHandlerVersion": "1.0",
-                        },
-                        {"name": "myExtensionName"},
+                            "name": "AzureMonitorLinuxAgent",
+                            "properties": {
+                                "autoUpgradeMinorVersion": True,
+                                "enableAutomaticUpgrade": True,
+                                "publisher": "Microsoft.Azure.Monitor",
+                                "settings": {},
+                                "suppressFailures": False,
+                                "type": "AzureMonitorLinuxAgent",
+                                "typeHandlerVersion": "1.0",
+                            },
+                        }
                     ],
+                    "zones": ["1"],
                 },
-                "resourceCount": 2,
-                "resourceOverrides": [
+                "virtualMachineOverrides": [
                     {
-                        "location": "LocalDev",
-                        "name": "myFleet_523",
+                        "computeApiVersion": "2024-07-01",
+                        "name": "overrideVmConfig-0",
                         "properties": {
-                            "hardwareProfile": {"vmSize": "Standard_F1s"},
-                            "osProfile": {
-                                "adminPassword": "SomeDecryptedSecretValue",
-                                "adminUsername": "adminUser",
-                                "computerName": "myFleet000000",
-                                "windowsConfiguration": {
-                                    "additionalUnattendContent": [
-                                        {"content": "", "passName": "someValue"},
-                                        {"content": "SomeDecryptedSecretValue", "passName": "someOtherValue"},
-                                    ]
-                                },
+                            "networkProfile": {
+                                "networkInterfaces": [
+                                    {
+                                        "id": "/subscriptions/732116BD-AF31-4E74-9283-B387C44B4A44/resourceGroups/myResourceGroup/providers/Microsoft.Network/networkInterfaces/myNic-override",
+                                        "properties": {"deleteOption": "Delete", "primary": True},
+                                    }
+                                ]
                             },
-                            "priority": 0,
-                            "provisioningState": 0,
-                        },
-                        "zones": ["1"],
-                    },
-                    {
-                        "location": "LocalDev",
-                        "name": "myFleet_524",
-                        "properties": {
-                            "hardwareProfile": {"vmSize": "Standard_G1s"},
-                            "osProfile": {
-                                "adminPassword": "SomeDecryptedSecretValue",
-                                "adminUsername": "adminUser",
-                                "computerName": "myFleet000000",
-                                "windowsConfiguration": {
-                                    "additionalUnattendContent": [
-                                        {"content": "", "passName": "someValue"},
-                                        {"content": "SomeDecryptedSecretValue", "passName": "someOtherValue"},
-                                    ]
-                                },
+                            "storageProfile": {
+                                "osDisk": {
+                                    "caching": "ReadWrite",
+                                    "createOption": "FromImage",
+                                    "deleteOption": "Delete",
+                                    "diskSizeGB": 256,
+                                    "managedDisk": {"storageAccountType": "Premium_LRS"},
+                                    "name": "overrideOsDisk",
+                                    "osType": "Linux",
+                                }
                             },
-                            "priority": 0,
-                            "provisioningState": 0,
                         },
+                        "tags": {"department": "engineering", "environment": "production", "role": "web-server"},
                         "zones": ["2"],
-                    },
+                    }
                 ],
-                "resourcePrefix": "TL1",
             },
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_VirtualMachinesExecuteCreate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/ScheduledActions_VirtualMachinesExecuteCreate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

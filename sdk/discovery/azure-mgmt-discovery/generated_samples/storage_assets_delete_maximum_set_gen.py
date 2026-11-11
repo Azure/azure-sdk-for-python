@@ -32,11 +32,11 @@ def main():
 
     client.storage_assets.begin_delete(
         resource_group_name="rgdiscovery",
-        storage_container_name="f7e7a03c675ccffe1a",
-        storage_asset_name="8f741ee4588dc823fc",
+        storage_container_name="86f9743316a64d577a",
+        storage_asset_name="7255aed4c052c5a165",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/StorageAssets_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/StorageAssets_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -755,9 +755,9 @@ class CreditSummary(ProxyResource):
     :vartype system_data: ~azure.mgmt.consumption.models.SystemData
     :ivar properties: The properties of the credit summary.
     :vartype properties: ~azure.mgmt.consumption.models.CreditSummaryProperties
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
+    :ivar etag: eTag of the resource. To handle concurrent update scenario, this field will be used
+     to determine whether the user is updating the latest version or not.
+    :vartype etag: str
     :ivar tags: A list of Tag.
     :vartype tags: dict[str, str]
     """
@@ -766,7 +766,7 @@ class CreditSummary(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of the credit summary."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
+    etag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
     """eTag of the resource. To handle concurrent update scenario, this field will be used to
      determine whether the user is updating the latest version or not."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -789,7 +789,7 @@ class CreditSummary(ProxyResource):
         self,
         *,
         properties: Optional["_models.CreditSummaryProperties"] = None,
-        e_tag: Optional[str] = None,
+        etag: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 

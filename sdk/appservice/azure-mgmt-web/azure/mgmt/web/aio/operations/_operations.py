@@ -34,7 +34,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _deserialize_xml, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -734,7 +734,6 @@ from ...operations._operations import (
 )
 from .._configuration import WebSiteManagementClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -839,7 +838,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        worker_pool_envelope: Union[_models.WorkerPoolResource, JSON, IO[bytes]],
+        worker_pool_envelope: Union[_models.WorkerPoolResource, _types.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -949,7 +948,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        worker_pool_envelope: JSON,
+        worker_pool_envelope: _types.WorkerPoolResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -966,7 +965,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param worker_pool_name: Name of the worker pool. Required.
         :type worker_pool_name: str
         :param worker_pool_envelope: Properties of the worker pool. Required.
-        :type worker_pool_envelope: JSON
+        :type worker_pool_envelope: ~azure.mgmt.web.types.WorkerPoolResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1015,7 +1014,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        worker_pool_envelope: Union[_models.WorkerPoolResource, JSON, IO[bytes]],
+        worker_pool_envelope: Union[_models.WorkerPoolResource, _types.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkerPoolResource]:
         """Create or update a worker pool.
@@ -1029,9 +1028,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type name: str
         :param worker_pool_name: Name of the worker pool. Required.
         :type worker_pool_name: str
-        :param worker_pool_envelope: Properties of the worker pool. Is one of the following types:
-         WorkerPoolResource, JSON, IO[bytes] Required.
-        :type worker_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource or JSON or IO[bytes]
+        :param worker_pool_envelope: Properties of the worker pool. Is either a WorkerPoolResource type
+         or a IO[bytes] type. Required.
+        :type worker_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~azure.mgmt.web.types.WorkerPoolResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkerPoolResource. The WorkerPoolResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.WorkerPoolResource]
@@ -1128,7 +1128,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        worker_pool_envelope: JSON,
+        worker_pool_envelope: _types.WorkerPoolResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1145,7 +1145,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param worker_pool_name: Name of the worker pool. Required.
         :type worker_pool_name: str
         :param worker_pool_envelope: Properties of the worker pool. Required.
-        :type worker_pool_envelope: JSON
+        :type worker_pool_envelope: ~azure.mgmt.web.types.WorkerPoolResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1192,7 +1192,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        worker_pool_envelope: Union[_models.WorkerPoolResource, JSON, IO[bytes]],
+        worker_pool_envelope: Union[_models.WorkerPoolResource, _types.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.WorkerPoolResource:
         """Create or update a worker pool.
@@ -1206,9 +1206,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type name: str
         :param worker_pool_name: Name of the worker pool. Required.
         :type worker_pool_name: str
-        :param worker_pool_envelope: Properties of the worker pool. Is one of the following types:
-         WorkerPoolResource, JSON, IO[bytes] Required.
-        :type worker_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource or JSON or IO[bytes]
+        :param worker_pool_envelope: Properties of the worker pool. Is either a WorkerPoolResource type
+         or a IO[bytes] type. Required.
+        :type worker_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~azure.mgmt.web.types.WorkerPoolResource or IO[bytes]
         :return: WorkerPoolResource. The WorkerPoolResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.WorkerPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1340,7 +1341,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1449,7 +1453,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1554,7 +1561,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1658,7 +1668,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1762,7 +1775,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1881,7 +1897,9 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        hosting_environment_envelope: Union[_models.AppServiceEnvironmentResource, JSON, IO[bytes]],
+        hosting_environment_envelope: Union[
+            _models.AppServiceEnvironmentResource, _types.AppServiceEnvironmentResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1993,7 +2011,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        hosting_environment_envelope: JSON,
+        hosting_environment_envelope: _types.AppServiceEnvironmentResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2009,7 +2027,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type name: str
         :param hosting_environment_envelope: Configuration details of the App Service Environment.
          Required.
-        :type hosting_environment_envelope: JSON
+        :type hosting_environment_envelope: ~azure.mgmt.web.types.AppServiceEnvironmentResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2057,7 +2075,9 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        hosting_environment_envelope: Union[_models.AppServiceEnvironmentResource, JSON, IO[bytes]],
+        hosting_environment_envelope: Union[
+            _models.AppServiceEnvironmentResource, _types.AppServiceEnvironmentResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AppServiceEnvironmentResource]:
         """Create or update an App Service Environment.
@@ -2070,9 +2090,9 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param name: Name of the App Service Environment. Required.
         :type name: str
         :param hosting_environment_envelope: Configuration details of the App Service Environment. Is
-         one of the following types: AppServiceEnvironmentResource, JSON, IO[bytes] Required.
+         either a AppServiceEnvironmentResource type or a IO[bytes] type. Required.
         :type hosting_environment_envelope: ~azure.mgmt.web.models.AppServiceEnvironmentResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.web.types.AppServiceEnvironmentResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AppServiceEnvironmentResource. The
          AppServiceEnvironmentResource is compatible with MutableMapping
         :rtype:
@@ -2167,7 +2187,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        hosting_environment_envelope: JSON,
+        hosting_environment_envelope: _types.AppServiceEnvironmentPatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2183,7 +2203,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type name: str
         :param hosting_environment_envelope: Configuration details of the App Service Environment.
          Required.
-        :type hosting_environment_envelope: JSON
+        :type hosting_environment_envelope: ~azure.mgmt.web.types.AppServiceEnvironmentPatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2229,7 +2249,9 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        hosting_environment_envelope: Union[_models.AppServiceEnvironmentPatchResource, JSON, IO[bytes]],
+        hosting_environment_envelope: Union[
+            _models.AppServiceEnvironmentPatchResource, _types.AppServiceEnvironmentPatchResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AppServiceEnvironmentResource:
         """Create or update an App Service Environment.
@@ -2242,9 +2264,9 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param name: Name of the App Service Environment. Required.
         :type name: str
         :param hosting_environment_envelope: Configuration details of the App Service Environment. Is
-         one of the following types: AppServiceEnvironmentPatchResource, JSON, IO[bytes] Required.
+         either a AppServiceEnvironmentPatchResource type or a IO[bytes] type. Required.
         :type hosting_environment_envelope: ~azure.mgmt.web.models.AppServiceEnvironmentPatchResource
-         or JSON or IO[bytes]
+         or ~azure.mgmt.web.types.AppServiceEnvironmentPatchResource or IO[bytes]
         :return: AppServiceEnvironmentResource. The AppServiceEnvironmentResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.AppServiceEnvironmentResource
@@ -2501,7 +2523,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2594,7 +2619,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2695,7 +2723,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2741,7 +2772,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        vnet_info: Union[_models.VirtualNetworkProfile, JSON, IO[bytes]],
+        vnet_info: Union[_models.VirtualNetworkProfile, _types.VirtualNetworkProfile, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2846,7 +2877,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        vnet_info: JSON,
+        vnet_info: _types.VirtualNetworkProfile,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2861,7 +2892,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param name: Name of the App Service Environment. Required.
         :type name: str
         :param vnet_info: Details for the new virtual network. Required.
-        :type vnet_info: JSON
+        :type vnet_info: ~azure.mgmt.web.types.VirtualNetworkProfile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2906,7 +2937,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        vnet_info: Union[_models.VirtualNetworkProfile, JSON, IO[bytes]],
+        vnet_info: Union[_models.VirtualNetworkProfile, _types.VirtualNetworkProfile, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[AsyncItemPaged["_models.Site"]]:
         """Move an App Service Environment to a different VNET.
@@ -2918,9 +2949,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param name: Name of the App Service Environment. Required.
         :type name: str
-        :param vnet_info: Details for the new virtual network. Is one of the following types:
-         VirtualNetworkProfile, JSON, IO[bytes] Required.
-        :type vnet_info: ~azure.mgmt.web.models.VirtualNetworkProfile or JSON or IO[bytes]
+        :param vnet_info: Details for the new virtual network. Is either a VirtualNetworkProfile type
+         or a IO[bytes] type. Required.
+        :type vnet_info: ~azure.mgmt.web.models.VirtualNetworkProfile or
+         ~azure.mgmt.web.types.VirtualNetworkProfile or IO[bytes]
         :return: An instance of LROPoller that returns an iterator like instance of list of Site
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.Site]]
@@ -2978,7 +3010,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3279,7 +3314,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3630,7 +3668,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3925,7 +3966,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4070,7 +4114,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4175,7 +4222,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4336,7 +4386,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4487,7 +4540,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4711,7 +4767,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        custom_dns_suffix_configuration: JSON,
+        custom_dns_suffix_configuration: _types.CustomDnsSuffixConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4726,7 +4782,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param name: Name of the App Service Environment. Required.
         :type name: str
         :param custom_dns_suffix_configuration: Required.
-        :type custom_dns_suffix_configuration: JSON
+        :type custom_dns_suffix_configuration: ~azure.mgmt.web.types.CustomDnsSuffixConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4771,7 +4827,9 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        custom_dns_suffix_configuration: Union[_models.CustomDnsSuffixConfiguration, JSON, IO[bytes]],
+        custom_dns_suffix_configuration: Union[
+            _models.CustomDnsSuffixConfiguration, _types.CustomDnsSuffixConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CustomDnsSuffixConfiguration:
         """Update Custom Dns Suffix configuration of an App Service Environment.
@@ -4783,10 +4841,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param name: Name of the App Service Environment. Required.
         :type name: str
-        :param custom_dns_suffix_configuration: Is one of the following types:
-         CustomDnsSuffixConfiguration, JSON, IO[bytes] Required.
+        :param custom_dns_suffix_configuration: Is either a CustomDnsSuffixConfiguration type or a
+         IO[bytes] type. Required.
         :type custom_dns_suffix_configuration: ~azure.mgmt.web.models.CustomDnsSuffixConfiguration or
-         JSON or IO[bytes]
+         ~azure.mgmt.web.types.CustomDnsSuffixConfiguration or IO[bytes]
         :return: CustomDnsSuffixConfiguration. The CustomDnsSuffixConfiguration is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.CustomDnsSuffixConfiguration
@@ -5043,7 +5101,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        ase_networking_configuration: JSON,
+        ase_networking_configuration: _types.AseV3NetworkingConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5058,7 +5116,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param name: Name of the App Service Environment. Required.
         :type name: str
         :param ase_networking_configuration: Required.
-        :type ase_networking_configuration: JSON
+        :type ase_networking_configuration: ~azure.mgmt.web.types.AseV3NetworkingConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5103,7 +5161,9 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        ase_networking_configuration: Union[_models.AseV3NetworkingConfiguration, JSON, IO[bytes]],
+        ase_networking_configuration: Union[
+            _models.AseV3NetworkingConfiguration, _types.AseV3NetworkingConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AseV3NetworkingConfiguration:
         """Update networking configuration of an App Service Environment.
@@ -5115,10 +5175,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param name: Name of the App Service Environment. Required.
         :type name: str
-        :param ase_networking_configuration: Is one of the following types:
-         AseV3NetworkingConfiguration, JSON, IO[bytes] Required.
-        :type ase_networking_configuration: ~azure.mgmt.web.models.AseV3NetworkingConfiguration or JSON
-         or IO[bytes]
+        :param ase_networking_configuration: Is either a AseV3NetworkingConfiguration type or a
+         IO[bytes] type. Required.
+        :type ase_networking_configuration: ~azure.mgmt.web.models.AseV3NetworkingConfiguration or
+         ~azure.mgmt.web.types.AseV3NetworkingConfiguration or IO[bytes]
         :return: AseV3NetworkingConfiguration. The AseV3NetworkingConfiguration is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.AseV3NetworkingConfiguration
@@ -5269,7 +5329,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        multi_role_pool_envelope: Union[_models.WorkerPoolResource, JSON, IO[bytes]],
+        multi_role_pool_envelope: Union[_models.WorkerPoolResource, _types.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5374,7 +5434,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        multi_role_pool_envelope: JSON,
+        multi_role_pool_envelope: _types.WorkerPoolResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5389,7 +5449,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param name: Name of the App Service Environment. Required.
         :type name: str
         :param multi_role_pool_envelope: Properties of the multi-role pool. Required.
-        :type multi_role_pool_envelope: JSON
+        :type multi_role_pool_envelope: ~azure.mgmt.web.types.WorkerPoolResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5434,7 +5494,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        multi_role_pool_envelope: Union[_models.WorkerPoolResource, JSON, IO[bytes]],
+        multi_role_pool_envelope: Union[_models.WorkerPoolResource, _types.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkerPoolResource]:
         """Create or update a multi-role pool.
@@ -5446,9 +5506,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param name: Name of the App Service Environment. Required.
         :type name: str
-        :param multi_role_pool_envelope: Properties of the multi-role pool. Is one of the following
-         types: WorkerPoolResource, JSON, IO[bytes] Required.
-        :type multi_role_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource or JSON or IO[bytes]
+        :param multi_role_pool_envelope: Properties of the multi-role pool. Is either a
+         WorkerPoolResource type or a IO[bytes] type. Required.
+        :type multi_role_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~azure.mgmt.web.types.WorkerPoolResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkerPoolResource. The WorkerPoolResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.WorkerPoolResource]
@@ -5540,7 +5601,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        multi_role_pool_envelope: JSON,
+        multi_role_pool_envelope: _types.WorkerPoolResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5555,7 +5616,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param name: Name of the App Service Environment. Required.
         :type name: str
         :param multi_role_pool_envelope: Properties of the multi-role pool. Required.
-        :type multi_role_pool_envelope: JSON
+        :type multi_role_pool_envelope: ~azure.mgmt.web.types.WorkerPoolResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5598,7 +5659,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         name: str,
-        multi_role_pool_envelope: Union[_models.WorkerPoolResource, JSON, IO[bytes]],
+        multi_role_pool_envelope: Union[_models.WorkerPoolResource, _types.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.WorkerPoolResource:
         """Create or update a multi-role pool.
@@ -5610,9 +5671,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param name: Name of the App Service Environment. Required.
         :type name: str
-        :param multi_role_pool_envelope: Properties of the multi-role pool. Is one of the following
-         types: WorkerPoolResource, JSON, IO[bytes] Required.
-        :type multi_role_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource or JSON or IO[bytes]
+        :param multi_role_pool_envelope: Properties of the multi-role pool. Is either a
+         WorkerPoolResource type or a IO[bytes] type. Required.
+        :type multi_role_pool_envelope: ~azure.mgmt.web.models.WorkerPoolResource or
+         ~azure.mgmt.web.types.WorkerPoolResource or IO[bytes]
         :return: WorkerPoolResource. The WorkerPoolResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.WorkerPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5743,7 +5805,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5850,7 +5915,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5952,7 +6020,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6053,7 +6124,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6154,7 +6228,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6279,7 +6356,11 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes]],
+        private_endpoint_wrapper: Union[
+            _models.RemotePrivateEndpointConnectionARMResource,
+            _types.RemotePrivateEndpointConnectionARMResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6391,7 +6472,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: JSON,
+        private_endpoint_wrapper: _types.RemotePrivateEndpointConnectionARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6408,7 +6489,8 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_wrapper: Required.
-        :type private_endpoint_wrapper: JSON
+        :type private_endpoint_wrapper:
+         ~azure.mgmt.web.types.RemotePrivateEndpointConnectionARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6459,7 +6541,11 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes]],
+        private_endpoint_wrapper: Union[
+            _models.RemotePrivateEndpointConnectionARMResource,
+            _types.RemotePrivateEndpointConnectionARMResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RemotePrivateEndpointConnectionARMResource]:
         """Approves or rejects a private endpoint connection.
@@ -6473,10 +6559,11 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type name: str
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param private_endpoint_wrapper: Is one of the following types:
-         RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes] Required.
+        :param private_endpoint_wrapper: Is either a RemotePrivateEndpointConnectionARMResource type or
+         a IO[bytes] type. Required.
         :type private_endpoint_wrapper:
-         ~azure.mgmt.web.models.RemotePrivateEndpointConnectionARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.RemotePrivateEndpointConnectionARMResource or
+         ~azure.mgmt.web.types.RemotePrivateEndpointConnectionARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RemotePrivateEndpointConnectionARMResource.
          The RemotePrivateEndpointConnectionARMResource is compatible with MutableMapping
         :rtype:
@@ -6601,7 +6688,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
     @distributed_trace_async
     async def begin_delete_private_endpoint_connection(
         self, resource_group_name: str, name: str, private_endpoint_connection_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[Any]:
         """Deletes a private endpoint connection.
 
         Description for Deletes a private endpoint connection.
@@ -6613,14 +6700,14 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :type name: str
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns any
+        :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Any] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -6637,9 +6724,12 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(Any, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -6654,13 +6744,13 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[Any].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[Any](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_private_endpoint_connection_list(
@@ -6722,7 +6812,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7012,7 +7105,10 @@ class RecommendationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7128,7 +7224,10 @@ class RecommendationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7537,7 +7636,10 @@ class RecommendationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7653,7 +7755,10 @@ class RecommendationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7874,7 +7979,10 @@ class RecommendationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8125,7 +8233,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes]],
+        private_endpoint_wrapper: Union[
+            _models.RemotePrivateEndpointConnectionARMResource,
+            _types.RemotePrivateEndpointConnectionARMResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8237,7 +8349,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: JSON,
+        private_endpoint_wrapper: _types.RemotePrivateEndpointConnectionARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8254,7 +8366,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_wrapper: Request body. Required.
-        :type private_endpoint_wrapper: JSON
+        :type private_endpoint_wrapper:
+         ~azure.mgmt.web.types.RemotePrivateEndpointConnectionARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8305,7 +8418,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes]],
+        private_endpoint_wrapper: Union[
+            _models.RemotePrivateEndpointConnectionARMResource,
+            _types.RemotePrivateEndpointConnectionARMResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RemotePrivateEndpointConnectionARMResource]:
         """Approves or rejects a private endpoint connection.
@@ -8319,10 +8436,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param private_endpoint_wrapper: Request body. Is one of the following types:
-         RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes] Required.
+        :param private_endpoint_wrapper: Request body. Is either a
+         RemotePrivateEndpointConnectionARMResource type or a IO[bytes] type. Required.
         :type private_endpoint_wrapper:
-         ~azure.mgmt.web.models.RemotePrivateEndpointConnectionARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.RemotePrivateEndpointConnectionARMResource or
+         ~azure.mgmt.web.types.RemotePrivateEndpointConnectionARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RemotePrivateEndpointConnectionARMResource.
          The RemotePrivateEndpointConnectionARMResource is compatible with MutableMapping
         :rtype:
@@ -8447,7 +8565,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def begin_delete_private_endpoint_connection(
         self, resource_group_name: str, name: str, private_endpoint_connection_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[Any]:
         """Deletes a private endpoint connection.
 
         Description for Deletes a private endpoint connection.
@@ -8459,14 +8577,14 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns any
+        :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Any] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -8483,9 +8601,12 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(Any, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -8500,13 +8621,13 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[Any].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[Any](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_private_endpoint_connection_list(
@@ -8568,7 +8689,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8688,7 +8812,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: Union[_models.StaticSiteARMResource, JSON, IO[bytes]],
+        static_site_envelope: Union[_models.StaticSiteARMResource, _types.StaticSiteARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8795,7 +8919,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: JSON,
+        static_site_envelope: _types.StaticSiteARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8812,7 +8936,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param static_site_envelope: A JSON representation of the staticsite properties. See example.
          Required.
-        :type static_site_envelope: JSON
+        :type static_site_envelope: ~azure.mgmt.web.types.StaticSiteARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8859,7 +8983,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: Union[_models.StaticSiteARMResource, JSON, IO[bytes]],
+        static_site_envelope: Union[_models.StaticSiteARMResource, _types.StaticSiteARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteARMResource]:
         """Creates a new static site in an existing resource group, or updates an existing static site.
@@ -8873,8 +8997,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param static_site_envelope: A JSON representation of the staticsite properties. See example.
-         Is one of the following types: StaticSiteARMResource, JSON, IO[bytes] Required.
-        :type static_site_envelope: ~azure.mgmt.web.models.StaticSiteARMResource or JSON or IO[bytes]
+         Is either a StaticSiteARMResource type or a IO[bytes] type. Required.
+        :type static_site_envelope: ~azure.mgmt.web.models.StaticSiteARMResource or
+         ~azure.mgmt.web.types.StaticSiteARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns StaticSiteARMResource. The
          StaticSiteARMResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.StaticSiteARMResource]
@@ -8968,7 +9093,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: JSON,
+        static_site_envelope: _types.StaticSitePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8985,7 +9110,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param static_site_envelope: A JSON representation of the staticsite properties. See example.
          Required.
-        :type static_site_envelope: JSON
+        :type static_site_envelope: ~azure.mgmt.web.types.StaticSitePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9030,7 +9155,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_envelope: Union[_models.StaticSitePatchResource, JSON, IO[bytes]],
+        static_site_envelope: Union[_models.StaticSitePatchResource, _types.StaticSitePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.StaticSiteARMResource:
         """Creates a new static site in an existing resource group, or updates an existing static site.
@@ -9044,8 +9169,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param static_site_envelope: A JSON representation of the staticsite properties. See example.
-         Is one of the following types: StaticSitePatchResource, JSON, IO[bytes] Required.
-        :type static_site_envelope: ~azure.mgmt.web.models.StaticSitePatchResource or JSON or IO[bytes]
+         Is either a StaticSitePatchResource type or a IO[bytes] type. Required.
+        :type static_site_envelope: ~azure.mgmt.web.models.StaticSitePatchResource or
+         ~azure.mgmt.web.types.StaticSitePatchResource or IO[bytes]
         :return: StaticSiteARMResource. The StaticSiteARMResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9295,7 +9421,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9387,7 +9516,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9492,7 +9624,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9645,7 +9780,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         authprovider: str,
         userid: str,
-        static_site_user_envelope: JSON,
+        static_site_user_envelope: _types.StaticSiteUserARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9665,7 +9800,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type userid: str
         :param static_site_user_envelope: A JSON representation of the StaticSiteUser properties. See
          example. Required.
-        :type static_site_user_envelope: JSON
+        :type static_site_user_envelope: ~azure.mgmt.web.types.StaticSiteUserARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9719,7 +9854,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         authprovider: str,
         userid: str,
-        static_site_user_envelope: Union[_models.StaticSiteUserARMResource, JSON, IO[bytes]],
+        static_site_user_envelope: Union[
+            _models.StaticSiteUserARMResource, _types.StaticSiteUserARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.StaticSiteUserARMResource:
         """Updates a user entry with the listed roles.
@@ -9736,9 +9873,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param userid: Required.
         :type userid: str
         :param static_site_user_envelope: A JSON representation of the StaticSiteUser properties. See
-         example. Is one of the following types: StaticSiteUserARMResource, JSON, IO[bytes] Required.
-        :type static_site_user_envelope: ~azure.mgmt.web.models.StaticSiteUserARMResource or JSON or
-         IO[bytes]
+         example. Is either a StaticSiteUserARMResource type or a IO[bytes] type. Required.
+        :type static_site_user_envelope: ~azure.mgmt.web.models.StaticSiteUserARMResource or
+         ~azure.mgmt.web.types.StaticSiteUserARMResource or IO[bytes]
         :return: StaticSiteUserARMResource. The StaticSiteUserARMResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.StaticSiteUserARMResource
@@ -9848,7 +9985,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_settings: JSON,
+        app_settings: _types.StringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9864,7 +10001,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param app_settings: The dictionary containing the static site app settings to update.
          Required.
-        :type app_settings: JSON
+        :type app_settings: ~azure.mgmt.web.types.StringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9908,7 +10045,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_settings: Union[_models.StringDictionary, JSON, IO[bytes]],
+        app_settings: Union[_models.StringDictionary, _types.StringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.StringDictionary:
         """Creates or updates the app settings of a static site.
@@ -9920,9 +10057,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :param app_settings: The dictionary containing the static site app settings to update. Is one
-         of the following types: StringDictionary, JSON, IO[bytes] Required.
-        :type app_settings: ~azure.mgmt.web.models.StringDictionary or JSON or IO[bytes]
+        :param app_settings: The dictionary containing the static site app settings to update. Is
+         either a StringDictionary type or a IO[bytes] type. Required.
+        :type app_settings: ~azure.mgmt.web.models.StringDictionary or
+         ~azure.mgmt.web.types.StringDictionary or IO[bytes]
         :return: StringDictionary. The StringDictionary is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10029,7 +10167,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_settings: JSON,
+        app_settings: _types.StringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10045,7 +10183,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param app_settings: The dictionary containing the static site function app settings to update.
          Required.
-        :type app_settings: JSON
+        :type app_settings: ~azure.mgmt.web.types.StringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10089,7 +10227,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_settings: Union[_models.StringDictionary, JSON, IO[bytes]],
+        app_settings: Union[_models.StringDictionary, _types.StringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.StringDictionary:
         """Creates or updates the function app settings of a static site.
@@ -10102,8 +10240,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param app_settings: The dictionary containing the static site function app settings to update.
-         Is one of the following types: StringDictionary, JSON, IO[bytes] Required.
-        :type app_settings: ~azure.mgmt.web.models.StringDictionary or JSON or IO[bytes]
+         Is either a StringDictionary type or a IO[bytes] type. Required.
+        :type app_settings: ~azure.mgmt.web.models.StringDictionary or
+         ~azure.mgmt.web.types.StringDictionary or IO[bytes]
         :return: StringDictionary. The StringDictionary is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10211,7 +10350,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_user_roles_invitation_envelope: JSON,
+        static_site_user_roles_invitation_envelope: _types.StaticSiteUserInvitationRequestResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10226,7 +10365,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param static_site_user_roles_invitation_envelope: Required.
-        :type static_site_user_roles_invitation_envelope: JSON
+        :type static_site_user_roles_invitation_envelope:
+         ~azure.mgmt.web.types.StaticSiteUserInvitationRequestResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10272,7 +10412,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         static_site_user_roles_invitation_envelope: Union[
-            _models.StaticSiteUserInvitationRequestResource, JSON, IO[bytes]
+            _models.StaticSiteUserInvitationRequestResource, _types.StaticSiteUserInvitationRequestResource, IO[bytes]
         ],
         **kwargs: Any
     ) -> _models.StaticSiteUserInvitationResponseResource:
@@ -10285,10 +10425,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :param static_site_user_roles_invitation_envelope: Is one of the following types:
-         StaticSiteUserInvitationRequestResource, JSON, IO[bytes] Required.
+        :param static_site_user_roles_invitation_envelope: Is either a
+         StaticSiteUserInvitationRequestResource type or a IO[bytes] type. Required.
         :type static_site_user_roles_invitation_envelope:
-         ~azure.mgmt.web.models.StaticSiteUserInvitationRequestResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteUserInvitationRequestResource or
+         ~azure.mgmt.web.types.StaticSiteUserInvitationRequestResource or IO[bytes]
         :return: StaticSiteUserInvitationResponseResource. The StaticSiteUserInvitationResponseResource
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StaticSiteUserInvitationResponseResource
@@ -10543,7 +10684,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10990,7 +11134,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        reset_properties_envelope: JSON,
+        reset_properties_envelope: _types.StaticSiteResetPropertiesARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11005,7 +11149,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param reset_properties_envelope: Required.
-        :type reset_properties_envelope: JSON
+        :type reset_properties_envelope: ~azure.mgmt.web.types.StaticSiteResetPropertiesARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11048,7 +11192,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        reset_properties_envelope: Union[_models.StaticSiteResetPropertiesARMResource, JSON, IO[bytes]],
+        reset_properties_envelope: Union[
+            _models.StaticSiteResetPropertiesARMResource, _types.StaticSiteResetPropertiesARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> None:
         """Resets the api key for an existing static site.
@@ -11060,10 +11206,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the static site. Required.
         :type name: str
-        :param reset_properties_envelope: Is one of the following types:
-         StaticSiteResetPropertiesARMResource, JSON, IO[bytes] Required.
+        :param reset_properties_envelope: Is either a StaticSiteResetPropertiesARMResource type or a
+         IO[bytes] type. Required.
         :type reset_properties_envelope: ~azure.mgmt.web.models.StaticSiteResetPropertiesARMResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.web.types.StaticSiteResetPropertiesARMResource or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11181,7 +11327,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11227,7 +11376,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_zip_deployment_envelope: Union[_models.StaticSiteZipDeploymentARMResource, JSON, IO[bytes]],
+        static_site_zip_deployment_envelope: Union[
+            _models.StaticSiteZipDeploymentARMResource, _types.StaticSiteZipDeploymentARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11334,7 +11485,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_zip_deployment_envelope: JSON,
+        static_site_zip_deployment_envelope: _types.StaticSiteZipDeploymentARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11350,7 +11501,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param static_site_zip_deployment_envelope: A JSON representation of the
          StaticSiteZipDeployment properties. See example. Required.
-        :type static_site_zip_deployment_envelope: JSON
+        :type static_site_zip_deployment_envelope:
+         ~azure.mgmt.web.types.StaticSiteZipDeploymentARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11394,7 +11546,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        static_site_zip_deployment_envelope: Union[_models.StaticSiteZipDeploymentARMResource, JSON, IO[bytes]],
+        static_site_zip_deployment_envelope: Union[
+            _models.StaticSiteZipDeploymentARMResource, _types.StaticSiteZipDeploymentARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deploys zipped content to a static site.
@@ -11407,10 +11561,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the static site. Required.
         :type name: str
         :param static_site_zip_deployment_envelope: A JSON representation of the
-         StaticSiteZipDeployment properties. See example. Is one of the following types:
-         StaticSiteZipDeploymentARMResource, JSON, IO[bytes] Required.
+         StaticSiteZipDeployment properties. See example. Is either a StaticSiteZipDeploymentARMResource
+         type or a IO[bytes] type. Required.
         :type static_site_zip_deployment_envelope:
-         ~azure.mgmt.web.models.StaticSiteZipDeploymentARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteZipDeploymentARMResource or
+         ~azure.mgmt.web.types.StaticSiteZipDeploymentARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11726,7 +11881,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11807,7 +11965,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         environment_name: str,
-        app_settings: JSON,
+        app_settings: _types.StringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11825,7 +11983,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type environment_name: str
         :param app_settings: The dictionary containing the static site app settings to update.
          Required.
-        :type app_settings: JSON
+        :type app_settings: ~azure.mgmt.web.types.StringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11873,7 +12031,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         environment_name: str,
-        app_settings: Union[_models.StringDictionary, JSON, IO[bytes]],
+        app_settings: Union[_models.StringDictionary, _types.StringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.StringDictionary:
         """Creates or updates the app settings of a static site build.
@@ -11887,9 +12045,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param environment_name: The stage site identifier. Required.
         :type environment_name: str
-        :param app_settings: The dictionary containing the static site app settings to update. Is one
-         of the following types: StringDictionary, JSON, IO[bytes] Required.
-        :type app_settings: ~azure.mgmt.web.models.StringDictionary or JSON or IO[bytes]
+        :param app_settings: The dictionary containing the static site app settings to update. Is
+         either a StringDictionary type or a IO[bytes] type. Required.
+        :type app_settings: ~azure.mgmt.web.models.StringDictionary or
+         ~azure.mgmt.web.types.StringDictionary or IO[bytes]
         :return: StringDictionary. The StringDictionary is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12001,7 +12160,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         environment_name: str,
-        app_settings: JSON,
+        app_settings: _types.StringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12019,7 +12178,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type environment_name: str
         :param app_settings: The dictionary containing the static site function app settings to update.
          Required.
-        :type app_settings: JSON
+        :type app_settings: ~azure.mgmt.web.types.StringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12067,7 +12226,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         environment_name: str,
-        app_settings: Union[_models.StringDictionary, JSON, IO[bytes]],
+        app_settings: Union[_models.StringDictionary, _types.StringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.StringDictionary:
         """Creates or updates the function app settings of a static site build.
@@ -12082,8 +12241,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param environment_name: The stage site identifier. Required.
         :type environment_name: str
         :param app_settings: The dictionary containing the static site function app settings to update.
-         Is one of the following types: StringDictionary, JSON, IO[bytes] Required.
-        :type app_settings: ~azure.mgmt.web.models.StringDictionary or JSON or IO[bytes]
+         Is either a StringDictionary type or a IO[bytes] type. Required.
+        :type app_settings: ~azure.mgmt.web.models.StringDictionary or
+         ~azure.mgmt.web.types.StringDictionary or IO[bytes]
         :return: StringDictionary. The StringDictionary is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12219,7 +12379,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12477,7 +12640,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12524,7 +12690,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         environment_name: str,
-        static_site_zip_deployment_envelope: Union[_models.StaticSiteZipDeploymentARMResource, JSON, IO[bytes]],
+        static_site_zip_deployment_envelope: Union[
+            _models.StaticSiteZipDeploymentARMResource, _types.StaticSiteZipDeploymentARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12636,7 +12804,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         environment_name: str,
-        static_site_zip_deployment_envelope: JSON,
+        static_site_zip_deployment_envelope: _types.StaticSiteZipDeploymentARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12654,7 +12822,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type environment_name: str
         :param static_site_zip_deployment_envelope: A JSON representation of the
          StaticSiteZipDeployment properties. See example. Required.
-        :type static_site_zip_deployment_envelope: JSON
+        :type static_site_zip_deployment_envelope:
+         ~azure.mgmt.web.types.StaticSiteZipDeploymentARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12702,7 +12871,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         environment_name: str,
-        static_site_zip_deployment_envelope: Union[_models.StaticSiteZipDeploymentARMResource, JSON, IO[bytes]],
+        static_site_zip_deployment_envelope: Union[
+            _models.StaticSiteZipDeploymentARMResource, _types.StaticSiteZipDeploymentARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deploys zipped content to a specific environment of a static site.
@@ -12717,10 +12888,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param environment_name: The stage site identifier. Required.
         :type environment_name: str
         :param static_site_zip_deployment_envelope: A JSON representation of the
-         StaticSiteZipDeployment properties. See example. Is one of the following types:
-         StaticSiteZipDeploymentARMResource, JSON, IO[bytes] Required.
+         StaticSiteZipDeployment properties. See example. Is either a StaticSiteZipDeploymentARMResource
+         type or a IO[bytes] type. Required.
         :type static_site_zip_deployment_envelope:
-         ~azure.mgmt.web.models.StaticSiteZipDeploymentARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteZipDeploymentARMResource or
+         ~azure.mgmt.web.types.StaticSiteZipDeploymentARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12896,7 +13068,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         database_connection_name: str,
-        database_connection_request_envelope: JSON,
+        database_connection_request_envelope: _types.DatabaseConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12916,7 +13088,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type database_connection_name: str
         :param database_connection_request_envelope: A JSON representation of the database connection
          request properties. Required.
-        :type database_connection_request_envelope: JSON
+        :type database_connection_request_envelope: ~azure.mgmt.web.types.DatabaseConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12968,7 +13140,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         database_connection_name: str,
-        database_connection_request_envelope: Union[_models.DatabaseConnection, JSON, IO[bytes]],
+        database_connection_request_envelope: Union[_models.DatabaseConnection, _types.DatabaseConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatabaseConnection:
         """Create or update a database connection for a static site build.
@@ -12985,10 +13157,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param database_connection_name: Name of the database connection. Required.
         :type database_connection_name: str
         :param database_connection_request_envelope: A JSON representation of the database connection
-         request properties. Is one of the following types: DatabaseConnection, JSON, IO[bytes]
-         Required.
-        :type database_connection_request_envelope: ~azure.mgmt.web.models.DatabaseConnection or JSON
-         or IO[bytes]
+         request properties. Is either a DatabaseConnection type or a IO[bytes] type. Required.
+        :type database_connection_request_envelope: ~azure.mgmt.web.models.DatabaseConnection or
+         ~azure.mgmt.web.types.DatabaseConnection or IO[bytes]
         :return: DatabaseConnection. The DatabaseConnection is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13106,7 +13277,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         database_connection_name: str,
-        database_connection_request_envelope: JSON,
+        database_connection_request_envelope: _types.DatabaseConnectionPatchRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13126,7 +13297,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type database_connection_name: str
         :param database_connection_request_envelope: A JSON representation of the database connection
          request properties. Required.
-        :type database_connection_request_envelope: JSON
+        :type database_connection_request_envelope:
+         ~azure.mgmt.web.types.DatabaseConnectionPatchRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13178,7 +13350,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         database_connection_name: str,
-        database_connection_request_envelope: Union[_models.DatabaseConnectionPatchRequest, JSON, IO[bytes]],
+        database_connection_request_envelope: Union[
+            _models.DatabaseConnectionPatchRequest, _types.DatabaseConnectionPatchRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.DatabaseConnection:
         """Create or update a database connection for a static site build.
@@ -13195,10 +13369,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param database_connection_name: Name of the database connection. Required.
         :type database_connection_name: str
         :param database_connection_request_envelope: A JSON representation of the database connection
-         request properties. Is one of the following types: DatabaseConnectionPatchRequest, JSON,
-         IO[bytes] Required.
+         request properties. Is either a DatabaseConnectionPatchRequest type or a IO[bytes] type.
+         Required.
         :type database_connection_request_envelope:
-         ~azure.mgmt.web.models.DatabaseConnectionPatchRequest or JSON or IO[bytes]
+         ~azure.mgmt.web.models.DatabaseConnectionPatchRequest or
+         ~azure.mgmt.web.types.DatabaseConnectionPatchRequest or IO[bytes]
         :return: DatabaseConnection. The DatabaseConnection is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13401,7 +13576,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13639,7 +13817,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         database_connection_name: str,
-        database_connection_request_envelope: JSON,
+        database_connection_request_envelope: _types.DatabaseConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13657,7 +13835,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type database_connection_name: str
         :param database_connection_request_envelope: A JSON representation of the database connection
          request properties. Required.
-        :type database_connection_request_envelope: JSON
+        :type database_connection_request_envelope: ~azure.mgmt.web.types.DatabaseConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13705,7 +13883,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         database_connection_name: str,
-        database_connection_request_envelope: Union[_models.DatabaseConnection, JSON, IO[bytes]],
+        database_connection_request_envelope: Union[_models.DatabaseConnection, _types.DatabaseConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatabaseConnection:
         """Create or update a database connection for a static site.
@@ -13720,10 +13898,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param database_connection_name: Name of the database connection. Required.
         :type database_connection_name: str
         :param database_connection_request_envelope: A JSON representation of the database connection
-         request properties. Is one of the following types: DatabaseConnection, JSON, IO[bytes]
-         Required.
-        :type database_connection_request_envelope: ~azure.mgmt.web.models.DatabaseConnection or JSON
-         or IO[bytes]
+         request properties. Is either a DatabaseConnection type or a IO[bytes] type. Required.
+        :type database_connection_request_envelope: ~azure.mgmt.web.models.DatabaseConnection or
+         ~azure.mgmt.web.types.DatabaseConnection or IO[bytes]
         :return: DatabaseConnection. The DatabaseConnection is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13836,7 +14013,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         database_connection_name: str,
-        database_connection_request_envelope: JSON,
+        database_connection_request_envelope: _types.DatabaseConnectionPatchRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13854,7 +14031,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type database_connection_name: str
         :param database_connection_request_envelope: A JSON representation of the database connection
          request properties. Required.
-        :type database_connection_request_envelope: JSON
+        :type database_connection_request_envelope:
+         ~azure.mgmt.web.types.DatabaseConnectionPatchRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13902,7 +14080,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         database_connection_name: str,
-        database_connection_request_envelope: Union[_models.DatabaseConnectionPatchRequest, JSON, IO[bytes]],
+        database_connection_request_envelope: Union[
+            _models.DatabaseConnectionPatchRequest, _types.DatabaseConnectionPatchRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.DatabaseConnection:
         """Create or update a database connection for a static site.
@@ -13917,10 +14097,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param database_connection_name: Name of the database connection. Required.
         :type database_connection_name: str
         :param database_connection_request_envelope: A JSON representation of the database connection
-         request properties. Is one of the following types: DatabaseConnectionPatchRequest, JSON,
-         IO[bytes] Required.
+         request properties. Is either a DatabaseConnectionPatchRequest type or a IO[bytes] type.
+         Required.
         :type database_connection_request_envelope:
-         ~azure.mgmt.web.models.DatabaseConnectionPatchRequest or JSON or IO[bytes]
+         ~azure.mgmt.web.models.DatabaseConnectionPatchRequest or
+         ~azure.mgmt.web.types.DatabaseConnectionPatchRequest or IO[bytes]
         :return: DatabaseConnection. The DatabaseConnection is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14116,7 +14297,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14325,7 +14509,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         environment_name: str,
         function_app_name: str,
         static_site_user_provided_function_envelope: Union[
-            _models.StaticSiteUserProvidedFunctionAppARMResource, JSON, IO[bytes]
+            _models.StaticSiteUserProvidedFunctionAppARMResource,
+            _types.StaticSiteUserProvidedFunctionAppARMResource,
+            IO[bytes],
         ],
         *,
         is_forced: Optional[bool] = None,
@@ -14454,7 +14640,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         function_app_name: str,
-        static_site_user_provided_function_envelope: JSON,
+        static_site_user_provided_function_envelope: _types.StaticSiteUserProvidedFunctionAppARMResource,
         *,
         is_forced: Optional[bool] = None,
         content_type: str = "application/json",
@@ -14476,7 +14662,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type function_app_name: str
         :param static_site_user_provided_function_envelope: A JSON representation of the user provided
          function app properties. See example. Required.
-        :type static_site_user_provided_function_envelope: JSON
+        :type static_site_user_provided_function_envelope:
+         ~azure.mgmt.web.types.StaticSiteUserProvidedFunctionAppARMResource
         :keyword is_forced: Specify <code>true</code> to force the update of the auth configuration on
          the function app even if an AzureStaticWebApps provider is already configured on the function
          app. The default is <code>false</code>. Default value is None.
@@ -14545,7 +14732,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         environment_name: str,
         function_app_name: str,
         static_site_user_provided_function_envelope: Union[
-            _models.StaticSiteUserProvidedFunctionAppARMResource, JSON, IO[bytes]
+            _models.StaticSiteUserProvidedFunctionAppARMResource,
+            _types.StaticSiteUserProvidedFunctionAppARMResource,
+            IO[bytes],
         ],
         *,
         is_forced: Optional[bool] = None,
@@ -14566,10 +14755,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type function_app_name: str
         :param static_site_user_provided_function_envelope: A JSON representation of the user provided
-         function app properties. See example. Is one of the following types:
-         StaticSiteUserProvidedFunctionAppARMResource, JSON, IO[bytes] Required.
+         function app properties. See example. Is either a StaticSiteUserProvidedFunctionAppARMResource
+         type or a IO[bytes] type. Required.
         :type static_site_user_provided_function_envelope:
-         ~azure.mgmt.web.models.StaticSiteUserProvidedFunctionAppARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteUserProvidedFunctionAppARMResource or
+         ~azure.mgmt.web.types.StaticSiteUserProvidedFunctionAppARMResource or IO[bytes]
         :keyword is_forced: Specify <code>true</code> to force the update of the auth configuration on
          the function app even if an AzureStaticWebApps provider is already configured on the function
          app. The default is <code>false</code>. Default value is None.
@@ -14768,7 +14958,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14895,7 +15088,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         function_app_name: str,
         static_site_user_provided_function_envelope: Union[
-            _models.StaticSiteUserProvidedFunctionAppARMResource, JSON, IO[bytes]
+            _models.StaticSiteUserProvidedFunctionAppARMResource,
+            _types.StaticSiteUserProvidedFunctionAppARMResource,
+            IO[bytes],
         ],
         *,
         is_forced: Optional[bool] = None,
@@ -15018,7 +15213,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         function_app_name: str,
-        static_site_user_provided_function_envelope: JSON,
+        static_site_user_provided_function_envelope: _types.StaticSiteUserProvidedFunctionAppARMResource,
         *,
         is_forced: Optional[bool] = None,
         content_type: str = "application/json",
@@ -15037,7 +15232,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type function_app_name: str
         :param static_site_user_provided_function_envelope: A JSON representation of the user provided
          function app properties. See example. Required.
-        :type static_site_user_provided_function_envelope: JSON
+        :type static_site_user_provided_function_envelope:
+         ~azure.mgmt.web.types.StaticSiteUserProvidedFunctionAppARMResource
         :keyword is_forced: Specify <code>true</code> to force the update of the auth configuration on
          the function app even if an AzureStaticWebApps provider is already configured on the function
          app. The default is <code>false</code>. Default value is None.
@@ -15101,7 +15297,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         function_app_name: str,
         static_site_user_provided_function_envelope: Union[
-            _models.StaticSiteUserProvidedFunctionAppARMResource, JSON, IO[bytes]
+            _models.StaticSiteUserProvidedFunctionAppARMResource,
+            _types.StaticSiteUserProvidedFunctionAppARMResource,
+            IO[bytes],
         ],
         *,
         is_forced: Optional[bool] = None,
@@ -15119,10 +15317,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param function_app_name: Name of the function app registered with the static site. Required.
         :type function_app_name: str
         :param static_site_user_provided_function_envelope: A JSON representation of the user provided
-         function app properties. See example. Is one of the following types:
-         StaticSiteUserProvidedFunctionAppARMResource, JSON, IO[bytes] Required.
+         function app properties. See example. Is either a StaticSiteUserProvidedFunctionAppARMResource
+         type or a IO[bytes] type. Required.
         :type static_site_user_provided_function_envelope:
-         ~azure.mgmt.web.models.StaticSiteUserProvidedFunctionAppARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteUserProvidedFunctionAppARMResource or
+         ~azure.mgmt.web.types.StaticSiteUserProvidedFunctionAppARMResource or IO[bytes]
         :keyword is_forced: Specify <code>true</code> to force the update of the auth configuration on
          the function app even if an AzureStaticWebApps provider is already configured on the function
          app. The default is <code>false</code>. Default value is None.
@@ -15313,7 +15512,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15472,7 +15674,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         basic_auth_name: Union[str, _models.BasicAuthName],
-        basic_auth_envelope: JSON,
+        basic_auth_envelope: _types.StaticSiteBasicAuthPropertiesARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15489,7 +15691,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param basic_auth_name: name of the basic auth entry. "default" Required.
         :type basic_auth_name: str or ~azure.mgmt.web.models.BasicAuthName
         :param basic_auth_envelope: A JSON representation of the basic auth properties. Required.
-        :type basic_auth_envelope: JSON
+        :type basic_auth_envelope: ~azure.mgmt.web.types.StaticSiteBasicAuthPropertiesARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15538,7 +15740,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         basic_auth_name: Union[str, _models.BasicAuthName],
-        basic_auth_envelope: Union[_models.StaticSiteBasicAuthPropertiesARMResource, JSON, IO[bytes]],
+        basic_auth_envelope: Union[
+            _models.StaticSiteBasicAuthPropertiesARMResource, _types.StaticSiteBasicAuthPropertiesARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.StaticSiteBasicAuthPropertiesARMResource:
         """Adds or updates basic auth for a static site.
@@ -15552,10 +15756,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param basic_auth_name: name of the basic auth entry. "default" Required.
         :type basic_auth_name: str or ~azure.mgmt.web.models.BasicAuthName
-        :param basic_auth_envelope: A JSON representation of the basic auth properties. Is one of the
-         following types: StaticSiteBasicAuthPropertiesARMResource, JSON, IO[bytes] Required.
+        :param basic_auth_envelope: A JSON representation of the basic auth properties. Is either a
+         StaticSiteBasicAuthPropertiesARMResource type or a IO[bytes] type. Required.
         :type basic_auth_envelope: ~azure.mgmt.web.models.StaticSiteBasicAuthPropertiesARMResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.web.types.StaticSiteBasicAuthPropertiesARMResource or IO[bytes]
         :return: StaticSiteBasicAuthPropertiesARMResource. The StaticSiteBasicAuthPropertiesARMResource
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StaticSiteBasicAuthPropertiesARMResource
@@ -15689,7 +15893,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15815,7 +16022,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         domain_name: str,
         static_site_custom_domain_request_properties_envelope: Union[
-            _models.StaticSiteCustomDomainRequestPropertiesARMResource, JSON, IO[bytes]
+            _models.StaticSiteCustomDomainRequestPropertiesARMResource,
+            _types.StaticSiteCustomDomainRequestPropertiesARMResource,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -15930,7 +16139,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         domain_name: str,
-        static_site_custom_domain_request_properties_envelope: JSON,
+        static_site_custom_domain_request_properties_envelope: _types.StaticSiteCustomDomainRequestPropertiesARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15949,7 +16158,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type domain_name: str
         :param static_site_custom_domain_request_properties_envelope: A JSON representation of the
          static site custom domain request properties. See example. Required.
-        :type static_site_custom_domain_request_properties_envelope: JSON
+        :type static_site_custom_domain_request_properties_envelope:
+         ~azure.mgmt.web.types.StaticSiteCustomDomainRequestPropertiesARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16003,7 +16213,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         domain_name: str,
         static_site_custom_domain_request_properties_envelope: Union[
-            _models.StaticSiteCustomDomainRequestPropertiesARMResource, JSON, IO[bytes]
+            _models.StaticSiteCustomDomainRequestPropertiesARMResource,
+            _types.StaticSiteCustomDomainRequestPropertiesARMResource,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteCustomDomainOverviewARMResource]:
@@ -16020,10 +16232,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param domain_name: The custom domain name. Required.
         :type domain_name: str
         :param static_site_custom_domain_request_properties_envelope: A JSON representation of the
-         static site custom domain request properties. See example. Is one of the following types:
-         StaticSiteCustomDomainRequestPropertiesARMResource, JSON, IO[bytes] Required.
+         static site custom domain request properties. See example. Is either a
+         StaticSiteCustomDomainRequestPropertiesARMResource type or a IO[bytes] type. Required.
         :type static_site_custom_domain_request_properties_envelope:
-         ~azure.mgmt.web.models.StaticSiteCustomDomainRequestPropertiesARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteCustomDomainRequestPropertiesARMResource or
+         ~azure.mgmt.web.types.StaticSiteCustomDomainRequestPropertiesARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns StaticSiteCustomDomainOverviewARMResource.
          The StaticSiteCustomDomainOverviewARMResource is compatible with MutableMapping
         :rtype:
@@ -16269,7 +16482,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16317,7 +16533,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         domain_name: str,
         static_site_custom_domain_request_properties_envelope: Union[
-            _models.StaticSiteCustomDomainRequestPropertiesARMResource, JSON, IO[bytes]
+            _models.StaticSiteCustomDomainRequestPropertiesARMResource,
+            _types.StaticSiteCustomDomainRequestPropertiesARMResource,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -16430,7 +16648,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         domain_name: str,
-        static_site_custom_domain_request_properties_envelope: JSON,
+        static_site_custom_domain_request_properties_envelope: _types.StaticSiteCustomDomainRequestPropertiesARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16448,7 +16666,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type domain_name: str
         :param static_site_custom_domain_request_properties_envelope: A JSON representation of the
          static site custom domain request properties. See example. Required.
-        :type static_site_custom_domain_request_properties_envelope: JSON
+        :type static_site_custom_domain_request_properties_envelope:
+         ~azure.mgmt.web.types.StaticSiteCustomDomainRequestPropertiesARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16497,7 +16716,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         domain_name: str,
         static_site_custom_domain_request_properties_envelope: Union[
-            _models.StaticSiteCustomDomainRequestPropertiesARMResource, JSON, IO[bytes]
+            _models.StaticSiteCustomDomainRequestPropertiesARMResource,
+            _types.StaticSiteCustomDomainRequestPropertiesARMResource,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -16513,10 +16734,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param domain_name: The custom domain name. Required.
         :type domain_name: str
         :param static_site_custom_domain_request_properties_envelope: A JSON representation of the
-         static site custom domain request properties. See example. Is one of the following types:
-         StaticSiteCustomDomainRequestPropertiesARMResource, JSON, IO[bytes] Required.
+         static site custom domain request properties. See example. Is either a
+         StaticSiteCustomDomainRequestPropertiesARMResource type or a IO[bytes] type. Required.
         :type static_site_custom_domain_request_properties_envelope:
-         ~azure.mgmt.web.models.StaticSiteCustomDomainRequestPropertiesARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteCustomDomainRequestPropertiesARMResource or
+         ~azure.mgmt.web.types.StaticSiteCustomDomainRequestPropertiesARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16652,7 +16874,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, JSON, IO[bytes]],
+        static_site_linked_backend_envelope: Union[
+            _models.StaticSiteLinkedBackendARMResource, _types.StaticSiteLinkedBackendARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16764,7 +16988,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: JSON,
+        static_site_linked_backend_envelope: _types.StaticSiteLinkedBackendARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16782,7 +17006,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type linked_backend_name: str
         :param static_site_linked_backend_envelope: A JSON representation of the linked backend request
          properties. Required.
-        :type static_site_linked_backend_envelope: JSON
+        :type static_site_linked_backend_envelope:
+         ~azure.mgmt.web.types.StaticSiteLinkedBackendARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16834,7 +17059,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, JSON, IO[bytes]],
+        static_site_linked_backend_envelope: Union[
+            _models.StaticSiteLinkedBackendARMResource, _types.StaticSiteLinkedBackendARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteLinkedBackendARMResource]:
         """Link backend to a static site.
@@ -16849,10 +17076,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param linked_backend_name: Name of the linked backend that should be retrieved. Required.
         :type linked_backend_name: str
         :param static_site_linked_backend_envelope: A JSON representation of the linked backend request
-         properties. Is one of the following types: StaticSiteLinkedBackendARMResource, JSON, IO[bytes]
-         Required.
+         properties. Is either a StaticSiteLinkedBackendARMResource type or a IO[bytes] type. Required.
         :type static_site_linked_backend_envelope:
-         ~azure.mgmt.web.models.StaticSiteLinkedBackendARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteLinkedBackendARMResource or
+         ~azure.mgmt.web.types.StaticSiteLinkedBackendARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns StaticSiteLinkedBackendARMResource. The
          StaticSiteLinkedBackendARMResource is compatible with MutableMapping
         :rtype:
@@ -17049,7 +17276,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17096,7 +17326,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, JSON, IO[bytes]],
+        static_site_linked_backend_envelope: Union[
+            _models.StaticSiteLinkedBackendARMResource, _types.StaticSiteLinkedBackendARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -17208,7 +17440,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: JSON,
+        static_site_linked_backend_envelope: _types.StaticSiteLinkedBackendARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17226,7 +17458,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type linked_backend_name: str
         :param static_site_linked_backend_envelope: A JSON representation of the linked backend request
          properties. Required.
-        :type static_site_linked_backend_envelope: JSON
+        :type static_site_linked_backend_envelope:
+         ~azure.mgmt.web.types.StaticSiteLinkedBackendARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17274,7 +17507,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, JSON, IO[bytes]],
+        static_site_linked_backend_envelope: Union[
+            _models.StaticSiteLinkedBackendARMResource, _types.StaticSiteLinkedBackendARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Validates that a backend can be linked to a static site.
@@ -17289,10 +17524,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param linked_backend_name: Name of the linked backend that should be retrieved. Required.
         :type linked_backend_name: str
         :param static_site_linked_backend_envelope: A JSON representation of the linked backend request
-         properties. Is one of the following types: StaticSiteLinkedBackendARMResource, JSON, IO[bytes]
-         Required.
+         properties. Is either a StaticSiteLinkedBackendARMResource type or a IO[bytes] type. Required.
         :type static_site_linked_backend_envelope:
-         ~azure.mgmt.web.models.StaticSiteLinkedBackendARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteLinkedBackendARMResource or
+         ~azure.mgmt.web.types.StaticSiteLinkedBackendARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17432,7 +17667,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, JSON, IO[bytes]],
+        static_site_linked_backend_envelope: Union[
+            _models.StaticSiteLinkedBackendARMResource, _types.StaticSiteLinkedBackendARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -17549,7 +17786,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: JSON,
+        static_site_linked_backend_envelope: _types.StaticSiteLinkedBackendARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17569,7 +17806,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type linked_backend_name: str
         :param static_site_linked_backend_envelope: A JSON representation of the linked backend request
          properties. Required.
-        :type static_site_linked_backend_envelope: JSON
+        :type static_site_linked_backend_envelope:
+         ~azure.mgmt.web.types.StaticSiteLinkedBackendARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17625,7 +17863,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, JSON, IO[bytes]],
+        static_site_linked_backend_envelope: Union[
+            _models.StaticSiteLinkedBackendARMResource, _types.StaticSiteLinkedBackendARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteLinkedBackendARMResource]:
         """Link backend to a static site build.
@@ -17642,10 +17882,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param linked_backend_name: Name of the linked backend that should be retrieved. Required.
         :type linked_backend_name: str
         :param static_site_linked_backend_envelope: A JSON representation of the linked backend request
-         properties. Is one of the following types: StaticSiteLinkedBackendARMResource, JSON, IO[bytes]
-         Required.
+         properties. Is either a StaticSiteLinkedBackendARMResource type or a IO[bytes] type. Required.
         :type static_site_linked_backend_envelope:
-         ~azure.mgmt.web.models.StaticSiteLinkedBackendARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteLinkedBackendARMResource or
+         ~azure.mgmt.web.types.StaticSiteLinkedBackendARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns StaticSiteLinkedBackendARMResource. The
          StaticSiteLinkedBackendARMResource is compatible with MutableMapping
         :rtype:
@@ -17850,7 +18090,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17898,7 +18141,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, JSON, IO[bytes]],
+        static_site_linked_backend_envelope: Union[
+            _models.StaticSiteLinkedBackendARMResource, _types.StaticSiteLinkedBackendARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18015,7 +18260,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: JSON,
+        static_site_linked_backend_envelope: _types.StaticSiteLinkedBackendARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18035,7 +18280,8 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :type linked_backend_name: str
         :param static_site_linked_backend_envelope: A JSON representation of the linked backend request
          properties. Required.
-        :type static_site_linked_backend_envelope: JSON
+        :type static_site_linked_backend_envelope:
+         ~azure.mgmt.web.types.StaticSiteLinkedBackendARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18087,7 +18333,9 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         name: str,
         environment_name: str,
         linked_backend_name: str,
-        static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, JSON, IO[bytes]],
+        static_site_linked_backend_envelope: Union[
+            _models.StaticSiteLinkedBackendARMResource, _types.StaticSiteLinkedBackendARMResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Validates that a backend can be linked to a static site build.
@@ -18104,10 +18352,10 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :param linked_backend_name: Name of the linked backend that should be retrieved. Required.
         :type linked_backend_name: str
         :param static_site_linked_backend_envelope: A JSON representation of the linked backend request
-         properties. Is one of the following types: StaticSiteLinkedBackendARMResource, JSON, IO[bytes]
-         Required.
+         properties. Is either a StaticSiteLinkedBackendARMResource type or a IO[bytes] type. Required.
         :type static_site_linked_backend_envelope:
-         ~azure.mgmt.web.models.StaticSiteLinkedBackendARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSiteLinkedBackendARMResource or
+         ~azure.mgmt.web.types.StaticSiteLinkedBackendARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18174,7 +18422,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
 
         Description for Generates a preview workflow file for the static site.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param static_sites_workflow_preview_request: The request body. Required.
         :type static_sites_workflow_preview_request:
@@ -18192,7 +18440,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     async def preview_workflow(
         self,
         location: str,
-        static_sites_workflow_preview_request: JSON,
+        static_sites_workflow_preview_request: _types.StaticSitesWorkflowPreviewRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18201,10 +18449,11 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
 
         Description for Generates a preview workflow file for the static site.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param static_sites_workflow_preview_request: The request body. Required.
-        :type static_sites_workflow_preview_request: JSON
+        :type static_sites_workflow_preview_request:
+         ~azure.mgmt.web.types.StaticSitesWorkflowPreviewRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18227,7 +18476,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
 
         Description for Generates a preview workflow file for the static site.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param static_sites_workflow_preview_request: The request body. Required.
         :type static_sites_workflow_preview_request: IO[bytes]
@@ -18244,19 +18493,22 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     async def preview_workflow(
         self,
         location: str,
-        static_sites_workflow_preview_request: Union[_models.StaticSitesWorkflowPreviewRequest, JSON, IO[bytes]],
+        static_sites_workflow_preview_request: Union[
+            _models.StaticSitesWorkflowPreviewRequest, _types.StaticSitesWorkflowPreviewRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.StaticSitesWorkflowPreview:
         """Generates a preview workflow file for the static site.
 
         Description for Generates a preview workflow file for the static site.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param static_sites_workflow_preview_request: The request body. Is one of the following types:
-         StaticSitesWorkflowPreviewRequest, JSON, IO[bytes] Required.
+        :param static_sites_workflow_preview_request: The request body. Is either a
+         StaticSitesWorkflowPreviewRequest type or a IO[bytes] type. Required.
         :type static_sites_workflow_preview_request:
-         ~azure.mgmt.web.models.StaticSitesWorkflowPreviewRequest or JSON or IO[bytes]
+         ~azure.mgmt.web.models.StaticSitesWorkflowPreviewRequest or
+         ~azure.mgmt.web.types.StaticSitesWorkflowPreviewRequest or IO[bytes]
         :return: StaticSitesWorkflowPreview. The StaticSitesWorkflowPreview is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.StaticSitesWorkflowPreview
@@ -18403,7 +18655,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18526,7 +18781,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_envelope: Union[_models.Site, JSON, IO[bytes]],
+        site_envelope: Union[_models.Site, _types.Site, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18639,7 +18894,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_envelope: JSON,
+        site_envelope: _types.Site,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18659,7 +18914,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param site_envelope: A JSON representation of the app properties. See example. Required.
-        :type site_envelope: JSON
+        :type site_envelope: ~azure.mgmt.web.types.Site
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18711,7 +18966,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_envelope: Union[_models.Site, JSON, IO[bytes]],
+        site_envelope: Union[_models.Site, _types.Site, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Site]:
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing
@@ -18728,9 +18983,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param site_envelope: A JSON representation of the app properties. See example. Is one of the
-         following types: Site, JSON, IO[bytes] Required.
-        :type site_envelope: ~azure.mgmt.web.models.Site or JSON or IO[bytes]
+        :param site_envelope: A JSON representation of the app properties. See example. Is either a
+         Site type or a IO[bytes] type. Required.
+        :type site_envelope: ~azure.mgmt.web.models.Site or ~azure.mgmt.web.types.Site or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Site. The Site is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.Site]
@@ -18830,7 +19085,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_envelope: JSON,
+        site_envelope: _types.SitePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18850,7 +19105,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param site_envelope: A JSON representation of the app properties. See example. Required.
-        :type site_envelope: JSON
+        :type site_envelope: ~azure.mgmt.web.types.SitePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18900,7 +19155,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_envelope: Union[_models.SitePatchResource, JSON, IO[bytes]],
+        site_envelope: Union[_models.SitePatchResource, _types.SitePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.Site:
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing
@@ -18917,9 +19172,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param site_envelope: A JSON representation of the app properties. See example. Is one of the
-         following types: SitePatchResource, JSON, IO[bytes] Required.
-        :type site_envelope: ~azure.mgmt.web.models.SitePatchResource or JSON or IO[bytes]
+        :param site_envelope: A JSON representation of the app properties. See example. Is either a
+         SitePatchResource type or a IO[bytes] type. Required.
+        :type site_envelope: ~azure.mgmt.web.models.SitePatchResource or
+         ~azure.mgmt.web.types.SitePatchResource or IO[bytes]
         :return: Site. The Site is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Site
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19132,7 +19388,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19295,7 +19554,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        slot_swap_entity: JSON,
+        slot_swap_entity: _types.CsmSlotEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19313,7 +19572,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param slot_swap_entity: JSON object that contains the target slot name. See example. Required.
-        :type slot_swap_entity: JSON
+        :type slot_swap_entity: ~azure.mgmt.web.types.CsmSlotEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19361,7 +19620,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        slot_swap_entity: Union[_models.CsmSlotEntity, JSON, IO[bytes]],
+        slot_swap_entity: Union[_models.CsmSlotEntity, _types.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Applies the configuration settings from the target slot onto the current slot.
@@ -19376,9 +19635,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is one of
-         the following types: CsmSlotEntity, JSON, IO[bytes] Required.
-        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or JSON or IO[bytes]
+        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is either
+         a CsmSlotEntity type or a IO[bytes] type. Required.
+        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or
+         ~azure.mgmt.web.types.CsmSlotEntity or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19478,7 +19738,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        request: JSON,
+        request: _types.BackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19497,7 +19757,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param request: Backup configuration. You can use the JSON response from the POST action as
          input here. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.BackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19546,7 +19806,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        request: Union[_models.BackupRequest, JSON, IO[bytes]],
+        request: Union[_models.BackupRequest, _types.BackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.BackupItem:
         """Creates a backup of an app.
@@ -19562,8 +19822,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param request: Backup configuration. You can use the JSON response from the POST action as
-         input here. Is one of the following types: BackupRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.BackupRequest or JSON or IO[bytes]
+         input here. Is either a BackupRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.web.models.BackupRequest or ~azure.mgmt.web.types.BackupRequest or
+         IO[bytes]
         :return: BackupItem. The BackupItem is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.BackupItem
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19675,7 +19936,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        app_settings: JSON,
+        app_settings: _types.StringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19693,7 +19954,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param app_settings: Application settings of the app. Required.
-        :type app_settings: JSON
+        :type app_settings: ~azure.mgmt.web.types.StringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19741,7 +20002,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        app_settings: Union[_models.StringDictionary, JSON, IO[bytes]],
+        app_settings: Union[_models.StringDictionary, _types.StringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.StringDictionary:
         """Replaces the application settings of an app.
@@ -19756,9 +20017,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param app_settings: Application settings of the app. Is one of the following types:
-         StringDictionary, JSON, IO[bytes] Required.
-        :type app_settings: ~azure.mgmt.web.models.StringDictionary or JSON or IO[bytes]
+        :param app_settings: Application settings of the app. Is either a StringDictionary type or a
+         IO[bytes] type. Required.
+        :type app_settings: ~azure.mgmt.web.models.StringDictionary or
+         ~azure.mgmt.web.types.StringDictionary or IO[bytes]
         :return: StringDictionary. The StringDictionary is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19948,7 +20210,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_auth_settings: JSON,
+        site_auth_settings: _types.SiteAuthSettings,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19966,7 +20228,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param site_auth_settings: Auth settings associated with web app. Required.
-        :type site_auth_settings: JSON
+        :type site_auth_settings: ~azure.mgmt.web.types.SiteAuthSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20014,7 +20276,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_auth_settings: Union[_models.SiteAuthSettings, JSON, IO[bytes]],
+        site_auth_settings: Union[_models.SiteAuthSettings, _types.SiteAuthSettings, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteAuthSettings:
         """Updates the Authentication / Authorization settings associated with web app.
@@ -20029,9 +20291,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param site_auth_settings: Auth settings associated with web app. Is one of the following
-         types: SiteAuthSettings, JSON, IO[bytes] Required.
-        :type site_auth_settings: ~azure.mgmt.web.models.SiteAuthSettings or JSON or IO[bytes]
+        :param site_auth_settings: Auth settings associated with web app. Is either a SiteAuthSettings
+         type or a IO[bytes] type. Required.
+        :type site_auth_settings: ~azure.mgmt.web.models.SiteAuthSettings or
+         ~azure.mgmt.web.types.SiteAuthSettings or IO[bytes]
         :return: SiteAuthSettings. The SiteAuthSettings is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteAuthSettings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20222,7 +20485,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        azure_storage_accounts: JSON,
+        azure_storage_accounts: _types.AzureStoragePropertyDictionaryResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20240,7 +20503,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param azure_storage_accounts: Azure storage accounts of the app. Required.
-        :type azure_storage_accounts: JSON
+        :type azure_storage_accounts: ~azure.mgmt.web.types.AzureStoragePropertyDictionaryResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20290,7 +20553,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        azure_storage_accounts: Union[_models.AzureStoragePropertyDictionaryResource, JSON, IO[bytes]],
+        azure_storage_accounts: Union[
+            _models.AzureStoragePropertyDictionaryResource, _types.AzureStoragePropertyDictionaryResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AzureStoragePropertyDictionaryResource:
         """Updates the Azure storage account configurations of an app.
@@ -20305,10 +20570,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param azure_storage_accounts: Azure storage accounts of the app. Is one of the following
-         types: AzureStoragePropertyDictionaryResource, JSON, IO[bytes] Required.
+        :param azure_storage_accounts: Azure storage accounts of the app. Is either a
+         AzureStoragePropertyDictionaryResource type or a IO[bytes] type. Required.
         :type azure_storage_accounts: ~azure.mgmt.web.models.AzureStoragePropertyDictionaryResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.web.types.AzureStoragePropertyDictionaryResource or IO[bytes]
         :return: AzureStoragePropertyDictionaryResource. The AzureStoragePropertyDictionaryResource is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.AzureStoragePropertyDictionaryResource
@@ -20500,7 +20765,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        request: JSON,
+        request: _types.BackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20518,7 +20783,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param request: Edited backup configuration. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.BackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20566,7 +20831,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        request: Union[_models.BackupRequest, JSON, IO[bytes]],
+        request: Union[_models.BackupRequest, _types.BackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.BackupRequest:
         """Updates the backup configuration of an app.
@@ -20581,9 +20846,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param request: Edited backup configuration. Is one of the following types: BackupRequest,
-         JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.BackupRequest or JSON or IO[bytes]
+        :param request: Edited backup configuration. Is either a BackupRequest type or a IO[bytes]
+         type. Required.
+        :type request: ~azure.mgmt.web.models.BackupRequest or ~azure.mgmt.web.types.BackupRequest or
+         IO[bytes]
         :return: BackupRequest. The BackupRequest is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.BackupRequest
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20840,7 +21106,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        connection_strings: JSON,
+        connection_strings: _types.ConnectionStringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20859,7 +21125,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param connection_strings: Connection strings of the app or deployment slot. See example.
          Required.
-        :type connection_strings: JSON
+        :type connection_strings: ~azure.mgmt.web.types.ConnectionStringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20910,7 +21176,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        connection_strings: Union[_models.ConnectionStringDictionary, JSON, IO[bytes]],
+        connection_strings: Union[_models.ConnectionStringDictionary, _types.ConnectionStringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConnectionStringDictionary:
         """Replaces the connection strings of an app.
@@ -20926,9 +21192,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param connection_strings: Connection strings of the app or deployment slot. See example. Is
-         one of the following types: ConnectionStringDictionary, JSON, IO[bytes] Required.
-        :type connection_strings: ~azure.mgmt.web.models.ConnectionStringDictionary or JSON or
-         IO[bytes]
+         either a ConnectionStringDictionary type or a IO[bytes] type. Required.
+        :type connection_strings: ~azure.mgmt.web.models.ConnectionStringDictionary or
+         ~azure.mgmt.web.types.ConnectionStringDictionary or IO[bytes]
         :return: ConnectionStringDictionary. The ConnectionStringDictionary is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.ConnectionStringDictionary
@@ -21120,7 +21386,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        metadata: JSON,
+        metadata: _types.StringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21138,7 +21404,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param metadata: Edited metadata of the app or deployment slot. See example. Required.
-        :type metadata: JSON
+        :type metadata: ~azure.mgmt.web.types.StringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21186,7 +21452,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        metadata: Union[_models.StringDictionary, JSON, IO[bytes]],
+        metadata: Union[_models.StringDictionary, _types.StringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.StringDictionary:
         """Replaces the metadata of an app.
@@ -21201,9 +21467,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param metadata: Edited metadata of the app or deployment slot. See example. Is one of the
-         following types: StringDictionary, JSON, IO[bytes] Required.
-        :type metadata: ~azure.mgmt.web.models.StringDictionary or JSON or IO[bytes]
+        :param metadata: Edited metadata of the app or deployment slot. See example. Is either a
+         StringDictionary type or a IO[bytes] type. Required.
+        :type metadata: ~azure.mgmt.web.models.StringDictionary or
+         ~azure.mgmt.web.types.StringDictionary or IO[bytes]
         :return: StringDictionary. The StringDictionary is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21526,7 +21793,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        push_settings: JSON,
+        push_settings: _types.PushSettings,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21544,7 +21811,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param push_settings: Push settings associated with web app. Required.
-        :type push_settings: JSON
+        :type push_settings: ~azure.mgmt.web.types.PushSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21592,7 +21859,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        push_settings: Union[_models.PushSettings, JSON, IO[bytes]],
+        push_settings: Union[_models.PushSettings, _types.PushSettings, IO[bytes]],
         **kwargs: Any
     ) -> _models.PushSettings:
         """Updates the Push settings associated with web app.
@@ -21607,9 +21874,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param push_settings: Push settings associated with web app. Is one of the following types:
-         PushSettings, JSON, IO[bytes] Required.
-        :type push_settings: ~azure.mgmt.web.models.PushSettings or JSON or IO[bytes]
+        :param push_settings: Push settings associated with web app. Is either a PushSettings type or a
+         IO[bytes] type. Required.
+        :type push_settings: ~azure.mgmt.web.models.PushSettings or ~azure.mgmt.web.types.PushSettings
+         or IO[bytes]
         :return: PushSettings. The PushSettings is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PushSettings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21962,7 +22230,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        request: JSON,
+        request: _types.RestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21983,7 +22251,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param request: A RestoreRequest object that includes Azure storage URL and blog name for
          discovery of backup. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.RestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22034,7 +22302,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.RestoreRequest:
         """Discovers an existing app backup that can be restored from a blob in Azure storage. Use this to
@@ -22052,8 +22320,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param request: A RestoreRequest object that includes Azure storage URL and blog name for
-         discovery of backup. Is one of the following types: RestoreRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.RestoreRequest or JSON or IO[bytes]
+         discovery of backup. Is either a RestoreRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.web.models.RestoreRequest or ~azure.mgmt.web.types.RestoreRequest or
+         IO[bytes]
         :return: RestoreRequest. The RestoreRequest is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.RestoreRequest
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -22455,7 +22724,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         key_type: str,
         key_name: str,
         slot: str,
-        key: JSON,
+        key: _types.KeyInfo,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22477,7 +22746,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param key: The key to create or update. Required.
-        :type key: JSON
+        :type key: ~azure.mgmt.web.types.KeyInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22533,7 +22802,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         key_type: str,
         key_name: str,
         slot: str,
-        key: Union[_models.KeyInfo, JSON, IO[bytes]],
+        key: Union[_models.KeyInfo, _types.KeyInfo, IO[bytes]],
         **kwargs: Any
     ) -> _models.KeyInfo:
         """Add or update a host level secret.
@@ -22552,9 +22821,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param key: The key to create or update. Is one of the following types: KeyInfo, JSON,
-         IO[bytes] Required.
-        :type key: ~azure.mgmt.web.models.KeyInfo or JSON or IO[bytes]
+        :param key: The key to create or update. Is either a KeyInfo type or a IO[bytes] type.
+         Required.
+        :type key: ~azure.mgmt.web.models.KeyInfo or ~azure.mgmt.web.types.KeyInfo or IO[bytes]
         :return: KeyInfo. The KeyInfo is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.KeyInfo
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -22999,7 +23268,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -23379,7 +23651,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[List[_models.NetworkTrace]]:
         """Start capturing network packets for the site.
 
         Description for Start capturing network packets for the site.
@@ -23398,14 +23670,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :paramtype max_frame_length: int
         :keyword sas_url: The Blob URL to store capture file. Default value is None.
         :paramtype sas_url: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns list of NetworkTrace
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.mgmt.web.models.NetworkTrace]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -23425,9 +23697,12 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(List[_models.NetworkTrace], response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -23442,13 +23717,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[List[_models.NetworkTrace]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[List[_models.NetworkTrace]](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def stop_web_site_network_trace_slot(
@@ -23895,7 +24172,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24212,7 +24492,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        publishing_profile_options: JSON,
+        publishing_profile_options: _types.CsmPublishingProfileOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24231,7 +24511,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param publishing_profile_options: Specifies publishingProfileOptions for publishing profile.
          For example, use {" format": "FileZilla3"} to get a FileZilla publishing profile. Required.
-        :type publishing_profile_options: JSON
+        :type publishing_profile_options: ~azure.mgmt.web.types.CsmPublishingProfileOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24280,7 +24560,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        publishing_profile_options: Union[_models.CsmPublishingProfileOptions, JSON, IO[bytes]],
+        publishing_profile_options: Union[
+            _models.CsmPublishingProfileOptions, _types.CsmPublishingProfileOptions, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
@@ -24296,10 +24578,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param publishing_profile_options: Specifies publishingProfileOptions for publishing profile.
-         For example, use {" format": "FileZilla3"} to get a FileZilla publishing profile. Is one of the
-         following types: CsmPublishingProfileOptions, JSON, IO[bytes] Required.
-        :type publishing_profile_options: ~azure.mgmt.web.models.CsmPublishingProfileOptions or JSON or
-         IO[bytes]
+         For example, use {" format": "FileZilla3"} to get a FileZilla publishing profile. Is either a
+         CsmPublishingProfileOptions type or a IO[bytes] type. Required.
+        :type publishing_profile_options: ~azure.mgmt.web.models.CsmPublishingProfileOptions or
+         ~azure.mgmt.web.types.CsmPublishingProfileOptions or IO[bytes]
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24525,7 +24807,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24636,7 +24918,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        request: JSON,
+        request: _types.RestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24654,7 +24936,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param request: Information on restore request . Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.RestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24702,7 +24984,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores an app from a backup blob in Azure Storage.
@@ -24717,9 +24999,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param request: Information on restore request . Is one of the following types: RestoreRequest,
-         JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.RestoreRequest or JSON or IO[bytes]
+        :param request: Information on restore request . Is either a RestoreRequest type or a IO[bytes]
+         type. Required.
+        :type request: ~azure.mgmt.web.models.RestoreRequest or ~azure.mgmt.web.types.RestoreRequest or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24777,7 +25060,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        restore_request: Union[_models.DeletedAppRestoreRequest, JSON, IO[bytes]],
+        restore_request: Union[_models.DeletedAppRestoreRequest, _types.DeletedAppRestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24888,7 +25171,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        restore_request: JSON,
+        restore_request: _types.DeletedAppRestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24906,7 +25189,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param restore_request: Deleted web app restore information. Required.
-        :type restore_request: JSON
+        :type restore_request: ~azure.mgmt.web.types.DeletedAppRestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24954,7 +25237,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        restore_request: Union[_models.DeletedAppRestoreRequest, JSON, IO[bytes]],
+        restore_request: Union[_models.DeletedAppRestoreRequest, _types.DeletedAppRestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a deleted web app to this web app.
@@ -24969,9 +25252,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param restore_request: Deleted web app restore information. Is one of the following types:
-         DeletedAppRestoreRequest, JSON, IO[bytes] Required.
-        :type restore_request: ~azure.mgmt.web.models.DeletedAppRestoreRequest or JSON or IO[bytes]
+        :param restore_request: Deleted web app restore information. Is either a
+         DeletedAppRestoreRequest type or a IO[bytes] type. Required.
+        :type restore_request: ~azure.mgmt.web.models.DeletedAppRestoreRequest or
+         ~azure.mgmt.web.types.DeletedAppRestoreRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25029,7 +25313,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        restore_request: Union[_models.SnapshotRestoreRequest, JSON, IO[bytes]],
+        restore_request: Union[_models.SnapshotRestoreRequest, _types.SnapshotRestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25141,7 +25425,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        restore_request: JSON,
+        restore_request: _types.SnapshotRestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25160,7 +25444,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param restore_request: Snapshot restore settings. Snapshot information can be obtained by
          calling GetDeletedSites or GetSiteSnapshots API. Required.
-        :type restore_request: JSON
+        :type restore_request: ~azure.mgmt.web.types.SnapshotRestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25209,7 +25493,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        restore_request: Union[_models.SnapshotRestoreRequest, JSON, IO[bytes]],
+        restore_request: Union[_models.SnapshotRestoreRequest, _types.SnapshotRestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a web app from a snapshot.
@@ -25225,9 +25509,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param restore_request: Snapshot restore settings. Snapshot information can be obtained by
-         calling GetDeletedSites or GetSiteSnapshots API. Is one of the following types:
-         SnapshotRestoreRequest, JSON, IO[bytes] Required.
-        :type restore_request: ~azure.mgmt.web.models.SnapshotRestoreRequest or JSON or IO[bytes]
+         calling GetDeletedSites or GetSiteSnapshots API. Is either a SnapshotRestoreRequest type or a
+         IO[bytes] type. Required.
+        :type restore_request: ~azure.mgmt.web.models.SnapshotRestoreRequest or
+         ~azure.mgmt.web.types.SnapshotRestoreRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25319,7 +25604,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        slot_swap_entity: JSON,
+        slot_swap_entity: _types.CsmSlotEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25337,7 +25622,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param slot_swap_entity: JSON object that contains the target slot name. See example. Required.
-        :type slot_swap_entity: JSON
+        :type slot_swap_entity: ~azure.mgmt.web.types.CsmSlotEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25385,7 +25670,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        slot_swap_entity: Union[_models.CsmSlotEntity, JSON, IO[bytes]],
+        slot_swap_entity: Union[_models.CsmSlotEntity, _types.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncItemPaged["_models.SlotDifference"]:
         """Get the difference in configuration settings between two web app slots.
@@ -25400,9 +25685,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is one of
-         the following types: CsmSlotEntity, JSON, IO[bytes] Required.
-        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or JSON or IO[bytes]
+        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is either
+         a CsmSlotEntity type or a IO[bytes] type. Required.
+        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or
+         ~azure.mgmt.web.types.CsmSlotEntity or IO[bytes]
         :return: An iterator like instance of SlotDifference
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.SlotDifference]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25459,7 +25745,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25506,7 +25795,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        slot_swap_entity: Union[_models.CsmSlotEntity, JSON, IO[bytes]],
+        slot_swap_entity: Union[_models.CsmSlotEntity, _types.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25617,7 +25906,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        slot_swap_entity: JSON,
+        slot_swap_entity: _types.CsmSlotEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25635,7 +25924,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param slot_swap_entity: JSON object that contains the target slot name. See example. Required.
-        :type slot_swap_entity: JSON
+        :type slot_swap_entity: ~azure.mgmt.web.types.CsmSlotEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25683,7 +25972,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        slot_swap_entity: Union[_models.CsmSlotEntity, JSON, IO[bytes]],
+        slot_swap_entity: Union[_models.CsmSlotEntity, _types.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Swaps two deployment slots of an app.
@@ -25698,9 +25987,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is one of
-         the following types: CsmSlotEntity, JSON, IO[bytes] Required.
-        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or JSON or IO[bytes]
+        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is either
+         a CsmSlotEntity type or a IO[bytes] type. Required.
+        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or
+         ~azure.mgmt.web.types.CsmSlotEntity or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25816,7 +26106,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25921,7 +26214,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -26110,7 +26406,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[List[_models.NetworkTrace]]:
         """Start capturing network packets for the site.
 
         Description for Start capturing network packets for the site.
@@ -26129,14 +26425,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :paramtype max_frame_length: int
         :keyword sas_url: The Blob URL to store capture file. Default value is None.
         :paramtype sas_url: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns list of NetworkTrace
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.mgmt.web.models.NetworkTrace]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -26156,9 +26452,12 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(List[_models.NetworkTrace], response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -26173,13 +26472,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[List[_models.NetworkTrace]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[List[_models.NetworkTrace]](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def stop_slot(self, resource_group_name: str, name: str, slot: str, **kwargs: Any) -> None:
@@ -26502,7 +26803,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -26584,7 +26888,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        workflow_artifacts: Optional[JSON] = None,
+        workflow_artifacts: Optional[_types.WorkflowArtifacts] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26603,7 +26907,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param workflow_artifacts: Application settings and files of the workflow. Default value is
          None.
-        :type workflow_artifacts: JSON
+        :type workflow_artifacts: ~azure.mgmt.web.types.WorkflowArtifacts
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26652,7 +26956,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        workflow_artifacts: Optional[Union[_models.WorkflowArtifacts, JSON, IO[bytes]]] = None,
+        workflow_artifacts: Optional[Union[_models.WorkflowArtifacts, _types.WorkflowArtifacts, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         """Creates the artifacts for web site, or a deployment slot.
@@ -26667,9 +26971,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. By default, this API returns the production slot.
          Required.
         :type slot: str
-        :param workflow_artifacts: Application settings and files of the workflow. Is one of the
-         following types: WorkflowArtifacts, JSON, IO[bytes] Default value is None.
-        :type workflow_artifacts: ~azure.mgmt.web.models.WorkflowArtifacts or JSON or IO[bytes]
+        :param workflow_artifacts: Application settings and files of the workflow. Is either a
+         WorkflowArtifacts type or a IO[bytes] type. Default value is None.
+        :type workflow_artifacts: ~azure.mgmt.web.models.WorkflowArtifacts or
+         ~azure.mgmt.web.types.WorkflowArtifacts or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -26894,7 +27199,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes]],
+        private_endpoint_wrapper: Union[
+            _models.RemotePrivateEndpointConnectionARMResource,
+            _types.RemotePrivateEndpointConnectionARMResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -27006,7 +27315,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: JSON,
+        private_endpoint_wrapper: _types.RemotePrivateEndpointConnectionARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27023,7 +27332,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_wrapper: Required.
-        :type private_endpoint_wrapper: JSON
+        :type private_endpoint_wrapper:
+         ~azure.mgmt.web.types.RemotePrivateEndpointConnectionARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27074,7 +27384,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes]],
+        private_endpoint_wrapper: Union[
+            _models.RemotePrivateEndpointConnectionARMResource,
+            _types.RemotePrivateEndpointConnectionARMResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RemotePrivateEndpointConnectionARMResource]:
         """Approves or rejects a private endpoint connection.
@@ -27088,10 +27402,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param private_endpoint_wrapper: Is one of the following types:
-         RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes] Required.
+        :param private_endpoint_wrapper: Is either a RemotePrivateEndpointConnectionARMResource type or
+         a IO[bytes] type. Required.
         :type private_endpoint_wrapper:
-         ~azure.mgmt.web.models.RemotePrivateEndpointConnectionARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.RemotePrivateEndpointConnectionARMResource or
+         ~azure.mgmt.web.types.RemotePrivateEndpointConnectionARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RemotePrivateEndpointConnectionARMResource.
          The RemotePrivateEndpointConnectionARMResource is compatible with MutableMapping
         :rtype:
@@ -27216,7 +27531,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def begin_delete_private_endpoint_connection(
         self, resource_group_name: str, name: str, private_endpoint_connection_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[Any]:
         """Deletes a private endpoint connection.
 
         Description for Deletes a private endpoint connection.
@@ -27228,14 +27543,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns any
+        :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Any] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -27252,9 +27567,12 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(Any, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -27269,13 +27587,13 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[Any].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[Any](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_private_endpoint_connection_list(
@@ -27337,7 +27655,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -27466,7 +27787,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         private_endpoint_connection_name: str,
         slot: str,
-        private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes]],
+        private_endpoint_wrapper: Union[
+            _models.RemotePrivateEndpointConnectionARMResource,
+            _types.RemotePrivateEndpointConnectionARMResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -27583,7 +27908,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         private_endpoint_connection_name: str,
         slot: str,
-        private_endpoint_wrapper: JSON,
+        private_endpoint_wrapper: _types.RemotePrivateEndpointConnectionARMResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27602,7 +27927,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the site deployment slot. Required.
         :type slot: str
         :param private_endpoint_wrapper: Required.
-        :type private_endpoint_wrapper: JSON
+        :type private_endpoint_wrapper:
+         ~azure.mgmt.web.types.RemotePrivateEndpointConnectionARMResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27657,7 +27983,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         private_endpoint_connection_name: str,
         slot: str,
-        private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes]],
+        private_endpoint_wrapper: Union[
+            _models.RemotePrivateEndpointConnectionARMResource,
+            _types.RemotePrivateEndpointConnectionARMResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RemotePrivateEndpointConnectionARMResource]:
         """Approves or rejects a private endpoint connection.
@@ -27673,10 +28003,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type private_endpoint_connection_name: str
         :param slot: Name of the site deployment slot. Required.
         :type slot: str
-        :param private_endpoint_wrapper: Is one of the following types:
-         RemotePrivateEndpointConnectionARMResource, JSON, IO[bytes] Required.
+        :param private_endpoint_wrapper: Is either a RemotePrivateEndpointConnectionARMResource type or
+         a IO[bytes] type. Required.
         :type private_endpoint_wrapper:
-         ~azure.mgmt.web.models.RemotePrivateEndpointConnectionARMResource or JSON or IO[bytes]
+         ~azure.mgmt.web.models.RemotePrivateEndpointConnectionARMResource or
+         ~azure.mgmt.web.types.RemotePrivateEndpointConnectionARMResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RemotePrivateEndpointConnectionARMResource.
          The RemotePrivateEndpointConnectionARMResource is compatible with MutableMapping
         :rtype:
@@ -27803,7 +28134,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def begin_delete_private_endpoint_connection_slot(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, private_endpoint_connection_name: str, slot: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[Any]:
         """Deletes a private endpoint connection.
 
         Description for Deletes a private endpoint connection.
@@ -27817,14 +28148,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type private_endpoint_connection_name: str
         :param slot: Name of the site deployment slot. Required.
         :type slot: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns any
+        :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Any] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -27842,9 +28173,12 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(Any, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -27859,13 +28193,13 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[Any].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[Any](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_private_endpoint_connection_list_slot(  # pylint: disable=name-too-long
@@ -27930,7 +28264,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28094,7 +28431,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         namespace_name: str,
         relay_name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.HybridConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28113,7 +28450,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param relay_name: The relay name for this hybrid connection. Required.
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.HybridConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28164,7 +28501,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         namespace_name: str,
         relay_name: str,
-        connection_envelope: Union[_models.HybridConnection, JSON, IO[bytes]],
+        connection_envelope: Union[_models.HybridConnection, _types.HybridConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.HybridConnection:
         """Creates a new Hybrid Connection using a Service Bus relay.
@@ -28180,9 +28517,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type namespace_name: str
         :param relay_name: The relay name for this hybrid connection. Required.
         :type relay_name: str
-        :param connection_envelope: The details of the hybrid connection. Is one of the following
-         types: HybridConnection, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection or JSON or IO[bytes]
+        :param connection_envelope: The details of the hybrid connection. Is either a HybridConnection
+         type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection or
+         ~azure.mgmt.web.types.HybridConnection or IO[bytes]
         :return: HybridConnection. The HybridConnection is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.HybridConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -28298,7 +28636,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         namespace_name: str,
         relay_name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.HybridConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28317,7 +28655,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param relay_name: The relay name for this hybrid connection. Required.
         :type relay_name: str
         :param connection_envelope: The details of the hybrid connection. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.HybridConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28368,7 +28706,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         namespace_name: str,
         relay_name: str,
-        connection_envelope: Union[_models.HybridConnection, JSON, IO[bytes]],
+        connection_envelope: Union[_models.HybridConnection, _types.HybridConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.HybridConnection:
         """Creates a new Hybrid Connection using a Service Bus relay.
@@ -28384,9 +28722,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type namespace_name: str
         :param relay_name: The relay name for this hybrid connection. Required.
         :type relay_name: str
-        :param connection_envelope: The details of the hybrid connection. Is one of the following
-         types: HybridConnection, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection or JSON or IO[bytes]
+        :param connection_envelope: The details of the hybrid connection. Is either a HybridConnection
+         type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection or
+         ~azure.mgmt.web.types.HybridConnection or IO[bytes]
         :return: HybridConnection. The HybridConnection is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.HybridConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -28656,7 +28995,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         namespace_name: str,
         relay_name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.HybridConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28677,7 +29016,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: The name of the slot for the web app. Required.
         :type slot: str
         :param connection_envelope: The details of the hybrid connection. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.HybridConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28732,7 +29071,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         namespace_name: str,
         relay_name: str,
         slot: str,
-        connection_envelope: Union[_models.HybridConnection, JSON, IO[bytes]],
+        connection_envelope: Union[_models.HybridConnection, _types.HybridConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.HybridConnection:
         """Creates a new Hybrid Connection using a Service Bus relay.
@@ -28750,9 +29089,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type relay_name: str
         :param slot: The name of the slot for the web app. Required.
         :type slot: str
-        :param connection_envelope: The details of the hybrid connection. Is one of the following
-         types: HybridConnection, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection or JSON or IO[bytes]
+        :param connection_envelope: The details of the hybrid connection. Is either a HybridConnection
+         type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection or
+         ~azure.mgmt.web.types.HybridConnection or IO[bytes]
         :return: HybridConnection. The HybridConnection is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.HybridConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -28873,7 +29213,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         namespace_name: str,
         relay_name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.HybridConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28894,7 +29234,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: The name of the slot for the web app. Required.
         :type slot: str
         :param connection_envelope: The details of the hybrid connection. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.HybridConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28949,7 +29289,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         namespace_name: str,
         relay_name: str,
         slot: str,
-        connection_envelope: Union[_models.HybridConnection, JSON, IO[bytes]],
+        connection_envelope: Union[_models.HybridConnection, _types.HybridConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.HybridConnection:
         """Creates a new Hybrid Connection using a Service Bus relay.
@@ -28967,9 +29307,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type relay_name: str
         :param slot: The name of the slot for the web app. Required.
         :type slot: str
-        :param connection_envelope: The details of the hybrid connection. Is one of the following
-         types: HybridConnection, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection or JSON or IO[bytes]
+        :param connection_envelope: The details of the hybrid connection. Is either a HybridConnection
+         type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.HybridConnection or
+         ~azure.mgmt.web.types.HybridConnection or IO[bytes]
         :return: HybridConnection. The HybridConnection is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.HybridConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -29241,7 +29582,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.VnetInfoResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29264,7 +29605,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param connection_envelope: Properties of the Virtual Network connection. See example.
          Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.VnetInfoResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29319,7 +29660,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         slot: str,
-        connection_envelope: Union[_models.VnetInfoResource, JSON, IO[bytes]],
+        connection_envelope: Union[_models.VnetInfoResource, _types.VnetInfoResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetInfoResource:
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties
@@ -29338,9 +29679,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get the
          named virtual network for the production slot. Required.
         :type slot: str
-        :param connection_envelope: Properties of the Virtual Network connection. See example. Is one
-         of the following types: VnetInfoResource, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetInfoResource or JSON or IO[bytes]
+        :param connection_envelope: Properties of the Virtual Network connection. See example. Is
+         either a VnetInfoResource type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.VnetInfoResource or
+         ~azure.mgmt.web.types.VnetInfoResource or IO[bytes]
         :return: VnetInfoResource. The VnetInfoResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -29460,7 +29802,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.VnetInfoResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29483,7 +29825,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param connection_envelope: Properties of the Virtual Network connection. See example.
          Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.VnetInfoResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29538,7 +29880,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         slot: str,
-        connection_envelope: Union[_models.VnetInfoResource, JSON, IO[bytes]],
+        connection_envelope: Union[_models.VnetInfoResource, _types.VnetInfoResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetInfoResource:
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties
@@ -29557,9 +29899,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get the
          named virtual network for the production slot. Required.
         :type slot: str
-        :param connection_envelope: Properties of the Virtual Network connection. See example. Is one
-         of the following types: VnetInfoResource, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetInfoResource or JSON or IO[bytes]
+        :param connection_envelope: Properties of the Virtual Network connection. See example. Is
+         either a VnetInfoResource type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.VnetInfoResource or
+         ~azure.mgmt.web.types.VnetInfoResource or IO[bytes]
         :return: VnetInfoResource. The VnetInfoResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -29898,7 +30241,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         vnet_name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.VnetInfoResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29918,7 +30261,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network connection. See example.
          Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.VnetInfoResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29968,7 +30311,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         vnet_name: str,
-        connection_envelope: Union[_models.VnetInfoResource, JSON, IO[bytes]],
+        connection_envelope: Union[_models.VnetInfoResource, _types.VnetInfoResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetInfoResource:
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties
@@ -29984,9 +30327,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param vnet_name: Name of the virtual network. Required.
         :type vnet_name: str
-        :param connection_envelope: Properties of the Virtual Network connection. See example. Is one
-         of the following types: VnetInfoResource, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetInfoResource or JSON or IO[bytes]
+        :param connection_envelope: Properties of the Virtual Network connection. See example. Is
+         either a VnetInfoResource type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.VnetInfoResource or
+         ~azure.mgmt.web.types.VnetInfoResource or IO[bytes]
         :return: VnetInfoResource. The VnetInfoResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -30100,7 +30444,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         vnet_name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.VnetInfoResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30120,7 +30464,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param connection_envelope: Properties of the Virtual Network connection. See example.
          Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.VnetInfoResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30170,7 +30514,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         vnet_name: str,
-        connection_envelope: Union[_models.VnetInfoResource, JSON, IO[bytes]],
+        connection_envelope: Union[_models.VnetInfoResource, _types.VnetInfoResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetInfoResource:
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties
@@ -30186,9 +30530,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param vnet_name: Name of the virtual network. Required.
         :type vnet_name: str
-        :param connection_envelope: Properties of the Virtual Network connection. See example. Is one
-         of the following types: VnetInfoResource, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetInfoResource or JSON or IO[bytes]
+        :param connection_envelope: Properties of the Virtual Network connection. See example. Is
+         either a VnetInfoResource type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.VnetInfoResource or
+         ~azure.mgmt.web.types.VnetInfoResource or IO[bytes]
         :return: VnetInfoResource. The VnetInfoResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -30531,7 +30876,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         vnet_name: str,
         gateway_name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.VnetGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30554,7 +30899,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          gateway for the production slot's Virtual Network. Required.
         :type slot: str
         :param connection_envelope: The properties to update this gateway with. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.VnetGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30611,7 +30956,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         vnet_name: str,
         gateway_name: str,
         slot: str,
-        connection_envelope: Union[_models.VnetGateway, JSON, IO[bytes]],
+        connection_envelope: Union[_models.VnetGateway, _types.VnetGateway, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetGateway:
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
@@ -30631,9 +30976,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get a
          gateway for the production slot's Virtual Network. Required.
         :type slot: str
-        :param connection_envelope: The properties to update this gateway with. Is one of the following
-         types: VnetGateway, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or JSON or IO[bytes]
+        :param connection_envelope: The properties to update this gateway with. Is either a VnetGateway
+         type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or
+         ~azure.mgmt.web.types.VnetGateway or IO[bytes]
         :return: VnetGateway. The VnetGateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -30756,7 +31102,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         vnet_name: str,
         gateway_name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.VnetGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30779,7 +31125,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          gateway for the production slot's Virtual Network. Required.
         :type slot: str
         :param connection_envelope: The properties to update this gateway with. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.VnetGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30836,7 +31182,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         vnet_name: str,
         gateway_name: str,
         slot: str,
-        connection_envelope: Union[_models.VnetGateway, JSON, IO[bytes]],
+        connection_envelope: Union[_models.VnetGateway, _types.VnetGateway, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetGateway:
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
@@ -30856,9 +31202,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get a
          gateway for the production slot's Virtual Network. Required.
         :type slot: str
-        :param connection_envelope: The properties to update this gateway with. Is one of the following
-         types: VnetGateway, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or JSON or IO[bytes]
+        :param connection_envelope: The properties to update this gateway with. Is either a VnetGateway
+         type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or
+         ~azure.mgmt.web.types.VnetGateway or IO[bytes]
         :return: VnetGateway. The VnetGateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -31057,7 +31404,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         gateway_name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.VnetGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31077,7 +31424,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type gateway_name: str
         :param connection_envelope: The properties to update this gateway with. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.VnetGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31129,7 +31476,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         gateway_name: str,
-        connection_envelope: Union[_models.VnetGateway, JSON, IO[bytes]],
+        connection_envelope: Union[_models.VnetGateway, _types.VnetGateway, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetGateway:
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
@@ -31146,9 +31493,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param gateway_name: Name of the gateway. Currently, the only supported string is "primary".
          Required.
         :type gateway_name: str
-        :param connection_envelope: The properties to update this gateway with. Is one of the following
-         types: VnetGateway, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or JSON or IO[bytes]
+        :param connection_envelope: The properties to update this gateway with. Is either a VnetGateway
+         type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or
+         ~azure.mgmt.web.types.VnetGateway or IO[bytes]
         :return: VnetGateway. The VnetGateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -31265,7 +31613,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         gateway_name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.VnetGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31285,7 +31633,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type gateway_name: str
         :param connection_envelope: The properties to update this gateway with. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.VnetGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31337,7 +31685,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         gateway_name: str,
-        connection_envelope: Union[_models.VnetGateway, JSON, IO[bytes]],
+        connection_envelope: Union[_models.VnetGateway, _types.VnetGateway, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetGateway:
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
@@ -31354,9 +31702,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param gateway_name: Name of the gateway. Currently, the only supported string is "primary".
          Required.
         :type gateway_name: str
-        :param connection_envelope: The properties to update this gateway with. Is one of the following
-         types: VnetGateway, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or JSON or IO[bytes]
+        :param connection_envelope: The properties to update this gateway with. Is either a VnetGateway
+         type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or
+         ~azure.mgmt.web.types.VnetGateway or IO[bytes]
         :return: VnetGateway. The VnetGateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -31503,7 +31852,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, name: str, site_envelope: Union[_models.Site, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        site_envelope: Union[_models.Site, _types.Site, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -31609,7 +31962,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_envelope: JSON,
+        site_envelope: _types.Site,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31626,7 +31979,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param site_envelope: A JSON representation of the app properties. See example. Required.
-        :type site_envelope: JSON
+        :type site_envelope: ~azure.mgmt.web.types.Site
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31670,7 +32023,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, name: str, site_envelope: Union[_models.Site, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        site_envelope: Union[_models.Site, _types.Site, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.Site]:
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing
         app.
@@ -31683,9 +32040,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param site_envelope: A JSON representation of the app properties. See example. Is one of the
-         following types: Site, JSON, IO[bytes] Required.
-        :type site_envelope: ~azure.mgmt.web.models.Site or JSON or IO[bytes]
+        :param site_envelope: A JSON representation of the app properties. See example. Is either a
+         Site type or a IO[bytes] type. Required.
+        :type site_envelope: ~azure.mgmt.web.models.Site or ~azure.mgmt.web.types.Site or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Site. The Site is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.Site]
@@ -31779,7 +32136,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_envelope: JSON,
+        site_envelope: _types.SitePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31796,7 +32153,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param site_envelope: A JSON representation of the app properties. See example. Required.
-        :type site_envelope: JSON
+        :type site_envelope: ~azure.mgmt.web.types.SitePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31841,7 +32198,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_envelope: Union[_models.SitePatchResource, JSON, IO[bytes]],
+        site_envelope: Union[_models.SitePatchResource, _types.SitePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.Site:
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing
@@ -31855,9 +32212,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param site_envelope: A JSON representation of the app properties. See example. Is one of the
-         following types: SitePatchResource, JSON, IO[bytes] Required.
-        :type site_envelope: ~azure.mgmt.web.models.SitePatchResource or JSON or IO[bytes]
+        :param site_envelope: A JSON representation of the app properties. See example. Is either a
+         SitePatchResource type or a IO[bytes] type. Required.
+        :type site_envelope: ~azure.mgmt.web.models.SitePatchResource or
+         ~azure.mgmt.web.types.SitePatchResource or IO[bytes]
         :return: Site. The Site is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Site
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32053,7 +32411,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32207,7 +32568,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        slot_swap_entity: JSON,
+        slot_swap_entity: _types.CsmSlotEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32222,7 +32583,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param slot_swap_entity: JSON object that contains the target slot name. See example. Required.
-        :type slot_swap_entity: JSON
+        :type slot_swap_entity: ~azure.mgmt.web.types.CsmSlotEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32265,7 +32626,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        slot_swap_entity: Union[_models.CsmSlotEntity, JSON, IO[bytes]],
+        slot_swap_entity: Union[_models.CsmSlotEntity, _types.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Applies the configuration settings from the target slot onto the current slot.
@@ -32277,9 +32638,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is one of
-         the following types: CsmSlotEntity, JSON, IO[bytes] Required.
-        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or JSON or IO[bytes]
+        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is either
+         a CsmSlotEntity type or a IO[bytes] type. Required.
+        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or
+         ~azure.mgmt.web.types.CsmSlotEntity or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32373,7 +32735,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        request: JSON,
+        request: _types.BackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32389,7 +32751,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param request: Backup configuration. You can use the JSON response from the POST action as
          input here. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.BackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32430,7 +32792,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def backup(
-        self, resource_group_name: str, name: str, request: Union[_models.BackupRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        request: Union[_models.BackupRequest, _types.BackupRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.BackupItem:
         """Creates a backup of an app.
 
@@ -32442,8 +32808,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param request: Backup configuration. You can use the JSON response from the POST action as
-         input here. Is one of the following types: BackupRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.BackupRequest or JSON or IO[bytes]
+         input here. Is either a BackupRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.web.models.BackupRequest or ~azure.mgmt.web.types.BackupRequest or
+         IO[bytes]
         :return: BackupItem. The BackupItem is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.BackupItem
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32549,7 +32916,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_settings: JSON,
+        app_settings: _types.StringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32564,7 +32931,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param app_settings: Application settings of the app. Required.
-        :type app_settings: JSON
+        :type app_settings: ~azure.mgmt.web.types.StringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32607,7 +32974,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_settings: Union[_models.StringDictionary, JSON, IO[bytes]],
+        app_settings: Union[_models.StringDictionary, _types.StringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.StringDictionary:
         """Replaces the application settings of an app.
@@ -32619,9 +32986,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param app_settings: Application settings of the app. Is one of the following types:
-         StringDictionary, JSON, IO[bytes] Required.
-        :type app_settings: ~azure.mgmt.web.models.StringDictionary or JSON or IO[bytes]
+        :param app_settings: Application settings of the app. Is either a StringDictionary type or a
+         IO[bytes] type. Required.
+        :type app_settings: ~azure.mgmt.web.models.StringDictionary or
+         ~azure.mgmt.web.types.StringDictionary or IO[bytes]
         :return: StringDictionary. The StringDictionary is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32801,7 +33169,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_auth_settings: JSON,
+        site_auth_settings: _types.SiteAuthSettings,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32816,7 +33184,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param site_auth_settings: Auth settings associated with web app. Required.
-        :type site_auth_settings: JSON
+        :type site_auth_settings: ~azure.mgmt.web.types.SiteAuthSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32859,7 +33227,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_auth_settings: Union[_models.SiteAuthSettings, JSON, IO[bytes]],
+        site_auth_settings: Union[_models.SiteAuthSettings, _types.SiteAuthSettings, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteAuthSettings:
         """Updates the Authentication / Authorization settings associated with web app.
@@ -32871,9 +33239,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param site_auth_settings: Auth settings associated with web app. Is one of the following
-         types: SiteAuthSettings, JSON, IO[bytes] Required.
-        :type site_auth_settings: ~azure.mgmt.web.models.SiteAuthSettings or JSON or IO[bytes]
+        :param site_auth_settings: Auth settings associated with web app. Is either a SiteAuthSettings
+         type or a IO[bytes] type. Required.
+        :type site_auth_settings: ~azure.mgmt.web.models.SiteAuthSettings or
+         ~azure.mgmt.web.types.SiteAuthSettings or IO[bytes]
         :return: SiteAuthSettings. The SiteAuthSettings is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteAuthSettings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -33052,7 +33421,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        azure_storage_accounts: JSON,
+        azure_storage_accounts: _types.AzureStoragePropertyDictionaryResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33067,7 +33436,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param azure_storage_accounts: Azure storage accounts of the app. Required.
-        :type azure_storage_accounts: JSON
+        :type azure_storage_accounts: ~azure.mgmt.web.types.AzureStoragePropertyDictionaryResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33112,7 +33481,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        azure_storage_accounts: Union[_models.AzureStoragePropertyDictionaryResource, JSON, IO[bytes]],
+        azure_storage_accounts: Union[
+            _models.AzureStoragePropertyDictionaryResource, _types.AzureStoragePropertyDictionaryResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AzureStoragePropertyDictionaryResource:
         """Updates the Azure storage account configurations of an app.
@@ -33124,10 +33495,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param azure_storage_accounts: Azure storage accounts of the app. Is one of the following
-         types: AzureStoragePropertyDictionaryResource, JSON, IO[bytes] Required.
+        :param azure_storage_accounts: Azure storage accounts of the app. Is either a
+         AzureStoragePropertyDictionaryResource type or a IO[bytes] type. Required.
         :type azure_storage_accounts: ~azure.mgmt.web.models.AzureStoragePropertyDictionaryResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.web.types.AzureStoragePropertyDictionaryResource or IO[bytes]
         :return: AzureStoragePropertyDictionaryResource. The AzureStoragePropertyDictionaryResource is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.AzureStoragePropertyDictionaryResource
@@ -33309,7 +33680,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        request: JSON,
+        request: _types.BackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33324,7 +33695,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param request: Edited backup configuration. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.BackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33364,7 +33735,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def update_backup_configuration(
-        self, resource_group_name: str, name: str, request: Union[_models.BackupRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        request: Union[_models.BackupRequest, _types.BackupRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.BackupRequest:
         """Updates the backup configuration of an app.
 
@@ -33375,9 +33750,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param request: Edited backup configuration. Is one of the following types: BackupRequest,
-         JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.BackupRequest or JSON or IO[bytes]
+        :param request: Edited backup configuration. Is either a BackupRequest type or a IO[bytes]
+         type. Required.
+        :type request: ~azure.mgmt.web.models.BackupRequest or ~azure.mgmt.web.types.BackupRequest or
+         IO[bytes]
         :return: BackupRequest. The BackupRequest is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.BackupRequest
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -33618,7 +33994,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        connection_strings: JSON,
+        connection_strings: _types.ConnectionStringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33634,7 +34010,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param connection_strings: Connection strings of the app or deployment slot. See example.
          Required.
-        :type connection_strings: JSON
+        :type connection_strings: ~azure.mgmt.web.types.ConnectionStringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33680,7 +34056,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        connection_strings: Union[_models.ConnectionStringDictionary, JSON, IO[bytes]],
+        connection_strings: Union[_models.ConnectionStringDictionary, _types.ConnectionStringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConnectionStringDictionary:
         """Replaces the connection strings of an app.
@@ -33693,9 +34069,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param connection_strings: Connection strings of the app or deployment slot. See example. Is
-         one of the following types: ConnectionStringDictionary, JSON, IO[bytes] Required.
-        :type connection_strings: ~azure.mgmt.web.models.ConnectionStringDictionary or JSON or
-         IO[bytes]
+         either a ConnectionStringDictionary type or a IO[bytes] type. Required.
+        :type connection_strings: ~azure.mgmt.web.models.ConnectionStringDictionary or
+         ~azure.mgmt.web.types.ConnectionStringDictionary or IO[bytes]
         :return: ConnectionStringDictionary. The ConnectionStringDictionary is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.ConnectionStringDictionary
@@ -33877,7 +34253,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        metadata: JSON,
+        metadata: _types.StringDictionary,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33892,7 +34268,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param metadata: Edited metadata of the app or deployment slot. See example. Required.
-        :type metadata: JSON
+        :type metadata: ~azure.mgmt.web.types.StringDictionary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33935,7 +34311,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        metadata: Union[_models.StringDictionary, JSON, IO[bytes]],
+        metadata: Union[_models.StringDictionary, _types.StringDictionary, IO[bytes]],
         **kwargs: Any
     ) -> _models.StringDictionary:
         """Replaces the metadata of an app.
@@ -33947,9 +34323,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param metadata: Edited metadata of the app or deployment slot. See example. Is one of the
-         following types: StringDictionary, JSON, IO[bytes] Required.
-        :type metadata: ~azure.mgmt.web.models.StringDictionary or JSON or IO[bytes]
+        :param metadata: Edited metadata of the app or deployment slot. See example. Is either a
+         StringDictionary type or a IO[bytes] type. Required.
+        :type metadata: ~azure.mgmt.web.models.StringDictionary or
+         ~azure.mgmt.web.types.StringDictionary or IO[bytes]
         :return: StringDictionary. The StringDictionary is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -34256,7 +34633,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        push_settings: JSON,
+        push_settings: _types.PushSettings,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34271,7 +34648,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param push_settings: Push settings associated with web app. Required.
-        :type push_settings: JSON
+        :type push_settings: ~azure.mgmt.web.types.PushSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34314,7 +34691,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        push_settings: Union[_models.PushSettings, JSON, IO[bytes]],
+        push_settings: Union[_models.PushSettings, _types.PushSettings, IO[bytes]],
         **kwargs: Any
     ) -> _models.PushSettings:
         """Updates the Push settings associated with web app.
@@ -34326,9 +34703,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param push_settings: Push settings associated with web app. Is one of the following types:
-         PushSettings, JSON, IO[bytes] Required.
-        :type push_settings: ~azure.mgmt.web.models.PushSettings or JSON or IO[bytes]
+        :param push_settings: Push settings associated with web app. Is either a PushSettings type or a
+         IO[bytes] type. Required.
+        :type push_settings: ~azure.mgmt.web.models.PushSettings or ~azure.mgmt.web.types.PushSettings
+         or IO[bytes]
         :return: PushSettings. The PushSettings is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PushSettings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -34661,7 +35039,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        request: JSON,
+        request: _types.RestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34679,7 +35057,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param request: A RestoreRequest object that includes Azure storage URL and blog name for
          discovery of backup. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.RestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34725,7 +35103,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.RestoreRequest:
         """Discovers an existing app backup that can be restored from a blob in Azure storage. Use this to
@@ -34740,8 +35118,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param request: A RestoreRequest object that includes Azure storage URL and blog name for
-         discovery of backup. Is one of the following types: RestoreRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.RestoreRequest or JSON or IO[bytes]
+         discovery of backup. Is either a RestoreRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.web.models.RestoreRequest or ~azure.mgmt.web.types.RestoreRequest or
+         IO[bytes]
         :return: RestoreRequest. The RestoreRequest is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.RestoreRequest
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -35262,7 +35641,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         key_type: str,
         key_name: str,
-        key: JSON,
+        key: _types.KeyInfo,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35281,7 +35660,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param key_name: The name of the key. Required.
         :type key_name: str
         :param key: The key to create or update. Required.
-        :type key: JSON
+        :type key: ~azure.mgmt.web.types.KeyInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35332,7 +35711,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         key_type: str,
         key_name: str,
-        key: Union[_models.KeyInfo, JSON, IO[bytes]],
+        key: Union[_models.KeyInfo, _types.KeyInfo, IO[bytes]],
         **kwargs: Any
     ) -> _models.KeyInfo:
         """Add or update a host level secret.
@@ -35348,9 +35727,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type key_type: str
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key: The key to create or update. Is one of the following types: KeyInfo, JSON,
-         IO[bytes] Required.
-        :type key: ~azure.mgmt.web.models.KeyInfo or JSON or IO[bytes]
+        :param key: The key to create or update. Is either a KeyInfo type or a IO[bytes] type.
+         Required.
+        :type key: ~azure.mgmt.web.models.KeyInfo or ~azure.mgmt.web.types.KeyInfo or IO[bytes]
         :return: KeyInfo. The KeyInfo is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.KeyInfo
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -35772,7 +36151,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -35964,7 +36346,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        migration_options: Union[_models.StorageMigrationOptions, JSON, IO[bytes]],
+        migration_options: Union[_models.StorageMigrationOptions, _types.StorageMigrationOptions, IO[bytes]],
         *,
         subscription_name: str,
         **kwargs: Any
@@ -36074,7 +36456,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        migration_options: JSON,
+        migration_options: _types.StorageMigrationOptions,
         *,
         subscription_name: str,
         content_type: str = "application/json",
@@ -36090,7 +36472,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param migration_options: Migration migrationOptions. Required.
-        :type migration_options: JSON
+        :type migration_options: ~azure.mgmt.web.types.StorageMigrationOptions
         :keyword subscription_name: Azure subscription. Required.
         :paramtype subscription_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -36140,7 +36522,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        migration_options: Union[_models.StorageMigrationOptions, JSON, IO[bytes]],
+        migration_options: Union[_models.StorageMigrationOptions, _types.StorageMigrationOptions, IO[bytes]],
         *,
         subscription_name: str,
         **kwargs: Any
@@ -36154,9 +36536,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param migration_options: Migration migrationOptions. Is one of the following types:
-         StorageMigrationOptions, JSON, IO[bytes] Required.
-        :type migration_options: ~azure.mgmt.web.models.StorageMigrationOptions or JSON or IO[bytes]
+        :param migration_options: Migration migrationOptions. Is either a StorageMigrationOptions type
+         or a IO[bytes] type. Required.
+        :type migration_options: ~azure.mgmt.web.models.StorageMigrationOptions or
+         ~azure.mgmt.web.types.StorageMigrationOptions or IO[bytes]
         :keyword subscription_name: Azure subscription. Required.
         :paramtype subscription_name: str
         :return: An instance of AsyncLROPoller that returns StorageMigrationResponse. The
@@ -36224,7 +36607,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        migration_request_envelope: Union[_models.MigrateMySqlRequest, JSON, IO[bytes]],
+        migration_request_envelope: Union[_models.MigrateMySqlRequest, _types.MigrateMySqlRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -36328,7 +36711,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        migration_request_envelope: JSON,
+        migration_request_envelope: _types.MigrateMySqlRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36343,7 +36726,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param migration_request_envelope: MySql migration options. Required.
-        :type migration_request_envelope: JSON
+        :type migration_request_envelope: ~azure.mgmt.web.types.MigrateMySqlRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36388,7 +36771,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        migration_request_envelope: Union[_models.MigrateMySqlRequest, JSON, IO[bytes]],
+        migration_request_envelope: Union[_models.MigrateMySqlRequest, _types.MigrateMySqlRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Operation]:
         """Migrates a local (in-app) MySql database to a remote MySql database.
@@ -36400,10 +36783,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param migration_request_envelope: MySql migration options. Is one of the following types:
-         MigrateMySqlRequest, JSON, IO[bytes] Required.
-        :type migration_request_envelope: ~azure.mgmt.web.models.MigrateMySqlRequest or JSON or
-         IO[bytes]
+        :param migration_request_envelope: MySql migration options. Is either a MigrateMySqlRequest
+         type or a IO[bytes] type. Required.
+        :type migration_request_envelope: ~azure.mgmt.web.models.MigrateMySqlRequest or
+         ~azure.mgmt.web.types.MigrateMySqlRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Operation. The Operation is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.Operation]
@@ -36712,7 +37095,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[List[_models.NetworkTrace]]:
         """Start capturing network packets for the site.
 
         Description for Start capturing network packets for the site.
@@ -36728,14 +37111,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :paramtype max_frame_length: int
         :keyword sas_url: The Blob URL to store capture file. Default value is None.
         :paramtype sas_url: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns list of NetworkTrace
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.mgmt.web.models.NetworkTrace]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -36754,9 +37137,12 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(List[_models.NetworkTrace], response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -36771,13 +37157,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[List[_models.NetworkTrace]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[List[_models.NetworkTrace]](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def stop_web_site_network_trace(self, resource_group_name: str, name: str, **kwargs: Any) -> None:
@@ -37196,7 +37584,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37494,7 +37885,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        publishing_profile_options: JSON,
+        publishing_profile_options: _types.CsmPublishingProfileOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37510,7 +37901,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param publishing_profile_options: Specifies publishingProfileOptions for publishing profile.
          For example, use {" format": "FileZilla3"} to get a FileZilla publishing profile. Required.
-        :type publishing_profile_options: JSON
+        :type publishing_profile_options: ~azure.mgmt.web.types.CsmPublishingProfileOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37554,7 +37945,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        publishing_profile_options: Union[_models.CsmPublishingProfileOptions, JSON, IO[bytes]],
+        publishing_profile_options: Union[
+            _models.CsmPublishingProfileOptions, _types.CsmPublishingProfileOptions, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Gets the publishing profile for an app (or deployment slot, if specified).
@@ -37567,10 +37960,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param publishing_profile_options: Specifies publishingProfileOptions for publishing profile.
-         For example, use {" format": "FileZilla3"} to get a FileZilla publishing profile. Is one of the
-         following types: CsmPublishingProfileOptions, JSON, IO[bytes] Required.
-        :type publishing_profile_options: ~azure.mgmt.web.models.CsmPublishingProfileOptions or JSON or
-         IO[bytes]
+         For example, use {" format": "FileZilla3"} to get a FileZilla publishing profile. Is either a
+         CsmPublishingProfileOptions type or a IO[bytes] type. Required.
+        :type publishing_profile_options: ~azure.mgmt.web.models.CsmPublishingProfileOptions or
+         ~azure.mgmt.web.types.CsmPublishingProfileOptions or IO[bytes]
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -37783,7 +38176,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -37888,7 +38281,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        request: JSON,
+        request: _types.RestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37903,7 +38296,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param request: Information on restore request . Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.RestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37946,7 +38339,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores an app from a backup blob in Azure Storage.
@@ -37958,9 +38351,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param request: Information on restore request . Is one of the following types: RestoreRequest,
-         JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.RestoreRequest or JSON or IO[bytes]
+        :param request: Information on restore request . Is either a RestoreRequest type or a IO[bytes]
+         type. Required.
+        :type request: ~azure.mgmt.web.models.RestoreRequest or ~azure.mgmt.web.types.RestoreRequest or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38016,7 +38410,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        restore_request: Union[_models.DeletedAppRestoreRequest, JSON, IO[bytes]],
+        restore_request: Union[_models.DeletedAppRestoreRequest, _types.DeletedAppRestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -38121,7 +38515,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        restore_request: JSON,
+        restore_request: _types.DeletedAppRestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -38136,7 +38530,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param restore_request: Deleted web app restore information. Required.
-        :type restore_request: JSON
+        :type restore_request: ~azure.mgmt.web.types.DeletedAppRestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38179,7 +38573,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        restore_request: Union[_models.DeletedAppRestoreRequest, JSON, IO[bytes]],
+        restore_request: Union[_models.DeletedAppRestoreRequest, _types.DeletedAppRestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a deleted web app to this web app.
@@ -38191,9 +38585,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param restore_request: Deleted web app restore information. Is one of the following types:
-         DeletedAppRestoreRequest, JSON, IO[bytes] Required.
-        :type restore_request: ~azure.mgmt.web.models.DeletedAppRestoreRequest or JSON or IO[bytes]
+        :param restore_request: Deleted web app restore information. Is either a
+         DeletedAppRestoreRequest type or a IO[bytes] type. Required.
+        :type restore_request: ~azure.mgmt.web.models.DeletedAppRestoreRequest or
+         ~azure.mgmt.web.types.DeletedAppRestoreRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38249,7 +38644,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        restore_request: Union[_models.SnapshotRestoreRequest, JSON, IO[bytes]],
+        restore_request: Union[_models.SnapshotRestoreRequest, _types.SnapshotRestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -38355,7 +38750,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        restore_request: JSON,
+        restore_request: _types.SnapshotRestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -38371,7 +38766,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param restore_request: Snapshot restore settings. Snapshot information can be obtained by
          calling GetDeletedSites or GetSiteSnapshots API. Required.
-        :type restore_request: JSON
+        :type restore_request: ~azure.mgmt.web.types.SnapshotRestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38415,7 +38810,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        restore_request: Union[_models.SnapshotRestoreRequest, JSON, IO[bytes]],
+        restore_request: Union[_models.SnapshotRestoreRequest, _types.SnapshotRestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a web app from a snapshot.
@@ -38428,9 +38823,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param restore_request: Snapshot restore settings. Snapshot information can be obtained by
-         calling GetDeletedSites or GetSiteSnapshots API. Is one of the following types:
-         SnapshotRestoreRequest, JSON, IO[bytes] Required.
-        :type restore_request: ~azure.mgmt.web.models.SnapshotRestoreRequest or JSON or IO[bytes]
+         calling GetDeletedSites or GetSiteSnapshots API. Is either a SnapshotRestoreRequest type or a
+         IO[bytes] type. Required.
+        :type restore_request: ~azure.mgmt.web.models.SnapshotRestoreRequest or
+         ~azure.mgmt.web.types.SnapshotRestoreRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38516,7 +38912,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        slot_swap_entity: JSON,
+        slot_swap_entity: _types.CsmSlotEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -38531,7 +38927,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param slot_swap_entity: JSON object that contains the target slot name. See example. Required.
-        :type slot_swap_entity: JSON
+        :type slot_swap_entity: ~azure.mgmt.web.types.CsmSlotEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38574,7 +38970,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        slot_swap_entity: Union[_models.CsmSlotEntity, JSON, IO[bytes]],
+        slot_swap_entity: Union[_models.CsmSlotEntity, _types.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncItemPaged["_models.SlotDifference"]:
         """Get the difference in configuration settings between two web app slots.
@@ -38586,9 +38982,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is one of
-         the following types: CsmSlotEntity, JSON, IO[bytes] Required.
-        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or JSON or IO[bytes]
+        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is either
+         a CsmSlotEntity type or a IO[bytes] type. Required.
+        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or
+         ~azure.mgmt.web.types.CsmSlotEntity or IO[bytes]
         :return: An iterator like instance of SlotDifference
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.SlotDifference]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38644,7 +39041,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38690,7 +39090,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        slot_swap_entity: Union[_models.CsmSlotEntity, JSON, IO[bytes]],
+        slot_swap_entity: Union[_models.CsmSlotEntity, _types.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -38795,7 +39195,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        slot_swap_entity: JSON,
+        slot_swap_entity: _types.CsmSlotEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -38810,7 +39210,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param slot_swap_entity: JSON object that contains the target slot name. See example. Required.
-        :type slot_swap_entity: JSON
+        :type slot_swap_entity: ~azure.mgmt.web.types.CsmSlotEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38853,7 +39253,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        slot_swap_entity: Union[_models.CsmSlotEntity, JSON, IO[bytes]],
+        slot_swap_entity: Union[_models.CsmSlotEntity, _types.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Swaps two deployment slots of an app.
@@ -38865,9 +39265,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is one of
-         the following types: CsmSlotEntity, JSON, IO[bytes] Required.
-        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or JSON or IO[bytes]
+        :param slot_swap_entity: JSON object that contains the target slot name. See example. Is either
+         a CsmSlotEntity type or a IO[bytes] type. Required.
+        :type slot_swap_entity: ~azure.mgmt.web.models.CsmSlotEntity or
+         ~azure.mgmt.web.types.CsmSlotEntity or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38976,7 +39377,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39077,7 +39481,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39259,7 +39666,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[List[_models.NetworkTrace]]:
         """Start capturing network packets for the site.
 
         Description for Start capturing network packets for the site.
@@ -39275,14 +39682,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :paramtype max_frame_length: int
         :keyword sas_url: The Blob URL to store capture file. Default value is None.
         :paramtype sas_url: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns list of NetworkTrace
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.mgmt.web.models.NetworkTrace]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -39301,9 +39708,12 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(List[_models.NetworkTrace], response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -39318,13 +39728,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[List[_models.NetworkTrace]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[List[_models.NetworkTrace]](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def stop(self, resource_group_name: str, name: str, **kwargs: Any) -> None:
@@ -39627,7 +40039,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39704,7 +40119,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        workflow_artifacts: Optional[JSON] = None,
+        workflow_artifacts: Optional[_types.WorkflowArtifacts] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39720,7 +40135,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param workflow_artifacts: Application settings and files of the workflow. Default value is
          None.
-        :type workflow_artifacts: JSON
+        :type workflow_artifacts: ~azure.mgmt.web.types.WorkflowArtifacts
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39764,7 +40179,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        workflow_artifacts: Optional[Union[_models.WorkflowArtifacts, JSON, IO[bytes]]] = None,
+        workflow_artifacts: Optional[Union[_models.WorkflowArtifacts, _types.WorkflowArtifacts, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         """Creates the artifacts for web site, or a deployment slot.
@@ -39776,9 +40191,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param workflow_artifacts: Application settings and files of the workflow. Is one of the
-         following types: WorkflowArtifacts, JSON, IO[bytes] Default value is None.
-        :type workflow_artifacts: ~azure.mgmt.web.models.WorkflowArtifacts or JSON or IO[bytes]
+        :param workflow_artifacts: Application settings and files of the workflow. Is either a
+         WorkflowArtifacts type or a IO[bytes] type. Default value is None.
+        :type workflow_artifacts: ~azure.mgmt.web.models.WorkflowArtifacts or
+         ~azure.mgmt.web.types.WorkflowArtifacts or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -40111,7 +40527,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -40195,7 +40614,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         backup_id: str,
-        request: JSON,
+        request: _types.BackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40216,7 +40635,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param backup_id: ID of the backup. Required.
         :type backup_id: str
         :param request: Information on backup request. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.BackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40267,7 +40686,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         backup_id: str,
-        request: Union[_models.BackupRequest, JSON, IO[bytes]],
+        request: Union[_models.BackupRequest, _types.BackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.BackupItem:
         """Gets status of a web app backup that may be in progress, including secrets associated with the
@@ -40285,9 +40704,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param backup_id: ID of the backup. Required.
         :type backup_id: str
-        :param request: Information on backup request. Is one of the following types: BackupRequest,
-         JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.BackupRequest or JSON or IO[bytes]
+        :param request: Information on backup request. Is either a BackupRequest type or a IO[bytes]
+         type. Required.
+        :type request: ~azure.mgmt.web.models.BackupRequest or ~azure.mgmt.web.types.BackupRequest or
+         IO[bytes]
         :return: BackupItem. The BackupItem is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.BackupItem
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -40365,7 +40785,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         backup_id: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -40475,7 +40895,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         backup_id: str,
-        request: JSON,
+        request: _types.RestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40492,7 +40912,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param backup_id: ID of the backup. Required.
         :type backup_id: str
         :param request: Information on restore request . Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.RestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40539,7 +40959,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         backup_id: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a specific backup to another app (or deployment slot, if specified).
@@ -40553,9 +40973,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param backup_id: ID of the backup. Required.
         :type backup_id: str
-        :param request: Information on restore request . Is one of the following types: RestoreRequest,
-         JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.RestoreRequest or JSON or IO[bytes]
+        :param request: Information on restore request . Is either a RestoreRequest type or a IO[bytes]
+         type. Required.
+        :type request: ~azure.mgmt.web.models.RestoreRequest or ~azure.mgmt.web.types.RestoreRequest or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -40820,7 +41241,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -40909,7 +41333,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         backup_id: str,
         slot: str,
-        request: JSON,
+        request: _types.BackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40933,7 +41357,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          of the production slot. Required.
         :type slot: str
         :param request: Information on backup request. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.BackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40989,7 +41413,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         backup_id: str,
         slot: str,
-        request: Union[_models.BackupRequest, JSON, IO[bytes]],
+        request: Union[_models.BackupRequest, _types.BackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.BackupItem:
         """Gets status of a web app backup that may be in progress, including secrets associated with the
@@ -41010,9 +41434,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get a backup
          of the production slot. Required.
         :type slot: str
-        :param request: Information on backup request. Is one of the following types: BackupRequest,
-         JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.BackupRequest or JSON or IO[bytes]
+        :param request: Information on backup request. Is either a BackupRequest type or a IO[bytes]
+         type. Required.
+        :type request: ~azure.mgmt.web.models.BackupRequest or ~azure.mgmt.web.types.BackupRequest or
+         IO[bytes]
         :return: BackupItem. The BackupItem is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.BackupItem
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -41092,7 +41517,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         backup_id: str,
         slot: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -41208,7 +41633,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         backup_id: str,
         slot: str,
-        request: JSON,
+        request: _types.RestoreRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41228,7 +41653,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          of the production slot. Required.
         :type slot: str
         :param request: Information on restore request . Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.RestoreRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41280,7 +41705,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         backup_id: str,
         slot: str,
-        request: Union[_models.RestoreRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreRequest, _types.RestoreRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a specific backup to another app (or deployment slot, if specified).
@@ -41297,9 +41722,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get a backup
          of the production slot. Required.
         :type slot: str
-        :param request: Information on restore request . Is one of the following types: RestoreRequest,
-         JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.RestoreRequest or JSON or IO[bytes]
+        :param request: Information on restore request . Is either a RestoreRequest type or a IO[bytes]
+         type. Required.
+        :type request: ~azure.mgmt.web.models.RestoreRequest or ~azure.mgmt.web.types.RestoreRequest or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -41464,7 +41890,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        csm_publishing_access_policies_entity: JSON,
+        csm_publishing_access_policies_entity: _types.CsmPublishingCredentialsPoliciesEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41479,7 +41905,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param csm_publishing_access_policies_entity: Required.
-        :type csm_publishing_access_policies_entity: JSON
+        :type csm_publishing_access_policies_entity:
+         ~azure.mgmt.web.types.CsmPublishingCredentialsPoliciesEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41524,7 +41951,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        csm_publishing_access_policies_entity: Union[_models.CsmPublishingCredentialsPoliciesEntity, JSON, IO[bytes]],
+        csm_publishing_access_policies_entity: Union[
+            _models.CsmPublishingCredentialsPoliciesEntity, _types.CsmPublishingCredentialsPoliciesEntity, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CsmPublishingCredentialsPoliciesEntity:
         """Updates whether FTP is allowed on the site or not.
@@ -41536,10 +41965,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param csm_publishing_access_policies_entity: Is one of the following types:
-         CsmPublishingCredentialsPoliciesEntity, JSON, IO[bytes] Required.
+        :param csm_publishing_access_policies_entity: Is either a
+         CsmPublishingCredentialsPoliciesEntity type or a IO[bytes] type. Required.
         :type csm_publishing_access_policies_entity:
-         ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity or JSON or IO[bytes]
+         ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity or
+         ~azure.mgmt.web.types.CsmPublishingCredentialsPoliciesEntity or IO[bytes]
         :return: CsmPublishingCredentialsPoliciesEntity. The CsmPublishingCredentialsPoliciesEntity is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity
@@ -41673,7 +42103,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -41826,7 +42259,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        csm_publishing_access_policies_entity: JSON,
+        csm_publishing_access_policies_entity: _types.CsmPublishingCredentialsPoliciesEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41841,7 +42274,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param csm_publishing_access_policies_entity: Required.
-        :type csm_publishing_access_policies_entity: JSON
+        :type csm_publishing_access_policies_entity:
+         ~azure.mgmt.web.types.CsmPublishingCredentialsPoliciesEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41886,7 +42320,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        csm_publishing_access_policies_entity: Union[_models.CsmPublishingCredentialsPoliciesEntity, JSON, IO[bytes]],
+        csm_publishing_access_policies_entity: Union[
+            _models.CsmPublishingCredentialsPoliciesEntity, _types.CsmPublishingCredentialsPoliciesEntity, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CsmPublishingCredentialsPoliciesEntity:
         """Updates whether user publishing credentials are allowed on the site or not.
@@ -41898,10 +42334,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param csm_publishing_access_policies_entity: Is one of the following types:
-         CsmPublishingCredentialsPoliciesEntity, JSON, IO[bytes] Required.
+        :param csm_publishing_access_policies_entity: Is either a
+         CsmPublishingCredentialsPoliciesEntity type or a IO[bytes] type. Required.
         :type csm_publishing_access_policies_entity:
-         ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity or JSON or IO[bytes]
+         ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity or
+         ~azure.mgmt.web.types.CsmPublishingCredentialsPoliciesEntity or IO[bytes]
         :return: CsmPublishingCredentialsPoliciesEntity. The CsmPublishingCredentialsPoliciesEntity is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity
@@ -42092,7 +42529,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        csm_publishing_access_policies_entity: JSON,
+        csm_publishing_access_policies_entity: _types.CsmPublishingCredentialsPoliciesEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42109,7 +42546,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Required.
         :type slot: str
         :param csm_publishing_access_policies_entity: Required.
-        :type csm_publishing_access_policies_entity: JSON
+        :type csm_publishing_access_policies_entity:
+         ~azure.mgmt.web.types.CsmPublishingCredentialsPoliciesEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42158,7 +42596,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        csm_publishing_access_policies_entity: Union[_models.CsmPublishingCredentialsPoliciesEntity, JSON, IO[bytes]],
+        csm_publishing_access_policies_entity: Union[
+            _models.CsmPublishingCredentialsPoliciesEntity, _types.CsmPublishingCredentialsPoliciesEntity, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CsmPublishingCredentialsPoliciesEntity:
         """Updates whether FTP is allowed on the site or not.
@@ -42172,10 +42612,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param slot: Required.
         :type slot: str
-        :param csm_publishing_access_policies_entity: Is one of the following types:
-         CsmPublishingCredentialsPoliciesEntity, JSON, IO[bytes] Required.
+        :param csm_publishing_access_policies_entity: Is either a
+         CsmPublishingCredentialsPoliciesEntity type or a IO[bytes] type. Required.
         :type csm_publishing_access_policies_entity:
-         ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity or JSON or IO[bytes]
+         ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity or
+         ~azure.mgmt.web.types.CsmPublishingCredentialsPoliciesEntity or IO[bytes]
         :return: CsmPublishingCredentialsPoliciesEntity. The CsmPublishingCredentialsPoliciesEntity is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity
@@ -42313,7 +42754,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -42473,7 +42917,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        csm_publishing_access_policies_entity: JSON,
+        csm_publishing_access_policies_entity: _types.CsmPublishingCredentialsPoliciesEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42490,7 +42934,8 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Required.
         :type slot: str
         :param csm_publishing_access_policies_entity: Required.
-        :type csm_publishing_access_policies_entity: JSON
+        :type csm_publishing_access_policies_entity:
+         ~azure.mgmt.web.types.CsmPublishingCredentialsPoliciesEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42539,7 +42984,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        csm_publishing_access_policies_entity: Union[_models.CsmPublishingCredentialsPoliciesEntity, JSON, IO[bytes]],
+        csm_publishing_access_policies_entity: Union[
+            _models.CsmPublishingCredentialsPoliciesEntity, _types.CsmPublishingCredentialsPoliciesEntity, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CsmPublishingCredentialsPoliciesEntity:
         """Updates whether user publishing credentials are allowed on the site or not.
@@ -42553,10 +43000,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param slot: Required.
         :type slot: str
-        :param csm_publishing_access_policies_entity: Is one of the following types:
-         CsmPublishingCredentialsPoliciesEntity, JSON, IO[bytes] Required.
+        :param csm_publishing_access_policies_entity: Is either a
+         CsmPublishingCredentialsPoliciesEntity type or a IO[bytes] type. Required.
         :type csm_publishing_access_policies_entity:
-         ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity or JSON or IO[bytes]
+         ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity or
+         ~azure.mgmt.web.types.CsmPublishingCredentialsPoliciesEntity or IO[bytes]
         :return: CsmPublishingCredentialsPoliciesEntity. The CsmPublishingCredentialsPoliciesEntity is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.CsmPublishingCredentialsPoliciesEntity
@@ -42739,7 +43187,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_auth_settings_v2: JSON,
+        site_auth_settings_v2: _types.SiteAuthSettingsV2,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42755,7 +43203,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param site_auth_settings_v2: Auth settings associated with web app. Required.
-        :type site_auth_settings_v2: JSON
+        :type site_auth_settings_v2: ~azure.mgmt.web.types.SiteAuthSettingsV2
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42799,7 +43247,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_auth_settings_v2: Union[_models.SiteAuthSettingsV2, JSON, IO[bytes]],
+        site_auth_settings_v2: Union[_models.SiteAuthSettingsV2, _types.SiteAuthSettingsV2, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteAuthSettingsV2:
         """Updates site's Authentication / Authorization settings for apps via the V2 format.
@@ -42812,9 +43260,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param site_auth_settings_v2: Auth settings associated with web app. Is one of the following
-         types: SiteAuthSettingsV2, JSON, IO[bytes] Required.
-        :type site_auth_settings_v2: ~azure.mgmt.web.models.SiteAuthSettingsV2 or JSON or IO[bytes]
+        :param site_auth_settings_v2: Auth settings associated with web app. Is either a
+         SiteAuthSettingsV2 type or a IO[bytes] type. Required.
+        :type site_auth_settings_v2: ~azure.mgmt.web.models.SiteAuthSettingsV2 or
+         ~azure.mgmt.web.types.SiteAuthSettingsV2 or IO[bytes]
         :return: SiteAuthSettingsV2. The SiteAuthSettingsV2 is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteAuthSettingsV2
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -43078,7 +43527,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_auth_settings_v2: JSON,
+        site_auth_settings_v2: _types.SiteAuthSettingsV2,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43097,7 +43546,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          settings for the production slot. Required.
         :type slot: str
         :param site_auth_settings_v2: Auth settings associated with web app. Required.
-        :type site_auth_settings_v2: JSON
+        :type site_auth_settings_v2: ~azure.mgmt.web.types.SiteAuthSettingsV2
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43146,7 +43595,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_auth_settings_v2: Union[_models.SiteAuthSettingsV2, JSON, IO[bytes]],
+        site_auth_settings_v2: Union[_models.SiteAuthSettingsV2, _types.SiteAuthSettingsV2, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteAuthSettingsV2:
         """Updates site's Authentication / Authorization settings for apps via the V2 format.
@@ -43162,9 +43611,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get the
          settings for the production slot. Required.
         :type slot: str
-        :param site_auth_settings_v2: Auth settings associated with web app. Is one of the following
-         types: SiteAuthSettingsV2, JSON, IO[bytes] Required.
-        :type site_auth_settings_v2: ~azure.mgmt.web.models.SiteAuthSettingsV2 or JSON or IO[bytes]
+        :param site_auth_settings_v2: Auth settings associated with web app. Is either a
+         SiteAuthSettingsV2 type or a IO[bytes] type. Required.
+        :type site_auth_settings_v2: ~azure.mgmt.web.models.SiteAuthSettingsV2 or
+         ~azure.mgmt.web.types.SiteAuthSettingsV2 or IO[bytes]
         :return: SiteAuthSettingsV2. The SiteAuthSettingsV2 is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteAuthSettingsV2
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -43451,7 +43901,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43629,7 +44082,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43813,7 +44269,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43997,7 +44456,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -44148,7 +44610,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_logs_config: JSON,
+        site_logs_config: _types.SiteLogsConfig,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44164,7 +44626,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param site_logs_config: A SiteLogsConfig JSON object that contains the logging configuration
          to change in the "properties"property. Required.
-        :type site_logs_config: JSON
+        :type site_logs_config: ~azure.mgmt.web.types.SiteLogsConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44208,7 +44670,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_logs_config: Union[_models.SiteLogsConfig, JSON, IO[bytes]],
+        site_logs_config: Union[_models.SiteLogsConfig, _types.SiteLogsConfig, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteLogsConfig:
         """Updates the logging configuration of an app.
@@ -44221,9 +44683,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param site_logs_config: A SiteLogsConfig JSON object that contains the logging configuration
-         to change in the "properties"property. Is one of the following types: SiteLogsConfig, JSON,
-         IO[bytes] Required.
-        :type site_logs_config: ~azure.mgmt.web.models.SiteLogsConfig or JSON or IO[bytes]
+         to change in the "properties"property. Is either a SiteLogsConfig type or a IO[bytes] type.
+         Required.
+        :type site_logs_config: ~azure.mgmt.web.models.SiteLogsConfig or
+         ~azure.mgmt.web.types.SiteLogsConfig or IO[bytes]
         :return: SiteLogsConfig. The SiteLogsConfig is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteLogsConfig
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -44413,7 +44876,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_logs_config: JSON,
+        site_logs_config: _types.SiteLogsConfig,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44432,7 +44895,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param site_logs_config: A SiteLogsConfig JSON object that contains the logging configuration
          to change in the "properties"property. Required.
-        :type site_logs_config: JSON
+        :type site_logs_config: ~azure.mgmt.web.types.SiteLogsConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44481,7 +44944,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_logs_config: Union[_models.SiteLogsConfig, JSON, IO[bytes]],
+        site_logs_config: Union[_models.SiteLogsConfig, _types.SiteLogsConfig, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteLogsConfig:
         """Updates the logging configuration of an app.
@@ -44497,9 +44960,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          logging configuration for the production slot. Required.
         :type slot: str
         :param site_logs_config: A SiteLogsConfig JSON object that contains the logging configuration
-         to change in the "properties"property. Is one of the following types: SiteLogsConfig, JSON,
-         IO[bytes] Required.
-        :type site_logs_config: ~azure.mgmt.web.models.SiteLogsConfig or JSON or IO[bytes]
+         to change in the "properties"property. Is either a SiteLogsConfig type or a IO[bytes] type.
+         Required.
+        :type site_logs_config: ~azure.mgmt.web.models.SiteLogsConfig or
+         ~azure.mgmt.web.types.SiteLogsConfig or IO[bytes]
         :return: SiteLogsConfig. The SiteLogsConfig is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteLogsConfig
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -44684,7 +45148,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        slot_config_names: JSON,
+        slot_config_names: _types.SlotConfigNamesResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44702,7 +45166,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param slot_config_names: Names of application settings and connection strings. See example.
          Required.
-        :type slot_config_names: JSON
+        :type slot_config_names: ~azure.mgmt.web.types.SlotConfigNamesResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44748,7 +45212,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        slot_config_names: Union[_models.SlotConfigNamesResource, JSON, IO[bytes]],
+        slot_config_names: Union[_models.SlotConfigNamesResource, _types.SlotConfigNamesResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.SlotConfigNamesResource:
         """Updates the names of application settings and connection string that remain with the slot
@@ -44763,8 +45227,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param slot_config_names: Names of application settings and connection strings. See example. Is
-         one of the following types: SlotConfigNamesResource, JSON, IO[bytes] Required.
-        :type slot_config_names: ~azure.mgmt.web.models.SlotConfigNamesResource or JSON or IO[bytes]
+         either a SlotConfigNamesResource type or a IO[bytes] type. Required.
+        :type slot_config_names: ~azure.mgmt.web.models.SlotConfigNamesResource or
+         ~azure.mgmt.web.types.SlotConfigNamesResource or IO[bytes]
         :return: SlotConfigNamesResource. The SlotConfigNamesResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SlotConfigNamesResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -44944,7 +45409,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_config: JSON,
+        site_config: _types.SiteConfigResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44959,7 +45424,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param site_config: JSON representation of a SiteConfig object. See example. Required.
-        :type site_config: JSON
+        :type site_config: ~azure.mgmt.web.types.SiteConfigResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45002,7 +45467,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_config: Union[_models.SiteConfigResource, JSON, IO[bytes]],
+        site_config: Union[_models.SiteConfigResource, _types.SiteConfigResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteConfigResource:
         """Updates the configuration of an app.
@@ -45014,9 +45479,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param site_config: JSON representation of a SiteConfig object. See example. Is one of the
-         following types: SiteConfigResource, JSON, IO[bytes] Required.
-        :type site_config: ~azure.mgmt.web.models.SiteConfigResource or JSON or IO[bytes]
+        :param site_config: JSON representation of a SiteConfig object. See example. Is either a
+         SiteConfigResource type or a IO[bytes] type. Required.
+        :type site_config: ~azure.mgmt.web.models.SiteConfigResource or
+         ~azure.mgmt.web.types.SiteConfigResource or IO[bytes]
         :return: SiteConfigResource. The SiteConfigResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteConfigResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -45122,7 +45588,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_config: JSON,
+        site_config: _types.SiteConfigResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45137,7 +45603,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param site_config: JSON representation of a SiteConfig object. See example. Required.
-        :type site_config: JSON
+        :type site_config: ~azure.mgmt.web.types.SiteConfigResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45180,7 +45646,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_config: Union[_models.SiteConfigResource, JSON, IO[bytes]],
+        site_config: Union[_models.SiteConfigResource, _types.SiteConfigResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteConfigResource:
         """Updates the configuration of an app.
@@ -45192,9 +45658,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param site_config: JSON representation of a SiteConfig object. See example. Is one of the
-         following types: SiteConfigResource, JSON, IO[bytes] Required.
-        :type site_config: ~azure.mgmt.web.models.SiteConfigResource or JSON or IO[bytes]
+        :param site_config: JSON representation of a SiteConfig object. See example. Is either a
+         SiteConfigResource type or a IO[bytes] type. Required.
+        :type site_config: ~azure.mgmt.web.models.SiteConfigResource or
+         ~azure.mgmt.web.types.SiteConfigResource or IO[bytes]
         :return: SiteConfigResource. The SiteConfigResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteConfigResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -45328,7 +45795,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -45506,7 +45976,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -45731,7 +46204,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_config: JSON,
+        site_config: _types.SiteConfigResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45749,7 +46222,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          configuration for the production slot. Required.
         :type slot: str
         :param site_config: JSON representation of a SiteConfig object. See example. Required.
-        :type site_config: JSON
+        :type site_config: ~azure.mgmt.web.types.SiteConfigResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45797,7 +46270,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_config: Union[_models.SiteConfigResource, JSON, IO[bytes]],
+        site_config: Union[_models.SiteConfigResource, _types.SiteConfigResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteConfigResource:
         """Updates the configuration of an app.
@@ -45812,9 +46285,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will return
          configuration for the production slot. Required.
         :type slot: str
-        :param site_config: JSON representation of a SiteConfig object. See example. Is one of the
-         following types: SiteConfigResource, JSON, IO[bytes] Required.
-        :type site_config: ~azure.mgmt.web.models.SiteConfigResource or JSON or IO[bytes]
+        :param site_config: JSON representation of a SiteConfig object. See example. Is either a
+         SiteConfigResource type or a IO[bytes] type. Required.
+        :type site_config: ~azure.mgmt.web.models.SiteConfigResource or
+         ~azure.mgmt.web.types.SiteConfigResource or IO[bytes]
         :return: SiteConfigResource. The SiteConfigResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteConfigResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -45926,7 +46400,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_config: JSON,
+        site_config: _types.SiteConfigResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45944,7 +46418,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          configuration for the production slot. Required.
         :type slot: str
         :param site_config: JSON representation of a SiteConfig object. See example. Required.
-        :type site_config: JSON
+        :type site_config: ~azure.mgmt.web.types.SiteConfigResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45992,7 +46466,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_config: Union[_models.SiteConfigResource, JSON, IO[bytes]],
+        site_config: Union[_models.SiteConfigResource, _types.SiteConfigResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteConfigResource:
         """Updates the configuration of an app.
@@ -46007,9 +46481,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will return
          configuration for the production slot. Required.
         :type slot: str
-        :param site_config: JSON representation of a SiteConfig object. See example. Is one of the
-         following types: SiteConfigResource, JSON, IO[bytes] Required.
-        :type site_config: ~azure.mgmt.web.models.SiteConfigResource or JSON or IO[bytes]
+        :param site_config: JSON representation of a SiteConfig object. See example. Is either a
+         SiteConfigResource type or a IO[bytes] type. Required.
+        :type site_config: ~azure.mgmt.web.models.SiteConfigResource or
+         ~azure.mgmt.web.types.SiteConfigResource or IO[bytes]
         :return: SiteConfigResource. The SiteConfigResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteConfigResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -46148,7 +46623,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -46334,7 +46812,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -46644,7 +47125,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -47026,7 +47510,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -47394,7 +47881,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -47635,7 +48125,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -47790,7 +48283,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         id: str,
-        deployment: JSON,
+        deployment: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -47807,7 +48300,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param id: Deployment ID. Required.
         :type id: str
         :param deployment: Deployment details. Required.
-        :type deployment: JSON
+        :type deployment: ~azure.mgmt.web.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -47854,7 +48347,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         id: str,
-        deployment: Union[_models.Deployment, JSON, IO[bytes]],
+        deployment: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> _models.Deployment:
         """Create a deployment for an app, or a deployment slot.
@@ -47868,9 +48361,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param id: Deployment ID. Required.
         :type id: str
-        :param deployment: Deployment details. Is one of the following types: Deployment, JSON,
-         IO[bytes] Required.
-        :type deployment: ~azure.mgmt.web.models.Deployment or JSON or IO[bytes]
+        :param deployment: Deployment details. Is either a Deployment type or a IO[bytes] type.
+         Required.
+        :type deployment: ~azure.mgmt.web.models.Deployment or ~azure.mgmt.web.types.Deployment or
+         IO[bytes]
         :return: Deployment. The Deployment is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Deployment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -48064,7 +48558,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -48307,7 +48804,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         id: str,
         slot: str,
-        deployment: JSON,
+        deployment: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -48327,7 +48824,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          for the production slot. Required.
         :type slot: str
         :param deployment: Deployment details. Required.
-        :type deployment: JSON
+        :type deployment: ~azure.mgmt.web.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -48379,7 +48876,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         id: str,
         slot: str,
-        deployment: Union[_models.Deployment, JSON, IO[bytes]],
+        deployment: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> _models.Deployment:
         """Create a deployment for an app, or a deployment slot.
@@ -48396,9 +48893,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API gets a deployment
          for the production slot. Required.
         :type slot: str
-        :param deployment: Deployment details. Is one of the following types: Deployment, JSON,
-         IO[bytes] Required.
-        :type deployment: ~azure.mgmt.web.models.Deployment or JSON or IO[bytes]
+        :param deployment: Deployment details. Is either a Deployment type or a IO[bytes] type.
+         Required.
+        :type deployment: ~azure.mgmt.web.models.Deployment or ~azure.mgmt.web.types.Deployment or
+         IO[bytes]
         :return: Deployment. The Deployment is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Deployment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -48603,7 +49101,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -48843,7 +49344,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         domain_ownership_identifier_name: str,
-        domain_ownership_identifier: JSON,
+        domain_ownership_identifier: _types.Identifier,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -48862,7 +49363,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type domain_ownership_identifier_name: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
          Required.
-        :type domain_ownership_identifier: JSON
+        :type domain_ownership_identifier: ~azure.mgmt.web.types.Identifier
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -48911,7 +49412,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         domain_ownership_identifier_name: str,
-        domain_ownership_identifier: Union[_models.Identifier, JSON, IO[bytes]],
+        domain_ownership_identifier: Union[_models.Identifier, _types.Identifier, IO[bytes]],
         **kwargs: Any
     ) -> _models.Identifier:
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
@@ -48927,8 +49428,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param domain_ownership_identifier_name: Name of domain ownership identifier. Required.
         :type domain_ownership_identifier_name: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
-         Is one of the following types: Identifier, JSON, IO[bytes] Required.
-        :type domain_ownership_identifier: ~azure.mgmt.web.models.Identifier or JSON or IO[bytes]
+         Is either a Identifier type or a IO[bytes] type. Required.
+        :type domain_ownership_identifier: ~azure.mgmt.web.models.Identifier or
+         ~azure.mgmt.web.types.Identifier or IO[bytes]
         :return: Identifier. The Identifier is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Identifier
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -49041,7 +49543,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         domain_ownership_identifier_name: str,
-        domain_ownership_identifier: JSON,
+        domain_ownership_identifier: _types.Identifier,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -49060,7 +49562,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type domain_ownership_identifier_name: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
          Required.
-        :type domain_ownership_identifier: JSON
+        :type domain_ownership_identifier: ~azure.mgmt.web.types.Identifier
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -49109,7 +49611,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         domain_ownership_identifier_name: str,
-        domain_ownership_identifier: Union[_models.Identifier, JSON, IO[bytes]],
+        domain_ownership_identifier: Union[_models.Identifier, _types.Identifier, IO[bytes]],
         **kwargs: Any
     ) -> _models.Identifier:
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
@@ -49125,8 +49627,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param domain_ownership_identifier_name: Name of domain ownership identifier. Required.
         :type domain_ownership_identifier_name: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
-         Is one of the following types: Identifier, JSON, IO[bytes] Required.
-        :type domain_ownership_identifier: ~azure.mgmt.web.models.Identifier or JSON or IO[bytes]
+         Is either a Identifier type or a IO[bytes] type. Required.
+        :type domain_ownership_identifier: ~azure.mgmt.web.models.Identifier or
+         ~azure.mgmt.web.types.Identifier or IO[bytes]
         :return: Identifier. The Identifier is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Identifier
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -49322,7 +49825,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -49490,7 +49996,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         domain_ownership_identifier_name: str,
         slot: str,
-        domain_ownership_identifier: JSON,
+        domain_ownership_identifier: _types.Identifier,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -49512,7 +50018,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
          Required.
-        :type domain_ownership_identifier: JSON
+        :type domain_ownership_identifier: ~azure.mgmt.web.types.Identifier
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -49566,7 +50072,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         domain_ownership_identifier_name: str,
         slot: str,
-        domain_ownership_identifier: Union[_models.Identifier, JSON, IO[bytes]],
+        domain_ownership_identifier: Union[_models.Identifier, _types.Identifier, IO[bytes]],
         **kwargs: Any
     ) -> _models.Identifier:
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
@@ -49585,8 +50091,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          binding for the production slot. Required.
         :type slot: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
-         Is one of the following types: Identifier, JSON, IO[bytes] Required.
-        :type domain_ownership_identifier: ~azure.mgmt.web.models.Identifier or JSON or IO[bytes]
+         Is either a Identifier type or a IO[bytes] type. Required.
+        :type domain_ownership_identifier: ~azure.mgmt.web.models.Identifier or
+         ~azure.mgmt.web.types.Identifier or IO[bytes]
         :return: Identifier. The Identifier is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Identifier
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -49705,7 +50212,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         domain_ownership_identifier_name: str,
         slot: str,
-        domain_ownership_identifier: JSON,
+        domain_ownership_identifier: _types.Identifier,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -49727,7 +50234,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
          Required.
-        :type domain_ownership_identifier: JSON
+        :type domain_ownership_identifier: ~azure.mgmt.web.types.Identifier
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -49781,7 +50288,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         domain_ownership_identifier_name: str,
         slot: str,
-        domain_ownership_identifier: Union[_models.Identifier, JSON, IO[bytes]],
+        domain_ownership_identifier: Union[_models.Identifier, _types.Identifier, IO[bytes]],
         **kwargs: Any
     ) -> _models.Identifier:
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
@@ -49800,8 +50307,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          binding for the production slot. Required.
         :type slot: str
         :param domain_ownership_identifier: A JSON representation of the domain ownership properties.
-         Is one of the following types: Identifier, JSON, IO[bytes] Required.
-        :type domain_ownership_identifier: ~azure.mgmt.web.models.Identifier or JSON or IO[bytes]
+         Is either a Identifier type or a IO[bytes] type. Required.
+        :type domain_ownership_identifier: ~azure.mgmt.web.models.Identifier or
+         ~azure.mgmt.web.types.Identifier or IO[bytes]
         :return: Identifier. The Identifier is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Identifier
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -50006,7 +50514,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -50121,7 +50632,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     async def _create_ms_deploy_operation_initial(
-        self, resource_group_name: str, name: str, ms_deploy: Union[_models.MSDeploy, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        ms_deploy: Union[_models.MSDeploy, _types.MSDeploy, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -50225,7 +50740,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        ms_deploy: JSON,
+        ms_deploy: _types.MSDeploy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -50240,7 +50755,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of web app. Required.
         :type name: str
         :param ms_deploy: Details of MSDeploy operation. Required.
-        :type ms_deploy: JSON
+        :type ms_deploy: ~azure.mgmt.web.types.MSDeploy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -50282,7 +50797,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_create_ms_deploy_operation(
-        self, resource_group_name: str, name: str, ms_deploy: Union[_models.MSDeploy, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        ms_deploy: Union[_models.MSDeploy, _types.MSDeploy, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.MSDeployStatus]:
         """Invoke the MSDeploy web app extension.
 
@@ -50293,9 +50812,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of web app. Required.
         :type name: str
-        :param ms_deploy: Details of MSDeploy operation. Is one of the following types: MSDeploy, JSON,
-         IO[bytes] Required.
-        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy or JSON or IO[bytes]
+        :param ms_deploy: Details of MSDeploy operation. Is either a MSDeploy type or a IO[bytes] type.
+         Required.
+        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy or ~azure.mgmt.web.types.MSDeploy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MSDeployStatus. The MSDeployStatus is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.MSDeployStatus]
@@ -50511,7 +51030,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         instance_id: str,
-        ms_deploy: Union[_models.MSDeploy, JSON, IO[bytes]],
+        ms_deploy: Union[_models.MSDeploy, _types.MSDeploy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -50621,7 +51140,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         instance_id: str,
-        ms_deploy: JSON,
+        ms_deploy: _types.MSDeploy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -50638,7 +51157,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param instance_id: ID of web app instance. Required.
         :type instance_id: str
         :param ms_deploy: Details of MSDeploy operation. Required.
-        :type ms_deploy: JSON
+        :type ms_deploy: ~azure.mgmt.web.types.MSDeploy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -50687,7 +51206,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         instance_id: str,
-        ms_deploy: Union[_models.MSDeploy, JSON, IO[bytes]],
+        ms_deploy: Union[_models.MSDeploy, _types.MSDeploy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MSDeployStatus]:
         """Invoke the MSDeploy web app extension.
@@ -50701,9 +51220,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param instance_id: ID of web app instance. Required.
         :type instance_id: str
-        :param ms_deploy: Details of MSDeploy operation. Is one of the following types: MSDeploy, JSON,
-         IO[bytes] Required.
-        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy or JSON or IO[bytes]
+        :param ms_deploy: Details of MSDeploy operation. Is either a MSDeploy type or a IO[bytes] type.
+         Required.
+        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy or ~azure.mgmt.web.types.MSDeploy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MSDeployStatus. The MSDeployStatus is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.MSDeployStatus]
@@ -50926,7 +51445,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        ms_deploy: Union[_models.MSDeploy, JSON, IO[bytes]],
+        ms_deploy: Union[_models.MSDeploy, _types.MSDeploy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -51037,7 +51556,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        ms_deploy: JSON,
+        ms_deploy: _types.MSDeploy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51055,7 +51574,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type slot: str
         :param ms_deploy: Details of MSDeploy operation. Required.
-        :type ms_deploy: JSON
+        :type ms_deploy: ~azure.mgmt.web.types.MSDeploy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51105,7 +51624,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        ms_deploy: Union[_models.MSDeploy, JSON, IO[bytes]],
+        ms_deploy: Union[_models.MSDeploy, _types.MSDeploy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MSDeployStatus]:
         """Invoke the MSDeploy web app extension.
@@ -51120,9 +51639,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of web app slot. If not specified then will default to production slot.
          Required.
         :type slot: str
-        :param ms_deploy: Details of MSDeploy operation. Is one of the following types: MSDeploy, JSON,
-         IO[bytes] Required.
-        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy or JSON or IO[bytes]
+        :param ms_deploy: Details of MSDeploy operation. Is either a MSDeploy type or a IO[bytes] type.
+         Required.
+        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy or ~azure.mgmt.web.types.MSDeploy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MSDeployStatus. The MSDeployStatus is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.MSDeployStatus]
@@ -51350,7 +51869,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         slot: str,
         instance_id: str,
-        ms_deploy: Union[_models.MSDeploy, JSON, IO[bytes]],
+        ms_deploy: Union[_models.MSDeploy, _types.MSDeploy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -51466,7 +51985,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         slot: str,
         instance_id: str,
-        ms_deploy: JSON,
+        ms_deploy: _types.MSDeploy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51486,7 +52005,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param instance_id: ID of web app instance. Required.
         :type instance_id: str
         :param ms_deploy: Details of MSDeploy operation. Required.
-        :type ms_deploy: JSON
+        :type ms_deploy: ~azure.mgmt.web.types.MSDeploy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51540,7 +52059,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         slot: str,
         instance_id: str,
-        ms_deploy: Union[_models.MSDeploy, JSON, IO[bytes]],
+        ms_deploy: Union[_models.MSDeploy, _types.MSDeploy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MSDeployStatus]:
         """Invoke the MSDeploy web app extension.
@@ -51557,9 +52076,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param instance_id: ID of web app instance. Required.
         :type instance_id: str
-        :param ms_deploy: Details of MSDeploy operation. Is one of the following types: MSDeploy, JSON,
-         IO[bytes] Required.
-        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy or JSON or IO[bytes]
+        :param ms_deploy: Details of MSDeploy operation. Is either a MSDeploy type or a IO[bytes] type.
+         Required.
+        :type ms_deploy: ~azure.mgmt.web.models.MSDeploy or ~azure.mgmt.web.types.MSDeploy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MSDeployStatus. The MSDeployStatus is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.MSDeployStatus]
@@ -51786,7 +52305,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         function_name: str,
-        function_envelope: Union[_models.FunctionEnvelope, JSON, IO[bytes]],
+        function_envelope: Union[_models.FunctionEnvelope, _types.FunctionEnvelope, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -51896,7 +52415,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         function_name: str,
-        function_envelope: JSON,
+        function_envelope: _types.FunctionEnvelope,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51913,7 +52432,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param function_name: Function name. Required.
         :type function_name: str
         :param function_envelope: Function details. Required.
-        :type function_envelope: JSON
+        :type function_envelope: ~azure.mgmt.web.types.FunctionEnvelope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51962,7 +52481,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         function_name: str,
-        function_envelope: Union[_models.FunctionEnvelope, JSON, IO[bytes]],
+        function_envelope: Union[_models.FunctionEnvelope, _types.FunctionEnvelope, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FunctionEnvelope]:
         """Create function for web site, or a deployment slot.
@@ -51976,9 +52495,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param function_name: Function name. Required.
         :type function_name: str
-        :param function_envelope: Function details. Is one of the following types: FunctionEnvelope,
-         JSON, IO[bytes] Required.
-        :type function_envelope: ~azure.mgmt.web.models.FunctionEnvelope or JSON or IO[bytes]
+        :param function_envelope: Function details. Is either a FunctionEnvelope type or a IO[bytes]
+         type. Required.
+        :type function_envelope: ~azure.mgmt.web.models.FunctionEnvelope or
+         ~azure.mgmt.web.types.FunctionEnvelope or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FunctionEnvelope. The FunctionEnvelope is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.FunctionEnvelope]
@@ -52162,7 +52682,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -52246,7 +52769,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         function_name: str,
         key_name: str,
-        key: JSON,
+        key: _types.KeyInfo,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -52265,7 +52788,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param key_name: Required.
         :type key_name: str
         :param key: The key to create or update. Required.
-        :type key: JSON
+        :type key: ~azure.mgmt.web.types.KeyInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -52316,7 +52839,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         function_name: str,
         key_name: str,
-        key: Union[_models.KeyInfo, JSON, IO[bytes]],
+        key: Union[_models.KeyInfo, _types.KeyInfo, IO[bytes]],
         **kwargs: Any
     ) -> _models.KeyInfo:
         """Add or update a function secret.
@@ -52332,9 +52855,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type function_name: str
         :param key_name: Required.
         :type key_name: str
-        :param key: The key to create or update. Is one of the following types: KeyInfo, JSON,
-         IO[bytes] Required.
-        :type key: ~azure.mgmt.web.models.KeyInfo or JSON or IO[bytes]
+        :param key: The key to create or update. Is either a KeyInfo type or a IO[bytes] type.
+         Required.
+        :type key: ~azure.mgmt.web.models.KeyInfo or ~azure.mgmt.web.types.KeyInfo or IO[bytes]
         :return: KeyInfo. The KeyInfo is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.KeyInfo
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -52715,7 +53238,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         function_name: str,
         slot: str,
-        function_envelope: Union[_models.FunctionEnvelope, JSON, IO[bytes]],
+        function_envelope: Union[_models.FunctionEnvelope, _types.FunctionEnvelope, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -52830,7 +53353,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         function_name: str,
         slot: str,
-        function_envelope: JSON,
+        function_envelope: _types.FunctionEnvelope,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -52849,7 +53372,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. Required.
         :type slot: str
         :param function_envelope: Function details. Required.
-        :type function_envelope: JSON
+        :type function_envelope: ~azure.mgmt.web.types.FunctionEnvelope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -52902,7 +53425,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         function_name: str,
         slot: str,
-        function_envelope: Union[_models.FunctionEnvelope, JSON, IO[bytes]],
+        function_envelope: Union[_models.FunctionEnvelope, _types.FunctionEnvelope, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FunctionEnvelope]:
         """Create function for web site, or a deployment slot.
@@ -52918,9 +53441,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type function_name: str
         :param slot: Name of the deployment slot. Required.
         :type slot: str
-        :param function_envelope: Function details. Is one of the following types: FunctionEnvelope,
-         JSON, IO[bytes] Required.
-        :type function_envelope: ~azure.mgmt.web.models.FunctionEnvelope or JSON or IO[bytes]
+        :param function_envelope: Function details. Is either a FunctionEnvelope type or a IO[bytes]
+         type. Required.
+        :type function_envelope: ~azure.mgmt.web.models.FunctionEnvelope or
+         ~azure.mgmt.web.types.FunctionEnvelope or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FunctionEnvelope. The FunctionEnvelope is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.FunctionEnvelope]
@@ -53113,7 +53637,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -53201,7 +53728,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         function_name: str,
         key_name: str,
         slot: str,
-        key: JSON,
+        key: _types.KeyInfo,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -53222,7 +53749,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Required.
         :type slot: str
         :param key: The key to create or update. Required.
-        :type key: JSON
+        :type key: ~azure.mgmt.web.types.KeyInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -53277,7 +53804,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         function_name: str,
         key_name: str,
         slot: str,
-        key: Union[_models.KeyInfo, JSON, IO[bytes]],
+        key: Union[_models.KeyInfo, _types.KeyInfo, IO[bytes]],
         **kwargs: Any
     ) -> _models.KeyInfo:
         """Add or update a function secret.
@@ -53295,9 +53822,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type key_name: str
         :param slot: Required.
         :type slot: str
-        :param key: The key to create or update. Is one of the following types: KeyInfo, JSON,
-         IO[bytes] Required.
-        :type key: ~azure.mgmt.web.models.KeyInfo or JSON or IO[bytes]
+        :param key: The key to create or update. Is either a KeyInfo type or a IO[bytes] type.
+         Required.
+        :type key: ~azure.mgmt.web.models.KeyInfo or ~azure.mgmt.web.types.KeyInfo or IO[bytes]
         :return: KeyInfo. The KeyInfo is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.KeyInfo
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -53718,7 +54245,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         host_name: str,
-        host_name_binding: JSON,
+        host_name_binding: _types.HostNameBinding,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -53736,7 +54263,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type host_name: str
         :param host_name_binding: Binding details. This is the JSON representation of a HostNameBinding
          object. Required.
-        :type host_name_binding: JSON
+        :type host_name_binding: ~azure.mgmt.web.types.HostNameBinding
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -53784,7 +54311,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         host_name: str,
-        host_name_binding: Union[_models.HostNameBinding, JSON, IO[bytes]],
+        host_name_binding: Union[_models.HostNameBinding, _types.HostNameBinding, IO[bytes]],
         **kwargs: Any
     ) -> _models.HostNameBinding:
         """Creates a hostname binding for an app.
@@ -53799,8 +54326,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param host_name: Hostname in the hostname binding. Required.
         :type host_name: str
         :param host_name_binding: Binding details. This is the JSON representation of a HostNameBinding
-         object. Is one of the following types: HostNameBinding, JSON, IO[bytes] Required.
-        :type host_name_binding: ~azure.mgmt.web.models.HostNameBinding or JSON or IO[bytes]
+         object. Is either a HostNameBinding type or a IO[bytes] type. Required.
+        :type host_name_binding: ~azure.mgmt.web.models.HostNameBinding or
+         ~azure.mgmt.web.types.HostNameBinding or IO[bytes]
         :return: HostNameBinding. The HostNameBinding is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.HostNameBinding
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -53996,7 +54524,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -54163,7 +54694,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         host_name: str,
         slot: str,
-        host_name_binding: JSON,
+        host_name_binding: _types.HostNameBinding,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -54184,7 +54715,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param host_name_binding: Binding details. This is the JSON representation of a HostNameBinding
          object. Required.
-        :type host_name_binding: JSON
+        :type host_name_binding: ~azure.mgmt.web.types.HostNameBinding
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -54237,7 +54768,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         host_name: str,
         slot: str,
-        host_name_binding: Union[_models.HostNameBinding, JSON, IO[bytes]],
+        host_name_binding: Union[_models.HostNameBinding, _types.HostNameBinding, IO[bytes]],
         **kwargs: Any
     ) -> _models.HostNameBinding:
         """Creates a hostname binding for an app.
@@ -54255,8 +54786,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          for the production slot. Required.
         :type slot: str
         :param host_name_binding: Binding details. This is the JSON representation of a HostNameBinding
-         object. Is one of the following types: HostNameBinding, JSON, IO[bytes] Required.
-        :type host_name_binding: ~azure.mgmt.web.models.HostNameBinding or JSON or IO[bytes]
+         object. Is either a HostNameBinding type or a IO[bytes] type. Required.
+        :type host_name_binding: ~azure.mgmt.web.models.HostNameBinding or
+         ~azure.mgmt.web.types.HostNameBinding or IO[bytes]
         :return: HostNameBinding. The HostNameBinding is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.HostNameBinding
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -54461,7 +54993,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -54621,7 +55156,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         entity_name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.RelayServiceConnectionEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -54639,7 +55174,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param entity_name: Name of the hybrid connection. Required.
         :type entity_name: str
         :param connection_envelope: Details of the hybrid connection configuration. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.RelayServiceConnectionEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -54689,7 +55224,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         entity_name: str,
-        connection_envelope: Union[_models.RelayServiceConnectionEntity, JSON, IO[bytes]],
+        connection_envelope: Union[
+            _models.RelayServiceConnectionEntity, _types.RelayServiceConnectionEntity, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.RelayServiceConnectionEntity:
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
@@ -54704,10 +55241,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param entity_name: Name of the hybrid connection. Required.
         :type entity_name: str
-        :param connection_envelope: Details of the hybrid connection configuration. Is one of the
-         following types: RelayServiceConnectionEntity, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.RelayServiceConnectionEntity or JSON or
-         IO[bytes]
+        :param connection_envelope: Details of the hybrid connection configuration. Is either a
+         RelayServiceConnectionEntity type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.types.RelayServiceConnectionEntity or IO[bytes]
         :return: RelayServiceConnectionEntity. The RelayServiceConnectionEntity is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity
@@ -54821,7 +55358,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         entity_name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.RelayServiceConnectionEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -54839,7 +55376,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param entity_name: Name of the hybrid connection. Required.
         :type entity_name: str
         :param connection_envelope: Details of the hybrid connection configuration. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.RelayServiceConnectionEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -54889,7 +55426,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         entity_name: str,
-        connection_envelope: Union[_models.RelayServiceConnectionEntity, JSON, IO[bytes]],
+        connection_envelope: Union[
+            _models.RelayServiceConnectionEntity, _types.RelayServiceConnectionEntity, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.RelayServiceConnectionEntity:
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
@@ -54904,10 +55443,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param entity_name: Name of the hybrid connection. Required.
         :type entity_name: str
-        :param connection_envelope: Details of the hybrid connection configuration. Is one of the
-         following types: RelayServiceConnectionEntity, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.RelayServiceConnectionEntity or JSON or
-         IO[bytes]
+        :param connection_envelope: Details of the hybrid connection configuration. Is either a
+         RelayServiceConnectionEntity type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.types.RelayServiceConnectionEntity or IO[bytes]
         :return: RelayServiceConnectionEntity. The RelayServiceConnectionEntity is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity
@@ -55172,7 +55711,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         entity_name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.RelayServiceConnectionEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -55193,7 +55732,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          connection for the production slot. Required.
         :type slot: str
         :param connection_envelope: Details of the hybrid connection configuration. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.RelayServiceConnectionEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -55248,7 +55787,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         entity_name: str,
         slot: str,
-        connection_envelope: Union[_models.RelayServiceConnectionEntity, JSON, IO[bytes]],
+        connection_envelope: Union[
+            _models.RelayServiceConnectionEntity, _types.RelayServiceConnectionEntity, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.RelayServiceConnectionEntity:
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
@@ -55266,10 +55807,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get a hybrid
          connection for the production slot. Required.
         :type slot: str
-        :param connection_envelope: Details of the hybrid connection configuration. Is one of the
-         following types: RelayServiceConnectionEntity, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.RelayServiceConnectionEntity or JSON or
-         IO[bytes]
+        :param connection_envelope: Details of the hybrid connection configuration. Is either a
+         RelayServiceConnectionEntity type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.types.RelayServiceConnectionEntity or IO[bytes]
         :return: RelayServiceConnectionEntity. The RelayServiceConnectionEntity is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity
@@ -55389,7 +55930,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         entity_name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.RelayServiceConnectionEntity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -55410,7 +55951,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          connection for the production slot. Required.
         :type slot: str
         :param connection_envelope: Details of the hybrid connection configuration. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.RelayServiceConnectionEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -55465,7 +56006,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         entity_name: str,
         slot: str,
-        connection_envelope: Union[_models.RelayServiceConnectionEntity, JSON, IO[bytes]],
+        connection_envelope: Union[
+            _models.RelayServiceConnectionEntity, _types.RelayServiceConnectionEntity, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.RelayServiceConnectionEntity:
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
@@ -55483,10 +56026,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get a hybrid
          connection for the production slot. Required.
         :type slot: str
-        :param connection_envelope: Details of the hybrid connection configuration. Is one of the
-         following types: RelayServiceConnectionEntity, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.RelayServiceConnectionEntity or JSON or
-         IO[bytes]
+        :param connection_envelope: Details of the hybrid connection configuration. Is either a
+         RelayServiceConnectionEntity type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.RelayServiceConnectionEntity or
+         ~azure.mgmt.web.types.RelayServiceConnectionEntity or IO[bytes]
         :return: RelayServiceConnectionEntity. The RelayServiceConnectionEntity is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.RelayServiceConnectionEntity
@@ -55765,7 +56308,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -55951,7 +56497,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -56210,7 +56759,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -56401,7 +56953,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -56646,7 +57201,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -56829,7 +57387,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -57100,7 +57661,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -57299,7 +57863,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -57558,7 +58125,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -57749,7 +58319,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -57944,7 +58517,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -58131,7 +58707,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -58341,7 +58920,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -58536,7 +59118,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -58847,7 +59432,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.SwiftVirtualNetwork,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -58868,7 +59453,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param connection_envelope: Properties of the Virtual Network connection. See example.
          Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.SwiftVirtualNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -58917,7 +59502,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        connection_envelope: Union[_models.SwiftVirtualNetwork, JSON, IO[bytes]],
+        connection_envelope: Union[_models.SwiftVirtualNetwork, _types.SwiftVirtualNetwork, IO[bytes]],
         **kwargs: Any
     ) -> _models.SwiftVirtualNetwork:
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true
@@ -58934,9 +59519,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param connection_envelope: Properties of the Virtual Network connection. See example. Is one
-         of the following types: SwiftVirtualNetwork, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.SwiftVirtualNetwork or JSON or IO[bytes]
+        :param connection_envelope: Properties of the Virtual Network connection. See example. Is
+         either a SwiftVirtualNetwork type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.SwiftVirtualNetwork or
+         ~azure.mgmt.web.types.SwiftVirtualNetwork or IO[bytes]
         :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -59048,7 +59634,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.SwiftVirtualNetwork,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -59069,7 +59655,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param connection_envelope: Properties of the Virtual Network connection. See example.
          Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.SwiftVirtualNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -59118,7 +59704,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        connection_envelope: Union[_models.SwiftVirtualNetwork, JSON, IO[bytes]],
+        connection_envelope: Union[_models.SwiftVirtualNetwork, _types.SwiftVirtualNetwork, IO[bytes]],
         **kwargs: Any
     ) -> _models.SwiftVirtualNetwork:
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true
@@ -59135,9 +59721,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the app. Required.
         :type name: str
-        :param connection_envelope: Properties of the Virtual Network connection. See example. Is one
-         of the following types: SwiftVirtualNetwork, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.SwiftVirtualNetwork or JSON or IO[bytes]
+        :param connection_envelope: Properties of the Virtual Network connection. See example. Is
+         either a SwiftVirtualNetwork type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.SwiftVirtualNetwork or
+         ~azure.mgmt.web.types.SwiftVirtualNetwork or IO[bytes]
         :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -59391,7 +59978,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.SwiftVirtualNetwork,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -59415,7 +60002,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param connection_envelope: Properties of the Virtual Network connection. See example.
          Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.SwiftVirtualNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -59469,7 +60056,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        connection_envelope: Union[_models.SwiftVirtualNetwork, JSON, IO[bytes]],
+        connection_envelope: Union[_models.SwiftVirtualNetwork, _types.SwiftVirtualNetwork, IO[bytes]],
         **kwargs: Any
     ) -> _models.SwiftVirtualNetwork:
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true
@@ -59489,9 +60076,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get a
          gateway for the production slot's Virtual Network. Required.
         :type slot: str
-        :param connection_envelope: Properties of the Virtual Network connection. See example. Is one
-         of the following types: SwiftVirtualNetwork, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.SwiftVirtualNetwork or JSON or IO[bytes]
+        :param connection_envelope: Properties of the Virtual Network connection. See example. Is
+         either a SwiftVirtualNetwork type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.SwiftVirtualNetwork or
+         ~azure.mgmt.web.types.SwiftVirtualNetwork or IO[bytes]
         :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -59609,7 +60197,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.SwiftVirtualNetwork,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -59633,7 +60221,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param connection_envelope: Properties of the Virtual Network connection. See example.
          Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.SwiftVirtualNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -59687,7 +60275,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        connection_envelope: Union[_models.SwiftVirtualNetwork, JSON, IO[bytes]],
+        connection_envelope: Union[_models.SwiftVirtualNetwork, _types.SwiftVirtualNetwork, IO[bytes]],
         **kwargs: Any
     ) -> _models.SwiftVirtualNetwork:
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true
@@ -59707,9 +60295,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get a
          gateway for the production slot's Virtual Network. Required.
         :type slot: str
-        :param connection_envelope: Properties of the Virtual Network connection. See example. Is one
-         of the following types: SwiftVirtualNetwork, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.SwiftVirtualNetwork or JSON or IO[bytes]
+        :param connection_envelope: Properties of the Virtual Network connection. See example. Is
+         either a SwiftVirtualNetwork type or a IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.SwiftVirtualNetwork or
+         ~azure.mgmt.web.types.SwiftVirtualNetwork or IO[bytes]
         :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -60120,7 +60709,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         premier_add_on_name: str,
-        premier_add_on: JSON,
+        premier_add_on: _types.PremierAddOn,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -60137,7 +60726,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param premier_add_on_name: Add-on name. Required.
         :type premier_add_on_name: str
         :param premier_add_on: A JSON representation of the edited premier add-on. Required.
-        :type premier_add_on: JSON
+        :type premier_add_on: ~azure.mgmt.web.types.PremierAddOn
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -60184,7 +60773,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         premier_add_on_name: str,
-        premier_add_on: Union[_models.PremierAddOn, JSON, IO[bytes]],
+        premier_add_on: Union[_models.PremierAddOn, _types.PremierAddOn, IO[bytes]],
         **kwargs: Any
     ) -> _models.PremierAddOn:
         """Updates a named add-on of an app.
@@ -60198,9 +60787,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param premier_add_on_name: Add-on name. Required.
         :type premier_add_on_name: str
-        :param premier_add_on: A JSON representation of the edited premier add-on. Is one of the
-         following types: PremierAddOn, JSON, IO[bytes] Required.
-        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOn or JSON or IO[bytes]
+        :param premier_add_on: A JSON representation of the edited premier add-on. Is either a
+         PremierAddOn type or a IO[bytes] type. Required.
+        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOn or ~azure.mgmt.web.types.PremierAddOn
+         or IO[bytes]
         :return: PremierAddOn. The PremierAddOn is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PremierAddOn
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -60311,7 +60901,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         premier_add_on_name: str,
-        premier_add_on: JSON,
+        premier_add_on: _types.PremierAddOnPatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -60328,7 +60918,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param premier_add_on_name: Add-on name. Required.
         :type premier_add_on_name: str
         :param premier_add_on: A JSON representation of the edited premier add-on. Required.
-        :type premier_add_on: JSON
+        :type premier_add_on: ~azure.mgmt.web.types.PremierAddOnPatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -60375,7 +60965,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         premier_add_on_name: str,
-        premier_add_on: Union[_models.PremierAddOnPatchResource, JSON, IO[bytes]],
+        premier_add_on: Union[_models.PremierAddOnPatchResource, _types.PremierAddOnPatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.PremierAddOn:
         """Updates a named add-on of an app.
@@ -60389,9 +60979,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param premier_add_on_name: Add-on name. Required.
         :type premier_add_on_name: str
-        :param premier_add_on: A JSON representation of the edited premier add-on. Is one of the
-         following types: PremierAddOnPatchResource, JSON, IO[bytes] Required.
-        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOnPatchResource or JSON or IO[bytes]
+        :param premier_add_on: A JSON representation of the edited premier add-on. Is either a
+         PremierAddOnPatchResource type or a IO[bytes] type. Required.
+        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOnPatchResource or
+         ~azure.mgmt.web.types.PremierAddOnPatchResource or IO[bytes]
         :return: PremierAddOn. The PremierAddOn is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PremierAddOn
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -60652,7 +61243,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         premier_add_on_name: str,
         slot: str,
-        premier_add_on: JSON,
+        premier_add_on: _types.PremierAddOn,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -60672,7 +61263,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          named add-on for the production slot. Required.
         :type slot: str
         :param premier_add_on: A JSON representation of the edited premier add-on. Required.
-        :type premier_add_on: JSON
+        :type premier_add_on: ~azure.mgmt.web.types.PremierAddOn
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -60724,7 +61315,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         premier_add_on_name: str,
         slot: str,
-        premier_add_on: Union[_models.PremierAddOn, JSON, IO[bytes]],
+        premier_add_on: Union[_models.PremierAddOn, _types.PremierAddOn, IO[bytes]],
         **kwargs: Any
     ) -> _models.PremierAddOn:
         """Updates a named add-on of an app.
@@ -60741,9 +61332,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get the
          named add-on for the production slot. Required.
         :type slot: str
-        :param premier_add_on: A JSON representation of the edited premier add-on. Is one of the
-         following types: PremierAddOn, JSON, IO[bytes] Required.
-        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOn or JSON or IO[bytes]
+        :param premier_add_on: A JSON representation of the edited premier add-on. Is either a
+         PremierAddOn type or a IO[bytes] type. Required.
+        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOn or ~azure.mgmt.web.types.PremierAddOn
+         or IO[bytes]
         :return: PremierAddOn. The PremierAddOn is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PremierAddOn
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -60860,7 +61452,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         premier_add_on_name: str,
         slot: str,
-        premier_add_on: JSON,
+        premier_add_on: _types.PremierAddOnPatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -60880,7 +61472,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          named add-on for the production slot. Required.
         :type slot: str
         :param premier_add_on: A JSON representation of the edited premier add-on. Required.
-        :type premier_add_on: JSON
+        :type premier_add_on: ~azure.mgmt.web.types.PremierAddOnPatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -60932,7 +61524,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         premier_add_on_name: str,
         slot: str,
-        premier_add_on: Union[_models.PremierAddOnPatchResource, JSON, IO[bytes]],
+        premier_add_on: Union[_models.PremierAddOnPatchResource, _types.PremierAddOnPatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.PremierAddOn:
         """Updates a named add-on of an app.
@@ -60949,9 +61541,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: Name of the deployment slot. If a slot is not specified, the API will get the
          named add-on for the production slot. Required.
         :type slot: str
-        :param premier_add_on: A JSON representation of the edited premier add-on. Is one of the
-         following types: PremierAddOnPatchResource, JSON, IO[bytes] Required.
-        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOnPatchResource or JSON or IO[bytes]
+        :param premier_add_on: A JSON representation of the edited premier add-on. Is either a
+         PremierAddOnPatchResource type or a IO[bytes] type. Required.
+        :type premier_add_on: ~azure.mgmt.web.models.PremierAddOnPatchResource or
+         ~azure.mgmt.web.types.PremierAddOnPatchResource or IO[bytes]
         :return: PremierAddOn. The PremierAddOn is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PremierAddOn
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -61203,7 +61796,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        access: JSON,
+        access: _types.PrivateAccess,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -61220,7 +61813,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: The name of the web app. Required.
         :type name: str
         :param access: The information for the private access. Required.
-        :type access: JSON
+        :type access: ~azure.mgmt.web.types.PrivateAccess
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -61262,7 +61855,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def put_private_access_vnet(
-        self, resource_group_name: str, name: str, access: Union[_models.PrivateAccess, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        access: Union[_models.PrivateAccess, _types.PrivateAccess, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PrivateAccess:
         """Sets data around private site access enablement and authorized Virtual Networks that can access
         the site.
@@ -61275,9 +61872,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: The name of the web app. Required.
         :type name: str
-        :param access: The information for the private access. Is one of the following types:
-         PrivateAccess, JSON, IO[bytes] Required.
-        :type access: ~azure.mgmt.web.models.PrivateAccess or JSON or IO[bytes]
+        :param access: The information for the private access. Is either a PrivateAccess type or a
+         IO[bytes] type. Required.
+        :type access: ~azure.mgmt.web.models.PrivateAccess or ~azure.mgmt.web.types.PrivateAccess or
+         IO[bytes]
         :return: PrivateAccess. The PrivateAccess is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PrivateAccess
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -61468,7 +62066,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        access: JSON,
+        access: _types.PrivateAccess,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -61487,7 +62085,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param slot: The name of the slot for the web app. Required.
         :type slot: str
         :param access: The information for the private access. Required.
-        :type access: JSON
+        :type access: ~azure.mgmt.web.types.PrivateAccess
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -61536,7 +62134,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        access: Union[_models.PrivateAccess, JSON, IO[bytes]],
+        access: Union[_models.PrivateAccess, _types.PrivateAccess, IO[bytes]],
         **kwargs: Any
     ) -> _models.PrivateAccess:
         """Sets data around private site access enablement and authorized Virtual Networks that can access
@@ -61552,9 +62150,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param slot: The name of the slot for the web app. Required.
         :type slot: str
-        :param access: The information for the private access. Is one of the following types:
-         PrivateAccess, JSON, IO[bytes] Required.
-        :type access: ~azure.mgmt.web.models.PrivateAccess or JSON or IO[bytes]
+        :param access: The information for the private access. Is either a PrivateAccess type or a
+         IO[bytes] type. Required.
+        :type access: ~azure.mgmt.web.models.PrivateAccess or ~azure.mgmt.web.types.PrivateAccess or
+         IO[bytes]
         :return: PrivateAccess. The PrivateAccess is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PrivateAccess
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -61743,7 +62342,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         public_certificate_name: str,
-        public_certificate: JSON,
+        public_certificate: _types.PublicCertificate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -61761,7 +62360,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type public_certificate_name: str
         :param public_certificate: Public certificate details. This is the JSON representation of a
          PublicCertificate object. Required.
-        :type public_certificate: JSON
+        :type public_certificate: ~azure.mgmt.web.types.PublicCertificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -61809,7 +62408,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         public_certificate_name: str,
-        public_certificate: Union[_models.PublicCertificate, JSON, IO[bytes]],
+        public_certificate: Union[_models.PublicCertificate, _types.PublicCertificate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PublicCertificate:
         """Creates a hostname binding for an app.
@@ -61824,9 +62423,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param public_certificate_name: Public certificate name. Required.
         :type public_certificate_name: str
         :param public_certificate: Public certificate details. This is the JSON representation of a
-         PublicCertificate object. Is one of the following types: PublicCertificate, JSON, IO[bytes]
-         Required.
-        :type public_certificate: ~azure.mgmt.web.models.PublicCertificate or JSON or IO[bytes]
+         PublicCertificate object. Is either a PublicCertificate type or a IO[bytes] type. Required.
+        :type public_certificate: ~azure.mgmt.web.models.PublicCertificate or
+         ~azure.mgmt.web.types.PublicCertificate or IO[bytes]
         :return: PublicCertificate. The PublicCertificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PublicCertificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -62022,7 +62621,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -62189,7 +62791,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         public_certificate_name: str,
         slot: str,
-        public_certificate: JSON,
+        public_certificate: _types.PublicCertificate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -62210,7 +62812,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param public_certificate: Public certificate details. This is the JSON representation of a
          PublicCertificate object. Required.
-        :type public_certificate: JSON
+        :type public_certificate: ~azure.mgmt.web.types.PublicCertificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -62263,7 +62865,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         public_certificate_name: str,
         slot: str,
-        public_certificate: Union[_models.PublicCertificate, JSON, IO[bytes]],
+        public_certificate: Union[_models.PublicCertificate, _types.PublicCertificate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PublicCertificate:
         """Creates a hostname binding for an app.
@@ -62281,9 +62883,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          for the production slot. Required.
         :type slot: str
         :param public_certificate: Public certificate details. This is the JSON representation of a
-         PublicCertificate object. Is one of the following types: PublicCertificate, JSON, IO[bytes]
-         Required.
-        :type public_certificate: ~azure.mgmt.web.models.PublicCertificate or JSON or IO[bytes]
+         PublicCertificate object. Is either a PublicCertificate type or a IO[bytes] type. Required.
+        :type public_certificate: ~azure.mgmt.web.models.PublicCertificate or
+         ~azure.mgmt.web.types.PublicCertificate or IO[bytes]
         :return: PublicCertificate. The PublicCertificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.PublicCertificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -62488,7 +63090,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -62645,7 +63250,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         container_name: str,
-        request: JSON,
+        request: _types.SiteContainer,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -62662,7 +63267,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param container_name: Site Container Name. Required.
         :type container_name: str
         :param request: Container Entity. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.SiteContainer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -62709,7 +63314,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         container_name: str,
-        request: Union[_models.SiteContainer, JSON, IO[bytes]],
+        request: Union[_models.SiteContainer, _types.SiteContainer, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteContainer:
         """Creates or Updates a site container for a site, or a deployment slot.
@@ -62723,9 +63328,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param container_name: Site Container Name. Required.
         :type container_name: str
-        :param request: Container Entity. Is one of the following types: SiteContainer, JSON, IO[bytes]
-         Required.
-        :type request: ~azure.mgmt.web.models.SiteContainer or JSON or IO[bytes]
+        :param request: Container Entity. Is either a SiteContainer type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.web.models.SiteContainer or ~azure.mgmt.web.types.SiteContainer or
+         IO[bytes]
         :return: SiteContainer. The SiteContainer is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteContainer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -62921,7 +63526,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -63087,7 +63695,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         slot: str,
         container_name: str,
-        request: JSON,
+        request: _types.SiteContainer,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -63107,7 +63715,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param container_name: Site Container Name. Required.
         :type container_name: str
         :param request: Container Entity. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.SiteContainer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -63159,7 +63767,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         slot: str,
         container_name: str,
-        request: Union[_models.SiteContainer, JSON, IO[bytes]],
+        request: Union[_models.SiteContainer, _types.SiteContainer, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteContainer:
         """Creates or Updates a site container for a site, or a deployment slot.
@@ -63176,9 +63784,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param container_name: Site Container Name. Required.
         :type container_name: str
-        :param request: Container Entity. Is one of the following types: SiteContainer, JSON, IO[bytes]
-         Required.
-        :type request: ~azure.mgmt.web.models.SiteContainer or JSON or IO[bytes]
+        :param request: Container Entity. Is either a SiteContainer type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.web.models.SiteContainer or ~azure.mgmt.web.types.SiteContainer or
+         IO[bytes]
         :return: SiteContainer. The SiteContainer is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteContainer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -63383,7 +63991,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -63757,7 +64368,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -64148,7 +64762,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -64273,7 +64890,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_source_control: Union[_models.SiteSourceControl, JSON, IO[bytes]],
+        site_source_control: Union[_models.SiteSourceControl, _types.SiteSourceControl, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -64390,7 +65007,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_source_control: JSON,
+        site_source_control: _types.SiteSourceControl,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -64409,7 +65026,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param site_source_control: JSON representation of a SiteSourceControl object. See example.
          Required.
-        :type site_source_control: JSON
+        :type site_source_control: ~azure.mgmt.web.types.SiteSourceControl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -64460,7 +65077,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_source_control: Union[_models.SiteSourceControl, JSON, IO[bytes]],
+        site_source_control: Union[_models.SiteSourceControl, _types.SiteSourceControl, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SiteSourceControl]:
         """Updates the source control configuration of an app.
@@ -64476,8 +65093,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          source control configuration for the production slot. Required.
         :type slot: str
         :param site_source_control: JSON representation of a SiteSourceControl object. See example. Is
-         one of the following types: SiteSourceControl, JSON, IO[bytes] Required.
-        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl or JSON or IO[bytes]
+         either a SiteSourceControl type or a IO[bytes] type. Required.
+        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl or
+         ~azure.mgmt.web.types.SiteSourceControl or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SiteSourceControl. The SiteSourceControl is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.SiteSourceControl]
@@ -64576,7 +65194,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_source_control: JSON,
+        site_source_control: _types.SiteSourceControl,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -64595,7 +65213,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type slot: str
         :param site_source_control: JSON representation of a SiteSourceControl object. See example.
          Required.
-        :type site_source_control: JSON
+        :type site_source_control: ~azure.mgmt.web.types.SiteSourceControl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -64644,7 +65262,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         name: str,
         slot: str,
-        site_source_control: Union[_models.SiteSourceControl, JSON, IO[bytes]],
+        site_source_control: Union[_models.SiteSourceControl, _types.SiteSourceControl, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteSourceControl:
         """Updates the source control configuration of an app.
@@ -64660,8 +65278,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
          source control configuration for the production slot. Required.
         :type slot: str
         :param site_source_control: JSON representation of a SiteSourceControl object. See example. Is
-         one of the following types: SiteSourceControl, JSON, IO[bytes] Required.
-        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl or JSON or IO[bytes]
+         either a SiteSourceControl type or a IO[bytes] type. Required.
+        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl or
+         ~azure.mgmt.web.types.SiteSourceControl or IO[bytes]
         :return: SiteSourceControl. The SiteSourceControl is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteSourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -64878,7 +65497,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_source_control: Union[_models.SiteSourceControl, JSON, IO[bytes]],
+        site_source_control: Union[_models.SiteSourceControl, _types.SiteSourceControl, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -64989,7 +65608,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_source_control: JSON,
+        site_source_control: _types.SiteSourceControl,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -65005,7 +65624,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param site_source_control: JSON representation of a SiteSourceControl object. See example.
          Required.
-        :type site_source_control: JSON
+        :type site_source_control: ~azure.mgmt.web.types.SiteSourceControl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -65051,7 +65670,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_source_control: Union[_models.SiteSourceControl, JSON, IO[bytes]],
+        site_source_control: Union[_models.SiteSourceControl, _types.SiteSourceControl, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SiteSourceControl]:
         """Updates the source control configuration of an app.
@@ -65064,8 +65683,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param site_source_control: JSON representation of a SiteSourceControl object. See example. Is
-         one of the following types: SiteSourceControl, JSON, IO[bytes] Required.
-        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl or JSON or IO[bytes]
+         either a SiteSourceControl type or a IO[bytes] type. Required.
+        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl or
+         ~azure.mgmt.web.types.SiteSourceControl or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SiteSourceControl. The SiteSourceControl is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.SiteSourceControl]
@@ -65158,7 +65778,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_source_control: JSON,
+        site_source_control: _types.SiteSourceControl,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -65174,7 +65794,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param site_source_control: JSON representation of a SiteSourceControl object. See example.
          Required.
-        :type site_source_control: JSON
+        :type site_source_control: ~azure.mgmt.web.types.SiteSourceControl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -65218,7 +65838,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        site_source_control: Union[_models.SiteSourceControl, JSON, IO[bytes]],
+        site_source_control: Union[_models.SiteSourceControl, _types.SiteSourceControl, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteSourceControl:
         """Updates the source control configuration of an app.
@@ -65231,8 +65851,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the app. Required.
         :type name: str
         :param site_source_control: JSON representation of a SiteSourceControl object. See example. Is
-         one of the following types: SiteSourceControl, JSON, IO[bytes] Required.
-        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl or JSON or IO[bytes]
+         either a SiteSourceControl type or a IO[bytes] type. Required.
+        :type site_source_control: ~azure.mgmt.web.models.SiteSourceControl or
+         ~azure.mgmt.web.types.SiteSourceControl or IO[bytes]
         :return: SiteSourceControl. The SiteSourceControl is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SiteSourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -65580,7 +66201,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -65890,7 +66514,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -66147,7 +66774,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -66332,7 +66962,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -66518,7 +67151,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -66694,7 +67330,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -66878,7 +67517,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -67056,7 +67698,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -67418,7 +68063,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: Union[_models.AppServicePlan, JSON, IO[bytes]],
+        app_service_plan: Union[_models.AppServicePlan, _types.AppServicePlan, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -67523,7 +68168,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: JSON,
+        app_service_plan: _types.AppServicePlan,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -67538,7 +68183,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the App Service plan. Required.
         :type name: str
         :param app_service_plan: Details of the App Service plan. Required.
-        :type app_service_plan: JSON
+        :type app_service_plan: ~azure.mgmt.web.types.AppServicePlan
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -67583,7 +68228,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: Union[_models.AppServicePlan, JSON, IO[bytes]],
+        app_service_plan: Union[_models.AppServicePlan, _types.AppServicePlan, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AppServicePlan]:
         """Creates or updates an App Service Plan.
@@ -67595,9 +68240,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the App Service plan. Required.
         :type name: str
-        :param app_service_plan: Details of the App Service plan. Is one of the following types:
-         AppServicePlan, JSON, IO[bytes] Required.
-        :type app_service_plan: ~azure.mgmt.web.models.AppServicePlan or JSON or IO[bytes]
+        :param app_service_plan: Details of the App Service plan. Is either a AppServicePlan type or a
+         IO[bytes] type. Required.
+        :type app_service_plan: ~azure.mgmt.web.models.AppServicePlan or
+         ~azure.mgmt.web.types.AppServicePlan or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AppServicePlan. The AppServicePlan is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.AppServicePlan]
@@ -67689,7 +68335,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: JSON,
+        app_service_plan: _types.AppServicePlanPatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -67704,7 +68350,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the App Service plan. Required.
         :type name: str
         :param app_service_plan: Details of the App Service plan. Required.
-        :type app_service_plan: JSON
+        :type app_service_plan: ~azure.mgmt.web.types.AppServicePlanPatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -67747,7 +68393,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: Union[_models.AppServicePlanPatchResource, JSON, IO[bytes]],
+        app_service_plan: Union[_models.AppServicePlanPatchResource, _types.AppServicePlanPatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.AppServicePlan:
         """Creates or updates an App Service Plan.
@@ -67759,9 +68405,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the App Service plan. Required.
         :type name: str
-        :param app_service_plan: Details of the App Service plan. Is one of the following types:
-         AppServicePlanPatchResource, JSON, IO[bytes] Required.
-        :type app_service_plan: ~azure.mgmt.web.models.AppServicePlanPatchResource or JSON or IO[bytes]
+        :param app_service_plan: Details of the App Service plan. Is either a
+         AppServicePlanPatchResource type or a IO[bytes] type. Required.
+        :type app_service_plan: ~azure.mgmt.web.models.AppServicePlanPatchResource or
+         ~azure.mgmt.web.types.AppServicePlanPatchResource or IO[bytes]
         :return: AppServicePlan. The AppServicePlan is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.AppServicePlan
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -67948,7 +68595,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -68045,7 +68695,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -68218,7 +68871,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -68405,7 +69061,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -68583,7 +69242,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -68979,7 +69641,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -69366,7 +70031,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         gateway_name: str,
-        connection_envelope: JSON,
+        connection_envelope: _types.VnetGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -69385,7 +70050,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param gateway_name: Name of the gateway. Only the 'primary' gateway is supported. Required.
         :type gateway_name: str
         :param connection_envelope: Definition of the gateway. Required.
-        :type connection_envelope: JSON
+        :type connection_envelope: ~azure.mgmt.web.types.VnetGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -69436,7 +70101,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         gateway_name: str,
-        connection_envelope: Union[_models.VnetGateway, JSON, IO[bytes]],
+        connection_envelope: Union[_models.VnetGateway, _types.VnetGateway, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetGateway:
         """Update a Virtual Network gateway.
@@ -69452,9 +70117,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param gateway_name: Name of the gateway. Only the 'primary' gateway is supported. Required.
         :type gateway_name: str
-        :param connection_envelope: Definition of the gateway. Is one of the following types:
-         VnetGateway, JSON, IO[bytes] Required.
-        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or JSON or IO[bytes]
+        :param connection_envelope: Definition of the gateway. Is either a VnetGateway type or a
+         IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.models.VnetGateway or
+         ~azure.mgmt.web.types.VnetGateway or IO[bytes]
         :return: VnetGateway. The VnetGateway is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -69650,7 +70316,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         route_name: str,
-        route: JSON,
+        route: _types.VnetRoute,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -69669,7 +70335,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
         :param route: Definition of the Virtual Network route. Required.
-        :type route: JSON
+        :type route: ~azure.mgmt.web.types.VnetRoute
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -69720,7 +70386,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         route_name: str,
-        route: Union[_models.VnetRoute, JSON, IO[bytes]],
+        route: Union[_models.VnetRoute, _types.VnetRoute, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetRoute:
         """Create or update a Virtual Network route in an App Service plan.
@@ -69736,9 +70402,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
-        :param route: Definition of the Virtual Network route. Is one of the following types:
-         VnetRoute, JSON, IO[bytes] Required.
-        :type route: ~azure.mgmt.web.models.VnetRoute or JSON or IO[bytes]
+        :param route: Definition of the Virtual Network route. Is either a VnetRoute type or a
+         IO[bytes] type. Required.
+        :type route: ~azure.mgmt.web.models.VnetRoute or ~azure.mgmt.web.types.VnetRoute or IO[bytes]
         :return: VnetRoute. The VnetRoute is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetRoute
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -69854,7 +70520,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         route_name: str,
-        route: JSON,
+        route: _types.VnetRoute,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -69873,7 +70539,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
         :param route: Definition of the Virtual Network route. Required.
-        :type route: JSON
+        :type route: ~azure.mgmt.web.types.VnetRoute
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -69924,7 +70590,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         route_name: str,
-        route: Union[_models.VnetRoute, JSON, IO[bytes]],
+        route: Union[_models.VnetRoute, _types.VnetRoute, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetRoute:
         """Create or update a Virtual Network route in an App Service plan.
@@ -69940,9 +70606,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
-        :param route: Definition of the Virtual Network route. Is one of the following types:
-         VnetRoute, JSON, IO[bytes] Required.
-        :type route: ~azure.mgmt.web.models.VnetRoute or JSON or IO[bytes]
+        :param route: Definition of the Virtual Network route. Is either a VnetRoute type or a
+         IO[bytes] type. Required.
+        :type route: ~azure.mgmt.web.models.VnetRoute or ~azure.mgmt.web.types.VnetRoute or IO[bytes]
         :return: VnetRoute. The VnetRoute is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetRoute
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -70285,7 +70951,7 @@ class CertificatesOperations:
         self,
         resource_group_name: str,
         name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.Certificate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -70300,7 +70966,7 @@ class CertificatesOperations:
         :param name: Name of the certificate. Required.
         :type name: str
         :param certificate_envelope: Details of certificate, if it exists already. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.web.types.Certificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -70343,7 +71009,7 @@ class CertificatesOperations:
         self,
         resource_group_name: str,
         name: str,
-        certificate_envelope: Union[_models.Certificate, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.Certificate, _types.Certificate, IO[bytes]],
         **kwargs: Any
     ) -> _models.Certificate:
         """Create or update a certificate.
@@ -70355,9 +71021,10 @@ class CertificatesOperations:
         :type resource_group_name: str
         :param name: Name of the certificate. Required.
         :type name: str
-        :param certificate_envelope: Details of certificate, if it exists already. Is one of the
-         following types: Certificate, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.web.models.Certificate or JSON or IO[bytes]
+        :param certificate_envelope: Details of certificate, if it exists already. Is either a
+         Certificate type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.web.models.Certificate or
+         ~azure.mgmt.web.types.Certificate or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -70463,7 +71130,7 @@ class CertificatesOperations:
         self,
         resource_group_name: str,
         name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.CertificatePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -70478,7 +71145,7 @@ class CertificatesOperations:
         :param name: Name of the certificate. Required.
         :type name: str
         :param certificate_envelope: Details of certificate, if it exists already. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.web.types.CertificatePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -70521,7 +71188,7 @@ class CertificatesOperations:
         self,
         resource_group_name: str,
         name: str,
-        certificate_envelope: Union[_models.CertificatePatchResource, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.CertificatePatchResource, _types.CertificatePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.Certificate:
         """Create or update a certificate.
@@ -70533,10 +71200,10 @@ class CertificatesOperations:
         :type resource_group_name: str
         :param name: Name of the certificate. Required.
         :type name: str
-        :param certificate_envelope: Details of certificate, if it exists already. Is one of the
-         following types: CertificatePatchResource, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.web.models.CertificatePatchResource or JSON or
-         IO[bytes]
+        :param certificate_envelope: Details of certificate, if it exists already. Is either a
+         CertificatePatchResource type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.web.models.CertificatePatchResource or
+         ~azure.mgmt.web.types.CertificatePatchResource or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -70721,7 +71388,10 @@ class CertificatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -70817,7 +71487,10 @@ class CertificatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -70992,7 +71665,7 @@ class SiteCertificatesOperations:
         resource_group_name: str,
         name: str,
         certificate_name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.Certificate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -71009,7 +71682,7 @@ class SiteCertificatesOperations:
         :param certificate_name: Name of the certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Details of certificate, if it exists already. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.web.types.Certificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -71056,7 +71729,7 @@ class SiteCertificatesOperations:
         resource_group_name: str,
         name: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.Certificate, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.Certificate, _types.Certificate, IO[bytes]],
         **kwargs: Any
     ) -> _models.Certificate:
         """Create or update a certificate under a given site.
@@ -71070,9 +71743,10 @@ class SiteCertificatesOperations:
         :type name: str
         :param certificate_name: Name of the certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Details of certificate, if it exists already. Is one of the
-         following types: Certificate, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.web.models.Certificate or JSON or IO[bytes]
+        :param certificate_envelope: Details of certificate, if it exists already. Is either a
+         Certificate type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.web.models.Certificate or
+         ~azure.mgmt.web.types.Certificate or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -71183,7 +71857,7 @@ class SiteCertificatesOperations:
         resource_group_name: str,
         name: str,
         certificate_name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.CertificatePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -71200,7 +71874,7 @@ class SiteCertificatesOperations:
         :param certificate_name: Name of the certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Details of certificate, if it exists already. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.web.types.CertificatePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -71247,7 +71921,7 @@ class SiteCertificatesOperations:
         resource_group_name: str,
         name: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.CertificatePatchResource, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.CertificatePatchResource, _types.CertificatePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.Certificate:
         """Create or update a certificate under a given site.
@@ -71261,10 +71935,10 @@ class SiteCertificatesOperations:
         :type name: str
         :param certificate_name: Name of the certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Details of certificate, if it exists already. Is one of the
-         following types: CertificatePatchResource, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.web.models.CertificatePatchResource or JSON or
-         IO[bytes]
+        :param certificate_envelope: Details of certificate, if it exists already. Is either a
+         CertificatePatchResource type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.web.models.CertificatePatchResource or
+         ~azure.mgmt.web.types.CertificatePatchResource or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -71456,7 +72130,10 @@ class SiteCertificatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -71622,7 +72299,7 @@ class SiteCertificatesOperations:
         name: str,
         slot: str,
         certificate_name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.Certificate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -71642,7 +72319,7 @@ class SiteCertificatesOperations:
         :param certificate_name: Name of the certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Details of certificate, if it exists already. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.web.types.Certificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -71694,7 +72371,7 @@ class SiteCertificatesOperations:
         name: str,
         slot: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.Certificate, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.Certificate, _types.Certificate, IO[bytes]],
         **kwargs: Any
     ) -> _models.Certificate:
         """Create or update a certificate in a given site and deployment slot.
@@ -71711,9 +72388,10 @@ class SiteCertificatesOperations:
         :type slot: str
         :param certificate_name: Name of the certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Details of certificate, if it exists already. Is one of the
-         following types: Certificate, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.web.models.Certificate or JSON or IO[bytes]
+        :param certificate_envelope: Details of certificate, if it exists already. Is either a
+         Certificate type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.web.models.Certificate or
+         ~azure.mgmt.web.types.Certificate or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -71830,7 +72508,7 @@ class SiteCertificatesOperations:
         name: str,
         slot: str,
         certificate_name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.CertificatePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -71850,7 +72528,7 @@ class SiteCertificatesOperations:
         :param certificate_name: Name of the certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Details of certificate, if it exists already. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.web.types.CertificatePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -71902,7 +72580,7 @@ class SiteCertificatesOperations:
         name: str,
         slot: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.CertificatePatchResource, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.CertificatePatchResource, _types.CertificatePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.Certificate:
         """Create or update a certificate for a site and deployment slot.
@@ -71919,10 +72597,10 @@ class SiteCertificatesOperations:
         :type slot: str
         :param certificate_name: Name of the certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Details of certificate, if it exists already. Is one of the
-         following types: CertificatePatchResource, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.web.models.CertificatePatchResource or JSON or
-         IO[bytes]
+        :param certificate_envelope: Details of certificate, if it exists already. Is either a
+         CertificatePatchResource type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.web.models.CertificatePatchResource or
+         ~azure.mgmt.web.types.CertificatePatchResource or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -72127,7 +72805,10 @@ class SiteCertificatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -72554,7 +73235,10 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -72749,7 +73433,10 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -72951,7 +73638,10 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -73129,7 +73819,10 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -73313,7 +74006,10 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -73497,7 +74193,10 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -73791,7 +74490,10 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -74079,7 +74781,10 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -74376,7 +75081,10 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -74615,7 +75323,7 @@ class KubeEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        kube_environment_envelope: Union[_models.KubeEnvironment, JSON, IO[bytes]],
+        kube_environment_envelope: Union[_models.KubeEnvironment, _types.KubeEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -74722,7 +75430,7 @@ class KubeEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        kube_environment_envelope: JSON,
+        kube_environment_envelope: _types.KubeEnvironment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -74738,7 +75446,7 @@ class KubeEnvironmentsOperations:
         :type name: str
         :param kube_environment_envelope: Configuration details of the Kubernetes Environment.
          Required.
-        :type kube_environment_envelope: JSON
+        :type kube_environment_envelope: ~azure.mgmt.web.types.KubeEnvironment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -74784,7 +75492,7 @@ class KubeEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        kube_environment_envelope: Union[_models.KubeEnvironment, JSON, IO[bytes]],
+        kube_environment_envelope: Union[_models.KubeEnvironment, _types.KubeEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.KubeEnvironment]:
         """Creates or updates a Kubernetes Environment.
@@ -74796,9 +75504,10 @@ class KubeEnvironmentsOperations:
         :type resource_group_name: str
         :param name: Name of the Kubernetes Environment. Required.
         :type name: str
-        :param kube_environment_envelope: Configuration details of the Kubernetes Environment. Is one
-         of the following types: KubeEnvironment, JSON, IO[bytes] Required.
-        :type kube_environment_envelope: ~azure.mgmt.web.models.KubeEnvironment or JSON or IO[bytes]
+        :param kube_environment_envelope: Configuration details of the Kubernetes Environment. Is
+         either a KubeEnvironment type or a IO[bytes] type. Required.
+        :type kube_environment_envelope: ~azure.mgmt.web.models.KubeEnvironment or
+         ~azure.mgmt.web.types.KubeEnvironment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns KubeEnvironment. The KubeEnvironment is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.KubeEnvironment]
@@ -74891,7 +75600,7 @@ class KubeEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        kube_environment_envelope: JSON,
+        kube_environment_envelope: _types.KubeEnvironmentPatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -74907,7 +75616,7 @@ class KubeEnvironmentsOperations:
         :type name: str
         :param kube_environment_envelope: Configuration details of the Kubernetes Environment.
          Required.
-        :type kube_environment_envelope: JSON
+        :type kube_environment_envelope: ~azure.mgmt.web.types.KubeEnvironmentPatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -74951,7 +75660,9 @@ class KubeEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        kube_environment_envelope: Union[_models.KubeEnvironmentPatchResource, JSON, IO[bytes]],
+        kube_environment_envelope: Union[
+            _models.KubeEnvironmentPatchResource, _types.KubeEnvironmentPatchResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.KubeEnvironment:
         """Creates or updates a Kubernetes Environment.
@@ -74963,10 +75674,10 @@ class KubeEnvironmentsOperations:
         :type resource_group_name: str
         :param name: Name of the Kubernetes Environment. Required.
         :type name: str
-        :param kube_environment_envelope: Configuration details of the Kubernetes Environment. Is one
-         of the following types: KubeEnvironmentPatchResource, JSON, IO[bytes] Required.
-        :type kube_environment_envelope: ~azure.mgmt.web.models.KubeEnvironmentPatchResource or JSON or
-         IO[bytes]
+        :param kube_environment_envelope: Configuration details of the Kubernetes Environment. Is
+         either a KubeEnvironmentPatchResource type or a IO[bytes] type. Required.
+        :type kube_environment_envelope: ~azure.mgmt.web.models.KubeEnvironmentPatchResource or
+         ~azure.mgmt.web.types.KubeEnvironmentPatchResource or IO[bytes]
         :return: KubeEnvironment. The KubeEnvironment is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.KubeEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -75212,7 +75923,10 @@ class KubeEnvironmentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -75304,7 +76018,10 @@ class KubeEnvironmentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -75516,7 +76233,10 @@ class WorkflowRunsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -75800,7 +76520,10 @@ class WorkflowRunActionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -75908,7 +76631,10 @@ class WorkflowRunActionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -76127,7 +76853,10 @@ class WorkflowRunActionScopeRepetitionsOperations:  # pylint: disable=name-too-l
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -76338,7 +77067,10 @@ class WorkflowTriggersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -76849,7 +77581,10 @@ class WorkflowTriggerHistoriesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77194,7 +77929,10 @@ class WorkflowVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77305,7 +78043,10 @@ class ProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77403,7 +78144,10 @@ class ProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77500,7 +78244,10 @@ class ProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77550,7 +78297,7 @@ class ProviderOperations:
 
         Description for Get available Function app frameworks and their versions for location.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :keyword stack_os_type: Stack OS Type. Known values are: "Windows", "Linux", and "All". Default
          value is None.
@@ -77600,7 +78347,10 @@ class ProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77650,7 +78400,7 @@ class ProviderOperations:
 
         Description for Get available Web app frameworks and their versions for location.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :keyword stack_os_type: Stack OS Type. Known values are: "Windows", "Linux", and "All". Default
          value is None.
@@ -77700,7 +78450,10 @@ class ProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77797,7 +78550,10 @@ class ProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77896,7 +78652,10 @@ class ProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77964,7 +78723,7 @@ class DeletedWebAppsOperations:
 
         Description for Get deleted app for a subscription at location.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param deleted_site_id: The numeric ID of the deleted app, e.g. 12345. Required.
         :type deleted_site_id: str
@@ -78035,7 +78794,7 @@ class DeletedWebAppsOperations:
 
         Description for Get all deleted apps for a subscription at location.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: An iterator like instance of DeletedSite
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.DeletedSite]
@@ -78082,7 +78841,10 @@ class DeletedWebAppsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -78174,7 +78936,10 @@ class DeletedWebAppsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -78366,7 +79131,10 @@ class ResourceHealthMetadataOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -78550,7 +79318,10 @@ class ResourceHealthMetadataOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -78642,7 +79413,10 @@ class ResourceHealthMetadataOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -78741,7 +79515,10 @@ class ResourceHealthMetadataOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -78837,7 +79614,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         name: str,
         workflow_name: str,
-        key_type: JSON,
+        key_type: _types.RegenerateActionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -78852,7 +79629,7 @@ class WorkflowsOperations:
         :param workflow_name: The workflow name. Required.
         :type workflow_name: str
         :param key_type: The access key type. Required.
-        :type key_type: JSON
+        :type key_type: ~azure.mgmt.web.types.RegenerateActionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -78897,7 +79674,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         name: str,
         workflow_name: str,
-        key_type: Union[_models.RegenerateActionParameter, JSON, IO[bytes]],
+        key_type: Union[_models.RegenerateActionParameter, _types.RegenerateActionParameter, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Regenerates the callback URL access key for request triggers.
@@ -78909,9 +79686,10 @@ class WorkflowsOperations:
         :type name: str
         :param workflow_name: The workflow name. Required.
         :type workflow_name: str
-        :param key_type: The access key type. Is one of the following types: RegenerateActionParameter,
-         JSON, IO[bytes] Required.
-        :type key_type: ~azure.mgmt.web.models.RegenerateActionParameter or JSON or IO[bytes]
+        :param key_type: The access key type. Is either a RegenerateActionParameter type or a IO[bytes]
+         type. Required.
+        :type key_type: ~azure.mgmt.web.models.RegenerateActionParameter or
+         ~azure.mgmt.web.types.RegenerateActionParameter or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -79007,7 +79785,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         name: str,
         workflow_name: str,
-        validate: JSON,
+        validate: _types.Workflow,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -79022,7 +79800,7 @@ class WorkflowsOperations:
         :param workflow_name: The workflow name. Required.
         :type workflow_name: str
         :param validate: The workflow. Required.
-        :type validate: JSON
+        :type validate: ~azure.mgmt.web.types.Workflow
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -79067,7 +79845,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         name: str,
         workflow_name: str,
-        validate: Union[_models.Workflow, JSON, IO[bytes]],
+        validate: Union[_models.Workflow, _types.Workflow, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Validates the workflow definition.
@@ -79079,9 +79857,8 @@ class WorkflowsOperations:
         :type name: str
         :param workflow_name: The workflow name. Required.
         :type workflow_name: str
-        :param validate: The workflow. Is one of the following types: Workflow, JSON, IO[bytes]
-         Required.
-        :type validate: ~azure.mgmt.web.models.Workflow or JSON or IO[bytes]
+        :param validate: The workflow. Is either a Workflow type or a IO[bytes] type. Required.
+        :type validate: ~azure.mgmt.web.models.Workflow or ~azure.mgmt.web.types.Workflow or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -79318,7 +80095,10 @@ class WorkflowRunActionRepetitionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -79436,7 +80216,10 @@ class WorkflowRunActionRepetitionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -79667,7 +80450,10 @@ class WorkflowRunActionRepetitionsRequestHistoriesOperations:  # pylint: disable
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -79734,7 +80520,7 @@ class GetUsagesInLocationOperations:
         List usages in cores for all skus used by a subscription in a given location, for a specific
         quota type.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: An iterator like instance of CsmUsageQuota
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.CsmUsageQuota]
@@ -79781,7 +80567,10 @@ class GetUsagesInLocationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -79858,7 +80647,7 @@ class _WebSiteManagementClientOperationsMixin(
     async def validate_move(
         self,
         resource_group_name: str,
-        move_resource_envelope: JSON,
+        move_resource_envelope: _types.CsmMoveResourceEnvelope,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -79871,7 +80660,7 @@ class _WebSiteManagementClientOperationsMixin(
          Required.
         :type resource_group_name: str
         :param move_resource_envelope: Object that represents the resource to move. Required.
-        :type move_resource_envelope: JSON
+        :type move_resource_envelope: ~azure.mgmt.web.types.CsmMoveResourceEnvelope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -79910,7 +80699,7 @@ class _WebSiteManagementClientOperationsMixin(
     async def validate_move(
         self,
         resource_group_name: str,
-        move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, JSON, IO[bytes]],
+        move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, _types.CsmMoveResourceEnvelope, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Validate whether a resource can be moved.
@@ -79920,10 +80709,10 @@ class _WebSiteManagementClientOperationsMixin(
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param move_resource_envelope: Object that represents the resource to move. Is one of the
-         following types: CsmMoveResourceEnvelope, JSON, IO[bytes] Required.
-        :type move_resource_envelope: ~azure.mgmt.web.models.CsmMoveResourceEnvelope or JSON or
-         IO[bytes]
+        :param move_resource_envelope: Object that represents the resource to move. Is either a
+         CsmMoveResourceEnvelope type or a IO[bytes] type. Required.
+        :type move_resource_envelope: ~azure.mgmt.web.models.CsmMoveResourceEnvelope or
+         ~azure.mgmt.web.types.CsmMoveResourceEnvelope or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -80009,7 +80798,12 @@ class _WebSiteManagementClientOperationsMixin(
 
     @overload
     async def validate(
-        self, resource_group_name: str, validate_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_group_name: str,
+        validate_request: _types.ValidateRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ValidateResponse:
         """Validate if a resource can be created.
 
@@ -80019,7 +80813,7 @@ class _WebSiteManagementClientOperationsMixin(
          Required.
         :type resource_group_name: str
         :param validate_request: Request with the resources to validate. Required.
-        :type validate_request: JSON
+        :type validate_request: ~azure.mgmt.web.types.ValidateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -80056,7 +80850,10 @@ class _WebSiteManagementClientOperationsMixin(
 
     @distributed_trace_async
     async def validate(
-        self, resource_group_name: str, validate_request: Union[_models.ValidateRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        validate_request: Union[_models.ValidateRequest, _types.ValidateRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ValidateResponse:
         """Validate if a resource can be created.
 
@@ -80065,9 +80862,10 @@ class _WebSiteManagementClientOperationsMixin(
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param validate_request: Request with the resources to validate. Is one of the following types:
-         ValidateRequest, JSON, IO[bytes] Required.
-        :type validate_request: ~azure.mgmt.web.models.ValidateRequest or JSON or IO[bytes]
+        :param validate_request: Request with the resources to validate. Is either a ValidateRequest
+         type or a IO[bytes] type. Required.
+        :type validate_request: ~azure.mgmt.web.models.ValidateRequest or
+         ~azure.mgmt.web.types.ValidateRequest or IO[bytes]
         :return: ValidateResponse. The ValidateResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.ValidateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -80253,7 +81051,10 @@ class _WebSiteManagementClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -80353,7 +81154,10 @@ class _WebSiteManagementClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -80416,14 +81220,14 @@ class _WebSiteManagementClientOperationsMixin(
 
     @overload
     async def check_name_availability(
-        self, request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, request: _types.ResourceNameAvailabilityRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ResourceNameAvailability:
         """Check if a resource name is available.
 
         Description for Check if a resource name is available.
 
         :param request: The request body. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.ResourceNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -80454,15 +81258,18 @@ class _WebSiteManagementClientOperationsMixin(
 
     @distributed_trace_async
     async def check_name_availability(
-        self, request: Union[_models.ResourceNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        request: Union[_models.ResourceNameAvailabilityRequest, _types.ResourceNameAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ResourceNameAvailability:
         """Check if a resource name is available.
 
         Description for Check if a resource name is available.
 
-        :param request: The request body. Is one of the following types:
-         ResourceNameAvailabilityRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.ResourceNameAvailabilityRequest or JSON or IO[bytes]
+        :param request: The request body. Is either a ResourceNameAvailabilityRequest type or a
+         IO[bytes] type. Required.
+        :type request: ~azure.mgmt.web.models.ResourceNameAvailabilityRequest or
+         ~azure.mgmt.web.types.ResourceNameAvailabilityRequest or IO[bytes]
         :return: ResourceNameAvailability. The ResourceNameAvailability is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.ResourceNameAvailability
@@ -80588,7 +81395,10 @@ class _WebSiteManagementClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -80712,7 +81522,10 @@ class _WebSiteManagementClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -80774,14 +81587,14 @@ class _WebSiteManagementClientOperationsMixin(
 
     @overload
     def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long
-        self, name_identifier: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name_identifier: _types.NameIdentifier, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncItemPaged["_models.Identifier"]:
         """List all apps that are assigned to a hostname.
 
         Description for List all apps that are assigned to a hostname.
 
         :param name_identifier: The request body. Required.
-        :type name_identifier: JSON
+        :type name_identifier: ~azure.mgmt.web.types.NameIdentifier
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -80810,15 +81623,16 @@ class _WebSiteManagementClientOperationsMixin(
 
     @distributed_trace
     def list_site_identifiers_assigned_to_host_name(  # pylint: disable=name-too-long
-        self, name_identifier: Union[_models.NameIdentifier, JSON, IO[bytes]], **kwargs: Any
+        self, name_identifier: Union[_models.NameIdentifier, _types.NameIdentifier, IO[bytes]], **kwargs: Any
     ) -> AsyncItemPaged["_models.Identifier"]:
         """List all apps that are assigned to a hostname.
 
         Description for List all apps that are assigned to a hostname.
 
-        :param name_identifier: The request body. Is one of the following types: NameIdentifier, JSON,
-         IO[bytes] Required.
-        :type name_identifier: ~azure.mgmt.web.models.NameIdentifier or JSON or IO[bytes]
+        :param name_identifier: The request body. Is either a NameIdentifier type or a IO[bytes] type.
+         Required.
+        :type name_identifier: ~azure.mgmt.web.models.NameIdentifier or
+         ~azure.mgmt.web.types.NameIdentifier or IO[bytes]
         :return: An iterator like instance of Identifier
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.Identifier]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -80872,7 +81686,10 @@ class _WebSiteManagementClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -80927,7 +81744,7 @@ class _WebSiteManagementClientOperationsMixin(
 
         Check if a resource name is available for DNL sites.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param request: The request body. Required.
         :type request: ~azure.mgmt.web.models.DnlResourceNameAvailabilityRequest
@@ -80942,16 +81759,21 @@ class _WebSiteManagementClientOperationsMixin(
 
     @overload
     async def regional_check_name_availability(
-        self, location: str, request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        request: _types.DnlResourceNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DnlResourceNameAvailability:
         """Check if a resource name is available for DNL sites.
 
         Check if a resource name is available for DNL sites.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param request: The request body. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.web.types.DnlResourceNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -80969,7 +81791,7 @@ class _WebSiteManagementClientOperationsMixin(
 
         Check if a resource name is available for DNL sites.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param request: The request body. Required.
         :type request: IO[bytes]
@@ -80984,17 +81806,23 @@ class _WebSiteManagementClientOperationsMixin(
 
     @distributed_trace_async
     async def regional_check_name_availability(
-        self, location: str, request: Union[_models.DnlResourceNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        request: Union[
+            _models.DnlResourceNameAvailabilityRequest, _types.DnlResourceNameAvailabilityRequest, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models.DnlResourceNameAvailability:
         """Check if a resource name is available for DNL sites.
 
         Check if a resource name is available for DNL sites.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param request: The request body. Is one of the following types:
-         DnlResourceNameAvailabilityRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.web.models.DnlResourceNameAvailabilityRequest or JSON or IO[bytes]
+        :param request: The request body. Is either a DnlResourceNameAvailabilityRequest type or a
+         IO[bytes] type. Required.
+        :type request: ~azure.mgmt.web.models.DnlResourceNameAvailabilityRequest or
+         ~azure.mgmt.web.types.DnlResourceNameAvailabilityRequest or IO[bytes]
         :return: DnlResourceNameAvailability. The DnlResourceNameAvailability is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.DnlResourceNameAvailability
@@ -81116,7 +81944,10 @@ class _WebSiteManagementClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -81246,7 +82077,7 @@ class _WebSiteManagementClientOperationsMixin(
 
     @overload
     async def verify_hosting_environment_vnet(
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: _types.VnetParameters, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VnetValidationFailureDetails:
         """Verifies if this VNET is compatible with an App Service Environment by analyzing the Network
         Security Group rules.
@@ -81255,7 +82086,7 @@ class _WebSiteManagementClientOperationsMixin(
         analyzing the Network Security Group rules.
 
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.web.types.VnetParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -81288,7 +82119,7 @@ class _WebSiteManagementClientOperationsMixin(
 
     @distributed_trace_async
     async def verify_hosting_environment_vnet(
-        self, parameters: Union[_models.VnetParameters, JSON, IO[bytes]], **kwargs: Any
+        self, parameters: Union[_models.VnetParameters, _types.VnetParameters, IO[bytes]], **kwargs: Any
     ) -> _models.VnetValidationFailureDetails:
         """Verifies if this VNET is compatible with an App Service Environment by analyzing the Network
         Security Group rules.
@@ -81296,9 +82127,10 @@ class _WebSiteManagementClientOperationsMixin(
         Description for Verifies if this VNET is compatible with an App Service Environment by
         analyzing the Network Security Group rules.
 
-        :param parameters: The request body. Is one of the following types: VnetParameters, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.web.models.VnetParameters or JSON or IO[bytes]
+        :param parameters: The request body. Is either a VnetParameters type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.web.models.VnetParameters or ~azure.mgmt.web.types.VnetParameters
+         or IO[bytes]
         :return: VnetValidationFailureDetails. The VnetValidationFailureDetails is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.web.models.VnetValidationFailureDetails
@@ -81399,7 +82231,7 @@ class _WebSiteManagementClientOperationsMixin(
     async def move(
         self,
         resource_group_name: str,
-        move_resource_envelope: JSON,
+        move_resource_envelope: _types.CsmMoveResourceEnvelope,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -81412,7 +82244,7 @@ class _WebSiteManagementClientOperationsMixin(
          Required.
         :type resource_group_name: str
         :param move_resource_envelope: Object that represents the resource to move. Required.
-        :type move_resource_envelope: JSON
+        :type move_resource_envelope: ~azure.mgmt.web.types.CsmMoveResourceEnvelope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -81451,7 +82283,7 @@ class _WebSiteManagementClientOperationsMixin(
     async def move(
         self,
         resource_group_name: str,
-        move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, JSON, IO[bytes]],
+        move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, _types.CsmMoveResourceEnvelope, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Move resources between resource groups.
@@ -81461,10 +82293,10 @@ class _WebSiteManagementClientOperationsMixin(
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param move_resource_envelope: Object that represents the resource to move. Is one of the
-         following types: CsmMoveResourceEnvelope, JSON, IO[bytes] Required.
-        :type move_resource_envelope: ~azure.mgmt.web.models.CsmMoveResourceEnvelope or JSON or
-         IO[bytes]
+        :param move_resource_envelope: Object that represents the resource to move. Is either a
+         CsmMoveResourceEnvelope type or a IO[bytes] type. Required.
+        :type move_resource_envelope: ~azure.mgmt.web.models.CsmMoveResourceEnvelope or
+         ~azure.mgmt.web.types.CsmMoveResourceEnvelope or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -81606,14 +82438,14 @@ class _WebSiteManagementClientOperationsMixin(
 
     @overload
     async def update_publishing_user(
-        self, user_details: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, user_details: _types.User, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.User:
         """Updates publishing user.
 
         Description for Updates publishing user.
 
         :param user_details: Details of publishing user. Required.
-        :type user_details: JSON
+        :type user_details: ~azure.mgmt.web.types.User
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -81642,15 +82474,15 @@ class _WebSiteManagementClientOperationsMixin(
 
     @distributed_trace_async
     async def update_publishing_user(
-        self, user_details: Union[_models.User, JSON, IO[bytes]], **kwargs: Any
+        self, user_details: Union[_models.User, _types.User, IO[bytes]], **kwargs: Any
     ) -> _models.User:
         """Updates publishing user.
 
         Description for Updates publishing user.
 
-        :param user_details: Details of publishing user. Is one of the following types: User, JSON,
-         IO[bytes] Required.
-        :type user_details: ~azure.mgmt.web.models.User or JSON or IO[bytes]
+        :param user_details: Details of publishing user. Is either a User type or a IO[bytes] type.
+         Required.
+        :type user_details: ~azure.mgmt.web.models.User or ~azure.mgmt.web.types.User or IO[bytes]
         :return: User. The User is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.User
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -81813,7 +82645,12 @@ class _WebSiteManagementClientOperationsMixin(
 
     @overload
     async def update_source_control(
-        self, source_control_type: str, request_message: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        source_control_type: str,
+        request_message: _types.SourceControl,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SourceControl:
         """Updates source control token.
 
@@ -81822,7 +82659,7 @@ class _WebSiteManagementClientOperationsMixin(
         :param source_control_type: Type of source control. Required.
         :type source_control_type: str
         :param request_message: Source control token information. Required.
-        :type request_message: JSON
+        :type request_message: ~azure.mgmt.web.types.SourceControl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -81858,7 +82695,10 @@ class _WebSiteManagementClientOperationsMixin(
 
     @distributed_trace_async
     async def update_source_control(
-        self, source_control_type: str, request_message: Union[_models.SourceControl, JSON, IO[bytes]], **kwargs: Any
+        self,
+        source_control_type: str,
+        request_message: Union[_models.SourceControl, _types.SourceControl, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SourceControl:
         """Updates source control token.
 
@@ -81866,9 +82706,10 @@ class _WebSiteManagementClientOperationsMixin(
 
         :param source_control_type: Type of source control. Required.
         :type source_control_type: str
-        :param request_message: Source control token information. Is one of the following types:
-         SourceControl, JSON, IO[bytes] Required.
-        :type request_message: ~azure.mgmt.web.models.SourceControl or JSON or IO[bytes]
+        :param request_message: Source control token information. Is either a SourceControl type or a
+         IO[bytes] type. Required.
+        :type request_message: ~azure.mgmt.web.models.SourceControl or
+         ~azure.mgmt.web.types.SourceControl or IO[bytes]
         :return: SourceControl. The SourceControl is compatible with MutableMapping
         :rtype: ~azure.mgmt.web.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -81987,7 +82828,10 @@ class _WebSiteManagementClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

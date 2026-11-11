@@ -24,6 +24,7 @@ from ._models import (  # type: ignore
     ErrorDetail,
     ErrorResponse,
     Frontend,
+    FrontendAssociation,
     FrontendProperties,
     FrontendUpdate,
     FrontendUpdateProperties,
@@ -32,6 +33,13 @@ from ._models import (  # type: ignore
     IpAccessRulesSecurityPolicy,
     Operation,
     OperationDisplay,
+    PrivateEndpointConnection,
+    PrivateEndpointConnectionProperties,
+    PrivateEndpointReference,
+    PrivateLinkResource,
+    PrivateLinkResourceProperties,
+    PrivateLinkServiceConnectionState,
+    ProxyResource,
     Resource,
     ResourceId,
     SecurityPolicy,
@@ -56,7 +64,9 @@ from ._enums import (  # type: ignore
     IpAccessRuleAction,
     Origin,
     PolicyType,
+    PrivateLinkServiceConnectionStatus,
     ProvisioningState,
+    PublicNetworkAccess,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -73,6 +83,7 @@ __all__ = [
     "ErrorDetail",
     "ErrorResponse",
     "Frontend",
+    "FrontendAssociation",
     "FrontendProperties",
     "FrontendUpdate",
     "FrontendUpdateProperties",
@@ -81,6 +92,13 @@ __all__ = [
     "IpAccessRulesSecurityPolicy",
     "Operation",
     "OperationDisplay",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionProperties",
+    "PrivateEndpointReference",
+    "PrivateLinkResource",
+    "PrivateLinkResourceProperties",
+    "PrivateLinkServiceConnectionState",
+    "ProxyResource",
     "Resource",
     "ResourceId",
     "SecurityPolicy",
@@ -102,7 +120,9 @@ __all__ = [
     "IpAccessRuleAction",
     "Origin",
     "PolicyType",
+    "PrivateLinkServiceConnectionStatus",
     "ProvisioningState",
+    "PublicNetworkAccess",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

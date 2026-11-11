@@ -9,7 +9,6 @@ import random
 from typing import (
     Any,
     Dict,
-    Mapping,
     Optional,
     Tuple,
 )
@@ -20,9 +19,6 @@ from ._constants import (
     JITTER_RATIO,
     STARTUP_BACKOFF_INTERVALS,
 )
-
-
-JSON = Mapping[str, Any]
 
 min_uptime = 5
 
@@ -47,7 +43,7 @@ def get_startup_backoff(elapsed_seconds: float, attempts: int) -> Tuple[float, b
 
     :param elapsed_seconds: The time elapsed since startup began, in seconds.
     :type elapsed_seconds: float
-    :param attempts: The number of retry attempts made (1-based).
+    :param attempts: The number of retry attempts made (0-based).
     :type attempts: int
     :return: A tuple where the first element is the backoff duration in seconds,
              and the second element indicates if the fixed backoff window has been exceeded.
@@ -194,18 +190,16 @@ def _calculate_backoff_duration(attempts: int) -> float:
     """
     attempts += 1
     if attempts < 1:
-        raise ValueError("Number of attempts must be at least 1.")
+        raise ValueError("Number of attempts must be at least 0.")
 
     if attempts == 1:
         return MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION
 
     # Calculate exponential backoff: min * 2^(attempts-1)
-    # Cap the shift amount to prevent overflow
     safe_shift = min(attempts - 1, 63)
     calculated = MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 << safe_shift)
 
     # Cap at max duration
-    if calculated > MAX_STARTUP_BACKOFF_DURATION or calculated <= 0:  # Check for overflow
-        calculated = MAX_STARTUP_BACKOFF_DURATION
+    calculated = min(calculated, MAX_STARTUP_BACKOFF_DURATION)
 
     return _jitter(calculated, JITTER_RATIO)

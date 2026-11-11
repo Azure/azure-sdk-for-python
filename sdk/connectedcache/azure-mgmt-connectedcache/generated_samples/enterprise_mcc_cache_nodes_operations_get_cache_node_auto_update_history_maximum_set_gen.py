@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-11-30-preview/EnterpriseMccCacheNodesOperations_GetCacheNodeAutoUpdateHistory_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/EnterpriseMccCacheNodesOperations_GetCacheNodeAutoUpdateHistory_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

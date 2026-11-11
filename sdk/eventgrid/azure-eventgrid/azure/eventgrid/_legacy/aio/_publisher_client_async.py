@@ -23,6 +23,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
     AsyncBearerTokenCredentialPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -115,6 +116,16 @@ class EventGridPublisherClient:
         credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> List[Any]:
         auth_policy = _get_authentication_policy(credential, AsyncBearerTokenCredentialPolicy)
+        # Merge any caller-supplied blocked redirect headers with the mandatory
+        # Event Grid credential headers, and remove the key from kwargs so it is
+        # not passed twice to SensitiveHeaderCleanupPolicy.
+        blocked_redirect_headers = [
+            "Authorization",
+            "x-ms-authorization-auxiliary",
+            "aeg-sas-key",
+            "aeg-sas-token",
+            *kwargs.pop("blocked_redirect_headers", []),
+        ]
         sdk_moniker = "eventgridpublisherclient/{}".format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),
@@ -125,6 +136,14 @@ class EventGridPublisherClient:
             AsyncRedirectPolicy(**kwargs),
             AsyncRetryPolicy(**kwargs),
             auth_policy,
+            # Strip credential headers on cross-host redirects to avoid leaking them to
+            # a redirect target. `SensitiveHeaderCleanupPolicy` already covers
+            # `Authorization` and `x-ms-authorization-auxiliary` by default; the Event
+            # Grid SAS headers (`aeg-sas-key`/`aeg-sas-token`) are added here as well.
+            SensitiveHeaderCleanupPolicy(
+                blocked_redirect_headers=blocked_redirect_headers,
+                **kwargs,
+            ),
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),

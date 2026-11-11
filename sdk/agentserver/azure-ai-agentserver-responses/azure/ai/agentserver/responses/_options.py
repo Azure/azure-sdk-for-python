@@ -19,10 +19,12 @@ class ResponsesServerOptions:
         *,
         additional_server_version: str | None = None,
         default_model: str | None = None,
-        default_fetch_history_count: int = 100,
+        default_fetch_history_count: int = -1,
         sse_keep_alive_interval_seconds: int | None = None,
         shutdown_grace_period_seconds: int = 10,
         create_span_hook: "CreateSpanHook | None" = None,
+        resilient_background: bool = False,
+        steerable_conversations: bool = False,
     ) -> None:
         if additional_server_version is not None:
             normalized = additional_server_version.strip()
@@ -38,8 +40,8 @@ class ResponsesServerOptions:
             raise ValueError("sse_keep_alive_interval_seconds must be > 0 when set")
         self.sse_keep_alive_interval_seconds = sse_keep_alive_interval_seconds
 
-        if default_fetch_history_count <= 0:
-            raise ValueError("default_fetch_history_count must be > 0")
+        if default_fetch_history_count != -1 and default_fetch_history_count <= 0:
+            raise ValueError("default_fetch_history_count must be -1 (unlimited) or > 0")
         self.default_fetch_history_count = default_fetch_history_count
 
         if shutdown_grace_period_seconds <= 0:
@@ -47,6 +49,24 @@ class ResponsesServerOptions:
         self.shutdown_grace_period_seconds = shutdown_grace_period_seconds
 
         self.create_span_hook = create_span_hook
+
+        # (Spec 024 Phase 5 — Proposal #5) ``store_disabled`` and
+        # ``max_pending`` options DELETED. The file-backed response
+        # provider is always available; per-conversation pending counts
+        # are controlled by the underlying task primitive (which does
+        # not expose a cap). ``replay_event_ttl_seconds`` is similarly
+        # framework-internal — the stream registry hardcodes a sensible
+        # default (10 minutes).
+        # (Spec 024 Phase 4 — Proposal #9) Composition guard relaxed:
+        # steerable_conversations and resilient_background are independent
+        # options. Pre-Phase-4 the framework rejected
+        # `steerable=True + resilient_bg=False`, assuming steering required
+        # resilience for background responses. That assumption was wrong:
+        # the chain extends across turns regardless of resilience, and
+        # the lock/queue semantics are independent of the recovery
+        # disposition. The guard is deleted.
+        self.resilient_background = resilient_background
+        self.steerable_conversations = steerable_conversations
 
     @classmethod
     def from_env(cls, environ: Mapping[str, str] | None = None) -> "ResponsesServerOptions":
@@ -69,19 +89,19 @@ class ResponsesServerOptions:
                     return normalized
             return None
 
-        def _parse_positive_int(*keys: str) -> int | None:
+        def _parse_history_limit(*keys: str) -> int | None:
             raw = _first_non_empty(*keys)
             if raw is None:
                 return None
             try:
                 value = int(raw)
             except ValueError as exc:
-                raise ValueError(f"{keys[0]} must be a positive integer") from exc
-            if value <= 0:
-                raise ValueError(f"{keys[0]} must be > 0")
+                raise ValueError(f"{keys[0]} must be -1 (unlimited) or a positive integer") from exc
+            if value != -1 and value <= 0:
+                raise ValueError(f"{keys[0]} must be -1 (unlimited) or > 0")
             return value
 
-        default_fetch_history_count = _parse_positive_int(
+        default_fetch_history_count = _parse_history_limit(
             "DEFAULT_FETCH_HISTORY_ITEM_COUNT",
         )
 

@@ -24,6 +24,7 @@
         "azure.mgmt.secretsstoreextension.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
         "azure.mgmt.secretsstoreextension.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
         "azure.mgmt.secretsstoreextension.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.secretsstoreextension.models.AzureCloudName": "Microsoft.SecretSyncController.AzureCloudName",
         "azure.mgmt.secretsstoreextension.models.ProvisioningState": "Microsoft.SecretSyncController.ProvisioningState",
         "azure.mgmt.secretsstoreextension.models.ExtendedLocationType": "Azure.ResourceManager.CommonTypes.ExtendedLocationType",
         "azure.mgmt.secretsstoreextension.models.KubernetesSecretType": "Microsoft.SecretSyncController.KubernetesSecretType",
@@ -54,5 +55,6 @@
         "azure.mgmt.secretsstoreextension.aio.operations.SecretSyncsOperations.list_by_resource_group": "Microsoft.SecretSyncController.SecretSyncs.listByResourceGroup",
         "azure.mgmt.secretsstoreextension.operations.SecretSyncsOperations.list_by_subscription": "Microsoft.SecretSyncController.SecretSyncs.listBySubscription",
         "azure.mgmt.secretsstoreextension.aio.operations.SecretSyncsOperations.list_by_subscription": "Microsoft.SecretSyncController.SecretSyncs.listBySubscription"
-    }
+    },
+    "CrossLanguageVersion": "06b6556d7bd6"
 }

@@ -33,6 +33,7 @@ For guidance on the samples README, visit the [sample guide](https://github.com/
 |[tracing/db_psycopg2.py][db_psycopg2] | Instrument the PsycoPG2 library |
 |[tracing/http_fastapi.py][http_fastapi] | Instrument a FastAPI app |
 |[tracing/http_flask.py][http_flask] | Instrument a Flask app |
+|[tracing/http_httpx.py][http_httpx] | Instrument the HTTPX library |
 |[tracing/http_requests.py][http_requests] | Instrument the Requests library |
 |[tracing/http_urllib.py][http_urllib] | Instrument the URLLib library |
 |[tracing/http_urllib3.py][http_urllib3] | Instrument the URLLib library |
@@ -83,6 +84,7 @@ To learn more, see the [Azure Monitor OpenTelemetry Distro documentation][distro
 [db_psycopg2]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/db_psycopg2.py
 [http_fastapi]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_fastapi.py
 [http_flask]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_flask.py
+[http_httpx]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_httpx.py
 [http_requests]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_requests.py
 [http_urllib]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_urllib.py
 [http_urllib3]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_urllib3.py

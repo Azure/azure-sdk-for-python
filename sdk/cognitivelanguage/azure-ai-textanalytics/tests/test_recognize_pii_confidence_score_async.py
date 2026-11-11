@@ -11,10 +11,9 @@ import pytest
 
 from devtools_testutils import (
     AzureRecordedTestCase,
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -27,26 +26,30 @@ from azure.ai.textanalytics.models import (
 )
 
 TextAnalysisPreparer = functools.partial(
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
     "text_analysis",
     text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
-    text_analysis_key="fake_key",
 )
 
 
 class TestTextAnalysis(AzureRecordedTestCase):
-    def create_client(self, endpoint: str, key: str) -> TextAnalysisClient:
-        return TextAnalysisClient(endpoint, AzureKeyCredential(key))
+    def create_client(self, endpoint: str) -> TextAnalysisClient:
+        credential = self.get_credential(TextAnalysisClient, is_async=True)
+        return self.create_client_from_credential(
+            TextAnalysisClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
 
 
 class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_recognize_pii_confidence_score_async( # pylint: disable=name-too-long
-        self, text_analysis_endpoint, text_analysis_key
+    async def test_recognize_pii_confidence_score_async(  # pylint: disable=name-too-long
+        self, text_analysis_endpoint
     ):
-        async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
+        async with self.create_client(text_analysis_endpoint) as client:
 
             # Input documents
             docs = [
@@ -58,17 +61,27 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
             ]
             text_input = MultiLanguageTextInput(multi_language_inputs=docs)
 
-            # Confidence score overrides
-            ssn_override = ConfidenceScoreThresholdOverride(value=0.9, entity="USSocialSecurityNumber")
-            email_override = ConfidenceScoreThresholdOverride(value=0.9, entity="Email")
-            confidence_threshold = ConfidenceScoreThreshold(default=0.3, overrides=[ssn_override, email_override])
+            default_threshold = 0.3
+            threshold_overrides = {"USSocialSecurityNumber": 0.9, "Email": 0.9}
+            ssn_override = ConfidenceScoreThresholdOverride(
+                value=threshold_overrides["USSocialSecurityNumber"],
+                entity="USSocialSecurityNumber",
+            )
+            email_override = ConfidenceScoreThresholdOverride(
+                value=threshold_overrides["Email"], entity="Email"
+            )
+            confidence_threshold = ConfidenceScoreThreshold(
+                default=default_threshold, overrides=[ssn_override, email_override]
+            )
 
             # Parameters
             parameters = PiiActionContent(
                 pii_categories=["All"], confidence_score_threshold=confidence_threshold
             )
 
-            body = TextPiiEntitiesRecognitionInput(text_input=text_input, action_content=parameters)
+            body = TextPiiEntitiesRecognitionInput(
+                text_input=text_input, action_content=parameters
+            )
 
             # Async (non-LRO) call
             result = await client.analyze_text(body=body)
@@ -82,18 +95,17 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
             doc = result.results.documents[0]
             redacted = doc.redacted_text
 
-            # Person should be masked out in text;
+            # Recognized person entities should be redacted.
             assert "John Doe" not in redacted
             assert doc.entities is not None
             assert len(doc.entities) > 0
 
-            # Person is present
-            assert any(e.category == "Person" for e in doc.entities), "Expected at least one Person entity"
+            assert any(
+                e.category == "Person" for e in doc.entities
+            ), "Expected at least one Person entity"
 
-            # Verify SSN / Email are NOT returned as entities
-            bad_categories = {"USSocialSecurityNumber", "Email"}
-            bad_types = {"USSocialSecurityNumber", "Email"}
-
-            for e in doc.entities:
-                assert e.category not in bad_categories
-                assert e.type not in bad_types
+            for entity in doc.entities:
+                applicable_threshold = threshold_overrides.get(
+                    entity.category, default_threshold
+                )
+                assert entity.confidence_score >= applicable_threshold

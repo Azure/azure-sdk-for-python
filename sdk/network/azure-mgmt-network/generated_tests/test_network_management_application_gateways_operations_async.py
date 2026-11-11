@@ -26,7 +26,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
         response = await self.client.application_gateways.get(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -51,6 +51,63 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                     "location": "str",
                     "name": "str",
                     "properties": {
+                        "advancedRoutingConditionSets": [
+                            {
+                                "etag": "str",
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "routingConditions": [
+                                        {
+                                            "conditionType": "str",
+                                            "propertyName": "str",
+                                            "propertyValueMatcher": {
+                                                "pattern": "str",
+                                                "ignoreCase": bool,
+                                                "negate": bool,
+                                            },
+                                            "propertyValues": ["str"],
+                                        }
+                                    ],
+                                    "provisioningState": "str",
+                                },
+                                "type": "str",
+                            }
+                        ],
+                        "advancedRoutingMaps": [
+                            {
+                                "etag": "str",
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "advancedRoutingRules": [
+                                        {
+                                            "etag": "str",
+                                            "id": "str",
+                                            "name": "str",
+                                            "properties": {
+                                                "priority": 0,
+                                                "advancedRoutingConditionSet": {"id": "str"},
+                                                "authConfigs": [{"authenticationPolicy": {"id": "str"}, "name": "str"}],
+                                                "backendAddressPool": {"id": "str"},
+                                                "backendHttpSettings": {"id": "str"},
+                                                "provisioningState": "str",
+                                                "redirectConfiguration": {"id": "str"},
+                                                "rewriteRuleSet": {"id": "str"},
+                                            },
+                                            "type": "str",
+                                        }
+                                    ],
+                                    "defaultAuthConfigs": [{"authenticationPolicy": {"id": "str"}, "name": "str"}],
+                                    "defaultBackendAddressPool": {"id": "str"},
+                                    "defaultBackendHttpSettings": {"id": "str"},
+                                    "defaultRedirectConfiguration": {"id": "str"},
+                                    "defaultRewriteRuleSet": {"id": "str"},
+                                    "provisioningState": "str",
+                                },
+                                "type": "str",
+                            }
+                        ],
                         "authenticationCertificates": [
                             {
                                 "etag": "str",
@@ -467,6 +524,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -491,6 +551,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -559,6 +622,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                         "id": "str"
                                                                                                                     }
                                                                                                                 },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -663,6 +727,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "approvalReference": {
+                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                    },
                                                                                                                                     "groupIds": [
                                                                                                                                         "str"
                                                                                                                                     ],
@@ -687,6 +754,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "approvalReference": {
+                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                    },
                                                                                                                                     "groupIds": [
                                                                                                                                         "str"
                                                                                                                                     ],
@@ -756,6 +826,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                 "id": "str"
                                                                                                                             }
                                                                                                                         },
+                                                                                                                        "enableConnectionTracking": bool,
                                                                                                                         "gatewayLoadBalancer": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -943,6 +1014,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1245,6 +1319,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                             "id": "str"
                                                                                                                         }
                                                                                                                     },
+                                                                                                                    "enableConnectionTracking": bool,
                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -1343,6 +1418,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                     "id": "str"
                                                                                                                                 }
                                                                                                                             },
+                                                                                                                            "enableConnectionTracking": bool,
                                                                                                                             "gatewayLoadBalancer": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -1414,6 +1490,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1551,7 +1630,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                 },
                                                             },
                                                         },
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -1583,6 +1668,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -1670,7 +1756,11 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                             "ipAddress": "str",
                                                                             "ipConfiguration": ...,
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -1711,6 +1801,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -1915,6 +2006,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1935,6 +2029,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1999,6 +2096,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                         "id": "str"
                                                                                                     }
                                                                                                 },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2060,6 +2158,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                         },
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -2127,6 +2226,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -2210,6 +2310,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -2234,6 +2337,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -2301,6 +2407,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "id": "str"
                                                                                                             }
                                                                                                         },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -2370,6 +2477,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 },
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -2437,6 +2545,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -2587,6 +2696,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -2867,6 +2979,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             "id": "str"
                                                                                                         }
                                                                                                     },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -2928,6 +3041,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -2995,6 +3109,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -3070,6 +3185,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                     "id": "str"
                                                                                                                 }
                                                                                                             },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -3139,6 +3255,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -3206,6 +3323,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -3258,6 +3376,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -3398,6 +3519,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                    "enableConnectionTracking": bool,
                                                                     "gatewayLoadBalancer": {"id": "str"},
                                                                     "inboundNatPools": [{"id": "str"}],
                                                                     "inboundNatRules": [{"id": "str"}],
@@ -3722,6 +3844,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "approvalReference": {
+                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                    },
                                                                                                                                     "groupIds": [
                                                                                                                                         "str"
                                                                                                                                     ],
@@ -3746,6 +3871,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "approvalReference": {
+                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                    },
                                                                                                                                     "groupIds": [
                                                                                                                                         "str"
                                                                                                                                     ],
@@ -3875,6 +4003,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                                     "id": "str",
                                                                                                                                                     "name": "str",
                                                                                                                                                     "properties": {
+                                                                                                                                                        "approvalReference": {
+                                                                                                                                                            "privateEndpointId": "str"
+                                                                                                                                                        },
                                                                                                                                                         "groupIds": [
                                                                                                                                                             "str"
                                                                                                                                                         ],
@@ -3899,6 +4030,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                                     "id": "str",
                                                                                                                                                     "name": "str",
                                                                                                                                                     "properties": {
+                                                                                                                                                        "approvalReference": {
+                                                                                                                                                            "privateEndpointId": "str"
+                                                                                                                                                        },
                                                                                                                                                         "groupIds": [
                                                                                                                                                             "str"
                                                                                                                                                         ],
@@ -4099,6 +4233,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -4461,6 +4598,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -4615,7 +4755,11 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -4656,6 +4800,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -4749,6 +4894,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 "ipConfiguration": ...,
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -4814,6 +4960,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -5050,6 +5197,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -5074,6 +5224,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -5203,6 +5356,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                     "id": "str",
                                                                                                                                     "name": "str",
                                                                                                                                     "properties": {
+                                                                                                                                        "approvalReference": {
+                                                                                                                                            "privateEndpointId": "str"
+                                                                                                                                        },
                                                                                                                                         "groupIds": [
                                                                                                                                             "str"
                                                                                                                                         ],
@@ -5227,6 +5383,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                                     "id": "str",
                                                                                                                                     "name": "str",
                                                                                                                                     "properties": {
+                                                                                                                                        "approvalReference": {
+                                                                                                                                            "privateEndpointId": "str"
+                                                                                                                                        },
                                                                                                                                         "groupIds": [
                                                                                                                                             "str"
                                                                                                                                         ],
@@ -5421,6 +5580,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -5779,6 +5941,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -6049,7 +6214,11 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                 "type": "str",
                             }
                         ],
-                        "globalConfiguration": {"enableRequestBuffering": bool, "enableResponseBuffering": bool},
+                        "globalConfiguration": {
+                            "disableDefaultServerHeaderInResponse": bool,
+                            "enableRequestBuffering": bool,
+                            "enableResponseBuffering": bool,
+                        },
                         "httpListeners": [
                             {
                                 "etag": "str",
@@ -6157,6 +6326,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                     "id": "str",
                                                     "name": "str",
                                                     "properties": {
+                                                        "approvalReference": {"privateEndpointId": "str"},
                                                         "groupIds": ["str"],
                                                         "privateLinkServiceConnectionState": {
                                                             "actionsRequired": "str",
@@ -6742,7 +6912,11 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -6783,6 +6957,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -6875,6 +7050,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 "ipConfiguration": ...,
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -6940,6 +7116,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -7285,6 +7462,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -7751,6 +7929,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -7816,6 +7995,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -7920,6 +8100,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                     "ipConfiguration": ...,
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -7987,6 +8168,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -8627,6 +8809,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 "ipConfiguration": ...,
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -8692,6 +8875,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -8949,6 +9133,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                         "ipConfiguration": ...,
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -9016,6 +9201,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -9365,6 +9551,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -9819,6 +10006,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -9866,6 +10054,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -9959,6 +10148,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                         "ipConfiguration": ...,
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -10026,6 +10216,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -10418,6 +10609,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -10878,6 +11070,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -10929,6 +11122,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -11031,6 +11225,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "ipConfiguration": ...,
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -11098,6 +11293,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -12048,6 +12244,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -12099,6 +12296,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -12200,6 +12398,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "ipConfiguration": ...,
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -12267,6 +12466,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -12649,6 +12849,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                     "id": "str",
                                                     "name": "str",
                                                     "properties": {
+                                                        "approvalReference": {"privateEndpointId": "str"},
                                                         "groupIds": ["str"],
                                                         "privateLinkServiceConnectionState": {
                                                             "actionsRequired": "str",
@@ -12737,7 +12938,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                         "idleTimeoutInMinutes": 0,
                                                                         "ipAddress": "str",
                                                                         "ipConfiguration": ...,
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -12769,6 +12976,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -13100,6 +13308,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -13151,6 +13360,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -13178,6 +13388,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 "id": "str"
                                                                                                             }
                                                                                                         },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -13247,6 +13458,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 },
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -13314,6 +13526,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -13411,6 +13624,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                     "id": "str"
                                                                                                 }
                                                                                             },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -13472,6 +13686,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -13539,6 +13754,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -13610,6 +13826,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             "id": "str"
                                                                                                         }
                                                                                                     },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -13671,6 +13888,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -13738,6 +13956,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -13958,6 +14177,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -14025,6 +14245,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -14323,6 +14544,8 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                 "id": "str",
                                 "name": "str",
                                 "properties": {
+                                    "advancedRoutingMap": {"id": "str"},
+                                    "authConfigs": [{"authenticationPolicy": {"id": "str"}, "name": "str"}],
                                     "backendAddressPool": {"id": "str"},
                                     "backendHttpSettings": {"id": "str"},
                                     "entraJWTValidationConfig": {"id": "str"},
@@ -14338,6 +14561,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                 "type": "str",
                             }
                         ],
+                        "reservedCapacity": 0,
                         "resourceGuid": "str",
                         "rewriteRuleSets": [
                             {
@@ -14530,7 +14754,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14544,7 +14768,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -14557,7 +14781,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             await self.client.application_gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14569,7 +14793,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     async def test_application_gateways_list(self, resource_group):
         response = self.client.application_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -14579,7 +14803,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_application_gateways_list_all(self, resource_group):
         response = self.client.application_gateways.list_all(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -14592,7 +14816,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             await self.client.application_gateways.begin_start(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14606,7 +14830,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             await self.client.application_gateways.begin_stop(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14620,7 +14844,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             await self.client.application_gateways.begin_backend_health(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14645,7 +14869,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                     "protocol": "str",
                     "timeout": 0,
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14656,7 +14880,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_ssl_options(self, resource_group):
         response = await self.client.application_gateways.list_available_ssl_options(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -14666,7 +14890,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_ssl_predefined_policies(self, resource_group):
         response = self.client.application_gateways.list_available_ssl_predefined_policies(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -14677,7 +14901,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     async def test_application_gateways_get_ssl_predefined_policy(self, resource_group):
         response = await self.client.application_gateways.get_ssl_predefined_policy(
             predefined_policy_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -14687,7 +14911,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_server_variables(self, resource_group):
         response = await self.client.application_gateways.list_available_server_variables(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -14697,7 +14921,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_request_headers(self, resource_group):
         response = await self.client.application_gateways.list_available_request_headers(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -14707,7 +14931,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_response_headers(self, resource_group):
         response = await self.client.application_gateways.list_available_response_headers(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -14717,7 +14941,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_waf_rule_sets(self, resource_group):
         response = await self.client.application_gateways.list_available_waf_rule_sets(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

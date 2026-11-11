@@ -4,11 +4,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+
 import pytest
-import platform
+
 from azure.core.rest import HttpRequest
-import aiohttp
-from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 
 # flask returns these response headers, which we don't really need for these following tests
 RESPONSE_HEADERS_TO_IGNORE = [
@@ -129,7 +128,7 @@ async def test_headers_response_items_mutability(get_response_headers):
 @pytest.mark.asyncio
 async def test_header_mutations(get_response_headers):
     h = await get_response_headers(HttpRequest("GET", "/headers/empty"))
-    assert dict(h) == {}
+    assert not dict(h)
     h["a"] = "1"
     assert dict(h) == {"a": "1"}
     h["a"] = "2"

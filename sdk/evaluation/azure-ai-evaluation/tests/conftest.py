@@ -210,6 +210,7 @@ def add_sanitizers(
 
         # removes some headers since they are causing some unnecessary mismatches in recordings
         headers_to_ignore = [
+            "accept-encoding",
             "ms-azure-ai-promptflow",
             "ms-azure-ai-promptflow-called-from",
             "x-ms-useragent",

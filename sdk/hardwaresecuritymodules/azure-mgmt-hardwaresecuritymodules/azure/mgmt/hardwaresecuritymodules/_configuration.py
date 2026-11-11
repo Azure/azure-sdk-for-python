@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
@@ -14,10 +15,11 @@ from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLo
 from ._version import VERSION
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class HardwareSecurityModulesMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class HardwareSecurityModulesMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long,docstring-keyword-should-match-keyword-only
     """Configuration for HardwareSecurityModulesMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,8 +31,13 @@ class HardwareSecurityModulesMgmtClientConfiguration:  # pylint: disable=too-man
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2025-03-31".
-     Note that overriding this default value may result in unsupported behavior.
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :type cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2025-12-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -39,9 +46,10 @@ class HardwareSecurityModulesMgmtClientConfiguration:  # pylint: disable=too-man
         credential: "TokenCredential",
         subscription_id: str,
         base_url: str = "https://management.azure.com",
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-03-31")
+        api_version: str = kwargs.pop("api_version", "2025-12-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -51,6 +59,7 @@ class HardwareSecurityModulesMgmtClientConfiguration:  # pylint: disable=too-man
         self.credential = credential
         self.subscription_id = subscription_id
         self.base_url = base_url
+        self.cloud_setting = cloud_setting
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-hardwaresecuritymodules/{}".format(VERSION))

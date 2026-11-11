@@ -195,6 +195,15 @@ class ContainerAppRunningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Container App Job is in Ready state."""
 
 
+class ContainerAppsFunctionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of a Container App function."""
+
+    ENABLED = "Enabled"
+    """The function is enabled."""
+    DISABLED = "Disabled"
+    """The function is disabled."""
+
+
 class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The container type of the sessions. You can use your own container to build the session pool,
     or you can use a predefined container to run workload with specific language.
@@ -252,6 +261,28 @@ class DnsVerificationTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Failed."""
     SKIPPED = "Skipped"
     """Skipped."""
+
+
+class DotNetComponentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the .NET Component."""
+
+    SUCCEEDED = "Succeeded"
+    """The .NET component was provisioned successfully."""
+    FAILED = "Failed"
+    """The .NET component failed to provision."""
+    CANCELED = "Canceled"
+    """Provisioning of the .NET component was canceled."""
+    DELETING = "Deleting"
+    """The .NET component is being deleted."""
+    IN_PROGRESS = "InProgress"
+    """The .NET component is being provisioned."""
+
+
+class DotNetComponentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the .NET Component."""
+
+    ASPIRE_DASHBOARD = "AspireDashboard"
+    """An Aspire dashboard component."""
 
 
 class EnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -418,6 +449,17 @@ class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Deleting."""
 
 
+class JobRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current running state of the job."""
+
+    READY = "Ready"
+    """The job is ready to run."""
+    PROGRESSING = "Progressing"
+    """The job is transitioning to its target state."""
+    SUSPENDED = "Suspended"
+    """The job is suspended."""
+
+
 class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Metadata to represent the container app kind, representing if a container app is workflowapp or
     functionapp.
@@ -464,6 +506,19 @@ class ManagedCertificateDomainControlValidation(  # pylint: disable=name-too-lon
     """HTTP."""
     TXT = "TXT"
     """TXT."""
+
+
+class ManagedEnvironmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mode of the managed environment."""
+
+    CONSUMPTION_ONLY = "ConsumptionOnly"
+    """The environment supports consumption-only workloads."""
+    WORKLOAD_PROFILES = "WorkloadProfiles"
+    """The environment supports workload profiles."""
+    EXPRESS = "Express"
+    """The environment uses the Express mode."""
+    ARCHIVED = "Archived"
+    """The environment is archived."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -576,6 +631,23 @@ class RevisionRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unknown."""
 
 
+class SandboxGroupProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the SandboxGroup."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    IN_PROGRESS = "InProgress"
+    """The resource is being provisioned."""
+    UPDATING = "Updating"
+    """The resource is being updated."""
+    DELETING = "Deleting"
+    """The resource is being deleted."""
+
+
 class Scheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheme to use for connecting to the host. Defaults to HTTP."""
 
@@ -620,6 +692,18 @@ class SessionPoolProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Deleting."""
 
 
+class SessionProbeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Denotes the type of probe. Can be Liveness or Startup, Readiness probe is not supported in
+    sessions. Type must be unique for each probe within the context of a list of probes
+    (SessionProbes).
+    """
+
+    LIVENESS = "Liveness"
+    """Checks whether the session is still running and healthy."""
+    STARTUP = "Startup"
+    """Checks whether the session has started successfully."""
+
+
 class SourceControlOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current provisioning State of the operation."""
 
@@ -631,6 +715,17 @@ class SourceControlOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Failed."""
     CANCELED = "Canceled"
     """Canceled."""
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the label history record."""
+
+    SUCCEEDED = "Succeeded"
+    """The label operation completed successfully."""
+    FAILED = "Failed"
+    """The label operation failed."""
+    STARTING = "Starting"
+    """The label operation is starting."""
 
 
 class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -679,6 +774,23 @@ class UnauthenticatedClientActionV2(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Return401."""
     RETURN403 = "Return403"
     """Return403."""
+
+
+class VnetConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the VnetConnection."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    IN_PROGRESS = "InProgress"
+    """The resource is being provisioned."""
+    UPDATING = "Updating"
+    """The resource is being updated."""
+    DELETING = "Deleting"
+    """The resource is being deleted."""
 
 
 class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):

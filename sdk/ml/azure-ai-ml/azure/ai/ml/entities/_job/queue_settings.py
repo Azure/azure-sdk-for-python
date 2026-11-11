@@ -5,12 +5,17 @@
 import logging
 from typing import Any, Dict, Optional, Union
 
-from ..._restclient.v2023_04_01_preview.models import QueueSettings as RestQueueSettings
+from ..._restclient.arm_ml_service.models import QueueSettings as RestQueueSettings
 from ..._utils._experimental import experimental
 from ..._utils.utils import is_data_binding_expression
 from ...constants._job.job import JobPriorityValues, JobTierNames
 from ...entities._mixins import DictMixin, RestTranslatableMixin
-from ...exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from ...exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -45,21 +50,40 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
         self._validate()
         job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier.lower(), None) if self.job_tier else None
         priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority.lower(), None) if self.priority else None
-        return RestQueueSettings(job_tier=job_tier, priority=priority)
+        rest_obj = RestQueueSettings(job_tier=job_tier)
+        # The shared arm_ml_service QueueSettings model dropped ``priority`` from its constructor; the legacy
+        # msrest model carried it (as an int) on the wire, so preserve it as an unknown wire key.
+        if priority is not None:
+            rest_obj["priority"] = priority
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: Union[Dict[str, Any], RestQueueSettings, None]) -> Optional["QueueSettings"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
-            queue_settings = RestQueueSettings.from_dict(obj)
+            # Pipeline node rest objects are snake_case dicts (``job_tier``) while arm job responses use the
+            # camelCase wire key (``jobTier``). Normalize so ``RestQueueSettings._deserialize`` (which reads the
+            # camelCase wire key) picks up the value regardless of which form the caller passes.
+            if "job_tier" in obj and "jobTier" not in obj:
+                obj = {**obj, "jobTier": obj["job_tier"]}
+            queue_settings = RestQueueSettings._deserialize(obj, [])  # pylint: disable=protected-access
             return cls._from_rest_object(queue_settings)
         job_tier = JobTierNames.REST_TO_ENTITY.get(obj.job_tier, None) if obj.job_tier else None
-        priority = JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None) if hasattr(obj, "priority") else None
+        # ``priority`` is an unknown wire key on the arm hybrid (a MutableMapping); read it via mapping
+        # access when present, else fall back to attribute access for legacy msrest objects.
+        if getattr(obj, "_is_model", False) is True:
+            rest_priority = obj.get("priority")
+        else:
+            rest_priority = obj.priority if hasattr(obj, "priority") else None
+        priority = JobPriorityValues.REST_TO_ENTITY.get(rest_priority, None) if rest_priority else None
         return cls(job_tier=job_tier, priority=priority)
 
     def _validate(self) -> None:
-        for key, enum_class in [("job_tier", JobTierNames), ("priority", JobPriorityValues)]:
+        for key, enum_class in [
+            ("job_tier", JobTierNames),
+            ("priority", JobPriorityValues),
+        ]:
             value = getattr(self, key)
             if is_data_binding_expression(value):
                 msg = (

@@ -1,0 +1,38 @@
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
+import:
+  - ../../.vscode/cspell.json
+words:
+  - byoa
+  - cacerts
+  - DBFS
+  - Eloqua
+  - ename
+  - evalue
+  - hcatalog
+  - Hdfs
+  - ilearner
+  - Informix
+  - Magento
+  - MetastoreUpdation
+  - mktorest
+  - myshopify
+  - mysquare
+  - nbformat
+  - Netezza
+  - Odbc
+  - ondemand
+  - oozie
+  - paramref
+  - pyspark
+  - Responsys
+  - SASL
+  - SSISDB
+  - Sybase
+  - Syms
+  - Twilio
+  - Updation
+  - USQL
+  - Vertica
+  - WTGCTBG
+  - Xero

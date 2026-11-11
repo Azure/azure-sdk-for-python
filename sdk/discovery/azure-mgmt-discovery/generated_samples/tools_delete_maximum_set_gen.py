@@ -32,10 +32,10 @@ def main():
 
     client.tools.begin_delete(
         resource_group_name="rgdiscovery",
-        tool_name="d0e8e07484db1bb9a9",
+        tool_name="f127c90bef940264e3",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/Tools_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Tools_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

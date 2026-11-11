@@ -107,6 +107,8 @@ class TestStatsbeatConfig(unittest.TestCase):
             self.assertEqual(config.endpoint, "https://westus-1.in.applicationinsights.azure.com/")
             self.assertEqual(config.region, "westus")
             self.assertEqual(config.instrumentation_key, "test-key")
+            # config.disable_offline_storage mirrors the user's setting (used only for DISK_RETRY
+            # reporting); statsbeat's own exporter never persists to disk regardless (see _do_initialize).
             self.assertTrue(config.disable_offline_storage)
             self.assertIsNotNone(config.credential)
             self.assertEqual(config.distro_version, "1.0.0")
@@ -153,11 +155,13 @@ class TestStatsbeatConfig(unittest.TestCase):
             region="westus",
             instrumentation_key="test-key",
             credential="test_credential",
-            disable_offline_storage=False,
+            disable_offline_storage=True,
             distro_version="1.0.0",
         )
 
-        config_dict = {"disable_offline_storage": "true"}
+        # A conflicting value in the dict must be ignored: the customer's setting is preserved from
+        # base_config, and statsbeat's own storage is never controlled by OneSettings.
+        config_dict = {"disable_offline_storage": "false"}
 
         new_config = StatsbeatConfig.from_config(base_config, config_dict)
 
@@ -749,7 +753,7 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertEqual(self.manager._config, config_mock)
         mock_meter_provider.shutdown.assert_called_once()
 
-    def _initialize_routing(self):
+    def _initialize_routing(self, disable_offline_storage=True):
         patches = (
             patch.dict(
                 os.environ,
@@ -787,10 +791,17 @@ class TestStatsbeatManager(unittest.TestCase):
             endpoint="https://dc.services.visualstudio.com",
             region=None,
             instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab",
-            disable_offline_storage=True,
+            disable_offline_storage=disable_offline_storage,
         )
         self.assertTrue(self.manager.initialize(config))
         return mocked
+
+    def test_redirect_keeps_statsbeat_storage_disabled(self):
+        self._initialize_routing(disable_offline_storage=False)
+        self.manager._update_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
+        self.assertFalse(self.manager.get_current_config().disable_offline_storage)
+        self.assertTrue(self.manager._exporter._exporter._disable_offline_storage)
+        self.assertIsNone(self.manager._exporter._exporter.storage)
 
     def test_redirect_preserves_collection_and_routes_all_metrics_to_eu(self):
         track = self._initialize_routing()

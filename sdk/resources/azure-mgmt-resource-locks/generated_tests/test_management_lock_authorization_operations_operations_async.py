@@ -23,7 +23,7 @@ class TestManagementLockAuthorizationOperationsOperationsAsync(AzureMgmtRecorded
     @recorded_by_proxy_async
     async def test_authorization_operations_list(self, resource_group):
         response = self.client.authorization_operations.list(
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -22,7 +22,6 @@ from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AccessPolicyAssignmentOperations,
     DatabasesOperations,
-    MigrationOperations,
     MigrationsOperations,
     Operations,
     OperationsStatusOperations,
@@ -61,8 +60,6 @@ class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attr
     :ivar access_policy_assignment: AccessPolicyAssignmentOperations operations
     :vartype access_policy_assignment:
      azure.mgmt.redisenterprise.operations.AccessPolicyAssignmentOperations
-    :ivar migration: MigrationOperations operations
-    :vartype migration: azure.mgmt.redisenterprise.operations.MigrationOperations
     :ivar operations_status: OperationsStatusOperations operations
     :vartype operations_status: azure.mgmt.redisenterprise.operations.OperationsStatusOperations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -75,7 +72,7 @@ class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attr
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-02-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-06-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -145,7 +142,6 @@ class RedisEnterpriseManagementClient:  # pylint: disable=too-many-instance-attr
         self.access_policy_assignment = AccessPolicyAssignmentOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.migration = MigrationOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations_status = OperationsStatusOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

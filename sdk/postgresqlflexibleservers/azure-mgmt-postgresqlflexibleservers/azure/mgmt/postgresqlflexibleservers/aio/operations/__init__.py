@@ -23,6 +23,7 @@ from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import VirtualEndpointsOperations  # type: ignore
 from ._operations import MaintenanceEventsOperations  # type: ignore
 from ._operations import MajorVersionUpgradePrecheckOperations  # type: ignore
+from ._operations import DbAgentsOperations  # type: ignore
 from ._operations import AdministratorsMicrosoftEntraOperations  # type: ignore
 from ._operations import CapabilitiesByServerOperations  # type: ignore
 from ._operations import CapturedLogsOperations  # type: ignore
@@ -54,6 +55,7 @@ __all__ = [
     "VirtualEndpointsOperations",
     "MaintenanceEventsOperations",
     "MajorVersionUpgradePrecheckOperations",
+    "DbAgentsOperations",
     "AdministratorsMicrosoftEntraOperations",
     "CapabilitiesByServerOperations",
     "CapturedLogsOperations",

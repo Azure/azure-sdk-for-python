@@ -34,7 +34,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -75,7 +75,6 @@ from .._configuration import ConsumptionManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -621,7 +620,13 @@ class BudgetsOperations:
 
     @overload
     async def create_or_update(
-        self, scope: str, budget_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope: str,
+        budget_name: str,
+        parameters: _types.Budget,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Budget:
         """The operation to create or update a budget. You can optionally provide an eTag if desired as a
         form of concurrency control. To obtain the latest eTag for a given budget, perform a get
@@ -632,7 +637,7 @@ class BudgetsOperations:
         :param budget_name: Budget Name. Required.
         :type budget_name: str
         :param parameters: Parameters supplied to the Create Budget operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.consumption.types.Budget
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -671,7 +676,7 @@ class BudgetsOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, scope: str, budget_name: str, parameters: Union[_models.Budget, JSON, IO[bytes]], **kwargs: Any
+        self, scope: str, budget_name: str, parameters: Union[_models.Budget, _types.Budget, IO[bytes]], **kwargs: Any
     ) -> _models.Budget:
         """The operation to create or update a budget. You can optionally provide an eTag if desired as a
         form of concurrency control. To obtain the latest eTag for a given budget, perform a get
@@ -681,9 +686,10 @@ class BudgetsOperations:
         :type scope: str
         :param budget_name: Budget Name. Required.
         :type budget_name: str
-        :param parameters: Parameters supplied to the Create Budget operation. Is one of the following
-         types: Budget, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.consumption.models.Budget or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Create Budget operation. Is either a Budget type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.consumption.models.Budget or ~azure.mgmt.consumption.types.Budget
+         or IO[bytes]
         :return: Budget. The Budget is compatible with MutableMapping
         :rtype: ~azure.mgmt.consumption.models.Budget
         :raises ~azure.core.exceptions.HttpResponseError:

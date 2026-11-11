@@ -49,9 +49,12 @@ class TestPureStorageBlockMgmtReservationsOperations(AzureMgmtRecordedTestCase):
                             "termId": "str",
                             "termUnit": "str",
                         },
+                        "saaSResourceId": "str",
                         "subscriptionId": "str",
                         "subscriptionStatus": "str",
                     },
+                    "provisioningState": "str",
+                    "reservationInternalId": "str",
                     "user": {
                         "emailAddress": "str",
                         "firstName": "str",
@@ -70,8 +73,6 @@ class TestPureStorageBlockMgmtReservationsOperations(AzureMgmtRecordedTestCase):
                         "phoneNumber": "str",
                         "upn": "str",
                     },
-                    "provisioningState": "str",
-                    "reservationInternalId": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -178,6 +179,29 @@ class TestPureStorageBlockMgmtReservationsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_reservations_get_billing_report(self, resource_group):
         response = self.client.reservations.get_billing_report(
+            resource_group_name=resource_group.name,
+            reservation_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_reservations_begin_link_saa_s(self, resource_group):
+        response = self.client.reservations.begin_link_saa_s(
+            resource_group_name=resource_group.name,
+            reservation_name="str",
+            body={"saaSResourceId": "str"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_reservations_latest_linked_saa_s(self, resource_group):
+        response = self.client.reservations.latest_linked_saa_s(
             resource_group_name=resource_group.name,
             reservation_name="str",
         )

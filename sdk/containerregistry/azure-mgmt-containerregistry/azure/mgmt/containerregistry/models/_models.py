@@ -30,7 +30,7 @@ class ActivationProperties(_Model):
     """The activation status of the connected registry. Known values are: \"Active\" and \"Inactive\"."""
 
 
-class Actor(_Model):
+class Actor(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The agent that initiated the event. For most situations, this could be from the authorization
     context of the request.
 
@@ -60,7 +60,7 @@ class Actor(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdditionalAuthenticationProperties(_Model):
+class AdditionalAuthenticationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication configuration used by a cache rule to access an upstream registry.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -141,7 +141,7 @@ class ProxyResource(Resource):
     """
 
 
-class Archive(ProxyResource):
+class Archive(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a archive for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -208,7 +208,7 @@ class Archive(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ArchivePackageSourceProperties(_Model):
+class ArchivePackageSourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the archive package source.
 
     :ivar type: The type of package source for a archive. "remote"
@@ -243,7 +243,7 @@ class ArchivePackageSourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArchiveProperties(_Model):
+class ArchiveProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a archive.
 
     :ivar package_source: The package source of the archive.
@@ -298,7 +298,7 @@ class ArchiveProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArchiveUpdateParameters(_Model):
+class ArchiveUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating a archive.
 
     :ivar properties: The properties of the connected registry update parameters.
@@ -348,7 +348,7 @@ class ArchiveUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ArchiveUpdateProperties(_Model):
+class ArchiveUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a archive.
 
     :ivar published_version: The published version of the archive.
@@ -378,7 +378,7 @@ class ArchiveUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArchiveVersion(ProxyResource):
+class ArchiveVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents an export pipeline for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -439,7 +439,7 @@ class ArchiveVersion(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ArchiveVersionProperties(_Model):
+class ArchiveVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an archive version.
 
     :ivar provisioning_state: The provisioning state of the archive at the time the operation was
@@ -479,7 +479,7 @@ class ArchiveVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthCredential(_Model):
+class AuthCredential(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication credential stored for an upstream.
 
     :ivar name: The name of the credential. "Credential1"
@@ -527,7 +527,7 @@ class AuthCredential(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureADAuthenticationAsArmPolicy(_Model):
+class AzureADAuthenticationAsArmPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy for using Azure Resource Manager audience token for a container registry.
 
     :ivar status: The value that indicates whether the policy is enabled or not. Known values are:
@@ -560,7 +560,7 @@ class AzureADAuthenticationAsArmPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CacheRule(ProxyResource):
+class CacheRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a cache rule for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -635,7 +635,7 @@ class CacheRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CacheRuleProperties(_Model):
+class CacheRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a cache rule.
 
     :ivar credential_set_resource_id: The ARM resource ID of the credential store which is
@@ -703,7 +703,7 @@ class CacheRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CacheRuleUpdateParameters(_Model):
+class CacheRuleUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating a cache rule.
 
     :ivar properties: The properties of the cache rule update parameters.
@@ -760,7 +760,7 @@ class CacheRuleUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CacheRuleUpdateProperties(_Model):
+class CacheRuleUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating cache rule properties.
 
     :ivar credential_set_resource_id: The ARM resource ID of the credential store which is
@@ -800,7 +800,7 @@ class CacheRuleUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CallbackConfig(_Model):
+class CallbackConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration of service URI and custom headers for the webhook.
 
     :ivar service_uri: The service URI for the webhook to post notifications. Required.
@@ -835,7 +835,7 @@ class CallbackConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedRegistry(ProxyResource):
+class ConnectedRegistry(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a connected registry for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -851,12 +851,21 @@ class ConnectedRegistry(ProxyResource):
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar properties: The properties of the connected registry.
     :vartype properties: ~azure.mgmt.containerregistry.models.ConnectedRegistryProperties
+    :ivar identity: The user-assigned managed identity used by the on-prem connected registry to
+     authenticate with the cloud registry for sync operations. Requires authType to be
+     ManagedIdentity.
+    :vartype identity: ~azure.mgmt.containerregistry.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.ConnectedRegistryProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of the connected registry."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user-assigned managed identity used by the on-prem connected registry to authenticate with
+     the cloud registry for sync operations. Requires authType to be ManagedIdentity."""
 
     __flattened_items = [
         "provisioning_state",
@@ -880,6 +889,7 @@ class ConnectedRegistry(ProxyResource):
         self,
         *,
         properties: Optional["_models.ConnectedRegistryProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -911,7 +921,7 @@ class ConnectedRegistry(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ConnectedRegistryProperties(_Model):
+class ConnectedRegistryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a connected registry.
 
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Creating",
@@ -1029,17 +1039,25 @@ class ConnectedRegistryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedRegistryUpdateParameters(_Model):
+class ConnectedRegistryUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating a connected registry.
 
     :ivar properties: The properties of the connected registry update parameters.
     :vartype properties: ~azure.mgmt.containerregistry.models.ConnectedRegistryUpdateProperties
+    :ivar identity: The user-assigned managed identity used to authenticate the connected registry
+     with its parent during synchronization. Requires authType to be ManagedIdentity.
+    :vartype identity: ~azure.mgmt.containerregistry.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.ConnectedRegistryUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of the connected registry update parameters."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user-assigned managed identity used to authenticate the connected registry with its parent
+     during synchronization. Requires authType to be ManagedIdentity."""
 
     __flattened_items = ["sync_properties", "logging", "client_token_ids", "notifications_list", "garbage_collection"]
 
@@ -1048,6 +1066,7 @@ class ConnectedRegistryUpdateParameters(_Model):
         self,
         *,
         properties: Optional["_models.ConnectedRegistryUpdateProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -1079,7 +1098,7 @@ class ConnectedRegistryUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ConnectedRegistryUpdateProperties(_Model):
+class ConnectedRegistryUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating token properties.
 
     :ivar sync_properties: The sync properties of the connected registry with its parent.
@@ -1139,7 +1158,7 @@ class ConnectedRegistryUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CredentialHealth(_Model):
+class CredentialHealth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The health of the auth credential.
 
     :ivar status: The health status of credential. Known values are: "Healthy" and "Unhealthy".
@@ -1181,7 +1200,7 @@ class CredentialHealth(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CredentialSet(ProxyResource):
+class CredentialSet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a credential set resource for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1250,7 +1269,7 @@ class CredentialSet(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CredentialSetProperties(_Model):
+class CredentialSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a credential set resource.
 
     :ivar login_server: The credentials are stored for this upstream or login server.
@@ -1301,7 +1320,7 @@ class CredentialSetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CredentialSetUpdateParameters(_Model):
+class CredentialSetUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating a credential set.
 
     :ivar properties: The properties of the credential set update parameters.
@@ -1359,7 +1378,7 @@ class CredentialSetUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CredentialSetUpdateProperties(_Model):
+class CredentialSetUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating credential set properties.
 
     :ivar auth_credentials: List of authentication credentials stored for an upstream. Usually
@@ -1391,7 +1410,7 @@ class CredentialSetUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionProperty(_Model):
+class EncryptionProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EncryptionProperty.
 
     :ivar status: Indicates whether or not the encryption is enabled for container registry. Known
@@ -1474,7 +1493,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1502,7 +1521,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventInfo(_Model):
+class EventInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The basic information of an event.
 
     :ivar id: The event ID.
@@ -1530,7 +1549,7 @@ class EventInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Event(EventInfo):
+class Event(EventInfo):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The event for a webhook.
 
     :ivar id: The event ID.
@@ -1570,7 +1589,7 @@ class Event(EventInfo):
         super().__init__(*args, **kwargs)
 
 
-class EventContent(_Model):
+class EventContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The content of the event request message.
 
     :ivar id: The event ID.
@@ -1634,7 +1653,7 @@ class EventContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventRequestMessage(_Model):
+class EventRequestMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The event request message sent to the service URI.
 
     :ivar content: The content of the event request message.
@@ -1684,7 +1703,7 @@ class EventRequestMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventResponseMessage(_Model):
+class EventResponseMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The event response message received from the service URI.
 
     :ivar content: The content of the event response message.
@@ -1736,7 +1755,7 @@ class EventResponseMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportPipeline(ProxyResource):
+class ExportPipeline(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents an export pipeline for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1809,7 +1828,7 @@ class ExportPipeline(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ExportPipelineProperties(_Model):
+class ExportPipelineProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an export pipeline.
 
     :ivar target: The target properties of the export pipeline. Required.
@@ -1855,7 +1874,7 @@ class ExportPipelineProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportPipelineTargetProperties(_Model):
+class ExportPipelineTargetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the export pipeline target.
 
     :ivar type: The type of target for the export pipeline.
@@ -1912,7 +1931,7 @@ class ExportPipelineTargetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportPolicy(_Model):
+class ExportPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The export policy for a container registry.
 
     :ivar status: The value that indicates whether the policy is enabled or not. Known values are:
@@ -1944,7 +1963,9 @@ class ExportPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GarAuthenticationProperties(AdditionalAuthenticationProperties, discriminator="GoogleArtifactRegistry"):
+class GarAuthenticationProperties(
+    AdditionalAuthenticationProperties, discriminator="GoogleArtifactRegistry"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Google Artifact Registry (GAR) authentication configuration.
 
     :ivar authentication_type: Required. Google Artifact Registry (GAR) authentication via workload
@@ -2001,7 +2022,7 @@ class GarAuthenticationProperties(AdditionalAuthenticationProperties, discrimina
         self.authentication_type = AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY  # type: ignore
 
 
-class GarbageCollectionProperties(_Model):
+class GarbageCollectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The garbage collection properties of the connected registry.
 
     :ivar enabled: Indicates whether garbage collection is enabled for the connected registry.
@@ -2036,7 +2057,7 @@ class GarbageCollectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateCredentialsParameters(_Model):
+class GenerateCredentialsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used to generate credentials for a specified token or user of a container
     registry.
 
@@ -2082,7 +2103,7 @@ class GenerateCredentialsParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateCredentialsResult(_Model):
+class GenerateCredentialsResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from the GenerateCredentials operation.
 
     :ivar username: The username for a container registry.
@@ -2117,7 +2138,7 @@ class GenerateCredentialsResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProperties(_Model):
+class IdentityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed identity for the resource.
 
     :ivar principal_id: The principal ID of resource identity.
@@ -2171,7 +2192,7 @@ class IdentityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportImageParameters(_Model):
+class ImportImageParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ImportImageParameters.
 
     :ivar source: The source of the image. Required.
@@ -2227,7 +2248,7 @@ class ImportImageParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportPipeline(ProxyResource):
+class ImportPipeline(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents an import pipeline for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2300,7 +2321,7 @@ class ImportPipeline(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ImportPipelineProperties(_Model):
+class ImportPipelineProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an import pipeline.
 
     :ivar source: The source properties of the import pipeline. Required.
@@ -2353,7 +2374,7 @@ class ImportPipelineProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportPipelineSourceProperties(_Model):
+class ImportPipelineSourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the import pipeline source.
 
     :ivar type: The type of source for the import pipeline. "AzureStorageBlobContainer"
@@ -2412,7 +2433,7 @@ class ImportPipelineSourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportSource(_Model):
+class ImportSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ImportSource.
 
     :ivar resource_id: The resource identifier of the source Azure Container Registry.
@@ -2466,7 +2487,7 @@ class ImportSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportSourceCredentials(_Model):
+class ImportSourceCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ImportSourceCredentials.
 
     :ivar username: The username to authenticate with the source registry.
@@ -2499,7 +2520,7 @@ class ImportSourceCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPRule(_Model):
+class IPRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP rule with specific IP or IP range in CIDR format.
 
     :ivar action: The action of IP ACL rule. "Allow"
@@ -2535,7 +2556,7 @@ class IPRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultProperties(_Model):
+class KeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KeyVaultProperties.
 
     :ivar key_identifier: Key vault uri to access the encryption key.
@@ -2586,7 +2607,7 @@ class KeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoggingProperties(_Model):
+class LoggingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The logging properties of the connected registry.
 
     :ivar log_level: The verbosity of logs persisted on the connected registry. Known values are:
@@ -2642,7 +2663,59 @@ class LoginServerProperties(_Model):
     """The TLS properties of the connected registry login server."""
 
 
-class NetworkRuleSet(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.containerregistry.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.containerregistry.models.UserAssignedIdentity]
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identities assigned to this resource by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network rule set for a container registry.
 
     :ivar default_action: The default action of allow or deny when no other rules match. Required.
@@ -2688,7 +2761,7 @@ class NetworkRuleSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDefinition(_Model):
+class OperationDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a container registry operation.
 
     :ivar origin: The origin information of the container registry operation.
@@ -2767,7 +2840,7 @@ class OperationDefinition(_Model):
             super().__setattr__(key, value)
 
 
-class OperationDisplayDefinition(_Model):
+class OperationDisplayDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The display information for a container registry operation.
 
     :ivar provider: The resource provider name: Microsoft.ContainerRegistry.
@@ -2810,7 +2883,7 @@ class OperationDisplayDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationLogSpecificationDefinition(_Model):
+class OperationLogSpecificationDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of Azure Monitoring log.
 
     :ivar name: Log name.
@@ -2852,7 +2925,7 @@ class OperationLogSpecificationDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationMetricSpecificationDefinition(_Model):
+class OperationMetricSpecificationDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of Azure Monitoring metric.
 
     :ivar name: Metric name.
@@ -2913,7 +2986,7 @@ class OperationMetricSpecificationDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationPropertiesDefinition(_Model):
+class OperationPropertiesDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of Azure Monitoring properties.
 
     :ivar service_specification: The definition of Azure Monitoring service.
@@ -2944,7 +3017,7 @@ class OperationPropertiesDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationServiceSpecificationDefinition(_Model):
+class OperationServiceSpecificationDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of Azure Monitoring list.
 
     :ivar metric_specifications: A list of Azure Monitoring metrics definition.
@@ -2983,7 +3056,7 @@ class OperationServiceSpecificationDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParentProperties(_Model):
+class ParentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the connected registry parent.
 
     :ivar id: The resource ID of the parent to which the connected registry will be associated.
@@ -3018,7 +3091,7 @@ class ParentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineRun(ProxyResource):
+class PipelineRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a pipeline run for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3079,7 +3152,7 @@ class PipelineRun(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PipelineRunProperties(_Model):
+class PipelineRunProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a pipeline run.
 
     :ivar provisioning_state: The provisioning state of a pipeline run. Known values are:
@@ -3130,7 +3203,7 @@ class PipelineRunProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineRunRequest(_Model):
+class PipelineRunRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request properties provided for a pipeline run.
 
     :ivar pipeline_resource_id: The resource ID of the pipeline to run.
@@ -3192,7 +3265,7 @@ class PipelineRunRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineRunResponse(_Model):
+class PipelineRunResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response properties returned for a pipeline run.
 
     :ivar status: The current status of the pipeline run.
@@ -3284,7 +3357,7 @@ class PipelineRunResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineRunSourceProperties(_Model):
+class PipelineRunSourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The pipeline run source properties.
 
     :ivar type: The type of the source. "AzureStorageBlob"
@@ -3319,7 +3392,7 @@ class PipelineRunSourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineRunTargetProperties(_Model):
+class PipelineRunTargetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The pipeline run target properties.
 
     :ivar type: The type of the target. "AzureStorageBlob"
@@ -3354,7 +3427,7 @@ class PipelineRunTargetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineSourceTriggerDescriptor(_Model):
+class PipelineSourceTriggerDescriptor(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The pipeline source trigger descriptor.
 
     :ivar timestamp: The timestamp when the source update happened.
@@ -3384,7 +3457,7 @@ class PipelineSourceTriggerDescriptor(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineSourceTriggerProperties(_Model):
+class PipelineSourceTriggerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source trigger properties of the import pipeline.
 
     :ivar status: The current status of the source trigger. Required. Known values are: "Enabled"
@@ -3414,7 +3487,7 @@ class PipelineSourceTriggerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineTriggerDescriptor(_Model):
+class PipelineTriggerDescriptor(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The pipeline trigger descriptor.
 
     :ivar source_trigger: The source trigger that caused the pipeline run.
@@ -3444,7 +3517,7 @@ class PipelineTriggerDescriptor(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineTriggerProperties(_Model):
+class PipelineTriggerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The trigger properties of the import pipeline.
 
     :ivar source_trigger: The source trigger properties of the pipeline.
@@ -3474,7 +3547,7 @@ class PipelineTriggerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Policies(_Model):
+class Policies(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policies for a container registry.
 
     :ivar quarantine_policy: The quarantine policy for a container registry.
@@ -3541,7 +3614,7 @@ class Policies(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Private Endpoint resource.
 
     :ivar id: This is private endpoint resource created with Microsoft.Network resource provider.
@@ -3569,7 +3642,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a private endpoint connection for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3630,7 +3703,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a private endpoint connection.
 
     :ivar private_endpoint: The resource of private endpoint.
@@ -3678,7 +3751,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3739,7 +3812,7 @@ class PrivateLinkResource(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -3777,7 +3850,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The state of a private link service connection.
 
     :ivar status: The private link service connection status. Known values are: "Approved",
@@ -3825,7 +3898,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProgressProperties(_Model):
+class ProgressProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The progress properties.
 
     :ivar percentage: The percentage complete of the copy operation.
@@ -3853,7 +3926,7 @@ class ProgressProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuarantinePolicy(_Model):
+class QuarantinePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The quarantine policy for a container registry.
 
     :ivar status: The value that indicates whether the policy is enabled or not. Known values are:
@@ -3885,7 +3958,7 @@ class QuarantinePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegenerateCredentialParameters(_Model):
+class RegenerateCredentialParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used to regenerate the login credential.
 
     :ivar name: Specifies name of the password which should be regenerated -- password or
@@ -3915,7 +3988,7 @@ class RegenerateCredentialParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3959,7 +4032,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Registry(TrackedResource):
+class Registry(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4062,7 +4135,7 @@ class Registry(TrackedResource):
             super().__setattr__(key, value)
 
 
-class RegistryListCredentialsResult(_Model):
+class RegistryListCredentialsResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from the ListCredentials operation.
 
     :ivar username: The username for a container registry.
@@ -4097,7 +4170,7 @@ class RegistryListCredentialsResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryNameCheckRequest(_Model):
+class RegistryNameCheckRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request to check whether a container registry name is available.
 
     :ivar name: The name of the container registry. Required.
@@ -4155,7 +4228,7 @@ class RegistryNameCheckRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryNameStatus(_Model):
+class RegistryNameStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of a request to check the availability of a container registry name.
 
     :ivar available_login_server_name: The complete login server name with domain name label (DNL)
@@ -4205,7 +4278,7 @@ class RegistryNameStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryPassword(_Model):
+class RegistryPassword(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The login password for the container registry.
 
     :ivar name: The password name. Known values are: "password" and "password2".
@@ -4240,7 +4313,7 @@ class RegistryPassword(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryProperties(_Model):
+class RegistryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a container registry.
 
     :ivar login_server: The URL that can be used to log into the container registry.
@@ -4439,7 +4512,7 @@ class RegistryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryPropertiesUpdateParameters(_Model):
+class RegistryPropertiesUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating the properties of a container registry.
 
     :ivar admin_user_enabled: The value that indicates whether the admin user is enabled.
@@ -4574,7 +4647,7 @@ class RegistryPropertiesUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistrySyncResult(_Model):
+class RegistrySyncResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The registry sync result of the connected registry.
 
     :ivar sync_trigger: The action that triggered the most recent registry sync. Required. Known
@@ -4631,7 +4704,7 @@ class RegistrySyncResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryUpdateParameters(_Model):
+class RegistryUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating a container registry.
 
     :ivar identity: The identity of the container registry.
@@ -4713,7 +4786,7 @@ class RegistryUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class RegistryUsage(_Model):
+class RegistryUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The quota usage for a container registry.
 
     :ivar name: The name of the usage.
@@ -4760,7 +4833,7 @@ class RegistryUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryUsageListResult(_Model):
+class RegistryUsageListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of a request to get container registry quota usages.
 
     :ivar value: The list of container registry quota usages.
@@ -4790,7 +4863,7 @@ class RegistryUsageListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Replication(TrackedResource):
+class Replication(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a replication for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4857,7 +4930,7 @@ class Replication(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ReplicationProperties(_Model):
+class ReplicationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a replication.
 
     :ivar provisioning_state: The provisioning state of the replication at the time the operation
@@ -4913,7 +4986,7 @@ class ReplicationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationUpdateParameters(_Model):
+class ReplicationUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating a replication.
 
     :ivar tags: The tags for the replication.
@@ -4968,7 +5041,7 @@ class ReplicationUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ReplicationUpdateParametersProperties(_Model):
+class ReplicationUpdateParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ReplicationUpdateParametersProperties.
 
     :ivar region_endpoint_enabled: Specifies whether the replication's regional endpoint is
@@ -5002,7 +5075,7 @@ class ReplicationUpdateParametersProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Request(_Model):
+class Request(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request that generated the event.
 
     :ivar id: The ID of the request that initiated the event.
@@ -5054,7 +5127,7 @@ class Request(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetentionPolicy(_Model):
+class RetentionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The retention policy for a container registry.
 
     :ivar days: The number of days to retain an untagged manifest after which it gets purged.
@@ -5097,7 +5170,7 @@ class RetentionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScopeMap(ProxyResource):
+class ScopeMap(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a scope map for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5158,7 +5231,7 @@ class ScopeMap(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ScopeMapProperties(_Model):
+class ScopeMapProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a scope map.
 
     :ivar description: The user friendly description of the scope map.
@@ -5211,7 +5284,7 @@ class ScopeMapProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScopeMapPropertiesUpdateParameters(_Model):
+class ScopeMapPropertiesUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The update parameters for scope map properties.
 
     :ivar description: The user friendly description of the scope map.
@@ -5246,7 +5319,7 @@ class ScopeMapPropertiesUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScopeMapUpdateParameters(_Model):
+class ScopeMapUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties for updating the scope map.
 
     :ivar properties: The update parameters for scope map properties.
@@ -5296,7 +5369,7 @@ class ScopeMapUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU of a container registry.
 
     :ivar name: The SKU name of the container registry. Required for registry creation. Required.
@@ -5332,7 +5405,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftDeletePolicy(_Model):
+class SoftDeletePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The soft delete policy for a container registry.
 
     :ivar retention_days: The number of days after which a soft-deleted item is permanently
@@ -5378,7 +5451,7 @@ class SoftDeletePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Source(_Model):
+class Source(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The registry node that generated the event. Put differently, while the actor initiates the
     event, the source generates it.
 
@@ -5448,6 +5521,10 @@ class StatusDetailProperties(_Model):
     :vartype timestamp: ~datetime.datetime
     :ivar correlation_id: The correlation ID of the status.
     :vartype correlation_id: str
+    :ivar total_gib: The total disk space in gibibytes (Gib, base-2).
+    :vartype total_gib: float
+    :ivar available_gib: The available disk space in gibibytes (Gib, base-2).
+    :vartype available_gib: float
     """
 
     type: Optional[str] = rest_field(visibility=["read"])
@@ -5460,13 +5537,17 @@ class StatusDetailProperties(_Model):
     """The timestamp of the status."""
     correlation_id: Optional[str] = rest_field(name="correlationId", visibility=["read"])
     """The correlation ID of the status."""
+    total_gib: Optional[float] = rest_field(name="totalGib", visibility=["read"])
+    """The total disk space in gibibytes (Gib, base-2)."""
+    available_gib: Optional[float] = rest_field(name="availableGib", visibility=["read"])
+    """The available disk space in gibibytes (Gib, base-2)."""
 
 
-class SyncProperties(_Model):
+class SyncProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The sync properties of the connected registry with its parent.
 
     :ivar token_id: The resource ID of the ACR token used to authenticate the connected registry to
-     its parent during sync. Required.
+     its parent during sync.
     :vartype token_id: str
     :ivar schedule: The cron expression indicating the schedule that the connected registry will
      sync with its parent.
@@ -5484,11 +5565,14 @@ class SyncProperties(_Model):
     :ivar gateway_endpoint: The gateway endpoint used by the connected registry to communicate with
      its parent.
     :vartype gateway_endpoint: str
+    :ivar auth_type: The authentication type used for the connected registry to sync with its
+     parent. Known values are: "SyncToken" and "ManagedIdentity".
+    :vartype auth_type: str or ~azure.mgmt.containerregistry.models.AuthType
     """
 
-    token_id: str = rest_field(name="tokenId", visibility=["read", "create", "update", "delete", "query"])
+    token_id: Optional[str] = rest_field(name="tokenId", visibility=["read", "create", "update", "delete", "query"])
     """The resource ID of the ACR token used to authenticate the connected registry to its parent
-     during sync. Required."""
+     during sync."""
     schedule: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The cron expression indicating the schedule that the connected registry will sync with its
      parent."""
@@ -5506,15 +5590,21 @@ class SyncProperties(_Model):
     """The last time a sync occurred between the connected registry and its parent."""
     gateway_endpoint: Optional[str] = rest_field(name="gatewayEndpoint", visibility=["read"])
     """The gateway endpoint used by the connected registry to communicate with its parent."""
+    auth_type: Optional[Union[str, "_models.AuthType"]] = rest_field(
+        name="authType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication type used for the connected registry to sync with its parent. Known values
+     are: \"SyncToken\" and \"ManagedIdentity\"."""
 
     @overload
     def __init__(
         self,
         *,
-        token_id: str,
         message_ttl: datetime.timedelta,
+        token_id: Optional[str] = None,
         schedule: Optional[str] = None,
         sync_window: Optional[datetime.timedelta] = None,
+        auth_type: Optional[Union[str, "_models.AuthType"]] = None,
     ) -> None: ...
 
     @overload
@@ -5528,7 +5618,7 @@ class SyncProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SyncUpdateProperties(_Model):
+class SyncUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating the sync properties of the connected registry with its parent.
 
     :ivar schedule: The cron expression indicating the schedule that the connected registry will
@@ -5540,6 +5630,9 @@ class SyncUpdateProperties(_Model):
     :ivar message_ttl: The period of time for which a message is available to sync before it is
      expired. Specify the duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per ISO8601.
     :vartype message_ttl: ~datetime.timedelta
+    :ivar auth_type: The authentication type used for the connected registry to sync with its
+     parent. Known values are: "SyncToken" and "ManagedIdentity".
+    :vartype auth_type: str or ~azure.mgmt.containerregistry.models.AuthType
     """
 
     schedule: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5555,6 +5648,11 @@ class SyncUpdateProperties(_Model):
     )
     """The period of time for which a message is available to sync before it is expired. Specify the
      duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per ISO8601."""
+    auth_type: Optional[Union[str, "_models.AuthType"]] = rest_field(
+        name="authType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication type used for the connected registry to sync with its parent. Known values
+     are: \"SyncToken\" and \"ManagedIdentity\"."""
 
     @overload
     def __init__(
@@ -5563,6 +5661,7 @@ class SyncUpdateProperties(_Model):
         schedule: Optional[str] = None,
         sync_window: Optional[datetime.timedelta] = None,
         message_ttl: Optional[datetime.timedelta] = None,
+        auth_type: Optional[Union[str, "_models.AuthType"]] = None,
     ) -> None: ...
 
     @overload
@@ -5576,7 +5675,7 @@ class SyncUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -5643,7 +5742,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Target(_Model):
+class Target(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The target of the event.
 
     :ivar media_type: The MIME type of the referenced object.
@@ -5743,7 +5842,7 @@ class TlsProperties(_Model):
     """The certificate used to configure HTTPS for the login server."""
 
 
-class Token(ProxyResource):
+class Token(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a token for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5804,7 +5903,7 @@ class Token(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TokenCertificate(_Model):
+class TokenCertificate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a certificate used for authenticating a token.
 
     :ivar name: Known values are: "certificate1" and "certificate2".
@@ -5855,7 +5954,7 @@ class TokenCertificate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenCredentialsProperties(_Model):
+class TokenCredentialsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the credentials that can be used for authenticating the token.
 
     :ivar certificates:
@@ -5890,7 +5989,7 @@ class TokenCredentialsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenPassword(_Model):
+class TokenPassword(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The password that will be used for authenticating the token of a container registry.
 
     :ivar creation_time: The creation datetime of the password.
@@ -5940,7 +6039,7 @@ class TokenPassword(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenProperties(_Model):
+class TokenProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a token.
 
     :ivar creation_date: The creation date of scope map.
@@ -5999,7 +6098,7 @@ class TokenProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenUpdateParameters(_Model):
+class TokenUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating a token.
 
     :ivar properties: The properties of the token update parameters.
@@ -6049,7 +6148,7 @@ class TokenUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class TokenUpdateProperties(_Model):
+class TokenUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating token properties.
 
     :ivar scope_map_id: The resource ID of the scope map to which the token will be associated
@@ -6096,7 +6195,7 @@ class TokenUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrustPolicy(_Model):
+class TrustPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The content trust policy for a container registry.
 
     :ivar type: The type of trust policy. "Notary"
@@ -6135,6 +6234,21 @@ class TrustPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
+class UserAssignedIdentity(_Model):
+    """User assigned identity properties.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
+
+
 class UserIdentityProperties(_Model):
     """UserIdentityProperties.
 
@@ -6150,7 +6264,7 @@ class UserIdentityProperties(_Model):
     """The client id of user assigned identity."""
 
 
-class VirtualNetworkRule(_Model):
+class VirtualNetworkRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual network rule.
 
     :ivar action: The action of virtual network rule. "Allow"
@@ -6191,7 +6305,7 @@ class VirtualNetworkRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Webhook(TrackedResource):
+class Webhook(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that represents a webhook for a container registry.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6258,7 +6372,7 @@ class Webhook(TrackedResource):
             super().__setattr__(key, value)
 
 
-class WebhookCreateParameters(_Model):
+class WebhookCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for creating a webhook.
 
     :ivar tags: The tags for the webhook.
@@ -6319,7 +6433,7 @@ class WebhookCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class WebhookProperties(_Model):
+class WebhookProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a webhook.
 
     :ivar status: The status of the webhook at the time the operation was called. Known values are:
@@ -6376,7 +6490,7 @@ class WebhookProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebhookPropertiesCreateParameters(_Model):
+class WebhookPropertiesCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for creating the properties of a webhook.
 
     :ivar service_uri: The service URI for the webhook to post notifications. Required.
@@ -6436,7 +6550,7 @@ class WebhookPropertiesCreateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebhookPropertiesUpdateParameters(_Model):
+class WebhookPropertiesUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating the properties of a webhook.
 
     :ivar service_uri: The service URI for the webhook to post notifications.
@@ -6498,7 +6612,7 @@ class WebhookPropertiesUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebhookUpdateParameters(_Model):
+class WebhookUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters for updating a webhook.
 
     :ivar tags: The tags for the webhook.

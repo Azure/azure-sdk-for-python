@@ -3,10 +3,9 @@
 # ----------------------------------------------------------
 
 
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelConfiguration as RestModelConfiguration
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -15,10 +14,10 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 class ModelConfiguration:
     """ModelConfiguration.
 
-    :param mode: The mode of the model. Possible values include: "Copy", "Download".
-    :type mode: str
-    :param mount_path: The mount path of the model.
-    :type mount_path: str
+    :keyword mode: The mode of the model. Possible values include: "Copy", "Download".
+    :paramtype mode: str
+    :keyword mount_path: The mount path of the model.
+    :paramtype mount_path: str
 
     .. admonition:: Example:
 
@@ -35,12 +34,22 @@ class ModelConfiguration:
         self.mount_path = mount_path
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestModelConfiguration) -> "ModelConfiguration":
-        return ModelConfiguration(mode=rest_obj.mode, mount_path=rest_obj.mount_path)
+    def _from_rest_object(cls, rest_obj: Any) -> "ModelConfiguration":
+        mode = rest_obj.get("mode") if hasattr(rest_obj, "get") else rest_obj.mode
+        mount_path = rest_obj.get("mountPath") if hasattr(rest_obj, "get") else rest_obj.mount_path
+        return ModelConfiguration(mode=mode, mount_path=mount_path)
 
-    def _to_rest_object(self) -> RestModelConfiguration:
+    def _to_rest_object(self) -> Dict[str, Any]:
+        # ``ModelConfiguration`` was dropped from the arm_ml_service (2025-12) model; build the
+        # 2023-04 wire body directly as a dict (JSON-direct). The legacy msrest model omitted ``None``
+        # fields on the wire, so only include values that are set.
         self._validate()
-        return RestModelConfiguration(mode=self.mode, mount_path=self.mount_path)
+        rest_obj: Dict[str, Any] = {}
+        if self.mode is not None:
+            rest_obj["mode"] = self.mode
+        if self.mount_path is not None:
+            rest_obj["mountPath"] = self.mount_path
+        return rest_obj
 
     def _validate(self) -> None:
         if self.mode is not None and self.mode.lower() not in ["copy", "download"]:

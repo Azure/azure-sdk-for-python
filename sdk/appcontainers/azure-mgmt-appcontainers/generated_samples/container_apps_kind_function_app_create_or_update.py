@@ -60,7 +60,13 @@ def main():
                             "resources": {"cpu": 0.5, "memory": "1.0Gi"},
                         }
                     ],
-                    "scale": {"cooldownPeriod": 300, "maxReplicas": 10, "minReplicas": 0, "pollingInterval": 30},
+                    "scale": {
+                        "allowScalingRuleOverride": True,
+                        "cooldownPeriod": 300,
+                        "maxReplicas": 10,
+                        "minReplicas": 0,
+                        "pollingInterval": 30,
+                    },
                 },
             },
         },
@@ -68,6 +74,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/ContainerApps_Kind_FunctionApp_CreateOrUpdate.json
+# x-ms-original-file: 2026-07-01/ContainerApps_Kind_FunctionApp_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

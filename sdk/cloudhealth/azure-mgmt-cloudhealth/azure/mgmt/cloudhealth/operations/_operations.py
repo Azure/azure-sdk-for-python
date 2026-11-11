@@ -51,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_health_models_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +101,7 @@ def build_health_models_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +132,7 @@ def build_health_models_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +161,7 @@ def build_health_models_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}"
     path_format_arguments = {
@@ -184,7 +184,7 @@ def build_health_models_list_by_resource_group_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -211,7 +211,7 @@ def build_health_models_list_by_subscription_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -237,7 +237,7 @@ def build_signal_definitions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +267,7 @@ def build_signal_definitions_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -297,7 +297,7 @@ def build_signal_definitions_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/signaldefinitions/{signalDefinitionName}"
     path_format_arguments = {
@@ -326,7 +326,7 @@ def build_signal_definitions_list_by_health_model_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -360,7 +360,7 @@ def build_authentication_settings_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -394,7 +394,7 @@ def build_authentication_settings_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -428,7 +428,7 @@ def build_authentication_settings_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/authenticationsettings/{authenticationSettingName}"
     path_format_arguments = {
@@ -452,7 +452,7 @@ def build_authentication_settings_list_by_health_model_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -480,7 +480,7 @@ def build_entities_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -510,7 +510,7 @@ def build_entities_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -540,7 +540,7 @@ def build_entities_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/entities/{entityName}"
     path_format_arguments = {
@@ -569,7 +569,7 @@ def build_entities_list_by_health_model_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -600,7 +600,7 @@ def build_entities_get_history_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -632,7 +632,7 @@ def build_entities_get_signal_history_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -664,7 +664,7 @@ def build_entities_ingest_health_report_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/entities/{entityName}/ingestHealthReport"
     path_format_arguments = {
@@ -693,7 +693,7 @@ def build_entities_add_data_annotation_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -725,7 +725,7 @@ def build_entities_get_data_annotations_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -756,7 +756,7 @@ def build_entities_get_signal_recommendations_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -785,7 +785,7 @@ def build_relationships_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -815,7 +815,7 @@ def build_relationships_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -845,7 +845,7 @@ def build_relationships_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/relationships/{relationshipName}"
     path_format_arguments = {
@@ -874,7 +874,7 @@ def build_relationships_list_by_health_model_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -904,7 +904,7 @@ def build_discovery_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -934,7 +934,7 @@ def build_discovery_rules_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -964,7 +964,7 @@ def build_discovery_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/discoveryrules/{discoveryRuleName}"
     path_format_arguments = {
@@ -993,7 +993,7 @@ def build_discovery_rules_list_by_health_model_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1017,7 +1017,7 @@ def build_discovery_rules_list_by_health_model_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1127,7 +1127,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class HealthModelsOperations:
+class HealthModelsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1993,7 +1993,7 @@ class HealthModelsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SignalDefinitionsOperations:
+class SignalDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2099,7 +2099,7 @@ class SignalDefinitionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -2290,7 +2290,7 @@ class SignalDefinitionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_create_or_update(
         self,
@@ -2383,7 +2383,7 @@ class SignalDefinitionsOperations:
                 "signal_definition_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, signal_definition_name: str, **kwargs: Any
@@ -2459,7 +2459,7 @@ class SignalDefinitionsOperations:
                 "signal_definition_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, signal_definition_name: str, **kwargs: Any
@@ -2636,7 +2636,7 @@ class SignalDefinitionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AuthenticationSettingsOperations:
+class AuthenticationSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2742,7 +2742,7 @@ class AuthenticationSettingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -2933,7 +2933,7 @@ class AuthenticationSettingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_create_or_update(
         self,
@@ -3026,7 +3026,7 @@ class AuthenticationSettingsOperations:
                 "authentication_setting_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, authentication_setting_name: str, **kwargs: Any
@@ -3102,7 +3102,7 @@ class AuthenticationSettingsOperations:
                 "authentication_setting_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, authentication_setting_name: str, **kwargs: Any
@@ -3269,7 +3269,7 @@ class AuthenticationSettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EntitiesOperations:
+class EntitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3372,7 +3372,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -3560,7 +3560,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_create_or_update(
         self,
@@ -3652,7 +3652,7 @@ class EntitiesOperations:
                 "entity_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, entity_name: str, **kwargs: Any
@@ -3728,7 +3728,7 @@ class EntitiesOperations:
                 "entity_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, entity_name: str, **kwargs: Any
@@ -4007,7 +4007,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def get_history(
         self,
@@ -4206,7 +4206,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def get_signal_history(
         self,
@@ -4404,7 +4404,7 @@ class EntitiesOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def ingest_health_report(  # pylint: disable=inconsistent-return-statements
         self,
@@ -4590,7 +4590,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     def add_data_annotation(
         self,
@@ -4792,7 +4792,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     def get_data_annotations(
         self,
@@ -4901,7 +4901,7 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     def get_signal_recommendations(
         self, resource_group_name: str, health_model_name: str, entity_name: str, **kwargs: Any
@@ -4980,7 +4980,7 @@ class EntitiesOperations:
         return deserialized  # type: ignore
 
 
-class RelationshipsOperations:
+class RelationshipsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5087,7 +5087,7 @@ class RelationshipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -5281,7 +5281,7 @@ class RelationshipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_create_or_update(
         self,
@@ -5375,7 +5375,7 @@ class RelationshipsOperations:
                 "relationship_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, relationship_name: str, **kwargs: Any
@@ -5451,7 +5451,7 @@ class RelationshipsOperations:
                 "relationship_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, relationship_name: str, **kwargs: Any
@@ -5629,7 +5629,7 @@ class RelationshipsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DiscoveryRulesOperations:
+class DiscoveryRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5735,7 +5735,7 @@ class DiscoveryRulesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -5926,7 +5926,7 @@ class DiscoveryRulesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_create_or_update(
         self,
@@ -6019,7 +6019,7 @@ class DiscoveryRulesOperations:
                 "discovery_rule_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, discovery_rule_name: str, **kwargs: Any
@@ -6095,7 +6095,7 @@ class DiscoveryRulesOperations:
                 "discovery_rule_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-09-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, discovery_rule_name: str, **kwargs: Any

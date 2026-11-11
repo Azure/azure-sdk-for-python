@@ -36,7 +36,7 @@ def main():
         app_link_member_name="member-01",
         properties={
             "properties": {
-                "connectivityProfile": {"eastWestGateway": {"visibility": "Internal"}},
+                "connectivityProfile": {"eastWestGateway": {"visibility": "Internal"}, "network": "network1"},
                 "upgradeProfile": {"mode": "SelfManaged", "selfManagedUpgradeProfile": {"version": "1.26"}},
             },
             "tags": {"key7952": "updated_tag_value"},
@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/AppLinkMembers_Update.json
+# x-ms-original-file: 2026-08-01-preview/AppLinkMembers_Update.json
 if __name__ == "__main__":
     main()

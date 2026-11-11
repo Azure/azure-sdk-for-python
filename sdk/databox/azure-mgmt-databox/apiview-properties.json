@@ -201,5 +201,5 @@
         "azure.mgmt.databox.DataBoxManagementClient.mitigate": "Microsoft.DataBox.mitigate",
         "azure.mgmt.databox.aio.DataBoxManagementClient.mitigate": "Microsoft.DataBox.mitigate"
     },
-    "CrossLanguageVersion": "22b0e520823b"
+    "CrossLanguageVersion": "bea111e24ce7"
 }

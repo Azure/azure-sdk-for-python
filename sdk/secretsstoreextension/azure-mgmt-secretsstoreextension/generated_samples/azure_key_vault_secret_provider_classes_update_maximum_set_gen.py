@@ -37,6 +37,7 @@ def main():
         properties={
             "properties": {
                 "clientId": "00000000-0000-0000-0000-000000000000",
+                "cloudName": "AzurePublicCloud",
                 "keyvaultName": "example-ssc-key-vault",
                 "objects": "array: |\n  - |\n    objectName: my-secret-object\n    objectType: secret\n    objectVersionHistory: 1",
                 "tenantId": "00000000-0000-0000-0000-000000000000",
@@ -47,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-08-21-preview/AzureKeyVaultSecretProviderClasses_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-25-preview/AzureKeyVaultSecretProviderClasses_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

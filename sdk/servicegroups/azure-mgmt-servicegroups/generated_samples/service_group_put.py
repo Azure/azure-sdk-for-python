@@ -33,6 +33,7 @@ def main():
         service_group_name="ServiceGroup1",
         create_service_group_request={
             "properties": {
+                "attributes": {"criticality": 2},
                 "displayName": "ServiceGroup 1 Name",
                 "parent": {"resourceId": "/providers/Microsoft.Management/serviceGroups/RootGroup"},
             }
@@ -41,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-02-01-preview/ServiceGroup_Put.json
+# x-ms-original-file: 2026-08-01/ServiceGroup_Put.json
 if __name__ == "__main__":
     main()

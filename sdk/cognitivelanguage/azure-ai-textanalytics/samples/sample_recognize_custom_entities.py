@@ -69,25 +69,12 @@ def sample_text_custom_entities():
     # LRO
     poller = client.begin_analyze_text_job(text_input=text_input, actions=actions)
 
-    print(f"Operation ID: {poller.details.get('operation_id')}")
-    paged_actions = poller.result()
+    job_state = poller.result()
+    print(f"Job ID: {job_state.job_id}")
+    print(f"Status: {job_state.status}")
 
-    d = poller.details
-    print(f"Job ID: {d.get('job_id')}")
-    print(f"Status: {d.get('status')}")
-    print(f"Created: {d.get('created_date_time')}")
-    print(f"Last Updated: {d.get('last_updated_date_time')}")
-    if d.get("expiration_date_time"):
-        print(f"Expires: {d.get('expiration_date_time')}")
-    if d.get("display_name"):
-        print(f"Display Name: {d.get('display_name')}")
-
-    for actions_page in paged_actions:
-        print(
-            f"Completed: {actions_page.completed}, In Progress: {actions_page.in_progress}, "
-            f"Failed: {actions_page.failed}, Total: {actions_page.total}"
-        )
-        for op_result in actions_page.items_property or []:
+    if job_state.actions:
+        for op_result in job_state.actions.items_property or []:
             if isinstance(op_result, CustomEntityRecognitionOperationResult):
                 print(f"\nAction Name: {op_result.task_name}")
                 print(f"Action Status: {op_result.status}")

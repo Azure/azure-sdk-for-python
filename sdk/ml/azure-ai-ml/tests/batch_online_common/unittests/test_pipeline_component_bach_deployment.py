@@ -6,14 +6,7 @@ import json
 
 import pytest
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as RestBatchDeployment
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    BatchDeploymentProperties as RestBatchDeploymentProperties,
-)
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    BatchPipelineComponentDeploymentConfiguration as RestBatchPipelineComponentDeploymentConfiguration,
-)
-from azure.ai.ml._restclient.v2024_01_01_preview.models import IdAssetReference
+from azure.ai.ml._restclient.arm_ml_service.models import BatchDeployment as RestBatchDeployment
 from azure.ai.ml.entities import PipelineComponent
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._load_functions import load_pipeline_component_batch_deployment
@@ -82,7 +75,7 @@ class TestPipelineComponentBatchDeployment:
     def test_from_rest_object(self) -> None:
 
         with open(TestPipelineComponentBatchDeployment.HELLO_BATCH_DEPLOYMENT_REST, "r") as file:
-            pipeline_component_rest = RestBatchDeployment.from_dict(json.load(file))
+            pipeline_component_rest = RestBatchDeployment._deserialize(json.load(file), [])
             pipeline_component_rest.properties.additional_properties = {
                 "deploymentConfiguration": {
                     "componentId": {"assetId": "azureml:hello_batch@latest"},

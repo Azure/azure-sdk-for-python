@@ -1,5 +1,29 @@
 # Release History
 
+## 3.0.0b3 (2026-09-29)
+
+### Features Added
+
+  - Client `PostgreSQLManagementClient` added operation group `db_agents`
+  - Model `Backup` added property `immutable_backup`
+  - Model `BackupForPatch` added property `immutable_backup`
+  - Enum `PostgresMajorVersion` added member `ENUM_19`
+  - Model `ServerProperties` added property `fips_mode`
+  - Model `ServerPropertiesForPatch` added property `fips_mode`
+  - Model `ServerPropertiesForPatch` added property `source_server_resource_id`
+  - Model `Storage` added property `auto_grow_increment_percent`
+  - Model `Storage` added property `auto_grow_max_threshold_mb`
+  - Added model `DbAgent`
+  - Added model `DbAgentForUpdate`
+  - Added model `DbAgentForUpdateProperties`
+  - Added enum `DbAgentForUpdateState`
+  - Added model `DbAgentProperties`
+  - Added enum `DbAgentProvisioningState`
+  - Added enum `DbAgentState`
+  - Added enum `FipsMode`
+  - Added enum `ImmutableBackup`
+  - Added operation group `DbAgentsOperations`
+
 ## 3.0.0b2 (2026-06-03)
 
 ### Features Added

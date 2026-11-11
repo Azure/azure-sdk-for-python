@@ -8,7 +8,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     JobBase,
     MLTableJobInput,
     QueueSettings,
@@ -266,12 +266,15 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         :param rest_job: The rest job object.
         :type rest_job: AutoMLJob
         """
-        if isinstance(rest_job.training_data, Input):
-            rest_job.training_data = MLTableJobInput(uri=rest_job.training_data.path)
-        if isinstance(rest_job.validation_data, Input):
-            rest_job.validation_data = MLTableJobInput(uri=rest_job.validation_data.path)
-        if hasattr(rest_job, "test_data") and isinstance(rest_job.test_data, Input):
-            rest_job.test_data = MLTableJobInput(uri=rest_job.test_data.path)
+        # Read from ``self`` (the entity holds the clean SDK ``Input`` with ``.path``); the arm task
+        # constructor coerces a non-arm ``Input`` assignment into a raw dict, so ``rest_job``'s field
+        # can no longer expose ``.path``. Assigning an arm ``MLTableJobInput`` back is not coerced.
+        if isinstance(self.training_data, Input):
+            rest_job.training_data = MLTableJobInput(uri=self.training_data.path)
+        if isinstance(self.validation_data, Input):
+            rest_job.validation_data = MLTableJobInput(uri=self.validation_data.path)
+        if hasattr(self, "test_data") and isinstance(self.test_data, Input):
+            rest_job.test_data = MLTableJobInput(uri=self.test_data.path)
 
     def _restore_data_inputs(self) -> None:
         """Restore MLTableJobInputs to JobInputs within data_settings."""

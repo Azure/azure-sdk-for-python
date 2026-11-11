@@ -7,9 +7,15 @@ try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
-import sys
 from unittest.mock import Mock
+import tempfile
+import os
+import asyncio
+from itertools import product
+
 import pytest
+from utils import HTTP_REQUESTS
+
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     AzureError,
@@ -27,12 +33,6 @@ from azure.core.pipeline.transport import (
     HttpResponse,
     AsyncHttpTransport,
 )
-import tempfile
-import os
-import time
-import asyncio
-from itertools import product
-from utils import HTTP_REQUESTS
 
 
 def test_retry_code_class_variables():
@@ -59,7 +59,9 @@ def test_retry_types():
     assert backoff_time == 4
 
 
-@pytest.mark.parametrize("retry_after_input,http_request", product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
+@pytest.mark.parametrize(
+    "retry_after_input,http_request", list(product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
+)
 def test_retry_after(retry_after_input, http_request):
     retry_policy = AsyncRetryPolicy()
     request = http_request("GET", "http://localhost")
@@ -78,7 +80,9 @@ def test_retry_after(retry_after_input, http_request):
     assert retry_after == float(retry_after_input)
 
 
-@pytest.mark.parametrize("retry_after_input,http_request", product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
+@pytest.mark.parametrize(
+    "retry_after_input,http_request", list(product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS))
+)
 def test_x_ms_retry_after(retry_after_input, http_request):
     retry_policy = AsyncRetryPolicy()
     request = http_request("GET", "http://localhost")
@@ -227,9 +231,8 @@ async def test_retry_seekable_file(http_request):
                     response.status_code = 400
                     return response
 
-    file = tempfile.NamedTemporaryFile(delete=False)
-    file.write(b"Lots of dataaaa")
-    file.close()
+    with tempfile.NamedTemporaryFile(delete=False) as file:
+        file.write(b"Lots of dataaaa")
     http_request = http_request("GET", "http://localhost/")
     headers = {"Content-Type": "multipart/form-data"}
     http_request.headers = headers
@@ -295,7 +298,7 @@ combinations = [(ServiceRequestError, ServiceRequestTimeoutError), (ServiceRespo
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "combinations,http_request",
-    product(combinations, HTTP_REQUESTS),
+    list(product(combinations, HTTP_REQUESTS)),
 )
 async def test_does_not_sleep_after_timeout(combinations, http_request):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
@@ -341,7 +344,7 @@ def test_configure_retries_uses_constructor_values():
     assert retry_settings["max_backoff"] == 60
     assert retry_settings["timeout"] == 300
     assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]
 
 
 def test_configure_retries_options_override_constructor():
@@ -379,7 +382,7 @@ def test_configure_retries_options_override_constructor():
     assert retry_settings["max_backoff"] == 180
     assert retry_settings["timeout"] == 600
     assert retry_settings["methods"] == frozenset(["GET", "POST"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]
 
     # Verify options dict was modified (values were popped)
     assert "retry_total" not in options
@@ -409,4 +412,4 @@ def test_configure_retries_default_values():
     assert retry_settings["max_backoff"] == 120  # default retry_backoff_max (BACKOFF_MAX)
     assert retry_settings["timeout"] == 604800  # default timeout
     assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]

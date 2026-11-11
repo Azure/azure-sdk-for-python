@@ -14,6 +14,7 @@ class Action(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action of virtual network rule."""
 
     ALLOW = "Allow"
+    """ALLOW."""
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -29,8 +30,11 @@ class AutoScalePolicyEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enable or Disable scale up setting on Elastic San Appliance."""
 
     NONE = "None"
+    """NONE."""
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -44,6 +48,22 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
+
+
+class DeleteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of DeleteType."""
+
+    PERMANENT = "permanent"
+    """PERMANENT."""
+
+
+class ElasticSanVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Elastic San appliance version."""
+
+    V1 = "V1"
+    """Version 1 of the Elastic San appliance."""
+    V2 = "V2"
+    """Version 2 of the Elastic San appliance."""
 
 
 class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -60,21 +80,32 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type."""
 
     NONE = "None"
+    """NONE."""
     SYSTEM_ASSIGNED = "SystemAssigned"
+    """SYSTEM_ASSIGNED."""
     USER_ASSIGNED = "UserAssigned"
+    """USER_ASSIGNED."""
 
 
 class OperationalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operational status of the resource."""
 
     INVALID = "Invalid"
+    """INVALID."""
     UNKNOWN = "Unknown"
+    """UNKNOWN."""
     HEALTHY = "Healthy"
+    """HEALTHY."""
     UNHEALTHY = "Unhealthy"
+    """UNHEALTHY."""
     UPDATING = "Updating"
+    """UPDATING."""
     RUNNING = "Running"
+    """RUNNING."""
     STOPPED = "Stopped"
+    """STOPPED."""
     STOPPED_DEALLOCATED_ = "Stopped (deallocated)"
+    """STOPPED_DEALLOCATED_."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -90,28 +121,53 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
+class PolicyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of PolicyState."""
+
+    ENABLED = "Enabled"
+    """ENABLED."""
+    DISABLED = "Disabled"
+    """DISABLED."""
+
+
 class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The private endpoint connection status."""
 
     PENDING = "Pending"
+    """PENDING."""
     APPROVED = "Approved"
+    """APPROVED."""
     FAILED = "Failed"
+    """FAILED."""
     REJECTED = "Rejected"
+    """REJECTED."""
 
 
 class ProvisioningStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the iSCSI Target."""
 
     INVALID = "Invalid"
+    """INVALID."""
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     FAILED = "Failed"
+    """FAILED."""
     CANCELED = "Canceled"
+    """CANCELED."""
     PENDING = "Pending"
+    """PENDING."""
     CREATING = "Creating"
+    """CREATING."""
     UPDATING = "Updating"
+    """UPDATING."""
     DELETING = "Deleting"
+    """DELETING."""
     DELETED = "Deleted"
+    """DELETED."""
     RESTORING = "Restoring"
+    """RESTORING."""
+    SOFT_DELETING = "SoftDeleting"
+    """SOFT_DELETING."""
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -120,51 +176,102 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
+
+
+class QualityOfService(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Quality of Service tier for the volume group, applicable for ElasticSanVersion V2 only."""
+
+    GENERAL_PURPOSE = "GeneralPurpose"
+    """General purpose tier."""
+    PERFORMANCE_CRITICAL = "PerformanceCritical"
+    """Performance critical tier."""
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name."""
 
     PREMIUM_LRS = "Premium_LRS"
-    """Premium locally redundant storage"""
+    """Premium locally redundant storage."""
     PREMIUM_ZRS = "Premium_ZRS"
-    """Premium zone redundant storage"""
+    """Premium zone redundant storage."""
+    ELASTIC_SAN_LRS = "ElasticSAN_LRS"
+    """Locally redundant storage. Supported only for ElasticSanVersion V2."""
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku tier."""
 
     PREMIUM = "Premium"
-    """Premium Tier"""
+    """Premium Tier."""
+
+
+class SnapshotAccessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of snapshot which determines the access availability of the snapshot."""
+
+    UNKNOWN = "Unknown"
+    """Default value."""
+    PENDING = "Pending"
+    """The snapshot cannot be used for restore, copy or download to offline."""
+    AVAILABLE = "Available"
+    """The snapshot can be used for restore, copy to different region, and download to offline."""
+    INSTANT_ACCESS = "InstantAccess"
+    """The snapshot can be used for restoring volumes with fast performance but cannot be copied or
+    downloaded."""
+    AVAILABLE_WITH_INSTANT_ACCESS = "AvailableWithInstantAccess"
+    """The snapshot can be used for restoring volumes with fast performance, copied and downloaded."""
 
 
 class StorageTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage Target type."""
 
     ISCSI = "Iscsi"
+    """ISCSI."""
+    DIRECT_ATTACH = "DirectAttach"
+    """Direct attach storage target type."""
     NONE = "None"
+    """NONE."""
 
 
 class VolumeCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This enumerates the possible sources of a volume creation."""
 
     NONE = "None"
+    """NONE."""
     VOLUME_SNAPSHOT = "VolumeSnapshot"
+    """VOLUME_SNAPSHOT."""
     DISK_SNAPSHOT = "DiskSnapshot"
+    """DISK_SNAPSHOT."""
     DISK = "Disk"
+    """DISK."""
     DISK_RESTORE_POINT = "DiskRestorePoint"
+    """DISK_RESTORE_POINT."""
+
+
+class XMsAccessSoftDeletedResources(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of XMsAccessSoftDeletedResources."""
+
+    TRUE = "true"
+    """TRUE."""
+    FALSE = "false"
+    """FALSE."""
 
 
 class XMsDeleteSnapshots(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of XMsDeleteSnapshots."""
 
     TRUE = "true"
+    """TRUE."""
     FALSE = "false"
+    """FALSE."""
 
 
 class XMsForceDelete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of XMsForceDelete."""
 
     TRUE = "true"
+    """TRUE."""
     FALSE = "false"
+    """FALSE."""

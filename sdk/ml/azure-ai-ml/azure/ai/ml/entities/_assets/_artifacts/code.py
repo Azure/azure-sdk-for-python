@@ -24,21 +24,21 @@ from .artifact import ArtifactStorageInfo
 class Code(Artifact):
     """Code for training and scoring.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param path: A local path or a remote uri. A storage remote uri example is like,
+    :keyword name: Name of the resource.
+    :paramtype name: str
+    :keyword version: Version of the resource.
+    :paramtype version: str
+    :keyword path: A local path or a remote uri. A storage remote uri example is like,
         "https://{storage_account}.blob.core.windows.net/{container}/{path}"
-    :type path: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param ignore_file: Ignore file for the resource.
-    :type ignore_file: IgnoreFile
+    :paramtype path: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword ignore_file: Ignore file for the resource.
+    :paramtype ignore_file: IgnoreFile
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

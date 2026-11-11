@@ -26,10 +26,11 @@
   "packageOptions": {
     "breakingChangeLabel": "CI-BreakingChange-Python",
     "breakingChangesLabel": "BreakingChange-Python-Sdk",
+    "sdkBreakingChangePatternFile": "doc/dev/mgmt/sdk-breaking-changes-guide.md",
     "updateChangelogContentScript": {
       "path": "./scripts/automation_sdk_update_changelog_content.ps1"
     },
-    "getSDKChangesScript": {
+    "getSdkChangesScript": {
       "path": "./scripts/automation_sdk_get_changes.ps1"
     },
     "updateVersionScript": {

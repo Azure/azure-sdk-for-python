@@ -111,6 +111,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": True},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
                 "previewlib1": {"enabled": False},
                 "previewlib2": {"enabled": False},
             },
@@ -145,6 +147,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": True},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
@@ -193,6 +197,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": False},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
@@ -276,6 +282,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": True},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": False},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
 
@@ -310,6 +318,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": True},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
 
@@ -455,6 +465,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": False},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
@@ -482,6 +494,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": True},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
@@ -520,6 +534,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": False},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
@@ -558,6 +574,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": False},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
@@ -597,6 +615,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": False},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
@@ -635,6 +655,8 @@ class TestConfigurations(TestCase):
                 "requests": {"enabled": False},
                 "urllib": {"enabled": True},
                 "urllib3": {"enabled": True},
+                "httpx": {"enabled": True},
+                "httpx2": {"enabled": True},
             },
         )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)

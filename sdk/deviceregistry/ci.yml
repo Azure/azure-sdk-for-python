@@ -32,3 +32,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-deviceregistry
       safeName: azuremgmtdeviceregistry
+    - name: azure-iot-deviceregistrysoftwareupdate
+      safeName: azureiotdeviceregistrysoftwareupdate

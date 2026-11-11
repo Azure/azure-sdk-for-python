@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/RedisEnterpriseDatabasesNoClusterCacheUpdateClustering.json
+# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseDatabasesNoClusterCacheUpdateClustering.json
 if __name__ == "__main__":
     main()

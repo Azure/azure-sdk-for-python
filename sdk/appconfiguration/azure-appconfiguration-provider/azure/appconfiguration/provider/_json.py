@@ -43,7 +43,7 @@ def _find_string_end(text: str, index: int) -> int:
 
 def remove_json_comments(text: str) -> str:
     """
-    Removes comments from a JSON file. Supports //, and /* ... */ comments.
+    Removes comments from a JSON string. Supports //, and /* ... */ comments.
     Returns as string.
 
     :param text: The input JSON string with comments.

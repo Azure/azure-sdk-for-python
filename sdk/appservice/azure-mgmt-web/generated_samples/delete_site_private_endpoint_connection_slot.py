@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.web_apps.begin_delete_private_endpoint_connection_slot(
+    response = client.web_apps.begin_delete_private_endpoint_connection_slot(
         resource_group_name="rg",
         name="testSite",
         private_endpoint_connection_name="connection",
         slot="stage",
     ).result()
+    print(response)
 
 
 # x-ms-original-file: 2025-05-01/DeleteSitePrivateEndpointConnectionSlot.json

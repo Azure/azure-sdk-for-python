@@ -119,10 +119,6 @@ class TestClientEventType:
         assert ClientEventType.RESPONSE_CREATE == "response.create"
         assert ClientEventType.RESPONSE_CANCEL == "response.cancel"
 
-    def test_rtc_call_events(self):
-        """Test RTC call events."""
-        assert ClientEventType.RTC_CALL_SDP_CREATE == "rtc.call.sdp.create"
-
     def test_input_text_events(self):
         """Test input text streaming events."""
         assert ClientEventType.INPUT_TEXT_DELTA == "input_text.delta"
@@ -312,14 +308,8 @@ class TestServerEventTypeNew:
     def test_output_audio_buffer_cleared(self):
         assert ServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED == "output_audio_buffer.cleared"
 
-    def test_output_audio_buffer_lifecycle(self):
-        assert ServerEventType.OUTPUT_AUDIO_BUFFER_STARTED == "output_audio_buffer.started"
-        assert ServerEventType.OUTPUT_AUDIO_BUFFER_STOPPED == "output_audio_buffer.stopped"
-
     def test_invocation_and_rtc_events(self):
         assert ServerEventType.RESPONSE_INVOCATION_DELTA == "response.invocation.delta"
-        assert ServerEventType.RTC_CALL_SDP_CREATED == "rtc.call.sdp.created"
-        assert ServerEventType.RTC_CALL_ERROR == "rtc.call.error"
 
     def test_audio_transcript_annotation(self):
         assert (

@@ -87,7 +87,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -197,7 +197,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class HybridConnectionsOperations:
+class HybridConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1373,7 +1373,7 @@ class HybridConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WCFRelaysOperations:
+class WCFRelaysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2549,7 +2549,7 @@ class WCFRelaysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3062,7 +3062,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3228,7 +3228,7 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
 
-class NamespacesOperations:
+class NamespacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -1,6 +1,6 @@
 # OpenAI Responses API — Compliance Requirements
 
-> Source of truth: [OpenAI OpenAPI spec v2.3.0](https://app.stainless.com/api/spec/documented/openai/openapi.documented.yml)
+> Source of truth: [OpenAI OpenAPI spec v2.3.0](https://github.com/openai/openai-openapi/blob/main/openapi.yaml)
 > (also cross-referenced against the OpenAI Python SDK v1.82+)
 
 This document captures the wire-format contracts that our Responses server

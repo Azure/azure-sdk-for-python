@@ -42,3 +42,17 @@ class TestAVSHostsOperations(AzureMgmtRecordedTestCase):
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_hosts_update(self, resource_group):
+        response = self.client.hosts.update(
+            resource_group_name=resource_group.name,
+            private_cloud_name="str",
+            cluster_name="str",
+            host_id="str",
+            properties={"properties": {"licenses": ["host_license"]}},
+        )
+
+        # please add some check logic here by yourself
+        # ...

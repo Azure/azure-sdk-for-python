@@ -56,20 +56,19 @@ class TestIotDpsIotDpsResourceOperations(AzureMgmtRecordedTestCase):
                         {"keyName": "str", "rights": "str", "primaryKey": "str", "secondaryKey": "str"}
                     ],
                     "deviceProvisioningHostName": "str",
-                    "deviceRegistryNamespace": {
-                        "authenticationType": "str",
-                        "resourceId": "str",
-                        "selectedUserAssignedIdentityResourceId": "str",
-                    },
+                    "disableLocalAuth": bool,
                     "enableDataResidency": bool,
                     "idScope": "str",
                     "iotHubs": [
                         {
-                            "connectionString": "str",
                             "location": "str",
                             "allocationWeight": 0,
                             "applyAllocationPolicy": bool,
+                            "authenticationType": "str",
+                            "connectionString": "str",
+                            "hostName": "str",
                             "name": "str",
+                            "selectedUserAssignedIdentityResourceId": "str",
                         }
                     ],
                     "ipFilterRules": [{"action": "str", "filterName": "str", "ipMask": "str", "target": "str"}],
@@ -224,7 +223,7 @@ class TestIotDpsIotDpsResourceOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...
 

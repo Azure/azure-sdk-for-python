@@ -12,16 +12,16 @@ except ImportError:
 import time
 
 import pytest
+from opentelemetry.trace import StatusCode as OtelStatusCode
+from tracing_common import FakeSpan
+from utils import HTTP_REQUESTS
+
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
 from azure.core.tracing.decorator_async import distributed_trace_async
-from opentelemetry.trace import StatusCode as OtelStatusCode
-
-from tracing_common import FakeSpan
-from utils import HTTP_REQUESTS
 
 
 class MockClient:

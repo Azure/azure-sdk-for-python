@@ -2,10 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import pytest
-from unittest.mock import Mock, MagicMock, patch
-import pandas as pd
 from typing import List, Any
+from unittest.mock import Mock, MagicMock, patch
+
+import httpx
+import pandas as pd
+import pytest
+from openai import APIStatusError, APITimeoutError, OpenAI
 
 from azure.ai.evaluation._evaluate._evaluate_aoai import (
     _get_single_run_results,
@@ -100,7 +103,7 @@ class TestAOAIPagination:
         # Mock run results
         mock_run_results = Mock()
         mock_run_results.status = "completed"
-        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=80, failed=20)]
+        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=200, failed=50)]
 
         # Create 3 pages of results
         page1_items = [
@@ -146,17 +149,77 @@ class TestAOAIPagination:
 
         # Verify all results were collected
         assert len(df) == 250
+        assert df["outputs.test_grader.sample"].tolist() == [f"Sample {i}" for i in range(250)]
+        assert df["outputs.test_grader.score"].tolist() == [0.9] * 100 + [0.85] * 100 + [0.3] * 50
+        assert metrics == {"test_grader.pass_rate": 0.8}
         assert mock_client.evals.runs.output_items.list.call_count == 3
+        mock_client.with_options.assert_not_called()
 
         # Verify pagination parameters
         calls = mock_client.evals.runs.output_items.list.call_args_list
         assert calls[0][1]["eval_id"] == "test-group"
         assert calls[0][1]["run_id"] == "test-run"
-        assert calls[0][1]["limit"] == 100
+        assert all(call.kwargs["limit"] == 100 for call in calls)
         assert "after" not in calls[0][1]
 
         assert calls[1][1]["after"] == "item-99"  # Last item ID from page 1
         assert calls[2][1]["after"] == "item-199"  # Last item ID from page 2
+
+    @pytest.mark.parametrize("failure", ["timeout", 408, 504])
+    def test_later_page_failure_uses_client_retries_without_reducing_page_size(self, failure):
+        requests = []
+
+        def handle_request(request):
+            requests.append(request)
+            if len(requests) == 1:
+                return httpx.Response(
+                    200,
+                    json={
+                        "object": "list",
+                        "data": [
+                            {
+                                "id": "item-0",
+                                "datasource_item_id": 0,
+                                "results": [{"name": "grader-1", "passed": True, "score": 1.0}],
+                            }
+                        ],
+                        "has_more": True,
+                    },
+                )
+            if failure == "timeout":
+                raise httpx.ReadTimeout("output-items timeout", request=request)
+            return httpx.Response(failure, json={"error": {"message": "output-items timeout"}})
+
+        with OpenAI(
+            api_key="test-key",
+            base_url="https://example.test/v1",
+            max_retries=1,
+            http_client=httpx.Client(transport=httpx.MockTransport(handle_request)),
+        ) as client:
+            run_info = OAIEvalRunCreationInfo(
+                client=client,
+                eval_group_id="test-group",
+                eval_run_id="test-run",
+                grader_name_map={"grader-1": "test_grader"},
+                expected_rows=2,
+            )
+            completed_run = Mock(
+                status="completed",
+                per_testing_criteria_results=[Mock(testing_criteria="grader-1", passed=2, failed=0)],
+            )
+            with patch(
+                "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion",
+                return_value=completed_run,
+            ), patch("openai._base_client.time.sleep"), pytest.raises(
+                APITimeoutError if failure == "timeout" else APIStatusError
+            ):
+                _get_single_run_results(run_info)
+            assert client.max_retries == 1
+
+        assert len(requests) == 3
+        assert all(request.url.params["limit"] == "100" for request in requests)
+        assert "after" not in requests[0].url.params
+        assert all(request.url.params["after"] == "item-0" for request in requests[1:])
 
     def test_empty_page_handling(self):
         """Test handling of empty pages in pagination"""

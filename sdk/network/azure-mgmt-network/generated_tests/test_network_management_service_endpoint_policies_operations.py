@@ -25,7 +25,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
         response = self.client.service_endpoint_policies.get(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -134,7 +134,13 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                     "idleTimeoutInMinutes": 0,
                                                     "ipAddress": "str",
                                                     "ipConfiguration": ...,
-                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                    "ipTags": [
+                                                        {
+                                                            "firstPartyServiceTagId": "str",
+                                                            "ipTagType": "str",
+                                                            "tag": "str",
+                                                        }
+                                                    ],
                                                     "linkedPublicIPAddress": ...,
                                                     "migrationPhase": "str",
                                                     "natGateway": {
@@ -166,6 +172,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                     "publicIPPrefix": {"id": "str"},
                                                     "resourceGuid": "str",
                                                     "servicePublicIPAddress": ...,
+                                                    "upgradedToV2": bool,
                                                 },
                                                 "sku": {"name": "str", "tier": "str"},
                                                 "tags": {"str": "str"},
@@ -458,7 +465,13 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                 "subnet": ...,
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -490,6 +503,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -514,6 +528,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -569,6 +584,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -620,6 +636,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -710,6 +727,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -730,6 +750,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -787,6 +810,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                         "ddosSettings": {
                                                                             "ddosCustomPolicy": {"id": "str"}
                                                                         },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -833,7 +857,11 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -876,6 +904,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -948,6 +977,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -968,6 +1000,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -1027,6 +1062,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                 "ddosSettings": {
                                                                                     "ddosCustomPolicy": {"id": "str"}
                                                                                 },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -1078,6 +1114,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -1127,6 +1164,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -1329,6 +1367,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -1378,6 +1417,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -1513,6 +1553,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                     "id": "str",
                                                     "name": "str",
                                                     "properties": {
+                                                        "approvalReference": {"privateEndpointId": "str"},
                                                         "groupIds": ["str"],
                                                         "privateLinkServiceConnectionState": {
                                                             "actionsRequired": "str",
@@ -1711,7 +1752,11 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -1752,6 +1797,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -1776,6 +1822,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -1837,6 +1884,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -1902,6 +1950,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2148,6 +2197,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -2199,6 +2249,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -2246,6 +2297,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2310,6 +2362,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -2365,6 +2418,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2416,6 +2470,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2620,6 +2675,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2671,6 +2727,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2711,6 +2768,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                     "id": "str",
                                                     "name": "str",
                                                     "properties": {
+                                                        "approvalReference": {"privateEndpointId": "str"},
                                                         "groupIds": ["str"],
                                                         "privateLinkServiceConnectionState": {
                                                             "actionsRequired": "str",
@@ -2812,7 +2870,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2825,7 +2883,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -2837,7 +2895,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
         response = self.client.service_endpoint_policies.begin_delete(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2848,7 +2906,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
     def test_service_endpoint_policies_list_by_resource_group(self, resource_group):
         response = self.client.service_endpoint_policies.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2858,7 +2916,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_service_endpoint_policies_list(self, resource_group):
         response = self.client.service_endpoint_policies.list(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

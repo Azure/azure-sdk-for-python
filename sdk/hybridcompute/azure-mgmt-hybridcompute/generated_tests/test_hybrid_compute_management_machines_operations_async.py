@@ -39,7 +39,12 @@ class TestHybridComputeManagementMachinesOperationsAsync(AzureMgmtRecordedTestCa
             parameters={
                 "location": "str",
                 "id": "str",
-                "identity": {"principalId": "str", "tenantId": "str", "type": "str"},
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "kind": "str",
                 "name": "str",
                 "properties": {
@@ -242,6 +247,7 @@ class TestHybridComputeManagementMachinesOperationsAsync(AzureMgmtRecordedTestCa
                         "guestConfigurationService": {"startupType": "str", "status": "str"},
                     },
                     "status": "str",
+                    "statusReason": "str",
                     "storageProfile": {
                         "disks": [
                             {
@@ -322,7 +328,12 @@ class TestHybridComputeManagementMachinesOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             machine_name="str",
             parameters={
-                "identity": {"principalId": "str", "tenantId": "str", "type": "str"},
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "kind": "str",
                 "properties": {
                     "agentUpgrade": {

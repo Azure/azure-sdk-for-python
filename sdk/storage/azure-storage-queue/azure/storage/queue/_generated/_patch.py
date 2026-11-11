@@ -16,7 +16,6 @@ from ._configuration import QueuesClientConfiguration as QueuesClientConfigurati
 from ._utils.serialization import Deserializer, Serializer
 from .operations import QueueOperations, ServiceOperations
 from ._client import QueuesClient as QueuesClientInternal
-from ._version import VERSION
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -40,18 +39,10 @@ class QueuesClientConfiguration(QueuesClientConfigurationInternal):
     """
 
     def __init__(self, url: str, credential: Optional["TokenCredential"] = None, **kwargs: Any) -> None:
-        version: str = kwargs.pop("version", "2026-04-06")
-
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-
         self.url = url
-        self.credential = credential
-        self.version = version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "storage-queue/{}".format(VERSION))
-        self.polling_interval = kwargs.get("polling_interval", 30)
-        self._configure(**kwargs)
+        self.version: str = kwargs.pop("version", "2026-04-06")
 
 
 class QueuesClient(QueuesClientInternal):

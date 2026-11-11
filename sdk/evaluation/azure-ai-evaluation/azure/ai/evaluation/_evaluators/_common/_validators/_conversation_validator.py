@@ -7,7 +7,12 @@ Validator for conversation-style query and response inputs.
 
 from typing import Any, Dict, List, Optional
 from typing_extensions import override
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from ._validation_constants import MessageRole, ContentType
 from ._validator_interface import ValidatorInterface
 
@@ -21,21 +26,27 @@ class ConversationValidator(ValidatorInterface):
     check_for_unsupported_tools: bool = False
     error_target: ErrorTarget
 
+    # Tools that evaluators with ``check_for_unsupported_tools=True`` reject.
+    # ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding`` are
+    # accepted by default because the shared formatter JSON-encodes their
+    # structured tool_result payloads (see ``_stringify_tool_result``).
+    # ``GroundednessConversationValidator`` overrides this list to keep
+    # rejecting them until a context-extractor helper lands.
     UNSUPPORTED_TOOLS: List[str] = [
-        "azure_ai_search",
         "bing_custom_search",
         "bing_grounding",
         "browser_automation",
         "code_interpreter_call",
         "computer_call",
-        "azure_fabric",
         "openapi_call",
-        "sharepoint_grounding",
         "web_search",
     ]
 
     def __init__(
-        self, error_target: ErrorTarget, requires_query: bool = True, check_for_unsupported_tools: bool = False
+        self,
+        error_target: ErrorTarget,
+        requires_query: bool = True,
+        check_for_unsupported_tools: bool = False,
     ):
         """Initialize with error target and query requirement."""
         self.requires_query = requires_query
@@ -220,7 +231,11 @@ class ConversationValidator(ValidatorInterface):
                     error = self._validate_text_content_item(content_item, MessageRole.ASSISTANT)
                     if error:
                         return error
-                elif content_type in [ContentType.TOOL_CALL, ContentType.FUNCTION_CALL, ContentType.OPENAPI_CALL]:
+                elif content_type in [
+                    ContentType.TOOL_CALL,
+                    ContentType.FUNCTION_CALL,
+                    ContentType.OPENAPI_CALL,
+                ]:
                     error = self._validate_tool_call_content_item(content_item)
                     if error:
                         return error
@@ -253,7 +268,9 @@ class ConversationValidator(ValidatorInterface):
             )
 
         error = self._validate_string_field(
-            message, "tool_call_id", f"content items for role '{MessageRole.TOOL.value}'"
+            message,
+            "tool_call_id",
+            f"content items for role '{MessageRole.TOOL.value}'",
         )
         if error:
             return error
@@ -281,7 +298,9 @@ class ConversationValidator(ValidatorInterface):
                 ContentType.FUNCTION_CALL_OUTPUT,
             ]:
                 error = self._validate_field_exists(
-                    content_item, content_type, f"content items for role '{MessageRole.TOOL.value}'"
+                    content_item,
+                    content_type,
+                    f"content items for role '{MessageRole.TOOL.value}'",
                 )
                 if error:
                     return error
@@ -453,3 +472,28 @@ class ConversationValidator(ValidatorInterface):
             raise response_validation_exception
 
         return True
+
+
+class GroundednessConversationValidator(ConversationValidator):
+    """
+    ConversationValidator override used by ``GroundednessEvaluator``.
+
+    Groundedness still rejects ``azure_ai_search``, ``azure_fabric``, and
+    ``sharepoint_grounding`` tool calls pending a helper that can extract
+    document bodies out of structured ``tool_result`` envelopes and feed
+    them in as the ``context`` input the groundedness judge prompt scores
+    against. Without that helper the judge would receive empty or wrong
+    context and return a silently low groundedness score, so the
+    enablement performed for ``ToolCallSuccessEvaluator`` and
+    ``ToolOutputUtilizationEvaluator`` is intentionally not extended here.
+
+    Once the context-extractor helper lands, this subclass can be deleted
+    and ``GroundednessEvaluator`` can use ``ConversationValidator``
+    directly.
+    """
+
+    UNSUPPORTED_TOOLS: List[str] = ConversationValidator.UNSUPPORTED_TOOLS + [
+        "azure_ai_search",
+        "azure_fabric",
+        "sharepoint_grounding",
+    ]

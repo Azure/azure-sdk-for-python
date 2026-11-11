@@ -6,8 +6,10 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Literal, Optional, Union
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as RestBatchDeployment
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    BatchDeployment as RestBatchDeployment,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
     BatchDeploymentProperties,
     BatchPipelineComponentDeploymentConfiguration,
     IdAssetReference,
@@ -30,20 +32,20 @@ type: Literal["pipeline"] = "pipeline"
 class PipelineComponentBatchDeployment(BatchDeployment):
     """Pipeline Component Batch Deployment entity.
 
-    :param name: Name of the deployment resource.
-    :type name: str
-    :param description: Description of the deployment resource.
-    :type description: Optional[str]
-    :param component: Component definition.
-    :type component: Optional[Union[Component, str]]
-    :param settings: Run-time settings for the pipeline job.
-    :type settings: Optional[Dict[str, Any]]
-    :param tags: A set of tags. The tags which will be applied to the job.
-    :type tags: Optional[Dict[str, Any]]
-    :param job_definition: Arm ID or PipelineJob entity of an existing pipeline job.
-    :type job_definition: Optional[Dict[str, ~azure.ai.ml.entities._builders.BaseNode]]
-    :param endpoint_name: Name of the Endpoint resource, defaults to None.
-    :type endpoint_name: Optional[str]
+    :keyword name: Name of the deployment resource.
+    :paramtype name: str
+    :keyword description: Description of the deployment resource.
+    :paramtype description: Optional[str]
+    :keyword component: Component definition.
+    :paramtype component: Optional[Union[Component, str]]
+    :keyword settings: Run-time settings for the pipeline job.
+    :paramtype settings: Optional[Dict[str, Any]]
+    :keyword tags: A set of tags. The tags which will be applied to the job.
+    :paramtype tags: Optional[Dict[str, Any]]
+    :keyword job_definition: Arm ID or PipelineJob entity of an existing pipeline job.
+    :paramtype job_definition: Optional[Dict[str, ~azure.ai.ml.entities._builders.BaseNode]]
+    :keyword endpoint_name: Name of the Endpoint resource, defaults to None.
+    :paramtype endpoint_name: Optional[str]
     """
 
     def __init__(
@@ -62,7 +64,12 @@ class PipelineComponentBatchDeployment(BatchDeployment):
         # Get type from kwargs if present, otherwise use the default type defined above
         _type = kwargs.pop("type", type)
         super().__init__(
-            name=name, _type=_type, endpoint_name=endpoint_name, tags=tags, description=description, **kwargs
+            name=name,
+            _type=_type,
+            endpoint_name=endpoint_name,
+            tags=tags,
+            description=description,
+            **kwargs,
         )
         self.component = component
         self.settings = settings
@@ -89,6 +96,13 @@ class PipelineComponentBatchDeployment(BatchDeployment):
             properties=BatchDeploymentProperties(
                 deployment_configuration=batch_pipeline_config,
                 description=self.description,
+                # The v2024_01 msrest BatchDeploymentProperties model defaulted these fields and always
+                # emitted them on the wire even when unset here. The shared arm_ml_service model does not
+                # default them, so set them explicitly to the same values to keep the body byte-identical.
+                error_threshold=-1,
+                max_concurrency_per_instance=1,
+                mini_batch_size=10,
+                output_file_name="predictions.csv",
             ),
         )
 
@@ -115,11 +129,18 @@ class PipelineComponentBatchDeployment(BatchDeployment):
 
     @classmethod
     def _from_rest_object(cls, deployment: RestBatchDeployment) -> "PipelineComponentBatchDeployment":
+        # The arm_ml_service model is a MutableMapping and exposes untyped wire keys via ``.get``; the
+        # legacy msrest model exposed the same extra keys via ``additional_properties``.
+        deployment_config = (
+            deployment.properties.additional_properties.get("deploymentConfiguration", {})
+            if hasattr(deployment.properties, "additional_properties")
+            else deployment.properties.get("deploymentConfiguration", {})
+        )
         return PipelineComponentBatchDeployment(
             name=deployment.name,
             tags=deployment.tags,
-            component=deployment.properties.additional_properties["deploymentConfiguration"]["componentId"]["assetId"],
-            settings=deployment.properties.additional_properties["deploymentConfiguration"]["settings"],
+            component=deployment_config["componentId"]["assetId"],
+            settings=deployment_config["settings"],
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
         )
 

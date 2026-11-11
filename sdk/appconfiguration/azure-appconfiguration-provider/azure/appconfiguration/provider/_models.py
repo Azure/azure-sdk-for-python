@@ -35,7 +35,7 @@ class AzureAppConfigurationKeyVaultOptions:
         :keyword client_configs: A Mapping of SecretClient endpoints to client configurations from
          azure-keyvault-secrets. This is optional if credential is provided. If a credential isn't provided a
          credential will need to be in each set for each.
-        :paramtype client_configs: Mapping[Url, Mapping]
+        :paramtype client_configs: Mapping[str, Mapping[str, Any]]
         :keyword secret_resolver: A function that takes a URI and returns a value.
         :paramtype secret_resolver: Callable[[str], str]
         """
@@ -52,20 +52,20 @@ class SettingSelector:
 
     :keyword key_filter: A filter to select configuration settings and feature flags based on their keys.
      Cannot be used with snapshot_name.
-    :type key_filter: str
+    :paramtype key_filter: Optional[str]
     :keyword label_filter: A filter to select configuration settings and feature flags based on their labels. Default
      value is \0 i.e. (No Label) as seen in the portal. Cannot be used with snapshot_name.
-    :type label_filter: Optional[str]
+    :paramtype label_filter: Optional[str]
     :keyword tag_filters: A filter to select configuration settings and feature flags based on their tags. This is a
      list of strings that will be used to match tags on the configuration settings. Reserved characters (\\*, \\, ,)
      must be escaped with backslash if they are part of the value. Tag filters must follow the format
      "tagName=tagValue", for empty values use "tagName=" and for null values use "tagName=\\0".
      Cannot be used with snapshot_name.
-    :type tag_filters: Optional[List[str]]
+    :paramtype tag_filters: Optional[List[str]]
     :keyword snapshot_name: The name of the snapshot to load configuration settings from. When specified,
      all configuration settings from the snapshot will be loaded. Cannot be used with key_filter, label_filter,
      or tag_filters.
-    :type snapshot_name: Optional[str]
+    :paramtype snapshot_name: Optional[str]
     """
 
     def __init__(

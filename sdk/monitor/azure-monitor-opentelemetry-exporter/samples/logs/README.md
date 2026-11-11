@@ -13,6 +13,8 @@ These code samples show common champion scenario operations with the AzureMonito
 * Logs: [sample_log.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_log.py)
 * Trace correlation: [sample_log.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_correlate.py)
 * Custom properties: [sample_properties.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_properties.py)
+* Custom measurements: [sample_log_custom_measurements.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_log_custom_measurements.py)
+* Availability telemetry: [sample_availability_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_availability_data.py)
 
 
 ## Installation
@@ -54,6 +56,28 @@ $ python sample_correlate.py
 ```sh
 $ # from this directory
 $ python sample_properties.py
+```
+
+### Custom measurements
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # from this directory
+$ python sample_log_custom_measurements.py
+```
+
+### Availability telemetry
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # from this directory
+$ python sample_availability_data.py
 ```
 
 ## Explore the data

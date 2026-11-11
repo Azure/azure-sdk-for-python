@@ -13,21 +13,17 @@ parameters:
   - name: NameForReservation
     type: string
     default: 'auto'
-  - name: VersionForReservation
-    type: string
-    default: '0.0.0'
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
     - stage: Build
-      displayName: 'Build ${{ parameters.NameForReservation }}==${{ parameters.VersionForReservation }}'
+      displayName: 'Build ${{ parameters.NameForReservation }}==0.0.0b1'
       jobs:
         - template: ../jobs/build-namereserve-package.yml
           parameters:
             NameForReservation: ${{ parameters.NameForReservation }}
-            VersionForReservation: ${{ parameters.VersionForReservation }}
 
     - stage: Publish
       displayName: 'Publish Name Reservation Package'

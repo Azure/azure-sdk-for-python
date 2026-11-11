@@ -34,7 +34,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -160,7 +160,6 @@ from .._configuration import CdnManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -367,7 +366,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         profile_name: str,
-        profile: Union[_models.Profile, JSON, IO[bytes]],
+        profile: Union[_models.Profile, _types.Profile, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -475,7 +474,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         profile_name: str,
-        profile: JSON,
+        profile: _types.Profile,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -490,7 +489,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param profile: Profile properties needed to create a new profile. Required.
-        :type profile: JSON
+        :type profile: ~azure.mgmt.cdn.types.Profile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -535,7 +534,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         profile_name: str,
-        profile: Union[_models.Profile, JSON, IO[bytes]],
+        profile: Union[_models.Profile, _types.Profile, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Profile]:
         """Creates a new Azure Front Door Standard or Azure Front Door Premium or CDN profile with a
@@ -547,9 +546,9 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :param profile: Profile properties needed to create a new profile. Is one of the following
-         types: Profile, JSON, IO[bytes] Required.
-        :type profile: ~azure.mgmt.cdn.models.Profile or JSON or IO[bytes]
+        :param profile: Profile properties needed to create a new profile. Is either a Profile type or
+         a IO[bytes] type. Required.
+        :type profile: ~azure.mgmt.cdn.models.Profile or ~azure.mgmt.cdn.types.Profile or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Profile. The Profile is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Profile]
@@ -611,7 +610,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_update_parameters: Union[_models.ProfileUpdateParameters, JSON, IO[bytes]],
+        profile_update_parameters: Union[_models.ProfileUpdateParameters, _types.ProfileUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -717,7 +716,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_update_parameters: JSON,
+        profile_update_parameters: _types.ProfileUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -733,7 +732,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         :type profile_name: str
         :param profile_update_parameters: Profile properties needed to update an existing profile.
          Required.
-        :type profile_update_parameters: JSON
+        :type profile_update_parameters: ~azure.mgmt.cdn.types.ProfileUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -779,7 +778,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_update_parameters: Union[_models.ProfileUpdateParameters, JSON, IO[bytes]],
+        profile_update_parameters: Union[_models.ProfileUpdateParameters, _types.ProfileUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Profile]:
         """Updates an existing Azure Front Door Standard or Azure Front Door Premium or CDN profile with
@@ -792,9 +791,9 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param profile_update_parameters: Profile properties needed to update an existing profile. Is
-         one of the following types: ProfileUpdateParameters, JSON, IO[bytes] Required.
-        :type profile_update_parameters: ~azure.mgmt.cdn.models.ProfileUpdateParameters or JSON or
-         IO[bytes]
+         either a ProfileUpdateParameters type or a IO[bytes] type. Required.
+        :type profile_update_parameters: ~azure.mgmt.cdn.models.ProfileUpdateParameters or
+         ~azure.mgmt.cdn.types.ProfileUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Profile. The Profile is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Profile]
@@ -1671,7 +1670,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         profile_name: str,
-        migration_parameters: Union[_models.CdnMigrationToAfdParameters, JSON, IO[bytes]],
+        migration_parameters: Union[_models.CdnMigrationToAfdParameters, _types.CdnMigrationToAfdParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1777,7 +1776,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         profile_name: str,
-        migration_parameters: JSON,
+        migration_parameters: _types.CdnMigrationToAfdParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1792,7 +1791,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param migration_parameters: Properties needed to migrate the profile. Required.
-        :type migration_parameters: JSON
+        :type migration_parameters: ~azure.mgmt.cdn.types.CdnMigrationToAfdParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1837,7 +1836,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         profile_name: str,
-        migration_parameters: Union[_models.CdnMigrationToAfdParameters, JSON, IO[bytes]],
+        migration_parameters: Union[_models.CdnMigrationToAfdParameters, _types.CdnMigrationToAfdParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MigrateResult]:
         """Migrate the CDN profile to Azure Frontdoor(Standard/Premium) profile. This step prepares the
@@ -1849,10 +1848,10 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :param migration_parameters: Properties needed to migrate the profile. Is one of the following
-         types: CdnMigrationToAfdParameters, JSON, IO[bytes] Required.
-        :type migration_parameters: ~azure.mgmt.cdn.models.CdnMigrationToAfdParameters or JSON or
-         IO[bytes]
+        :param migration_parameters: Properties needed to migrate the profile. Is either a
+         CdnMigrationToAfdParameters type or a IO[bytes] type. Required.
+        :type migration_parameters: ~azure.mgmt.cdn.models.CdnMigrationToAfdParameters or
+         ~azure.mgmt.cdn.types.CdnMigrationToAfdParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MigrateResult. The MigrateResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.MigrateResult]
@@ -2032,7 +2031,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
     async def _can_migrate_initial(
         self,
         resource_group_name: str,
-        can_migrate_parameters: Union[_models.CanMigrateParameters, JSON, IO[bytes]],
+        can_migrate_parameters: Union[_models.CanMigrateParameters, _types.CanMigrateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2132,7 +2131,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
     async def begin_can_migrate(
         self,
         resource_group_name: str,
-        can_migrate_parameters: JSON,
+        can_migrate_parameters: _types.CanMigrateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2144,7 +2143,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param can_migrate_parameters: Properties needed to check if cdn profile or classic frontdoor
          can be migrated. Required.
-        :type can_migrate_parameters: JSON
+        :type can_migrate_parameters: ~azure.mgmt.cdn.types.CanMigrateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2184,7 +2183,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
     async def begin_can_migrate(
         self,
         resource_group_name: str,
-        can_migrate_parameters: Union[_models.CanMigrateParameters, JSON, IO[bytes]],
+        can_migrate_parameters: Union[_models.CanMigrateParameters, _types.CanMigrateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CanMigrateResult]:
         """Checks if CDN profile can be migrated to Azure Frontdoor(Standard/Premium) profile.
@@ -2193,8 +2192,9 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type resource_group_name: str
         :param can_migrate_parameters: Properties needed to check if cdn profile or classic frontdoor
-         can be migrated. Is one of the following types: CanMigrateParameters, JSON, IO[bytes] Required.
-        :type can_migrate_parameters: ~azure.mgmt.cdn.models.CanMigrateParameters or JSON or IO[bytes]
+         can be migrated. Is either a CanMigrateParameters type or a IO[bytes] type. Required.
+        :type can_migrate_parameters: ~azure.mgmt.cdn.models.CanMigrateParameters or
+         ~azure.mgmt.cdn.types.CanMigrateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CanMigrateResult. The CanMigrateResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.CanMigrateResult]
@@ -2254,7 +2254,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
     async def _migrate_initial(
         self,
         resource_group_name: str,
-        migration_parameters: Union[_models.MigrationParameters, JSON, IO[bytes]],
+        migration_parameters: Union[_models.MigrationParameters, _types.MigrationParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2353,7 +2353,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
     async def begin_migrate(
         self,
         resource_group_name: str,
-        migration_parameters: JSON,
+        migration_parameters: _types.MigrationParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2365,7 +2365,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type resource_group_name: str
         :param migration_parameters: Properties needed to migrate the profile. Required.
-        :type migration_parameters: JSON
+        :type migration_parameters: ~azure.mgmt.cdn.types.MigrationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2405,7 +2405,7 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
     async def begin_migrate(
         self,
         resource_group_name: str,
-        migration_parameters: Union[_models.MigrationParameters, JSON, IO[bytes]],
+        migration_parameters: Union[_models.MigrationParameters, _types.MigrationParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MigrateResult]:
         """Migrate the CDN profile to Azure Frontdoor(Standard/Premium) profile. The change need to be
@@ -2414,9 +2414,10 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param migration_parameters: Properties needed to migrate the profile. Is one of the following
-         types: MigrationParameters, JSON, IO[bytes] Required.
-        :type migration_parameters: ~azure.mgmt.cdn.models.MigrationParameters or JSON or IO[bytes]
+        :param migration_parameters: Properties needed to migrate the profile. Is either a
+         MigrationParameters type or a IO[bytes] type. Required.
+        :type migration_parameters: ~azure.mgmt.cdn.models.MigrationParameters or
+         ~azure.mgmt.cdn.types.MigrationParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MigrateResult. The MigrateResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.MigrateResult]
@@ -2574,7 +2575,7 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint: Union[_models.AFDEndpoint, JSON, IO[bytes]],
+        endpoint: Union[_models.AFDEndpoint, _types.AFDEndpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2692,7 +2693,7 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint: JSON,
+        endpoint: _types.AFDEndpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2710,7 +2711,7 @@ class AFDEndpointsOperations:
          Required.
         :type endpoint_name: str
         :param endpoint: Endpoint properties. Required.
-        :type endpoint: JSON
+        :type endpoint: ~azure.mgmt.cdn.types.AFDEndpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2760,7 +2761,7 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint: Union[_models.AFDEndpoint, JSON, IO[bytes]],
+        endpoint: Union[_models.AFDEndpoint, _types.AFDEndpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AFDEndpoint]:
         """Creates a new AzureFrontDoor endpoint with the specified endpoint name under the specified
@@ -2775,9 +2776,10 @@ class AFDEndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :param endpoint: Endpoint properties. Is one of the following types: AFDEndpoint, JSON,
-         IO[bytes] Required.
-        :type endpoint: ~azure.mgmt.cdn.models.AFDEndpoint or JSON or IO[bytes]
+        :param endpoint: Endpoint properties. Is either a AFDEndpoint type or a IO[bytes] type.
+         Required.
+        :type endpoint: ~azure.mgmt.cdn.models.AFDEndpoint or ~azure.mgmt.cdn.types.AFDEndpoint or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns AFDEndpoint. The AFDEndpoint is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDEndpoint]
@@ -2841,7 +2843,9 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint_update_properties: Union[_models.AFDEndpointUpdateParameters, JSON, IO[bytes]],
+        endpoint_update_properties: Union[
+            _models.AFDEndpointUpdateParameters, _types.AFDEndpointUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2957,7 +2961,7 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint_update_properties: JSON,
+        endpoint_update_properties: _types.AFDEndpointUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2977,7 +2981,7 @@ class AFDEndpointsOperations:
          Required.
         :type endpoint_name: str
         :param endpoint_update_properties: Endpoint update properties. Required.
-        :type endpoint_update_properties: JSON
+        :type endpoint_update_properties: ~azure.mgmt.cdn.types.AFDEndpointUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3029,7 +3033,9 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint_update_properties: Union[_models.AFDEndpointUpdateParameters, JSON, IO[bytes]],
+        endpoint_update_properties: Union[
+            _models.AFDEndpointUpdateParameters, _types.AFDEndpointUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AFDEndpoint]:
         """Updates an existing AzureFrontDoor endpoint with the specified endpoint name under the
@@ -3046,10 +3052,10 @@ class AFDEndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :param endpoint_update_properties: Endpoint update properties. Is one of the following types:
-         AFDEndpointUpdateParameters, JSON, IO[bytes] Required.
-        :type endpoint_update_properties: ~azure.mgmt.cdn.models.AFDEndpointUpdateParameters or JSON or
-         IO[bytes]
+        :param endpoint_update_properties: Endpoint update properties. Is either a
+         AFDEndpointUpdateParameters type or a IO[bytes] type. Required.
+        :type endpoint_update_properties: ~azure.mgmt.cdn.models.AFDEndpointUpdateParameters or
+         ~azure.mgmt.cdn.types.AFDEndpointUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AFDEndpoint. The AFDEndpoint is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDEndpoint]
@@ -3345,7 +3351,7 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        contents: Union[_models.AfdPurgeParameters, JSON, IO[bytes]],
+        contents: Union[_models.AfdPurgeParameters, _types.AfdPurgeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3461,7 +3467,7 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        contents: JSON,
+        contents: _types.AfdPurgeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3481,7 +3487,7 @@ class AFDEndpointsOperations:
          Path can be a full URL, e.g. '/pictures/city.png' which removes a single file, or a directory
          with a wildcard, e.g. '/pictures/*' which removes all folders and files in the directory.
          Required.
-        :type contents: JSON
+        :type contents: ~azure.mgmt.cdn.types.AfdPurgeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3531,7 +3537,7 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        contents: Union[_models.AfdPurgeParameters, JSON, IO[bytes]],
+        contents: Union[_models.AfdPurgeParameters, _types.AfdPurgeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Removes a content from AzureFrontDoor.
@@ -3548,8 +3554,9 @@ class AFDEndpointsOperations:
         :param contents: The list of paths to the content and the list of linked domains to be purged.
          Path can be a full URL, e.g. '/pictures/city.png' which removes a single file, or a directory
          with a wildcard, e.g. '/pictures/*' which removes all folders and files in the directory. Is
-         one of the following types: AfdPurgeParameters, JSON, IO[bytes] Required.
-        :type contents: ~azure.mgmt.cdn.models.AfdPurgeParameters or JSON or IO[bytes]
+         either a AfdPurgeParameters type or a IO[bytes] type. Required.
+        :type contents: ~azure.mgmt.cdn.models.AfdPurgeParameters or
+         ~azure.mgmt.cdn.types.AfdPurgeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3749,7 +3756,7 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        custom_domain_properties: JSON,
+        custom_domain_properties: _types.ValidateCustomDomainInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3767,7 +3774,7 @@ class AFDEndpointsOperations:
          Required.
         :type endpoint_name: str
         :param custom_domain_properties: Custom domain to be validated. Required.
-        :type custom_domain_properties: JSON
+        :type custom_domain_properties: ~azure.mgmt.cdn.types.ValidateCustomDomainInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3817,7 +3824,7 @@ class AFDEndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        custom_domain_properties: Union[_models.ValidateCustomDomainInput, JSON, IO[bytes]],
+        custom_domain_properties: Union[_models.ValidateCustomDomainInput, _types.ValidateCustomDomainInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.ValidateCustomDomainOutput:
         """Validates the custom domain mapping to ensure it maps to the correct Azure Front Door endpoint
@@ -3832,10 +3839,10 @@ class AFDEndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :param custom_domain_properties: Custom domain to be validated. Is one of the following types:
-         ValidateCustomDomainInput, JSON, IO[bytes] Required.
-        :type custom_domain_properties: ~azure.mgmt.cdn.models.ValidateCustomDomainInput or JSON or
-         IO[bytes]
+        :param custom_domain_properties: Custom domain to be validated. Is either a
+         ValidateCustomDomainInput type or a IO[bytes] type. Required.
+        :type custom_domain_properties: ~azure.mgmt.cdn.models.ValidateCustomDomainInput or
+         ~azure.mgmt.cdn.types.ValidateCustomDomainInput or IO[bytes]
         :return: ValidateCustomDomainOutput. The ValidateCustomDomainOutput is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cdn.models.ValidateCustomDomainOutput
@@ -4009,7 +4016,7 @@ class AFDOriginGroupsOperations:
         resource_group_name: str,
         profile_name: str,
         origin_group_name: str,
-        origin_group: Union[_models.AFDOriginGroup, JSON, IO[bytes]],
+        origin_group: Union[_models.AFDOriginGroup, _types.AFDOriginGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4125,7 +4132,7 @@ class AFDOriginGroupsOperations:
         resource_group_name: str,
         profile_name: str,
         origin_group_name: str,
-        origin_group: JSON,
+        origin_group: _types.AFDOriginGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4142,7 +4149,7 @@ class AFDOriginGroupsOperations:
          Required.
         :type origin_group_name: str
         :param origin_group: Origin group properties. Required.
-        :type origin_group: JSON
+        :type origin_group: ~azure.mgmt.cdn.types.AFDOriginGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4191,7 +4198,7 @@ class AFDOriginGroupsOperations:
         resource_group_name: str,
         profile_name: str,
         origin_group_name: str,
-        origin_group: Union[_models.AFDOriginGroup, JSON, IO[bytes]],
+        origin_group: Union[_models.AFDOriginGroup, _types.AFDOriginGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AFDOriginGroup]:
         """Creates a new origin group within the specified profile.
@@ -4205,9 +4212,10 @@ class AFDOriginGroupsOperations:
         :param origin_group_name: Name of the origin group which is unique within the endpoint.
          Required.
         :type origin_group_name: str
-        :param origin_group: Origin group properties. Is one of the following types: AFDOriginGroup,
-         JSON, IO[bytes] Required.
-        :type origin_group: ~azure.mgmt.cdn.models.AFDOriginGroup or JSON or IO[bytes]
+        :param origin_group: Origin group properties. Is either a AFDOriginGroup type or a IO[bytes]
+         type. Required.
+        :type origin_group: ~azure.mgmt.cdn.models.AFDOriginGroup or
+         ~azure.mgmt.cdn.types.AFDOriginGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AFDOriginGroup. The AFDOriginGroup is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDOriginGroup]
@@ -4271,7 +4279,9 @@ class AFDOriginGroupsOperations:
         resource_group_name: str,
         profile_name: str,
         origin_group_name: str,
-        origin_group_update_properties: Union[_models.AFDOriginGroupUpdateParameters, JSON, IO[bytes]],
+        origin_group_update_properties: Union[
+            _models.AFDOriginGroupUpdateParameters, _types.AFDOriginGroupUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4385,7 +4395,7 @@ class AFDOriginGroupsOperations:
         resource_group_name: str,
         profile_name: str,
         origin_group_name: str,
-        origin_group_update_properties: JSON,
+        origin_group_update_properties: _types.AFDOriginGroupUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4402,7 +4412,7 @@ class AFDOriginGroupsOperations:
          Required.
         :type origin_group_name: str
         :param origin_group_update_properties: Origin group properties. Required.
-        :type origin_group_update_properties: JSON
+        :type origin_group_update_properties: ~azure.mgmt.cdn.types.AFDOriginGroupUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4451,7 +4461,9 @@ class AFDOriginGroupsOperations:
         resource_group_name: str,
         profile_name: str,
         origin_group_name: str,
-        origin_group_update_properties: Union[_models.AFDOriginGroupUpdateParameters, JSON, IO[bytes]],
+        origin_group_update_properties: Union[
+            _models.AFDOriginGroupUpdateParameters, _types.AFDOriginGroupUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AFDOriginGroup]:
         """Updates an existing origin group within a profile.
@@ -4465,10 +4477,10 @@ class AFDOriginGroupsOperations:
         :param origin_group_name: Name of the origin group which is unique within the endpoint.
          Required.
         :type origin_group_name: str
-        :param origin_group_update_properties: Origin group properties. Is one of the following types:
-         AFDOriginGroupUpdateParameters, JSON, IO[bytes] Required.
+        :param origin_group_update_properties: Origin group properties. Is either a
+         AFDOriginGroupUpdateParameters type or a IO[bytes] type. Required.
         :type origin_group_update_properties: ~azure.mgmt.cdn.models.AFDOriginGroupUpdateParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.cdn.types.AFDOriginGroupUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AFDOriginGroup. The AFDOriginGroup is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDOriginGroup]
@@ -4969,7 +4981,7 @@ class AFDOriginsOperations:
         profile_name: str,
         origin_group_name: str,
         origin_name: str,
-        origin: Union[_models.AFDOrigin, JSON, IO[bytes]],
+        origin: Union[_models.AFDOrigin, _types.AFDOrigin, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5087,7 +5099,7 @@ class AFDOriginsOperations:
         profile_name: str,
         origin_group_name: str,
         origin_name: str,
-        origin: JSON,
+        origin: _types.AFDOrigin,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5106,7 +5118,7 @@ class AFDOriginsOperations:
         :param origin_name: Name of the origin which is unique within the profile. Required.
         :type origin_name: str
         :param origin: Origin properties. Required.
-        :type origin: JSON
+        :type origin: ~azure.mgmt.cdn.types.AFDOrigin
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5159,7 +5171,7 @@ class AFDOriginsOperations:
         profile_name: str,
         origin_group_name: str,
         origin_name: str,
-        origin: Union[_models.AFDOrigin, JSON, IO[bytes]],
+        origin: Union[_models.AFDOrigin, _types.AFDOrigin, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AFDOrigin]:
         """Creates a new origin within the specified origin group.
@@ -5175,9 +5187,8 @@ class AFDOriginsOperations:
         :type origin_group_name: str
         :param origin_name: Name of the origin which is unique within the profile. Required.
         :type origin_name: str
-        :param origin: Origin properties. Is one of the following types: AFDOrigin, JSON, IO[bytes]
-         Required.
-        :type origin: ~azure.mgmt.cdn.models.AFDOrigin or JSON or IO[bytes]
+        :param origin: Origin properties. Is either a AFDOrigin type or a IO[bytes] type. Required.
+        :type origin: ~azure.mgmt.cdn.models.AFDOrigin or ~azure.mgmt.cdn.types.AFDOrigin or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AFDOrigin. The AFDOrigin is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDOrigin]
@@ -5243,7 +5254,7 @@ class AFDOriginsOperations:
         profile_name: str,
         origin_group_name: str,
         origin_name: str,
-        origin_update_properties: Union[_models.AFDOriginUpdateParameters, JSON, IO[bytes]],
+        origin_update_properties: Union[_models.AFDOriginUpdateParameters, _types.AFDOriginUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5361,7 +5372,7 @@ class AFDOriginsOperations:
         profile_name: str,
         origin_group_name: str,
         origin_name: str,
-        origin_update_properties: JSON,
+        origin_update_properties: _types.AFDOriginUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5380,7 +5391,7 @@ class AFDOriginsOperations:
         :param origin_name: Name of the origin which is unique within the profile. Required.
         :type origin_name: str
         :param origin_update_properties: Origin properties. Required.
-        :type origin_update_properties: JSON
+        :type origin_update_properties: ~azure.mgmt.cdn.types.AFDOriginUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5433,7 +5444,7 @@ class AFDOriginsOperations:
         profile_name: str,
         origin_group_name: str,
         origin_name: str,
-        origin_update_properties: Union[_models.AFDOriginUpdateParameters, JSON, IO[bytes]],
+        origin_update_properties: Union[_models.AFDOriginUpdateParameters, _types.AFDOriginUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AFDOrigin]:
         """Updates an existing origin within an origin group.
@@ -5449,10 +5460,10 @@ class AFDOriginsOperations:
         :type origin_group_name: str
         :param origin_name: Name of the origin which is unique within the profile. Required.
         :type origin_name: str
-        :param origin_update_properties: Origin properties. Is one of the following types:
-         AFDOriginUpdateParameters, JSON, IO[bytes] Required.
-        :type origin_update_properties: ~azure.mgmt.cdn.models.AFDOriginUpdateParameters or JSON or
-         IO[bytes]
+        :param origin_update_properties: Origin properties. Is either a AFDOriginUpdateParameters type
+         or a IO[bytes] type. Required.
+        :type origin_update_properties: ~azure.mgmt.cdn.models.AFDOriginUpdateParameters or
+         ~azure.mgmt.cdn.types.AFDOriginUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AFDOrigin. The AFDOrigin is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDOrigin]
@@ -5857,7 +5868,7 @@ class RoutesOperations:
         profile_name: str,
         endpoint_name: str,
         route_name: str,
-        route: Union[_models.Route, JSON, IO[bytes]],
+        route: Union[_models.Route, _types.Route, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5979,7 +5990,7 @@ class RoutesOperations:
         profile_name: str,
         endpoint_name: str,
         route_name: str,
-        route: JSON,
+        route: _types.Route,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5999,7 +6010,7 @@ class RoutesOperations:
         :param route_name: Name of the routing rule. Required.
         :type route_name: str
         :param route: Route properties. Required.
-        :type route: JSON
+        :type route: ~azure.mgmt.cdn.types.Route
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6053,7 +6064,7 @@ class RoutesOperations:
         profile_name: str,
         endpoint_name: str,
         route_name: str,
-        route: Union[_models.Route, JSON, IO[bytes]],
+        route: Union[_models.Route, _types.Route, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Route]:
         """Creates a new route with the specified route name under the specified subscription, resource
@@ -6070,8 +6081,8 @@ class RoutesOperations:
         :type endpoint_name: str
         :param route_name: Name of the routing rule. Required.
         :type route_name: str
-        :param route: Route properties. Is one of the following types: Route, JSON, IO[bytes] Required.
-        :type route: ~azure.mgmt.cdn.models.Route or JSON or IO[bytes]
+        :param route: Route properties. Is either a Route type or a IO[bytes] type. Required.
+        :type route: ~azure.mgmt.cdn.models.Route or ~azure.mgmt.cdn.types.Route or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Route. The Route is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Route]
@@ -6137,7 +6148,7 @@ class RoutesOperations:
         profile_name: str,
         endpoint_name: str,
         route_name: str,
-        route_update_properties: Union[_models.RouteUpdateParameters, JSON, IO[bytes]],
+        route_update_properties: Union[_models.RouteUpdateParameters, _types.RouteUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6257,7 +6268,7 @@ class RoutesOperations:
         profile_name: str,
         endpoint_name: str,
         route_name: str,
-        route_update_properties: JSON,
+        route_update_properties: _types.RouteUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6277,7 +6288,7 @@ class RoutesOperations:
         :param route_name: Name of the routing rule. Required.
         :type route_name: str
         :param route_update_properties: Route update properties. Required.
-        :type route_update_properties: JSON
+        :type route_update_properties: ~azure.mgmt.cdn.types.RouteUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6331,7 +6342,7 @@ class RoutesOperations:
         profile_name: str,
         endpoint_name: str,
         route_name: str,
-        route_update_properties: Union[_models.RouteUpdateParameters, JSON, IO[bytes]],
+        route_update_properties: Union[_models.RouteUpdateParameters, _types.RouteUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Route]:
         """Updates an existing route with the specified route name under the specified subscription,
@@ -6348,10 +6359,10 @@ class RoutesOperations:
         :type endpoint_name: str
         :param route_name: Name of the routing rule. Required.
         :type route_name: str
-        :param route_update_properties: Route update properties. Is one of the following types:
-         RouteUpdateParameters, JSON, IO[bytes] Required.
-        :type route_update_properties: ~azure.mgmt.cdn.models.RouteUpdateParameters or JSON or
-         IO[bytes]
+        :param route_update_properties: Route update properties. Is either a RouteUpdateParameters type
+         or a IO[bytes] type. Required.
+        :type route_update_properties: ~azure.mgmt.cdn.models.RouteUpdateParameters or
+         ~azure.mgmt.cdn.types.RouteUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Route. The Route is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Route]
@@ -6768,7 +6779,7 @@ class RuleSetsOperations:
         resource_group_name: str,
         profile_name: str,
         rule_set_name: str,
-        resource: Optional[Union[_models.RuleSet, JSON, IO[bytes]]] = None,
+        resource: Optional[Union[_models.RuleSet, _types.RuleSet, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6887,7 +6898,7 @@ class RuleSetsOperations:
         resource_group_name: str,
         profile_name: str,
         rule_set_name: str,
-        resource: Optional[JSON] = None,
+        resource: Optional[_types.RuleSet] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6905,7 +6916,7 @@ class RuleSetsOperations:
          Required.
         :type rule_set_name: str
         :param resource: Resource create parameters. Default value is None.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.cdn.types.RuleSet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6970,7 +6981,7 @@ class RuleSetsOperations:
         resource_group_name: str,
         profile_name: str,
         rule_set_name: str,
-        resource: Optional[Union[_models.RuleSet, JSON, IO[bytes]]] = None,
+        resource: Optional[Union[_models.RuleSet, _types.RuleSet, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RuleSet]:
         """Creates or update a batch rule set within the specified profile along with the rules associate
@@ -6985,9 +6996,9 @@ class RuleSetsOperations:
         :param rule_set_name: Name of the rule set under the profile which is unique globally.
          Required.
         :type rule_set_name: str
-        :param resource: Resource create parameters. Is one of the following types: RuleSet, JSON,
-         IO[bytes] Default value is None.
-        :type resource: ~azure.mgmt.cdn.models.RuleSet or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a RuleSet type or a IO[bytes] type.
+         Default value is None.
+        :type resource: ~azure.mgmt.cdn.models.RuleSet or ~azure.mgmt.cdn.types.RuleSet or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RuleSet. The RuleSet is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.RuleSet]
@@ -7491,7 +7502,7 @@ class RulesOperations:
         profile_name: str,
         rule_set_name: str,
         rule_name: str,
-        rule: Union[_models.Rule, JSON, IO[bytes]],
+        rule: Union[_models.Rule, _types.Rule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7612,7 +7623,7 @@ class RulesOperations:
         profile_name: str,
         rule_set_name: str,
         rule_name: str,
-        rule: JSON,
+        rule: _types.Rule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7631,7 +7642,7 @@ class RulesOperations:
         :param rule_name: Name of the delivery rule which is unique within the endpoint. Required.
         :type rule_name: str
         :param rule: The delivery rule properties. Required.
-        :type rule: JSON
+        :type rule: ~azure.mgmt.cdn.types.Rule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7684,7 +7695,7 @@ class RulesOperations:
         profile_name: str,
         rule_set_name: str,
         rule_name: str,
-        rule: Union[_models.Rule, JSON, IO[bytes]],
+        rule: Union[_models.Rule, _types.Rule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Rule]:
         """Creates a new delivery rule within the specified rule set.
@@ -7700,9 +7711,8 @@ class RulesOperations:
         :type rule_set_name: str
         :param rule_name: Name of the delivery rule which is unique within the endpoint. Required.
         :type rule_name: str
-        :param rule: The delivery rule properties. Is one of the following types: Rule, JSON, IO[bytes]
-         Required.
-        :type rule: ~azure.mgmt.cdn.models.Rule or JSON or IO[bytes]
+        :param rule: The delivery rule properties. Is either a Rule type or a IO[bytes] type. Required.
+        :type rule: ~azure.mgmt.cdn.models.Rule or ~azure.mgmt.cdn.types.Rule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Rule. The Rule is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Rule]
@@ -7768,7 +7778,7 @@ class RulesOperations:
         profile_name: str,
         rule_set_name: str,
         rule_name: str,
-        rule_update_properties: Union[_models.RuleUpdateParameters, JSON, IO[bytes]],
+        rule_update_properties: Union[_models.RuleUpdateParameters, _types.RuleUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7886,7 +7896,7 @@ class RulesOperations:
         profile_name: str,
         rule_set_name: str,
         rule_name: str,
-        rule_update_properties: JSON,
+        rule_update_properties: _types.RuleUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7905,7 +7915,7 @@ class RulesOperations:
         :param rule_name: Name of the delivery rule which is unique within the endpoint. Required.
         :type rule_name: str
         :param rule_update_properties: Delivery rule properties. Required.
-        :type rule_update_properties: JSON
+        :type rule_update_properties: ~azure.mgmt.cdn.types.RuleUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7958,7 +7968,7 @@ class RulesOperations:
         profile_name: str,
         rule_set_name: str,
         rule_name: str,
-        rule_update_properties: Union[_models.RuleUpdateParameters, JSON, IO[bytes]],
+        rule_update_properties: Union[_models.RuleUpdateParameters, _types.RuleUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Rule]:
         """Updates an existing delivery rule within a rule set.
@@ -7974,9 +7984,10 @@ class RulesOperations:
         :type rule_set_name: str
         :param rule_name: Name of the delivery rule which is unique within the endpoint. Required.
         :type rule_name: str
-        :param rule_update_properties: Delivery rule properties. Is one of the following types:
-         RuleUpdateParameters, JSON, IO[bytes] Required.
-        :type rule_update_properties: ~azure.mgmt.cdn.models.RuleUpdateParameters or JSON or IO[bytes]
+        :param rule_update_properties: Delivery rule properties. Is either a RuleUpdateParameters type
+         or a IO[bytes] type. Required.
+        :type rule_update_properties: ~azure.mgmt.cdn.models.RuleUpdateParameters or
+         ~azure.mgmt.cdn.types.RuleUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Rule. The Rule is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Rule]
@@ -8375,7 +8386,7 @@ class SecurityPoliciesOperations:
         resource_group_name: str,
         profile_name: str,
         security_policy_name: str,
-        security_policy: Union[_models.SecurityPolicy, JSON, IO[bytes]],
+        security_policy: Union[_models.SecurityPolicy, _types.SecurityPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8490,7 +8501,7 @@ class SecurityPoliciesOperations:
         resource_group_name: str,
         profile_name: str,
         security_policy_name: str,
-        security_policy: JSON,
+        security_policy: _types.SecurityPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8506,7 +8517,7 @@ class SecurityPoliciesOperations:
         :param security_policy_name: Name of the security policy under the profile. Required.
         :type security_policy_name: str
         :param security_policy: The security policy properties. Required.
-        :type security_policy: JSON
+        :type security_policy: ~azure.mgmt.cdn.types.SecurityPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8554,7 +8565,7 @@ class SecurityPoliciesOperations:
         resource_group_name: str,
         profile_name: str,
         security_policy_name: str,
-        security_policy: Union[_models.SecurityPolicy, JSON, IO[bytes]],
+        security_policy: Union[_models.SecurityPolicy, _types.SecurityPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SecurityPolicy]:
         """Creates a new security policy within the specified profile.
@@ -8567,9 +8578,10 @@ class SecurityPoliciesOperations:
         :type profile_name: str
         :param security_policy_name: Name of the security policy under the profile. Required.
         :type security_policy_name: str
-        :param security_policy: The security policy properties. Is one of the following types:
-         SecurityPolicy, JSON, IO[bytes] Required.
-        :type security_policy: ~azure.mgmt.cdn.models.SecurityPolicy or JSON or IO[bytes]
+        :param security_policy: The security policy properties. Is either a SecurityPolicy type or a
+         IO[bytes] type. Required.
+        :type security_policy: ~azure.mgmt.cdn.models.SecurityPolicy or
+         ~azure.mgmt.cdn.types.SecurityPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SecurityPolicy. The SecurityPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.SecurityPolicy]
@@ -8633,7 +8645,9 @@ class SecurityPoliciesOperations:
         resource_group_name: str,
         profile_name: str,
         security_policy_name: str,
-        security_policy_update_properties: Union[_models.SecurityPolicyUpdateParameters, JSON, IO[bytes]],
+        security_policy_update_properties: Union[
+            _models.SecurityPolicyUpdateParameters, _types.SecurityPolicyUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8745,7 +8759,7 @@ class SecurityPoliciesOperations:
         resource_group_name: str,
         profile_name: str,
         security_policy_name: str,
-        security_policy_update_properties: JSON,
+        security_policy_update_properties: _types.SecurityPolicyUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8761,7 +8775,7 @@ class SecurityPoliciesOperations:
         :param security_policy_name: Name of the security policy under the profile. Required.
         :type security_policy_name: str
         :param security_policy_update_properties: Security policy update properties. Required.
-        :type security_policy_update_properties: JSON
+        :type security_policy_update_properties: ~azure.mgmt.cdn.types.SecurityPolicyUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8809,7 +8823,9 @@ class SecurityPoliciesOperations:
         resource_group_name: str,
         profile_name: str,
         security_policy_name: str,
-        security_policy_update_properties: Union[_models.SecurityPolicyUpdateParameters, JSON, IO[bytes]],
+        security_policy_update_properties: Union[
+            _models.SecurityPolicyUpdateParameters, _types.SecurityPolicyUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SecurityPolicy]:
         """Updates an existing security policy within a profile.
@@ -8822,10 +8838,10 @@ class SecurityPoliciesOperations:
         :type profile_name: str
         :param security_policy_name: Name of the security policy under the profile. Required.
         :type security_policy_name: str
-        :param security_policy_update_properties: Security policy update properties. Is one of the
-         following types: SecurityPolicyUpdateParameters, JSON, IO[bytes] Required.
+        :param security_policy_update_properties: Security policy update properties. Is either a
+         SecurityPolicyUpdateParameters type or a IO[bytes] type. Required.
         :type security_policy_update_properties: ~azure.mgmt.cdn.models.SecurityPolicyUpdateParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.cdn.types.SecurityPolicyUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SecurityPolicy. The SecurityPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.SecurityPolicy]
@@ -9212,7 +9228,7 @@ class SecretsOperations:
         resource_group_name: str,
         profile_name: str,
         secret_name: str,
-        secret: Union[_models.Secret, JSON, IO[bytes]],
+        secret: Union[_models.Secret, _types.Secret, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9327,7 +9343,7 @@ class SecretsOperations:
         resource_group_name: str,
         profile_name: str,
         secret_name: str,
-        secret: JSON,
+        secret: _types.Secret,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9343,7 +9359,7 @@ class SecretsOperations:
         :param secret_name: Name of the Secret under the profile. Required.
         :type secret_name: str
         :param secret: The Secret properties. Required.
-        :type secret: JSON
+        :type secret: ~azure.mgmt.cdn.types.Secret
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9391,7 +9407,7 @@ class SecretsOperations:
         resource_group_name: str,
         profile_name: str,
         secret_name: str,
-        secret: Union[_models.Secret, JSON, IO[bytes]],
+        secret: Union[_models.Secret, _types.Secret, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Secret]:
         """Creates a new Secret within the specified profile.
@@ -9404,9 +9420,8 @@ class SecretsOperations:
         :type profile_name: str
         :param secret_name: Name of the Secret under the profile. Required.
         :type secret_name: str
-        :param secret: The Secret properties. Is one of the following types: Secret, JSON, IO[bytes]
-         Required.
-        :type secret: ~azure.mgmt.cdn.models.Secret or JSON or IO[bytes]
+        :param secret: The Secret properties. Is either a Secret type or a IO[bytes] type. Required.
+        :type secret: ~azure.mgmt.cdn.models.Secret or ~azure.mgmt.cdn.types.Secret or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Secret. The Secret is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Secret]
@@ -9797,7 +9812,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint: Union[_models.Endpoint, JSON, IO[bytes]],
+        endpoint: Union[_models.Endpoint, _types.Endpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9911,7 +9926,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint: JSON,
+        endpoint: _types.Endpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9929,7 +9944,7 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param endpoint: Endpoint properties. Required.
-        :type endpoint: JSON
+        :type endpoint: ~azure.mgmt.cdn.types.Endpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9979,7 +9994,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint: Union[_models.Endpoint, JSON, IO[bytes]],
+        endpoint: Union[_models.Endpoint, _types.Endpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Endpoint]:
         """Creates a new CDN endpoint with the specified endpoint name under the specified subscription,
@@ -9994,9 +10009,8 @@ class EndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :param endpoint: Endpoint properties. Is one of the following types: Endpoint, JSON, IO[bytes]
-         Required.
-        :type endpoint: ~azure.mgmt.cdn.models.Endpoint or JSON or IO[bytes]
+        :param endpoint: Endpoint properties. Is either a Endpoint type or a IO[bytes] type. Required.
+        :type endpoint: ~azure.mgmt.cdn.models.Endpoint or ~azure.mgmt.cdn.types.Endpoint or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Endpoint. The Endpoint is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Endpoint]
@@ -10060,7 +10074,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint_update_properties: Union[_models.EndpointUpdateParameters, JSON, IO[bytes]],
+        endpoint_update_properties: Union[_models.EndpointUpdateParameters, _types.EndpointUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10173,7 +10187,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint_update_properties: JSON,
+        endpoint_update_properties: _types.EndpointUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10193,7 +10207,7 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param endpoint_update_properties: Endpoint update properties. Required.
-        :type endpoint_update_properties: JSON
+        :type endpoint_update_properties: ~azure.mgmt.cdn.types.EndpointUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10245,7 +10259,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        endpoint_update_properties: Union[_models.EndpointUpdateParameters, JSON, IO[bytes]],
+        endpoint_update_properties: Union[_models.EndpointUpdateParameters, _types.EndpointUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Endpoint]:
         """Updates an existing CDN endpoint with the specified endpoint name under the specified
@@ -10262,10 +10276,10 @@ class EndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :param endpoint_update_properties: Endpoint update properties. Is one of the following types:
-         EndpointUpdateParameters, JSON, IO[bytes] Required.
-        :type endpoint_update_properties: ~azure.mgmt.cdn.models.EndpointUpdateParameters or JSON or
-         IO[bytes]
+        :param endpoint_update_properties: Endpoint update properties. Is either a
+         EndpointUpdateParameters type or a IO[bytes] type. Required.
+        :type endpoint_update_properties: ~azure.mgmt.cdn.models.EndpointUpdateParameters or
+         ~azure.mgmt.cdn.types.EndpointUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Endpoint. The Endpoint is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Endpoint]
@@ -10826,7 +10840,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: Union[_models.PurgeParameters, JSON, IO[bytes]],
+        content_file_paths: Union[_models.PurgeParameters, _types.PurgeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10938,7 +10952,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: JSON,
+        content_file_paths: _types.PurgeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10957,7 +10971,7 @@ class EndpointsOperations:
         :param content_file_paths: The path to the content to be purged. Path can be a full URL, e.g.
          '/pictures/city.png' which removes a single file, or a directory with a wildcard, e.g.
          '/pictures/*' which removes all folders and files in the directory. Required.
-        :type content_file_paths: JSON
+        :type content_file_paths: ~azure.mgmt.cdn.types.PurgeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11006,7 +11020,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: Union[_models.PurgeParameters, JSON, IO[bytes]],
+        content_file_paths: Union[_models.PurgeParameters, _types.PurgeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Removes a content from CDN.
@@ -11022,9 +11036,10 @@ class EndpointsOperations:
         :type endpoint_name: str
         :param content_file_paths: The path to the content to be purged. Path can be a full URL, e.g.
          '/pictures/city.png' which removes a single file, or a directory with a wildcard, e.g.
-         '/pictures/*' which removes all folders and files in the directory. Is one of the following
-         types: PurgeParameters, JSON, IO[bytes] Required.
-        :type content_file_paths: ~azure.mgmt.cdn.models.PurgeParameters or JSON or IO[bytes]
+         '/pictures/*' which removes all folders and files in the directory. Is either a PurgeParameters
+         type or a IO[bytes] type. Required.
+        :type content_file_paths: ~azure.mgmt.cdn.models.PurgeParameters or
+         ~azure.mgmt.cdn.types.PurgeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11082,7 +11097,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: Union[_models.LoadParameters, JSON, IO[bytes]],
+        content_file_paths: Union[_models.LoadParameters, _types.LoadParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11193,7 +11208,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: JSON,
+        content_file_paths: _types.LoadParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11211,7 +11226,7 @@ class EndpointsOperations:
         :type endpoint_name: str
         :param content_file_paths: The path to the content to be loaded. Path should be a full URL,
          e.g. ‘/pictures/city.png' which loads a single file. Required.
-        :type content_file_paths: JSON
+        :type content_file_paths: ~azure.mgmt.cdn.types.LoadParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11259,7 +11274,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        content_file_paths: Union[_models.LoadParameters, JSON, IO[bytes]],
+        content_file_paths: Union[_models.LoadParameters, _types.LoadParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Pre-loads a content to CDN. Available for Verizon Profiles.
@@ -11274,9 +11289,10 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param content_file_paths: The path to the content to be loaded. Path should be a full URL,
-         e.g. ‘/pictures/city.png' which loads a single file. Is one of the following types:
-         LoadParameters, JSON, IO[bytes] Required.
-        :type content_file_paths: ~azure.mgmt.cdn.models.LoadParameters or JSON or IO[bytes]
+         e.g. ‘/pictures/city.png' which loads a single file. Is either a LoadParameters type or a
+         IO[bytes] type. Required.
+        :type content_file_paths: ~azure.mgmt.cdn.models.LoadParameters or
+         ~azure.mgmt.cdn.types.LoadParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11368,7 +11384,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        custom_domain_properties: JSON,
+        custom_domain_properties: _types.ValidateCustomDomainInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11385,7 +11401,7 @@ class EndpointsOperations:
          Required.
         :type endpoint_name: str
         :param custom_domain_properties: Custom domain to be validated. Required.
-        :type custom_domain_properties: JSON
+        :type custom_domain_properties: ~azure.mgmt.cdn.types.ValidateCustomDomainInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11434,7 +11450,7 @@ class EndpointsOperations:
         resource_group_name: str,
         profile_name: str,
         endpoint_name: str,
-        custom_domain_properties: Union[_models.ValidateCustomDomainInput, JSON, IO[bytes]],
+        custom_domain_properties: Union[_models.ValidateCustomDomainInput, _types.ValidateCustomDomainInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.ValidateCustomDomainOutput:
         """Validates the custom domain mapping to ensure it maps to the correct CDN endpoint in DNS.
@@ -11448,10 +11464,10 @@ class EndpointsOperations:
         :param endpoint_name: Name of the endpoint under the profile which is unique globally.
          Required.
         :type endpoint_name: str
-        :param custom_domain_properties: Custom domain to be validated. Is one of the following types:
-         ValidateCustomDomainInput, JSON, IO[bytes] Required.
-        :type custom_domain_properties: ~azure.mgmt.cdn.models.ValidateCustomDomainInput or JSON or
-         IO[bytes]
+        :param custom_domain_properties: Custom domain to be validated. Is either a
+         ValidateCustomDomainInput type or a IO[bytes] type. Required.
+        :type custom_domain_properties: ~azure.mgmt.cdn.models.ValidateCustomDomainInput or
+         ~azure.mgmt.cdn.types.ValidateCustomDomainInput or IO[bytes]
         :return: ValidateCustomDomainOutput. The ValidateCustomDomainOutput is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cdn.models.ValidateCustomDomainOutput
@@ -11736,7 +11752,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin: Union[_models.Origin, JSON, IO[bytes]],
+        origin: Union[_models.Origin, _types.Origin, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11855,7 +11871,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin: JSON,
+        origin: _types.Origin,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11874,7 +11890,7 @@ class OriginsOperations:
         :param origin_name: Name of the origin which is unique within the endpoint. Required.
         :type origin_name: str
         :param origin: Origin properties. Required.
-        :type origin: JSON
+        :type origin: ~azure.mgmt.cdn.types.Origin
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11927,7 +11943,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin: Union[_models.Origin, JSON, IO[bytes]],
+        origin: Union[_models.Origin, _types.Origin, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Origin]:
         """Creates a new origin within the specified endpoint.
@@ -11943,9 +11959,8 @@ class OriginsOperations:
         :type endpoint_name: str
         :param origin_name: Name of the origin which is unique within the endpoint. Required.
         :type origin_name: str
-        :param origin: Origin properties. Is one of the following types: Origin, JSON, IO[bytes]
-         Required.
-        :type origin: ~azure.mgmt.cdn.models.Origin or JSON or IO[bytes]
+        :param origin: Origin properties. Is either a Origin type or a IO[bytes] type. Required.
+        :type origin: ~azure.mgmt.cdn.models.Origin or ~azure.mgmt.cdn.types.Origin or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Origin. The Origin is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
@@ -12011,7 +12026,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin_update_properties: Union[_models.OriginUpdateParameters, JSON, IO[bytes]],
+        origin_update_properties: Union[_models.OriginUpdateParameters, _types.OriginUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12126,7 +12141,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin_update_properties: JSON,
+        origin_update_properties: _types.OriginUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12145,7 +12160,7 @@ class OriginsOperations:
         :param origin_name: Name of the origin which is unique within the endpoint. Required.
         :type origin_name: str
         :param origin_update_properties: Origin properties. Required.
-        :type origin_update_properties: JSON
+        :type origin_update_properties: ~azure.mgmt.cdn.types.OriginUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12198,7 +12213,7 @@ class OriginsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_name: str,
-        origin_update_properties: Union[_models.OriginUpdateParameters, JSON, IO[bytes]],
+        origin_update_properties: Union[_models.OriginUpdateParameters, _types.OriginUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Origin]:
         """Updates an existing origin within an endpoint.
@@ -12214,10 +12229,10 @@ class OriginsOperations:
         :type endpoint_name: str
         :param origin_name: Name of the origin which is unique within the endpoint. Required.
         :type origin_name: str
-        :param origin_update_properties: Origin properties. Is one of the following types:
-         OriginUpdateParameters, JSON, IO[bytes] Required.
-        :type origin_update_properties: ~azure.mgmt.cdn.models.OriginUpdateParameters or JSON or
-         IO[bytes]
+        :param origin_update_properties: Origin properties. Is either a OriginUpdateParameters type or
+         a IO[bytes] type. Required.
+        :type origin_update_properties: ~azure.mgmt.cdn.models.OriginUpdateParameters or
+         ~azure.mgmt.cdn.types.OriginUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Origin. The Origin is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Origin]
@@ -12618,7 +12633,7 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group: Union[_models.OriginGroup, JSON, IO[bytes]],
+        origin_group: Union[_models.OriginGroup, _types.OriginGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12738,7 +12753,7 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group: JSON,
+        origin_group: _types.OriginGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12758,7 +12773,7 @@ class OriginGroupsOperations:
          Required.
         :type origin_group_name: str
         :param origin_group: Origin group properties. Required.
-        :type origin_group: JSON
+        :type origin_group: ~azure.mgmt.cdn.types.OriginGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12812,7 +12827,7 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group: Union[_models.OriginGroup, JSON, IO[bytes]],
+        origin_group: Union[_models.OriginGroup, _types.OriginGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OriginGroup]:
         """Creates a new origin group within the specified endpoint.
@@ -12829,9 +12844,10 @@ class OriginGroupsOperations:
         :param origin_group_name: Name of the origin group which is unique within the endpoint.
          Required.
         :type origin_group_name: str
-        :param origin_group: Origin group properties. Is one of the following types: OriginGroup, JSON,
-         IO[bytes] Required.
-        :type origin_group: ~azure.mgmt.cdn.models.OriginGroup or JSON or IO[bytes]
+        :param origin_group: Origin group properties. Is either a OriginGroup type or a IO[bytes] type.
+         Required.
+        :type origin_group: ~azure.mgmt.cdn.models.OriginGroup or ~azure.mgmt.cdn.types.OriginGroup or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns OriginGroup. The OriginGroup is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.OriginGroup]
@@ -12897,7 +12913,9 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group_update_properties: Union[_models.OriginGroupUpdateParameters, JSON, IO[bytes]],
+        origin_group_update_properties: Union[
+            _models.OriginGroupUpdateParameters, _types.OriginGroupUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13013,7 +13031,7 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group_update_properties: JSON,
+        origin_group_update_properties: _types.OriginGroupUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13033,7 +13051,7 @@ class OriginGroupsOperations:
          Required.
         :type origin_group_name: str
         :param origin_group_update_properties: Origin group properties. Required.
-        :type origin_group_update_properties: JSON
+        :type origin_group_update_properties: ~azure.mgmt.cdn.types.OriginGroupUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13087,7 +13105,9 @@ class OriginGroupsOperations:
         profile_name: str,
         endpoint_name: str,
         origin_group_name: str,
-        origin_group_update_properties: Union[_models.OriginGroupUpdateParameters, JSON, IO[bytes]],
+        origin_group_update_properties: Union[
+            _models.OriginGroupUpdateParameters, _types.OriginGroupUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OriginGroup]:
         """Updates an existing origin group within an endpoint.
@@ -13104,10 +13124,10 @@ class OriginGroupsOperations:
         :param origin_group_name: Name of the origin group which is unique within the endpoint.
          Required.
         :type origin_group_name: str
-        :param origin_group_update_properties: Origin group properties. Is one of the following types:
-         OriginGroupUpdateParameters, JSON, IO[bytes] Required.
+        :param origin_group_update_properties: Origin group properties. Is either a
+         OriginGroupUpdateParameters type or a IO[bytes] type. Required.
         :type origin_group_update_properties: ~azure.mgmt.cdn.models.OriginGroupUpdateParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.cdn.types.OriginGroupUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OriginGroup. The OriginGroup is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.OriginGroup]
@@ -13508,7 +13528,7 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         custom_domain_name: str,
-        custom_domain_properties: Union[_models.CustomDomainParameters, JSON, IO[bytes]],
+        custom_domain_properties: Union[_models.CustomDomainParameters, _types.CustomDomainParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13627,7 +13647,7 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         custom_domain_name: str,
-        custom_domain_properties: JSON,
+        custom_domain_properties: _types.CustomDomainParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13646,7 +13666,7 @@ class CustomDomainsOperations:
         :param custom_domain_name: Name of the custom domain within an endpoint. Required.
         :type custom_domain_name: str
         :param custom_domain_properties: Properties required to create a new custom domain. Required.
-        :type custom_domain_properties: JSON
+        :type custom_domain_properties: ~azure.mgmt.cdn.types.CustomDomainParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13699,7 +13719,7 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         custom_domain_name: str,
-        custom_domain_properties: Union[_models.CustomDomainParameters, JSON, IO[bytes]],
+        custom_domain_properties: Union[_models.CustomDomainParameters, _types.CustomDomainParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CustomDomain]:
         """Creates a new custom domain within an endpoint.
@@ -13715,10 +13735,10 @@ class CustomDomainsOperations:
         :type endpoint_name: str
         :param custom_domain_name: Name of the custom domain within an endpoint. Required.
         :type custom_domain_name: str
-        :param custom_domain_properties: Properties required to create a new custom domain. Is one of
-         the following types: CustomDomainParameters, JSON, IO[bytes] Required.
-        :type custom_domain_properties: ~azure.mgmt.cdn.models.CustomDomainParameters or JSON or
-         IO[bytes]
+        :param custom_domain_properties: Properties required to create a new custom domain. Is either a
+         CustomDomainParameters type or a IO[bytes] type. Required.
+        :type custom_domain_properties: ~azure.mgmt.cdn.models.CustomDomainParameters or
+         ~azure.mgmt.cdn.types.CustomDomainParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CustomDomain. The CustomDomain is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.CustomDomain]
@@ -14161,7 +14181,9 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         custom_domain_name: str,
-        custom_domain_https_parameters: Optional[Union[_models.CustomDomainHttpsParameters, JSON, IO[bytes]]] = None,
+        custom_domain_https_parameters: Optional[
+            Union[_models.CustomDomainHttpsParameters, _types.CustomDomainHttpsParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14282,7 +14304,7 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         custom_domain_name: str,
-        custom_domain_https_parameters: Optional[JSON] = None,
+        custom_domain_https_parameters: Optional[_types.CustomDomainHttpsParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14303,7 +14325,7 @@ class CustomDomainsOperations:
         :param custom_domain_https_parameters: The configuration specifying how to enable HTTPS for the
          custom domain - using CDN managed certificate or user's own certificate. If not specified,
          enabling ssl uses CDN managed certificate by default. Default value is None.
-        :type custom_domain_https_parameters: JSON
+        :type custom_domain_https_parameters: ~azure.mgmt.cdn.types.CustomDomainHttpsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14358,7 +14380,9 @@ class CustomDomainsOperations:
         profile_name: str,
         endpoint_name: str,
         custom_domain_name: str,
-        custom_domain_https_parameters: Optional[Union[_models.CustomDomainHttpsParameters, JSON, IO[bytes]]] = None,
+        custom_domain_https_parameters: Optional[
+            Union[_models.CustomDomainHttpsParameters, _types.CustomDomainHttpsParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CustomDomain]:
         """Enable https delivery of the custom domain.
@@ -14376,10 +14400,10 @@ class CustomDomainsOperations:
         :type custom_domain_name: str
         :param custom_domain_https_parameters: The configuration specifying how to enable HTTPS for the
          custom domain - using CDN managed certificate or user's own certificate. If not specified,
-         enabling ssl uses CDN managed certificate by default. Is one of the following types:
-         CustomDomainHttpsParameters, JSON, IO[bytes] Default value is None.
+         enabling ssl uses CDN managed certificate by default. Is either a CustomDomainHttpsParameters
+         type or a IO[bytes] type. Default value is None.
         :type custom_domain_https_parameters: ~azure.mgmt.cdn.models.CustomDomainHttpsParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.cdn.types.CustomDomainHttpsParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CustomDomain. The CustomDomain is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.CustomDomain]
@@ -14541,7 +14565,7 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        custom_domain: Union[_models.AFDDomain, JSON, IO[bytes]],
+        custom_domain: Union[_models.AFDDomain, _types.AFDDomain, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14657,7 +14681,7 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        custom_domain: JSON,
+        custom_domain: _types.AFDDomain,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14674,7 +14698,7 @@ class AFDCustomDomainsOperations:
          Required.
         :type custom_domain_name: str
         :param custom_domain: Domain properties. Required.
-        :type custom_domain: JSON
+        :type custom_domain: ~azure.mgmt.cdn.types.AFDDomain
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14723,7 +14747,7 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        custom_domain: Union[_models.AFDDomain, JSON, IO[bytes]],
+        custom_domain: Union[_models.AFDDomain, _types.AFDDomain, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AFDDomain]:
         """Creates a new domain within the specified profile.
@@ -14737,9 +14761,10 @@ class AFDCustomDomainsOperations:
         :param custom_domain_name: Name of the domain under the profile which is unique globally.
          Required.
         :type custom_domain_name: str
-        :param custom_domain: Domain properties. Is one of the following types: AFDDomain, JSON,
-         IO[bytes] Required.
-        :type custom_domain: ~azure.mgmt.cdn.models.AFDDomain or JSON or IO[bytes]
+        :param custom_domain: Domain properties. Is either a AFDDomain type or a IO[bytes] type.
+         Required.
+        :type custom_domain: ~azure.mgmt.cdn.models.AFDDomain or ~azure.mgmt.cdn.types.AFDDomain or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns AFDDomain. The AFDDomain is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDDomain]
@@ -14803,7 +14828,9 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        custom_domain_update_properties: Union[_models.AFDDomainUpdateParameters, JSON, IO[bytes]],
+        custom_domain_update_properties: Union[
+            _models.AFDDomainUpdateParameters, _types.AFDDomainUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14917,7 +14944,7 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        custom_domain_update_properties: JSON,
+        custom_domain_update_properties: _types.AFDDomainUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14934,7 +14961,7 @@ class AFDCustomDomainsOperations:
          Required.
         :type custom_domain_name: str
         :param custom_domain_update_properties: Domain properties. Required.
-        :type custom_domain_update_properties: JSON
+        :type custom_domain_update_properties: ~azure.mgmt.cdn.types.AFDDomainUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14983,7 +15010,9 @@ class AFDCustomDomainsOperations:
         resource_group_name: str,
         profile_name: str,
         custom_domain_name: str,
-        custom_domain_update_properties: Union[_models.AFDDomainUpdateParameters, JSON, IO[bytes]],
+        custom_domain_update_properties: Union[
+            _models.AFDDomainUpdateParameters, _types.AFDDomainUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AFDDomain]:
         """Updates an existing domain within a profile.
@@ -14997,10 +15026,10 @@ class AFDCustomDomainsOperations:
         :param custom_domain_name: Name of the domain under the profile which is unique globally.
          Required.
         :type custom_domain_name: str
-        :param custom_domain_update_properties: Domain properties. Is one of the following types:
-         AFDDomainUpdateParameters, JSON, IO[bytes] Required.
-        :type custom_domain_update_properties: ~azure.mgmt.cdn.models.AFDDomainUpdateParameters or JSON
-         or IO[bytes]
+        :param custom_domain_update_properties: Domain properties. Is either a
+         AFDDomainUpdateParameters type or a IO[bytes] type. Required.
+        :type custom_domain_update_properties: ~azure.mgmt.cdn.models.AFDDomainUpdateParameters or
+         ~azure.mgmt.cdn.types.AFDDomainUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AFDDomain. The AFDDomain is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.AFDDomain]
@@ -15475,7 +15504,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        check_endpoint_name_availability_input: JSON,
+        check_endpoint_name_availability_input: _types.CheckEndpointNameAvailabilityInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15490,7 +15519,8 @@ class AFDProfilesOperations:
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param check_endpoint_name_availability_input: Input to check. Required.
-        :type check_endpoint_name_availability_input: JSON
+        :type check_endpoint_name_availability_input:
+         ~azure.mgmt.cdn.types.CheckEndpointNameAvailabilityInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15535,7 +15565,9 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        check_endpoint_name_availability_input: Union[_models.CheckEndpointNameAvailabilityInput, JSON, IO[bytes]],
+        check_endpoint_name_availability_input: Union[
+            _models.CheckEndpointNameAvailabilityInput, _types.CheckEndpointNameAvailabilityInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckEndpointNameAvailabilityOutput:
         """Check the availability of an afdx endpoint name, and return the globally unique endpoint host
@@ -15547,10 +15579,11 @@ class AFDProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :param check_endpoint_name_availability_input: Input to check. Is one of the following types:
-         CheckEndpointNameAvailabilityInput, JSON, IO[bytes] Required.
+        :param check_endpoint_name_availability_input: Input to check. Is either a
+         CheckEndpointNameAvailabilityInput type or a IO[bytes] type. Required.
         :type check_endpoint_name_availability_input:
-         ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput or JSON or IO[bytes]
+         ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput or
+         ~azure.mgmt.cdn.types.CheckEndpointNameAvailabilityInput or IO[bytes]
         :return: CheckEndpointNameAvailabilityOutput. The CheckEndpointNameAvailabilityOutput is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput
@@ -15761,7 +15794,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        check_host_name_availability_input: JSON,
+        check_host_name_availability_input: _types.CheckHostNameAvailabilityInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15776,7 +15809,7 @@ class AFDProfilesOperations:
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param check_host_name_availability_input: Custom domain to be validated. Required.
-        :type check_host_name_availability_input: JSON
+        :type check_host_name_availability_input: ~azure.mgmt.cdn.types.CheckHostNameAvailabilityInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15821,7 +15854,9 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        check_host_name_availability_input: Union[_models.CheckHostNameAvailabilityInput, JSON, IO[bytes]],
+        check_host_name_availability_input: Union[
+            _models.CheckHostNameAvailabilityInput, _types.CheckHostNameAvailabilityInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Validates the custom domain mapping to ensure it maps to the correct Azure Front Door endpoint
@@ -15833,10 +15868,10 @@ class AFDProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :param check_host_name_availability_input: Custom domain to be validated. Is one of the
-         following types: CheckHostNameAvailabilityInput, JSON, IO[bytes] Required.
+        :param check_host_name_availability_input: Custom domain to be validated. Is either a
+         CheckHostNameAvailabilityInput type or a IO[bytes] type. Required.
         :type check_host_name_availability_input: ~azure.mgmt.cdn.models.CheckHostNameAvailabilityInput
-         or JSON or IO[bytes]
+         or ~azure.mgmt.cdn.types.CheckHostNameAvailabilityInput or IO[bytes]
         :return: CheckNameAvailabilityOutput. The CheckNameAvailabilityOutput is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
@@ -15942,7 +15977,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        validate_secret_input: JSON,
+        validate_secret_input: _types.ValidateSecretInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15956,7 +15991,7 @@ class AFDProfilesOperations:
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param validate_secret_input: The Secret source. Required.
-        :type validate_secret_input: JSON
+        :type validate_secret_input: ~azure.mgmt.cdn.types.ValidateSecretInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15998,7 +16033,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        validate_secret_input: Union[_models.ValidateSecretInput, JSON, IO[bytes]],
+        validate_secret_input: Union[_models.ValidateSecretInput, _types.ValidateSecretInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.ValidateSecretOutput:
         """Validate a Secret in the profile.
@@ -16009,9 +16044,10 @@ class AFDProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :param validate_secret_input: The Secret source. Is one of the following types:
-         ValidateSecretInput, JSON, IO[bytes] Required.
-        :type validate_secret_input: ~azure.mgmt.cdn.models.ValidateSecretInput or JSON or IO[bytes]
+        :param validate_secret_input: The Secret source. Is either a ValidateSecretInput type or a
+         IO[bytes] type. Required.
+        :type validate_secret_input: ~azure.mgmt.cdn.models.ValidateSecretInput or
+         ~azure.mgmt.cdn.types.ValidateSecretInput or IO[bytes]
         :return: ValidateSecretOutput. The ValidateSecretOutput is compatible with MutableMapping
         :rtype: ~azure.mgmt.cdn.models.ValidateSecretOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16087,7 +16123,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_upgrade_parameters: Union[_models.ProfileUpgradeParameters, JSON, IO[bytes]],
+        profile_upgrade_parameters: Union[_models.ProfileUpgradeParameters, _types.ProfileUpgradeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16191,7 +16227,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_upgrade_parameters: JSON,
+        profile_upgrade_parameters: _types.ProfileUpgradeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16205,7 +16241,7 @@ class AFDProfilesOperations:
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param profile_upgrade_parameters: Profile upgrade input parameter. Required.
-        :type profile_upgrade_parameters: JSON
+        :type profile_upgrade_parameters: ~azure.mgmt.cdn.types.ProfileUpgradeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16249,7 +16285,7 @@ class AFDProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_upgrade_parameters: Union[_models.ProfileUpgradeParameters, JSON, IO[bytes]],
+        profile_upgrade_parameters: Union[_models.ProfileUpgradeParameters, _types.ProfileUpgradeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Profile]:
         """Upgrade a profile from Standard_AzureFrontDoor to Premium_AzureFrontDoor.
@@ -16260,10 +16296,10 @@ class AFDProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :param profile_upgrade_parameters: Profile upgrade input parameter. Is one of the following
-         types: ProfileUpgradeParameters, JSON, IO[bytes] Required.
-        :type profile_upgrade_parameters: ~azure.mgmt.cdn.models.ProfileUpgradeParameters or JSON or
-         IO[bytes]
+        :param profile_upgrade_parameters: Profile upgrade input parameter. Is either a
+         ProfileUpgradeParameters type or a IO[bytes] type. Required.
+        :type profile_upgrade_parameters: ~azure.mgmt.cdn.models.ProfileUpgradeParameters or
+         ~azure.mgmt.cdn.types.ProfileUpgradeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Profile. The Profile is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cdn.models.Profile]
@@ -17004,7 +17040,9 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        cdn_web_application_firewall_policy: Union[_models.CdnWebApplicationFirewallPolicy, JSON, IO[bytes]],
+        cdn_web_application_firewall_policy: Union[
+            _models.CdnWebApplicationFirewallPolicy, _types.CdnWebApplicationFirewallPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -17112,7 +17150,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        cdn_web_application_firewall_policy: JSON,
+        cdn_web_application_firewall_policy: _types.CdnWebApplicationFirewallPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17125,7 +17163,8 @@ class PoliciesOperations:
         :param policy_name: The name of the CdnWebApplicationFirewallPolicy. Required.
         :type policy_name: str
         :param cdn_web_application_firewall_policy: Policy to be created. Required.
-        :type cdn_web_application_firewall_policy: JSON
+        :type cdn_web_application_firewall_policy:
+         ~azure.mgmt.cdn.types.CdnWebApplicationFirewallPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17170,7 +17209,9 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        cdn_web_application_firewall_policy: Union[_models.CdnWebApplicationFirewallPolicy, JSON, IO[bytes]],
+        cdn_web_application_firewall_policy: Union[
+            _models.CdnWebApplicationFirewallPolicy, _types.CdnWebApplicationFirewallPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CdnWebApplicationFirewallPolicy]:
         """Create or update policy with specified rule set name within a resource group.
@@ -17180,10 +17221,11 @@ class PoliciesOperations:
         :type resource_group_name: str
         :param policy_name: The name of the CdnWebApplicationFirewallPolicy. Required.
         :type policy_name: str
-        :param cdn_web_application_firewall_policy: Policy to be created. Is one of the following
-         types: CdnWebApplicationFirewallPolicy, JSON, IO[bytes] Required.
+        :param cdn_web_application_firewall_policy: Policy to be created. Is either a
+         CdnWebApplicationFirewallPolicy type or a IO[bytes] type. Required.
         :type cdn_web_application_firewall_policy:
-         ~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicy or JSON or IO[bytes]
+         ~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicy or
+         ~azure.mgmt.cdn.types.CdnWebApplicationFirewallPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CdnWebApplicationFirewallPolicy. The
          CdnWebApplicationFirewallPolicy is compatible with MutableMapping
         :rtype:
@@ -17247,7 +17289,9 @@ class PoliciesOperations:
         resource_group_name: str,
         policy_name: str,
         cdn_web_application_firewall_policy_patch_parameters: Union[
-            _models.CdnWebApplicationFirewallPolicyPatchParameters, JSON, IO[bytes]
+            _models.CdnWebApplicationFirewallPolicyPatchParameters,
+            _types.CdnWebApplicationFirewallPolicyPatchParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -17355,7 +17399,7 @@ class PoliciesOperations:
         self,
         resource_group_name: str,
         policy_name: str,
-        cdn_web_application_firewall_policy_patch_parameters: JSON,
+        cdn_web_application_firewall_policy_patch_parameters: _types.CdnWebApplicationFirewallPolicyPatchParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17370,7 +17414,8 @@ class PoliciesOperations:
         :type policy_name: str
         :param cdn_web_application_firewall_policy_patch_parameters: CdnWebApplicationFirewallPolicy
          parameters to be patched. Required.
-        :type cdn_web_application_firewall_policy_patch_parameters: JSON
+        :type cdn_web_application_firewall_policy_patch_parameters:
+         ~azure.mgmt.cdn.types.CdnWebApplicationFirewallPolicyPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17418,7 +17463,9 @@ class PoliciesOperations:
         resource_group_name: str,
         policy_name: str,
         cdn_web_application_firewall_policy_patch_parameters: Union[
-            _models.CdnWebApplicationFirewallPolicyPatchParameters, JSON, IO[bytes]
+            _models.CdnWebApplicationFirewallPolicyPatchParameters,
+            _types.CdnWebApplicationFirewallPolicyPatchParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CdnWebApplicationFirewallPolicy]:
@@ -17431,10 +17478,11 @@ class PoliciesOperations:
         :param policy_name: The name of the CdnWebApplicationFirewallPolicy. Required.
         :type policy_name: str
         :param cdn_web_application_firewall_policy_patch_parameters: CdnWebApplicationFirewallPolicy
-         parameters to be patched. Is one of the following types:
-         CdnWebApplicationFirewallPolicyPatchParameters, JSON, IO[bytes] Required.
+         parameters to be patched. Is either a CdnWebApplicationFirewallPolicyPatchParameters type or a
+         IO[bytes] type. Required.
         :type cdn_web_application_firewall_policy_patch_parameters:
-         ~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicyPatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicyPatchParameters or
+         ~azure.mgmt.cdn.types.CdnWebApplicationFirewallPolicyPatchParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CdnWebApplicationFirewallPolicy. The
          CdnWebApplicationFirewallPolicy is compatible with MutableMapping
         :rtype:
@@ -18020,7 +18068,7 @@ class _CdnManagementClientOperationsMixin(
     async def check_endpoint_name_availability(
         self,
         resource_group_name: str,
-        check_endpoint_name_availability_input: JSON,
+        check_endpoint_name_availability_input: _types.CheckEndpointNameAvailabilityInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18032,7 +18080,8 @@ class _CdnManagementClientOperationsMixin(
          Required.
         :type resource_group_name: str
         :param check_endpoint_name_availability_input: Input to check. Required.
-        :type check_endpoint_name_availability_input: JSON
+        :type check_endpoint_name_availability_input:
+         ~azure.mgmt.cdn.types.CheckEndpointNameAvailabilityInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18072,7 +18121,9 @@ class _CdnManagementClientOperationsMixin(
     async def check_endpoint_name_availability(
         self,
         resource_group_name: str,
-        check_endpoint_name_availability_input: Union[_models.CheckEndpointNameAvailabilityInput, JSON, IO[bytes]],
+        check_endpoint_name_availability_input: Union[
+            _models.CheckEndpointNameAvailabilityInput, _types.CheckEndpointNameAvailabilityInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckEndpointNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
@@ -18081,10 +18132,11 @@ class _CdnManagementClientOperationsMixin(
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param check_endpoint_name_availability_input: Input to check. Is one of the following types:
-         CheckEndpointNameAvailabilityInput, JSON, IO[bytes] Required.
+        :param check_endpoint_name_availability_input: Input to check. Is either a
+         CheckEndpointNameAvailabilityInput type or a IO[bytes] type. Required.
         :type check_endpoint_name_availability_input:
-         ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput or JSON or IO[bytes]
+         ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityInput or
+         ~azure.mgmt.cdn.types.CheckEndpointNameAvailabilityInput or IO[bytes]
         :return: CheckEndpointNameAvailabilityOutput. The CheckEndpointNameAvailabilityOutput is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.cdn.models.CheckEndpointNameAvailabilityOutput
@@ -18180,13 +18232,17 @@ class _CdnManagementClientOperationsMixin(
 
     @overload
     async def check_name_availability(
-        self, check_name_availability_input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        check_name_availability_input: _types.CheckNameAvailabilityInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
         :param check_name_availability_input: The request body. Required.
-        :type check_name_availability_input: JSON
+        :type check_name_availability_input: ~azure.mgmt.cdn.types.CheckNameAvailabilityInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18216,15 +18272,19 @@ class _CdnManagementClientOperationsMixin(
 
     @distributed_trace_async
     async def check_name_availability(
-        self, check_name_availability_input: Union[_models.CheckNameAvailabilityInput, JSON, IO[bytes]], **kwargs: Any
+        self,
+        check_name_availability_input: Union[
+            _models.CheckNameAvailabilityInput, _types.CheckNameAvailabilityInput, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
-        :param check_name_availability_input: The request body. Is one of the following types:
-         CheckNameAvailabilityInput, JSON, IO[bytes] Required.
-        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput or JSON
-         or IO[bytes]
+        :param check_name_availability_input: The request body. Is either a CheckNameAvailabilityInput
+         type or a IO[bytes] type. Required.
+        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput or
+         ~azure.mgmt.cdn.types.CheckNameAvailabilityInput or IO[bytes]
         :return: CheckNameAvailabilityOutput. The CheckNameAvailabilityOutput is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
@@ -18318,13 +18378,17 @@ class _CdnManagementClientOperationsMixin(
 
     @overload
     async def check_name_availability_with_subscription(  # pylint: disable=name-too-long
-        self, check_name_availability_input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        check_name_availability_input: _types.CheckNameAvailabilityInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
         :param check_name_availability_input: The request body. Required.
-        :type check_name_availability_input: JSON
+        :type check_name_availability_input: ~azure.mgmt.cdn.types.CheckNameAvailabilityInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18354,15 +18418,19 @@ class _CdnManagementClientOperationsMixin(
 
     @distributed_trace_async
     async def check_name_availability_with_subscription(  # pylint: disable=name-too-long
-        self, check_name_availability_input: Union[_models.CheckNameAvailabilityInput, JSON, IO[bytes]], **kwargs: Any
+        self,
+        check_name_availability_input: Union[
+            _models.CheckNameAvailabilityInput, _types.CheckNameAvailabilityInput, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This is needed for resources where name is globally
         unique, such as a CDN endpoint.
 
-        :param check_name_availability_input: The request body. Is one of the following types:
-         CheckNameAvailabilityInput, JSON, IO[bytes] Required.
-        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput or JSON
-         or IO[bytes]
+        :param check_name_availability_input: The request body. Is either a CheckNameAvailabilityInput
+         type or a IO[bytes] type. Required.
+        :type check_name_availability_input: ~azure.mgmt.cdn.models.CheckNameAvailabilityInput or
+         ~azure.mgmt.cdn.types.CheckNameAvailabilityInput or IO[bytes]
         :return: CheckNameAvailabilityOutput. The CheckNameAvailabilityOutput is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cdn.models.CheckNameAvailabilityOutput
@@ -18453,14 +18521,14 @@ class _CdnManagementClientOperationsMixin(
 
     @overload
     async def validate_probe(
-        self, validate_probe_input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, validate_probe_input: _types.ValidateProbeInput, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ValidateProbeOutput:
         """Check if the probe path is a valid path and the file can be accessed. Probe path is the path to
         a file hosted on the origin server to help accelerate the delivery of dynamic content via the
         CDN endpoint. This path is relative to the origin path specified in the endpoint configuration.
 
         :param validate_probe_input: The request body. Required.
-        :type validate_probe_input: JSON
+        :type validate_probe_input: ~azure.mgmt.cdn.types.ValidateProbeInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18489,15 +18557,18 @@ class _CdnManagementClientOperationsMixin(
 
     @distributed_trace_async
     async def validate_probe(
-        self, validate_probe_input: Union[_models.ValidateProbeInput, JSON, IO[bytes]], **kwargs: Any
+        self,
+        validate_probe_input: Union[_models.ValidateProbeInput, _types.ValidateProbeInput, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ValidateProbeOutput:
         """Check if the probe path is a valid path and the file can be accessed. Probe path is the path to
         a file hosted on the origin server to help accelerate the delivery of dynamic content via the
         CDN endpoint. This path is relative to the origin path specified in the endpoint configuration.
 
-        :param validate_probe_input: The request body. Is one of the following types:
-         ValidateProbeInput, JSON, IO[bytes] Required.
-        :type validate_probe_input: ~azure.mgmt.cdn.models.ValidateProbeInput or JSON or IO[bytes]
+        :param validate_probe_input: The request body. Is either a ValidateProbeInput type or a
+         IO[bytes] type. Required.
+        :type validate_probe_input: ~azure.mgmt.cdn.models.ValidateProbeInput or
+         ~azure.mgmt.cdn.types.ValidateProbeInput or IO[bytes]
         :return: ValidateProbeOutput. The ValidateProbeOutput is compatible with MutableMapping
         :rtype: ~azure.mgmt.cdn.models.ValidateProbeOutput
         :raises ~azure.core.exceptions.HttpResponseError:

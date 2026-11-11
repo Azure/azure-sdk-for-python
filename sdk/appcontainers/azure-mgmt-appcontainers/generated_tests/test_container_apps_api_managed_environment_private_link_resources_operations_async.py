@@ -29,3 +29,15 @@ class TestContainerAppsAPIManagedEnvironmentPrivateLinkResourcesOperationsAsync(
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_managed_environment_private_link_resources_get(self, resource_group):
+        response = await self.client.managed_environment_private_link_resources.get(
+            resource_group_name=resource_group.name,
+            environment_name="str",
+            private_link_resource_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

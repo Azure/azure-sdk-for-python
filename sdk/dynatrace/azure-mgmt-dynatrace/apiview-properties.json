@@ -143,5 +143,5 @@
         "azure.mgmt.dynatrace.operations.CreationSupportedOperations.get": "Dynatrace.Observability.CreationSupportedOperationGroup.get",
         "azure.mgmt.dynatrace.aio.operations.CreationSupportedOperations.get": "Dynatrace.Observability.CreationSupportedOperationGroup.get"
     },
-    "CrossLanguageVersion": "98a6a088aa0f"
+    "CrossLanguageVersion": "ce1a49a8c31f"
 }

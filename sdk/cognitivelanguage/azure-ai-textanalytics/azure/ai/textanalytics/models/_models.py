@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AbstractiveSummarizationActionContent(_Model):
+class AbstractiveSummarizationActionContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for the pre-built Abstractive Summarization task.
 
     :ivar logging_opt_out: logging opt out.
@@ -93,7 +93,7 @@ class AbstractiveSummarizationActionContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeTextOperationAction(_Model):
+class AnalyzeTextOperationAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The long running task to be performed by the service on the input documents.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -140,13 +140,15 @@ class AnalyzeTextOperationAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AbstractiveSummarizationOperationAction(AnalyzeTextOperationAction, discriminator="AbstractiveSummarization"):
+class AbstractiveSummarizationOperationAction(
+    AnalyzeTextOperationAction, discriminator="AbstractiveSummarization"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the task definition for an Abstractive Summarization task.
 
     :ivar name: task name.
     :vartype name: str
     :ivar kind: The Abstractive Summarization kind of the long running task. Required. Abstractive
-     summarization task
+     summarization task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ABSTRACTIVE_SUMMARIZATION
     :ivar action_content: Parameters for the Abstractive Summarization task.
     :vartype action_content: ~azure.ai.textanalytics.models.AbstractiveSummarizationActionContent
@@ -154,7 +156,7 @@ class AbstractiveSummarizationOperationAction(AnalyzeTextOperationAction, discri
 
     kind: Literal[AnalyzeTextOperationActionKind.ABSTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Abstractive Summarization kind of the long running task. Required. Abstractive
-     summarization task"""
+     summarization task."""
     action_content: Optional["_models.AbstractiveSummarizationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -180,7 +182,7 @@ class AbstractiveSummarizationOperationAction(AnalyzeTextOperationAction, discri
         self.kind = AnalyzeTextOperationActionKind.ABSTRACTIVE_SUMMARIZATION  # type: ignore
 
 
-class AnalyzeTextLROResult(_Model):
+class AnalyzeTextLROResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the AnalyzeText long running operation result object.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -249,7 +251,9 @@ class AnalyzeTextLROResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AbstractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator="AbstractiveSummarizationLROResults"):
+class AbstractiveSummarizationOperationResult(
+    AnalyzeTextLROResult, discriminator="AbstractiveSummarizationLROResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the results for an Abstractive Summarization task.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -260,7 +264,7 @@ class AbstractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminato
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Abstractive summarization LRO results
+    :ivar kind: Kind of the task. Required. Abstractive summarization LRO results.
     :vartype kind: str or
      ~azure.ai.textanalytics.models.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS
     :ivar results: Results of the task. Required.
@@ -268,7 +272,7 @@ class AbstractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminato
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Abstractive summarization LRO results"""
+    """Kind of the task. Required. Abstractive summarization LRO results."""
     results: "_models.AbstractiveSummarizationResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -296,7 +300,7 @@ class AbstractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminato
         self.kind = AnalyzeTextOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS  # type: ignore
 
 
-class AbstractiveSummarizationResult(_Model):
+class AbstractiveSummarizationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the pre-built Abstractive Summarization results of each document.
 
     :ivar errors: Errors by document id. Required.
@@ -345,7 +349,7 @@ class AbstractiveSummarizationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AbstractiveSummary(_Model):
+class AbstractiveSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing a single summary with context for given document.
 
     :ivar text: The text of the summary. Required.
@@ -380,7 +384,7 @@ class AbstractiveSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AbstractiveSummaryActionResult(_Model):
+class AbstractiveSummaryActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the Abstractive Summarization result of a single document with detected
     language.
 
@@ -440,7 +444,7 @@ class AbstractiveSummaryActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BaseMetadata(_Model):
+class BaseMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The abstract base class for entity Metadata.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -486,7 +490,9 @@ class BaseMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AddressMetadata(BaseMetadata, discriminator="AddressMetadata"):
+class AddressMetadata(
+    BaseMetadata, discriminator="AddressMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Address entity Metadata model.
 
     :ivar metadata_kind: Kind of the metadata. Required. Metadata for address-related values.
@@ -554,7 +560,9 @@ class AddressMetadata(BaseMetadata, discriminator="AddressMetadata"):
         self.metadata_kind = MetadataKind.ADDRESS_METADATA  # type: ignore
 
 
-class AgeMetadata(BaseMetadata, discriminator="AgeMetadata"):
+class AgeMetadata(
+    BaseMetadata, discriminator="AgeMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Age entity Metadata model.
 
     :ivar value: The numeric value that the extracted text denotes. Required.
@@ -594,7 +602,7 @@ class AgeMetadata(BaseMetadata, discriminator="AgeMetadata"):
         self.metadata_kind = MetadataKind.AGE_METADATA  # type: ignore
 
 
-class EntityOverlapPolicy(_Model):
+class EntityOverlapPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The abstract base class for entity OverlapPolicy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -635,12 +643,12 @@ class AllowOverlapEntityPolicyType(EntityOverlapPolicy, discriminator="allowOver
     selection.
 
     :ivar policy_kind: The entity OverlapPolicy object kind. Required. Represents
-     AllowOverlapEntityPolicyType
+     AllowOverlapEntityPolicyType.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.ALLOW_OVERLAP
     """
 
     policy_kind: Literal[PolicyKind.ALLOW_OVERLAP] = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The entity OverlapPolicy object kind. Required. Represents AllowOverlapEntityPolicyType"""
+    """The entity OverlapPolicy object kind. Required. Represents AllowOverlapEntityPolicyType."""
 
     @overload
     def __init__(
@@ -659,7 +667,7 @@ class AllowOverlapEntityPolicyType(EntityOverlapPolicy, discriminator="allowOver
         self.policy_kind = PolicyKind.ALLOW_OVERLAP  # type: ignore
 
 
-class AnalyzeTextResult(_Model):
+class AnalyzeTextResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result object for the analyze task.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -696,17 +704,19 @@ class AnalyzeTextResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeTextEntitiesResult(AnalyzeTextResult, discriminator="EntityRecognitionResults"):
+class AnalyzeTextEntitiesResult(
+    AnalyzeTextResult, discriminator="EntityRecognitionResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the entity task.
 
-    :ivar kind: kind of the task. Required. Entity recognition results
+    :ivar kind: kind of the task. Required. Entity recognition results.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_RECOGNITION_RESULTS
     :ivar results: Results for entity recognition. Required.
     :vartype results: ~azure.ai.textanalytics.models.EntitiesWithMetadataAutoResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.ENTITY_RECOGNITION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """kind of the task. Required. Entity recognition results"""
+    """kind of the task. Required. Entity recognition results."""
     results: "_models.EntitiesWithMetadataAutoResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -731,17 +741,19 @@ class AnalyzeTextEntitiesResult(AnalyzeTextResult, discriminator="EntityRecognit
         self.kind = AnalyzeTextResultsKind.ENTITY_RECOGNITION_RESULTS  # type: ignore
 
 
-class AnalyzeTextEntityLinkingResult(AnalyzeTextResult, discriminator="EntityLinkingResults"):
+class AnalyzeTextEntityLinkingResult(
+    AnalyzeTextResult, discriminator="EntityLinkingResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text Entity linking task result.
 
-    :ivar kind: Kind of task result. Required. Entity linking results
+    :ivar kind: Kind of task result. Required. Entity linking results.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_LINKING_RESULTS
     :ivar results: Entity linking result. Required.
     :vartype results: ~azure.ai.textanalytics.models.EntityLinkingResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.ENTITY_LINKING_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of task result. Required. Entity linking results"""
+    """Kind of task result. Required. Entity linking results."""
     results: "_models.EntityLinkingResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Entity linking result. Required."""
 
@@ -764,7 +776,7 @@ class AnalyzeTextEntityLinkingResult(AnalyzeTextResult, discriminator="EntityLin
         self.kind = AnalyzeTextResultsKind.ENTITY_LINKING_RESULTS  # type: ignore
 
 
-class AnalyzeTextError(_Model):
+class AnalyzeTextError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The error response object returned when the service encounters some errors during processing
     the request.
 
@@ -830,7 +842,7 @@ class AnalyzeTextError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeTextInput(_Model):
+class AnalyzeTextInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Collection of documents to analyze and a single task to execute.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -867,17 +879,19 @@ class AnalyzeTextInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeTextKeyPhraseResult(AnalyzeTextResult, discriminator="KeyPhraseExtractionResults"):
+class AnalyzeTextKeyPhraseResult(
+    AnalyzeTextResult, discriminator="KeyPhraseExtractionResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text KeyPhraseExtraction task result.
 
-    :ivar kind: Kind of the task results. Required. Key phrase extraction results
+    :ivar kind: Kind of the task results. Required. Key phrase extraction results.
     :vartype kind: str or ~azure.ai.textanalytics.models.KEY_PHRASE_EXTRACTION_RESULTS
     :ivar results: The list of Key phrase extraction results. Required.
     :vartype results: ~azure.ai.textanalytics.models.KeyPhraseResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.KEY_PHRASE_EXTRACTION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task results. Required. Key phrase extraction results"""
+    """Kind of the task results. Required. Key phrase extraction results."""
     results: "_models.KeyPhraseResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of Key phrase extraction results. Required."""
 
@@ -900,17 +914,19 @@ class AnalyzeTextKeyPhraseResult(AnalyzeTextResult, discriminator="KeyPhraseExtr
         self.kind = AnalyzeTextResultsKind.KEY_PHRASE_EXTRACTION_RESULTS  # type: ignore
 
 
-class AnalyzeTextLanguageDetectionResult(AnalyzeTextResult, discriminator="LanguageDetectionResults"):
+class AnalyzeTextLanguageDetectionResult(
+    AnalyzeTextResult, discriminator="LanguageDetectionResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the language detection task result for the request.
 
-    :ivar kind: Kind of the task result. Required. Language detection results
+    :ivar kind: Kind of the task result. Required. Language detection results.
     :vartype kind: str or ~azure.ai.textanalytics.models.LANGUAGE_DETECTION_RESULTS
     :ivar results: Contains the language detection results. Required.
     :vartype results: ~azure.ai.textanalytics.models.LanguageDetectionResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.LANGUAGE_DETECTION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task result. Required. Language detection results"""
+    """Kind of the task result. Required. Language detection results."""
     results: "_models.LanguageDetectionResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Contains the language detection results. Required."""
 
@@ -933,7 +949,7 @@ class AnalyzeTextLanguageDetectionResult(AnalyzeTextResult, discriminator="Langu
         self.kind = AnalyzeTextResultsKind.LANGUAGE_DETECTION_RESULTS  # type: ignore
 
 
-class AnalyzeTextOperationState(_Model):
+class AnalyzeTextOperationState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object containing the analyze job LRO job state.
 
     :ivar display_name: display name.
@@ -1025,17 +1041,19 @@ class AnalyzeTextOperationState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeTextPiiResult(AnalyzeTextResult, discriminator="PiiEntityRecognitionResults"):
+class AnalyzeTextPiiResult(
+    AnalyzeTextResult, discriminator="PiiEntityRecognitionResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text PIIEntityRecognition LRO task.
 
-    :ivar kind: The kind of the task. Required. PII entity recognition results
+    :ivar kind: The kind of the task. Required. PII entity recognition results.
     :vartype kind: str or ~azure.ai.textanalytics.models.PII_ENTITY_RECOGNITION_RESULTS
     :ivar results: The list of pii results. Required.
     :vartype results: ~azure.ai.textanalytics.models.PiiResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.PII_ENTITY_RECOGNITION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of the task. Required. PII entity recognition results"""
+    """The kind of the task. Required. PII entity recognition results."""
     results: "_models.PiiResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of pii results. Required."""
 
@@ -1058,17 +1076,19 @@ class AnalyzeTextPiiResult(AnalyzeTextResult, discriminator="PiiEntityRecognitio
         self.kind = AnalyzeTextResultsKind.PII_ENTITY_RECOGNITION_RESULTS  # type: ignore
 
 
-class AnalyzeTextSentimentResult(AnalyzeTextResult, discriminator="SentimentAnalysisResults"):
+class AnalyzeTextSentimentResult(
+    AnalyzeTextResult, discriminator="SentimentAnalysisResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text SentimentAnalysis LRO task result.
 
-    :ivar kind: Kind of the task. Required. Sentiment analysis results
+    :ivar kind: Kind of the task. Required. Sentiment analysis results.
     :vartype kind: str or ~azure.ai.textanalytics.models.SENTIMENT_ANALYSIS_RESULTS
     :ivar results: The sentiment analysis results. Required.
     :vartype results: ~azure.ai.textanalytics.models.SentimentResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.SENTIMENT_ANALYSIS_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Sentiment analysis results"""
+    """Kind of the task. Required. Sentiment analysis results."""
     results: "_models.SentimentResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sentiment analysis results. Required."""
 
@@ -1091,7 +1111,9 @@ class AnalyzeTextSentimentResult(AnalyzeTextResult, discriminator="SentimentAnal
         self.kind = AnalyzeTextResultsKind.SENTIMENT_ANALYSIS_RESULTS  # type: ignore
 
 
-class AreaMetadata(BaseMetadata, discriminator="AreaMetadata"):
+class AreaMetadata(
+    BaseMetadata, discriminator="AreaMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Area entity Metadata model.
 
     :ivar value: The numeric value that the extracted text denotes. Required.
@@ -1135,7 +1157,7 @@ class AreaMetadata(BaseMetadata, discriminator="AreaMetadata"):
         self.metadata_kind = MetadataKind.AREA_METADATA  # type: ignore
 
 
-class BaseRedactionPolicy(_Model):
+class BaseRedactionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The abstract base class for RedactionPolicy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1196,7 +1218,9 @@ class BaseRedactionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"):
+class CharacterMaskPolicyType(
+    BaseRedactionPolicy, discriminator="characterMask"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the policy of redacting with a redaction character.
 
     :ivar entity_types: (Optional) describes the PII categories to which the redaction policy will
@@ -1269,7 +1293,7 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
         self.policy_kind = RedactionPolicyKind.CHARACTER_MASK  # type: ignore
 
 
-class ClassificationActionResult(_Model):
+class ClassificationActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the classification doc result for the task with detected language.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -1328,7 +1352,7 @@ class ClassificationActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassificationResult(_Model):
+class ClassificationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the classification result.
 
     :ivar category: Classification type. Required.
@@ -1363,7 +1387,7 @@ class ClassificationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfidenceScoreThreshold(_Model):
+class ConfidenceScoreThreshold(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for confidence score threshold for PII entity recognition.
 
     :ivar default: Minimum confidence score threshold for the PII entities to be returned in the
@@ -1402,7 +1426,7 @@ class ConfidenceScoreThreshold(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfidenceScoreThresholdOverride(_Model):
+class ConfidenceScoreThresholdOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Confidence score threshold override for a specific PII category.
 
     :ivar entity: The PII category for which to override the confidence score threshold. Required.
@@ -1465,7 +1489,7 @@ class ConfidenceScoreThresholdOverride(_Model):
     :ivar value: The confidence score threshold for the specified PII category. Required.
     :vartype value: float
     :ivar language: The 2 letter ISO 639-1 language for which the override applies. If not
-     specified, the override applies to all languages.
+     specified, the override applies to all languages. Required.
     :vartype language: str
     """
 
@@ -1535,9 +1559,9 @@ class ConfidenceScoreThresholdOverride(_Model):
      \"USMedicareBeneficiaryId\", \"Location\", \"City\", \"State\", \"Airport\", and \"GPE\"."""
     value: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The confidence score threshold for the specified PII category. Required."""
-    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The 2 letter ISO 639-1 language for which the override applies. If not specified, the override
-     applies to all languages."""
+     applies to all languages. Required."""
 
     @overload
     def __init__(
@@ -1545,7 +1569,7 @@ class ConfidenceScoreThresholdOverride(_Model):
         *,
         entity: Union[str, "_models.PiiCategoriesExclude"],
         value: float,
-        language: Optional[str] = None,
+        language: str,
     ) -> None: ...
 
     @overload
@@ -1559,7 +1583,9 @@ class ConfidenceScoreThresholdOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CurrencyMetadata(BaseMetadata, discriminator="CurrencyMetadata"):
+class CurrencyMetadata(
+    BaseMetadata, discriminator="CurrencyMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Currency ) entity Metadata model.
 
     :ivar value: The numeric value that the extracted text denotes. Required.
@@ -1608,7 +1634,7 @@ class CurrencyMetadata(BaseMetadata, discriminator="CurrencyMetadata"):
         self.metadata_kind = MetadataKind.CURRENCY_METADATA  # type: ignore
 
 
-class CustomEntitiesActionContent(_Model):
+class CustomEntitiesActionContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for a Custom Entities task.
 
     :ivar logging_opt_out: logging opt out.
@@ -1659,19 +1685,21 @@ class CustomEntitiesActionContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomEntitiesLROTask(AnalyzeTextOperationAction, discriminator="CustomEntityRecognition"):
+class CustomEntitiesLROTask(
+    AnalyzeTextOperationAction, discriminator="CustomEntityRecognition"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the custom text LRO task.
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. Custom entity recognition task
+    :ivar kind: Kind of the task. Required. Custom entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.CUSTOM_ENTITY_RECOGNITION
     :ivar parameters: task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.CustomEntitiesActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom entity recognition task"""
+    """Kind of the task. Required. Custom entity recognition task."""
     parameters: Optional["_models.CustomEntitiesActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1697,7 +1725,7 @@ class CustomEntitiesLROTask(AnalyzeTextOperationAction, discriminator="CustomEnt
         self.kind = AnalyzeTextOperationActionKind.CUSTOM_ENTITY_RECOGNITION  # type: ignore
 
 
-class CustomEntitiesResult(_Model):
+class CustomEntitiesResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the list of detected custom entities result for the documents.
 
     :ivar errors: Errors by document id. Required.
@@ -1751,7 +1779,7 @@ class CustomEntitiesResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomEntityActionResult(_Model):
+class CustomEntityActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the entity recognition task result for the document with detected language.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -1808,7 +1836,9 @@ class CustomEntityActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="CustomEntityRecognitionLROResults"):
+class CustomEntityRecognitionOperationResult(
+    AnalyzeTextLROResult, discriminator="CustomEntityRecognitionLROResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the custom entity recognition job result.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -1819,7 +1849,7 @@ class CustomEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom entity recognition LRO results
+    :ivar kind: Kind of the task. Required. Custom entity recognition LRO results.
     :vartype kind: str or
      ~azure.ai.textanalytics.models.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS
     :ivar results: List of results. Required.
@@ -1827,7 +1857,7 @@ class CustomEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom entity recognition LRO results"""
+    """Kind of the task. Required. Custom entity recognition LRO results."""
     results: "_models.CustomEntitiesResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of results. Required."""
 
@@ -1853,7 +1883,7 @@ class CustomEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator
         self.kind = AnalyzeTextOperationResultsKind.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS  # type: ignore
 
 
-class CustomLabelClassificationResult(_Model):
+class CustomLabelClassificationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the custom label classification results.
 
     :ivar errors: Errors by document id. Required.
@@ -1907,7 +1937,9 @@ class CustomLabelClassificationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomMultiLabelClassificationActionContent(_Model):  # pylint: disable=name-too-long
+class CustomMultiLabelClassificationActionContent(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Supported parameters for a Custom Multi Classification task.
 
     :ivar logging_opt_out: logging opt out.
@@ -1949,12 +1981,12 @@ class CustomMultiLabelClassificationActionContent(_Model):  # pylint: disable=na
 
 class CustomMultiLabelClassificationOperationAction(
     AnalyzeTextOperationAction, discriminator="CustomMultiLabelClassification"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Use custom models to classify text into multi label taxonomy.
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. Custom multi label classification task
+    :ivar kind: Kind of the task. Required. Custom multi label classification task.
     :vartype kind: str or ~azure.ai.textanalytics.models.CUSTOM_MULTI_LABEL_CLASSIFICATION
     :ivar action_content: Task parameters.
     :vartype action_content:
@@ -1962,7 +1994,7 @@ class CustomMultiLabelClassificationOperationAction(
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom multi label classification task"""
+    """Kind of the task. Required. Custom multi label classification task."""
     action_content: Optional["_models.CustomMultiLabelClassificationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1990,7 +2022,7 @@ class CustomMultiLabelClassificationOperationAction(
 
 class CustomMultiLabelClassificationOperationResult(
     AnalyzeTextLROResult, discriminator="CustomMultiLabelClassificationLROResults"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Contains the custom multi label classification job result.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -2001,7 +2033,7 @@ class CustomMultiLabelClassificationOperationResult(
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom multi label classification LRO results
+    :ivar kind: Kind of the task. Required. Custom multi label classification LRO results.
     :vartype kind: str or
      ~azure.ai.textanalytics.models.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS
     :ivar results: List of results. Required.
@@ -2009,7 +2041,7 @@ class CustomMultiLabelClassificationOperationResult(
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom multi label classification LRO results"""
+    """Kind of the task. Required. Custom multi label classification LRO results."""
     results: "_models.CustomLabelClassificationResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2037,7 +2069,9 @@ class CustomMultiLabelClassificationOperationResult(
         self.kind = AnalyzeTextOperationResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS  # type: ignore
 
 
-class CustomSingleLabelClassificationActionContent(_Model):  # pylint: disable=name-too-long
+class CustomSingleLabelClassificationActionContent(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Supported parameters for a Custom Single Classification task.
 
     :ivar logging_opt_out: logging opt out.
@@ -2079,12 +2113,12 @@ class CustomSingleLabelClassificationActionContent(_Model):  # pylint: disable=n
 
 class CustomSingleLabelClassificationOperationAction(
     AnalyzeTextOperationAction, discriminator="CustomSingleLabelClassification"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Use custom models to classify text into single label taxonomy.
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. Custom single label classification task
+    :ivar kind: Kind of the task. Required. Custom single label classification task.
     :vartype kind: str or ~azure.ai.textanalytics.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION
     :ivar action_content: Task parameters.
     :vartype action_content:
@@ -2092,7 +2126,7 @@ class CustomSingleLabelClassificationOperationAction(
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom single label classification task"""
+    """Kind of the task. Required. Custom single label classification task."""
     action_content: Optional["_models.CustomSingleLabelClassificationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2120,7 +2154,7 @@ class CustomSingleLabelClassificationOperationAction(
 
 class CustomSingleLabelClassificationOperationResult(
     AnalyzeTextLROResult, discriminator="CustomSingleLabelClassificationLROResults"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Contains the custom single label classification job result.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -2131,7 +2165,7 @@ class CustomSingleLabelClassificationOperationResult(
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom single label classification LRO results
+    :ivar kind: Kind of the task. Required. Custom single label classification LRO results.
     :vartype kind: str or
      ~azure.ai.textanalytics.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS
     :ivar results: List of results. Required.
@@ -2139,7 +2173,7 @@ class CustomSingleLabelClassificationOperationResult(
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom single label classification LRO results"""
+    """Kind of the task. Required. Custom single label classification LRO results."""
     results: "_models.CustomLabelClassificationResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2167,7 +2201,9 @@ class CustomSingleLabelClassificationOperationResult(
         self.kind = AnalyzeTextOperationResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS  # type: ignore
 
 
-class DateMetadata(BaseMetadata, discriminator="DateMetadata"):
+class DateMetadata(
+    BaseMetadata, discriminator="DateMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Metadata for date entity instances.
 
     :ivar dates: List of date values.
@@ -2202,7 +2238,9 @@ class DateMetadata(BaseMetadata, discriminator="DateMetadata"):
         self.metadata_kind = MetadataKind.DATE_METADATA  # type: ignore
 
 
-class DateTimeMetadata(BaseMetadata, discriminator="DateTimeMetadata"):
+class DateTimeMetadata(
+    BaseMetadata, discriminator="DateTimeMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Metadata for datetime entity instances.
 
     :ivar dates: List of date values.
@@ -2237,7 +2275,7 @@ class DateTimeMetadata(BaseMetadata, discriminator="DateTimeMetadata"):
         self.metadata_kind = MetadataKind.DATE_TIME_METADATA  # type: ignore
 
 
-class DateValue(_Model):
+class DateValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the date value.
 
     :ivar timex: An extended ISO 8601 date/time representation as described in
@@ -2289,7 +2327,7 @@ class DateValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DetectedLanguage(_Model):
+class DetectedLanguage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the details of the detected language for the text.
 
     :ivar name: Long name of a detected language (e.g. English, French). Required.
@@ -2367,7 +2405,7 @@ class DetectedLanguage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentError(_Model):
+class DocumentError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains details of errors encountered during a job execution.
 
     :ivar id: The ID of the input document. Required.
@@ -2400,7 +2438,7 @@ class DocumentError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentStatistics(_Model):
+class DocumentStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """if showStats=true was specified in the request this field will contain information about the
     document payload.
 
@@ -2438,7 +2476,7 @@ class DocumentStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentWarning(_Model):
+class DocumentWarning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the warnings object with warnings encountered for the processed document.
 
     :ivar code: Warning code. Required. Known values are: "LongWordsInDocument" and
@@ -2477,7 +2515,7 @@ class DocumentWarning(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntitiesActionContent(_Model):
+class EntitiesActionContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for an Entity Recognition task.
 
     :ivar logging_opt_out: logging opt out.
@@ -2562,19 +2600,21 @@ class EntitiesActionContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntitiesLROTask(AnalyzeTextOperationAction, discriminator="EntityRecognition"):
+class EntitiesLROTask(
+    AnalyzeTextOperationAction, discriminator="EntityRecognition"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the task definition for an Entities Recognition task.
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: The kind of task. Required. Entity recognition task
+    :ivar kind: The kind of task. Required. Entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_RECOGNITION
     :ivar parameters: Task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.EntitiesActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of task. Required. Entity recognition task"""
+    """The kind of task. Required. Entity recognition task."""
     parameters: Optional["_models.EntitiesActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2600,7 +2640,7 @@ class EntitiesLROTask(AnalyzeTextOperationAction, discriminator="EntityRecogniti
         self.kind = AnalyzeTextOperationActionKind.ENTITY_RECOGNITION  # type: ignore
 
 
-class EntitiesResult(_Model):
+class EntitiesResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the entity recognition task result.
 
     :ivar errors: Errors by document id. Required.
@@ -2649,7 +2689,7 @@ class EntitiesResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntitiesWithMetadataAutoResult(_Model):
+class EntitiesWithMetadataAutoResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the entity recognition task result.
 
     :ivar errors: Errors by document id. Required.
@@ -2698,7 +2738,7 @@ class EntitiesWithMetadataAutoResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityActionResult(_Model):
+class EntityActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the entity recognition task result for the document with metadata and detected
     language.
 
@@ -2758,7 +2798,7 @@ class EntityActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityActionResultWithMetadata(_Model):
+class EntityActionResultWithMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity documents result with metadata.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -2807,7 +2847,7 @@ class EntityActionResultWithMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityInferenceConfig(_Model):
+class EntityInferenceConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The class that houses the inference options allowed for named entity recognition.
 
     :ivar exclude_normalized_values: Option to include/exclude the detected entity values to be
@@ -2840,7 +2880,7 @@ class EntityInferenceConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityLinkingActionContent(_Model):
+class EntityLinkingActionContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for an Entity Linking task.
 
     :ivar logging_opt_out: logging opt out.
@@ -2888,7 +2928,7 @@ class EntityLinkingActionContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityLinkingActionResult(_Model):
+class EntityLinkingActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity linking document result with auto language detection.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -2945,19 +2985,21 @@ class EntityLinkingActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityLinkingLROTask(AnalyzeTextOperationAction, discriminator="EntityLinking"):
+class EntityLinkingLROTask(
+    AnalyzeTextOperationAction, discriminator="EntityLinking"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text Entity linking LRO task.
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of task result. Required. Entity linking task
+    :ivar kind: Kind of task result. Required. Entity linking task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_LINKING
     :ivar parameters: Task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.EntityLinkingActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.ENTITY_LINKING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of task result. Required. Entity linking task"""
+    """Kind of task result. Required. Entity linking task."""
     parameters: Optional["_models.EntityLinkingActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2983,7 +3025,7 @@ class EntityLinkingLROTask(AnalyzeTextOperationAction, discriminator="EntityLink
         self.kind = AnalyzeTextOperationActionKind.ENTITY_LINKING  # type: ignore
 
 
-class EntityLinkingMatch(_Model):
+class EntityLinkingMatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Match object containing the detected entity text with the offset and the length.
 
     :ivar confidence_score: If a well known item is recognized, a decimal number denoting the
@@ -3030,7 +3072,9 @@ class EntityLinkingMatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityLinkingOperationResult(AnalyzeTextLROResult, discriminator="EntityLinkingLROResults"):
+class EntityLinkingOperationResult(
+    AnalyzeTextLROResult, discriminator="EntityLinkingLROResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text Entity linking task LRO result.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -3041,14 +3085,14 @@ class EntityLinkingOperationResult(AnalyzeTextLROResult, discriminator="EntityLi
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Entity linking LRO results
+    :ivar kind: Kind of the task. Required. Entity linking LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_LINKING_OPERATION_RESULTS
     :ivar results: Entity linking result. Required.
     :vartype results: ~azure.ai.textanalytics.models.EntityLinkingResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.ENTITY_LINKING_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Entity linking LRO results"""
+    """Kind of the task. Required. Entity linking LRO results."""
     results: "_models.EntityLinkingResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Entity linking result. Required."""
 
@@ -3074,7 +3118,7 @@ class EntityLinkingOperationResult(AnalyzeTextLROResult, discriminator="EntityLi
         self.kind = AnalyzeTextOperationResultsKind.ENTITY_LINKING_OPERATION_RESULTS  # type: ignore
 
 
-class EntityLinkingResult(_Model):
+class EntityLinkingResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity linking result.
 
     :ivar errors: Errors by document id. Required.
@@ -3123,7 +3167,9 @@ class EntityLinkingResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
+class EntityMaskPolicyType(
+    BaseRedactionPolicy, discriminator="entityMask"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the policy of redacting PII with the entity type.
 
     :ivar entity_types: (Optional) describes the PII categories to which the redaction policy will
@@ -3164,7 +3210,9 @@ class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
         self.policy_kind = RedactionPolicyKind.ENTITY_MASK  # type: ignore
 
 
-class EntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="EntityRecognitionLROResults"):
+class EntityRecognitionOperationResult(
+    AnalyzeTextLROResult, discriminator="EntityRecognitionLROResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the entity recognition job task result.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -3175,14 +3223,14 @@ class EntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="Enti
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Entity recognition LRO results
+    :ivar kind: Kind of the task. Required. Entity recognition LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_RECOGNITION_OPERATION_RESULTS
     :ivar results: Results for the task. Required.
     :vartype results: ~azure.ai.textanalytics.models.EntitiesResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.ENTITY_RECOGNITION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Entity recognition LRO results"""
+    """Kind of the task. Required. Entity recognition LRO results."""
     results: "_models.EntitiesResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Results for the task. Required."""
 
@@ -3208,7 +3256,7 @@ class EntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="Enti
         self.kind = AnalyzeTextOperationResultsKind.ENTITY_RECOGNITION_OPERATION_RESULTS  # type: ignore
 
 
-class EntitySynonym(_Model):
+class EntitySynonym(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The entity synonyms used to enhance pii entity detection.
 
     :ivar synonym: The synonym to be used for context. Required.
@@ -3241,36 +3289,135 @@ class EntitySynonym(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntitySynonyms(_Model):
+class EntitySynonyms(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Object that allows the user to provide synonyms for context words that to enhance pii entity
     detection.
 
-    :ivar entity_type: The entity name. Required. Known values are: "Address", "Numeric", "Age",
-     "Currency", "Number", "NumberRange", "Percentage", "Ordinal", "Temperature", "Dimension",
-     "Length", "Weight", "Height", "Speed", "Area", "Volume", "Information", "Temporal", "Date",
-     "Time", "DateTime", "DateRange", "TimeRange", "DateTimeRange", "Duration", "SetTemporal",
-     "Event", "SportsEvent", "CulturalEvent", "NaturalEvent", "Location", "GPE", "City", "State",
-     "CountryRegion", "Continent", "Structural", "Airport", "Geological", "Organization",
-     "OrganizationMedical", "OrganizationStockExchange", "OrganizationSports", "Person",
-     "PersonType", "Email", "URL", "IP", "PhoneNumber", "Product", "ComputingProduct", and "Skill".
-    :vartype entity_type: str or ~azure.ai.textanalytics.models.EntityCategory
+    :ivar entity_type: The entity name. Required. Known values are: "ABARoutingNumber",
+     "ARNationalIdentityNumber", "AUBankAccountNumber", "AUDriversLicenseNumber",
+     "AUMedicalAccountNumber", "AUPassportNumber", "AUTaxFileNumber", "AUBusinessNumber",
+     "AUCompanyNumber", "ATIdentityCard", "ATTaxIdentificationNumber", "ATValueAddedTaxNumber",
+     "AzureDocumentDBAuthKey", "AzureIAASDatabaseConnectionAndSQLString",
+     "AzureIoTConnectionString", "AzurePublishSettingPassword", "AzureRedisCacheString", "AzureSAS",
+     "AzureServiceBusString", "AzureStorageAccountKey", "AzureStorageAccountGeneric",
+     "BENationalNumber", "BENationalNumberV2", "BEValueAddedTaxNumber", "BRCPFNumber",
+     "BRLegalEntityNumber", "BRNationalIDRG", "BGUniformCivilNumber", "CABankAccountNumber",
+     "CADriversLicenseNumber", "CAHealthServiceNumber", "CAPassportNumber",
+     "CAPersonalHealthIdentification", "CASocialInsuranceNumber", "CLIdentityCardNumber",
+     "CNResidentIdentityCardNumber", "CreditCardNumber", "HRIdentityCardNumber",
+     "HRNationalIDNumber", "HRPersonalIdentificationNumber", "HRPersonalIdentificationOIBNumberV2",
+     "CYIdentityCard", "CYTaxIdentificationNumber", "CZPersonalIdentityNumber",
+     "CZPersonalIdentityV2", "DKPersonalIdentificationNumber", "DKPersonalIdentificationV2",
+     "DrugEnforcementAgencyNumber", "EEPersonalIdentificationCode", "EUDebitCardNumber",
+     "EUDriversLicenseNumber", "EUGPSCoordinates", "EUNationalIdentificationNumber",
+     "EUPassportNumber", "EUSocialSecurityNumber", "EUTaxIdentificationNumber",
+     "FIEuropeanHealthNumber", "FINationalID", "FINationalIDV2", "FIPassportNumber",
+     "FRDriversLicenseNumber", "FRHealthInsuranceNumber", "FRNationalID", "FRPassportNumber",
+     "FRSocialSecurityNumber", "FRTaxIdentificationNumber", "FRValueAddedTaxNumber",
+     "DEDriversLicenseNumber", "DEPassportNumber", "DEIdentityCardNumber",
+     "DETaxIdentificationNumber", "DEValueAddedNumber", "GRNationalIDCard", "GRNationalIDV2",
+     "GRTaxIdentificationNumber", "HKIdentityCardNumber", "HUValueAddedNumber",
+     "HUPersonalIdentificationNumber", "HUTaxIdentificationNumber", "INPermanentAccount",
+     "INUniqueIdentificationNumber", "IDIdentityCardNumber", "InternationalBankingAccountNumber",
+     "IEPersonalPublicServiceNumber", "IEPersonalPublicServiceNumberV2", "ILBankAccountNumber",
+     "ILNationalID", "ITDriversLicenseNumber", "ITFiscalCode", "ITValueAddedTaxNumber",
+     "JPBankAccountNumber", "JPDriversLicenseNumber", "JPPassportNumber",
+     "JPResidentRegistrationNumber", "JPSocialInsuranceNumber", "JPMyNumberCorporate",
+     "JPMyNumberPersonal", "JPResidenceCardNumber", "LVPersonalCode", "LTPersonalCode",
+     "LUNationalIdentificationNumberNatural", "LUNationalIdentificationNumberNonNatural",
+     "MYIdentityCardNumber", "MTIdentityCardNumber", "MTTaxIDNumber", "NLCitizensServiceNumber",
+     "NLCitizensServiceNumberV2", "NLTaxIdentificationNumber", "NLValueAddedTaxNumber",
+     "NZBankAccountNumber", "NZDriversLicenseNumber", "NZInlandRevenueNumber",
+     "NZMinistryOfHealthNumber", "NZSocialWelfareNumber", "NOIdentityNumber",
+     "PHUnifiedMultiPurposeIDNumber", "PLIdentityCard", "PLNationalID", "PLNationalIDV2",
+     "PLPassportNumber", "PLTaxIdentificationNumber", "PLREGONNumber", "PTCitizenCardNumber",
+     "PTCitizenCardNumberV2", "PTTaxIdentificationNumber", "ROPersonalNumericalCode",
+     "RUPassportNumberDomestic", "RUPassportNumberInternational", "SANationalID",
+     "SGNationalRegistrationIdentityCardNumber", "SKPersonalNumber", "SITaxIdentificationNumber",
+     "SIUniqueMasterCitizenNumber", "ZAIdentificationNumber", "KRResidentRegistrationNumber",
+     "ESDNI", "ESSocialSecurityNumber", "ESTaxIdentificationNumber", "SQLServerConnectionString",
+     "SENationalID", "SENationalIDV2", "SEPassportNumber", "SETaxIdentificationNumber", "SWIFTCode",
+     "CHSocialSecurityNumber", "TWNationalID", "TWPassportNumber", "TWResidentCertificate",
+     "THPopulationIdentificationCode", "TRNationalIdentificationNumber", "UKDriversLicenseNumber",
+     "UKElectoralRollNumber", "UKNationalHealthNumber", "UKNationalInsuranceNumber",
+     "UKUniqueTaxpayerNumber", "USUKPassportNumber", "USBankAccountNumber",
+     "USDriversLicenseNumber", "USIndividualTaxpayerIdentification", "USSocialSecurityNumber",
+     "UAPassportNumberDomestic", "UAPassportNumberInternational", "Organization", "Email", "URL",
+     "Age", "PhoneNumber", "IPAddress", "Date", "Person", "Address", "DateOfBirth",
+     "BankAccountNumber", "PassportNumber", "DriversLicenseNumber", "Neighborhood", "SortCode",
+     "PIN", "VIN", "VehicleIdentificationNumber", "LicensePlate", "KRPassportNumber",
+     "KRDriversLicenseNumber", "KRSocialSecurityNumber", "GovernmentIssuedId", "Password",
+     "NationalId", "ZipCode", "CVV", "ExpirationDate", "CASocialIdentificationNumber",
+     "USMedicareBeneficiaryId", "Location", "City", "State", "Airport", and "GPE".
+    :vartype entity_type: str or ~azure.ai.textanalytics.models.PiiCategoriesExclude
     :ivar synonyms: The entity synonyms. Required.
     :vartype synonyms: list[~azure.ai.textanalytics.models.EntitySynonym]
     """
 
-    entity_type: Union[str, "_models.EntityCategory"] = rest_field(
+    entity_type: Union[str, "_models.PiiCategoriesExclude"] = rest_field(
         name="entityType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The entity name. Required. Known values are: \"Address\", \"Numeric\", \"Age\", \"Currency\",
-     \"Number\", \"NumberRange\", \"Percentage\", \"Ordinal\", \"Temperature\", \"Dimension\",
-     \"Length\", \"Weight\", \"Height\", \"Speed\", \"Area\", \"Volume\", \"Information\",
-     \"Temporal\", \"Date\", \"Time\", \"DateTime\", \"DateRange\", \"TimeRange\",
-     \"DateTimeRange\", \"Duration\", \"SetTemporal\", \"Event\", \"SportsEvent\",
-     \"CulturalEvent\", \"NaturalEvent\", \"Location\", \"GPE\", \"City\", \"State\",
-     \"CountryRegion\", \"Continent\", \"Structural\", \"Airport\", \"Geological\",
-     \"Organization\", \"OrganizationMedical\", \"OrganizationStockExchange\",
-     \"OrganizationSports\", \"Person\", \"PersonType\", \"Email\", \"URL\", \"IP\",
-     \"PhoneNumber\", \"Product\", \"ComputingProduct\", and \"Skill\"."""
+    """The entity name. Required. Known values are: \"ABARoutingNumber\",
+     \"ARNationalIdentityNumber\", \"AUBankAccountNumber\", \"AUDriversLicenseNumber\",
+     \"AUMedicalAccountNumber\", \"AUPassportNumber\", \"AUTaxFileNumber\", \"AUBusinessNumber\",
+     \"AUCompanyNumber\", \"ATIdentityCard\", \"ATTaxIdentificationNumber\",
+     \"ATValueAddedTaxNumber\", \"AzureDocumentDBAuthKey\",
+     \"AzureIAASDatabaseConnectionAndSQLString\", \"AzureIoTConnectionString\",
+     \"AzurePublishSettingPassword\", \"AzureRedisCacheString\", \"AzureSAS\",
+     \"AzureServiceBusString\", \"AzureStorageAccountKey\", \"AzureStorageAccountGeneric\",
+     \"BENationalNumber\", \"BENationalNumberV2\", \"BEValueAddedTaxNumber\", \"BRCPFNumber\",
+     \"BRLegalEntityNumber\", \"BRNationalIDRG\", \"BGUniformCivilNumber\", \"CABankAccountNumber\",
+     \"CADriversLicenseNumber\", \"CAHealthServiceNumber\", \"CAPassportNumber\",
+     \"CAPersonalHealthIdentification\", \"CASocialInsuranceNumber\", \"CLIdentityCardNumber\",
+     \"CNResidentIdentityCardNumber\", \"CreditCardNumber\", \"HRIdentityCardNumber\",
+     \"HRNationalIDNumber\", \"HRPersonalIdentificationNumber\",
+     \"HRPersonalIdentificationOIBNumberV2\", \"CYIdentityCard\", \"CYTaxIdentificationNumber\",
+     \"CZPersonalIdentityNumber\", \"CZPersonalIdentityV2\", \"DKPersonalIdentificationNumber\",
+     \"DKPersonalIdentificationV2\", \"DrugEnforcementAgencyNumber\",
+     \"EEPersonalIdentificationCode\", \"EUDebitCardNumber\", \"EUDriversLicenseNumber\",
+     \"EUGPSCoordinates\", \"EUNationalIdentificationNumber\", \"EUPassportNumber\",
+     \"EUSocialSecurityNumber\", \"EUTaxIdentificationNumber\", \"FIEuropeanHealthNumber\",
+     \"FINationalID\", \"FINationalIDV2\", \"FIPassportNumber\", \"FRDriversLicenseNumber\",
+     \"FRHealthInsuranceNumber\", \"FRNationalID\", \"FRPassportNumber\",
+     \"FRSocialSecurityNumber\", \"FRTaxIdentificationNumber\", \"FRValueAddedTaxNumber\",
+     \"DEDriversLicenseNumber\", \"DEPassportNumber\", \"DEIdentityCardNumber\",
+     \"DETaxIdentificationNumber\", \"DEValueAddedNumber\", \"GRNationalIDCard\",
+     \"GRNationalIDV2\", \"GRTaxIdentificationNumber\", \"HKIdentityCardNumber\",
+     \"HUValueAddedNumber\", \"HUPersonalIdentificationNumber\", \"HUTaxIdentificationNumber\",
+     \"INPermanentAccount\", \"INUniqueIdentificationNumber\", \"IDIdentityCardNumber\",
+     \"InternationalBankingAccountNumber\", \"IEPersonalPublicServiceNumber\",
+     \"IEPersonalPublicServiceNumberV2\", \"ILBankAccountNumber\", \"ILNationalID\",
+     \"ITDriversLicenseNumber\", \"ITFiscalCode\", \"ITValueAddedTaxNumber\",
+     \"JPBankAccountNumber\", \"JPDriversLicenseNumber\", \"JPPassportNumber\",
+     \"JPResidentRegistrationNumber\", \"JPSocialInsuranceNumber\", \"JPMyNumberCorporate\",
+     \"JPMyNumberPersonal\", \"JPResidenceCardNumber\", \"LVPersonalCode\", \"LTPersonalCode\",
+     \"LUNationalIdentificationNumberNatural\", \"LUNationalIdentificationNumberNonNatural\",
+     \"MYIdentityCardNumber\", \"MTIdentityCardNumber\", \"MTTaxIDNumber\",
+     \"NLCitizensServiceNumber\", \"NLCitizensServiceNumberV2\", \"NLTaxIdentificationNumber\",
+     \"NLValueAddedTaxNumber\", \"NZBankAccountNumber\", \"NZDriversLicenseNumber\",
+     \"NZInlandRevenueNumber\", \"NZMinistryOfHealthNumber\", \"NZSocialWelfareNumber\",
+     \"NOIdentityNumber\", \"PHUnifiedMultiPurposeIDNumber\", \"PLIdentityCard\", \"PLNationalID\",
+     \"PLNationalIDV2\", \"PLPassportNumber\", \"PLTaxIdentificationNumber\", \"PLREGONNumber\",
+     \"PTCitizenCardNumber\", \"PTCitizenCardNumberV2\", \"PTTaxIdentificationNumber\",
+     \"ROPersonalNumericalCode\", \"RUPassportNumberDomestic\", \"RUPassportNumberInternational\",
+     \"SANationalID\", \"SGNationalRegistrationIdentityCardNumber\", \"SKPersonalNumber\",
+     \"SITaxIdentificationNumber\", \"SIUniqueMasterCitizenNumber\", \"ZAIdentificationNumber\",
+     \"KRResidentRegistrationNumber\", \"ESDNI\", \"ESSocialSecurityNumber\",
+     \"ESTaxIdentificationNumber\", \"SQLServerConnectionString\", \"SENationalID\",
+     \"SENationalIDV2\", \"SEPassportNumber\", \"SETaxIdentificationNumber\", \"SWIFTCode\",
+     \"CHSocialSecurityNumber\", \"TWNationalID\", \"TWPassportNumber\", \"TWResidentCertificate\",
+     \"THPopulationIdentificationCode\", \"TRNationalIdentificationNumber\",
+     \"UKDriversLicenseNumber\", \"UKElectoralRollNumber\", \"UKNationalHealthNumber\",
+     \"UKNationalInsuranceNumber\", \"UKUniqueTaxpayerNumber\", \"USUKPassportNumber\",
+     \"USBankAccountNumber\", \"USDriversLicenseNumber\", \"USIndividualTaxpayerIdentification\",
+     \"USSocialSecurityNumber\", \"UAPassportNumberDomestic\", \"UAPassportNumberInternational\",
+     \"Organization\", \"Email\", \"URL\", \"Age\", \"PhoneNumber\", \"IPAddress\", \"Date\",
+     \"Person\", \"Address\", \"DateOfBirth\", \"BankAccountNumber\", \"PassportNumber\",
+     \"DriversLicenseNumber\", \"Neighborhood\", \"SortCode\", \"PIN\", \"VIN\",
+     \"VehicleIdentificationNumber\", \"LicensePlate\", \"KRPassportNumber\",
+     \"KRDriversLicenseNumber\", \"KRSocialSecurityNumber\", \"GovernmentIssuedId\", \"Password\",
+     \"NationalId\", \"ZipCode\", \"CVV\", \"ExpirationDate\", \"CASocialIdentificationNumber\",
+     \"USMedicareBeneficiaryId\", \"Location\", \"City\", \"State\", \"Airport\", and \"GPE\"."""
     synonyms: list["_models.EntitySynonym"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The entity synonyms. Required."""
 
@@ -3278,7 +3425,7 @@ class EntitySynonyms(_Model):
     def __init__(
         self,
         *,
-        entity_type: Union[str, "_models.EntityCategory"],
+        entity_type: Union[str, "_models.PiiCategoriesExclude"],
         synonyms: list["_models.EntitySynonym"],
     ) -> None: ...
 
@@ -3293,7 +3440,7 @@ class EntitySynonyms(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityTag(_Model):
+class EntityTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity tag object which contains the name of the tags abd any associated confidence score.
     Entity Tags are used to express some similarities/affinity between entities.
 
@@ -3329,7 +3476,7 @@ class EntityTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object. Required.
@@ -3357,7 +3504,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtractedSummaryActionResult(_Model):
+class ExtractedSummaryActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A ranked list of sentences representing the extracted summary.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -3416,7 +3563,7 @@ class ExtractedSummaryActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtractedSummarySentence(_Model):
+class ExtractedSummarySentence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an extracted sentences from the input document.
 
     :ivar text: The extracted sentence text. Required.
@@ -3463,7 +3610,7 @@ class ExtractedSummarySentence(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtractiveSummarizationActionContent(_Model):
+class ExtractiveSummarizationActionContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for an Extractive Summarization task.
 
     :ivar logging_opt_out: logging opt out.
@@ -3531,13 +3678,15 @@ class ExtractiveSummarizationActionContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtractiveSummarizationOperationAction(AnalyzeTextOperationAction, discriminator="ExtractiveSummarization"):
+class ExtractiveSummarizationOperationAction(
+    AnalyzeTextOperationAction, discriminator="ExtractiveSummarization"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the task definition for an Extractive Summarization task.
 
     :ivar name: task name.
     :vartype name: str
     :ivar kind: The Extractive Summarization kind of the long running task. Required. Extractive
-     summarization task
+     summarization task.
     :vartype kind: str or ~azure.ai.textanalytics.models.EXTRACTIVE_SUMMARIZATION
     :ivar action_content: Parameters for the Extractive Summarization task.
     :vartype action_content: ~azure.ai.textanalytics.models.ExtractiveSummarizationActionContent
@@ -3545,7 +3694,7 @@ class ExtractiveSummarizationOperationAction(AnalyzeTextOperationAction, discrim
 
     kind: Literal[AnalyzeTextOperationActionKind.EXTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Extractive Summarization kind of the long running task. Required. Extractive summarization
-     task"""
+     task."""
     action_content: Optional["_models.ExtractiveSummarizationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3571,7 +3720,9 @@ class ExtractiveSummarizationOperationAction(AnalyzeTextOperationAction, discrim
         self.kind = AnalyzeTextOperationActionKind.EXTRACTIVE_SUMMARIZATION  # type: ignore
 
 
-class ExtractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator="ExtractiveSummarizationLROResults"):
+class ExtractiveSummarizationOperationResult(
+    AnalyzeTextLROResult, discriminator="ExtractiveSummarizationLROResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the results for an Extractive Summarization task.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -3582,14 +3733,14 @@ class ExtractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Extractive summarization LRO results
+    :ivar kind: Kind of the task. Required. Extractive summarization LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS
     :ivar results: Results of the task. Required.
     :vartype results: ~azure.ai.textanalytics.models.ExtractiveSummarizationResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Extractive summarization LRO results"""
+    """Kind of the task. Required. Extractive summarization LRO results."""
     results: "_models.ExtractiveSummarizationResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3617,7 +3768,7 @@ class ExtractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator
         self.kind = AnalyzeTextOperationResultsKind.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS  # type: ignore
 
 
-class ExtractiveSummarizationResult(_Model):
+class ExtractiveSummarizationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the pre-built Extractive Summarization results of each document.
 
     :ivar errors: Errors by document id. Required.
@@ -3674,7 +3825,7 @@ class FhirBundle(_Model):
     """
 
 
-class HealthcareActionResult(_Model):
+class HealthcareActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result object for the processed Healthcare document with detected language.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -3749,7 +3900,7 @@ class HealthcareActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthcareAssertion(_Model):
+class HealthcareAssertion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Assertion of the entity.
 
     :ivar conditionality: Describes any conditionality on the entity. Known values are:
@@ -3809,7 +3960,7 @@ class HealthcareAssertion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthcareEntity(_Model):
+class HealthcareEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Healthcare entity extracted from the document.
 
     :ivar text: Entity text as appears in the request. Required.
@@ -3904,7 +4055,7 @@ class HealthcareEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthcareEntityLink(_Model):
+class HealthcareEntityLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to an entity in known data sources.
 
     :ivar data_source: Entity Catalog. Examples include: UMLS, CHV, MSH, etc. Required.
@@ -3937,7 +4088,9 @@ class HealthcareEntityLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthcareLROResult(AnalyzeTextLROResult, discriminator="HealthcareLROResults"):
+class HealthcareLROResult(
+    AnalyzeTextLROResult, discriminator="HealthcareLROResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Healthcare Analyze Text long tunning operation result object.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -3948,14 +4101,14 @@ class HealthcareLROResult(AnalyzeTextLROResult, discriminator="HealthcareLROResu
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Healthcare LRO results
+    :ivar kind: Kind of the task. Required. Healthcare LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.HEALTHCARE_OPERATION_RESULTS
     :ivar results: Results of the task. Required.
     :vartype results: ~azure.ai.textanalytics.models.HealthcareResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.HEALTHCARE_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Healthcare LRO results"""
+    """Kind of the task. Required. Healthcare LRO results."""
     results: "_models.HealthcareResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Results of the task. Required."""
 
@@ -3981,19 +4134,21 @@ class HealthcareLROResult(AnalyzeTextLROResult, discriminator="HealthcareLROResu
         self.kind = AnalyzeTextOperationResultsKind.HEALTHCARE_OPERATION_RESULTS  # type: ignore
 
 
-class HealthcareLROTask(AnalyzeTextOperationAction, discriminator="Healthcare"):
+class HealthcareLROTask(
+    AnalyzeTextOperationAction, discriminator="Healthcare"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The long running task to be performed by the service on the Healthcare input documents.
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Healthcare kind of the long running task. Required. Healthcare task
+    :ivar kind: Healthcare kind of the long running task. Required. Healthcare task.
     :vartype kind: str or ~azure.ai.textanalytics.models.HEALTHCARE
     :ivar parameters: Parameters for the Healthcare task.
     :vartype parameters: ~azure.ai.textanalytics.models.HealthcareTaskParameters
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.HEALTHCARE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Healthcare kind of the long running task. Required. Healthcare task"""
+    """Healthcare kind of the long running task. Required. Healthcare task."""
     parameters: Optional["_models.HealthcareTaskParameters"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4019,7 +4174,7 @@ class HealthcareLROTask(AnalyzeTextOperationAction, discriminator="Healthcare"):
         self.kind = AnalyzeTextOperationActionKind.HEALTHCARE  # type: ignore
 
 
-class HealthcareRelation(_Model):
+class HealthcareRelation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Every relation is an entity graph of a certain relationType, where all entities are connected
     and have specific roles within the relation context.
 
@@ -4085,7 +4240,7 @@ class HealthcareRelation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthcareRelationEntity(_Model):
+class HealthcareRelationEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity in the relation.
 
     :ivar ref: Reference link object, using a JSON pointer RFC 6901 (URI Fragment Identifier
@@ -4124,7 +4279,7 @@ class HealthcareRelationEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthcareResult(_Model):
+class HealthcareResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result object for the processed Healthcare task.
 
     :ivar errors: Errors by document id. Required.
@@ -4173,7 +4328,7 @@ class HealthcareResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthcareTaskParameters(_Model):
+class HealthcareTaskParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for a Healthcare task.
 
     :ivar logging_opt_out: logging opt out.
@@ -4244,7 +4399,9 @@ class HealthcareTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InformationMetadata(BaseMetadata, discriminator="InformationMetadata"):
+class InformationMetadata(
+    BaseMetadata, discriminator="InformationMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Information (data) entity Metadata model.
 
     :ivar value: The numeric value that the extracted text denotes. Required.
@@ -4286,7 +4443,7 @@ class InformationMetadata(BaseMetadata, discriminator="InformationMetadata"):
         self.metadata_kind = MetadataKind.INFORMATION_METADATA  # type: ignore
 
 
-class InnerErrorModel(_Model):
+class InnerErrorModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object containing more specific information about the error. As per Microsoft One API
     guidelines -
     `https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses
@@ -4349,7 +4506,7 @@ class InnerErrorModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyPhraseActionContent(_Model):
+class KeyPhraseActionContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for a Key Phrase Extraction task.
 
     :ivar logging_opt_out: logging opt out.
@@ -4386,7 +4543,9 @@ class KeyPhraseActionContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyPhraseExtractionOperationResult(AnalyzeTextLROResult, discriminator="KeyPhraseExtractionLROResults"):
+class KeyPhraseExtractionOperationResult(
+    AnalyzeTextLROResult, discriminator="KeyPhraseExtractionLROResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text KeyPhraseExtraction LRO task.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -4397,14 +4556,14 @@ class KeyPhraseExtractionOperationResult(AnalyzeTextLROResult, discriminator="Ke
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Key phrase extraction LRO results
+    :ivar kind: Kind of the task. Required. Key phrase extraction LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS
     :ivar results: The list of Key phrase extraction results. Required.
     :vartype results: ~azure.ai.textanalytics.models.KeyPhraseResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Key phrase extraction LRO results"""
+    """Kind of the task. Required. Key phrase extraction LRO results."""
     results: "_models.KeyPhraseResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of Key phrase extraction results. Required."""
 
@@ -4430,19 +4589,21 @@ class KeyPhraseExtractionOperationResult(AnalyzeTextLROResult, discriminator="Ke
         self.kind = AnalyzeTextOperationResultsKind.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS  # type: ignore
 
 
-class KeyPhraseLROTask(AnalyzeTextOperationAction, discriminator="KeyPhraseExtraction"):
+class KeyPhraseLROTask(
+    AnalyzeTextOperationAction, discriminator="KeyPhraseExtraction"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the task definition for a Key Phrase Extraction task.
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. Key phrase extraction task
+    :ivar kind: Kind of the task. Required. Key phrase extraction task.
     :vartype kind: str or ~azure.ai.textanalytics.models.KEY_PHRASE_EXTRACTION
     :ivar parameters: Key phrase extraction task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.KeyPhraseActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.KEY_PHRASE_EXTRACTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Key phrase extraction task"""
+    """Kind of the task. Required. Key phrase extraction task."""
     parameters: Optional["_models.KeyPhraseActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4468,7 +4629,7 @@ class KeyPhraseLROTask(AnalyzeTextOperationAction, discriminator="KeyPhraseExtra
         self.kind = AnalyzeTextOperationActionKind.KEY_PHRASE_EXTRACTION  # type: ignore
 
 
-class KeyPhraseResult(_Model):
+class KeyPhraseResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the KeyPhraseResult.
 
     :ivar errors: Errors by document id. Required.
@@ -4517,7 +4678,7 @@ class KeyPhraseResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyPhrasesActionResult(_Model):
+class KeyPhrasesActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A ranked list of sentences representing the extracted summary.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -4576,7 +4737,7 @@ class KeyPhrasesActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LanguageDetectionActionContent(_Model):
+class LanguageDetectionActionContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for a Language Detection task.
 
     :ivar logging_opt_out: logging opt out.
@@ -4613,7 +4774,7 @@ class LanguageDetectionActionContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LanguageDetectionDocumentResult(_Model):
+class LanguageDetectionDocumentResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the language detection for a document.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -4662,7 +4823,7 @@ class LanguageDetectionDocumentResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LanguageDetectionResult(_Model):
+class LanguageDetectionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the language detection result for the request.
 
     :ivar errors: Errors by document id. Required.
@@ -4711,7 +4872,7 @@ class LanguageDetectionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LanguageDetectionTextInput(_Model):
+class LanguageDetectionTextInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the language detection document analysis input.
 
     :ivar language_inputs: List of documents to be analyzed.
@@ -4741,7 +4902,7 @@ class LanguageDetectionTextInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LanguageInput(_Model):
+class LanguageInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the language detection input.
 
     :ivar id: A unique, non-empty document identifier. Required.
@@ -4781,7 +4942,9 @@ class LanguageInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LengthMetadata(BaseMetadata, discriminator="LengthMetadata"):
+class LengthMetadata(
+    BaseMetadata, discriminator="LengthMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Length entity Metadata model.
 
     :ivar value: The numeric value that the extracted text denotes. Required.
@@ -4824,7 +4987,7 @@ class LengthMetadata(BaseMetadata, discriminator="LengthMetadata"):
         self.metadata_kind = MetadataKind.LENGTH_METADATA  # type: ignore
 
 
-class LinkedEntity(_Model):
+class LinkedEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The LinkedEntity object containing the detected entity with the associated sources/links.
 
     :ivar name: Entity Linking formal name. Required.
@@ -4891,12 +5054,12 @@ class MatchLongestEntityPolicyType(EntityOverlapPolicy, discriminator="matchLong
     Text Analytics) follow the above steps starting from 1.
 
     :ivar policy_kind: The entity OverlapPolicy object kind. Required. Represents
-     MatchLongestEntityPolicyType
+     MatchLongestEntityPolicyType.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.MATCH_LONGEST
     """
 
     policy_kind: Literal[PolicyKind.MATCH_LONGEST] = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The entity OverlapPolicy object kind. Required. Represents MatchLongestEntityPolicyType"""
+    """The entity OverlapPolicy object kind. Required. Represents MatchLongestEntityPolicyType."""
 
     @overload
     def __init__(
@@ -4915,7 +5078,7 @@ class MatchLongestEntityPolicyType(EntityOverlapPolicy, discriminator="matchLong
         self.policy_kind = PolicyKind.MATCH_LONGEST  # type: ignore
 
 
-class MultiLanguageInput(_Model):
+class MultiLanguageInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains an input document to be analyzed by the service.
 
     :ivar id: A unique, non-empty document identifier. Required.
@@ -4959,7 +5122,7 @@ class MultiLanguageInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiLanguageTextInput(_Model):
+class MultiLanguageTextInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Collection of input documents to be analyzed by the service.
 
     :ivar multi_language_inputs: The input documents to be analyzed.
@@ -4989,7 +5152,7 @@ class MultiLanguageTextInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamedEntity(_Model):
+class NamedEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the detected entity object containing the entity category and entity text detected,
     etc.
 
@@ -5049,7 +5212,7 @@ class NamedEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamedEntityWithMetadata(_Model):
+class NamedEntityWithMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity object with tags and metadata.
 
     :ivar text: Entity text as appears in the request. Required.
@@ -5127,7 +5290,9 @@ class NamedEntityWithMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
+class NoMaskPolicyType(
+    BaseRedactionPolicy, discriminator="noMask"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the policy of not redacting found PII.
 
     :ivar entity_types: (Optional) describes the PII categories to which the redaction policy will
@@ -5168,7 +5333,9 @@ class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
         self.policy_kind = RedactionPolicyKind.NO_MASK  # type: ignore
 
 
-class NumberMetadata(BaseMetadata, discriminator="NumberMetadata"):
+class NumberMetadata(
+    BaseMetadata, discriminator="NumberMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A metadata for numeric entity instances.
 
     :ivar metadata_kind: Kind of the metadata. Required. Metadata for numeric values.
@@ -5210,7 +5377,9 @@ class NumberMetadata(BaseMetadata, discriminator="NumberMetadata"):
         self.metadata_kind = MetadataKind.NUMBER_METADATA  # type: ignore
 
 
-class NumericRangeMetadata(BaseMetadata, discriminator="NumericRangeMetadata"):
+class NumericRangeMetadata(
+    BaseMetadata, discriminator="NumericRangeMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """represents the Metadata of numeric intervals.
 
     :ivar metadata_kind: Kind of the metadata. Required. Metadata for numeric range values.
@@ -5268,7 +5437,9 @@ class NumericRangeMetadata(BaseMetadata, discriminator="NumericRangeMetadata"):
         self.metadata_kind = MetadataKind.NUMERIC_RANGE_METADATA  # type: ignore
 
 
-class OrdinalMetadata(BaseMetadata, discriminator="OrdinalMetadata"):
+class OrdinalMetadata(
+    BaseMetadata, discriminator="OrdinalMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A metadata for numeric entity instances.
 
     :ivar metadata_kind: Kind of the metadata. Required. Metadata for ordinal numbers.
@@ -5317,7 +5488,7 @@ class OrdinalMetadata(BaseMetadata, discriminator="OrdinalMetadata"):
         self.metadata_kind = MetadataKind.ORDINAL_METADATA  # type: ignore
 
 
-class PiiActionContent(_Model):
+class PiiActionContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for a PII Entities Recognition task.
 
     :ivar logging_opt_out: logging opt out.
@@ -5425,7 +5596,7 @@ class PiiActionContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PiiEntity(_Model):
+class PiiEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity object with tags.
 
     :ivar text: Entity text as appears in the request. Required.
@@ -5525,7 +5696,9 @@ class PiiEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PiiEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="PiiEntityRecognitionLROResults"):
+class PiiEntityRecognitionOperationResult(
+    AnalyzeTextLROResult, discriminator="PiiEntityRecognitionLROResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the PII LRO results.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -5536,14 +5709,14 @@ class PiiEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="P
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: The kind of the task. Required. PII entity recognition LRO results
+    :ivar kind: The kind of the task. Required. PII entity recognition LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.PII_ENTITY_RECOGNITION_OPERATION_RESULTS
     :ivar results: The list of pii results. Required.
     :vartype results: ~azure.ai.textanalytics.models.PiiResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.PII_ENTITY_RECOGNITION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of the task. Required. PII entity recognition LRO results"""
+    """The kind of the task. Required. PII entity recognition LRO results."""
     results: "_models.PiiResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of pii results. Required."""
 
@@ -5569,19 +5742,21 @@ class PiiEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="P
         self.kind = AnalyzeTextOperationResultsKind.PII_ENTITY_RECOGNITION_OPERATION_RESULTS  # type: ignore
 
 
-class PiiLROTask(AnalyzeTextOperationAction, discriminator="PiiEntityRecognition"):
+class PiiLROTask(
+    AnalyzeTextOperationAction, discriminator="PiiEntityRecognition"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text PIIEntityRecognition LRO task.
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. PII entity recognition task
+    :ivar kind: Kind of the task. Required. PII entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.PII_ENTITY_RECOGNITION
     :ivar parameters: Pii task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.PiiActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. PII entity recognition task"""
+    """Kind of the task. Required. PII entity recognition task."""
     parameters: Optional["_models.PiiActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5607,7 +5782,7 @@ class PiiLROTask(AnalyzeTextOperationAction, discriminator="PiiEntityRecognition
         self.kind = AnalyzeTextOperationActionKind.PII_ENTITY_RECOGNITION  # type: ignore
 
 
-class PiiResult(_Model):
+class PiiResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the PiiResult.
 
     :ivar errors: Errors by document id. Required.
@@ -5656,7 +5831,7 @@ class PiiResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PiiResultWithDetectedLanguage(_Model):
+class PiiResultWithDetectedLanguage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the PII results with detected language.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -5718,7 +5893,7 @@ class PiiResultWithDetectedLanguage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestStatistics(_Model):
+class RequestStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """if showStats=true was specified in the request this field will contain information about the
     request payload.
 
@@ -5772,7 +5947,7 @@ class RequestStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentenceAssessment(_Model):
+class SentenceAssessment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a sentence assessment and the assessments or target objects related to it.
 
     :ivar sentiment: The sentiment of the sentence. Required. Known values are: "positive",
@@ -5832,7 +6007,7 @@ class SentenceAssessment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentenceSentiment(_Model):
+class SentenceSentiment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A document's sentence sentiment.
 
     :ivar text: The sentence text. Required.
@@ -5901,7 +6076,7 @@ class SentenceSentiment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentenceTarget(_Model):
+class SentenceTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a sentence target and the assessments or target objects related to it.
 
     :ivar sentiment: The sentiment of the sentence. Required. Known values are: "positive",
@@ -5962,7 +6137,7 @@ class SentenceTarget(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentimentActionResult(_Model):
+class SentimentActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sentiment analysis per document.
 
     :ivar id: Unique, non-empty document identifier. Required.
@@ -6038,7 +6213,7 @@ class SentimentActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentimentAnalysisActionContent(_Model):
+class SentimentAnalysisActionContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported parameters for a Sentiment Analysis task.
 
     :ivar logging_opt_out: logging opt out.
@@ -6091,20 +6266,22 @@ class SentimentAnalysisActionContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentimentAnalysisOperationAction(AnalyzeTextOperationAction, discriminator="SentimentAnalysis"):
+class SentimentAnalysisOperationAction(
+    AnalyzeTextOperationAction, discriminator="SentimentAnalysis"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object representing the task definition for a Sentiment Analysis task.
 
     :ivar name: task name.
     :vartype name: str
     :ivar kind: The Sentiment Analysis kind of the long running task. Required. Sentiment analysis
-     task
+     task.
     :vartype kind: str or ~azure.ai.textanalytics.models.SENTIMENT_ANALYSIS
     :ivar parameters: Parameters for the Sentiment Analysis task.
     :vartype parameters: ~azure.ai.textanalytics.models.SentimentAnalysisActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.SENTIMENT_ANALYSIS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Sentiment Analysis kind of the long running task. Required. Sentiment analysis task"""
+    """The Sentiment Analysis kind of the long running task. Required. Sentiment analysis task."""
     parameters: Optional["_models.SentimentAnalysisActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6130,7 +6307,7 @@ class SentimentAnalysisOperationAction(AnalyzeTextOperationAction, discriminator
         self.kind = AnalyzeTextOperationActionKind.SENTIMENT_ANALYSIS  # type: ignore
 
 
-class SentimentConfidenceScores(_Model):
+class SentimentConfidenceScores(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the confidence scores between 0 and 1 across all sentiment classes: positive,
     neutral, negative.
 
@@ -6169,7 +6346,9 @@ class SentimentConfidenceScores(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisLROResults"):
+class SentimentLROResult(
+    AnalyzeTextLROResult, discriminator="SentimentAnalysisLROResults"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the Sentiment Analysis LRO results.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -6180,14 +6359,14 @@ class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisL
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Sentiment analysis LRO results
+    :ivar kind: Kind of the task. Required. Sentiment analysis LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.SENTIMENT_ANALYSIS_OPERATION_RESULTS
     :ivar results: The sentiment analysis results. Required.
     :vartype results: ~azure.ai.textanalytics.models.SentimentResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.SENTIMENT_ANALYSIS_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Sentiment analysis LRO results"""
+    """Kind of the task. Required. Sentiment analysis LRO results."""
     results: "_models.SentimentResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sentiment analysis results. Required."""
 
@@ -6213,7 +6392,7 @@ class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisL
         self.kind = AnalyzeTextOperationResultsKind.SENTIMENT_ANALYSIS_OPERATION_RESULTS  # type: ignore
 
 
-class SentimentResult(_Model):
+class SentimentResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sentiment analysis results for the input documents.
 
     :ivar errors: Errors by document id. Required.
@@ -6262,7 +6441,9 @@ class SentimentResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpeedMetadata(BaseMetadata, discriminator="SpeedMetadata"):
+class SpeedMetadata(
+    BaseMetadata, discriminator="SpeedMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Speed entity Metadata model.
 
     :ivar value: The numeric value that the extracted text denotes. Required.
@@ -6306,7 +6487,7 @@ class SpeedMetadata(BaseMetadata, discriminator="SpeedMetadata"):
         self.metadata_kind = MetadataKind.SPEED_METADATA  # type: ignore
 
 
-class SummaryContext(_Model):
+class SummaryContext(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The context of the summary.
 
     :ivar offset: Start position for the context. Use of different 'stringIndexType' values can
@@ -6343,7 +6524,9 @@ class SummaryContext(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SyntheticReplacementPolicyType(BaseRedactionPolicy, discriminator="syntheticReplacement"):
+class SyntheticReplacementPolicyType(
+    BaseRedactionPolicy, discriminator="syntheticReplacement"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the policy of replacing detected PII with synthetic values.
 
     :ivar entity_types: (Optional) describes the PII categories to which the redaction policy will
@@ -6394,7 +6577,7 @@ class SyntheticReplacementPolicyType(BaseRedactionPolicy, discriminator="synthet
         self.policy_kind = RedactionPolicyKind.SYNTHETIC_REPLACEMENT  # type: ignore
 
 
-class TargetConfidenceScoreLabel(_Model):
+class TargetConfidenceScoreLabel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the confidence scores across all sentiment classes: positive and negative.
 
     :ivar positive: Confidence score for positive sentiment. Required.
@@ -6427,7 +6610,7 @@ class TargetConfidenceScoreLabel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetRelation(_Model):
+class TargetRelation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the relation between assessments and/or targets.
 
     :ivar ref: The JSON pointer indicating the linked object. Required.
@@ -6463,7 +6646,9 @@ class TargetRelation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TemperatureMetadata(BaseMetadata, discriminator="TemperatureMetadata"):
+class TemperatureMetadata(
+    BaseMetadata, discriminator="TemperatureMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Information entity Metadata model.
 
     :ivar value: The numeric value that the extracted text denotes. Required.
@@ -6503,7 +6688,9 @@ class TemperatureMetadata(BaseMetadata, discriminator="TemperatureMetadata"):
         self.metadata_kind = MetadataKind.TEMPERATURE_METADATA  # type: ignore
 
 
-class TemporalSetMetadata(BaseMetadata, discriminator="TemporalSetMetadata"):
+class TemporalSetMetadata(
+    BaseMetadata, discriminator="TemporalSetMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Metadata for temporal set entity instances.
 
     :ivar dates: List of date values.
@@ -6538,7 +6725,9 @@ class TemporalSetMetadata(BaseMetadata, discriminator="TemporalSetMetadata"):
         self.metadata_kind = MetadataKind.TEMPORAL_SET_METADATA  # type: ignore
 
 
-class TemporalSpanMetadata(BaseMetadata, discriminator="TemporalSpanMetadata"):
+class TemporalSpanMetadata(
+    BaseMetadata, discriminator="TemporalSpanMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """represents the Metadata of a date and/or time span.
 
     :ivar metadata_kind: Kind of the metadata. Required. Metadata for temporal span values.
@@ -6573,7 +6762,7 @@ class TemporalSpanMetadata(BaseMetadata, discriminator="TemporalSpanMetadata"):
         self.metadata_kind = MetadataKind.TEMPORAL_SPAN_METADATA  # type: ignore
 
 
-class TemporalSpanValues(_Model):
+class TemporalSpanValues(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Temporal span object.
 
     :ivar begin: Start value for the span.
@@ -6635,7 +6824,7 @@ class TemporalSpanValues(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextActions(_Model):
+class TextActions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container for the tasks status for the LRO job.
 
     :ivar completed: Count of completed tasks. Required.
@@ -6685,10 +6874,12 @@ class TextActions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextEntityLinkingInput(AnalyzeTextInput, discriminator="EntityLinking"):
+class TextEntityLinkingInput(
+    AnalyzeTextInput, discriminator="EntityLinking"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text Entity linking input.
 
-    :ivar kind: Kind for Entity linking input. Required. Entity linking task
+    :ivar kind: Kind for Entity linking input. Required. Entity linking task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_LINKING
     :ivar text_input: Contains the analysis input to be handled by the service.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6697,7 +6888,7 @@ class TextEntityLinkingInput(AnalyzeTextInput, discriminator="EntityLinking"):
     """
 
     kind: Literal[AnalyzeTextInputKind.ENTITY_LINKING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind for Entity linking input. Required. Entity linking task"""
+    """Kind for Entity linking input. Required. Entity linking task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6727,10 +6918,12 @@ class TextEntityLinkingInput(AnalyzeTextInput, discriminator="EntityLinking"):
         self.kind = AnalyzeTextInputKind.ENTITY_LINKING  # type: ignore
 
 
-class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognition"):
+class TextEntityRecognitionInput(
+    AnalyzeTextInput, discriminator="EntityRecognition"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The entity recognition analyze text input task request.
 
-    :ivar kind: The kind of task. Required. Entity recognition task
+    :ivar kind: The kind of task. Required. Entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_RECOGNITION
     :ivar text_input: The input to be analyzed.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6739,7 +6932,7 @@ class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognit
     """
 
     kind: Literal[AnalyzeTextInputKind.ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of task. Required. Entity recognition task"""
+    """The kind of task. Required. Entity recognition task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6769,10 +6962,12 @@ class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognit
         self.kind = AnalyzeTextInputKind.ENTITY_RECOGNITION  # type: ignore
 
 
-class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExtraction"):
+class TextKeyPhraseExtractionInput(
+    AnalyzeTextInput, discriminator="KeyPhraseExtraction"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text KeyPhraseExtraction task input.
 
-    :ivar kind: Kind of the task. Required. Key phrase extraction task
+    :ivar kind: Kind of the task. Required. Key phrase extraction task.
     :vartype kind: str or ~azure.ai.textanalytics.models.KEY_PHRASE_EXTRACTION
     :ivar text_input: Contains the input documents.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6781,7 +6976,7 @@ class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExt
     """
 
     kind: Literal[AnalyzeTextInputKind.KEY_PHRASE_EXTRACTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Key phrase extraction task"""
+    """Kind of the task. Required. Key phrase extraction task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6811,10 +7006,12 @@ class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExt
         self.kind = AnalyzeTextInputKind.KEY_PHRASE_EXTRACTION  # type: ignore
 
 
-class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetection"):
+class TextLanguageDetectionInput(
+    AnalyzeTextInput, discriminator="LanguageDetection"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the language detection document analysis task input.
 
-    :ivar kind: Kind of the task. Required. Language detection task
+    :ivar kind: Kind of the task. Required. Language detection task.
     :vartype kind: str or ~azure.ai.textanalytics.models.LANGUAGE_DETECTION
     :ivar text_input: Documents to be analyzed.
     :vartype text_input: ~azure.ai.textanalytics.models.LanguageDetectionTextInput
@@ -6823,7 +7020,7 @@ class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetect
     """
 
     kind: Literal[AnalyzeTextInputKind.LANGUAGE_DETECTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Language detection task"""
+    """Kind of the task. Required. Language detection task."""
     text_input: Optional["_models.LanguageDetectionTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6853,10 +7050,12 @@ class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetect
         self.kind = AnalyzeTextInputKind.LANGUAGE_DETECTION  # type: ignore
 
 
-class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntityRecognition"):
+class TextPiiEntitiesRecognitionInput(
+    AnalyzeTextInput, discriminator="PiiEntityRecognition"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text PIIEntityRecognition task input.
 
-    :ivar kind: Kind of the task. Required. PII entity recognition task
+    :ivar kind: Kind of the task. Required. PII entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.PII_ENTITY_RECOGNITION
     :ivar text_input: Contains the input documents.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6865,7 +7064,7 @@ class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntity
     """
 
     kind: Literal[AnalyzeTextInputKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. PII entity recognition task"""
+    """Kind of the task. Required. PII entity recognition task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6895,10 +7094,12 @@ class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntity
         self.kind = AnalyzeTextInputKind.PII_ENTITY_RECOGNITION  # type: ignore
 
 
-class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnalysis"):
+class TextSentimentAnalysisInput(
+    AnalyzeTextInput, discriminator="SentimentAnalysis"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the analyze text SentimentAnalysis task input.
 
-    :ivar kind: Kind of the task. Required. Sentiment analysis task
+    :ivar kind: Kind of the task. Required. Sentiment analysis task.
     :vartype kind: str or ~azure.ai.textanalytics.models.SENTIMENT_ANALYSIS
     :ivar text_input: Contains the input documents.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6907,7 +7108,7 @@ class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnaly
     """
 
     kind: Literal[AnalyzeTextInputKind.SENTIMENT_ANALYSIS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Sentiment analysis task"""
+    """Kind of the task. Required. Sentiment analysis task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6937,7 +7138,9 @@ class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnaly
         self.kind = AnalyzeTextInputKind.SENTIMENT_ANALYSIS  # type: ignore
 
 
-class TimeMetadata(BaseMetadata, discriminator="TimeMetadata"):
+class TimeMetadata(
+    BaseMetadata, discriminator="TimeMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Metadata for time entity instances.
 
     :ivar dates: List of date values.
@@ -6972,7 +7175,7 @@ class TimeMetadata(BaseMetadata, discriminator="TimeMetadata"):
         self.metadata_kind = MetadataKind.TIME_METADATA  # type: ignore
 
 
-class ValueExclusionPolicy(_Model):
+class ValueExclusionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy for specific words and terms that should be excluded from detection by the PII detection
     service.
 
@@ -7010,7 +7213,9 @@ class ValueExclusionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeMetadata(BaseMetadata, discriminator="VolumeMetadata"):
+class VolumeMetadata(
+    BaseMetadata, discriminator="VolumeMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Volume entity Metadata model.
 
     :ivar value: The numeric value that the extracted text denotes. Required.
@@ -7057,7 +7262,9 @@ class VolumeMetadata(BaseMetadata, discriminator="VolumeMetadata"):
         self.metadata_kind = MetadataKind.VOLUME_METADATA  # type: ignore
 
 
-class WeightMetadata(BaseMetadata, discriminator="WeightMetadata"):
+class WeightMetadata(
+    BaseMetadata, discriminator="WeightMetadata"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the Weight ) entity Metadata model.
 
     :ivar value: The numeric value that the extracted text denotes. Required.

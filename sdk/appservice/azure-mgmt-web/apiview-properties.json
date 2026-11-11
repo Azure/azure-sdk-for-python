@@ -2014,5 +2014,6 @@
         "azure.mgmt.web.aio.WebSiteManagementClient.update_source_control": "Microsoft.Web.SourceControls.updateSourceControl",
         "azure.mgmt.web.WebSiteManagementClient.list_source_controls": "Microsoft.Web.SourceControls.listSourceControls",
         "azure.mgmt.web.aio.WebSiteManagementClient.list_source_controls": "Microsoft.Web.SourceControls.listSourceControls"
-    }
+    },
+    "CrossLanguageVersion": "22a58a6b33ef"
 }

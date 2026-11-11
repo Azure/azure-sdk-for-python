@@ -33,8 +33,9 @@ def main():
 
     response = client.supercomputers.begin_create_or_update(
         resource_group_name="rgdiscovery",
-        supercomputer_name="85fd61f68e7207bbd3",
+        supercomputer_name="4320c0c5e73e420d6c",
         resource={
+            "identity": {"type": "SystemAssigned"},
             "location": "uksouth",
             "properties": {
                 "customerManagedKeys": "Enabled",
@@ -46,7 +47,7 @@ def main():
                     "kubeletIdentity": {
                         "id": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/managedid1"
                     },
-                    "workloadIdentities": {"key1149": {}},
+                    "workloadIdentities": {"key8010": {}},
                 },
                 "logAnalyticsClusterId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.OperationalInsights/clusters/cluster1",
                 "managementSubnetId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.Network/virtualNetworks/virtualnetwork1/subnets/managementSubnet1",
@@ -54,12 +55,12 @@ def main():
                 "subnetId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.Network/virtualNetworks/virtualnetwork1/subnets/subnet1",
                 "systemSku": "Standard_D4s_v6",
             },
-            "tags": {"key5625": "spcjwrxnslfkiqbzdkhhbano"},
+            "tags": {"key5117": "zeawptiwdzd"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Supercomputers_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Supercomputers_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

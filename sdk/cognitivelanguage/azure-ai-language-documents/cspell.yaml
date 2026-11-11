@@ -1,0 +1,13 @@
+import:
+  - ../../../.vscode/cspell.json
+
+overrides:
+  - filename: sdk/cognitivelanguage/azure-ai-language-documents/**
+    words:
+      - brcpf
+      - esdni
+      - eugps
+      - idrg
+      - plregon
+      - regon
+      - usuk

@@ -39,7 +39,7 @@ async def sample_authentication_api_key_async():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
-    clu_client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key)) #pylint:disable=unused-variable
+    clu_client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))  # pylint:disable=unused-variable
     # [END create_clu_client_with_key_async]
 
 
@@ -54,7 +54,7 @@ async def sample_authentication_with_aad():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    clu_client = ConversationAnalysisClient(endpoint, credential=credential) #pylint:disable=unused-variable
+    clu_client = ConversationAnalysisClient(endpoint, credential=credential)  # pylint:disable=unused-variable
 
 
 async def main():

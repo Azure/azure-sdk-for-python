@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
 class LockLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level of the lock. Possible values are: NotSpecified, CanNotDelete, ReadOnly. CanNotDelete
     means authorized users are able to read and modify the resources, but not delete. ReadOnly

@@ -2,15 +2,48 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# The imports below the module-level helper are intentionally deferred to break a circular import.
+# pylint: disable=wrong-import-position
+
 import copy
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    JobOutput as RestJobOutput,
+)
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._util import copy_output_setting
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.core.serialization import as_attribute_dict
+
+
+def _rest_io_to_snake_dict(rest_io: Any) -> Dict:
+    """Convert a rest input/output model to the snake_case dict the node serializer expects.
+
+    The legacy msrest models produced snake_case from ``as_dict()``; the shared arm_ml_service hybrid
+    models produce camelCase from ``as_dict()`` (and drop ``assetVersion``/``pathOnCompute`` to unknown
+    wire keys), so use ``as_attribute_dict`` for the snake_case field view and merge any dropped wire
+    keys back so downstream name/version handling still finds them.
+
+    :param rest_io: A msrest or arm_ml_service rest input/output model.
+    :type rest_io: Any
+    :return: The snake_case dict view.
+    :rtype: Dict
+    """
+    if getattr(rest_io, "_is_model", False) is True:
+        result = as_attribute_dict(rest_io)
+        asset_version = rest_io.get("assetVersion")
+        if asset_version is not None:
+            result["asset_version"] = asset_version
+        # ``as_attribute_dict`` passes the untyped ``assetVersion`` wire key through unchanged; drop it so the node
+        # carries only the snake ``version`` key (matching the legacy msrest node wire format; the camelCase
+        # ``assetVersion`` would otherwise be an extra field on the pipeline-node output/input).
+        result.pop("assetVersion", None)
+        return result
+    return rest_io.as_dict()
+
 
 from ..._input_output_helpers import (
     from_rest_data_outputs,
@@ -122,7 +155,11 @@ class NodeIOMixin:
         return InputsAttrDict(input_dict)
 
     def _build_outputs_dict(
-        self, outputs: Dict, *, output_definition_dict: Optional[dict] = None, none_data: bool = False
+        self,
+        outputs: Dict,
+        *,
+        output_definition_dict: Optional[dict] = None,
+        none_data: bool = False,
     ) -> OutputsAttrDict:
         """Build an output attribute dict so user can get/set outputs by
         accessing attribute, eg: node1.outputs.xxx.
@@ -231,7 +268,7 @@ class NodeIOMixin:
         # convert rest io to dict
         rest_dataset_literal_inputs = {}
         for name, val in rest_inputs.items():
-            rest_dataset_literal_inputs[name] = val.as_dict()
+            rest_dataset_literal_inputs[name] = _rest_io_to_snake_dict(val)
             if hasattr(val, "mode") and val.mode:
                 rest_dataset_literal_inputs[name].update({"mode": val.mode.value})
         return rest_dataset_literal_inputs
@@ -273,7 +310,9 @@ class NodeIOMixin:
                 output_dict["version"] = output_dict.pop("asset_version")
             return output_dict
 
-        rest_data_outputs = {name: _rename_name_and_version(val.as_dict()) for name, val in rest_data_outputs.items()}
+        rest_data_outputs = {
+            name: _rename_name_and_version(_rest_io_to_snake_dict(val)) for name, val in rest_data_outputs.items()
+        }
         self._update_output_types(rest_data_outputs)
         rest_data_outputs.update(rest_output_bindings)
         return rest_data_outputs
@@ -506,7 +545,10 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         return PipelineInput(name=name, meta=meta, data=data, owner=self)
 
     def _build_output(
-        self, name: str, meta: Optional[Union[Input, Output]], data: Optional[Union[Output, str]]
+        self,
+        name: str,
+        meta: Optional[Union[Input, Output]],
+        data: Optional[Union[Output, str]],
     ) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
         result = PipelineOutput(port_name=name, meta=meta, data=data, owner=self)

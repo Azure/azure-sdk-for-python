@@ -42,7 +42,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -66,8 +65,8 @@ setup(
     },
     install_requires=[
         "isodate>=0.6.1",
-        "azure-core>=1.30.0",
+        "azure-core>=1.37.0",
         "typing-extensions>=4.6.0",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
 )

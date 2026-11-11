@@ -23,18 +23,17 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import aiohttp
+import trio
+import pytest
+from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
+
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import (
     AioHttpTransport,
-    AioHttpTransportResponse,
     AsyncioRequestsTransport,
     TrioRequestsTransport,
 )
-
-import aiohttp
-import trio
-
-import pytest
-from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
 from azure.core.pipeline._tools import is_rest
 
 
@@ -92,7 +91,6 @@ def test_conf_async_trio_requests(port, http_request):
         request = http_request("GET", "http://localhost:{}/basic/string".format(port))
         async with TrioRequestsTransport() as sender:
             return await sender.send(request)
-            assert response.body() is not None
 
     response = trio.run(do)
     assert isinstance(response.status_code, int)

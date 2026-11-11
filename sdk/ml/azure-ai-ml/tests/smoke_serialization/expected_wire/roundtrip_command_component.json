@@ -1,0 +1,49 @@
+{
+  "properties": {
+    "componentSpec": {
+      "_source": "CLASS",
+      "command": "echo ${{inputs.learning_rate}} ${{inputs.data}} && echo ${{outputs.model}}",
+      "description": "smoke command component",
+      "display_name": "smoke command component",
+      "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+      "inputs": {
+        "data": {
+          "type": "uri_folder"
+        },
+        "epochs": {
+          "default": "10",
+          "type": "integer"
+        },
+        "flag": {
+          "default": "True",
+          "type": "boolean"
+        },
+        "learning_rate": {
+          "default": "0.01",
+          "type": "number"
+        }
+      },
+      "is_deterministic": true,
+      "name": "smoke_command_component",
+      "outputs": {
+        "model": {
+          "type": "uri_folder"
+        }
+      },
+      "tags": {
+        "tag1": "value1"
+      },
+      "type": "command",
+      "version": "1"
+    },
+    "description": "smoke command component",
+    "isAnonymous": false,
+    "isArchived": false,
+    "properties": {
+      "client_component_hash": "9b70ca37-beee-f8b9-277e-8bf14a5eedd6"
+    },
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

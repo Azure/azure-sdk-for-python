@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
         response = self.client.virtual_network_appliances.get(
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -133,7 +133,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                 "idleTimeoutInMinutes": 0,
                                                 "ipAddress": "str",
                                                 "ipConfiguration": ...,
-                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                "ipTags": [
+                                                    {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                                ],
                                                 "linkedPublicIPAddress": ...,
                                                 "migrationPhase": "str",
                                                 "natGateway": {
@@ -165,6 +167,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                 "publicIPPrefix": {"id": "str"},
                                                 "resourceGuid": "str",
                                                 "servicePublicIPAddress": ...,
+                                                "upgradedToV2": bool,
                                             },
                                             "sku": {"name": "str", "tier": "str"},
                                             "tags": {"str": "str"},
@@ -457,7 +460,13 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                             "subnet": ...,
                                                                         },
                                                                     },
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -489,6 +498,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -511,6 +521,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                 "ddosSettings": {
                                                                                     "ddosCustomPolicy": {"id": "str"}
                                                                                 },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -562,6 +573,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -611,6 +623,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -699,6 +712,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -719,6 +733,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -774,6 +789,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                    "enableConnectionTracking": bool,
                                                                     "gatewayLoadBalancer": {"id": "str"},
                                                                     "inboundNatPools": [{"id": "str"}],
                                                                     "inboundNatRules": [{"id": "str"}],
@@ -820,7 +836,11 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -861,6 +881,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -930,6 +951,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -950,6 +974,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -1009,6 +1036,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -1060,6 +1088,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -1107,6 +1136,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -1302,6 +1332,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -1349,6 +1380,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -1481,6 +1513,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                 "id": "str",
                                                 "name": "str",
                                                 "properties": {
+                                                    "approvalReference": {"privateEndpointId": "str"},
                                                     "groupIds": ["str"],
                                                     "privateLinkServiceConnectionState": {
                                                         "actionsRequired": "str",
@@ -1671,7 +1704,13 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                 "subnet": ...,
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -1703,6 +1742,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -1727,6 +1767,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -1782,6 +1823,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -1833,6 +1875,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2076,6 +2119,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                         "ddosSettings": {
                                                                             "ddosCustomPolicy": {"id": "str"}
                                                                         },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -2122,7 +2166,11 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -2165,6 +2213,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -2227,6 +2276,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                 "ddosSettings": {
                                                                                     "ddosCustomPolicy": {"id": "str"}
                                                                                 },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -2278,6 +2328,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2327,6 +2378,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2529,6 +2581,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2578,6 +2631,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2618,6 +2672,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                                                 "id": "str",
                                                 "name": "str",
                                                 "properties": {
+                                                    "approvalReference": {"privateEndpointId": "str"},
                                                     "groupIds": ["str"],
                                                     "privateLinkServiceConnectionState": {
                                                         "actionsRequired": "str",
@@ -2749,7 +2804,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2762,7 +2817,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -2774,7 +2829,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
         response = self.client.virtual_network_appliances.begin_delete(
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2785,7 +2840,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
     def test_virtual_network_appliances_list(self, resource_group):
         response = self.client.virtual_network_appliances.list(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2795,7 +2850,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_virtual_network_appliances_list_all(self, resource_group):
         response = self.client.virtual_network_appliances.list_all(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

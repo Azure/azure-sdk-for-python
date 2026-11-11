@@ -1,5 +1,15 @@
 # Release History
 
+## 1.2.0 (2026-07-28)
+
+### Features Added
+
+  - Model `AkriConnectorTemplateRuntimeImageConfigurationSettings` added property `readiness_probe`
+  - Model `BrokerProperties` added property `high_priority_messages_backpressure_handling`
+  - Added model `AkriConnectorTemplateExecAction`
+  - Added model `AkriConnectorTemplateReadinessProbe`
+  - Added enum `HighPriorityMessagesBackpressureHandling`
+
 ## 1.1.0 (2026-04-10)
 
 ### Features Added

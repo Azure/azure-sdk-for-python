@@ -116,6 +116,7 @@ def main():
                     },
                 },
                 "generateResourceLimits": {"cpu": "Enabled"},
+                "highPriorityMessagesBackpressureHandling": "Accept",
                 "memoryProfile": "Tiny",
             },
         },
@@ -123,6 +124,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/Broker_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-07-01/Broker_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

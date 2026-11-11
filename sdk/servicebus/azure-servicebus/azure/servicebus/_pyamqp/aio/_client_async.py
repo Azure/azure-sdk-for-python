@@ -21,6 +21,7 @@ from ..client import (
     ReceiveClient as ReceiveClientSync,
     SendClient as SendClientSync,
     Outcomes,
+    _get_mgmt_request_remaining_timeout,
 )
 from ..message import _MessageDelivery, Message
 from ..constants import (
@@ -371,23 +372,33 @@ class AMQPClientAsync(AMQPClientSync):
         # The method also takes "status_code_field" and "status_description_field"
         # keyword arguments as alternate names for the status code and description
         # in the response body. Those two keyword arguments are used in Azure services only.
+        started = time.monotonic()
         async with self._mgmt_link_lock_async:
             try:
                 mgmt_link = self._mgmt_links[node]
             except KeyError:
                 mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-                self._mgmt_links[node] = mgmt_link
                 await mgmt_link.open()
+                self._mgmt_links[node] = mgmt_link
 
-        while not await self.client_ready_async():
-            await asyncio.sleep(0.05)
+        while True:
+            _get_mgmt_request_remaining_timeout(timeout, started)
+            authenticated = await self.auth_complete_async()
+            remaining = _get_mgmt_request_remaining_timeout(timeout, started)
+            if authenticated:
+                break
+            await asyncio.sleep(min(0.05, remaining) if remaining else 0.05)
 
         while not await mgmt_link.ready():
+            _get_mgmt_request_remaining_timeout(timeout, started)
             await self._connection.listen(wait=False)
 
         operation_type = operation_type or b"empty"
         status, description, response = await mgmt_link.execute(
-            message, operation=operation, operation_type=operation_type, timeout=timeout
+            message,
+            operation=operation,
+            operation_type=operation_type,
+            timeout=_get_mgmt_request_remaining_timeout(timeout, started),
         )
         return status, description, response
 
@@ -910,7 +921,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -920,7 +933,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_tag: bytes,
         outcome: Literal["released"],
         *,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -931,7 +946,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -944,7 +961,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         delivery_failed: Optional[bool] = None,
         undeliverable_here: Optional[bool] = None,
         message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -956,13 +975,17 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         *,
         section_number: int,
         section_offset: int,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     async def settle_messages_async(
         self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
     ):
         batchable = kwargs.pop("batchable", None)
+        await_outcome = kwargs.pop("await_outcome", False)
+        outcome_timeout = kwargs.pop("outcome_timeout", None)
         if outcome.lower() == "accepted":
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
@@ -984,8 +1007,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             first_delivery_id=first,
             last_delivery_id=last,
             delivery_tag=delivery_tag,
-            settled=True,
+            settled=not await_outcome,
             delivery_state=state,
             batchable=batchable,
             wait=True,
+            await_outcome=await_outcome,
+            outcome_timeout=outcome_timeout,
         )

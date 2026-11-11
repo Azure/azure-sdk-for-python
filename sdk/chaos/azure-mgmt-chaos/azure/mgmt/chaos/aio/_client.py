@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -24,6 +24,7 @@ from .operations import (
     ActionsOperations,
     CapabilitiesOperations,
     CapabilityTypesOperations,
+    ConnectionsOperations,
     DiscoveredResourcesOperations,
     ExperimentsOperations,
     OperationStatusesOperations,
@@ -36,6 +37,11 @@ from .operations import (
     TargetsOperations,
     WorkspacesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -71,11 +77,13 @@ class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype discovered_resources: azure.mgmt.chaos.aio.operations.DiscoveredResourcesOperations
     :ivar scenarios: ScenariosOperations operations
     :vartype scenarios: azure.mgmt.chaos.aio.operations.ScenariosOperations
-    :ivar scenario_runs: ScenarioRunsOperations operations
-    :vartype scenario_runs: azure.mgmt.chaos.aio.operations.ScenarioRunsOperations
     :ivar scenario_configurations: ScenarioConfigurationsOperations operations
     :vartype scenario_configurations:
      azure.mgmt.chaos.aio.operations.ScenarioConfigurationsOperations
+    :ivar scenario_runs: ScenarioRunsOperations operations
+    :vartype scenario_runs: azure.mgmt.chaos.aio.operations.ScenarioRunsOperations
+    :ivar connections: ConnectionsOperations operations
+    :vartype connections: azure.mgmt.chaos.aio.operations.ConnectionsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -86,8 +94,9 @@ class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-01-preview". Default value is "2026-05-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-08-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -163,10 +172,11 @@ class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.scenarios = ScenariosOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.scenario_runs = ScenarioRunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.scenario_configurations = ScenarioConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.scenario_runs = ScenarioRunsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

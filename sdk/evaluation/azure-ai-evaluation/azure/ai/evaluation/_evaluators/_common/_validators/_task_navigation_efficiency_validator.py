@@ -53,7 +53,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
         """Validate the response parameter."""
         if response is None:
             return EvaluationException(
-                message="'response' parameter is required and cannot be None.",
+                message="'actions' (also accepted as 'response') parameter is required and cannot be None.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=self.error_target,
@@ -61,7 +61,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
 
         if not isinstance(response, list):
             return EvaluationException(
-                message="'response' must be a list of messages.",
+                message="'actions' (also accepted as 'response') must be a list of messages.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
@@ -141,7 +141,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
         """Validate the ground_truth parameter."""
         if not ground_truth:
             return EvaluationException(
-                message="'ground_truth' parameter is required and cannot be None or empty.",
+                message="'expected_actions' (also accepted as 'ground_truth') parameter is required and cannot be None or empty.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
@@ -155,7 +155,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
             # Validate tuple format: (list, dict)
             if len(ground_truth) != 2:
                 return EvaluationException(
-                    message="When 'ground_truth' is a tuple, it must contain exactly 2 elements: (tool_names_list, parameters_dict).",
+                    message="When 'expected_actions' (also accepted as 'ground_truth') is a tuple, it must contain exactly 2 elements: (tool_names_list, parameters_dict).",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
@@ -166,7 +166,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
             # Validate tool names list
             if not isinstance(tool_names, list):
                 return EvaluationException(
-                    message="First element of 'ground_truth' tuple must be a list of tool names.",
+                    message="First element of 'expected_actions' (also accepted as 'ground_truth') tuple must be a list of tool names.",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
@@ -174,7 +174,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
 
             if len(tool_names) == 0:
                 return EvaluationException(
-                    message="Tool names list in 'ground_truth' cannot be empty.",
+                    message="Tool names list in 'expected_actions' (also accepted as 'ground_truth') cannot be empty.",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
@@ -183,7 +183,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
             for idx, name in enumerate(tool_names):
                 if not isinstance(name, str):
                     return EvaluationException(
-                        message=f"Tool name at index {idx} in 'ground_truth' must be a string, got {type(name).__name__}.",
+                        message=f"Tool name at index {idx} in 'expected_actions' (also accepted as 'ground_truth') must be a string, got {type(name).__name__}.",
                         blame=ErrorBlame.USER_ERROR,
                         category=ErrorCategory.INVALID_VALUE,
                         target=self.error_target,
@@ -192,7 +192,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
             # Validate parameters dict
             if not isinstance(parameters, dict):
                 return EvaluationException(
-                    message="Second element of 'ground_truth' tuple must be a dictionary of parameters.",
+                    message="Second element of 'expected_actions' (also accepted as 'ground_truth') tuple must be a dictionary of parameters.",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
@@ -202,7 +202,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
             for tool_name, params in parameters.items():
                 if not isinstance(params, dict):
                     return EvaluationException(
-                        message=f"Parameters for tool '{tool_name}' in 'ground_truth' must be a dictionary, got {type(params).__name__}.",
+                        message=f"Parameters for tool '{tool_name}' in 'expected_actions' (also accepted as 'ground_truth') must be a dictionary, got {type(params).__name__}.",
                         blame=ErrorBlame.USER_ERROR,
                         category=ErrorCategory.INVALID_VALUE,
                         target=self.error_target,
@@ -212,7 +212,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
             # Validate list of tool names
             if len(ground_truth) == 0:
                 return EvaluationException(
-                    message="'ground_truth' list cannot be empty.",
+                    message="'expected_actions' (also accepted as 'ground_truth') list cannot be empty.",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
@@ -229,7 +229,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
 
         else:
             return EvaluationException(
-                message="'ground_truth' must be either a list of tool names or a tuple of (tool_names_list, parameters_dict).",
+                message="'expected_actions' (also accepted as 'ground_truth') must be either a list of tool names or a tuple of (tool_names_list, parameters_dict).",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,

@@ -22,9 +22,9 @@ class TestIotDpsDpsCertificateOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_dps_certificate_get(self, resource_group):
         response = self.client.dps_certificate.get(
+            certificate_name="str",
             resource_group_name=resource_group.name,
             provisioning_service_name="str",
-            certificate_name="str",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestIotDpsDpsCertificateOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             provisioning_service_name="str",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...
 
@@ -94,9 +94,9 @@ class TestIotDpsDpsCertificateOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_dps_certificate_generate_verification_code(self, resource_group):
         response = self.client.dps_certificate.generate_verification_code(
+            certificate_name="str",
             resource_group_name=resource_group.name,
             provisioning_service_name="str",
-            certificate_name="str",
             etag="str",
             match_condition=~azure.core.MatchConditions,
         )
@@ -108,9 +108,9 @@ class TestIotDpsDpsCertificateOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_dps_certificate_verify_certificate(self, resource_group):
         response = self.client.dps_certificate.verify_certificate(
+            certificate_name="str",
             resource_group_name=resource_group.name,
             provisioning_service_name="str",
-            certificate_name="str",
             request={"certificate": "str"},
             etag="str",
             match_condition=~azure.core.MatchConditions,

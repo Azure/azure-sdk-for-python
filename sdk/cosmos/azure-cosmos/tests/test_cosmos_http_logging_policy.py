@@ -123,7 +123,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_default_http_logging_policy(self):
         # Test if we can log into from creating a database
-        database_id = "database_test-" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging")
         self.client_default.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
         messages_request = self.mock_handler_default.messages[0].message.split("\n")
@@ -141,7 +141,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_cosmos_http_logging_policy(self):
         # Test if we can log info from reading a database
-        database_id = "database_test-" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging")
         self.client_diagnostic.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
         # Check that we made a databaseaccount read request only once and that we only logged it once
@@ -193,7 +193,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_filtered_diagnostics_logging_policy(self):
         # Test if we can log errors with the filtered diagnostics logger
-        database_id = "database_test_" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging")
         container_id = "diagnostics_container_test_" + str(uuid.uuid4())
         self.client_filtered_diagnostic.create_database(id=database_id)
         database = self.client_filtered_diagnostic.get_database_client(database_id)
@@ -313,7 +313,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         custom_activity_id = str(uuid.uuid4())
 
         # Create a database and container for the test
-        database_id = "database_test_activity_id_" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging-activity-id")
         container_id = "container_test_activity_id_" + str(uuid.uuid4())
         database = self.client_activity_id.create_database(id=database_id)
         container = database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
@@ -396,7 +396,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.root_mock_handler.reset()
 
         # Attempt to read a nonexistent item
-        database_id = "database_test_hierarchical_logger_" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging-hierarchical")
         container_id = "container_test_hierarchical_logger_" + str(uuid.uuid4())
         database = self.client_grandchild_logger.create_database(id=database_id)
         container = database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))

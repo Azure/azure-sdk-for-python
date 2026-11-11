@@ -23,12 +23,13 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import os
 import zlib
+
 import pytest
+from utils import HTTP_REQUESTS
+
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import DecodeError
-from utils import HTTP_REQUESTS
 
 
 @pytest.mark.asyncio

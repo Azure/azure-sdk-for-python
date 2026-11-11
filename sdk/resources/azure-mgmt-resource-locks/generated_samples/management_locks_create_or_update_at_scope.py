@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/locks/stable/2016-09-01/examples/ManagementLocks_CreateOrUpdateAtScope.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/locks/stable/2020-05-01/examples/ManagementLocks_CreateOrUpdateAtScope.json
 if __name__ == "__main__":
     main()

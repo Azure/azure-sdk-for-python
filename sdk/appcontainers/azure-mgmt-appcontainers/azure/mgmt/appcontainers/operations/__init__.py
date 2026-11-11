@@ -14,10 +14,16 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import ContainerAppsSessionPoolsOperations  # type: ignore
+from ._operations import SandboxGroupsOperations  # type: ignore
+from ._operations import VnetConnectionsOperations  # type: ignore
 from ._operations import ContainerAppsSourceControlsOperations  # type: ignore
 from ._operations import ContainerAppsOperations  # type: ignore
+from ._operations import ContainerAppsFunctionsOperations  # type: ignore
 from ._operations import ContainerAppsRevisionsOperations  # type: ignore
+from ._operations import FunctionsExtensionOperations  # type: ignore
+from ._operations import ContainerAppsLabelHistoryOperations  # type: ignore
 from ._operations import ContainerAppsRevisionReplicasOperations  # type: ignore
+from ._operations import DotNetComponentsOperations  # type: ignore
 from ._operations import JavaComponentsOperations  # type: ignore
 from ._operations import LogicAppsOperations  # type: ignore
 from ._operations import ContainerAppsAuthConfigsOperations  # type: ignore
@@ -28,19 +34,24 @@ from ._operations import ConnectedEnvironmentsDaprComponentsOperations  # type: 
 from ._operations import DaprComponentsOperations  # type: ignore
 from ._operations import ConnectedEnvironmentsStoragesOperations  # type: ignore
 from ._operations import ManagedCertificatesOperations  # type: ignore
+from ._operations import ContainerAppPrivateEndpointConnectionsOperations  # type: ignore
+from ._operations import ContainerAppPrivateLinkResourcesOperations  # type: ignore
+from ._operations import ManagedEnvironmentPrivateLinkResourcesOperations  # type: ignore
+from ._operations import DaprComponentResiliencyPoliciesOperations  # type: ignore
 from ._operations import MaintenanceConfigurationsOperations  # type: ignore
 from ._operations import ManagedEnvironmentsStoragesOperations  # type: ignore
 from ._operations import JobsOperations  # type: ignore
 from ._operations import ContainerAppsDiagnosticsOperations  # type: ignore
 from ._operations import ManagedEnvironmentsDiagnosticsOperations  # type: ignore
+from ._operations import ContainerAppsRevisionFunctionsOperations  # type: ignore
 from ._operations import ConnectedEnvironmentsCertificatesOperations  # type: ignore
 from ._operations import NamespacesOperations  # type: ignore
-from ._operations import ManagedEnvironmentPrivateLinkResourcesOperations  # type: ignore
 from ._operations import ManagedEnvironmentPrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import HttpRouteConfigOperations  # type: ignore
 from ._operations import JobsExecutionsOperations  # type: ignore
 from ._operations import ManagedEnvironmentDiagnosticsOperations  # type: ignore
 from ._operations import AvailableWorkloadProfilesOperations  # type: ignore
+from ._operations import AvailableEnvironmentModesOperations  # type: ignore
 from ._operations import BillingMetersOperations  # type: ignore
 from ._operations import UsagesOperations  # type: ignore
 from ._operations import ManagedEnvironmentUsagesOperations  # type: ignore
@@ -53,10 +64,16 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "ContainerAppsSessionPoolsOperations",
+    "SandboxGroupsOperations",
+    "VnetConnectionsOperations",
     "ContainerAppsSourceControlsOperations",
     "ContainerAppsOperations",
+    "ContainerAppsFunctionsOperations",
     "ContainerAppsRevisionsOperations",
+    "FunctionsExtensionOperations",
+    "ContainerAppsLabelHistoryOperations",
     "ContainerAppsRevisionReplicasOperations",
+    "DotNetComponentsOperations",
     "JavaComponentsOperations",
     "LogicAppsOperations",
     "ContainerAppsAuthConfigsOperations",
@@ -67,19 +84,24 @@ __all__ = [
     "DaprComponentsOperations",
     "ConnectedEnvironmentsStoragesOperations",
     "ManagedCertificatesOperations",
+    "ContainerAppPrivateEndpointConnectionsOperations",
+    "ContainerAppPrivateLinkResourcesOperations",
+    "ManagedEnvironmentPrivateLinkResourcesOperations",
+    "DaprComponentResiliencyPoliciesOperations",
     "MaintenanceConfigurationsOperations",
     "ManagedEnvironmentsStoragesOperations",
     "JobsOperations",
     "ContainerAppsDiagnosticsOperations",
     "ManagedEnvironmentsDiagnosticsOperations",
+    "ContainerAppsRevisionFunctionsOperations",
     "ConnectedEnvironmentsCertificatesOperations",
     "NamespacesOperations",
-    "ManagedEnvironmentPrivateLinkResourcesOperations",
     "ManagedEnvironmentPrivateEndpointConnectionsOperations",
     "HttpRouteConfigOperations",
     "JobsExecutionsOperations",
     "ManagedEnvironmentDiagnosticsOperations",
     "AvailableWorkloadProfilesOperations",
+    "AvailableEnvironmentModesOperations",
     "BillingMetersOperations",
     "UsagesOperations",
     "ManagedEnvironmentUsagesOperations",

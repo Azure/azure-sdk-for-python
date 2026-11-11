@@ -7,8 +7,9 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import TYPE_CHECKING, Any
 
+from .. import models as _public_models
+
 from .._response_context import ResponseContext
-from ..models._generated import AgentReference, CreateResponse, OutputItem
 
 if TYPE_CHECKING:
     from ._observability import CreateSpan
@@ -25,18 +26,19 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         self,
         *,
         response_id: str,
-        agent_reference: AgentReference | dict[str, Any],
+        agent_reference: _public_models.AgentReference | dict[str, Any],
         model: str | None,
         store: bool,
         background: bool,
         stream: bool,
-        input_items: list[OutputItem],
+        input_items: list[_public_models.OutputItem],
         previous_response_id: str | None,
         conversation_id: str | None,
         cancellation_signal: asyncio.Event,
         span: "CreateSpan",
-        parsed: CreateResponse,
+        parsed: _public_models.CreateResponse,
         agent_session_id: str | None = None,
+        agent_session_guid: str | None = None,
         context: ResponseContext | None = None,
         user_id: str | None = None,
         call_id: str | None = None,
@@ -55,6 +57,7 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         self.span = span
         self.parsed = parsed
         self.agent_session_id = agent_session_id
+        self.agent_session_guid = agent_session_guid
         self.context = context
         self.user_id = user_id
         self.call_id = call_id

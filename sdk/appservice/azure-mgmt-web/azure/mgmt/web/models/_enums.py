@@ -1407,6 +1407,10 @@ class TriggeredWebJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FAILED."""
     ERROR = "Error"
     """ERROR."""
+    ABORTED = "Aborted"
+    """ABORTED."""
+    RUNNING = "Running"
+    """RUNNING."""
 
 
 class TriggerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

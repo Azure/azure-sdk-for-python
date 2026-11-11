@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.SqlVirtualMachine": "2023-10-01"
   },
-  "commit": "a7bdbe741c0ef1f1b159d8569b173757bd823ae9",
+  "commit": "cf49df24bee763924bb4d9abceebe4fd1916a6ad",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/sqlvirtualmachine/resource-manager/Microsoft.SqlVirtualMachine/SqlVirtualMachine",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.0"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }

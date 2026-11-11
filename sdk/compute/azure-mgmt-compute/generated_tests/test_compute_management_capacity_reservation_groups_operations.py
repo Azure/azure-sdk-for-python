@@ -24,7 +24,7 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
         response = self.client.capacity_reservation_groups.get(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -46,6 +46,7 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
                         "capacityReservations": [
                             {
                                 "name": "str",
+                                "reservationStateInfo": {"reservationState": "str"},
                                 "statuses": [
                                     {
                                         "code": "str",
@@ -55,7 +56,11 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
                                         "time": "2020-02-20 00:00:00",
                                     }
                                 ],
-                                "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
+                                "utilizationInfo": {
+                                    "currentCapacity": 0,
+                                    "usedReservedCountBySubscription": {"str": 0},
+                                    "virtualMachinesAllocated": [{"id": "str"}],
+                                },
                             }
                         ],
                         "sharedSubscriptionIds": [{"id": "str"}],
@@ -76,7 +81,7 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -95,6 +100,7 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
                         "capacityReservations": [
                             {
                                 "name": "str",
+                                "reservationStateInfo": {"reservationState": "str"},
                                 "statuses": [
                                     {
                                         "code": "str",
@@ -104,7 +110,11 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
                                         "time": "2020-02-20 00:00:00",
                                     }
                                 ],
-                                "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
+                                "utilizationInfo": {
+                                    "currentCapacity": 0,
+                                    "usedReservedCountBySubscription": {"str": 0},
+                                    "virtualMachinesAllocated": [{"id": "str"}],
+                                },
                             }
                         ],
                         "sharedSubscriptionIds": [{"id": "str"}],
@@ -115,7 +125,7 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -127,7 +137,7 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
         response = self.client.capacity_reservation_groups.delete(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -138,7 +148,7 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
     def test_capacity_reservation_groups_list_by_resource_group(self, resource_group):
         response = self.client.capacity_reservation_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -148,7 +158,7 @@ class TestComputeManagementCapacityReservationGroupsOperations(AzureMgmtRecorded
     @recorded_by_proxy
     def test_capacity_reservation_groups_list_by_subscription(self, resource_group):
         response = self.client.capacity_reservation_groups.list_by_subscription(
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

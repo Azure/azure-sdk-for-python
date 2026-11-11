@@ -37,9 +37,36 @@ python sample_01_getting_started.py
 | 14 | [File Inputs](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_14_file_inputs.py) | `ResponseContext` | Receive files via base64 data URL, URL, or file ID |
 | 15 | [Annotations](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | `ResponseEventStream` | Attach file_path, file_citation, and url_citation annotations to messages |
 | 16 | [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | `ResponseEventStream` | Return structured JSON as a `structured_outputs` item |
+| 19 | [Resilient Streaming](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_resilient_streaming.py) | Resilient | Canonical **framework-checkpoint** handler with `resilient_background=True` — one output item per phase + `stream.checkpoint()`; on recovery seeds from `context.persisted_response` and resumes past the checkpointed phases (re-emitting the same items with their original ids) |
+| 20 | [Resilient Steering](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_resilient_steering.py) | Resilient + steerable | Demonstrates `context.is_steered_turn` / `context.pending_input_count` with `resilient_background=True, steerable_conversations=True`; **naive re-run** recovery (no recovery-specific code — the turn re-runs) |
+| 21 | [Resilient LangGraph](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_21_resilient_langgraph.py) | Resilient + steerable | **Real-time streaming** LangGraph agent (token-by-token deltas) **composing an external durable engine**: `AsyncSqliteSaver` (graph resume) **+** framework `stream.checkpoint()` / `context.persisted_response` (client items + ids). Checkpoints 1:1 with the graph, storing the graph checkpoint id in `internal_metadata`, so recovery rewinds to the point matching the persisted items — one reply, original ids, no divergence window |
+| 22 | [Resilient Multiturn](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_resilient_multiturn.py) | Resilient | Multi-turn conversation with `resilient_background=True, steerable_conversations=False` and explicit `FoundryStateStore` state |
 
 ### When to use which
 
 - **`TextResponse`** — Use for text-only responses (samples 1, 2, 5, 7–9). Handles the full SSE lifecycle automatically.
 - **`ResponseEventStream`** — Use when you need function calls, reasoning items, multiple output types, image generation, structured outputs, annotations, upstream proxying, or fine-grained event control (samples 3, 4, 6, 10–12, 15, 16).
-- **`ResponseContext`** — Use `get_input_items()` to inspect incoming images and files (samples 13, 14).
+- **`ResponseContext`** — Use `get_input_items()` to inspect incoming images and files (samples 13, 14). Use `context.is_recovery`, `context.is_steered_turn`, and `context.pending_input_count` for resilient / steerable handlers; keep durable application state in `FoundryStateStore` (samples 19–22).
+
+### Enabling resilience and steering
+
+Resilient + steerable behaviour is **opt-in** via `ResponsesServerOptions` —
+the defaults are both `False`. The resilient samples (19–22) each show the
+exact options shape they require; in short:
+
+```python
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
+
+app = ResponsesAgentServerHost(
+    options=ResponsesServerOptions(
+        resilient_background=True,             # opt-in to crash recovery
+        steerable_conversations=True,        # opt-in to mid-turn steering
+    ),
+)
+```
+
+Without `resilient_background=True`, a crash mid-handler leaves the
+response in the "crash-failed" state (the next process lifetime marks
+it `failed` instead of re-invoking the handler). Without
+`steerable_conversations=True`, concurrent multi-turn requests for the
+same conversation return `409 conversation_locked` instead of queueing.

@@ -21,18 +21,18 @@ from .._schema.component import NodeType
 class InternalBaseNode(BaseNode):
     """Base class for node of internal components in pipeline. Can be instantiated directly.
 
-    :param type: Type of pipeline node
-    :type type: str
-    :param component: Id or instance of the component version to be run for the step
-    :type component: Union[Component, str]
-    :param inputs: Inputs to the node.
-    :type inputs: Dict[str, Union[Input, str, bool, int, float, Enum, dict]]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, Output, dict]]
-    :param properties: The job property dictionary.
-    :type properties: dict[str, str]
-    :param compute: Compute definition containing the compute information for the step
-    :type compute: str
+    :keyword type: Type of pipeline node
+    :paramtype type: str
+    :keyword component: Id or instance of the component version to be run for the step
+    :paramtype component: Union[Component, str]
+    :keyword inputs: Inputs to the node.
+    :paramtype inputs: Dict[str, Union[Input, str, bool, int, float, Enum, dict]]
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: Dict[str, Union[str, Output, dict]]
+    :keyword properties: The job property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword compute: Compute definition containing the compute information for the step
+    :paramtype compute: str
     """
 
     def __init__(

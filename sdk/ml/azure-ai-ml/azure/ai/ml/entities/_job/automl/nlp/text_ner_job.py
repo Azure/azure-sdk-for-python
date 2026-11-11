@@ -6,18 +6,23 @@
 
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, TaskType
-from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_workspaces_enums import (
-    ClassificationPrimaryMetrics,
-)
-from azure.ai.ml._restclient.v2024_01_01_preview.models import TextNer as RestTextNER
+from azure.ai.ml._restclient.arm_ml_service.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.arm_ml_service.models import ClassificationPrimaryMetrics
+from azure.ai.ml._restclient.arm_ml_service.models import IdentityConfiguration as RestIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.arm_ml_service.models import TaskType
+from azure.ai.ml._restclient.arm_ml_service.models import TextNer as RestTextNER
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_hybrid_rest_model,
+    to_rest_data_outputs,
+)
 from azure.ai.ml.entities._job.automl.nlp.automl_nlp_job import AutoMLNLPJob
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_fixed_parameters import NlpFixedParameters
@@ -34,15 +39,15 @@ if TYPE_CHECKING:
 class TextNerJob(AutoMLNLPJob):
     """Configuration for AutoML Text NER Job.
 
-    :param training_data: Training data to be used for training, defaults to None
-    :type training_data: Optional[~azure.ai.ml.Input]
-    :param validation_data: Validation data to be used for evaluating the trained model,
+    :keyword training_data: Training data to be used for training, defaults to None
+    :paramtype training_data: Optional[~azure.ai.ml.Input]
+    :keyword validation_data: Validation data to be used for evaluating the trained model,
         defaults to None
-    :type validation_data: Optional[~azure.ai.ml.Input]
-    :param primary_metric: The primary metric to be displayed, defaults to None
-    :type primary_metric: Optional[str]
-    :param log_verbosity: Log verbosity level, defaults to None
-    :type log_verbosity: Optional[str]
+    :paramtype validation_data: Optional[~azure.ai.ml.Input]
+    :keyword primary_metric: The primary metric to be displayed, defaults to None
+    :paramtype primary_metric: Optional[str]
+    :keyword log_verbosity: Log verbosity level, defaults to None
+    :paramtype log_verbosity: Optional[str]
 
     .. admonition:: Example:
 
@@ -95,22 +100,24 @@ class TextNerJob(AutoMLNLPJob):
             training_data=self.training_data,
             validation_data=self.validation_data,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
-            sweep_settings=self._sweep._to_rest_object() if self._sweep else None,
-            fixed_parameters=self._training_parameters._to_rest_object() if self._training_parameters else None,
-            search_space=(
-                [entry._to_rest_object() for entry in self._search_space if entry is not None]
-                if self._search_space is not None
-                else None
-            ),
             featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
             primary_metric=self.primary_metric,
             log_verbosity=self.log_verbosity,
         )
+        # ``fixedParameters``/``searchSpace``/``sweepSettings`` were dropped from the arm_ml_service
+        # (2025-12) TextNer model; assign them via wire-key so they still serialize on the wire.
+        if self._sweep:
+            text_ner["sweepSettings"] = self._sweep._to_rest_object()
+        if self._training_parameters:
+            text_ner["fixedParameters"] = self._training_parameters._to_rest_object()
+        if self._search_space is not None:
+            text_ner["searchSpace"] = [entry._to_rest_object() for entry in self._search_space if entry is not None]
         # resolve data inputs in rest object
         self._resolve_data_inputs(text_ner)
 
         properties = RestAutoMLJob(
             display_name=self.display_name,
+            is_archived=False,
             description=self.description,
             experiment_name=self.experiment_name,
             tags=self.tags,
@@ -119,10 +126,12 @@ class TextNerJob(AutoMLNLPJob):
             environment_id=self.environment_id,
             environment_variables=self.environment_variables,
             services=self.services,
-            outputs=to_rest_data_outputs(self.outputs),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
             resources=self.resources,
             task_details=text_ner,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            identity=to_hybrid_rest_model(
+                self.identity._to_job_rest_object() if self.identity else None, RestIdentityConfiguration
+            ),
             queue_settings=self.queue_settings,
         )
 
@@ -143,12 +152,10 @@ class TextNerJob(AutoMLNLPJob):
             if task_details.featurization_settings
             else None
         )
-        sweep = NlpSweepSettings._from_rest_object(task_details.sweep_settings) if task_details.sweep_settings else None
-        training_parameters = (
-            NlpFixedParameters._from_rest_object(task_details.fixed_parameters)
-            if task_details.fixed_parameters
-            else None
-        )
+        sweep_settings = task_details.get("sweepSettings")
+        sweep = NlpSweepSettings._from_rest_object(sweep_settings) if sweep_settings else None
+        fixed_parameters = task_details.get("fixedParameters")
+        training_parameters = NlpFixedParameters._from_rest_object(fixed_parameters) if fixed_parameters else None
 
         text_ner_job = cls(
             # ----- job specific params
@@ -174,7 +181,7 @@ class TextNerJob(AutoMLNLPJob):
             limits=limits,
             sweep=sweep,
             training_parameters=training_parameters,
-            search_space=cls._get_search_space_from_str(task_details.search_space),
+            search_space=cls._get_search_space_from_str(task_details.get("searchSpace")),
             featurization=featurization,
             identity=(
                 _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None

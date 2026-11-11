@@ -36,44 +36,6 @@ class ARecord(TypedDict, total=False):
     """The IPv4 address of this A record."""
 
 
-class CloudError(TypedDict, total=False):
-    """An error response from the service.
-
-    :ivar error: Cloud error body.
-    :vartype error: "CloudErrorBody"
-    """
-
-    error: "CloudErrorBody"
-    """Cloud error body."""
-
-
-class CloudErrorBody(TypedDict, total=False):
-    """An error response from the service.
-
-    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
-     programmatically.
-    :vartype code: str
-    :ivar message: A message describing the error, intended to be suitable for display in a user
-     interface.
-    :vartype message: str
-    :ivar target: The target of the particular error. For example, the name of the property in
-     error.
-    :vartype target: str
-    :ivar details: A list of additional details about the error.
-    :vartype details: list["CloudErrorBody"]
-    """
-
-    code: str
-    """An identifier for the error. Codes are invariant and are intended to be consumed
-     programmatically."""
-    message: str
-    """A message describing the error, intended to be suitable for display in a user interface."""
-    target: str
-    """The target of the particular error. For example, the name of the property in error."""
-    details: list["CloudErrorBody"]
-    """A list of additional details about the error."""
-
-
 class CnameRecord(TypedDict, total=False):
     """A CNAME record.
 

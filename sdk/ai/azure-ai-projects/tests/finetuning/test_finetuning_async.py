@@ -434,7 +434,7 @@ class TestFineTuningAsync(TestBase):
     )
     @servicePreparer()
     @_pass_create_args_async
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_create_job_async(self, job_type, model_type, training_type, **kwargs):
         if job_type == SFT_JOB_TYPE:
             await self._test_sft_create_job_helper_async(model_type, training_type, **kwargs)
@@ -463,7 +463,7 @@ class TestFineTuningAsync(TestBase):
     )
     @servicePreparer()
     @_pass_create_args_async
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_create_job_async_live_extended(self, job_type, model_type, training_type, **kwargs):
         if job_type == SFT_JOB_TYPE:
             await self._test_sft_create_job_helper_async(model_type, training_type, **kwargs)
@@ -482,7 +482,7 @@ class TestFineTuningAsync(TestBase):
     )
     @servicePreparer()
     @_pass_retrieve_args_async
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_retrieve_job_async(self, job_type, expected_method_type, **kwargs):
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
@@ -538,7 +538,7 @@ class TestFineTuningAsync(TestBase):
     )
     @servicePreparer()
     @_pass_retrieve_args_async
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_retrieve_job_async_live_extended(self, job_type, expected_method_type, **kwargs):
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
@@ -582,7 +582,7 @@ class TestFineTuningAsync(TestBase):
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_finetuning_list_jobs_async(self, **kwargs):
         project_client = self.create_async_client(**kwargs)
         openai_client = project_client.get_openai_client()
@@ -612,7 +612,7 @@ class TestFineTuningAsync(TestBase):
     )
     @servicePreparer()
     @_pass_cancel_args_async
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_cancel_job_async(self, job_type, model_type, training_type, expected_method_type, **kwargs):
         await self._test_cancel_job_helper_async(job_type, model_type, training_type, expected_method_type, **kwargs)
 
@@ -636,14 +636,14 @@ class TestFineTuningAsync(TestBase):
     )
     @servicePreparer()
     @_pass_cancel_args_async
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_cancel_job_async_live_extended(
         self, job_type, model_type, training_type, expected_method_type, **kwargs
     ):
         await self._test_cancel_job_helper_async(job_type, model_type, training_type, expected_method_type, **kwargs)
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_finetuning_list_events_async(self, **kwargs):
 
         project_client = self.create_async_client(**kwargs)
@@ -690,7 +690,7 @@ class TestFineTuningAsync(TestBase):
         reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
     )
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_finetuning_pause_job_async(self, **kwargs):
         running_job_id = kwargs.get("running_fine_tuning_job_id")
 
@@ -725,7 +725,7 @@ class TestFineTuningAsync(TestBase):
         reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
     )
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_finetuning_resume_job_async(self, **kwargs):
         paused_job_id = kwargs.get("paused_fine_tuning_job_id")
 
@@ -756,7 +756,7 @@ class TestFineTuningAsync(TestBase):
             print(f"[test_finetuning_resume_job] Successfully resumed and verified job: {paused_job_id}")
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_finetuning_list_checkpoints_async(self, **kwargs):
         completed_job_id = kwargs.get("completed_oai_model_sft_fine_tuning_job_id")
 
@@ -812,7 +812,7 @@ class TestFineTuningAsync(TestBase):
     )
     @servicePreparer()
     @_pass_deploy_args_async
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_deploy_and_infer_job_async(
         self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
     ):
@@ -858,7 +858,7 @@ class TestFineTuningAsync(TestBase):
     )
     @servicePreparer()
     @_pass_deploy_args_async
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_deploy_and_infer_job_async_live_extended(
         self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
     ):

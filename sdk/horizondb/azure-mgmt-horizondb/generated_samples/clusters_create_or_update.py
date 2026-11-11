@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -41,10 +40,9 @@ def main():
                 "administratorLoginPassword": "examplepassword",
                 "createMode": "Create",
                 "replicaCount": 2,
-                "sourceClusterResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/examplesourceresourcegroup/providers/Microsoft.HorizonDb/clusters/examplesourcecluster",
                 "vCores": 4,
                 "version": "17",
-                "zonePlacementPolicy": "Strict",
+                "zonePlacementPolicy": "BestEffort",
             },
             "tags": {"env": "dev"},
         },
@@ -52,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-20-preview/Clusters_CreateOrUpdate.json
+# x-ms-original-file: 2026-05-01-preview/Clusters_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

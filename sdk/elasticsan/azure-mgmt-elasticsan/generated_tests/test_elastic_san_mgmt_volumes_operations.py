@@ -43,7 +43,7 @@ class TestElasticSanMgmtVolumesOperations(AzureMgmtRecordedTestCase):
                 "properties": {
                     "sizeGiB": 0,
                     "creationData": {"createSource": "str", "sourceId": "str"},
-                    "managedBy": {"resourceId": "str"},
+                    "managedBy": [{"clientId": "str", "resourceIds": ["str"], "version": 0}],
                     "provisioningState": "str",
                     "storageTarget": {
                         "provisioningState": "str",
@@ -79,7 +79,9 @@ class TestElasticSanMgmtVolumesOperations(AzureMgmtRecordedTestCase):
             elastic_san_name="str",
             volume_group_name="str",
             volume_name="str",
-            parameters={"properties": {"managedBy": {"resourceId": "str"}, "sizeGiB": 0}},
+            parameters={
+                "properties": {"managedBy": [{"clientId": "str", "resourceIds": ["str"], "version": 0}], "sizeGiB": 0}
+            },
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

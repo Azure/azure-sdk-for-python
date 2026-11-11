@@ -2,6 +2,7 @@
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp
+asyncpg>=0.29.0
 pytest
 pytest-asyncio
 psycopg2-binary>=2.9.0

@@ -15,20 +15,21 @@ DESCRIPTION:
 USAGE: python conditional_operation_sample.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
 
 import os
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
+from azure.identity import DefaultAzureCredential
 
 
 def main():
-    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+    endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 
     # Create an app config client
-    client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
+    client = AzureAppConfigurationClient(endpoint, DefaultAzureCredential())
 
     # Unconditional set
     config_setting = ConfigurationSetting(

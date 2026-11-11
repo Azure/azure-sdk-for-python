@@ -25,7 +25,7 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.disk_encryption_sets.get(
             resource_group_name=resource_group.name,
             disk_encryption_set_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +104,7 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
                     },
                     "tags": {"str": "str"},
                 },
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -118,7 +118,7 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
             await self.client.disk_encryption_sets.begin_delete(
                 resource_group_name=resource_group.name,
                 disk_encryption_set_name="str",
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -130,7 +130,7 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
     async def test_disk_encryption_sets_list_by_resource_group(self, resource_group):
         response = self.client.disk_encryption_sets.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -140,7 +140,7 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_disk_encryption_sets_list(self, resource_group):
         response = self.client.disk_encryption_sets.list(
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -152,7 +152,7 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
         response = self.client.disk_encryption_sets.list_associated_resources(
             resource_group_name=resource_group.name,
             disk_encryption_set_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

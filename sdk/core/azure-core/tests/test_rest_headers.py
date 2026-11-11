@@ -4,9 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
-from requests import Response
 import pytest
-from azure.core.rest._requests_basic import RestRequestsTransportResponse
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
@@ -137,7 +135,7 @@ def test_headers_response_items_mutability(get_response_headers):
 
 def test_header_mutations(get_request_headers, get_response_headers):
     def _headers_check(h):
-        assert dict(h) == {}
+        assert not dict(h)
         h["a"] = "1"
         assert dict(h) == {"a": "1"}
         h["a"] = "2"

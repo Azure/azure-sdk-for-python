@@ -1,5 +1,20 @@
 # Release History
 
+## 1.0.0b4 (2026-08-25)
+
+### Features Added
+
+  - Model `EntityProperties` added property `signal_aggregation_groups`
+  - Added model `SignalAggregationGroup`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `HealthState.DELETED`
+  - Model `ThresholdRuleV2` deleted or renamed its instance variable `look_back_window`
+  - Renamed enum `DependenciesAggregationType` to `AggregationType`
+  - Renamed enum `DependenciesAggregationUnit` to `AggregationUnit`
+  - Deleted enum `LookBackWindow`
+
 ## 1.0.0b3 (2026-07-07)
 
 ### Features Added

@@ -29,9 +29,9 @@ class DeviceUpdateClientConfiguration:  # pylint: disable=too-many-instance-attr
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param instance_id: The Device Update for IoT Hub account instance identifier. Required.
     :type instance_id: str
-    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01".
-     Default value is "2026-06-01". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

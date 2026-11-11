@@ -7,6 +7,7 @@ Unit tests for azure-ai-discovery clients.
 
 These tests verify client configuration without making HTTP calls.
 """
+
 import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.discovery import WorkspaceClient, BookshelfClient
@@ -70,9 +71,10 @@ class TestBookshelfClientUnit:
             credential=AzureKeyCredential("fake-key"),
         )
 
-        # Verify operation groups exist
+        # Verify operation groups exist. In GA, the beta
+        # ``knowledge_base_versions`` group was folded into ``knowledge_bases``.
         assert hasattr(client, "knowledge_bases")
-        assert hasattr(client, "knowledge_base_versions")
+        assert not hasattr(client, "knowledge_base_versions")
 
     def test_client_endpoint_validation(self):
         """Test that client accepts valid endpoint URLs."""

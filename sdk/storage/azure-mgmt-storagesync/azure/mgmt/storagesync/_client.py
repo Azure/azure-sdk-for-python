@@ -43,7 +43,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class StorageSyncMgmtClient(_StorageSyncMgmtClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class StorageSyncMgmtClient(
+    _StorageSyncMgmtClientOperationsMixin
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Microsoft Storage Sync Service API. This belongs to Microsoft.StorageSync Resource Provider.
 
     :ivar operations: Operations operations
@@ -77,7 +79,7 @@ class StorageSyncMgmtClient(_StorageSyncMgmtClientOperationsMixin):  # pylint: d
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2022-09-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2025-12-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str

@@ -12,6 +12,7 @@ queue_settings/tags/properties/environment_variables) because the migration wrap
 children, and a regression typically hides in exactly one child.
 """
 from azure.ai.ml import Input, Output, MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.distribution import RayDistribution
 from azure.ai.ml import command
 from datetime import datetime
 from azure.ai.ml.constants._common import AssetTypes
@@ -276,6 +277,18 @@ def build_command_job_tensorflow():
     )
 
 
+def build_command_job_ray():
+    """A CommandJob with a Ray distribution (arm-absent Ray subtype -> JSON-direct wire)."""
+    return CommandJob(
+        name="smoke-command-ray",
+        command="python train.py",
+        environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+        compute="smoke-compute",
+        distribution=RayDistribution(port=6379, address="127.0.0.1", num_cpus=4, num_gpus=1),
+        resources=JobResourceConfiguration(instance_count=2),
+    )
+
+
 COMMAND_JOB_BUILDERS.update(
     {
         "command_job_minimal": build_command_job_minimal,
@@ -287,6 +300,7 @@ COMMAND_JOB_BUILDERS.update(
         "command_job_docker_args_list": build_command_job_docker_args_list,
         "command_job_pytorch": build_command_job_pytorch,
         "command_job_tensorflow": build_command_job_tensorflow,
+        "command_job_ray": build_command_job_ray,
     }
 )
 

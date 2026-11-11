@@ -10,8 +10,10 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
+import urllib.parse
 
 from azure.core import AsyncPipelineClient
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -25,18 +27,20 @@ from azure.core.exceptions import (
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
+from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_operations_list_request,
     build_service_groups_get_request,
-    build_service_groups_list_ancestors_request,
     build_service_groups_mgmt_create_or_update_service_group_request,
     build_service_groups_mgmt_delete_service_group_request,
     build_service_groups_mgmt_update_service_group_request,
@@ -45,10 +49,10 @@ from .._configuration import ServiceGroupsMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
+List = list
 
 
-class ServiceGroupsOperations:
+class ServiceGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -130,17 +134,42 @@ class ServiceGroupsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_ancestors(self, service_group_name: str, **kwargs: Any) -> _models.ServiceGroupCollectionResponse:
-        """Get the details of the serviceGroup's ancestors.
 
-        :param service_group_name: ServiceGroup Name. Required.
-        :type service_group_name: str
-        :return: ServiceGroupCollectionResponse. The ServiceGroupCollectionResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.servicegroups.models.ServiceGroupCollectionResponse
+class Operations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.servicegroups.aio.ServiceGroupsMgmtClient`'s
+        :attr:`operations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ServiceGroupsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
+        """Lists all available REST API operations for the Microsoft.Management resource provider.
+
+        :return: An iterator like instance of Operation
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicegroups.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -149,62 +178,91 @@ class ServiceGroupsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.ServiceGroupCollectionResponse] = kwargs.pop("cls", None)
+                _request = build_operations_list_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_service_groups_list_ancestors_request(
-            service_group_name=service_group_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
             )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ServiceGroupCollectionResponse, response.json())
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        return deserialized  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
 
 class _ServiceGroupsMgmtClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ServiceGroupsMgmtClientConfiguration]
 ):
 
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "service_group_name", "content_type", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
     async def _create_or_update_service_group_initial(
         self,
         service_group_name: str,
-        create_service_group_request: Union[_models.ServiceGroup, JSON, IO[bytes]],
+        create_service_group_request: Union[_models.ServiceGroup, _types.ServiceGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -303,7 +361,7 @@ class _ServiceGroupsMgmtClientOperationsMixin(
     async def begin_create_or_update_service_group(
         self,
         service_group_name: str,
-        create_service_group_request: JSON,
+        create_service_group_request: _types.ServiceGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -313,7 +371,7 @@ class _ServiceGroupsMgmtClientOperationsMixin(
         :param service_group_name: ServiceGroup Name. Required.
         :type service_group_name: str
         :param create_service_group_request: ServiceGroup creation parameters. Required.
-        :type create_service_group_request: JSON
+        :type create_service_group_request: ~azure.mgmt.servicegroups.types.ServiceGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -348,20 +406,25 @@ class _ServiceGroupsMgmtClientOperationsMixin(
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "service_group_name", "content_type", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
     async def begin_create_or_update_service_group(
         self,
         service_group_name: str,
-        create_service_group_request: Union[_models.ServiceGroup, JSON, IO[bytes]],
+        create_service_group_request: Union[_models.ServiceGroup, _types.ServiceGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServiceGroup]:
         """Create or Update a serviceGroup.
 
         :param service_group_name: ServiceGroup Name. Required.
         :type service_group_name: str
-        :param create_service_group_request: ServiceGroup creation parameters. Is one of the following
-         types: ServiceGroup, JSON, IO[bytes] Required.
-        :type create_service_group_request: ~azure.mgmt.servicegroups.models.ServiceGroup or JSON or
-         IO[bytes]
+        :param create_service_group_request: ServiceGroup creation parameters. Is either a ServiceGroup
+         type or a IO[bytes] type. Required.
+        :type create_service_group_request: ~azure.mgmt.servicegroups.models.ServiceGroup or
+         ~azure.mgmt.servicegroups.types.ServiceGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServiceGroup. The ServiceGroup is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicegroups.models.ServiceGroup]
@@ -418,10 +481,15 @@ class _ServiceGroupsMgmtClientOperationsMixin(
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "service_group_name", "content_type", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
     async def _update_service_group_initial(
         self,
         service_group_name: str,
-        update_service_group_request: Union[_models.ServiceGroup, JSON, IO[bytes]],
+        update_service_group_request: Union[_models.ServiceGroup, _types.ServiceGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -480,6 +548,9 @@ class _ServiceGroupsMgmtClientOperationsMixin(
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -518,7 +589,7 @@ class _ServiceGroupsMgmtClientOperationsMixin(
     async def begin_update_service_group(
         self,
         service_group_name: str,
-        update_service_group_request: JSON,
+        update_service_group_request: _types.ServiceGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -528,7 +599,7 @@ class _ServiceGroupsMgmtClientOperationsMixin(
         :param service_group_name: ServiceGroup Name. Required.
         :type service_group_name: str
         :param update_service_group_request: ServiceGroup update parameters. Required.
-        :type update_service_group_request: JSON
+        :type update_service_group_request: ~azure.mgmt.servicegroups.types.ServiceGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -563,20 +634,25 @@ class _ServiceGroupsMgmtClientOperationsMixin(
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "service_group_name", "content_type", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
     async def begin_update_service_group(
         self,
         service_group_name: str,
-        update_service_group_request: Union[_models.ServiceGroup, JSON, IO[bytes]],
+        update_service_group_request: Union[_models.ServiceGroup, _types.ServiceGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServiceGroup]:
         """Update a serviceGroup.
 
         :param service_group_name: ServiceGroup Name. Required.
         :type service_group_name: str
-        :param update_service_group_request: ServiceGroup update parameters. Is one of the following
-         types: ServiceGroup, JSON, IO[bytes] Required.
-        :type update_service_group_request: ~azure.mgmt.servicegroups.models.ServiceGroup or JSON or
-         IO[bytes]
+        :param update_service_group_request: ServiceGroup update parameters. Is either a ServiceGroup
+         type or a IO[bytes] type. Required.
+        :type update_service_group_request: ~azure.mgmt.servicegroups.models.ServiceGroup or
+         ~azure.mgmt.servicegroups.types.ServiceGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServiceGroup. The ServiceGroup is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicegroups.models.ServiceGroup]
@@ -633,6 +709,11 @@ class _ServiceGroupsMgmtClientOperationsMixin(
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "service_group_name"]},
+        api_versions_list=["2026-08-01"],
+    )
     async def _delete_service_group_initial(self, service_group_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -680,6 +761,9 @@ class _ServiceGroupsMgmtClientOperationsMixin(
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -691,6 +775,11 @@ class _ServiceGroupsMgmtClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "service_group_name"]},
+        api_versions_list=["2026-08-01"],
+    )
     async def begin_delete_service_group(self, service_group_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a ServiceGroup.
 

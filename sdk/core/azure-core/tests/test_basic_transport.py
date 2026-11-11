@@ -3,36 +3,37 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+# pylint: disable=line-too-long,useless-suppression
 from http.client import HTTPConnection
 from collections import OrderedDict
 import logging
-import pytest
 from unittest import mock
 from socket import timeout as SocketTimeout
 
+import pytest
 from urllib3.util import connection as urllib_connection
 from urllib3.response import HTTPResponse as UrllibResponse
 from urllib3.connection import HTTPConnection as UrllibConnection
+from utils import (
+    HTTP_REQUESTS,
+    request_and_responses_product,
+    HTTP_CLIENT_TRANSPORT_RESPONSES,
+    create_transport_response,
+)
 
 from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
 from azure.core.pipeline._tools import is_rest
+
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
 from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import (
     HttpResponseError,
-    ServiceRequestError,
     ServiceResponseError,
     ServiceRequestTimeoutError,
     ServiceResponseTimeoutError,
-)
-
-from utils import (
-    HTTP_REQUESTS,
-    request_and_responses_product,
-    HTTP_CLIENT_TRANSPORT_RESPONSES,
-    create_transport_response,
 )
 
 

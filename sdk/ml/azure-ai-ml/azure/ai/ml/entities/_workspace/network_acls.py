@@ -40,10 +40,10 @@ class DefaultActionType:
 class NetworkAcls(RestTranslatableMixin):
     """Network Access Setting for Workspace
 
-    :param default_action: Specifies the default action when no IP rules are matched.
-    :type default_action: str
-    :param ip_rules: Rules governing the accessibility of a resource from a specific IP address or IP range.
-    :type ip_rules: Optional[List[IPRule]]
+    :keyword default_action: Specifies the default action when no IP rules are matched.
+    :paramtype default_action: str
+    :keyword ip_rules: Rules governing the accessibility of a resource from a specific IP address or IP range.
+    :paramtype ip_rules: Optional[List[IPRule]]
 
     .. admonition:: Example:
 

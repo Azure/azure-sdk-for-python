@@ -45,6 +45,11 @@ class TestSqlManagementSyncMembersOperationsAsync(AzureMgmtRecordedTestCase):
                 sync_member_name="str",
                 parameters={
                     "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "name": "str",
                     "properties": {
                         "databaseName": "str",
@@ -88,6 +93,11 @@ class TestSqlManagementSyncMembersOperationsAsync(AzureMgmtRecordedTestCase):
                 sync_member_name="str",
                 parameters={
                     "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "name": "str",
                     "properties": {
                         "databaseName": "str",

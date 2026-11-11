@@ -11,9 +11,9 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class Notification(RestTranslatableMixin):
     """Configuration for notification.
 
-    :param email_on: Send email notification to user on specified notification type. Accepted values are
+    :keyword email_on: Send email notification to user on specified notification type. Accepted values are
         "JobCompleted", "JobFailed", and "JobCancelled".
-    :type email_on: Optional[list[str]]
+    :paramtype email_on: Optional[list[str]]
     :param: The email recipient list which. Note that this parameter has a character limit of 499 which
         includes all of the recipient strings and each comma seperator.
     :paramtype emails: Optional[list[str]]

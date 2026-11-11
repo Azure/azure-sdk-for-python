@@ -19,9 +19,6 @@ extends:
       InjectedPackages: $(InjectedPackages)
       Packages: ${{ parameters.Services }}
       MatrixReplace:
-        # Use dedicated storage pool in canadacentral with higher memory capacity
-        - Pool=.*LINUXPOOL.*/azsdk-pool-storage
-        - Pool=.*WINDOWSPOOL.*/azsdk-pool-storage
         - TestSamples=.*/true
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'

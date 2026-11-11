@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdministratorProperties(_Model):
+class AdministratorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a active directory administrator.
 
     :ivar administrator_type: Type of the sever administrator. "ActiveDirectory"
@@ -66,7 +66,7 @@ class AdministratorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedThreatProtectionProperties(_Model):
+class AdvancedThreatProtectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an Advanced Threat Protection state.
 
     :ivar state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
@@ -149,7 +149,7 @@ class ProxyResource(Resource):
     """
 
 
-class Advisor(ProxyResource):
+class Advisor(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database, Server or Elastic Pool Advisor.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -225,7 +225,7 @@ class Advisor(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AdvisorProperties(_Model):
+class AdvisorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a Database, Server or Elastic Pool Advisor.
 
     :ivar advisor_status: Gets the status of availability of this advisor to customers. Possible
@@ -305,7 +305,7 @@ class AdvisorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticTuningOptions(_Model):
+class AutomaticTuningOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Automatic tuning properties for individual advisors.
 
     :ivar desired_state: Automatic tuning option desired state. Known values are: "Off", "On", and
@@ -356,7 +356,7 @@ class AutomaticTuningOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticTuningServerOptions(_Model):
+class AutomaticTuningServerOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Automatic tuning properties for individual advisors.
 
     :ivar desired_state: Automatic tuning option desired state. Known values are: "Off", "On", and
@@ -405,7 +405,7 @@ class AutomaticTuningServerOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticTuningServerProperties(_Model):
+class AutomaticTuningServerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server-level Automatic Tuning properties.
 
     :ivar desired_state: Automatic tuning desired state. Known values are: "Custom", "Auto", and
@@ -482,7 +482,7 @@ class AutoPauseDelayTimeRange(_Model):
     """Value that is used to not pause (infinite delay before pause)."""
 
 
-class AzureADOnlyAuthProperties(_Model):
+class AzureADOnlyAuthProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a active directory only authentication.
 
     :ivar azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
@@ -513,7 +513,7 @@ class AzureADOnlyAuthProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupShortTermRetentionPolicy(ProxyResource):
+class BackupShortTermRetentionPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A short term retention policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -536,7 +536,7 @@ class BackupShortTermRetentionPolicy(ProxyResource):
     )
     """Resource properties."""
 
-    __flattened_items = ["retention_days", "diff_backup_interval_in_hours"]
+    __flattened_items = ["retention_days", "diff_backup_interval_in_hours", "lock_immutability", "immutability_status"]
 
     @overload
     def __init__(
@@ -574,7 +574,7 @@ class BackupShortTermRetentionPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class BackupShortTermRetentionPolicyProperties(_Model):
+class BackupShortTermRetentionPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a short term retention policy.
 
     :ivar retention_days: The backup retention period in days. This is how many days Point-in-Time
@@ -584,6 +584,12 @@ class BackupShortTermRetentionPolicyProperties(_Model):
      many interval hours between each differential backup will be supported. This is only applicable
      to live databases but not dropped databases. Known values are: 12 and 24.
     :vartype diff_backup_interval_in_hours: int or ~azure.mgmt.sql.models.DiffBackupIntervalInHours
+    :ivar lock_immutability: Whether to lock the immutability of the backups governed by this short
+     term retention policy.
+    :vartype lock_immutability: bool
+    :ivar immutability_status: The immutability status of the backups governed by this short term
+     retention policy. Known values are: "Disabled", "Enabled", and "Locked".
+    :vartype immutability_status: str or ~azure.mgmt.sql.models.ImmutabilityStatus
     """
 
     retention_days: Optional[int] = rest_field(
@@ -597,6 +603,15 @@ class BackupShortTermRetentionPolicyProperties(_Model):
     """The differential backup interval in hours. This is how many interval hours between each
      differential backup will be supported. This is only applicable to live databases but not
      dropped databases. Known values are: 12 and 24."""
+    lock_immutability: Optional[bool] = rest_field(
+        name="lockImmutability", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to lock the immutability of the backups governed by this short term retention policy."""
+    immutability_status: Optional[Union[str, "_models.ImmutabilityStatus"]] = rest_field(
+        name="immutabilityStatus", visibility=["read"]
+    )
+    """The immutability status of the backups governed by this short term retention policy. Known
+     values are: \"Disabled\", \"Enabled\", and \"Locked\"."""
 
     @overload
     def __init__(
@@ -604,6 +619,7 @@ class BackupShortTermRetentionPolicyProperties(_Model):
         *,
         retention_days: Optional[int] = None,
         diff_backup_interval_in_hours: Optional[Union[int, "_models.DiffBackupIntervalInHours"]] = None,
+        lock_immutability: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -687,7 +703,9 @@ class CertificateInfo(_Model):
     """The certificate expiry date."""
 
 
-class ChangeLongTermRetentionBackupAccessTierParameters(_Model):  # pylint: disable=name-too-long
+class ChangeLongTermRetentionBackupAccessTierParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Contains the information necessary to change long term retention backup access tier and related
     operation mode.
 
@@ -724,7 +742,7 @@ class ChangeLongTermRetentionBackupAccessTierParameters(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityRequest(_Model):
+class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request to check whether the specified name for a resource is available.
 
     :ivar name: Required.
@@ -785,7 +803,7 @@ class CheckNameAvailabilityResponse(_Model):
     """A message explaining why the name is unavailable. Will be undefined if the name is available."""
 
 
-class CompleteDatabaseRestoreDefinition(_Model):
+class CompleteDatabaseRestoreDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to perform a complete database restore operation.
 
     :ivar last_backup_name: The last backup name to apply. Required.
@@ -815,7 +833,7 @@ class CompleteDatabaseRestoreDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CopyLongTermRetentionBackupParameters(_Model):
+class CopyLongTermRetentionBackupParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to perform long term retention backup copy operation.
 
     :ivar properties: Resource properties.
@@ -872,7 +890,9 @@ class CopyLongTermRetentionBackupParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CopyLongTermRetentionBackupParametersProperties(_Model):  # pylint: disable=name-too-long
+class CopyLongTermRetentionBackupParametersProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Contains the properties to perform long term retention backup copy operation.
 
     :ivar target_subscription_id: The subscription that owns the target server.
@@ -933,7 +953,7 @@ class CopyLongTermRetentionBackupParametersProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class CreateDatabaseRestorePointDefinition(_Model):
+class CreateDatabaseRestorePointDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to perform a create database restore point operation.
 
     :ivar restore_point_label: The restore point label to apply. Required.
@@ -963,7 +983,7 @@ class CreateDatabaseRestorePointDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1007,7 +1027,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Database(TrackedResource):
+class Database(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1131,6 +1151,7 @@ class Database(TrackedResource):
         "perform_cutover",
         "availability_zone",
         "encryption_protector_auto_rotation",
+        "provisioning_state",
     ]
 
     @overload
@@ -1173,7 +1194,7 @@ class Database(TrackedResource):
             super().__setattr__(key, value)
 
 
-class DatabaseAdvancedThreatProtection(ProxyResource):
+class DatabaseAdvancedThreatProtection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database Advanced Threat Protection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1234,7 +1255,7 @@ class DatabaseAdvancedThreatProtection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseAutomaticTuning(ProxyResource):
+class DatabaseAutomaticTuning(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database-level Automatic Tuning.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1295,7 +1316,7 @@ class DatabaseAutomaticTuning(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseAutomaticTuningProperties(_Model):
+class DatabaseAutomaticTuningProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database-level Automatic Tuning properties.
 
     :ivar desired_state: Automatic tuning desired state. Known values are: "Inherit", "Custom",
@@ -1342,7 +1363,7 @@ class DatabaseAutomaticTuningProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseBlobAuditingPolicy(ProxyResource):
+class DatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database blob auditing policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1376,6 +1397,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         "is_azure_monitor_target_enabled",
         "queue_delay_ms",
         "is_managed_identity_in_use",
+        "required_fields",
         "state",
         "storage_endpoint",
         "storage_account_access_key",
@@ -1418,7 +1440,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseBlobAuditingPolicyProperties(_Model):
+class DatabaseBlobAuditingPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a database blob auditing policy.
 
     :ivar retention_days: Specifies the number of days to keep in the audit logs in the storage
@@ -1525,6 +1547,11 @@ class DatabaseBlobAuditingPolicyProperties(_Model):
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype is_managed_identity_in_use: bool
+    :ivar required_fields: Specifies the required fields to include in audit events (optional).
+     Each item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype required_fields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -1659,6 +1686,12 @@ class DatabaseBlobAuditingPolicyProperties(_Model):
         name="isManagedIdentityInUse", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether Managed Identity is used to access blob storage."""
+    required_fields: Optional[list[str]] = rest_field(
+        name="requiredFields", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Union[str, "_models.BlobAuditingPolicyState"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1701,6 +1734,7 @@ class DatabaseBlobAuditingPolicyProperties(_Model):
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
         is_managed_identity_in_use: Optional[bool] = None,
+        required_fields: Optional[list[str]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
@@ -1717,7 +1751,7 @@ class DatabaseBlobAuditingPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseColumn(ProxyResource):
+class DatabaseColumn(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database column resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1778,7 +1812,7 @@ class DatabaseColumn(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseColumnProperties(_Model):
+class DatabaseColumnProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database column properties.
 
     :ivar column_type: The column data type. Known values are: "image", "text", "uniqueidentifier",
@@ -1840,7 +1874,7 @@ class DatabaseColumnProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseExtensions(ProxyResource):
+class DatabaseExtensions(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Import, Export, or PolybaseImport resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1913,7 +1947,7 @@ class DatabaseExtensions(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseExtensionsProperties(_Model):
+class DatabaseExtensionsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the database information after a successful Import, Export, or PolybaseImport.
 
     :ivar operation_mode: Operation mode of the operation: Import, Export, or PolybaseImport.
@@ -2008,7 +2042,7 @@ class DatabaseExtensionsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseIdentity(_Model):
+class DatabaseIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Active Directory identity configuration for a resource.
 
     :ivar type: The identity type. Known values are: "None" and "UserAssigned".
@@ -2076,7 +2110,7 @@ class DatabaseKey(_Model):
     """The database key's version."""
 
 
-class DatabaseOperation(ProxyResource):
+class DatabaseOperation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2226,7 +2260,7 @@ class DatabaseOperationProperties(_Model):
     """The operation phase details."""
 
 
-class DatabaseProperties(_Model):
+class DatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The database's properties.
 
     :ivar create_mode: Specifies the mode of database creation.
@@ -2444,6 +2478,8 @@ class DatabaseProperties(_Model):
     :ivar encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
      database encryption protector AKV key.
     :vartype encryption_protector_auto_rotation: bool
+    :ivar provisioning_state: Specifies the provisioning state for this resource.
+    :vartype provisioning_state: str
     """
 
     create_mode: Optional[Union[str, "_models.CreateMode"]] = rest_field(name="createMode", visibility=["create"])
@@ -2717,6 +2753,8 @@ class DatabaseProperties(_Model):
         name="encryptionProtectorAutoRotation", visibility=["read", "create", "update", "delete", "query"]
     )
     """The flag to enable or disable auto rotation of database encryption protector AKV key."""
+    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
+    """Specifies the provisioning state for this resource."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -2786,7 +2824,7 @@ class DatabaseSchema(ProxyResource):
     """
 
 
-class DatabaseSecurityAlertPolicy(ProxyResource):
+class DatabaseSecurityAlertPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database security alert policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2856,7 +2894,9 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseSqlVulnerabilityAssessmentBaselineSet(ProxyResource):  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentBaselineSet(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A database sql vulnerability assessment baseline set.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2918,7 +2958,9 @@ class DatabaseSqlVulnerabilityAssessmentBaselineSet(ProxyResource):  # pylint: d
             super().__setattr__(key, value)
 
 
-class DatabaseSqlVulnerabilityAssessmentBaselineSetProperties(_Model):  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentBaselineSetProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a database Sql Vulnerability Assessment baseline set.
 
     :ivar results: The baseline set result. Required.
@@ -2946,7 +2988,9 @@ class DatabaseSqlVulnerabilityAssessmentBaselineSetProperties(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaseline(ProxyResource):  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentRuleBaseline(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A database sql vulnerability assessment rule baseline.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3008,7 +3052,9 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaseline(ProxyResource):  # pylint: 
             super().__setattr__(key, value)
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaselineInput(ProxyResource):  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentRuleBaselineInput(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A database sql vulnerability assessment rule baseline input.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3070,7 +3116,9 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineInput(ProxyResource):  # pyl
             super().__setattr__(key, value)
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaselineInputProperties(_Model):  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentRuleBaselineInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a database Sql Vulnerability Assessment rule baseline.
 
     :ivar latest_scan: The latest scan flag. Required.
@@ -3103,7 +3151,9 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineInputProperties(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput(ProxyResource):  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A database sql vulnerability assessment rule baseline list input.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3165,7 +3215,9 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput(ProxyResource):  #
             super().__setattr__(key, value)
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInputProperties(_Model):  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a database Sql Vulnerability Assessment rule baseline.
 
     :ivar latest_scan: The latest scan flag. Required.
@@ -3198,7 +3250,9 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaselineProperties(_Model):  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentRuleBaselineProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a database Sql Vulnerability Assessment rule baseline.
 
     :ivar results: The rule baseline result. Required.
@@ -3226,7 +3280,7 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineProperties(_Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class DatabaseTable(ProxyResource):
+class DatabaseTable(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database table resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3287,7 +3341,7 @@ class DatabaseTable(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseTableProperties(_Model):
+class DatabaseTableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database table properties.
 
     :ivar temporal_type: The table temporal type. Known values are: "NonTemporalTable",
@@ -3326,7 +3380,7 @@ class DatabaseTableProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseUpdate(_Model):
+class DatabaseUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database update resource.
 
     :ivar sku: The name and tier of the SKU.
@@ -3399,6 +3453,7 @@ class DatabaseUpdate(_Model):
         "manual_cutover",
         "perform_cutover",
         "encryption_protector_auto_rotation",
+        "provisioning_state",
     ]
 
     @overload
@@ -3440,7 +3495,7 @@ class DatabaseUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class DatabaseUpdateProperties(_Model):
+class DatabaseUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database update properties.
 
     :ivar create_mode: Specifies the mode of database creation.
@@ -3630,6 +3685,8 @@ class DatabaseUpdateProperties(_Model):
     :ivar encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
      database encryption protector AKV key.
     :vartype encryption_protector_auto_rotation: bool
+    :ivar provisioning_state: Specifies the provisioning state for this resource.
+    :vartype provisioning_state: str
     """
 
     create_mode: Optional[Union[str, "_models.CreateMode"]] = rest_field(name="createMode", visibility=["create"])
@@ -3874,6 +3931,8 @@ class DatabaseUpdateProperties(_Model):
         name="encryptionProtectorAutoRotation", visibility=["read", "create", "update", "delete", "query"]
     )
     """The flag to enable or disable auto rotation of database encryption protector AKV key."""
+    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
+    """Specifies the provisioning state for this resource."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -3924,7 +3983,7 @@ class DatabaseUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseUsage(ProxyResource):
+class DatabaseUsage(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usage metric of a database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4023,7 +4082,7 @@ class DatabaseUserIdentity(_Model):
     """The Azure Active Directory client id."""
 
 
-class DatabaseVulnerabilityAssessment(ProxyResource):
+class DatabaseVulnerabilityAssessment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database vulnerability assessment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4089,7 +4148,9 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseVulnerabilityAssessmentProperties(_Model):  # pylint: disable=name-too-long
+class DatabaseVulnerabilityAssessmentProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a database Vulnerability Assessment.
 
     :ivar storage_container_path: A blob storage container path to hold the scan results (e.g.
@@ -4156,7 +4217,9 @@ class DatabaseVulnerabilityAssessmentProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class DatabaseVulnerabilityAssessmentRuleBaseline(ProxyResource):  # pylint: disable=name-too-long
+class DatabaseVulnerabilityAssessmentRuleBaseline(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A database vulnerability assessment rule baseline.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4218,7 +4281,9 @@ class DatabaseVulnerabilityAssessmentRuleBaseline(ProxyResource):  # pylint: dis
             super().__setattr__(key, value)
 
 
-class DatabaseVulnerabilityAssessmentRuleBaselineItem(_Model):  # pylint: disable=name-too-long
+class DatabaseVulnerabilityAssessmentRuleBaselineItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for an Azure SQL Database Vulnerability Assessment rule baseline's result.
 
     :ivar result: The rule baseline result. Required.
@@ -4246,7 +4311,9 @@ class DatabaseVulnerabilityAssessmentRuleBaselineItem(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class DatabaseVulnerabilityAssessmentRuleBaselineProperties(_Model):  # pylint: disable=name-too-long
+class DatabaseVulnerabilityAssessmentRuleBaselineProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a database Vulnerability Assessment rule baseline.
 
     :ivar baseline_results: The rule baseline result. Required.
@@ -4292,7 +4359,9 @@ class DatabaseVulnerabilityAssessmentScanExportProperties(_Model):  # pylint: di
      <https://myStorage.blob.core.windows.net/VaScans/scans/serverName/databaseName/scan_scanId.xlsx>`_)."""
 
 
-class DatabaseVulnerabilityAssessmentScansExport(ProxyResource):  # pylint: disable=name-too-long
+class DatabaseVulnerabilityAssessmentScansExport(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A database Vulnerability Assessment scan export resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4353,7 +4422,7 @@ class DatabaseVulnerabilityAssessmentScansExport(ProxyResource):  # pylint: disa
             super().__setattr__(key, value)
 
 
-class DataMaskingPolicy(ProxyResource):
+class DataMaskingPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database data masking policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4422,7 +4491,7 @@ class DataMaskingPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DataMaskingPolicyProperties(_Model):
+class DataMaskingPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a database data masking policy.
 
     :ivar data_masking_state: The state of the data masking policy. Required. Known values are:
@@ -4473,7 +4542,7 @@ class DataMaskingPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataMaskingRule(ProxyResource):
+class DataMaskingRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A database data masking rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4555,7 +4624,7 @@ class DataMaskingRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DataMaskingRuleProperties(_Model):
+class DataMaskingRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a database data masking rule.
 
     :ivar id: The rule Id.
@@ -4668,7 +4737,67 @@ class DataMaskingRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataWarehouseUserActivities(ProxyResource):
+class DataSyncParticipantIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Azure Active Directory identity configuration for a resource.
+
+    :ivar type: The Datasync identity type. Required. Known values are: "None", "SystemAssigned",
+     "UserAssigned", and "SystemAssignedUserAssigned".
+    :vartype type: str or ~azure.mgmt.sql.models.DataSyncParticipantIdentityType
+    :ivar tenant_id: The DataSync participant identity tenant id.
+    :vartype tenant_id: str
+    :ivar user_assigned_identities: The resource ids of the user assigned identities to use.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.sql.models.DataSyncParticipantUserAssignedIdentity]
+    """
+
+    type: Union[str, "_models.DataSyncParticipantIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Datasync identity type. Required. Known values are: \"None\", \"SystemAssigned\",
+     \"UserAssigned\", and \"SystemAssignedUserAssigned\"."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The DataSync participant identity tenant id."""
+    user_assigned_identities: Optional[dict[str, "_models.DataSyncParticipantUserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ids of the user assigned identities to use."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.DataSyncParticipantIdentityType"],
+        tenant_id: Optional[str] = None,
+        user_assigned_identities: Optional[dict[str, "_models.DataSyncParticipantUserAssignedIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataSyncParticipantUserAssignedIdentity(_Model):
+    """Azure Active Directory identity configuration for a resource.
+
+    :ivar principal_id: The Azure Active Directory principal id.
+    :vartype principal_id: str
+    :ivar client_id: The Azure Active Directory client id.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The Azure Active Directory principal id."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The Azure Active Directory client id."""
+
+
+class DataWarehouseUserActivities(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User activities of a data warehouse.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4742,7 +4871,7 @@ class DataWarehouseUserActivitiesProperties(_Model):
     """Count of running and suspended queries."""
 
 
-class DeletedServer(ProxyResource):
+class DeletedServer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A deleted server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4765,7 +4894,14 @@ class DeletedServer(ProxyResource):
     )
     """Resource properties."""
 
-    __flattened_items = ["version", "deletion_time", "original_id", "fully_qualified_domain_name"]
+    __flattened_items = [
+        "version",
+        "deletion_time",
+        "original_id",
+        "original_resource_group",
+        "fully_qualified_domain_name",
+        "scheduled_purge_time",
+    ]
 
     @overload
     def __init__(
@@ -4812,8 +4948,13 @@ class DeletedServerProperties(_Model):
     :vartype deletion_time: ~datetime.datetime
     :ivar original_id: The original ID of the server before deletion.
     :vartype original_id: str
+    :ivar original_resource_group: The resource group of the original server before deletion.
+    :vartype original_resource_group: str
     :ivar fully_qualified_domain_name: The fully qualified domain name of the server.
     :vartype fully_qualified_domain_name: str
+    :ivar scheduled_purge_time: The date and time when the deleted server will be permanently
+     deleted (purged).
+    :vartype scheduled_purge_time: ~datetime.datetime
     """
 
     version: Optional[str] = rest_field(visibility=["read"])
@@ -4822,11 +4963,17 @@ class DeletedServerProperties(_Model):
     """The deletion time of the deleted server."""
     original_id: Optional[str] = rest_field(name="originalId", visibility=["read"])
     """The original ID of the server before deletion."""
+    original_resource_group: Optional[str] = rest_field(name="originalResourceGroup", visibility=["read"])
+    """The resource group of the original server before deletion."""
     fully_qualified_domain_name: Optional[str] = rest_field(name="fullyQualifiedDomainName", visibility=["read"])
     """The fully qualified domain name of the server."""
+    scheduled_purge_time: Optional[datetime.datetime] = rest_field(
+        name="scheduledPurgeTime", visibility=["read"], format="rfc3339"
+    )
+    """The date and time when the deleted server will be permanently deleted (purged)."""
 
 
-class DistributedAvailabilityGroup(ProxyResource):
+class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Distributed availability group between box and Sql Managed Instance.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4860,6 +5007,10 @@ class DistributedAvailabilityGroup(ProxyResource):
         "instance_availability_group_name",
         "failover_mode",
         "seeding_mode",
+        "link_mode",
+        "most_recent_error",
+        "most_recent_error_time",
+        "most_recent_error_message",
         "databases",
     ]
 
@@ -4899,7 +5050,7 @@ class DistributedAvailabilityGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DistributedAvailabilityGroupDatabase(_Model):
+class DistributedAvailabilityGroupDatabase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database specific information.
 
     :ivar database_name: The name of the database in link.
@@ -5030,7 +5181,7 @@ class DistributedAvailabilityGroupDatabase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DistributedAvailabilityGroupProperties(_Model):
+class DistributedAvailabilityGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a distributed availability group.
 
     :ivar distributed_availability_group_name: Name of the distributed availability group.
@@ -5058,6 +5209,17 @@ class DistributedAvailabilityGroupProperties(_Model):
     :ivar seeding_mode: Database seeding mode – can be Automatic (default), or Manual for supported
      scenarios. Known values are: "Automatic" and "Manual".
     :vartype seeding_mode: str or ~azure.mgmt.sql.models.SeedingModeType
+    :ivar link_mode: Specifies whether the link operates in single-database or multi-database mode.
+     Known values are: "SingleDatabase" and "MultiDatabase".
+    :vartype link_mode: str or ~azure.mgmt.sql.models.LinkModeType
+    :ivar most_recent_error: Most recent error code for the distributed availability group.
+    :vartype most_recent_error: str
+    :ivar most_recent_error_time: Time of the most recent error for the distributed availability
+     group.
+    :vartype most_recent_error_time: ~datetime.datetime
+    :ivar most_recent_error_message: Most recent error message for the distributed availability
+     group.
+    :vartype most_recent_error_message: str
     :ivar databases: Databases in the distributed availability group.
     :vartype databases: list[~azure.mgmt.sql.models.DistributedAvailabilityGroupDatabase]
     """
@@ -5105,6 +5267,19 @@ class DistributedAvailabilityGroupProperties(_Model):
     )
     """Database seeding mode – can be Automatic (default), or Manual for supported scenarios. Known
      values are: \"Automatic\" and \"Manual\"."""
+    link_mode: Optional[Union[str, "_models.LinkModeType"]] = rest_field(
+        name="linkMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether the link operates in single-database or multi-database mode. Known values
+     are: \"SingleDatabase\" and \"MultiDatabase\"."""
+    most_recent_error: Optional[str] = rest_field(name="mostRecentError", visibility=["read"])
+    """Most recent error code for the distributed availability group."""
+    most_recent_error_time: Optional[datetime.datetime] = rest_field(
+        name="mostRecentErrorTime", visibility=["read"], format="rfc3339"
+    )
+    """Time of the most recent error for the distributed availability group."""
+    most_recent_error_message: Optional[str] = rest_field(name="mostRecentErrorMessage", visibility=["read"])
+    """Most recent error message for the distributed availability group."""
     databases: Optional[list["_models.DistributedAvailabilityGroupDatabase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5121,6 +5296,7 @@ class DistributedAvailabilityGroupProperties(_Model):
         instance_availability_group_name: Optional[str] = None,
         failover_mode: Optional[Union[str, "_models.FailoverModeType"]] = None,
         seeding_mode: Optional[Union[str, "_models.SeedingModeType"]] = None,
+        link_mode: Optional[Union[str, "_models.LinkModeType"]] = None,
         databases: Optional[list["_models.DistributedAvailabilityGroupDatabase"]] = None,
     ) -> None: ...
 
@@ -5135,7 +5311,7 @@ class DistributedAvailabilityGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DistributedAvailabilityGroupSetRole(_Model):
+class DistributedAvailabilityGroupSetRole(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Distributed availability group failover request.
 
     :ivar instance_role: New role of managed instance in a distributed availability group, can be
@@ -5174,7 +5350,9 @@ class DistributedAvailabilityGroupSetRole(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DistributedAvailabilityGroupsFailoverRequest(_Model):  # pylint: disable=name-too-long
+class DistributedAvailabilityGroupsFailoverRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Distributed availability group failover.
 
     :ivar failover_type: The failover type, can be ForcedAllowDataLoss or Planned. Required. Known
@@ -5204,7 +5382,7 @@ class DistributedAvailabilityGroupsFailoverRequest(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class EditionCapability(_Model):
+class EditionCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The edition capability.
 
     :ivar name: The database edition name.
@@ -5269,7 +5447,7 @@ class EditionCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticPool(TrackedResource):
+class ElasticPool(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An elastic pool.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5337,6 +5515,7 @@ class ElasticPool(TrackedResource):
         "auto_pause_delay",
         "preferred_enclave_type",
         "availability_zone",
+        "current_sku",
     ]
 
     @overload
@@ -5378,7 +5557,7 @@ class ElasticPool(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ElasticPoolEditionCapability(_Model):
+class ElasticPoolEditionCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The elastic pool edition capability.
 
     :ivar name: The elastic pool edition name.
@@ -5432,7 +5611,7 @@ class ElasticPoolEditionCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticPoolOperation(ProxyResource):
+class ElasticPoolOperation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A elastic pool operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5573,7 +5752,9 @@ class ElasticPoolOperationProperties(_Model):
     """Whether the operation can be cancelled."""
 
 
-class ElasticPoolPerDatabaseMaxPerformanceLevelCapability(_Model):  # pylint: disable=name-too-long
+class ElasticPoolPerDatabaseMaxPerformanceLevelCapability(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The max per-database performance level capability.
 
     :ivar limit: The maximum performance level per database.
@@ -5623,7 +5804,9 @@ class ElasticPoolPerDatabaseMaxPerformanceLevelCapability(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ElasticPoolPerDatabaseMinPerformanceLevelCapability(_Model):  # pylint: disable=name-too-long
+class ElasticPoolPerDatabaseMinPerformanceLevelCapability(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The minimum per-database performance level capability.
 
     :ivar limit: The minimum performance level per database.
@@ -5665,7 +5848,7 @@ class ElasticPoolPerDatabaseMinPerformanceLevelCapability(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ElasticPoolPerDatabaseSettings(_Model):
+class ElasticPoolPerDatabaseSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Per database settings of an elastic pool.
 
     :ivar min_capacity: The minimum capacity all databases are guaranteed.
@@ -5709,7 +5892,7 @@ class ElasticPoolPerDatabaseSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticPoolPerformanceLevelCapability(_Model):
+class ElasticPoolPerformanceLevelCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Elastic Pool performance level capability.
 
     :ivar performance_level: The performance level for the pool.
@@ -5824,7 +6007,7 @@ class ElasticPoolPerformanceLevelCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticPoolProperties(_Model):
+class ElasticPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an elastic pool.
 
     :ivar state: The state of the elastic pool. Known values are: "Creating", "Ready", and
@@ -5860,6 +6043,8 @@ class ElasticPoolProperties(_Model):
     :ivar availability_zone: Specifies the availability zone the pool's primary replica is pinned
      to. Known values are: "NoPreference", "1", "2", and "3".
     :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
+    :ivar current_sku: The name and tier of the current SKU.
+    :vartype current_sku: ~azure.mgmt.sql.models.Sku
     """
 
     state: Optional[Union[str, "_models.ElasticPoolState"]] = rest_field(visibility=["read"])
@@ -5913,6 +6098,8 @@ class ElasticPoolProperties(_Model):
     )
     """Specifies the availability zone the pool's primary replica is pinned to. Known values are:
      \"NoPreference\", \"1\", \"2\", and \"3\"."""
+    current_sku: Optional["_models.Sku"] = rest_field(name="currentSku", visibility=["read"])
+    """The name and tier of the current SKU."""
 
     @overload
     def __init__(
@@ -5941,7 +6128,7 @@ class ElasticPoolProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticPoolUpdate(_Model):
+class ElasticPoolUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An elastic pool update.
 
     :ivar sku: An ARM Resource SKU.
@@ -5972,6 +6159,7 @@ class ElasticPoolUpdate(_Model):
         "auto_pause_delay",
         "preferred_enclave_type",
         "availability_zone",
+        "current_sku",
     ]
 
     @overload
@@ -6012,7 +6200,7 @@ class ElasticPoolUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ElasticPoolUpdateProperties(_Model):
+class ElasticPoolUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an elastic pool.
 
     :ivar max_size_bytes: The storage limit for the database elastic pool in bytes.
@@ -6043,6 +6231,8 @@ class ElasticPoolUpdateProperties(_Model):
     :ivar availability_zone: Specifies the availability zone the pool's primary replica is pinned
      to. Known values are: "NoPreference", "1", "2", and "3".
     :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
+    :ivar current_sku: The name and tier of the current SKU.
+    :vartype current_sku: ~azure.mgmt.sql.models.Sku
     """
 
     max_size_bytes: Optional[int] = rest_field(
@@ -6092,6 +6282,8 @@ class ElasticPoolUpdateProperties(_Model):
     )
     """Specifies the availability zone the pool's primary replica is pinned to. Known values are:
      \"NoPreference\", \"1\", \"2\", and \"3\"."""
+    current_sku: Optional["_models.Sku"] = rest_field(name="currentSku", visibility=["read"])
+    """The name and tier of the current SKU."""
 
     @overload
     def __init__(
@@ -6120,7 +6312,7 @@ class ElasticPoolUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionProtector(ProxyResource):
+class EncryptionProtector(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The server encryption protector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6198,7 +6390,7 @@ class EncryptionProtector(ProxyResource):
             super().__setattr__(key, value)
 
 
-class EncryptionProtectorProperties(_Model):
+class EncryptionProtectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for an encryption protector execution.
 
     :ivar subregion: Subregion of the encryption protector.
@@ -6260,7 +6452,7 @@ class EncryptionProtectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointCertificate(ProxyResource):
+class EndpointCertificate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate used on an endpoint on the Managed Instance.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6283,7 +6475,7 @@ class EndpointCertificate(ProxyResource):
     )
     """Resource properties."""
 
-    __flattened_items = ["public_blob"]
+    __flattened_items = ["public_blob", "trusted_root_certificates"]
 
     @overload
     def __init__(
@@ -6321,17 +6513,25 @@ class EndpointCertificate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class EndpointCertificateProperties(_Model):
+class EndpointCertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an endpoint certificate.
 
     :ivar public_blob: The certificate public blob.
     :vartype public_blob: str
+    :ivar trusted_root_certificates: Trusted root certificates required to validate the instance
+     certificate.
+    :vartype trusted_root_certificates:
+     list[~azure.mgmt.sql.models.EndpointTrustedRootCertificateInfo]
     """
 
     public_blob: Optional[str] = rest_field(
         name="publicBlob", visibility=["read", "create", "update", "delete", "query"]
     )
     """The certificate public blob."""
+    trusted_root_certificates: Optional[list["_models.EndpointTrustedRootCertificateInfo"]] = rest_field(
+        name="trustedRootCertificates", visibility=["read"]
+    )
+    """Trusted root certificates required to validate the instance certificate."""
 
     @overload
     def __init__(
@@ -6379,6 +6579,41 @@ class EndpointDetail(_Model):
     """The port an endpoint is connected to."""
 
 
+class EndpointTrustedRootCertificateInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Trusted root certificate required to validate the instance certificate.
+
+    :ivar subject: Root certificate subject name.
+    :vartype subject: str
+    :ivar public_blob: Root certificate public blob as DER encoded hex string.
+    :vartype public_blob: str
+    """
+
+    subject: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Root certificate subject name."""
+    public_blob: Optional[str] = rest_field(
+        name="publicBlob", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Root certificate public blob as DER encoded hex string."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subject: Optional[str] = None,
+        public_blob: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -6423,7 +6658,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -6451,7 +6686,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportDatabaseDefinition(_Model):
+class ExportDatabaseDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to perform export database operation.
 
     :ivar storage_key_type: Storage key type: StorageAccessKey, SharedAccessKey, or
@@ -6522,7 +6757,7 @@ class ExportDatabaseDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
+class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An extended database blob auditing policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6553,6 +6788,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         "is_azure_monitor_target_enabled",
         "queue_delay_ms",
         "is_managed_identity_in_use",
+        "required_fields",
         "state",
         "storage_endpoint",
         "storage_account_access_key",
@@ -6595,7 +6831,9 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ExtendedDatabaseBlobAuditingPolicyProperties(_Model):  # pylint: disable=name-too-long
+class ExtendedDatabaseBlobAuditingPolicyProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of an extended database blob auditing policy.
 
     :ivar predicate_expression: Specifies condition of where clause when creating an audit.
@@ -6704,6 +6942,11 @@ class ExtendedDatabaseBlobAuditingPolicyProperties(_Model):  # pylint: disable=n
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype is_managed_identity_in_use: bool
+    :ivar required_fields: Specifies the required fields to include in audit events (optional).
+     Each item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype required_fields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -6842,6 +7085,12 @@ class ExtendedDatabaseBlobAuditingPolicyProperties(_Model):  # pylint: disable=n
         name="isManagedIdentityInUse", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether Managed Identity is used to access blob storage."""
+    required_fields: Optional[list[str]] = rest_field(
+        name="requiredFields", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Union[str, "_models.BlobAuditingPolicyState"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6885,6 +7134,7 @@ class ExtendedDatabaseBlobAuditingPolicyProperties(_Model):  # pylint: disable=n
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
         is_managed_identity_in_use: Optional[bool] = None,
+        required_fields: Optional[list[str]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
@@ -6901,7 +7151,7 @@ class ExtendedDatabaseBlobAuditingPolicyProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ExtendedServerBlobAuditingPolicy(ProxyResource):
+class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An extended server blob auditing policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6933,6 +7183,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         "is_azure_monitor_target_enabled",
         "queue_delay_ms",
         "is_managed_identity_in_use",
+        "required_fields",
         "state",
         "storage_endpoint",
         "storage_account_access_key",
@@ -6975,7 +7226,9 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ExtendedServerBlobAuditingPolicyProperties(_Model):  # pylint: disable=name-too-long
+class ExtendedServerBlobAuditingPolicyProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of an extended server blob auditing policy.
 
     :ivar is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled, devops
@@ -7101,6 +7354,11 @@ class ExtendedServerBlobAuditingPolicyProperties(_Model):  # pylint: disable=nam
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype is_managed_identity_in_use: bool
+    :ivar required_fields: Specifies the required fields to include in audit events (optional).
+     Each item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype required_fields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -7258,6 +7516,12 @@ class ExtendedServerBlobAuditingPolicyProperties(_Model):  # pylint: disable=nam
         name="isManagedIdentityInUse", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether Managed Identity is used to access blob storage."""
+    required_fields: Optional[list[str]] = rest_field(
+        name="requiredFields", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Union[str, "_models.BlobAuditingPolicyState"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7302,6 +7566,7 @@ class ExtendedServerBlobAuditingPolicyProperties(_Model):  # pylint: disable=nam
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
         is_managed_identity_in_use: Optional[bool] = None,
+        required_fields: Optional[list[str]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
@@ -7318,7 +7583,7 @@ class ExtendedServerBlobAuditingPolicyProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class FailoverGroup(ProxyResource):
+class FailoverGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A failover group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7396,7 +7661,7 @@ class FailoverGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FailoverGroupProperties(_Model):
+class FailoverGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a failover group.
 
     :ivar read_write_endpoint: Read-write endpoint of the failover group instance. Required.
@@ -7465,7 +7730,7 @@ class FailoverGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverGroupReadOnlyEndpoint(_Model):
+class FailoverGroupReadOnlyEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Read-only endpoint of the failover group instance.
 
     :ivar failover_policy: Failover policy of the read-only endpoint for the failover group. Known
@@ -7504,7 +7769,7 @@ class FailoverGroupReadOnlyEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverGroupReadWriteEndpoint(_Model):
+class FailoverGroupReadWriteEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Read-write endpoint of the failover group instance.
 
     :ivar failover_policy: Failover policy of the read-write endpoint for the failover group. If
@@ -7548,7 +7813,7 @@ class FailoverGroupReadWriteEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverGroupUpdate(_Model):
+class FailoverGroupUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A failover group update request.
 
     :ivar properties: Resource properties.
@@ -7603,7 +7868,7 @@ class FailoverGroupUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class FailoverGroupUpdateProperties(_Model):
+class FailoverGroupUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a failover group update.
 
     :ivar read_write_endpoint: Read-write endpoint of the failover group instance.
@@ -7660,7 +7925,7 @@ class FailoverGroupUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceWithWritableName(_Model):
+class ResourceWithWritableName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM resource.
 
     :ivar id: Resource ID.
@@ -7696,7 +7961,9 @@ class ResourceWithWritableName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProxyResourceWithWritableName(ResourceWithWritableName):
+class ProxyResourceWithWritableName(
+    ResourceWithWritableName
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM proxy resource.
 
     :ivar id: Resource ID.
@@ -7725,7 +7992,7 @@ class ProxyResourceWithWritableName(ResourceWithWritableName):
         super().__init__(*args, **kwargs)
 
 
-class FirewallRule(ProxyResourceWithWritableName):
+class FirewallRule(ProxyResourceWithWritableName):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server firewall rule.
 
     :ivar id: Resource ID.
@@ -7782,7 +8049,7 @@ class FirewallRule(ProxyResourceWithWritableName):
             super().__setattr__(key, value)
 
 
-class FirewallRuleList(_Model):
+class FirewallRuleList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of server firewall rules.
 
     :ivar values_property:
@@ -7831,7 +8098,7 @@ class FreeLimitExhaustionBehaviorCapability(_Model):
      \"Default\", and \"Disabled\"."""
 
 
-class GeoBackupPolicy(ProxyResource):
+class GeoBackupPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Geo backup policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7900,7 +8167,7 @@ class GeoBackupPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GeoBackupPolicyProperties(_Model):
+class GeoBackupPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the geo backup policy.
 
     :ivar state: The state of the geo backup policy. Required. Known values are: "Enabled" and
@@ -7935,7 +8202,7 @@ class GeoBackupPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportExistingDatabaseDefinition(_Model):
+class ImportExistingDatabaseDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to perform import operation for existing database.
 
     :ivar storage_key_type: Storage key type: StorageAccessKey, SharedAccessKey, or
@@ -8006,7 +8273,9 @@ class ImportExistingDatabaseDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportExportExtensionsOperationResult(ProxyResource):
+class ImportExportExtensionsOperationResult(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Extension operation result resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8129,7 +8398,7 @@ class ImportExportExtensionsOperationResultProperties(_Model):  # pylint: disabl
     """Gets the status of private endpoints associated with this request."""
 
 
-class ImportExportOperationResult(ProxyResource):
+class ImportExportOperationResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An ImportExport operation result resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8252,7 +8521,7 @@ class ImportExportOperationResultProperties(_Model):
     """Gets the status of private endpoints associated with this request."""
 
 
-class ImportNewDatabaseDefinition(_Model):
+class ImportNewDatabaseDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to perform import operation for new database.
 
     :ivar database_name: Name of the import database.
@@ -8343,7 +8612,7 @@ class ImportNewDatabaseDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceFailoverGroup(ProxyResource):
+class InstanceFailoverGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An instance failover group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8412,7 +8681,7 @@ class InstanceFailoverGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class InstanceFailoverGroupProperties(_Model):
+class InstanceFailoverGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a instance failover group.
 
     :ivar secondary_type: Type of the geo-secondary instance. Set 'Standby' if the instance is used
@@ -8484,7 +8753,7 @@ class InstanceFailoverGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceFailoverGroupReadOnlyEndpoint(_Model):
+class InstanceFailoverGroupReadOnlyEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Read-only endpoint of the failover group instance.
 
     :ivar failover_policy: Failover policy of the read-only endpoint for the failover group. Known
@@ -8516,7 +8785,7 @@ class InstanceFailoverGroupReadOnlyEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceFailoverGroupReadWriteEndpoint(_Model):
+class InstanceFailoverGroupReadWriteEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Read-write endpoint of the failover group instance.
 
     :ivar failover_policy: Failover policy of the read-write endpoint for the failover group. If
@@ -8560,7 +8829,7 @@ class InstanceFailoverGroupReadWriteEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstancePool(TrackedResource):
+class InstancePool(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL instance pool.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8632,7 +8901,7 @@ class InstancePool(TrackedResource):
             super().__setattr__(key, value)
 
 
-class InstancePoolEditionCapability(_Model):
+class InstancePoolEditionCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance pool capability.
 
     :ivar name: The instance pool version name.
@@ -8676,7 +8945,7 @@ class InstancePoolEditionCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstancePoolFamilyCapability(_Model):
+class InstancePoolFamilyCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance pool family capability.
 
     :ivar name: Family name.
@@ -8726,7 +8995,7 @@ class InstancePoolFamilyCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstancePoolOperation(ProxyResource):
+class InstancePoolOperation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A instance pool operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8864,7 +9133,7 @@ class InstancePoolOperationProperties(_Model):
     """Whether the operation can be cancelled."""
 
 
-class InstancePoolProperties(_Model):
+class InstancePoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an instance pool.
 
     :ivar subnet_id: Resource ID of the subnet to place this instance pool in. Required.
@@ -8920,7 +9189,7 @@ class InstancePoolProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstancePoolUpdate(_Model):
+class InstancePoolUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update to an Instance pool.
 
     :ivar sku: The name and tier of the SKU.
@@ -8980,7 +9249,7 @@ class InstancePoolUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class InstancePoolVcoresCapability(_Model):
+class InstancePoolVcoresCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed instance virtual cores capability.
 
     :ivar name: The virtual cores identifier.
@@ -9026,7 +9295,7 @@ class InstancePoolVcoresCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPv6FirewallRule(ProxyResourceWithWritableName):
+class IPv6FirewallRule(ProxyResourceWithWritableName):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An IPv6 server firewall rule.
 
     :ivar id: Resource ID.
@@ -9083,7 +9352,7 @@ class IPv6FirewallRule(ProxyResourceWithWritableName):
             super().__setattr__(key, value)
 
 
-class IPv6ServerFirewallRuleProperties(_Model):
+class IPv6ServerFirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an IPv6 server firewall rule.
 
     :ivar start_i_pv6_address: The start IP address of the firewall rule. Must be IPv6 format.
@@ -9122,7 +9391,7 @@ class IPv6ServerFirewallRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Job(ProxyResource):
+class Job(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A job.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9183,7 +9452,7 @@ class Job(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobAgent(TrackedResource):
+class JobAgent(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL job agent.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9262,7 +9531,7 @@ class JobAgent(TrackedResource):
             super().__setattr__(key, value)
 
 
-class JobAgentEditionCapability(_Model):
+class JobAgentEditionCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The job agent edition capability.
 
     :ivar name: The job agent edition name.
@@ -9308,7 +9577,7 @@ class JobAgentEditionCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobAgentIdentity(_Model):
+class JobAgentIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Active Directory identity configuration for a resource.
 
     :ivar tenant_id: The job agent identity tenant id.
@@ -9353,7 +9622,7 @@ class JobAgentIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobAgentProperties(_Model):
+class JobAgentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a job agent.
 
     :ivar database_id: Resource ID of the database to store job metadata in. Required.
@@ -9387,7 +9656,7 @@ class JobAgentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobAgentServiceLevelObjectiveCapability(_Model):
+class JobAgentServiceLevelObjectiveCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The job agent service level objective capability.
 
     :ivar name: The service objective name.
@@ -9429,7 +9698,7 @@ class JobAgentServiceLevelObjectiveCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobAgentUpdate(_Model):
+class JobAgentUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update to an Azure SQL job agent.
 
     :ivar identity: Managed identity assigned to job agent.
@@ -9484,7 +9753,7 @@ class JobAgentUserAssignedIdentity(_Model):
     """The Azure Active Directory client id."""
 
 
-class JobAgentVersionCapability(_Model):
+class JobAgentVersionCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The job agent version capability.
 
     :ivar name: The job agent version name.
@@ -9528,7 +9797,7 @@ class JobAgentVersionCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobCredential(ProxyResource):
+class JobCredential(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A stored credential that can be used by a job to connect to target databases.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9589,7 +9858,7 @@ class JobCredential(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobCredentialProperties(_Model):
+class JobCredentialProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a job credential.
 
     :ivar username: The credential user name. Required.
@@ -9622,7 +9891,7 @@ class JobCredentialProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobExecution(ProxyResource):
+class JobExecution(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An execution of a job.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9697,7 +9966,7 @@ class JobExecution(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobExecutionProperties(_Model):
+class JobExecutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for an Azure SQL Database Elastic job execution.
 
     :ivar job_version: The job version number.
@@ -9806,7 +10075,7 @@ class JobExecutionTarget(_Model):
     """The database name."""
 
 
-class JobPrivateEndpoint(ProxyResource):
+class JobPrivateEndpoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A job agent private endpoint.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9867,7 +10136,7 @@ class JobPrivateEndpoint(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobPrivateEndpointProperties(_Model):
+class JobPrivateEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of job agent private endpoint.
 
     :ivar target_server_azure_resource_id: ARM resource id of the server the private endpoint will
@@ -9902,7 +10171,7 @@ class JobPrivateEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobProperties(_Model):
+class JobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a job.
 
     :ivar description: User-defined description of the job.
@@ -9939,7 +10208,7 @@ class JobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobSchedule(_Model):
+class JobSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scheduling properties of a job.
 
     :ivar start_time: Schedule start time.
@@ -9995,7 +10264,7 @@ class JobSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobStep(ProxyResource):
+class JobStep(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A job step.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10056,7 +10325,7 @@ class JobStep(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobStepAction(_Model):
+class JobStepAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The action to be executed by a job step.
 
     :ivar type: Type of action being executed by the job step. "TSql"
@@ -10098,7 +10367,7 @@ class JobStepAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobStepExecutionOptions(_Model):
+class JobStepExecutionOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The execution options of a job step.
 
     :ivar timeout_seconds: Execution timeout for the job step.
@@ -10158,7 +10427,7 @@ class JobStepExecutionOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobStepOutput(_Model):
+class JobStepOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The output configuration of a job step.
 
     :ivar type: The output destination type. "SqlDatabase"
@@ -10230,7 +10499,7 @@ class JobStepOutput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobStepProperties(_Model):
+class JobStepProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a job step.
 
     :ivar step_id: The job step's index within the job. If not specified when creating the job
@@ -10291,7 +10560,7 @@ class JobStepProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobTarget(_Model):
+class JobTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A job target, for example a specific database or a container of databases that is evaluated
     during job execution.
 
@@ -10368,7 +10637,7 @@ class JobTarget(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobTargetGroup(ProxyResource):
+class JobTargetGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A group of job targets.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10429,7 +10698,7 @@ class JobTargetGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobTargetGroupProperties(_Model):
+class JobTargetGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of job target group.
 
     :ivar members: Members of the target group. Required.
@@ -10474,7 +10743,7 @@ class JobVersion(ProxyResource):
     """
 
 
-class LedgerDigestUploads(ProxyResource):
+class LedgerDigestUploads(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure SQL Database ledger digest upload settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10535,7 +10804,7 @@ class LedgerDigestUploads(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LedgerDigestUploadsProperties(_Model):
+class LedgerDigestUploadsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a database ledger digest upload settings.
 
     :ivar digest_storage_endpoint: The digest storage endpoint, which must be either an Azure blob
@@ -10572,7 +10841,7 @@ class LedgerDigestUploadsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LicenseTypeCapability(_Model):
+class LicenseTypeCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The license type capability.
 
     :ivar name: License type identifier.
@@ -10610,7 +10879,7 @@ class LicenseTypeCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocationCapabilities(_Model):
+class LocationCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The location capability.
 
     :ivar name: The location name.
@@ -10674,7 +10943,9 @@ class LocationCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogicalDatabaseTransparentDataEncryption(ProxyResource):
+class LogicalDatabaseTransparentDataEncryption(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A logical database transparent data encryption scan state.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10752,7 +11023,7 @@ class LogSizeCapability(_Model):
      \"Terabytes\", \"Petabytes\", and \"Percent\"."""
 
 
-class LongTermRetentionBackup(ProxyResource):
+class LongTermRetentionBackup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A long term retention backup.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10827,7 +11098,9 @@ class LongTermRetentionBackup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LongTermRetentionBackupOperationResult(ProxyResource):
+class LongTermRetentionBackupOperationResult(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A LongTermRetentionBackup operation result resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10896,7 +11169,7 @@ class LongTermRetentionBackupOperationResult(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LongTermRetentionBackupProperties(_Model):
+class LongTermRetentionBackupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a long term retention backup.
 
     :ivar server_name: The server name that the backup database belong to.
@@ -11052,7 +11325,7 @@ class LongTermRetentionOperationResultProperties(_Model):  # pylint: disable=nam
     """Progress message."""
 
 
-class LongTermRetentionPolicy(ProxyResource):
+class LongTermRetentionPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A long term retention policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11120,7 +11393,7 @@ class LongTermRetentionPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LongTermRetentionPolicyProperties(_Model):
+class LongTermRetentionPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a long term retention policy.
 
     :ivar time_based_immutability: The setting for whether to enable time-based immutability for
@@ -11195,7 +11468,7 @@ class LongTermRetentionPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceConfigurationCapability(_Model):
+class MaintenanceConfigurationCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The maintenance configuration capability.
 
     :ivar name: Maintenance configuration name.
@@ -11238,7 +11511,7 @@ class MaintenanceConfigurationCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindowOptions(ProxyResource):
+class MaintenanceWindowOptions(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance window options.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11307,7 +11580,7 @@ class MaintenanceWindowOptions(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MaintenanceWindowOptionsProperties(_Model):
+class MaintenanceWindowOptionsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance window options properties.
 
     :ivar is_enabled: Whether maintenance windows are enabled for the database.
@@ -11379,7 +11652,7 @@ class MaintenanceWindowOptionsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindows(ProxyResource):
+class MaintenanceWindows(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance windows.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11440,7 +11713,7 @@ class MaintenanceWindows(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MaintenanceWindowsProperties(_Model):
+class MaintenanceWindowsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance windows resource properties.
 
     :ivar time_ranges:
@@ -11469,7 +11742,7 @@ class MaintenanceWindowsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindowTimeRange(_Model):
+class MaintenanceWindowTimeRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance window time range.
 
     :ivar day_of_week: Day of maintenance window. Known values are: "Sunday", "Monday", "Tuesday",
@@ -11511,7 +11784,9 @@ class MaintenanceWindowTimeRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedBackupShortTermRetentionPolicy(ProxyResource):
+class ManagedBackupShortTermRetentionPolicy(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A short term retention policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11534,7 +11809,7 @@ class ManagedBackupShortTermRetentionPolicy(ProxyResource):
     )
     """Resource properties."""
 
-    __flattened_items = ["retention_days"]
+    __flattened_items = ["retention_days", "lock_immutability", "immutability_status"]
 
     @overload
     def __init__(
@@ -11572,12 +11847,20 @@ class ManagedBackupShortTermRetentionPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedBackupShortTermRetentionPolicyProperties(_Model):  # pylint: disable=name-too-long
+class ManagedBackupShortTermRetentionPolicyProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a short term retention policy.
 
     :ivar retention_days: The backup retention period in days. This is how many days Point-in-Time
      Restore will be supported.
     :vartype retention_days: int
+    :ivar lock_immutability: Whether to lock the immutability of the backups governed by this short
+     term retention policy.
+    :vartype lock_immutability: bool
+    :ivar immutability_status: The immutability status of the backups governed by this short term
+     retention policy. Known values are: "Disabled", "Enabled", and "Locked".
+    :vartype immutability_status: str or ~azure.mgmt.sql.models.ImmutabilityStatus
     """
 
     retention_days: Optional[int] = rest_field(
@@ -11585,12 +11868,20 @@ class ManagedBackupShortTermRetentionPolicyProperties(_Model):  # pylint: disabl
     )
     """The backup retention period in days. This is how many days Point-in-Time Restore will be
      supported."""
+    lock_immutability: Optional[bool] = rest_field(name="lockImmutability", visibility=["create", "update"])
+    """Whether to lock the immutability of the backups governed by this short term retention policy."""
+    immutability_status: Optional[Union[str, "_models.ImmutabilityStatus"]] = rest_field(
+        name="immutabilityStatus", visibility=["read"]
+    )
+    """The immutability status of the backups governed by this short term retention policy. Known
+     values are: \"Disabled\", \"Enabled\", and \"Locked\"."""
 
     @overload
     def __init__(
         self,
         *,
         retention_days: Optional[int] = None,
+        lock_immutability: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -11604,7 +11895,7 @@ class ManagedBackupShortTermRetentionPolicyProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class ManagedDatabase(TrackedResource):
+class ManagedDatabase(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed database resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11695,7 +11986,9 @@ class ManagedDatabase(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedDatabaseAdvancedThreatProtection(ProxyResource):
+class ManagedDatabaseAdvancedThreatProtection(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed database Advanced Threat Protection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11790,7 +12083,7 @@ class ManagedDatabaseExtendedAccessibilityInfo(_Model):
     """For the root cause kind “TransparentDataEncryption”, the CMK URI."""
 
 
-class ManagedDatabaseMoveDefinition(_Model):
+class ManagedDatabaseMoveDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to perform a managed database move.
 
     :ivar destination_managed_database_id: The destination managed database ID. Required.
@@ -11820,7 +12113,7 @@ class ManagedDatabaseMoveDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDatabaseMoveOperationResult(ProxyResource):
+class ManagedDatabaseMoveOperationResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed database move operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11973,7 +12266,7 @@ class ManagedDatabaseMoveOperationResultProperties(_Model):  # pylint: disable=n
     """Whether or not the error is a user error."""
 
 
-class ManagedDatabaseProperties(_Model):
+class ManagedDatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed database's properties.
 
     :ivar collation: Collation of the managed database.
@@ -12327,7 +12620,7 @@ class ManagedDatabaseRestoreDetailsProperties(_Model):
     """Unrestorable files."""
 
 
-class ManagedDatabaseRestoreDetailsResult(ProxyResource):
+class ManagedDatabaseRestoreDetailsResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed database restore details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12422,7 +12715,7 @@ class ManagedDatabaseRestoreDetailsUnrestorableFileProperties(_Model):  # pylint
     """File name."""
 
 
-class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
+class ManagedDatabaseSecurityAlertPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed database security alert policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12492,7 +12785,7 @@ class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedDatabaseStartMoveDefinition(_Model):
+class ManagedDatabaseStartMoveDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to start a managed database move.
 
     :ivar destination_managed_database_id: The destination managed database ID. Required.
@@ -12529,7 +12822,7 @@ class ManagedDatabaseStartMoveDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDatabaseUpdate(_Model):
+class ManagedDatabaseUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An managed database update.
 
     :ivar properties: Resource properties.
@@ -12608,7 +12901,7 @@ class ManagedDatabaseUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ManagedInstance(TrackedResource):
+class ManagedInstance(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL managed instance.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12735,7 +13028,7 @@ class ManagedInstance(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceAdministrator(ProxyResource):
+class ManagedInstanceAdministrator(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL managed instance administrator.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12758,7 +13051,7 @@ class ManagedInstanceAdministrator(ProxyResource):
     )
     """Resource properties."""
 
-    __flattened_items = ["administrator_type", "login", "sid", "tenant_id"]
+    __flattened_items = ["administrator_type", "login", "sid", "tenant_id", "principal_type"]
 
     @overload
     def __init__(
@@ -12796,7 +13089,7 @@ class ManagedInstanceAdministrator(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceAdministratorProperties(_Model):
+class ManagedInstanceAdministratorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a managed instance administrator.
 
     :ivar administrator_type: Type of the managed instance administrator. Required.
@@ -12808,6 +13101,10 @@ class ManagedInstanceAdministratorProperties(_Model):
     :vartype sid: str
     :ivar tenant_id: Tenant ID of the managed instance administrator.
     :vartype tenant_id: str
+    :ivar principal_type: Principal type of the managed instance administrator. Known values are:
+     "User", "Group", and "Application".
+    :vartype principal_type: str or
+     ~azure.mgmt.sql.models.ManagedInstanceAdministratorPrincipalType
     """
 
     administrator_type: Union[str, "_models.ManagedInstanceAdministratorType"] = rest_field(
@@ -12820,6 +13117,11 @@ class ManagedInstanceAdministratorProperties(_Model):
     """SID (object ID) of the managed instance administrator. Required."""
     tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
     """Tenant ID of the managed instance administrator."""
+    principal_type: Optional[Union[str, "_models.ManagedInstanceAdministratorPrincipalType"]] = rest_field(
+        name="principalType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Principal type of the managed instance administrator. Known values are: \"User\", \"Group\",
+     and \"Application\"."""
 
     @overload
     def __init__(
@@ -12829,6 +13131,7 @@ class ManagedInstanceAdministratorProperties(_Model):
         login: str,
         sid: str,
         tenant_id: Optional[str] = None,
+        principal_type: Optional[Union[str, "_models.ManagedInstanceAdministratorPrincipalType"]] = None,
     ) -> None: ...
 
     @overload
@@ -12842,7 +13145,9 @@ class ManagedInstanceAdministratorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceAdvancedThreatProtection(ProxyResource):
+class ManagedInstanceAdvancedThreatProtection(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed instance Advanced Threat Protection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12903,7 +13208,9 @@ class ManagedInstanceAdvancedThreatProtection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceAzureADOnlyAuthentication(ProxyResource):
+class ManagedInstanceAzureADOnlyAuthentication(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Active Directory only authentication.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12964,7 +13271,7 @@ class ManagedInstanceAzureADOnlyAuthentication(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceAzureADOnlyAuthProperties(_Model):
+class ManagedInstanceAzureADOnlyAuthProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a active directory only authentication for Managed Instance.
 
     :ivar azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
@@ -12995,7 +13302,7 @@ class ManagedInstanceAzureADOnlyAuthProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceDtc(ProxyResource):
+class ManagedInstanceDtc(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SQL Managed Instance DTC.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13023,6 +13330,7 @@ class ManagedInstanceDtc(ProxyResource):
         "security_settings",
         "external_dns_suffix_search_list",
         "dtc_host_name_dns_suffix",
+        "fqdn_enabled",
         "provisioning_state",
     ]
 
@@ -13062,7 +13370,7 @@ class ManagedInstanceDtc(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceDtcProperties(_Model):
+class ManagedInstanceDtcProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of managed instance DTC.
 
     :ivar dtc_enabled: Active status of managed instance DTC.
@@ -13073,6 +13381,9 @@ class ManagedInstanceDtcProperties(_Model):
     :vartype external_dns_suffix_search_list: list[str]
     :ivar dtc_host_name_dns_suffix: Host name dns suffix of managed instance DTC.
     :vartype dtc_host_name_dns_suffix: str
+    :ivar fqdn_enabled: Status of FQDN of managed instance DTC. Toggling this setting might trigger
+     a restart of the managed instance.
+    :vartype fqdn_enabled: bool
     :ivar provisioning_state: Provisioning state of managed instance DTC. Known values are:
      "Created", "InProgress", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.sql.models.ProvisioningState
@@ -13092,6 +13403,11 @@ class ManagedInstanceDtcProperties(_Model):
     """External dns suffix search list of managed instance DTC."""
     dtc_host_name_dns_suffix: Optional[str] = rest_field(name="dtcHostNameDnsSuffix", visibility=["read"])
     """Host name dns suffix of managed instance DTC."""
+    fqdn_enabled: Optional[bool] = rest_field(
+        name="fqdnEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Status of FQDN of managed instance DTC. Toggling this setting might trigger a restart of the
+     managed instance."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -13105,6 +13421,7 @@ class ManagedInstanceDtcProperties(_Model):
         dtc_enabled: Optional[bool] = None,
         security_settings: Optional["_models.ManagedInstanceDtcSecuritySettings"] = None,
         external_dns_suffix_search_list: Optional[list[str]] = None,
+        fqdn_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -13118,7 +13435,7 @@ class ManagedInstanceDtcProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceDtcSecuritySettings(_Model):
+class ManagedInstanceDtcSecuritySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Security Settings of managed instance DTC.
 
     :ivar transaction_manager_communication_settings: Transaction Manager communication settings of
@@ -13183,7 +13500,9 @@ class ManagedInstanceDtcSecuritySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceDtcTransactionManagerCommunicationSettings(_Model):  # pylint: disable=name-too-long
+class ManagedInstanceDtcTransactionManagerCommunicationSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Transaction Manager Communication Settings of managed instance DTC.
 
     :ivar allow_inbound_enabled: Allow Inbound traffic to managed instance DTC.
@@ -13225,7 +13544,7 @@ class ManagedInstanceDtcTransactionManagerCommunicationSettings(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceEditionCapability(_Model):
+class ManagedInstanceEditionCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed server capability.
 
     :ivar name: The managed server version name.
@@ -13280,7 +13599,7 @@ class ManagedInstanceEditionCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceEncryptionProtector(ProxyResource):
+class ManagedInstanceEncryptionProtector(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed instance encryption protector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13346,7 +13665,9 @@ class ManagedInstanceEncryptionProtector(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceEncryptionProtectorProperties(_Model):  # pylint: disable=name-too-long
+class ManagedInstanceEncryptionProtectorProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for an encryption protector execution.
 
     :ivar server_key_name: The name of the managed instance key.
@@ -13400,7 +13721,7 @@ class ManagedInstanceEncryptionProtectorProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceExternalAdministrator(_Model):
+class ManagedInstanceExternalAdministrator(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a active directory administrator.
 
     :ivar administrator_type: Type of the sever administrator. "ActiveDirectory"
@@ -13461,7 +13782,7 @@ class ManagedInstanceExternalAdministrator(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceFamilyCapability(_Model):
+class ManagedInstanceFamilyCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed server family capability.
 
     :ivar name: Family name.
@@ -13519,7 +13840,7 @@ class ManagedInstanceFamilyCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceKey(ProxyResource):
+class ManagedInstanceKey(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed instance key.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13585,7 +13906,7 @@ class ManagedInstanceKey(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceKeyProperties(_Model):
+class ManagedInstanceKeyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a key execution.
 
     :ivar server_key_type: The key type like 'ServiceManaged', 'AzureKeyVault'. Required. Known
@@ -13632,7 +13953,9 @@ class ManagedInstanceKeyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceLongTermRetentionBackup(ProxyResource):
+class ManagedInstanceLongTermRetentionBackup(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A long term retention backup for a managed database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13664,6 +13987,10 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
         "backup_expiration_time",
         "backup_storage_redundancy",
         "backup_storage_access_tier",
+        "is_backup_immutable",
+        "time_based_immutability",
+        "time_based_immutability_mode",
+        "legal_hold_immutability",
     ]
 
     @overload
@@ -13723,6 +14050,19 @@ class ManagedInstanceLongTermRetentionBackupProperties(_Model):  # pylint: disab
     :ivar backup_storage_access_tier: The BackupStorageAccessTier for the LTR backup. Known values
      are: "Hot" and "Archive".
     :vartype backup_storage_access_tier: str or ~azure.mgmt.sql.models.BackupStorageAccessTier
+    :ivar is_backup_immutable: The setting whether the LTR backup is immutable.
+    :vartype is_backup_immutable: bool
+    :ivar time_based_immutability: The setting for whether or not time-based immutability is
+     enabled for the LTR backup. When time-based immutability is enabled and locked, the backup
+     cannot be deleted until BackupExpirationTime. Known values are: "Enabled" and "Disabled".
+    :vartype time_based_immutability: str or ~azure.mgmt.sql.models.TimeBasedImmutability
+    :ivar time_based_immutability_mode: The time-based immutability mode. Only applicable if
+     time-based immutability is enabled. Known values are: "Locked" and "Unlocked".
+    :vartype time_based_immutability_mode: str or ~azure.mgmt.sql.models.TimeBasedImmutabilityMode
+    :ivar legal_hold_immutability: The setting for whether LegalHold is enabled or disabled on the
+     LTR backup. When LegalHold is enabled, the backup cannot be deleted until the LegalHold is
+     removed. Known values are: "Enabled" and "Disabled".
+    :vartype legal_hold_immutability: str or ~azure.mgmt.sql.models.SetLegalHoldImmutability
     """
 
     managed_instance_name: Optional[str] = rest_field(name="managedInstanceName", visibility=["read"])
@@ -13752,9 +14092,30 @@ class ManagedInstanceLongTermRetentionBackupProperties(_Model):  # pylint: disab
         name="backupStorageAccessTier", visibility=["read"]
     )
     """The BackupStorageAccessTier for the LTR backup. Known values are: \"Hot\" and \"Archive\"."""
+    is_backup_immutable: Optional[bool] = rest_field(name="isBackupImmutable", visibility=["read"])
+    """The setting whether the LTR backup is immutable."""
+    time_based_immutability: Optional[Union[str, "_models.TimeBasedImmutability"]] = rest_field(
+        name="timeBasedImmutability", visibility=["read"]
+    )
+    """The setting for whether or not time-based immutability is enabled for the LTR backup. When
+     time-based immutability is enabled and locked, the backup cannot be deleted until
+     BackupExpirationTime. Known values are: \"Enabled\" and \"Disabled\"."""
+    time_based_immutability_mode: Optional[Union[str, "_models.TimeBasedImmutabilityMode"]] = rest_field(
+        name="timeBasedImmutabilityMode", visibility=["read"]
+    )
+    """The time-based immutability mode. Only applicable if time-based immutability is enabled. Known
+     values are: \"Locked\" and \"Unlocked\"."""
+    legal_hold_immutability: Optional[Union[str, "_models.SetLegalHoldImmutability"]] = rest_field(
+        name="legalHoldImmutability", visibility=["read"]
+    )
+    """The setting for whether LegalHold is enabled or disabled on the LTR backup. When LegalHold is
+     enabled, the backup cannot be deleted until the LegalHold is removed. Known values are:
+     \"Enabled\" and \"Disabled\"."""
 
 
-class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
+class ManagedInstanceLongTermRetentionPolicy(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A long term retention policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13779,6 +14140,8 @@ class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
 
     __flattened_items = [
         "backup_storage_access_tier",
+        "time_based_immutability",
+        "time_based_immutability_mode",
         "weekly_retention",
         "monthly_retention",
         "yearly_retention",
@@ -13821,12 +14184,23 @@ class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceLongTermRetentionPolicyProperties(_Model):  # pylint: disable=name-too-long
+class ManagedInstanceLongTermRetentionPolicyProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a long term retention policy.
 
     :ivar backup_storage_access_tier: The BackupStorageAccessTier for the LTR backups. Known values
      are: "Hot" and "Archive".
     :vartype backup_storage_access_tier: str or ~azure.mgmt.sql.models.BackupStorageAccessTier
+    :ivar time_based_immutability: The setting for whether to enable time-based immutability for
+     future backups. When set, future backups will have TimeBasedImmutability enabled. Known values
+     are: "Enabled" and "Disabled".
+    :vartype time_based_immutability: str or ~azure.mgmt.sql.models.TimeBasedImmutability
+    :ivar time_based_immutability_mode: The setting for time-based immutability mode for future
+     backup (Value can be either Locked or UnLocked. Only effective if TimeBasedImmutability is
+     enabled). Caution: Immutability of LTR backup cannot be removed if TimeBasedImmutabilityMode is
+     Locked. Known values are: "Locked" and "Unlocked".
+    :vartype time_based_immutability_mode: str or ~azure.mgmt.sql.models.TimeBasedImmutabilityMode
     :ivar weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
     :vartype weekly_retention: str
     :ivar monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601 format.
@@ -13841,6 +14215,19 @@ class ManagedInstanceLongTermRetentionPolicyProperties(_Model):  # pylint: disab
         name="backupStorageAccessTier", visibility=["read", "create", "update", "delete", "query"]
     )
     """The BackupStorageAccessTier for the LTR backups. Known values are: \"Hot\" and \"Archive\"."""
+    time_based_immutability: Optional[Union[str, "_models.TimeBasedImmutability"]] = rest_field(
+        name="timeBasedImmutability", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The setting for whether to enable time-based immutability for future backups. When set, future
+     backups will have TimeBasedImmutability enabled. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    time_based_immutability_mode: Optional[Union[str, "_models.TimeBasedImmutabilityMode"]] = rest_field(
+        name="timeBasedImmutabilityMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The setting for time-based immutability mode for future backup (Value can be either Locked or
+     UnLocked. Only effective if TimeBasedImmutability is enabled). Caution: Immutability of LTR
+     backup cannot be removed if TimeBasedImmutabilityMode is Locked. Known values are: \"Locked\"
+     and \"Unlocked\"."""
     weekly_retention: Optional[str] = rest_field(
         name="weeklyRetention", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -13863,6 +14250,8 @@ class ManagedInstanceLongTermRetentionPolicyProperties(_Model):  # pylint: disab
         self,
         *,
         backup_storage_access_tier: Optional[Union[str, "_models.BackupStorageAccessTier"]] = None,
+        time_based_immutability: Optional[Union[str, "_models.TimeBasedImmutability"]] = None,
+        time_based_immutability_mode: Optional[Union[str, "_models.TimeBasedImmutabilityMode"]] = None,
         weekly_retention: Optional[str] = None,
         monthly_retention: Optional[str] = None,
         yearly_retention: Optional[str] = None,
@@ -13880,7 +14269,9 @@ class ManagedInstanceLongTermRetentionPolicyProperties(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceMaintenanceConfigurationCapability(_Model):  # pylint: disable=name-too-long
+class ManagedInstanceMaintenanceConfigurationCapability(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The maintenance configuration capability.
 
     :ivar name: Maintenance configuration name.
@@ -13918,7 +14309,7 @@ class ManagedInstanceMaintenanceConfigurationCapability(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceOperation(ProxyResource):
+class ManagedInstanceOperation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed instance operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14112,7 +14503,7 @@ class ManagedInstanceOperationSteps(_Model):
     """The operation steps list."""
 
 
-class ManagedInstancePairInfo(_Model):
+class ManagedInstancePairInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pairs of Managed Instances in the failover group.
 
     :ivar primary_managed_instance_id: Id of Primary Managed Instance in pair.
@@ -14164,7 +14555,9 @@ class ManagedInstancePecProperty(_Model):
     """Private endpoint connection properties."""
 
 
-class ManagedInstancePrivateEndpointConnection(ProxyResource):
+class ManagedInstancePrivateEndpointConnection(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14225,7 +14618,9 @@ class ManagedInstancePrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstancePrivateEndpointConnectionProperties(_Model):  # pylint: disable=name-too-long
+class ManagedInstancePrivateEndpointConnectionProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a private endpoint connection.
 
     :ivar private_endpoint: Private endpoint which the connection belongs to.
@@ -14270,7 +14665,7 @@ class ManagedInstancePrivateEndpointConnectionProperties(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstancePrivateEndpointProperty(_Model):
+class ManagedInstancePrivateEndpointProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedInstancePrivateEndpointProperty.
 
     :ivar id: Resource id of the private endpoint.
@@ -14339,7 +14734,9 @@ class ManagedInstancePrivateLinkProperties(_Model):
     """The private link resource required zone names."""
 
 
-class ManagedInstancePrivateLinkServiceConnectionStateProperty(_Model):  # pylint: disable=name-too-long
+class ManagedInstancePrivateLinkServiceConnectionStateProperty(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ManagedInstancePrivateLinkServiceConnectionStateProperty.
 
     :ivar status: The private link service connection status. Required.
@@ -14376,7 +14773,7 @@ class ManagedInstancePrivateLinkServiceConnectionStateProperty(_Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceProperties(_Model):
+class ManagedInstanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a managed instance.
 
     :ivar provisioning_state: Provisioning state of managed instance. Known values are: "Created",
@@ -14747,7 +15144,7 @@ class ManagedInstanceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceQuery(ProxyResource):
+class ManagedInstanceQuery(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database query.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14808,7 +15205,7 @@ class ManagedInstanceQuery(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceUpdate(_Model):
+class ManagedInstanceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update request for an Azure SQL Database managed instance.
 
     :ivar sku: Managed instance sku.
@@ -14918,7 +15315,9 @@ class ManagedInstanceUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest(_Model):  # pylint: disable=name-too-long
+class ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Validate azure key vault encryption key.
 
     :ivar tde_key_uri: The URI of the key. Required.
@@ -14946,7 +15345,7 @@ class ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest(_Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceVcoresCapability(_Model):
+class ManagedInstanceVcoresCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed instance virtual cores capability.
 
     :ivar name: The virtual cores identifier.
@@ -15077,7 +15476,7 @@ class ManagedInstanceVcoresCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceVersionCapability(_Model):
+class ManagedInstanceVersionCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed instance capability.
 
     :ivar name: The server version name.
@@ -15128,7 +15527,9 @@ class ManagedInstanceVersionCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedInstanceVulnerabilityAssessment(ProxyResource):
+class ManagedInstanceVulnerabilityAssessment(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed instance vulnerability assessment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15194,7 +15595,9 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedInstanceVulnerabilityAssessmentProperties(_Model):  # pylint: disable=name-too-long
+class ManagedInstanceVulnerabilityAssessmentProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a managed instance vulnerability assessment.
 
     :ivar storage_container_path: A blob storage container path to hold the scan results (e.g.
@@ -15259,7 +15662,7 @@ class ManagedInstanceVulnerabilityAssessmentProperties(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class ManagedLedgerDigestUploads(ProxyResource):
+class ManagedLedgerDigestUploads(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure SQL Database ledger digest upload settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15320,7 +15723,7 @@ class ManagedLedgerDigestUploads(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedLedgerDigestUploadsProperties(_Model):
+class ManagedLedgerDigestUploadsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a database ledger digest upload settings.
 
     :ivar digest_storage_endpoint: The digest storage endpoint, which must be either an Azure blob
@@ -15357,7 +15760,7 @@ class ManagedLedgerDigestUploadsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServerDnsAlias(ProxyResource):
+class ManagedServerDnsAlias(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed server DNS alias.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15418,7 +15821,7 @@ class ManagedServerDnsAlias(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedServerDnsAliasAcquisition(_Model):
+class ManagedServerDnsAliasAcquisition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed server DNS alias acquisition request.
 
     :ivar old_managed_server_dns_alias_resource_id: The resource ID of the managed server DNS alias
@@ -15450,7 +15853,7 @@ class ManagedServerDnsAliasAcquisition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServerDnsAliasCreation(_Model):
+class ManagedServerDnsAliasCreation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed server dns alias creation request.
 
     :ivar create_dns_record: Whether or not DNS record should be created for this alias.
@@ -15495,7 +15898,7 @@ class ManagedServerDnsAliasProperties(_Model):
     """The fully qualified public DNS record for managed server alias."""
 
 
-class ManagedServerSecurityAlertPolicy(ProxyResource):
+class ManagedServerSecurityAlertPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed server security alert policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15565,7 +15968,7 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedTransparentDataEncryption(ProxyResource):
+class ManagedTransparentDataEncryption(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed database transparent data encryption state.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15626,7 +16029,9 @@ class ManagedTransparentDataEncryption(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedTransparentDataEncryptionProperties(_Model):  # pylint: disable=name-too-long
+class ManagedTransparentDataEncryptionProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a transparent data encryption.
 
     :ivar state: Specifies the state of the transparent data encryption. Required. Known values
@@ -15658,7 +16063,7 @@ class ManagedTransparentDataEncryptionProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class MaxLimitRangeCapability(_Model):
+class MaxLimitRangeCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The maximum limit range capability.
 
     :ivar min_value: Minimum value.
@@ -15722,7 +16127,7 @@ class MaxSizeCapability(_Model):
      \"Terabytes\", and \"Petabytes\"."""
 
 
-class MaxSizeRangeCapability(_Model):
+class MaxSizeRangeCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The maximum size range capability.
 
     :ivar min_value: Minimum value.
@@ -15773,7 +16178,7 @@ class MaxSizeRangeCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MinCapacityCapability(_Model):
+class MinCapacityCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The min capacity capability.
 
     :ivar value: Min capacity value.
@@ -15811,7 +16216,7 @@ class MinCapacityCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Name(_Model):
+class Name(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM Usage Name.
 
     :ivar value: Usage name value.
@@ -15846,7 +16251,7 @@ class Name(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkIsolationSettings(_Model):
+class NetworkIsolationSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the ARM resources for which to create private endpoint connection.
 
     :ivar storage_account_resource_id: The resource id for the storage account used to store BACPAC
@@ -15887,7 +16292,9 @@ class NetworkIsolationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSP Configuration for a server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15954,7 +16361,9 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of an NSP config.
 
     :ivar provisioning_state:
@@ -16004,7 +16413,7 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class NSPConfigAccessRule(_Model):
+class NSPConfigAccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSPConfigAccessRule.
 
     :ivar name:
@@ -16037,7 +16446,7 @@ class NSPConfigAccessRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NSPConfigAccessRuleProperties(_Model):
+class NSPConfigAccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSPConfigAccessRuleProperties.
 
     :ivar direction:
@@ -16093,7 +16502,7 @@ class NSPConfigAccessRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NSPConfigAssociation(_Model):
+class NSPConfigAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSPConfigAssociation.
 
     :ivar name:
@@ -16126,7 +16535,7 @@ class NSPConfigAssociation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NSPConfigNetworkSecurityPerimeterRule(_Model):
+class NSPConfigNetworkSecurityPerimeterRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSPConfigNetworkSecurityPerimeterRule.
 
     :ivar id:
@@ -16163,7 +16572,7 @@ class NSPConfigNetworkSecurityPerimeterRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NSPConfigPerimeter(_Model):
+class NSPConfigPerimeter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSPConfigPerimeter.
 
     :ivar id:
@@ -16200,7 +16609,7 @@ class NSPConfigPerimeter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NSPConfigProfile(_Model):
+class NSPConfigProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSPConfigProfile.
 
     :ivar name:
@@ -16239,7 +16648,7 @@ class NSPConfigProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NSPProvisioningIssue(_Model):
+class NSPProvisioningIssue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSPProvisioningIssue.
 
     :ivar name:
@@ -16272,7 +16681,7 @@ class NSPProvisioningIssue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NSPProvisioningIssueProperties(_Model):
+class NSPProvisioningIssueProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSPProvisioningIssueProperties.
 
     :ivar issue_type:
@@ -16385,7 +16794,7 @@ class OutboundEnvironmentEndpoint(_Model):
      correctly."""
 
 
-class OutboundFirewallRule(ProxyResource):
+class OutboundFirewallRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL DB Server Outbound Firewall Rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16457,7 +16866,7 @@ class OutboundFirewallRuleProperties(_Model):
     """The state of the outbound rule."""
 
 
-class PartnerInfo(_Model):
+class PartnerInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Partner server information for the failover group.
 
     :ivar id: Resource identifier of the partner server. Required.
@@ -16496,7 +16905,7 @@ class PartnerInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerRegionInfo(_Model):
+class PartnerRegionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Partner region information for the failover group.
 
     :ivar location: Geo location of the partner managed instances.
@@ -16597,7 +17006,7 @@ class PhaseDetails(_Model):
     """The operation phase information."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16658,7 +17067,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private endpoint connection.
 
     :ivar private_endpoint: Private endpoint which the connection belongs to.
@@ -16670,7 +17079,7 @@ class PrivateEndpointConnectionProperties(_Model):
     :vartype private_link_service_connection_state:
      ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection. Known values are:
-     "Approving", "Ready", "Dropping", "Failed", and "Rejecting".
+     "Created", "InProgress", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.sql.models.PrivateEndpointProvisioningState
     """
 
@@ -16687,8 +17096,8 @@ class PrivateEndpointConnectionProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.PrivateEndpointProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """State of the private endpoint connection. Known values are: \"Approving\", \"Ready\",
-     \"Dropping\", \"Failed\", and \"Rejecting\"."""
+    """State of the private endpoint connection. Known values are: \"Created\", \"InProgress\",
+     \"Succeeded\", \"Failed\", and \"Canceled\"."""
 
     @overload
     def __init__(
@@ -16730,7 +17139,7 @@ class PrivateEndpointConnectionRequestStatus(_Model):
     """Status of this private endpoint connection."""
 
 
-class PrivateEndpointProperty(_Model):
+class PrivateEndpointProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateEndpointProperty.
 
     :ivar id: Resource id of the private endpoint.
@@ -16799,7 +17208,9 @@ class PrivateLinkResourceProperties(_Model):
     """The private link resource required zone names."""
 
 
-class PrivateLinkServiceConnectionStateProperty(_Model):  # pylint: disable=name-too-long
+class PrivateLinkServiceConnectionStateProperty(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """PrivateLinkServiceConnectionStateProperty.
 
     :ivar status: The private link service connection status. Required. Known values are:
@@ -16862,7 +17273,7 @@ class QueryCheck(_Model):
     """SQL Vulnerability Assessment column names of query expected result."""
 
 
-class QueryMetricInterval(_Model):
+class QueryMetricInterval(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a query metrics interval.
 
     :ivar interval_start_time: The start time for the metric interval (ISO-8601 format).
@@ -16951,7 +17362,7 @@ class QueryMetricProperties(_Model):
     """Metric value when stdev aggregate function is used over the interval."""
 
 
-class QueryProperties(_Model):
+class QueryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a database query.
 
     :ivar query_text: Query text.
@@ -16979,7 +17390,7 @@ class QueryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryStatistics(ProxyResource):
+class QueryStatistics(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """QueryStatistics.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17040,7 +17451,7 @@ class QueryStatistics(ProxyResource):
             super().__setattr__(key, value)
 
 
-class QueryStatisticsProperties(_Model):
+class QueryStatisticsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a query execution statistics.
 
     :ivar database_name: Database name of the database in which this query was executed.
@@ -17086,7 +17497,7 @@ class QueryStatisticsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReadScaleCapability(_Model):
+class ReadScaleCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The read scale capability.
 
     :ivar max_number_of_replicas: The maximum number of read scale replicas.
@@ -17124,7 +17535,7 @@ class ReadScaleCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendedAction(ProxyResource):
+class RecommendedAction(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database, Server or Elastic Pool Recommended Action.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17323,7 +17734,7 @@ class RecommendedActionMetricInfo(_Model):
     """Gets the value of the metric in the time interval given by this MetricInfo."""
 
 
-class RecommendedActionProperties(_Model):
+class RecommendedActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a Database, Server or Elastic Pool Recommended Action.
 
     :ivar recommendation_reason: Gets the reason for recommending this action. e.g.,
@@ -17490,7 +17901,7 @@ class RecommendedActionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendedActionStateInfo(_Model):
+class RecommendedActionStateInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information of current state for an Azure SQL Database, Server or Elastic Pool
     Recommended Action.
 
@@ -17561,7 +17972,7 @@ class RecommendedActionStateInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendedSensitivityLabelUpdate(ProxyResource):
+class RecommendedSensitivityLabelUpdate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A recommended sensitivity label update operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17622,7 +18033,7 @@ class RecommendedSensitivityLabelUpdate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RecommendedSensitivityLabelUpdateList(_Model):
+class RecommendedSensitivityLabelUpdateList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of recommended sensitivity label update operations.
 
     :ivar operations:
@@ -17651,7 +18062,9 @@ class RecommendedSensitivityLabelUpdateList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendedSensitivityLabelUpdateProperties(_Model):  # pylint: disable=name-too-long
+class RecommendedSensitivityLabelUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of an operation executed on a recommended sensitivity label.
 
     :ivar op: Required. Known values are: "enable" and "disable".
@@ -17696,7 +18109,7 @@ class RecommendedSensitivityLabelUpdateProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class RecoverableDatabase(ProxyResource):
+class RecoverableDatabase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A recoverable database resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17763,7 +18176,7 @@ class RecoverableDatabase(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RecoverableDatabaseProperties(_Model):
+class RecoverableDatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The recoverable database's properties.
 
     :ivar edition: The edition of the database.
@@ -17811,7 +18224,7 @@ class RecoverableDatabaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoverableManagedDatabase(ProxyResource):
+class RecoverableManagedDatabase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A recoverable managed database resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17883,7 +18296,9 @@ class RecoverableManagedDatabaseProperties(_Model):
     """The last available backup date."""
 
 
-class RefreshExternalGovernanceStatusOperationResult(ProxyResource):  # pylint: disable=name-too-long
+class RefreshExternalGovernanceStatusOperationResult(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """An RefreshExternalGovernanceStatus operation result resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17945,7 +18360,9 @@ class RefreshExternalGovernanceStatusOperationResult(ProxyResource):  # pylint: 
             super().__setattr__(key, value)
 
 
-class RefreshExternalGovernanceStatusOperationResultMI(ProxyResource):  # pylint: disable=name-too-long
+class RefreshExternalGovernanceStatusOperationResultMI(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """An RefreshExternalGovernanceStatus operation result resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18099,7 +18516,7 @@ class Remediation(_Model):
     """SQL Vulnerability Assessment optional link to remediate in Azure Portal."""
 
 
-class ReplicationLink(ProxyResource):
+class ReplicationLink(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A replication link.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18173,7 +18590,7 @@ class ReplicationLink(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ReplicationLinkProperties(_Model):
+class ReplicationLinkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a replication link.
 
     :ivar partner_server: Resource partner server.
@@ -18257,7 +18674,7 @@ class ReplicationLinkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationLinkUpdate(ProxyResource):
+class ReplicationLinkUpdate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A replication link update request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18318,7 +18735,7 @@ class ReplicationLinkUpdate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ReplicationLinkUpdateProperties(_Model):
+class ReplicationLinkUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a replication link update.
 
     :ivar link_type: Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED.
@@ -18350,7 +18767,7 @@ class ReplicationLinkUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceIdentity(_Model):
+class ResourceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Active Directory identity configuration for a resource.
 
     :ivar user_assigned_identities: The resource ids of the user assigned identities to use.
@@ -18399,7 +18816,7 @@ class ResourceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceMoveDefinition(_Model):
+class ResourceMoveDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to perform a resource move (rename).
 
     :ivar id: The target ID for the resource. Required.
@@ -18427,7 +18844,7 @@ class ResourceMoveDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableDroppedDatabase(ProxyResource):
+class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A restorable dropped database resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18511,7 +18928,7 @@ class RestorableDroppedDatabase(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RestorableDroppedDatabaseProperties(_Model):
+class RestorableDroppedDatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The restorable dropped database's properties.
 
     :ivar database_name: The name of the database.
@@ -18571,7 +18988,7 @@ class RestorableDroppedDatabaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableDroppedManagedDatabase(TrackedResource):
+class RestorableDroppedManagedDatabase(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A restorable dropped managed database resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18663,7 +19080,7 @@ class RestorableDroppedManagedDatabaseProperties(_Model):  # pylint: disable=nam
     """The earliest restore date of the database (ISO8601 format)."""
 
 
-class RestorePoint(ProxyResource):
+class RestorePoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Database restore points.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18763,7 +19180,7 @@ class RestorePointProperties(_Model):
     """The label of restore point for backup request by user."""
 
 
-class ScheduleItem(_Model):
+class ScheduleItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule info describing when the server should be started or stopped.
 
     :ivar start_day: Start day. Required. Known values are: "Sunday", "Monday", "Tuesday",
@@ -18814,7 +19231,7 @@ class ScheduleItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityAlertPolicyProperties(_Model):
+class SecurityAlertPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a security alert policy.
 
     :ivar state: Specifies the state of the policy, whether it is enabled or disabled or a policy
@@ -18902,7 +19319,7 @@ class SecurityAlertPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityAlertsPolicyProperties(_Model):
+class SecurityAlertsPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a security alert policy.
 
     :ivar state: Specifies the state of the policy, whether it is enabled or disabled or a policy
@@ -18989,7 +19406,7 @@ class SecurityAlertsPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityEvent(ProxyResource):
+class SecurityEvent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A security event.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19147,7 +19564,7 @@ class SecurityEventSqlInjectionAdditionalProperties(_Model):  # pylint: disable=
     """The sql error message."""
 
 
-class SensitivityLabel(ProxyResource):
+class SensitivityLabel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A sensitivity label.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19223,7 +19640,7 @@ class SensitivityLabel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SensitivityLabelProperties(_Model):
+class SensitivityLabelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a sensitivity label.
 
     :ivar schema_name: The schema name.
@@ -19304,7 +19721,7 @@ class SensitivityLabelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SensitivityLabelUpdate(ProxyResource):
+class SensitivityLabelUpdate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A sensitivity label update operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19365,7 +19782,7 @@ class SensitivityLabelUpdate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SensitivityLabelUpdateList(_Model):
+class SensitivityLabelUpdateList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of sensitivity label update operations.
 
     :ivar operations:
@@ -19394,7 +19811,7 @@ class SensitivityLabelUpdateList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SensitivityLabelUpdateProperties(_Model):
+class SensitivityLabelUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an operation executed on a sensitivity label.
 
     :ivar op: Required. Known values are: "set" and "remove".
@@ -19446,7 +19863,7 @@ class SensitivityLabelUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Server(TrackedResource):
+class Server(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL Database server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19543,7 +19960,7 @@ class Server(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ServerAdvancedThreatProtection(ProxyResource):
+class ServerAdvancedThreatProtection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server Advanced Threat Protection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19604,7 +20021,7 @@ class ServerAdvancedThreatProtection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerAutomaticTuning(ProxyResource):
+class ServerAutomaticTuning(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server-level Automatic Tuning.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19665,7 +20082,7 @@ class ServerAutomaticTuning(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerAzureADAdministrator(ProxyResource):
+class ServerAzureADAdministrator(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Active Directory administrator.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19726,7 +20143,7 @@ class ServerAzureADAdministrator(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerAzureADOnlyAuthentication(ProxyResource):
+class ServerAzureADOnlyAuthentication(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Active Directory only authentication.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19787,7 +20204,7 @@ class ServerAzureADOnlyAuthentication(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerBlobAuditingPolicy(ProxyResource):
+class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server blob auditing policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19818,6 +20235,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         "is_azure_monitor_target_enabled",
         "queue_delay_ms",
         "is_managed_identity_in_use",
+        "required_fields",
         "state",
         "storage_endpoint",
         "storage_account_access_key",
@@ -19860,7 +20278,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerBlobAuditingPolicyProperties(_Model):
+class ServerBlobAuditingPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a server blob auditing policy.
 
     :ivar is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled, devops
@@ -19984,6 +20402,11 @@ class ServerBlobAuditingPolicyProperties(_Model):
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype is_managed_identity_in_use: bool
+    :ivar required_fields: Specifies the required fields to include in audit events (optional).
+     Each item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype required_fields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -20137,6 +20560,12 @@ class ServerBlobAuditingPolicyProperties(_Model):
         name="isManagedIdentityInUse", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether Managed Identity is used to access blob storage."""
+    required_fields: Optional[list[str]] = rest_field(
+        name="requiredFields", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Union[str, "_models.BlobAuditingPolicyState"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -20180,6 +20609,7 @@ class ServerBlobAuditingPolicyProperties(_Model):
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
         is_managed_identity_in_use: Optional[bool] = None,
+        required_fields: Optional[list[str]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
@@ -20196,7 +20626,7 @@ class ServerBlobAuditingPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerConfigurationOption(ProxyResource):
+class ServerConfigurationOption(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server configuration option.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20257,7 +20687,7 @@ class ServerConfigurationOption(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerConfigurationOptionProperties(_Model):
+class ServerConfigurationOptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of server configuration option.
 
     :ivar server_configuration_option_value: Value of the server configuration option. Required.
@@ -20295,7 +20725,7 @@ class ServerConfigurationOptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerConnectionPolicy(ProxyResource):
+class ServerConnectionPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server connection policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20364,7 +20794,7 @@ class ServerConnectionPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerConnectionPolicyProperties(_Model):
+class ServerConnectionPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a server connection policy.
 
     :ivar connection_type: The server connection type. Required. Known values are: "Default",
@@ -20396,7 +20826,7 @@ class ServerConnectionPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerDevOpsAuditingSettings(ProxyResource):
+class ServerDevOpsAuditingSettings(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server DevOps auditing settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20464,7 +20894,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerDevOpsAuditSettingsProperties(_Model):
+class ServerDevOpsAuditSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a server DevOps audit settings.
 
     :ivar is_azure_monitor_target_enabled: Specifies whether DevOps audit events are sent to Azure
@@ -20586,7 +21016,7 @@ class ServerDevOpsAuditSettingsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerDnsAlias(ProxyResource):
+class ServerDnsAlias(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server DNS alias.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20647,7 +21077,7 @@ class ServerDnsAlias(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerDnsAliasAcquisition(_Model):
+class ServerDnsAliasAcquisition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server dns alias acquisition request.
 
     :ivar old_server_dns_alias_id: The id of the server alias that will be acquired to point to
@@ -20689,7 +21119,7 @@ class ServerDnsAliasProperties(_Model):
     """The fully qualified DNS record for alias."""
 
 
-class ServerExternalAdministrator(_Model):
+class ServerExternalAdministrator(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a active directory administrator.
 
     :ivar administrator_type: Type of the sever administrator. "ActiveDirectory"
@@ -20750,7 +21180,7 @@ class ServerExternalAdministrator(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerFirewallRuleProperties(_Model):
+class ServerFirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a server firewall rule.
 
     :ivar start_ip_address: The start IP address of the firewall rule. Must be IPv4 format. Use
@@ -20792,7 +21222,7 @@ class ServerFirewallRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerInfo(_Model):
+class ServerInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server info for the server trust group.
 
     :ivar server_id: Server Id. Required.
@@ -20820,7 +21250,7 @@ class ServerInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerKey(ProxyResource):
+class ServerKey(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server key.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20898,7 +21328,7 @@ class ServerKey(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerKeyProperties(_Model):
+class ServerKeyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a server key execution.
 
     :ivar subregion: Subregion of the server key.
@@ -20963,7 +21393,7 @@ class ServerKeyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerOperation(ProxyResource):
+class ServerOperation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21116,7 +21546,7 @@ class ServerPrivateEndpointConnection(_Model):
     """Private endpoint connection properties."""
 
 
-class ServerProperties(_Model):
+class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a server.
 
     :ivar administrator_login: Administrator username for the server. Once created it cannot be
@@ -21157,12 +21587,12 @@ class ServerProperties(_Model):
     :vartype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
     :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access for
      this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype restrict_outbound_network_access: str or
      ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar is_i_pv6_enabled: Whether or not to enable IPv6 support for this server.  Value is
-     optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled" and
-     "Disabled".
+     optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled",
+     "Disabled", and "SecuredByPerimeter".
     :vartype is_i_pv6_enabled: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar external_governance_status: Status of external governance. Known values are: "Enabled"
      and "Disabled".
@@ -21224,12 +21654,14 @@ class ServerProperties(_Model):
         name="restrictOutboundNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether or not to restrict outbound network access for this server.  Value is optional but if
-     passed in, must be 'Enabled' or 'Disabled'. Known values are: \"Enabled\" and \"Disabled\"."""
+     passed in, must be 'Enabled' or 'Disabled'. Known values are: \"Enabled\", \"Disabled\", and
+     \"SecuredByPerimeter\"."""
     is_i_pv6_enabled: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = rest_field(
         name="isIPv6Enabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether or not to enable IPv6 support for this server.  Value is optional but if passed in,
-     must be 'Enabled' or 'Disabled'. Known values are: \"Enabled\" and \"Disabled\"."""
+     must be 'Enabled' or 'Disabled'. Known values are: \"Enabled\", \"Disabled\", and
+     \"SecuredByPerimeter\"."""
     external_governance_status: Optional[Union[str, "_models.ExternalGovernanceStatus"]] = rest_field(
         name="externalGovernanceStatus", visibility=["read"]
     )
@@ -21274,7 +21706,7 @@ class ServerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerSecurityAlertPolicy(ProxyResource):
+class ServerSecurityAlertPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server security alert policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21344,7 +21776,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerTrustCertificate(ProxyResource):
+class ServerTrustCertificate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server trust certificate imported from box to enable connection between box and Sql Managed
     Instance.
 
@@ -21406,7 +21838,7 @@ class ServerTrustCertificate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerTrustCertificateProperties(_Model):
+class ServerTrustCertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a server trust certificate.
 
     :ivar public_blob: The certificate public blob.
@@ -21444,7 +21876,7 @@ class ServerTrustCertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerTrustGroup(ProxyResource):
+class ServerTrustGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server trust group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21505,7 +21937,7 @@ class ServerTrustGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerTrustGroupProperties(_Model):
+class ServerTrustGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a server trust group.
 
     :ivar group_members: Group members information for the server trust group. Required.
@@ -21543,7 +21975,7 @@ class ServerTrustGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerUpdate(_Model):
+class ServerUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update request for an Azure SQL Database server.
 
     :ivar identity: Server identity.
@@ -21624,7 +22056,7 @@ class ServerUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ServerUsage(ProxyResource):
+class ServerUsage(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usage metric of a server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21647,7 +22079,7 @@ class ServerUsage(ProxyResource):
     )
     """Resource properties."""
 
-    __flattened_items = ["display_name", "current_value", "limit", "unit"]
+    __flattened_items = ["display_name", "current_value", "limit", "unit", "resource_name", "next_reset_time"]
 
     @overload
     def __init__(
@@ -21696,6 +22128,10 @@ class ServerUsageProperties(_Model):
     :vartype limit: float
     :ivar unit: Unit of the metric.
     :vartype unit: str
+    :ivar resource_name: The name of the resource.
+    :vartype resource_name: str
+    :ivar next_reset_time: The next reset time for the metric (ISO8601 format).
+    :vartype next_reset_time: ~datetime.datetime
     """
 
     display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
@@ -21706,9 +22142,15 @@ class ServerUsageProperties(_Model):
     """Boundary value of the metric."""
     unit: Optional[str] = rest_field(visibility=["read"])
     """Unit of the metric."""
+    resource_name: Optional[str] = rest_field(name="resourceName", visibility=["read"])
+    """The name of the resource."""
+    next_reset_time: Optional[datetime.datetime] = rest_field(
+        name="nextResetTime", visibility=["read"], format="rfc3339"
+    )
+    """The next reset time for the metric (ISO8601 format)."""
 
 
-class ServerVersionCapability(_Model):
+class ServerVersionCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The server capability.
 
     :ivar name: The server version name.
@@ -21759,7 +22201,7 @@ class ServerVersionCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerVulnerabilityAssessment(ProxyResource):
+class ServerVulnerabilityAssessment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server vulnerability assessment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21825,7 +22267,7 @@ class ServerVulnerabilityAssessment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerVulnerabilityAssessmentProperties(_Model):
+class ServerVulnerabilityAssessmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a server Vulnerability Assessment.
 
     :ivar storage_container_path: A blob storage container path to hold the scan results (e.g.
@@ -21890,7 +22332,7 @@ class ServerVulnerabilityAssessmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceObjectiveCapability(_Model):
+class ServiceObjectiveCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The service objectives capability.
 
     :ivar id: The unique ID of the service objective.
@@ -22003,7 +22445,7 @@ class ServiceObjectiveCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServicePrincipal(_Model):
+class ServicePrincipal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed instance's service principal configuration for a resource.
 
     :ivar principal_id: The Azure Active Directory application object id.
@@ -22045,7 +22487,7 @@ class ServicePrincipal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An ARM Resource SKU.
 
     :ivar name: The name of the SKU, typically, a letter + Number code, e.g. P3. Required.
@@ -22095,7 +22537,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlAgentConfiguration(ProxyResource):
+class SqlAgentConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A recoverable managed database resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22156,7 +22598,7 @@ class SqlAgentConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SqlAgentConfigurationProperties(_Model):
+class SqlAgentConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sql agent configuration properties.
 
     :ivar state: The state of Sql Agent. Known values are: "Enabled" and "Disabled".
@@ -22186,7 +22628,7 @@ class SqlAgentConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlVulnerabilityAssessment(ProxyResource):
+class SqlVulnerabilityAssessment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A SQL Vulnerability Assessment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22247,7 +22689,9 @@ class SqlVulnerabilityAssessment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SqlVulnerabilityAssessmentPolicyProperties(_Model):  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentPolicyProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SqlVulnerabilityAssessmentPolicyProperties.
 
     :ivar state: Specifies the state of the SQL Vulnerability Assessment, whether it is enabled or
@@ -22296,7 +22740,9 @@ class SqlVulnerabilityAssessmentScanError(_Model):
     """The error message."""
 
 
-class SqlVulnerabilityAssessmentScanRecord(ProxyResource):
+class SqlVulnerabilityAssessmentScanRecord(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A vulnerability assessment scan record.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22501,7 +22947,9 @@ class SqlVulnerabilityAssessmentScanResultProperties(_Model):  # pylint: disable
     """SQL Vulnerability Assessment rule metadata."""
 
 
-class SqlVulnerabilityAssessmentScanResults(ProxyResource):
+class SqlVulnerabilityAssessmentScanResults(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -22572,7 +23020,7 @@ class SqlVulnerabilityAssessmentScanResults(ProxyResource):
             super().__setattr__(key, value)
 
 
-class StartStopManagedInstanceSchedule(ProxyResource):
+class StartStopManagedInstanceSchedule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed instance's Start/Stop schedule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22633,7 +23081,9 @@ class StartStopManagedInstanceSchedule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class StartStopManagedInstanceScheduleProperties(_Model):  # pylint: disable=name-too-long
+class StartStopManagedInstanceScheduleProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of managed instance's Start/Stop schedule.
 
     :ivar description: The description of the schedule.
@@ -22684,7 +23134,7 @@ class StartStopManagedInstanceScheduleProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class StorageCapability(_Model):
+class StorageCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The storage account type capability.
 
     :ivar storage_account_type: The storage account type for the database's backups. Known values
@@ -22727,7 +23177,7 @@ class StorageCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionUsage(ProxyResource):
+class SubscriptionUsage(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usage Metric of a Subscription in a Location.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22811,7 +23261,7 @@ class SubscriptionUsageProperties(_Model):
     """Unit of the metric."""
 
 
-class SynapseLinkWorkspace(ProxyResource):
+class SynapseLinkWorkspace(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Synapse link workspace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22872,7 +23322,7 @@ class SynapseLinkWorkspace(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SynapseLinkWorkspaceInfoProperties(_Model):
+class SynapseLinkWorkspaceInfoProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Synapse link workspaces.
 
     :ivar workspace_id: Synapse link workspace id.
@@ -22909,7 +23359,7 @@ class SynapseLinkWorkspaceInfoProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SynapseLinkWorkspaceProperties(_Model):
+class SynapseLinkWorkspaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Synapse link workspaces.
 
     :ivar workspaces: List of all synapselink workspaces.
@@ -22939,7 +23389,7 @@ class SynapseLinkWorkspaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SyncAgent(ProxyResource):
+class SyncAgent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL Database sync agent.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23019,7 +23469,7 @@ class SyncAgentKeyProperties(_Model):
     """Key of sync agent."""
 
 
-class SyncAgentLinkedDatabase(ProxyResource):
+class SyncAgentLinkedDatabase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL Database sync agent linked database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23115,7 +23565,7 @@ class SyncAgentLinkedDatabaseProperties(_Model):
     """User name of the sync agent linked database."""
 
 
-class SyncAgentProperties(_Model):
+class SyncAgentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an Azure SQL Database sync agent.
 
     :ivar name: Name of the sync agent.
@@ -23262,7 +23712,7 @@ class SyncFullSchemaTableColumn(_Model):
     """Quoted name of the column."""
 
 
-class SyncGroup(ProxyResource):
+class SyncGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL Database sync group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23280,6 +23730,8 @@ class SyncGroup(ProxyResource):
     :vartype properties: ~azure.mgmt.sql.models.SyncGroupProperties
     :ivar sku: The name and capacity of the SKU.
     :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar identity: Sync group authentication information.
+    :vartype identity: ~azure.mgmt.sql.models.DataSyncParticipantIdentity
     """
 
     properties: Optional["_models.SyncGroupProperties"] = rest_field(
@@ -23288,6 +23740,10 @@ class SyncGroup(ProxyResource):
     """Resource properties."""
     sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name and capacity of the SKU."""
+    identity: Optional["_models.DataSyncParticipantIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sync group authentication information."""
 
     __flattened_items = [
         "interval",
@@ -23310,6 +23766,7 @@ class SyncGroup(ProxyResource):
         *,
         properties: Optional["_models.SyncGroupProperties"] = None,
         sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.DataSyncParticipantIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -23373,7 +23830,7 @@ class SyncGroupLogProperties(_Model):
     """OperationStatus of the sync group log."""
 
 
-class SyncGroupProperties(_Model):
+class SyncGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a sync group with support to MI.
 
     :ivar interval: Sync interval of the sync group.
@@ -23469,7 +23926,7 @@ class SyncGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SyncGroupSchema(_Model):
+class SyncGroupSchema(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of sync group schema.
 
     :ivar tables: List of tables in sync group schema.
@@ -23506,7 +23963,7 @@ class SyncGroupSchema(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SyncGroupSchemaTable(_Model):
+class SyncGroupSchemaTable(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of table in sync group schema.
 
     :ivar columns: List of columns in sync group schema.
@@ -23543,7 +24000,7 @@ class SyncGroupSchemaTable(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SyncGroupSchemaTableColumn(_Model):
+class SyncGroupSchemaTableColumn(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of column in sync group table.
 
     :ivar quoted_name: Quoted name of sync group table column.
@@ -23583,7 +24040,7 @@ class SyncGroupSchemaTableColumn(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SyncMember(ProxyResource):
+class SyncMember(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL Database sync member.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23599,12 +24056,18 @@ class SyncMember(ProxyResource):
     :vartype system_data: ~azure.mgmt.sql.models.SystemData
     :ivar properties: Resource properties.
     :vartype properties: ~azure.mgmt.sql.models.SyncMemberProperties
+    :ivar identity: Sync member authentication information.
+    :vartype identity: ~azure.mgmt.sql.models.DataSyncParticipantIdentity
     """
 
     properties: Optional["_models.SyncMemberProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Resource properties."""
+    identity: Optional["_models.DataSyncParticipantIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sync member authentication information."""
 
     __flattened_items = [
         "database_type",
@@ -23626,6 +24089,7 @@ class SyncMember(ProxyResource):
         self,
         *,
         properties: Optional["_models.SyncMemberProperties"] = None,
+        identity: Optional["_models.DataSyncParticipantIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -23657,7 +24121,7 @@ class SyncMember(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SyncMemberProperties(_Model):
+class SyncMemberProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a sync member with support to MI.
 
     :ivar database_type: Database type of the sync member. Known values are: "AzureSqlDatabase" and
@@ -23769,7 +24233,7 @@ class SyncMemberProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -23836,7 +24300,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TdeCertificate(ProxyResource):
+class TdeCertificate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A TDE certificate that can be uploaded into a server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23897,7 +24361,7 @@ class TdeCertificate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TdeCertificateProperties(_Model):
+class TdeCertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a TDE certificate.
 
     :ivar private_blob: The base64 encoded certificate private blob. Required.
@@ -23930,7 +24394,7 @@ class TdeCertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeZone(ProxyResource):
+class TimeZone(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Time Zone property.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24006,7 +24470,7 @@ class TimeZoneProperties(_Model):
     """The time zone display name."""
 
 
-class TopQueries(_Model):
+class TopQueries(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TopQueries.
 
     :ivar number_of_queries: Requested number of top queries.
@@ -24062,7 +24526,7 @@ class TopQueries(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransparentDataEncryptionProperties(_Model):
+class TransparentDataEncryptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a transparent data encryption scan.
 
     :ivar state: Specifies the state of the transparent data encryption. Required. Known values
@@ -24103,7 +24567,7 @@ class TransparentDataEncryptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateLongTermRetentionBackupParameters(_Model):
+class UpdateLongTermRetentionBackupParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the information necessary to perform long term retention backup update operation.
 
     :ivar properties: Resource properties.
@@ -24153,7 +24617,9 @@ class UpdateLongTermRetentionBackupParameters(_Model):
             super().__setattr__(key, value)
 
 
-class UpdateLongTermRetentionBackupParametersProperties(_Model):  # pylint: disable=name-too-long
+class UpdateLongTermRetentionBackupParametersProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Contains the properties to perform long term retention backup copy operation.
 
     :ivar requested_backup_storage_redundancy: The storage redundancy type of the copied backup.
@@ -24186,7 +24652,9 @@ class UpdateLongTermRetentionBackupParametersProperties(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class UpdateVirtualClusterDnsServersOperation(ProxyResource):
+class UpdateVirtualClusterDnsServersOperation(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A refresh DNS servers operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24247,7 +24715,7 @@ class UpdateVirtualClusterDnsServersOperation(ProxyResource):
             super().__setattr__(key, value)
 
 
-class UpsertManagedServerOperationParameters(_Model):
+class UpsertManagedServerOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UpsertManagedServerOperationParameters.
 
     :ivar family:
@@ -24288,7 +24756,9 @@ class UpsertManagedServerOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpsertManagedServerOperationStepWithEstimatesAndDuration(_Model):  # pylint: disable=name-too-long
+class UpsertManagedServerOperationStepWithEstimatesAndDuration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """UpsertManagedServerOperationStepWithEstimatesAndDuration.
 
     :ivar step_start_time:
@@ -24446,7 +24916,7 @@ class VaRule(_Model):
     """SQL Vulnerability Assessment benchmark references."""
 
 
-class VirtualCluster(TrackedResource):
+class VirtualCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure SQL virtual cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24526,7 +24996,7 @@ class VirtualClusterDnsServersProperties(_Model):
      \"InProgress\"."""
 
 
-class VirtualClusterProperties(_Model):
+class VirtualClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a virtual cluster.
 
     :ivar subnet_id: Subnet resource ID for the virtual cluster.
@@ -24562,7 +25032,7 @@ class VirtualClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualClusterUpdate(_Model):
+class VirtualClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update request for virtual cluster.
 
     :ivar properties: Resource properties.
@@ -24617,7 +25087,7 @@ class VirtualClusterUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class VirtualNetworkRule(ProxyResource):
+class VirtualNetworkRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A virtual network rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24678,7 +25148,7 @@ class VirtualNetworkRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VirtualNetworkRuleProperties(_Model):
+class VirtualNetworkRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a virtual network rule.
 
     :ivar virtual_network_subnet_id: The ARM resource id of the virtual network subnet. Required.
@@ -24722,7 +25192,9 @@ class VirtualNetworkRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VulnerabilityAssessmentRecurringScansProperties(_Model):  # pylint: disable=name-too-long
+class VulnerabilityAssessmentRecurringScansProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a Vulnerability Assessment recurring scans.
 
     :ivar is_enabled: Recurring scans state.
@@ -24781,7 +25253,7 @@ class VulnerabilityAssessmentScanError(_Model):
     """The error message."""
 
 
-class VulnerabilityAssessmentScanRecord(ProxyResource):
+class VulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A vulnerability assessment scan record.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24895,7 +25367,7 @@ class VulnerabilityAssessmentScanRecordProperties(_Model):  # pylint: disable=na
     """The number of failed security checks."""
 
 
-class WorkloadClassifier(ProxyResource):
+class WorkloadClassifier(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload classifier operations for a data warehouse.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24956,7 +25428,7 @@ class WorkloadClassifier(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadClassifierProperties(_Model):
+class WorkloadClassifierProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload classifier definition. For more information look at
     sys.workload_management_workload_classifiers (DMV).
 
@@ -25010,7 +25482,7 @@ class WorkloadClassifierProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadGroup(ProxyResource):
+class WorkloadGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload group operations for a data warehouse.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -25078,7 +25550,7 @@ class WorkloadGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadGroupProperties(_Model):
+class WorkloadGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload group definition. For more information look at sys.workload_management_workload_groups
     (DMV).
 
@@ -25143,7 +25615,7 @@ class WorkloadGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ZonePinningCapability(_Model):
+class ZonePinningCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The zone pinning capability.
 
     :ivar availability_zone: Name of the availability zone.

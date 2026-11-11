@@ -4,9 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import (
-    Mapping,
     Any,
-    TypeVar,
     Optional,
     Dict,
     Tuple,
@@ -14,9 +12,6 @@ from typing import (
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from .._azureappconfigurationproviderbase import _RefreshTimer
-
-JSON = Mapping[str, Any]
-_T = TypeVar("_T")
 
 
 class _SecretProviderBase:
@@ -31,7 +26,7 @@ class _SecretProviderBase:
         )
 
         if kwargs.get("secret_refresh_interval", 60) < 1:
-            raise ValueError("Secret refresh interval must be greater than 1 second.")
+            raise ValueError("Secret refresh interval must be at least 1 second.")
 
         self.secret_refresh_timer: Optional[_RefreshTimer] = (
             _RefreshTimer(refresh_interval=kwargs.pop("secret_refresh_interval", 60))

@@ -1,6 +1,6 @@
 {
-  "apiVersion": "2026-05-01-preview",
+  "apiVersion": "2026-08-01-preview",
   "apiVersions": {
-    "Search": "2026-05-01-preview"
+    "Search": "2026-08-01-preview"
   }
 }

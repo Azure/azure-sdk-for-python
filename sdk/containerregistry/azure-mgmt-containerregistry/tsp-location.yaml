@@ -1,4 +1,4 @@
 directory: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/Registry
-commit: f38407491be7389b1e99f83c76c123f70c1a8ba2
+commit: 1a69077975e0c7510d65d7d92e4fbacc325cd411
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

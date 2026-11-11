@@ -12,7 +12,7 @@
   },
   "models": {
     "_comment": "Required when using fieldSchema unless the resource has defaults set via samples/sample_update_defaults.py. Leaving it set is always safe.",
-    "completion": "gpt-4.1",
+    "completion": "gpt-5.2",
     "embedding": "text-embedding-3-large"
   },
   "fieldSchema": {

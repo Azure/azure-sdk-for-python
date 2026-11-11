@@ -29,6 +29,7 @@ from .operations import (
     ExpansionJobsOperations,
     ImportJobsOperations,
     Operations,
+    RebalanceJobsOperations,
     SkusOperations,
     StorageTargetOperations,
     StorageTargetsOperations,
@@ -48,7 +49,7 @@ if TYPE_CHECKING:
 
 class StorageCacheManagementClient(
     _StorageCacheManagementClientOperationsMixin
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """A Storage Cache provides scalable caching service for NAS clients, serving data from either
     NFSv3 or Blob at-rest storage (referred to as "Storage Targets"). These operations allow you to
     manage Caches.
@@ -65,6 +66,8 @@ class StorageCacheManagementClient(
     :vartype auto_import_jobs: azure.mgmt.storagecache.operations.AutoImportJobsOperations
     :ivar expansion_jobs: ExpansionJobsOperations operations
     :vartype expansion_jobs: azure.mgmt.storagecache.operations.ExpansionJobsOperations
+    :ivar rebalance_jobs: RebalanceJobsOperations operations
+    :vartype rebalance_jobs: azure.mgmt.storagecache.operations.RebalanceJobsOperations
     :ivar caches: CachesOperations operations
     :vartype caches: azure.mgmt.storagecache.operations.CachesOperations
     :ivar storage_targets: StorageTargetsOperations operations
@@ -88,7 +91,7 @@ class StorageCacheManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-01-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-08-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -149,6 +152,7 @@ class StorageCacheManagementClient(
         self.import_jobs = ImportJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.auto_import_jobs = AutoImportJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.expansion_jobs = ExpansionJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rebalance_jobs = RebalanceJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.caches = CachesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.storage_targets = StorageTargetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.storage_target = StorageTargetOperations(self._client, self._config, self._serialize, self._deserialize)

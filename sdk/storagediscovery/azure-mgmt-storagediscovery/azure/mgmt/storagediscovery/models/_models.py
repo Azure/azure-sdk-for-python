@@ -17,6 +17,147 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AzureBlobStorageCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Blob Storage capability configuration.
+
+    :ivar capacity_details: The capacity details configuration for Azure Blob Storage. Required.
+    :vartype capacity_details: ~azure.mgmt.storagediscovery.models.CapacityDetails
+    :ivar prefix_configurations: The prefix configurations that scope the capacity details to
+     specific storage accounts, containers, and prefixes.
+    :vartype prefix_configurations: list[~azure.mgmt.storagediscovery.models.PrefixConfiguration]
+    """
+
+    capacity_details: "_models.CapacityDetails" = rest_field(
+        name="capacityDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The capacity details configuration for Azure Blob Storage. Required."""
+    prefix_configurations: Optional[list["_models.PrefixConfiguration"]] = rest_field(
+        name="prefixConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The prefix configurations that scope the capacity details to specific storage accounts,
+     containers, and prefixes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        capacity_details: "_models.CapacityDetails",
+        prefix_configurations: Optional[list["_models.PrefixConfiguration"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureBlobStorageCapabilityUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Blob Storage capability configuration that can be updated.
+
+    :ivar capacity_details: The capacity details configuration to update for Azure Blob Storage.
+    :vartype capacity_details: ~azure.mgmt.storagediscovery.models.CapacityDetailsUpdate
+    :ivar prefix_configurations: The prefix configurations to update for Azure Blob Storage.
+    :vartype prefix_configurations:
+     list[~azure.mgmt.storagediscovery.models.PrefixConfigurationUpdate]
+    """
+
+    capacity_details: Optional["_models.CapacityDetailsUpdate"] = rest_field(
+        name="capacityDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The capacity details configuration to update for Azure Blob Storage."""
+    prefix_configurations: Optional[list["_models.PrefixConfigurationUpdate"]] = rest_field(
+        name="prefixConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The prefix configurations to update for Azure Blob Storage."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        capacity_details: Optional["_models.CapacityDetailsUpdate"] = None,
+        prefix_configurations: Optional[list["_models.PrefixConfigurationUpdate"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The capacity details configuration.
+
+    :ivar status: The enablement status of the capacity details capability. Required. Known values
+     are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.storagediscovery.models.CapabilityStatus
+    """
+
+    status: Union[str, "_models.CapabilityStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The enablement status of the capacity details capability. Required. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.CapabilityStatus"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityDetailsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The capacity details configuration that can be updated.
+
+    :ivar status: The enablement status to update for the capacity details capability. Known values
+     are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.storagediscovery.models.CapabilityStatus
+    """
+
+    status: Optional[Union[str, "_models.CapabilityStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The enablement status to update for the capacity details capability. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.CapabilityStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -61,7 +202,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -89,7 +230,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -147,7 +288,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -175,6 +316,93 @@ class OperationDisplay(_Model):
     description: Optional[str] = rest_field(visibility=["read"])
     """The short, localized friendly description of the operation; suitable for tool tips and detailed
      views."""
+
+
+class PrefixConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A prefix configuration that scopes capacity details to a specific storage account, container,
+    and prefix.
+
+    :ivar storage_account_name: The name of the storage account. Required.
+    :vartype storage_account_name: str
+    :ivar container_name: The name of the blob container within the storage account. Required.
+    :vartype container_name: str
+    :ivar prefix: The blob prefix within the container to scope capacity details to. An empty value
+     scopes to the entire container. Must not start with a '/'.
+    :vartype prefix: str
+    """
+
+    storage_account_name: str = rest_field(
+        name="storageAccountName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the storage account. Required."""
+    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the blob container within the storage account. Required."""
+    prefix: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The blob prefix within the container to scope capacity details to. An empty value scopes to the
+     entire container. Must not start with a '/'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_account_name: str,
+        container_name: str,
+        prefix: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrefixConfigurationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A prefix configuration that can be updated.
+
+    :ivar storage_account_name: The name of the storage account.
+    :vartype storage_account_name: str
+    :ivar container_name: The name of the blob container within the storage account.
+    :vartype container_name: str
+    :ivar prefix: The blob prefix within the container to scope capacity details to. An empty value
+     scopes to the entire container. Must not start with a '/'.
+    :vartype prefix: str
+    """
+
+    storage_account_name: Optional[str] = rest_field(
+        name="storageAccountName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the storage account."""
+    container_name: Optional[str] = rest_field(
+        name="containerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the blob container within the storage account."""
+    prefix: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The blob prefix within the container to scope capacity details to. An empty value scopes to the
+     entire container. Must not start with a '/'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_account_name: Optional[str] = None,
+        container_name: Optional[str] = None,
+        prefix: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Resource(_Model):
@@ -205,7 +433,69 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class StorageDiscoveryScope(_Model):
+class StorageDiscoveryCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The capabilities configured for a storage discovery workspace.
+
+    :ivar azure_blob_storage: The Azure Blob Storage capability configuration for the storage
+     discovery workspace. Required.
+    :vartype azure_blob_storage: ~azure.mgmt.storagediscovery.models.AzureBlobStorageCapability
+    """
+
+    azure_blob_storage: "_models.AzureBlobStorageCapability" = rest_field(
+        name="azureBlobStorage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Blob Storage capability configuration for the storage discovery workspace. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_blob_storage: "_models.AzureBlobStorageCapability",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageDiscoveryCapabilitiesUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The capabilities that can be updated for a storage discovery workspace.
+
+    :ivar azure_blob_storage: The Azure Blob Storage capability configuration to update.
+    :vartype azure_blob_storage:
+     ~azure.mgmt.storagediscovery.models.AzureBlobStorageCapabilityUpdate
+    """
+
+    azure_blob_storage: Optional["_models.AzureBlobStorageCapabilityUpdate"] = rest_field(
+        name="azureBlobStorage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Blob Storage capability configuration to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_blob_storage: Optional["_models.AzureBlobStorageCapabilityUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageDiscoveryScope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage Discovery Scope. This had added validations.
 
     :ivar display_name: Display name of the collection. Required.
@@ -253,7 +543,7 @@ class StorageDiscoveryScope(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -297,7 +587,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class StorageDiscoveryWorkspace(TrackedResource):
+class StorageDiscoveryWorkspace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Storage Discovery Workspace resource. This resource configures the collection of storage
     account metrics.
 
@@ -345,13 +635,15 @@ class StorageDiscoveryWorkspace(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class StorageDiscoveryWorkspaceProperties(_Model):
+class StorageDiscoveryWorkspaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage Discovery Workspace Properties.
 
     :ivar sku: The storage discovery sku. Known values are: "Standard" and "Free".
     :vartype sku: str or ~azure.mgmt.storagediscovery.models.StorageDiscoverySku
     :ivar description: The description of the storage discovery workspace.
     :vartype description: str
+    :ivar capabilities: The capabilities configured for the storage discovery workspace.
+    :vartype capabilities: ~azure.mgmt.storagediscovery.models.StorageDiscoveryCapabilities
     :ivar workspace_roots: The view level storage discovery data estate. Required.
     :vartype workspace_roots: list[str]
     :ivar scopes: The scopes of the storage discovery workspace. Required.
@@ -368,6 +660,10 @@ class StorageDiscoveryWorkspaceProperties(_Model):
     """The storage discovery sku. Known values are: \"Standard\" and \"Free\"."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the storage discovery workspace."""
+    capabilities: Optional["_models.StorageDiscoveryCapabilities"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The capabilities configured for the storage discovery workspace."""
     workspace_roots: list[str] = rest_field(
         name="workspaceRoots", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -390,6 +686,7 @@ class StorageDiscoveryWorkspaceProperties(_Model):
         scopes: list["_models.StorageDiscoveryScope"],
         sku: Optional[Union[str, "_models.StorageDiscoverySku"]] = None,
         description: Optional[str] = None,
+        capabilities: Optional["_models.StorageDiscoveryCapabilities"] = None,
     ) -> None: ...
 
     @overload
@@ -403,7 +700,9 @@ class StorageDiscoveryWorkspaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageDiscoveryWorkspacePropertiesUpdate(_Model):  # pylint: disable=name-too-long
+class StorageDiscoveryWorkspacePropertiesUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The template for adding updateable properties.
 
     :ivar sku: The storage discovery sku. Known values are: "Standard" and "Free".
@@ -414,6 +713,8 @@ class StorageDiscoveryWorkspacePropertiesUpdate(_Model):  # pylint: disable=name
     :vartype workspace_roots: list[str]
     :ivar scopes: The scopes of the storage discovery workspace.
     :vartype scopes: list[~azure.mgmt.storagediscovery.models.StorageDiscoveryScope]
+    :ivar capabilities: The capabilities configured for the storage discovery workspace.
+    :vartype capabilities: ~azure.mgmt.storagediscovery.models.StorageDiscoveryCapabilitiesUpdate
     """
 
     sku: Optional[Union[str, "_models.StorageDiscoverySku"]] = rest_field(
@@ -430,6 +731,10 @@ class StorageDiscoveryWorkspacePropertiesUpdate(_Model):  # pylint: disable=name
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The scopes of the storage discovery workspace."""
+    capabilities: Optional["_models.StorageDiscoveryCapabilitiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The capabilities configured for the storage discovery workspace."""
 
     @overload
     def __init__(
@@ -439,6 +744,7 @@ class StorageDiscoveryWorkspacePropertiesUpdate(_Model):  # pylint: disable=name
         description: Optional[str] = None,
         workspace_roots: Optional[list[str]] = None,
         scopes: Optional[list["_models.StorageDiscoveryScope"]] = None,
+        capabilities: Optional["_models.StorageDiscoveryCapabilitiesUpdate"] = None,
     ) -> None: ...
 
     @overload
@@ -452,7 +758,7 @@ class StorageDiscoveryWorkspacePropertiesUpdate(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class StorageDiscoveryWorkspaceUpdate(_Model):
+class StorageDiscoveryWorkspaceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The template for adding updateable properties.
 
     :ivar tags: Resource tags.
@@ -488,7 +794,7 @@ class StorageDiscoveryWorkspaceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

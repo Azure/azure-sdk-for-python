@@ -28,6 +28,7 @@ from azure.mgmt.relationships import RelationshipsMgmtClient
 def main():
     client = RelationshipsMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.service_group_member_relationships.get(
@@ -37,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2023-09-01-preview/ServiceGroupMemberRelationships_Get.json
+# x-ms-original-file: 2026-08-01/ServiceGroupMemberRelationships_Get.json
 if __name__ == "__main__":
     main()

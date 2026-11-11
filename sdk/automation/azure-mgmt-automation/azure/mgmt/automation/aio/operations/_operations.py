@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -215,7 +215,6 @@ from .._configuration import AutomationClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -473,7 +472,7 @@ class SoftwareUpdateConfigurationsOperations:
         resource_group_name: str,
         automation_account_name: str,
         software_update_configuration_name: str,
-        parameters: JSON,
+        parameters: _types.SoftwareUpdateConfiguration,
         *,
         client_request_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -490,7 +489,7 @@ class SoftwareUpdateConfigurationsOperations:
          created. Required.
         :type software_update_configuration_name: str
         :param parameters: Request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.SoftwareUpdateConfiguration
         :keyword client_request_id: Identifies this specific client request. Default value is None.
         :paramtype client_request_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -543,7 +542,7 @@ class SoftwareUpdateConfigurationsOperations:
         resource_group_name: str,
         automation_account_name: str,
         software_update_configuration_name: str,
-        parameters: Union[_models.SoftwareUpdateConfiguration, JSON, IO[bytes]],
+        parameters: Union[_models.SoftwareUpdateConfiguration, _types.SoftwareUpdateConfiguration, IO[bytes]],
         *,
         client_request_id: Optional[str] = None,
         **kwargs: Any
@@ -558,10 +557,10 @@ class SoftwareUpdateConfigurationsOperations:
         :param software_update_configuration_name: The name of the software update configuration to be
          created. Required.
         :type software_update_configuration_name: str
-        :param parameters: Request body. Is one of the following types: SoftwareUpdateConfiguration,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.SoftwareUpdateConfiguration or JSON or
-         IO[bytes]
+        :param parameters: Request body. Is either a SoftwareUpdateConfiguration type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.automation.models.SoftwareUpdateConfiguration or
+         ~azure.mgmt.automation.types.SoftwareUpdateConfiguration or IO[bytes]
         :keyword client_request_id: Identifies this specific client request. Default value is None.
         :paramtype client_request_id: str
         :return: SoftwareUpdateConfiguration. The SoftwareUpdateConfiguration is compatible with
@@ -938,7 +937,7 @@ class HybridRunbookWorkersOperations:
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
         hybrid_runbook_worker_id: str,
-        hybrid_runbook_worker_creation_parameters: JSON,
+        hybrid_runbook_worker_creation_parameters: _types.HybridRunbookWorkerCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -956,7 +955,8 @@ class HybridRunbookWorkersOperations:
         :type hybrid_runbook_worker_id: str
         :param hybrid_runbook_worker_creation_parameters: The create or update parameters for hybrid
          runbook worker. Required.
-        :type hybrid_runbook_worker_creation_parameters: JSON
+        :type hybrid_runbook_worker_creation_parameters:
+         ~azure.mgmt.automation.types.HybridRunbookWorkerCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1006,7 +1006,9 @@ class HybridRunbookWorkersOperations:
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
         hybrid_runbook_worker_id: str,
-        hybrid_runbook_worker_creation_parameters: Union[_models.HybridRunbookWorkerCreateParameters, JSON, IO[bytes]],
+        hybrid_runbook_worker_creation_parameters: Union[
+            _models.HybridRunbookWorkerCreateParameters, _types.HybridRunbookWorkerCreateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.HybridRunbookWorker:
         """Create a hybrid runbook worker.
@@ -1021,10 +1023,11 @@ class HybridRunbookWorkersOperations:
         :param hybrid_runbook_worker_id: The hybrid runbook worker id. Required.
         :type hybrid_runbook_worker_id: str
         :param hybrid_runbook_worker_creation_parameters: The create or update parameters for hybrid
-         runbook worker. Is one of the following types: HybridRunbookWorkerCreateParameters, JSON,
-         IO[bytes] Required.
+         runbook worker. Is either a HybridRunbookWorkerCreateParameters type or a IO[bytes] type.
+         Required.
         :type hybrid_runbook_worker_creation_parameters:
-         ~azure.mgmt.automation.models.HybridRunbookWorkerCreateParameters or JSON or IO[bytes]
+         ~azure.mgmt.automation.models.HybridRunbookWorkerCreateParameters or
+         ~azure.mgmt.automation.types.HybridRunbookWorkerCreateParameters or IO[bytes]
         :return: HybridRunbookWorker. The HybridRunbookWorker is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.HybridRunbookWorker
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1140,7 +1143,7 @@ class HybridRunbookWorkersOperations:
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
         hybrid_runbook_worker_id: str,
-        hybrid_runbook_worker_creation_parameters: Optional[JSON] = None,
+        hybrid_runbook_worker_creation_parameters: Optional[_types.HybridRunbookWorkerCreateParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1158,7 +1161,8 @@ class HybridRunbookWorkersOperations:
         :type hybrid_runbook_worker_id: str
         :param hybrid_runbook_worker_creation_parameters: The create or update parameters for hybrid
          runbook worker. Default value is None.
-        :type hybrid_runbook_worker_creation_parameters: JSON
+        :type hybrid_runbook_worker_creation_parameters:
+         ~azure.mgmt.automation.types.HybridRunbookWorkerCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1209,7 +1213,7 @@ class HybridRunbookWorkersOperations:
         hybrid_runbook_worker_group_name: str,
         hybrid_runbook_worker_id: str,
         hybrid_runbook_worker_creation_parameters: Optional[
-            Union[_models.HybridRunbookWorkerCreateParameters, JSON, IO[bytes]]
+            Union[_models.HybridRunbookWorkerCreateParameters, _types.HybridRunbookWorkerCreateParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> _models.HybridRunbookWorker:
@@ -1225,10 +1229,11 @@ class HybridRunbookWorkersOperations:
         :param hybrid_runbook_worker_id: The hybrid runbook worker id. Required.
         :type hybrid_runbook_worker_id: str
         :param hybrid_runbook_worker_creation_parameters: The create or update parameters for hybrid
-         runbook worker. Is one of the following types: HybridRunbookWorkerCreateParameters, JSON,
-         IO[bytes] Default value is None.
+         runbook worker. Is either a HybridRunbookWorkerCreateParameters type or a IO[bytes] type.
+         Default value is None.
         :type hybrid_runbook_worker_creation_parameters:
-         ~azure.mgmt.automation.models.HybridRunbookWorkerCreateParameters or JSON or IO[bytes]
+         ~azure.mgmt.automation.models.HybridRunbookWorkerCreateParameters or
+         ~azure.mgmt.automation.types.HybridRunbookWorkerCreateParameters or IO[bytes]
         :return: HybridRunbookWorker. The HybridRunbookWorker is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.HybridRunbookWorker
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1533,7 +1538,7 @@ class HybridRunbookWorkersOperations:
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
         hybrid_runbook_worker_id: str,
-        hybrid_runbook_worker_move_parameters: JSON,
+        hybrid_runbook_worker_move_parameters: _types.HybridRunbookWorkerMoveParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1551,7 +1556,8 @@ class HybridRunbookWorkersOperations:
         :type hybrid_runbook_worker_id: str
         :param hybrid_runbook_worker_move_parameters: The hybrid runbook worker move parameters.
          Required.
-        :type hybrid_runbook_worker_move_parameters: JSON
+        :type hybrid_runbook_worker_move_parameters:
+         ~azure.mgmt.automation.types.HybridRunbookWorkerMoveParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1601,7 +1607,9 @@ class HybridRunbookWorkersOperations:
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
         hybrid_runbook_worker_id: str,
-        hybrid_runbook_worker_move_parameters: Union[_models.HybridRunbookWorkerMoveParameters, JSON, IO[bytes]],
+        hybrid_runbook_worker_move_parameters: Union[
+            _models.HybridRunbookWorkerMoveParameters, _types.HybridRunbookWorkerMoveParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> None:
         """Move a hybrid worker to a different group.
@@ -1615,10 +1623,11 @@ class HybridRunbookWorkersOperations:
         :type hybrid_runbook_worker_group_name: str
         :param hybrid_runbook_worker_id: The hybrid runbook worker id. Required.
         :type hybrid_runbook_worker_id: str
-        :param hybrid_runbook_worker_move_parameters: The hybrid runbook worker move parameters. Is one
-         of the following types: HybridRunbookWorkerMoveParameters, JSON, IO[bytes] Required.
+        :param hybrid_runbook_worker_move_parameters: The hybrid runbook worker move parameters. Is
+         either a HybridRunbookWorkerMoveParameters type or a IO[bytes] type. Required.
         :type hybrid_runbook_worker_move_parameters:
-         ~azure.mgmt.automation.models.HybridRunbookWorkerMoveParameters or JSON or IO[bytes]
+         ~azure.mgmt.automation.models.HybridRunbookWorkerMoveParameters or
+         ~azure.mgmt.automation.types.HybridRunbookWorkerMoveParameters or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1808,7 +1817,7 @@ class Python2PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: JSON,
+        parameters: _types.PythonPackageCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1823,7 +1832,7 @@ class Python2PackageOperations:
         :param package_name: The python package name. Required.
         :type package_name: str
         :param parameters: The create or update parameters for python package. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.PythonPackageCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1868,7 +1877,7 @@ class Python2PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: Union[_models.PythonPackageCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.PythonPackageCreateParameters, _types.PythonPackageCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Module:
         """Create or Update the python 2 package identified by package name.
@@ -1880,10 +1889,10 @@ class Python2PackageOperations:
         :type automation_account_name: str
         :param package_name: The python package name. Required.
         :type package_name: str
-        :param parameters: The create or update parameters for python package. Is one of the following
-         types: PythonPackageCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.PythonPackageCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: The create or update parameters for python package. Is either a
+         PythonPackageCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.PythonPackageCreateParameters or
+         ~azure.mgmt.automation.types.PythonPackageCreateParameters or IO[bytes]
         :return: Module. The Module is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Module
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1992,7 +2001,7 @@ class Python2PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: JSON,
+        parameters: _types.PythonPackageUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2007,7 +2016,7 @@ class Python2PackageOperations:
         :param package_name: The python package name. Required.
         :type package_name: str
         :param parameters: The update parameters for python package. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.PythonPackageUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2052,7 +2061,7 @@ class Python2PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: Union[_models.PythonPackageUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.PythonPackageUpdateParameters, _types.PythonPackageUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Module:
         """Update the python 2 package identified by package name.
@@ -2064,10 +2073,10 @@ class Python2PackageOperations:
         :type automation_account_name: str
         :param package_name: The python package name. Required.
         :type package_name: str
-        :param parameters: The update parameters for python package. Is one of the following types:
-         PythonPackageUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.PythonPackageUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The update parameters for python package. Is either a
+         PythonPackageUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.PythonPackageUpdateParameters or
+         ~azure.mgmt.automation.types.PythonPackageUpdateParameters or IO[bytes]
         :return: Module. The Module is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Module
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2433,7 +2442,7 @@ class Python3PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: JSON,
+        parameters: _types.PythonPackageCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2448,7 +2457,7 @@ class Python3PackageOperations:
         :param package_name: The python package name. Required.
         :type package_name: str
         :param parameters: The create or update parameters for python package. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.PythonPackageCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2493,7 +2502,7 @@ class Python3PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: Union[_models.PythonPackageCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.PythonPackageCreateParameters, _types.PythonPackageCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Module:
         """Create or Update the python 3 package identified by package name.
@@ -2505,10 +2514,10 @@ class Python3PackageOperations:
         :type automation_account_name: str
         :param package_name: The python package name. Required.
         :type package_name: str
-        :param parameters: The create or update parameters for python package. Is one of the following
-         types: PythonPackageCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.PythonPackageCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: The create or update parameters for python package. Is either a
+         PythonPackageCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.PythonPackageCreateParameters or
+         ~azure.mgmt.automation.types.PythonPackageCreateParameters or IO[bytes]
         :return: Module. The Module is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Module
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2617,7 +2626,7 @@ class Python3PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: JSON,
+        parameters: _types.PythonPackageUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2632,7 +2641,7 @@ class Python3PackageOperations:
         :param package_name: The python package name. Required.
         :type package_name: str
         :param parameters: The update parameters for python package. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.PythonPackageUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2677,7 +2686,7 @@ class Python3PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: Union[_models.PythonPackageUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.PythonPackageUpdateParameters, _types.PythonPackageUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Module:
         """Update the python 3 package identified by package name.
@@ -2689,10 +2698,10 @@ class Python3PackageOperations:
         :type automation_account_name: str
         :param package_name: The python package name. Required.
         :type package_name: str
-        :param parameters: The update parameters for python package. Is one of the following types:
-         PythonPackageUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.PythonPackageUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The update parameters for python package. Is either a
+         PythonPackageUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.PythonPackageUpdateParameters or
+         ~azure.mgmt.automation.types.PythonPackageUpdateParameters or IO[bytes]
         :return: Module. The Module is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Module
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3058,7 +3067,7 @@ class RuntimeEnvironmentsOperations:
         resource_group_name: str,
         automation_account_name: str,
         runtime_environment_name: str,
-        parameters: JSON,
+        parameters: _types.RuntimeEnvironment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3073,7 +3082,7 @@ class RuntimeEnvironmentsOperations:
         :param runtime_environment_name: The name of the Runtime Environment. Required.
         :type runtime_environment_name: str
         :param parameters: Parameters supplied to the create  the runtime environment. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.RuntimeEnvironment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3118,7 +3127,7 @@ class RuntimeEnvironmentsOperations:
         resource_group_name: str,
         automation_account_name: str,
         runtime_environment_name: str,
-        parameters: Union[_models.RuntimeEnvironment, JSON, IO[bytes]],
+        parameters: Union[_models.RuntimeEnvironment, _types.RuntimeEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> _models.RuntimeEnvironment:
         """Create or update Runtime Environment.
@@ -3130,9 +3139,10 @@ class RuntimeEnvironmentsOperations:
         :type automation_account_name: str
         :param runtime_environment_name: The name of the Runtime Environment. Required.
         :type runtime_environment_name: str
-        :param parameters: Parameters supplied to the create  the runtime environment. Is one of the
-         following types: RuntimeEnvironment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.RuntimeEnvironment or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create  the runtime environment. Is either a
+         RuntimeEnvironment type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.RuntimeEnvironment or
+         ~azure.mgmt.automation.types.RuntimeEnvironment or IO[bytes]
         :return: RuntimeEnvironment. The RuntimeEnvironment is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.RuntimeEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3241,7 +3251,7 @@ class RuntimeEnvironmentsOperations:
         resource_group_name: str,
         automation_account_name: str,
         runtime_environment_name: str,
-        parameters: JSON,
+        parameters: _types.RuntimeEnvironmentUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3256,7 +3266,7 @@ class RuntimeEnvironmentsOperations:
         :param runtime_environment_name: The name of the Runtime Environment. Required.
         :type runtime_environment_name: str
         :param parameters: Parameters supplied to the Runtime Environment. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.RuntimeEnvironmentUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3301,7 +3311,9 @@ class RuntimeEnvironmentsOperations:
         resource_group_name: str,
         automation_account_name: str,
         runtime_environment_name: str,
-        parameters: Union[_models.RuntimeEnvironmentUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.RuntimeEnvironmentUpdateParameters, _types.RuntimeEnvironmentUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.RuntimeEnvironment:
         """Update an Runtime Environment.
@@ -3313,10 +3325,10 @@ class RuntimeEnvironmentsOperations:
         :type automation_account_name: str
         :param runtime_environment_name: The name of the Runtime Environment. Required.
         :type runtime_environment_name: str
-        :param parameters: Parameters supplied to the Runtime Environment. Is one of the following
-         types: RuntimeEnvironmentUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.RuntimeEnvironmentUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters supplied to the Runtime Environment. Is either a
+         RuntimeEnvironmentUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.RuntimeEnvironmentUpdateParameters or
+         ~azure.mgmt.automation.types.RuntimeEnvironmentUpdateParameters or IO[bytes]
         :return: RuntimeEnvironment. The RuntimeEnvironment is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.RuntimeEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3657,7 +3669,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         automation_account_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3767,7 +3779,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         automation_account_name: str,
         private_endpoint_connection_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3782,7 +3794,7 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3831,7 +3843,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         automation_account_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Approve or reject a private endpoint connection with a given name.
@@ -3843,9 +3855,9 @@ class PrivateEndpointConnectionsOperations:
         :type automation_account_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Is one of the following types: PrivateEndpointConnection, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.automation.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param parameters: Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.PrivateEndpointConnection or
+         ~azure.mgmt.automation.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -4262,7 +4274,7 @@ class AutomationAccountOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: JSON,
+        parameters: _types.AutomationAccountCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4275,7 +4287,7 @@ class AutomationAccountOperations:
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param parameters: Parameters supplied to the create or update automation account. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.AutomationAccountCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4316,7 +4328,11 @@ class AutomationAccountOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: Union[_models.AutomationAccountCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AutomationAccountCreateOrUpdateParameters,
+            _types.AutomationAccountCreateOrUpdateParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.AutomationAccount:
         """Create or update automation account.
@@ -4326,10 +4342,10 @@ class AutomationAccountOperations:
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
-        :param parameters: Parameters supplied to the create or update automation account. Is one of
-         the following types: AutomationAccountCreateOrUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: Parameters supplied to the create or update automation account. Is either a
+         AutomationAccountCreateOrUpdateParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.automation.models.AutomationAccountCreateOrUpdateParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.automation.types.AutomationAccountCreateOrUpdateParameters or IO[bytes]
         :return: AutomationAccount. The AutomationAccount is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.AutomationAccount
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4433,7 +4449,7 @@ class AutomationAccountOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: JSON,
+        parameters: _types.AutomationAccountUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4446,7 +4462,7 @@ class AutomationAccountOperations:
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param parameters: Parameters supplied to the update automation account. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.AutomationAccountUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4487,7 +4503,9 @@ class AutomationAccountOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: Union[_models.AutomationAccountUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AutomationAccountUpdateParameters, _types.AutomationAccountUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AutomationAccount:
         """Update an automation account.
@@ -4497,10 +4515,10 @@ class AutomationAccountOperations:
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
-        :param parameters: Parameters supplied to the update automation account. Is one of the
-         following types: AutomationAccountUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.AutomationAccountUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters supplied to the update automation account. Is either a
+         AutomationAccountUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.AutomationAccountUpdateParameters or
+         ~azure.mgmt.automation.types.AutomationAccountUpdateParameters or IO[bytes]
         :return: AutomationAccount. The AutomationAccount is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.AutomationAccount
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5268,7 +5286,7 @@ class AgentRegistrationInformationOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: JSON,
+        parameters: _types.AgentRegistrationRegenerateKeyParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5281,7 +5299,7 @@ class AgentRegistrationInformationOperations:
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param parameters: The name of the agent registration key to be regenerated. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.AgentRegistrationRegenerateKeyParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5322,7 +5340,9 @@ class AgentRegistrationInformationOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: Union[_models.AgentRegistrationRegenerateKeyParameter, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AgentRegistrationRegenerateKeyParameter, _types.AgentRegistrationRegenerateKeyParameter, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AgentRegistration:
         """Regenerate a primary or secondary agent registration key.
@@ -5332,10 +5352,10 @@ class AgentRegistrationInformationOperations:
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
-        :param parameters: The name of the agent registration key to be regenerated. Is one of the
-         following types: AgentRegistrationRegenerateKeyParameter, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.AgentRegistrationRegenerateKeyParameter or JSON
-         or IO[bytes]
+        :param parameters: The name of the agent registration key to be regenerated. Is either a
+         AgentRegistrationRegenerateKeyParameter type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.AgentRegistrationRegenerateKeyParameter or
+         ~azure.mgmt.automation.types.AgentRegistrationRegenerateKeyParameter or IO[bytes]
         :return: AgentRegistration. The AgentRegistration is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.AgentRegistration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5996,7 +6016,7 @@ class JobOperations:
         resource_group_name: str,
         automation_account_name: str,
         job_name: str,
-        parameters: JSON,
+        parameters: _types.JobCreateParameters,
         *,
         client_request_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -6012,7 +6032,7 @@ class JobOperations:
         :param job_name: The job name. Required.
         :type job_name: str
         :param parameters: The parameters supplied to the create job operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.JobCreateParameters
         :keyword client_request_id: Identifies this specific client request. Default value is None.
         :paramtype client_request_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6062,7 +6082,7 @@ class JobOperations:
         resource_group_name: str,
         automation_account_name: str,
         job_name: str,
-        parameters: Union[_models.JobCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.JobCreateParameters, _types.JobCreateParameters, IO[bytes]],
         *,
         client_request_id: Optional[str] = None,
         **kwargs: Any
@@ -6076,9 +6096,10 @@ class JobOperations:
         :type automation_account_name: str
         :param job_name: The job name. Required.
         :type job_name: str
-        :param parameters: The parameters supplied to the create job operation. Is one of the following
-         types: JobCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.JobCreateParameters or JSON or IO[bytes]
+        :param parameters: The parameters supplied to the create job operation. Is either a
+         JobCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.JobCreateParameters or
+         ~azure.mgmt.automation.types.JobCreateParameters or IO[bytes]
         :keyword client_request_id: Identifies this specific client request. Default value is None.
         :paramtype client_request_id: str
         :return: Job. The Job is compatible with MutableMapping
@@ -7461,7 +7482,7 @@ class WebhookOperations:
         resource_group_name: str,
         automation_account_name: str,
         webhook_name: str,
-        parameters: JSON,
+        parameters: _types.WebhookCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7476,7 +7497,7 @@ class WebhookOperations:
         :param webhook_name: The webhook name. Required.
         :type webhook_name: str
         :param parameters: The create or update parameters for webhook. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.WebhookCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7521,7 +7542,7 @@ class WebhookOperations:
         resource_group_name: str,
         automation_account_name: str,
         webhook_name: str,
-        parameters: Union[_models.WebhookCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.WebhookCreateOrUpdateParameters, _types.WebhookCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Webhook:
         """Create the webhook identified by webhook name.
@@ -7533,10 +7554,10 @@ class WebhookOperations:
         :type automation_account_name: str
         :param webhook_name: The webhook name. Required.
         :type webhook_name: str
-        :param parameters: The create or update parameters for webhook. Is one of the following types:
-         WebhookCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.WebhookCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The create or update parameters for webhook. Is either a
+         WebhookCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.WebhookCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.WebhookCreateOrUpdateParameters or IO[bytes]
         :return: Webhook. The Webhook is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Webhook
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7645,7 +7666,7 @@ class WebhookOperations:
         resource_group_name: str,
         automation_account_name: str,
         webhook_name: str,
-        parameters: JSON,
+        parameters: _types.WebhookUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7660,7 +7681,7 @@ class WebhookOperations:
         :param webhook_name: The webhook name. Required.
         :type webhook_name: str
         :param parameters: The update parameters for webhook. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.WebhookUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7705,7 +7726,7 @@ class WebhookOperations:
         resource_group_name: str,
         automation_account_name: str,
         webhook_name: str,
-        parameters: Union[_models.WebhookUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.WebhookUpdateParameters, _types.WebhookUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Webhook:
         """Update the webhook identified by webhook name.
@@ -7717,9 +7738,10 @@ class WebhookOperations:
         :type automation_account_name: str
         :param webhook_name: The webhook name. Required.
         :type webhook_name: str
-        :param parameters: The update parameters for webhook. Is one of the following types:
-         WebhookUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.WebhookUpdateParameters or JSON or IO[bytes]
+        :param parameters: The update parameters for webhook. Is either a WebhookUpdateParameters type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.WebhookUpdateParameters or
+         ~azure.mgmt.automation.types.WebhookUpdateParameters or IO[bytes]
         :return: Webhook. The Webhook is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Webhook
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8088,7 +8110,7 @@ class DscNodeOperations:
         resource_group_name: str,
         automation_account_name: str,
         node_id: str,
-        dsc_node_update_parameters: JSON,
+        dsc_node_update_parameters: _types.DscNodeUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8103,7 +8125,7 @@ class DscNodeOperations:
         :param node_id: The node id. Required.
         :type node_id: str
         :param dsc_node_update_parameters: Parameters supplied to the update dsc node. Required.
-        :type dsc_node_update_parameters: JSON
+        :type dsc_node_update_parameters: ~azure.mgmt.automation.types.DscNodeUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8148,7 +8170,7 @@ class DscNodeOperations:
         resource_group_name: str,
         automation_account_name: str,
         node_id: str,
-        dsc_node_update_parameters: Union[_models.DscNodeUpdateParameters, JSON, IO[bytes]],
+        dsc_node_update_parameters: Union[_models.DscNodeUpdateParameters, _types.DscNodeUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.DscNode:
         """Update the dsc node.
@@ -8160,10 +8182,10 @@ class DscNodeOperations:
         :type automation_account_name: str
         :param node_id: The node id. Required.
         :type node_id: str
-        :param dsc_node_update_parameters: Parameters supplied to the update dsc node. Is one of the
-         following types: DscNodeUpdateParameters, JSON, IO[bytes] Required.
-        :type dsc_node_update_parameters: ~azure.mgmt.automation.models.DscNodeUpdateParameters or JSON
-         or IO[bytes]
+        :param dsc_node_update_parameters: Parameters supplied to the update dsc node. Is either a
+         DscNodeUpdateParameters type or a IO[bytes] type. Required.
+        :type dsc_node_update_parameters: ~azure.mgmt.automation.models.DscNodeUpdateParameters or
+         ~azure.mgmt.automation.types.DscNodeUpdateParameters or IO[bytes]
         :return: DscNode. The DscNode is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.DscNode
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8839,7 +8861,7 @@ class CertificateOperations:
         resource_group_name: str,
         automation_account_name: str,
         certificate_name: str,
-        parameters: JSON,
+        parameters: _types.CertificateCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8855,7 +8877,7 @@ class CertificateOperations:
         :type certificate_name: str
         :param parameters: The parameters supplied to the create or update certificate operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.CertificateCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8901,7 +8923,9 @@ class CertificateOperations:
         resource_group_name: str,
         automation_account_name: str,
         certificate_name: str,
-        parameters: Union[_models.CertificateCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CertificateCreateOrUpdateParameters, _types.CertificateCreateOrUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.Certificate:
         """Create a certificate.
@@ -8914,9 +8938,9 @@ class CertificateOperations:
         :param certificate_name: The name of certificate. Required.
         :type certificate_name: str
         :param parameters: The parameters supplied to the create or update certificate operation. Is
-         one of the following types: CertificateCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.CertificateCreateOrUpdateParameters or JSON or
-         IO[bytes]
+         either a CertificateCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.CertificateCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.CertificateCreateOrUpdateParameters or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9025,7 +9049,7 @@ class CertificateOperations:
         resource_group_name: str,
         automation_account_name: str,
         certificate_name: str,
-        parameters: JSON,
+        parameters: _types.CertificateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9040,7 +9064,7 @@ class CertificateOperations:
         :param certificate_name: The name of certificate. Required.
         :type certificate_name: str
         :param parameters: The parameters supplied to the update certificate operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.CertificateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9085,7 +9109,7 @@ class CertificateOperations:
         resource_group_name: str,
         automation_account_name: str,
         certificate_name: str,
-        parameters: Union[_models.CertificateUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.CertificateUpdateParameters, _types.CertificateUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Certificate:
         """Update a certificate.
@@ -9097,10 +9121,10 @@ class CertificateOperations:
         :type automation_account_name: str
         :param certificate_name: The name of certificate. Required.
         :type certificate_name: str
-        :param parameters: The parameters supplied to the update certificate operation. Is one of the
-         following types: CertificateUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.CertificateUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters supplied to the update certificate operation. Is either a
+         CertificateUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.CertificateUpdateParameters or
+         ~azure.mgmt.automation.types.CertificateUpdateParameters or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9467,7 +9491,7 @@ class ConnectionOperations:
         resource_group_name: str,
         automation_account_name: str,
         connection_name: str,
-        parameters: JSON,
+        parameters: _types.ConnectionCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9483,7 +9507,7 @@ class ConnectionOperations:
         :type connection_name: str
         :param parameters: The parameters supplied to the create or update connection operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.ConnectionCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9529,7 +9553,9 @@ class ConnectionOperations:
         resource_group_name: str,
         automation_account_name: str,
         connection_name: str,
-        parameters: Union[_models.ConnectionCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ConnectionCreateOrUpdateParameters, _types.ConnectionCreateOrUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.Connection:
         """Create or update a connection.
@@ -9541,10 +9567,10 @@ class ConnectionOperations:
         :type automation_account_name: str
         :param connection_name: The name of connection. Required.
         :type connection_name: str
-        :param parameters: The parameters supplied to the create or update connection operation. Is one
-         of the following types: ConnectionCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.ConnectionCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters supplied to the create or update connection operation. Is
+         either a ConnectionCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.ConnectionCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.ConnectionCreateOrUpdateParameters or IO[bytes]
         :return: Connection. The Connection is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9653,7 +9679,7 @@ class ConnectionOperations:
         resource_group_name: str,
         automation_account_name: str,
         connection_name: str,
-        parameters: JSON,
+        parameters: _types.ConnectionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9668,7 +9694,7 @@ class ConnectionOperations:
         :param connection_name: The name of connection. Required.
         :type connection_name: str
         :param parameters: The parameters supplied to the update a connection operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.ConnectionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9713,7 +9739,7 @@ class ConnectionOperations:
         resource_group_name: str,
         automation_account_name: str,
         connection_name: str,
-        parameters: Union[_models.ConnectionUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ConnectionUpdateParameters, _types.ConnectionUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Connection:
         """Update a connection.
@@ -9725,9 +9751,10 @@ class ConnectionOperations:
         :type automation_account_name: str
         :param connection_name: The name of connection. Required.
         :type connection_name: str
-        :param parameters: The parameters supplied to the update a connection operation. Is one of the
-         following types: ConnectionUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.ConnectionUpdateParameters or JSON or IO[bytes]
+        :param parameters: The parameters supplied to the update a connection operation. Is either a
+         ConnectionUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.ConnectionUpdateParameters or
+         ~azure.mgmt.automation.types.ConnectionUpdateParameters or IO[bytes]
         :return: Connection. The Connection is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10094,7 +10121,7 @@ class ConnectionTypeOperations:
         resource_group_name: str,
         automation_account_name: str,
         connection_type_name: str,
-        parameters: JSON,
+        parameters: _types.ConnectionTypeCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10110,7 +10137,7 @@ class ConnectionTypeOperations:
         :type connection_type_name: str
         :param parameters: The parameters supplied to the create or update connection type operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.ConnectionTypeCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10156,7 +10183,9 @@ class ConnectionTypeOperations:
         resource_group_name: str,
         automation_account_name: str,
         connection_type_name: str,
-        parameters: Union[_models.ConnectionTypeCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ConnectionTypeCreateOrUpdateParameters, _types.ConnectionTypeCreateOrUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ConnectionType:
         """Create a connection type.
@@ -10169,10 +10198,9 @@ class ConnectionTypeOperations:
         :param connection_type_name: The name of connection type. Required.
         :type connection_type_name: str
         :param parameters: The parameters supplied to the create or update connection type operation.
-         Is one of the following types: ConnectionTypeCreateOrUpdateParameters, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.automation.models.ConnectionTypeCreateOrUpdateParameters or JSON
-         or IO[bytes]
+         Is either a ConnectionTypeCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.ConnectionTypeCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.ConnectionTypeCreateOrUpdateParameters or IO[bytes]
         :return: ConnectionType. The ConnectionType is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.ConnectionType
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10539,7 +10567,7 @@ class CredentialOperations:
         resource_group_name: str,
         automation_account_name: str,
         credential_name: str,
-        parameters: JSON,
+        parameters: _types.CredentialCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10555,7 +10583,7 @@ class CredentialOperations:
         :type credential_name: str
         :param parameters: The parameters supplied to the create or update credential operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.CredentialCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10601,7 +10629,9 @@ class CredentialOperations:
         resource_group_name: str,
         automation_account_name: str,
         credential_name: str,
-        parameters: Union[_models.CredentialCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CredentialCreateOrUpdateParameters, _types.CredentialCreateOrUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.Credential:
         """Create a credential.
@@ -10613,10 +10643,10 @@ class CredentialOperations:
         :type automation_account_name: str
         :param credential_name: The name of credential. Required.
         :type credential_name: str
-        :param parameters: The parameters supplied to the create or update credential operation. Is one
-         of the following types: CredentialCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.CredentialCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters supplied to the create or update credential operation. Is
+         either a CredentialCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.CredentialCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.CredentialCreateOrUpdateParameters or IO[bytes]
         :return: Credential. The Credential is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Credential
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10725,7 +10755,7 @@ class CredentialOperations:
         resource_group_name: str,
         automation_account_name: str,
         credential_name: str,
-        parameters: JSON,
+        parameters: _types.CredentialUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10740,7 +10770,7 @@ class CredentialOperations:
         :param credential_name: The name of credential. Required.
         :type credential_name: str
         :param parameters: The parameters supplied to the Update credential operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.CredentialUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10785,7 +10815,7 @@ class CredentialOperations:
         resource_group_name: str,
         automation_account_name: str,
         credential_name: str,
-        parameters: Union[_models.CredentialUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.CredentialUpdateParameters, _types.CredentialUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Credential:
         """Update a credential.
@@ -10797,9 +10827,10 @@ class CredentialOperations:
         :type automation_account_name: str
         :param credential_name: The name of credential. Required.
         :type credential_name: str
-        :param parameters: The parameters supplied to the Update credential operation. Is one of the
-         following types: CredentialUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.CredentialUpdateParameters or JSON or IO[bytes]
+        :param parameters: The parameters supplied to the Update credential operation. Is either a
+         CredentialUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.CredentialUpdateParameters or
+         ~azure.mgmt.automation.types.CredentialUpdateParameters or IO[bytes]
         :return: Credential. The Credential is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Credential
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11165,7 +11196,7 @@ class DscConfigurationOperations:
         resource_group_name: str,
         automation_account_name: str,
         configuration_name: str,
-        parameters: JSON,
+        parameters: _types.DscConfigurationCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11180,7 +11211,7 @@ class DscConfigurationOperations:
         :param configuration_name: The configuration name. Required.
         :type configuration_name: str
         :param parameters: The create or update parameters for configuration. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.DscConfigurationCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11225,7 +11256,9 @@ class DscConfigurationOperations:
         resource_group_name: str,
         automation_account_name: str,
         configuration_name: str,
-        parameters: Union[_models.DscConfigurationCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DscConfigurationCreateOrUpdateParameters, _types.DscConfigurationCreateOrUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.DscConfiguration:
         """Create the configuration identified by configuration name.
@@ -11237,10 +11270,10 @@ class DscConfigurationOperations:
         :type automation_account_name: str
         :param configuration_name: The configuration name. Required.
         :type configuration_name: str
-        :param parameters: The create or update parameters for configuration. Is one of the following
-         types: DscConfigurationCreateOrUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: The create or update parameters for configuration. Is either a
+         DscConfigurationCreateOrUpdateParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.automation.models.DscConfigurationCreateOrUpdateParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.automation.types.DscConfigurationCreateOrUpdateParameters or IO[bytes]
         :return: DscConfiguration. The DscConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11349,7 +11382,7 @@ class DscConfigurationOperations:
         resource_group_name: str,
         automation_account_name: str,
         configuration_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.DscConfigurationUpdateParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11364,7 +11397,7 @@ class DscConfigurationOperations:
         :param configuration_name: The configuration name. Required.
         :type configuration_name: str
         :param parameters: The create or update parameters for configuration. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.DscConfigurationUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11409,7 +11442,9 @@ class DscConfigurationOperations:
         resource_group_name: str,
         automation_account_name: str,
         configuration_name: str,
-        parameters: Optional[Union[_models.DscConfigurationUpdateParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[_models.DscConfigurationUpdateParameters, _types.DscConfigurationUpdateParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> _models.DscConfiguration:
         """Create the configuration identified by configuration name.
@@ -11421,10 +11456,10 @@ class DscConfigurationOperations:
         :type automation_account_name: str
         :param configuration_name: The configuration name. Required.
         :type configuration_name: str
-        :param parameters: The create or update parameters for configuration. Is one of the following
-         types: DscConfigurationUpdateParameters, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.automation.models.DscConfigurationUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The create or update parameters for configuration. Is either a
+         DscConfigurationUpdateParameters type or a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.automation.models.DscConfigurationUpdateParameters or
+         ~azure.mgmt.automation.types.DscConfigurationUpdateParameters or IO[bytes]
         :return: DscConfiguration. The DscConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11861,7 +11896,11 @@ class DscNodeConfigurationOperations:
         resource_group_name: str,
         automation_account_name: str,
         node_configuration_name: str,
-        parameters: Union[_models.DscNodeConfigurationCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DscNodeConfigurationCreateOrUpdateParameters,
+            _types.DscNodeConfigurationCreateOrUpdateParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11970,7 +12009,7 @@ class DscNodeConfigurationOperations:
         resource_group_name: str,
         automation_account_name: str,
         node_configuration_name: str,
-        parameters: JSON,
+        parameters: _types.DscNodeConfigurationCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11985,7 +12024,7 @@ class DscNodeConfigurationOperations:
         :param node_configuration_name: The Dsc node configuration name. Required.
         :type node_configuration_name: str
         :param parameters: The create or update parameters for configuration. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.DscNodeConfigurationCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12032,7 +12071,11 @@ class DscNodeConfigurationOperations:
         resource_group_name: str,
         automation_account_name: str,
         node_configuration_name: str,
-        parameters: Union[_models.DscNodeConfigurationCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DscNodeConfigurationCreateOrUpdateParameters,
+            _types.DscNodeConfigurationCreateOrUpdateParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DscNodeConfiguration]:
         """Create the node configuration identified by node configuration name.
@@ -12044,10 +12087,10 @@ class DscNodeConfigurationOperations:
         :type automation_account_name: str
         :param node_configuration_name: The Dsc node configuration name. Required.
         :type node_configuration_name: str
-        :param parameters: The create or update parameters for configuration. Is one of the following
-         types: DscNodeConfigurationCreateOrUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: The create or update parameters for configuration. Is either a
+         DscNodeConfigurationCreateOrUpdateParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.automation.models.DscNodeConfigurationCreateOrUpdateParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.automation.types.DscNodeConfigurationCreateOrUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DscNodeConfiguration. The
          DscNodeConfiguration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.automation.models.DscNodeConfiguration]
@@ -12428,7 +12471,7 @@ class HybridRunbookWorkerGroupOperations:
         resource_group_name: str,
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
-        hybrid_runbook_worker_group_creation_parameters: JSON,
+        hybrid_runbook_worker_group_creation_parameters: _types.HybridRunbookWorkerGroupCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12444,7 +12487,8 @@ class HybridRunbookWorkerGroupOperations:
         :type hybrid_runbook_worker_group_name: str
         :param hybrid_runbook_worker_group_creation_parameters: The create or update parameters for
          hybrid runbook worker group. Required.
-        :type hybrid_runbook_worker_group_creation_parameters: JSON
+        :type hybrid_runbook_worker_group_creation_parameters:
+         ~azure.mgmt.automation.types.HybridRunbookWorkerGroupCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12493,7 +12537,9 @@ class HybridRunbookWorkerGroupOperations:
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
         hybrid_runbook_worker_group_creation_parameters: Union[
-            _models.HybridRunbookWorkerGroupCreateOrUpdateParameters, JSON, IO[bytes]
+            _models.HybridRunbookWorkerGroupCreateOrUpdateParameters,
+            _types.HybridRunbookWorkerGroupCreateOrUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> _models.HybridRunbookWorkerGroup:
@@ -12507,11 +12553,11 @@ class HybridRunbookWorkerGroupOperations:
         :param hybrid_runbook_worker_group_name: The hybrid runbook worker group name. Required.
         :type hybrid_runbook_worker_group_name: str
         :param hybrid_runbook_worker_group_creation_parameters: The create or update parameters for
-         hybrid runbook worker group. Is one of the following types:
-         HybridRunbookWorkerGroupCreateOrUpdateParameters, JSON, IO[bytes] Required.
+         hybrid runbook worker group. Is either a HybridRunbookWorkerGroupCreateOrUpdateParameters type
+         or a IO[bytes] type. Required.
         :type hybrid_runbook_worker_group_creation_parameters:
-         ~azure.mgmt.automation.models.HybridRunbookWorkerGroupCreateOrUpdateParameters or JSON or
-         IO[bytes]
+         ~azure.mgmt.automation.models.HybridRunbookWorkerGroupCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.HybridRunbookWorkerGroupCreateOrUpdateParameters or IO[bytes]
         :return: HybridRunbookWorkerGroup. The HybridRunbookWorkerGroup is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.automation.models.HybridRunbookWorkerGroup
@@ -12624,7 +12670,7 @@ class HybridRunbookWorkerGroupOperations:
         resource_group_name: str,
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
-        hybrid_runbook_worker_group_updation_parameters: JSON,
+        hybrid_runbook_worker_group_updation_parameters: _types.HybridRunbookWorkerGroupCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12640,7 +12686,8 @@ class HybridRunbookWorkerGroupOperations:
         :type hybrid_runbook_worker_group_name: str
         :param hybrid_runbook_worker_group_updation_parameters: The hybrid runbook worker group.
          Required.
-        :type hybrid_runbook_worker_group_updation_parameters: JSON
+        :type hybrid_runbook_worker_group_updation_parameters:
+         ~azure.mgmt.automation.types.HybridRunbookWorkerGroupCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12689,7 +12736,9 @@ class HybridRunbookWorkerGroupOperations:
         automation_account_name: str,
         hybrid_runbook_worker_group_name: str,
         hybrid_runbook_worker_group_updation_parameters: Union[
-            _models.HybridRunbookWorkerGroupCreateOrUpdateParameters, JSON, IO[bytes]
+            _models.HybridRunbookWorkerGroupCreateOrUpdateParameters,
+            _types.HybridRunbookWorkerGroupCreateOrUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> _models.HybridRunbookWorkerGroup:
@@ -12702,12 +12751,11 @@ class HybridRunbookWorkerGroupOperations:
         :type automation_account_name: str
         :param hybrid_runbook_worker_group_name: The hybrid runbook worker group name. Required.
         :type hybrid_runbook_worker_group_name: str
-        :param hybrid_runbook_worker_group_updation_parameters: The hybrid runbook worker group. Is one
-         of the following types: HybridRunbookWorkerGroupCreateOrUpdateParameters, JSON, IO[bytes]
-         Required.
+        :param hybrid_runbook_worker_group_updation_parameters: The hybrid runbook worker group. Is
+         either a HybridRunbookWorkerGroupCreateOrUpdateParameters type or a IO[bytes] type. Required.
         :type hybrid_runbook_worker_group_updation_parameters:
-         ~azure.mgmt.automation.models.HybridRunbookWorkerGroupCreateOrUpdateParameters or JSON or
-         IO[bytes]
+         ~azure.mgmt.automation.models.HybridRunbookWorkerGroupCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.HybridRunbookWorkerGroupCreateOrUpdateParameters or IO[bytes]
         :return: HybridRunbookWorkerGroup. The HybridRunbookWorkerGroup is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.automation.models.HybridRunbookWorkerGroup
@@ -13306,7 +13354,7 @@ class JobScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         job_schedule_id: str,
-        parameters: JSON,
+        parameters: _types.JobScheduleCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13321,7 +13369,7 @@ class JobScheduleOperations:
         :param job_schedule_id: The job schedule name. Required.
         :type job_schedule_id: str
         :param parameters: The parameters supplied to the create job schedule operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.JobScheduleCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13366,7 +13414,7 @@ class JobScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         job_schedule_id: str,
-        parameters: Union[_models.JobScheduleCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.JobScheduleCreateParameters, _types.JobScheduleCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobSchedule:
         """Create a job schedule.
@@ -13378,10 +13426,10 @@ class JobScheduleOperations:
         :type automation_account_name: str
         :param job_schedule_id: The job schedule name. Required.
         :type job_schedule_id: str
-        :param parameters: The parameters supplied to the create job schedule operation. Is one of the
-         following types: JobScheduleCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.JobScheduleCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters supplied to the create job schedule operation. Is either a
+         JobScheduleCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.JobScheduleCreateParameters or
+         ~azure.mgmt.automation.types.JobScheduleCreateParameters or IO[bytes]
         :return: JobSchedule. The JobSchedule is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.JobSchedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13750,7 +13798,7 @@ class ModuleOperations:
         resource_group_name: str,
         automation_account_name: str,
         module_name: str,
-        parameters: JSON,
+        parameters: _types.ModuleCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13765,7 +13813,7 @@ class ModuleOperations:
         :param module_name: The module name. Required.
         :type module_name: str
         :param parameters: The create or update parameters for module. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.ModuleCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13810,7 +13858,7 @@ class ModuleOperations:
         resource_group_name: str,
         automation_account_name: str,
         module_name: str,
-        parameters: Union[_models.ModuleCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ModuleCreateOrUpdateParameters, _types.ModuleCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Module:
         """Create or Update the module identified by module name.
@@ -13822,10 +13870,10 @@ class ModuleOperations:
         :type automation_account_name: str
         :param module_name: The module name. Required.
         :type module_name: str
-        :param parameters: The create or update parameters for module. Is one of the following types:
-         ModuleCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.ModuleCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The create or update parameters for module. Is either a
+         ModuleCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.ModuleCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.ModuleCreateOrUpdateParameters or IO[bytes]
         :return: Module. The Module is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Module
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13934,7 +13982,7 @@ class ModuleOperations:
         resource_group_name: str,
         automation_account_name: str,
         module_name: str,
-        parameters: JSON,
+        parameters: _types.ModuleUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13949,7 +13997,7 @@ class ModuleOperations:
         :param module_name: The module name. Required.
         :type module_name: str
         :param parameters: The update parameters for module. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.ModuleUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13994,7 +14042,7 @@ class ModuleOperations:
         resource_group_name: str,
         automation_account_name: str,
         module_name: str,
-        parameters: Union[_models.ModuleUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ModuleUpdateParameters, _types.ModuleUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Module:
         """Update the module identified by module name.
@@ -14006,9 +14054,10 @@ class ModuleOperations:
         :type automation_account_name: str
         :param module_name: The module name. Required.
         :type module_name: str
-        :param parameters: The update parameters for module. Is one of the following types:
-         ModuleUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.ModuleUpdateParameters or JSON or IO[bytes]
+        :param parameters: The update parameters for module. Is either a ModuleUpdateParameters type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.ModuleUpdateParameters or
+         ~azure.mgmt.automation.types.ModuleUpdateParameters or IO[bytes]
         :return: Module. The Module is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Module
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14718,7 +14767,7 @@ class PackageOperations:
         automation_account_name: str,
         runtime_environment_name: str,
         package_name: str,
-        parameters: JSON,
+        parameters: _types.PackageCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14735,7 +14784,7 @@ class PackageOperations:
         :param package_name: The Package name. Required.
         :type package_name: str
         :param parameters: The create or update parameters for Package. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.PackageCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14784,7 +14833,7 @@ class PackageOperations:
         automation_account_name: str,
         runtime_environment_name: str,
         package_name: str,
-        parameters: Union[_models.PackageCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.PackageCreateOrUpdateParameters, _types.PackageCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Package:
         """Create or update the package identified by package name.
@@ -14798,10 +14847,10 @@ class PackageOperations:
         :type runtime_environment_name: str
         :param package_name: The Package name. Required.
         :type package_name: str
-        :param parameters: The create or update parameters for Package. Is one of the following types:
-         PackageCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.PackageCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The create or update parameters for Package. Is either a
+         PackageCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.PackageCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.PackageCreateOrUpdateParameters or IO[bytes]
         :return: Package. The Package is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Package
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14915,7 +14964,7 @@ class PackageOperations:
         automation_account_name: str,
         runtime_environment_name: str,
         package_name: str,
-        parameters: JSON,
+        parameters: _types.PackageUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14932,7 +14981,7 @@ class PackageOperations:
         :param package_name: The Package name. Required.
         :type package_name: str
         :param parameters: The update parameters for Package. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.PackageUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14981,7 +15030,7 @@ class PackageOperations:
         automation_account_name: str,
         runtime_environment_name: str,
         package_name: str,
-        parameters: Union[_models.PackageUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.PackageUpdateParameters, _types.PackageUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Package:
         """Update the Package identified by Package name.
@@ -14995,9 +15044,10 @@ class PackageOperations:
         :type runtime_environment_name: str
         :param package_name: The Package name. Required.
         :type package_name: str
-        :param parameters: The update parameters for Package. Is one of the following types:
-         PackageUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.PackageUpdateParameters or JSON or IO[bytes]
+        :param parameters: The update parameters for Package. Is either a PackageUpdateParameters type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.PackageUpdateParameters or
+         ~azure.mgmt.automation.types.PackageUpdateParameters or IO[bytes]
         :return: Package. The Package is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Package
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15376,7 +15426,7 @@ class RunbookOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        parameters: JSON,
+        parameters: _types.RunbookCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15392,7 +15442,7 @@ class RunbookOperations:
         :type runbook_name: str
         :param parameters: The create or update parameters for runbook. Provide either content link for
          a published runbook or draft, not both. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.RunbookCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15438,7 +15488,7 @@ class RunbookOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        parameters: Union[_models.RunbookCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.RunbookCreateOrUpdateParameters, _types.RunbookCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Runbook:
         """Create the runbook identified by runbook name.
@@ -15451,10 +15501,10 @@ class RunbookOperations:
         :param runbook_name: The runbook name. Required.
         :type runbook_name: str
         :param parameters: The create or update parameters for runbook. Provide either content link for
-         a published runbook or draft, not both. Is one of the following types:
-         RunbookCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.RunbookCreateOrUpdateParameters or JSON or
-         IO[bytes]
+         a published runbook or draft, not both. Is either a RunbookCreateOrUpdateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.RunbookCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.RunbookCreateOrUpdateParameters or IO[bytes]
         :return: Runbook. The Runbook is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Runbook
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15563,7 +15613,7 @@ class RunbookOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        parameters: JSON,
+        parameters: _types.RunbookUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15578,7 +15628,7 @@ class RunbookOperations:
         :param runbook_name: The runbook name. Required.
         :type runbook_name: str
         :param parameters: The update parameters for runbook. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.RunbookUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15623,7 +15673,7 @@ class RunbookOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        parameters: Union[_models.RunbookUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.RunbookUpdateParameters, _types.RunbookUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Runbook:
         """Update the runbook identified by runbook name.
@@ -15635,9 +15685,10 @@ class RunbookOperations:
         :type automation_account_name: str
         :param runbook_name: The runbook name. Required.
         :type runbook_name: str
-        :param parameters: The update parameters for runbook. Is one of the following types:
-         RunbookUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.RunbookUpdateParameters or JSON or IO[bytes]
+        :param parameters: The update parameters for runbook. Is either a RunbookUpdateParameters type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.RunbookUpdateParameters or
+         ~azure.mgmt.automation.types.RunbookUpdateParameters or IO[bytes]
         :return: Runbook. The Runbook is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Runbook
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16737,7 +16788,7 @@ class TestJobOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        parameters: JSON,
+        parameters: _types.TestJobCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16752,7 +16803,7 @@ class TestJobOperations:
         :param runbook_name: The runbook name. Required.
         :type runbook_name: str
         :param parameters: The parameters supplied to the create test job operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.TestJobCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16797,7 +16848,7 @@ class TestJobOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        parameters: Union[_models.TestJobCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.TestJobCreateParameters, _types.TestJobCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.TestJob:
         """Create a test job of the runbook.
@@ -16809,9 +16860,10 @@ class TestJobOperations:
         :type automation_account_name: str
         :param runbook_name: The runbook name. Required.
         :type runbook_name: str
-        :param parameters: The parameters supplied to the create test job operation. Is one of the
-         following types: TestJobCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.TestJobCreateParameters or JSON or IO[bytes]
+        :param parameters: The parameters supplied to the create test job operation. Is either a
+         TestJobCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.TestJobCreateParameters or
+         ~azure.mgmt.automation.types.TestJobCreateParameters or IO[bytes]
         :return: TestJob. The TestJob is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.TestJob
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17275,7 +17327,7 @@ class ScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         schedule_name: str,
-        parameters: JSON,
+        parameters: _types.ScheduleCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17291,7 +17343,7 @@ class ScheduleOperations:
         :type schedule_name: str
         :param parameters: The parameters supplied to the create or update schedule operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.ScheduleCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17337,7 +17389,7 @@ class ScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         schedule_name: str,
-        parameters: Union[_models.ScheduleCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ScheduleCreateOrUpdateParameters, _types.ScheduleCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.Schedule]:
         """Create a schedule.
@@ -17349,10 +17401,10 @@ class ScheduleOperations:
         :type automation_account_name: str
         :param schedule_name: The schedule name. Required.
         :type schedule_name: str
-        :param parameters: The parameters supplied to the create or update schedule operation. Is one
-         of the following types: ScheduleCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.ScheduleCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters supplied to the create or update schedule operation. Is
+         either a ScheduleCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.ScheduleCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.ScheduleCreateOrUpdateParameters or IO[bytes]
         :return: Schedule or None. The Schedule is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Schedule or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17462,7 +17514,7 @@ class ScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         schedule_name: str,
-        parameters: JSON,
+        parameters: _types.ScheduleUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17477,7 +17529,7 @@ class ScheduleOperations:
         :param schedule_name: The schedule name. Required.
         :type schedule_name: str
         :param parameters: The parameters supplied to the update schedule operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.ScheduleUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17522,7 +17574,7 @@ class ScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         schedule_name: str,
-        parameters: Union[_models.ScheduleUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ScheduleUpdateParameters, _types.ScheduleUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Schedule:
         """Update the schedule identified by schedule name.
@@ -17534,9 +17586,10 @@ class ScheduleOperations:
         :type automation_account_name: str
         :param schedule_name: The schedule name. Required.
         :type schedule_name: str
-        :param parameters: The parameters supplied to the update schedule operation. Is one of the
-         following types: ScheduleUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.ScheduleUpdateParameters or JSON or IO[bytes]
+        :param parameters: The parameters supplied to the update schedule operation. Is either a
+         ScheduleUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.ScheduleUpdateParameters or
+         ~azure.mgmt.automation.types.ScheduleUpdateParameters or IO[bytes]
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17903,7 +17956,7 @@ class SourceControlOperations:
         resource_group_name: str,
         automation_account_name: str,
         source_control_name: str,
-        parameters: JSON,
+        parameters: _types.SourceControlCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17919,7 +17972,7 @@ class SourceControlOperations:
         :type source_control_name: str
         :param parameters: The parameters supplied to the create or update source control operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.SourceControlCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17965,7 +18018,9 @@ class SourceControlOperations:
         resource_group_name: str,
         automation_account_name: str,
         source_control_name: str,
-        parameters: Union[_models.SourceControlCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.SourceControlCreateOrUpdateParameters, _types.SourceControlCreateOrUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SourceControl:
         """Create a source control.
@@ -17978,9 +18033,9 @@ class SourceControlOperations:
         :param source_control_name: The name of source control. Required.
         :type source_control_name: str
         :param parameters: The parameters supplied to the create or update source control operation. Is
-         one of the following types: SourceControlCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.SourceControlCreateOrUpdateParameters or JSON
-         or IO[bytes]
+         either a SourceControlCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.SourceControlCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.SourceControlCreateOrUpdateParameters or IO[bytes]
         :return: SourceControl. The SourceControl is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18089,7 +18144,7 @@ class SourceControlOperations:
         resource_group_name: str,
         automation_account_name: str,
         source_control_name: str,
-        parameters: JSON,
+        parameters: _types.SourceControlUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18104,7 +18159,7 @@ class SourceControlOperations:
         :param source_control_name: The name of source control. Required.
         :type source_control_name: str
         :param parameters: The parameters supplied to the update source control operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.SourceControlUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18149,7 +18204,7 @@ class SourceControlOperations:
         resource_group_name: str,
         automation_account_name: str,
         source_control_name: str,
-        parameters: Union[_models.SourceControlUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SourceControlUpdateParameters, _types.SourceControlUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.SourceControl:
         """Update a source control.
@@ -18161,10 +18216,10 @@ class SourceControlOperations:
         :type automation_account_name: str
         :param source_control_name: The name of source control. Required.
         :type source_control_name: str
-        :param parameters: The parameters supplied to the update source control operation. Is one of
-         the following types: SourceControlUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.SourceControlUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters supplied to the update source control operation. Is either a
+         SourceControlUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.SourceControlUpdateParameters or
+         ~azure.mgmt.automation.types.SourceControlUpdateParameters or IO[bytes]
         :return: SourceControl. The SourceControl is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18463,7 +18518,7 @@ class SourceControlSyncJobOperations:
         automation_account_name: str,
         source_control_name: str,
         source_control_sync_job_id: str,
-        parameters: JSON,
+        parameters: _types.SourceControlSyncJobCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18481,7 +18536,7 @@ class SourceControlSyncJobOperations:
         :type source_control_sync_job_id: str
         :param parameters: The parameters supplied to the create source control sync job operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.SourceControlSyncJobCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18531,7 +18586,9 @@ class SourceControlSyncJobOperations:
         automation_account_name: str,
         source_control_name: str,
         source_control_sync_job_id: str,
-        parameters: Union[_models.SourceControlSyncJobCreateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.SourceControlSyncJobCreateParameters, _types.SourceControlSyncJobCreateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SourceControlSyncJob:
         """Creates the sync job for a source control.
@@ -18546,9 +18603,9 @@ class SourceControlSyncJobOperations:
         :param source_control_sync_job_id: The source control sync job id. Required.
         :type source_control_sync_job_id: str
         :param parameters: The parameters supplied to the create source control sync job operation. Is
-         one of the following types: SourceControlSyncJobCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.SourceControlSyncJobCreateParameters or JSON or
-         IO[bytes]
+         either a SourceControlSyncJobCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.SourceControlSyncJobCreateParameters or
+         ~azure.mgmt.automation.types.SourceControlSyncJobCreateParameters or IO[bytes]
         :return: SourceControlSyncJob. The SourceControlSyncJob is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.SourceControlSyncJob
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19176,7 +19233,7 @@ class VariableOperations:
         resource_group_name: str,
         automation_account_name: str,
         variable_name: str,
-        parameters: JSON,
+        parameters: _types.VariableCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19192,7 +19249,7 @@ class VariableOperations:
         :type variable_name: str
         :param parameters: The parameters supplied to the create or update variable operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.VariableCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19238,7 +19295,7 @@ class VariableOperations:
         resource_group_name: str,
         automation_account_name: str,
         variable_name: str,
-        parameters: Union[_models.VariableCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VariableCreateOrUpdateParameters, _types.VariableCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Variable:
         """Create a variable.
@@ -19250,10 +19307,10 @@ class VariableOperations:
         :type automation_account_name: str
         :param variable_name: The name of variable. Required.
         :type variable_name: str
-        :param parameters: The parameters supplied to the create or update variable operation. Is one
-         of the following types: VariableCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.VariableCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters supplied to the create or update variable operation. Is
+         either a VariableCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.VariableCreateOrUpdateParameters or
+         ~azure.mgmt.automation.types.VariableCreateOrUpdateParameters or IO[bytes]
         :return: Variable. The Variable is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19362,7 +19419,7 @@ class VariableOperations:
         resource_group_name: str,
         automation_account_name: str,
         variable_name: str,
-        parameters: JSON,
+        parameters: _types.VariableUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19377,7 +19434,7 @@ class VariableOperations:
         :param variable_name: The name of variable. Required.
         :type variable_name: str
         :param parameters: The parameters supplied to the update variable operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.VariableUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19422,7 +19479,7 @@ class VariableOperations:
         resource_group_name: str,
         automation_account_name: str,
         variable_name: str,
-        parameters: Union[_models.VariableUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VariableUpdateParameters, _types.VariableUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Variable:
         """Update a variable.
@@ -19434,9 +19491,10 @@ class VariableOperations:
         :type automation_account_name: str
         :param variable_name: The name of variable. Required.
         :type variable_name: str
-        :param parameters: The parameters supplied to the update variable operation. Is one of the
-         following types: VariableUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.VariableUpdateParameters or JSON or IO[bytes]
+        :param parameters: The parameters supplied to the update variable operation. Is either a
+         VariableUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.VariableUpdateParameters or
+         ~azure.mgmt.automation.types.VariableUpdateParameters or IO[bytes]
         :return: Variable. The Variable is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19802,7 +19860,7 @@ class WatcherOperations:
         resource_group_name: str,
         automation_account_name: str,
         watcher_name: str,
-        parameters: JSON,
+        parameters: _types.Watcher,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19817,7 +19875,7 @@ class WatcherOperations:
         :param watcher_name: The watcher name. Required.
         :type watcher_name: str
         :param parameters: The create or update parameters for watcher. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.Watcher
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19862,7 +19920,7 @@ class WatcherOperations:
         resource_group_name: str,
         automation_account_name: str,
         watcher_name: str,
-        parameters: Union[_models.Watcher, JSON, IO[bytes]],
+        parameters: Union[_models.Watcher, _types.Watcher, IO[bytes]],
         **kwargs: Any
     ) -> _models.Watcher:
         """Create the watcher identified by watcher name.
@@ -19874,9 +19932,10 @@ class WatcherOperations:
         :type automation_account_name: str
         :param watcher_name: The watcher name. Required.
         :type watcher_name: str
-        :param parameters: The create or update parameters for watcher. Is one of the following types:
-         Watcher, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.Watcher or JSON or IO[bytes]
+        :param parameters: The create or update parameters for watcher. Is either a Watcher type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.Watcher or ~azure.mgmt.automation.types.Watcher
+         or IO[bytes]
         :return: Watcher. The Watcher is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Watcher
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19985,7 +20044,7 @@ class WatcherOperations:
         resource_group_name: str,
         automation_account_name: str,
         watcher_name: str,
-        parameters: JSON,
+        parameters: _types.WatcherUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20000,7 +20059,7 @@ class WatcherOperations:
         :param watcher_name: The watcher name. Required.
         :type watcher_name: str
         :param parameters: The update parameters for watcher. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.WatcherUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20045,7 +20104,7 @@ class WatcherOperations:
         resource_group_name: str,
         automation_account_name: str,
         watcher_name: str,
-        parameters: Union[_models.WatcherUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.WatcherUpdateParameters, _types.WatcherUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Watcher:
         """Update the watcher identified by watcher name.
@@ -20057,9 +20116,10 @@ class WatcherOperations:
         :type automation_account_name: str
         :param watcher_name: The watcher name. Required.
         :type watcher_name: str
-        :param parameters: The update parameters for watcher. Is one of the following types:
-         WatcherUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.WatcherUpdateParameters or JSON or IO[bytes]
+        :param parameters: The update parameters for watcher. Is either a WatcherUpdateParameters type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.WatcherUpdateParameters or
+         ~azure.mgmt.automation.types.WatcherUpdateParameters or IO[bytes]
         :return: Watcher. The Watcher is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.Watcher
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20542,7 +20602,7 @@ class _AutomationClientOperationsMixin(
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: JSON,
+        parameters: _types.GraphicalRunbookContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20555,7 +20615,7 @@ class _AutomationClientOperationsMixin(
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param parameters: Input data describing the graphical runbook. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.automation.types.GraphicalRunbookContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20596,7 +20656,7 @@ class _AutomationClientOperationsMixin(
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: Union[_models.GraphicalRunbookContent, JSON, IO[bytes]],
+        parameters: Union[_models.GraphicalRunbookContent, _types.GraphicalRunbookContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.GraphicalRunbookContent:
         """Post operation to serialize or deserialize GraphRunbookContent.
@@ -20606,9 +20666,10 @@ class _AutomationClientOperationsMixin(
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
-        :param parameters: Input data describing the graphical runbook. Is one of the following types:
-         GraphicalRunbookContent, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.automation.models.GraphicalRunbookContent or JSON or IO[bytes]
+        :param parameters: Input data describing the graphical runbook. Is either a
+         GraphicalRunbookContent type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.automation.models.GraphicalRunbookContent or
+         ~azure.mgmt.automation.types.GraphicalRunbookContent or IO[bytes]
         :return: GraphicalRunbookContent. The GraphicalRunbookContent is compatible with MutableMapping
         :rtype: ~azure.mgmt.automation.models.GraphicalRunbookContent
         :raises ~azure.core.exceptions.HttpResponseError:

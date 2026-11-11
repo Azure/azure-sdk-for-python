@@ -57,6 +57,7 @@
         "azure.mgmt.cloudhealth.models.RelationshipProperties": "Microsoft.CloudHealth.RelationshipProperties",
         "azure.mgmt.cloudhealth.models.ResourceGraphQuerySpecification": "Microsoft.CloudHealth.ResourceGraphQuerySpecification",
         "azure.mgmt.cloudhealth.models.ResourceMetricSignalDefinitionProperties": "Microsoft.CloudHealth.ResourceMetricSignalDefinitionProperties",
+        "azure.mgmt.cloudhealth.models.SignalAggregationGroup": "Microsoft.CloudHealth.SignalAggregationGroup",
         "azure.mgmt.cloudhealth.models.SignalConfiguration": "Microsoft.CloudHealth.SignalConfiguration",
         "azure.mgmt.cloudhealth.models.SignalDefinition": "Microsoft.CloudHealth.SignalDefinition",
         "azure.mgmt.cloudhealth.models.SignalGroups": "Microsoft.CloudHealth.SignalGroups",
@@ -76,7 +77,6 @@
         "azure.mgmt.cloudhealth.models.RefreshInterval": "Microsoft.CloudHealth.RefreshInterval",
         "azure.mgmt.cloudhealth.models.SignalOperator": "Microsoft.CloudHealth.SignalOperator",
         "azure.mgmt.cloudhealth.models.DynamicThresholdSensitivity": "Microsoft.CloudHealth.DynamicThresholdSensitivity",
-        "azure.mgmt.cloudhealth.models.LookBackWindow": "Microsoft.CloudHealth.LookBackWindow",
         "azure.mgmt.cloudhealth.models.MetricAggregationType": "Microsoft.CloudHealth.MetricAggregationType",
         "azure.mgmt.cloudhealth.models.AuthenticationKind": "Microsoft.CloudHealth.AuthenticationKind",
         "azure.mgmt.cloudhealth.models.EntityImpact": "Microsoft.CloudHealth.EntityImpact",
@@ -86,8 +86,8 @@
         "azure.mgmt.cloudhealth.models.ResourceHealthCategory": "Microsoft.CloudHealth.ResourceHealthCategory",
         "azure.mgmt.cloudhealth.models.ResourceHealthReasonType": "Microsoft.CloudHealth.ResourceHealthReasonType",
         "azure.mgmt.cloudhealth.models.ResourceHealthReasonChronicity": "Microsoft.CloudHealth.ResourceHealthReasonChronicity",
-        "azure.mgmt.cloudhealth.models.DependenciesAggregationType": "Microsoft.CloudHealth.DependenciesAggregationType",
-        "azure.mgmt.cloudhealth.models.DependenciesAggregationUnit": "Microsoft.CloudHealth.DependenciesAggregationUnit",
+        "azure.mgmt.cloudhealth.models.AggregationType": "Microsoft.CloudHealth.AggregationType",
+        "azure.mgmt.cloudhealth.models.AggregationUnit": "Microsoft.CloudHealth.AggregationUnit",
         "azure.mgmt.cloudhealth.models.AlertSeverity": "Microsoft.CloudHealth.AlertSeverity",
         "azure.mgmt.cloudhealth.models.DiscoveryRuleRelationshipDiscoveryBehavior": "Microsoft.CloudHealth.DiscoveryRuleRelationshipDiscoveryBehavior",
         "azure.mgmt.cloudhealth.models.DiscoveryRuleRecommendedSignalsBehavior": "Microsoft.CloudHealth.DiscoveryRuleRecommendedSignalsBehavior",
@@ -159,5 +159,5 @@
         "azure.mgmt.cloudhealth.operations.DiscoveryRulesOperations.list_by_health_model": "Microsoft.CloudHealth.DiscoveryRules.listByHealthModel",
         "azure.mgmt.cloudhealth.aio.operations.DiscoveryRulesOperations.list_by_health_model": "Microsoft.CloudHealth.DiscoveryRules.listByHealthModel"
     },
-    "CrossLanguageVersion": "4de26ae5b426"
+    "CrossLanguageVersion": "834d27cf6ff8"
 }

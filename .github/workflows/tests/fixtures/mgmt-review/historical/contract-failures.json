@@ -1,0 +1,73 @@
+{
+  "description": "Sanitized minimal production failure shapes, not complete reviews or evidence of semantic correctness. Version-1 fragments are never a production fallback.",
+  "cases": [
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/35583017916",
+      "failure": "stale_tooling",
+      "fragment": {"tooling_source": "pull_request.base.sha", "http_status": 404}
+    },
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/35823186480",
+      "failure": "markdown_grammar",
+      "fragment": {"body": "No newly added or modified entries. This is an initial release."}
+    },
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/35553982529",
+      "failure": "placeholder",
+      "fragment": {"type": "add_comment", "body": "-"}
+    },
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/36370862764",
+      "failure": "matching_target",
+      "fragment": {"item_number": 49189}
+    },
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/35960617948",
+      "failure": "matching_target_then_missing_anchor",
+      "fragment": {"item_number": 48637, "source": {"url": "https://github.com/Azure/azure-sdk-for-python/blob/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/sdk/example/azure-mgmt-example/README.md", "line_status": "verified", "reason": ""}}
+    },
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/36369405687",
+      "related_runs": [
+        "https://github.com/Azure/azure-sdk-for-python/actions/runs/35960584474",
+        "https://github.com/Azure/azure-sdk-for-python/actions/runs/35960687674",
+        "https://github.com/Azure/azure-sdk-for-python/actions/runs/35962998897"
+      ],
+      "failure": "mixed_attribution_roles",
+      "fragment": {"cause": "typespec_api", "confidence": "high", "sources": [
+        {"url": "https://github.com/Azure/azure-rest-api-specs/blob/ffffffffffffffffffffffffffffffffffffffff/specification/example/main.tsp#L2-L3", "line_status": "verified", "reason": ""},
+        {"url": "https://github.com/Azure/azure-sdk-for-python/blob/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/sdk/example/azure-mgmt-example/CHANGELOG.md#L2", "line_status": "verified", "reason": ""}
+      ]}
+    },
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/36178556395",
+      "issue": "https://github.com/Azure/azure-sdk-for-python/issues/49209",
+      "pull_request": "https://github.com/Azure/azure-sdk-for-python/pull/49163",
+      "failure": "five_verified_sources_without_anchors",
+      "fragment": {"sources": [
+        {"url": "https://github.com/Azure/azure-sdk-for-python/blob/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/sdk/example/azure-mgmt-example/_metadata.json", "line_status": "verified", "reason": ""},
+        {"url": "https://github.com/Azure/azure-sdk-for-python/blob/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/sdk/example/azure-mgmt-example/pyproject.toml", "line_status": "verified", "reason": ""},
+        {"url": "https://github.com/Azure/azure-sdk-for-python/blob/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/sdk/example/azure-mgmt-example/pyproject.toml", "line_status": "verified", "reason": ""},
+        {"url": "https://github.com/Azure/azure-sdk-for-python/blob/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/sdk/example/azure-mgmt-example/README.md", "line_status": "verified", "reason": ""},
+        {"url": "https://github.com/Azure/azure-sdk-for-python/blob/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/sdk/example/azure-mgmt-example/README.md", "line_status": "verified", "reason": ""}
+      ]}
+    },
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/36174027847",
+      "failure": "stability_version_evidence",
+      "fragment": {"check": "Stability flags", "source": {"url": "https://github.com/Azure/azure-sdk-for-python/blob/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/sdk/example/azure-mgmt-example/azure/mgmt/example/_version.py#L1", "line_status": "verified", "reason": ""}}
+    },
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/35968468170",
+      "failure": "unavailable_with_anchor",
+      "fragment": {"source": {"url": "https://github.com/Azure/azure-sdk-for-python/blob/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/sdk/example/azure-mgmt-example/README.md#L2-L3", "line_status": "unavailable", "reason": "Exact source lines unavailable."}}
+    },
+    {
+      "run": "https://github.com/Azure/azure-sdk-for-python/actions/runs/36369417188",
+      "failure": "high_confidence_unavailable_specification",
+      "fragment": {"cause": "typespec_api", "confidence": "high", "sources": [
+        {"url": "https://github.com/Azure/azure-rest-api-specs/blob/ffffffffffffffffffffffffffffffffffffffff/specification/example/main.tsp", "line_status": "unavailable", "reason": "Exact source lines unavailable."}
+      ]}
+    }
+  ]
+}

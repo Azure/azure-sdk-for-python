@@ -23,7 +23,7 @@ class AssociationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Association Type Enum."""
 
     SUBNETS = "subnets"
-    """Association of Type Subnet"""
+    """Association of Type Subnet."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -43,9 +43,9 @@ class IpAccessRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Action of Ip Access Rule."""
 
     ALLOW = "allow"
-    """Allow Source Ip Prefixes"""
+    """Allow Source Ip Prefixes."""
     DENY = "deny"
-    """Deny Source Ip Prefixes"""
+    """Deny Source Ip Prefixes."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -65,25 +65,48 @@ class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Policy Type of the Security Policy."""
 
     WAF = "waf"
-    """Policy of Type WAF"""
+    """Policy of Type WAF."""
     IP_ACCESS_RULES = "ipAccessRules"
-    """Policy of Type IpAccessRules"""
+    """Policy of Type IpAccessRules."""
+
+
+class PrivateLinkServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    """Connection is pending approval."""
+    APPROVED = "Approved"
+    """Connection is approved."""
+    REJECTED = "Rejected"
+    """Connection is rejected."""
+    DISCONNECTED = "Disconnected"
+    """Connection is disconnected."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource Provisioning State Enum."""
 
     PROVISIONING = "Provisioning"
-    """Resource in Provisioning State"""
+    """Resource in Provisioning State."""
     UPDATING = "Updating"
-    """Resource in Updating State"""
+    """Resource in Updating State."""
     DELETING = "Deleting"
-    """Resource in Deleting State"""
+    """Resource in Deleting State."""
     ACCEPTED = "Accepted"
-    """Resource in Accepted State"""
+    """Resource in Accepted State."""
     SUCCEEDED = "Succeeded"
-    """Resource in Succeeded State"""
+    """Resource in Succeeded State."""
     FAILED = "Failed"
-    """Resource in Failed State"""
+    """Resource in Failed State."""
     CANCELED = "Canceled"
-    """Resource in Canceled State"""
+    """Resource in Canceled State."""
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether public network access is allowed for the frontend."""
+
+    ENABLED = "Enabled"
+    """Public network access is enabled (public frontend accessible via a public IP address)."""
+    DISABLED = "Disabled"
+    """Public network access is disabled (private frontend accessible only through a private
+    endpoint)."""

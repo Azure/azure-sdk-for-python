@@ -24,60 +24,15 @@ if TYPE_CHECKING:
         ManagedServiceIdentityType,
         Mode,
         NetworkRuleIPAction,
-        NetworkSecurityPerimeterConfigurationProvisioningState,
-        NspAccessRuleDirection,
         PrivateLinkConnectionStatus,
         ProvisioningStateDR,
         PublicNetworkAccess,
         PublicNetworkAccessFlag,
-        ResourceAssociationAccessMode,
         RoleDisasterRecovery,
         SkuName,
         SkuTier,
         TlsVersion,
-        UnavailableReason,
     )
-
-
-class AccessKeys(TypedDict, total=False):
-    """Namespace/ServiceBus Connection String.
-
-    :ivar primary_connection_string: Primary connection string of the created namespace
-     authorization rule.
-    :vartype primary_connection_string: str
-    :ivar secondary_connection_string: Secondary connection string of the created namespace
-     authorization rule.
-    :vartype secondary_connection_string: str
-    :ivar alias_primary_connection_string: Primary connection string of the alias if GEO DR is
-     enabled.
-    :vartype alias_primary_connection_string: str
-    :ivar alias_secondary_connection_string: Secondary  connection string of the alias if GEO DR is
-     enabled.
-    :vartype alias_secondary_connection_string: str
-    :ivar primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
-     token.
-    :vartype primary_key: str
-    :ivar secondary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
-     token.
-    :vartype secondary_key: str
-    :ivar key_name: A string that describes the authorization rule.
-    :vartype key_name: str
-    """
-
-    primaryConnectionString: str
-    """Primary connection string of the created namespace authorization rule."""
-    secondaryConnectionString: str
-    """Secondary connection string of the created namespace authorization rule."""
-    aliasPrimaryConnectionString: str
-    """Primary connection string of the alias if GEO DR is enabled."""
-    aliasSecondaryConnectionString: str
-    """Secondary  connection string of the alias if GEO DR is enabled."""
-    primaryKey: str
-    """A base64-encoded 256-bit primary key for signing and validating the SAS token."""
-    secondaryKey: str
-    """A base64-encoded 256-bit primary key for signing and validating the SAS token."""
-    keyName: str
-    """A string that describes the authorization rule."""
 
 
 class Action(TypedDict, total=False):
@@ -224,31 +179,6 @@ class CheckNameAvailability(TypedDict, total=False):
      letter or number. Required."""
 
 
-class CheckNameAvailabilityResult(TypedDict, total=False):
-    """Description of a Check Name availability request properties.
-
-    :ivar message: The detailed info regarding the reason associated with the namespace.
-    :vartype message: str
-    :ivar name_available: Value indicating namespace is availability, true if the namespace is
-     available; otherwise, false.
-    :vartype name_available: bool
-    :ivar reason: The reason for unavailability of a namespace. Known values are: "None",
-     "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown", and
-     "TooManyNamespaceInCurrentSubscription".
-    :vartype reason: Union[str, "UnavailableReason"]
-    """
-
-    message: str
-    """The detailed info regarding the reason associated with the namespace."""
-    nameAvailable: bool
-    """Value indicating namespace is availability, true if the namespace is available; otherwise,
-     false."""
-    reason: Union[str, "UnavailableReason"]
-    """The reason for unavailability of a namespace. Known values are: \"None\", \"InvalidName\",
-     \"SubscriptionIsDisabled\", \"NameInUse\", \"NameInLockdown\", and
-     \"TooManyNamespaceInCurrentSubscription\"."""
-
-
 class ConfidentialCompute(TypedDict, total=False):
     """ConfidentialCompute.
 
@@ -346,59 +276,6 @@ class Encryption(TypedDict, total=False):
      \"Microsoft.KeyVault\"."""
     requireInfrastructureEncryption: bool
     """Enable Infrastructure Encryption (Double Encryption)."""
-
-
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """The resource management error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorResponseError"
-    """
-
-    error: "ErrorResponseError"
-    """The error object."""
-
-
-class ErrorResponseError(TypedDict, total=False):
-    """The error object.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorResponse"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorResponse"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
 
 
 class FailOver(TypedDict, total=False):
@@ -681,204 +558,6 @@ class NetworkRuleSetProperties(TypedDict, total=False):
      values are: \"Enabled\" and \"Disabled\"."""
 
 
-class NetworkSecurityPerimeter(TypedDict, total=False):
-    """NetworkSecurityPerimeter related information.
-
-    :ivar id: Fully qualified identifier of the resource.
-    :vartype id: str
-    :ivar perimeter_guid: Guid of the resource.
-    :vartype perimeter_guid: str
-    :ivar location: Location of the resource.
-    :vartype location: str
-    """
-
-    id: str
-    """Fully qualified identifier of the resource."""
-    perimeterGuid: str
-    """Guid of the resource."""
-    location: str
-    """Location of the resource."""
-
-
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
-    """Network Security Perimeter related configurations of a given namespace.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Properties of the Network Security Perimeter Configuration.
-    :vartype properties: "NetworkSecurityPerimeterConfigurationProperties"
-    :ivar location: The geo-location where the resource lives.
-    :vartype location: str
-    """
-
-    properties: "NetworkSecurityPerimeterConfigurationProperties"
-    """Properties of the Network Security Perimeter Configuration."""
-    location: str
-    """The geo-location where the resource lives."""
-
-
-class NetworkSecurityPerimeterConfigurationProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Properties of NetworkSecurityPerimeterConfiguration.
-
-    :ivar provisioning_state: Provisioning state of NetworkSecurityPerimeter configuration
-     propagation. Known values are: "Unknown", "Creating", "Updating", "Accepted",
-     "InvalidResponse", "Succeeded", "SucceededWithIssues", "Failed", "Deleting", "Deleted", and
-     "Canceled".
-    :vartype provisioning_state: Union[str,
-     "NetworkSecurityPerimeterConfigurationProvisioningState"]
-    :ivar provisioning_issues: List of Provisioning Issues if any.
-    :vartype provisioning_issues: list["ProvisioningIssue"]
-    :ivar network_security_perimeter: NetworkSecurityPerimeter related information.
-    :vartype network_security_perimeter: "NetworkSecurityPerimeter"
-    :ivar resource_association: Information about resource association.
-    :vartype resource_association:
-     "NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation"
-    :ivar profile: Information about current network profile.
-    :vartype profile: "NetworkSecurityPerimeterConfigurationPropertiesProfile"
-    :ivar is_backing_resource: True if the ServiceBus namespace is backed by another Azure resource
-     and not visible to end users.
-    :vartype is_backing_resource: bool
-    :ivar applicable_features: Indicates that the NSP controls related to backing association are
-     only applicable to a specific feature in backing resource's data plane.
-    :vartype applicable_features: list[str]
-    :ivar parent_association_name: Source Resource Association name.
-    :vartype parent_association_name: str
-    :ivar source_resource_id: ARM Id of source resource.
-    :vartype source_resource_id: str
-    """
-
-    provisioningState: Union[str, "NetworkSecurityPerimeterConfigurationProvisioningState"]
-    """Provisioning state of NetworkSecurityPerimeter configuration propagation. Known values are:
-     \"Unknown\", \"Creating\", \"Updating\", \"Accepted\", \"InvalidResponse\", \"Succeeded\",
-     \"SucceededWithIssues\", \"Failed\", \"Deleting\", \"Deleted\", and \"Canceled\"."""
-    provisioningIssues: list["ProvisioningIssue"]
-    """List of Provisioning Issues if any."""
-    networkSecurityPerimeter: "NetworkSecurityPerimeter"
-    """NetworkSecurityPerimeter related information."""
-    resourceAssociation: "NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation"
-    """Information about resource association."""
-    profile: "NetworkSecurityPerimeterConfigurationPropertiesProfile"
-    """Information about current network profile."""
-    isBackingResource: bool
-    """True if the ServiceBus namespace is backed by another Azure resource and not visible to end
-     users."""
-    applicableFeatures: list[str]
-    """Indicates that the NSP controls related to backing association are only applicable to a
-     specific feature in backing resource's data plane."""
-    parentAssociationName: str
-    """Source Resource Association name."""
-    sourceResourceId: str
-    """ARM Id of source resource."""
-
-
-class NetworkSecurityPerimeterConfigurationPropertiesProfile(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Information about current network profile.
-
-    :ivar name: Name of the resource.
-    :vartype name: str
-    :ivar access_rules_version: Current access rules version.
-    :vartype access_rules_version: str
-    :ivar access_rules: List of Access Rules.
-    :vartype access_rules: list["NspAccessRule"]
-    """
-
-    name: str
-    """Name of the resource."""
-    accessRulesVersion: str
-    """Current access rules version."""
-    accessRules: list["NspAccessRule"]
-    """List of Access Rules."""
-
-
-class NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """Information about resource association.
-
-    :ivar name: Name of the resource association.
-    :vartype name: str
-    :ivar access_mode: Access Mode of the resource association. Known values are:
-     "NoAssociationMode", "EnforcedMode", "LearningMode", "AuditMode", and "UnspecifiedMode".
-    :vartype access_mode: Union[str, "ResourceAssociationAccessMode"]
-    """
-
-    name: str
-    """Name of the resource association."""
-    accessMode: Union[str, "ResourceAssociationAccessMode"]
-    """Access Mode of the resource association. Known values are: \"NoAssociationMode\",
-     \"EnforcedMode\", \"LearningMode\", \"AuditMode\", and \"UnspecifiedMode\"."""
-
-
-class NspAccessRule(TypedDict, total=False):
-    """Information of Access Rule in Network Profile.
-
-    :ivar id: Fully qualified identifier of the resource.
-    :vartype id: str
-    :ivar name: Name of the resource.
-    :vartype name: str
-    :ivar type: Type of the resource.
-    :vartype type: str
-    :ivar properties: Properties of Access Rule.
-    :vartype properties: "NspAccessRuleProperties"
-    """
-
-    id: str
-    """Fully qualified identifier of the resource."""
-    name: str
-    """Name of the resource."""
-    type: str
-    """Type of the resource."""
-    properties: "NspAccessRuleProperties"
-    """Properties of Access Rule."""
-
-
-class NspAccessRuleProperties(TypedDict, total=False):
-    """Properties of Access Rule.
-
-    :ivar direction: Direction of Access Rule. Known values are: "Inbound" and "Outbound".
-    :vartype direction: Union[str, "NspAccessRuleDirection"]
-    :ivar address_prefixes: Address prefixes in the CIDR format for inbound rules.
-    :vartype address_prefixes: list[str]
-    :ivar subscriptions: Subscriptions for inbound rules.
-    :vartype subscriptions: list["NspAccessRulePropertiesSubscriptionsItem"]
-    :ivar network_security_perimeters: NetworkSecurityPerimeters for inbound rules.
-    :vartype network_security_perimeters: list["NetworkSecurityPerimeter"]
-    :ivar fully_qualified_domain_names: FQDN for outbound rules.
-    :vartype fully_qualified_domain_names: list[str]
-    """
-
-    direction: Union[str, "NspAccessRuleDirection"]
-    """Direction of Access Rule. Known values are: \"Inbound\" and \"Outbound\"."""
-    addressPrefixes: list[str]
-    """Address prefixes in the CIDR format for inbound rules."""
-    subscriptions: list["NspAccessRulePropertiesSubscriptionsItem"]
-    """Subscriptions for inbound rules."""
-    networkSecurityPerimeters: list["NetworkSecurityPerimeter"]
-    """NetworkSecurityPerimeters for inbound rules."""
-    fullyQualifiedDomainNames: list[str]
-    """FQDN for outbound rules."""
-
-
-class NspAccessRulePropertiesSubscriptionsItem(TypedDict, total=False):
-    """Subscription for inbound rule.
-
-    :ivar id: Fully qualified identifier of subscription.
-    :vartype id: str
-    """
-
-    id: str
-    """Fully qualified identifier of subscription."""
-
-
 class NWRuleSetIpRules(TypedDict, total=False):
     """Description of NetWorkRuleSet - IpRules resource.
 
@@ -908,56 +587,6 @@ class NWRuleSetVirtualNetworkRules(TypedDict, total=False):
     """Subnet properties."""
     ignoreMissingVnetServiceEndpoint: bool
     """Value that indicates whether to ignore missing VNet Service Endpoint."""
-
-
-class Operation(TypedDict, total=False):
-    """A Service Bus REST API operation.
-
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
-    :vartype name: str
-    :ivar is_data_action: Indicates whether the operation is a data action.
-    :vartype is_data_action: bool
-    :ivar display: Display of the operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: Origin of the operation.
-    :vartype origin: str
-    :ivar properties: Properties of the operation.
-    :vartype properties: Any
-    """
-
-    name: str
-    """Operation name: {provider}/{resource}/{operation}."""
-    isDataAction: bool
-    """Indicates whether the operation is a data action."""
-    display: "OperationDisplay"
-    """Display of the operation."""
-    origin: str
-    """Origin of the operation."""
-    properties: Any
-    """Properties of the operation."""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Operation display payload.
-
-    :ivar provider: Resource provider of the operation.
-    :vartype provider: str
-    :ivar resource: Resource of the operation.
-    :vartype resource: str
-    :ivar operation: Localized friendly name for the operation.
-    :vartype operation: str
-    :ivar description: Localized friendly description for the operation.
-    :vartype description: str
-    """
-
-    provider: str
-    """Resource provider of the operation."""
-    resource: str
-    """Resource of the operation."""
-    operation: str
-    """Localized friendly name for the operation."""
-    description: str
-    """Localized friendly description for the operation."""
 
 
 class PlatformCapabilities(TypedDict, total=False):
@@ -1026,92 +655,6 @@ class PrivateEndpointConnectionProperties(TypedDict, total=False):
     provisioningState: Union[str, "EndPointProvisioningState"]
     """Provisioning state of the Private Endpoint Connection. Known values are: \"Creating\",
      \"Updating\", \"Deleting\", \"Succeeded\", \"Canceled\", and \"Failed\"."""
-
-
-class PrivateLinkResource(TypedDict, total=False):
-    """Information of the private link resource.
-
-    :ivar properties: Properties of the private link resource.
-    :vartype properties: "PrivateLinkResourceProperties"
-    :ivar id: Fully qualified identifier of the resource.
-    :vartype id: str
-    :ivar name: Name of the resource.
-    :vartype name: str
-    :ivar type: Type of the resource.
-    :vartype type: str
-    """
-
-    properties: "PrivateLinkResourceProperties"
-    """Properties of the private link resource."""
-    id: str
-    """Fully qualified identifier of the resource."""
-    name: str
-    """Name of the resource."""
-    type: str
-    """Type of the resource."""
-
-
-class PrivateLinkResourceProperties(TypedDict, total=False):
-    """Properties of PrivateLinkResource.
-
-    :ivar group_id:
-    :vartype group_id: str
-    :ivar required_members: Required Members.
-    :vartype required_members: list[str]
-    :ivar required_zone_names: Required Zone Names.
-    :vartype required_zone_names: list[str]
-    """
-
-    groupId: str
-    requiredMembers: list[str]
-    """Required Members."""
-    requiredZoneNames: list[str]
-    """Required Zone Names."""
-
-
-class PrivateLinkResourcesListResult(TypedDict, total=False):
-    """The response of a PrivateLinkResource list operation.
-
-    :ivar value: The PrivateLinkResource items on this page. Required.
-    :vartype value: list["PrivateLinkResource"]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: Required[list["PrivateLinkResource"]]
-    """The PrivateLinkResource items on this page. Required."""
-    nextLink: str
-    """The link to the next page of items."""
-
-
-class ProvisioningIssue(TypedDict, total=False):
-    """Describes Provisioning issue for given NetworkSecurityPerimeterConfiguration.
-
-    :ivar name: Name of the issue.
-    :vartype name: str
-    :ivar properties: Properties of Provisioning Issue.
-    :vartype properties: "ProvisioningIssueProperties"
-    """
-
-    name: str
-    """Name of the issue."""
-    properties: "ProvisioningIssueProperties"
-    """Properties of Provisioning Issue."""
-
-
-class ProvisioningIssueProperties(TypedDict, total=False):
-    """Properties of Provisioning Issue.
-
-    :ivar issue_type: Type of Issue.
-    :vartype issue_type: str
-    :ivar description: Description of the issue.
-    :vartype description: str
-    """
-
-    issueType: str
-    """Type of Issue."""
-    description: str
-    """Description of the issue."""
 
 
 class RegenerateAccessKeyParameters(TypedDict, total=False):

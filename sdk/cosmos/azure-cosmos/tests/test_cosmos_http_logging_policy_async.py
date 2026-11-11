@@ -80,7 +80,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
                                                          consistency_level="Session", logger=self.logger)
         await self.client_default.__aenter__()
         # Test if we can log info from creating a database
-        database_id = "database_test-" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging")
         await self.client_default.create_database(id=database_id)
 
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
@@ -108,7 +108,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         # give time to background health check to run
         await asyncio.sleep(1)
         # Test if we can log into from reading a database
-        database_id = "database_test-" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging")
         await self.client_diagnostic.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
         # Check that we made a databaseaccount read request only once and that we only logged it once
@@ -167,7 +167,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
                                                                      logger=self.logger,
                                                                      enable_diagnostics_logging=True)
         # Test if we can log errors with the filtered diagnostics logger
-        database_id = "database_test_" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging")
         container_id = "diagnostics_container_test_" + str(uuid.uuid4())
         await self.client_filtered_diagnostic.create_database(id=database_id)
         database = self.client_filtered_diagnostic.get_database_client(database_id)
@@ -283,7 +283,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         custom_activity_id = str(uuid.uuid4())
 
         # Create a database and container for the test
-        database_id = "database_test_activity_id_" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging-activity-id")
         container_id = "container_test_activity_id_" + str(uuid.uuid4())
         try:
 
@@ -389,7 +389,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         root_mock_handler.reset()
 
         # Attempt to read a nonexistent item
-        database_id = "database_test_hierarchical_logger_" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("logging-hierarchical")
         container_id = "container_test_hierarchical_logger_" + str(uuid.uuid4())
         database = await self.client_grandchild_logger.create_database(id=database_id)
         container = await database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))

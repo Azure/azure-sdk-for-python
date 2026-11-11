@@ -703,6 +703,25 @@ def parse_pyproject(
     ext_modules = get_value_from_dict(toml_dict, "tool.setuptools.ext-modules", [])
     ext_modules = [Extension(**moduleArgDict) for moduleArgDict in ext_modules]
 
+    # Declaring ext-modules in [tool.setuptools.ext-modules] is still experimental in setuptools, and the
+    # abi3 / py_limited_api wheel tag cannot be expressed declaratively, so compiled-extension packages keep
+    # their Extension(...) definition in setup.py. When such a package also has a [project] table, pyproject
+    # wins over setup.py during parsing and the extension would otherwise go undetected, causing the build to
+    # be mis-routed to `python -m build` (pure-Python) instead of cibuildwheel. Fall back to setup.py here so
+    # the extension is still discovered. Guarded so a setup.py that cannot be parsed cannot regress packages
+    # that parse fine today.
+    if not ext_modules:
+        sibling_setup_py = os.path.join(package_directory, "setup.py")
+        if os.path.exists(sibling_setup_py):
+            try:
+                setup_py_result = parse_setup_py(sibling_setup_py)
+                ext_package = ext_package or setup_py_result[11]  # ext_package
+                ext_modules = setup_py_result[12]  # ext_modules
+            except Exception as e:  # pragma: no cover - defensive, preserves prior behavior
+                logging.warning(
+                    f"Found setup.py alongside {pyproject_filename} but could not parse it for ext_modules: {e}"
+                )
+
     # fmt: off
     return (
         name,                   # str

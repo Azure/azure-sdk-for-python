@@ -1,0 +1,215 @@
+"""Minimal "hello world" resilient long-running agent (invocations protocol).
+
+The smallest possible long-running agent (LRA): it depends on ONLY
+``azure-ai-agentserver-core`` and ``azure-ai-agentserver-invocations`` — no LLM,
+no streaming, no cloud services — so it runs with a minimal dependency and
+memory footprint.
+
+It counts through ``steps`` steps, sleeping between them to simulate slow work
+that outlives a single request, and **checkpoints its progress after every
+step** to a durable state store (``FoundryStateStore``, which uses a local
+on-disk backend when running outside Foundry — so no Azure resources are
+required to run this locally). If the container crashes mid-run, the platform
+restarts it and the framework re-enters this task with
+``ctx.entry_mode == "recovered"`` — the handler reads ``completed_steps`` from
+the checkpoint and resumes at the next step instead of starting over.
+
+Input schema: ``{"name": str, "steps": int?}``. The host also injects the
+invocation's ``session_id`` into the durable input so the checkpoint store is
+isolated per session (see ``checkpoint_store_name``).
+
+Environment:
+
+- ``STEP_DELAY`` — seconds to sleep between steps (default ``2``). Keep it
+  nonzero so a crash demo has time to land mid-run.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import hashlib
+import logging
+import os
+from typing import Any
+
+from azure.ai.agentserver.core.storage import FoundryStateStore
+from azure.ai.agentserver.core.tasks import TaskContext, task
+
+logger = logging.getLogger(__name__)
+
+_STEP_DELAY = float(os.environ.get("STEP_DELAY", "2"))
+
+
+def checkpoint_store_name(session_id: str) -> str:
+    """Return the **session-isolated** checkpoint store name.
+
+    ``FoundryStateStore`` is agent-scoped and has no built-in per-session
+    isolation, so the store is namespaced by the invocation's session id (as the
+    other resilient samples do). This keeps one session's progress from being
+    read or overwritten by another — important because POST accepts a
+    caller-supplied invocation id that a different session could otherwise reuse
+    as a key. Shared with app.py so the poll endpoint reads the same scope.
+
+    The session component is **hashed**: a protocol session id can be up to 256
+    characters, and the local ``FoundryStateStore`` backend base64-encodes the
+    whole store name into a single filename, which would blow past the 255-byte
+    ``NAME_MAX`` and fail this no-cloud sample with ``ENAMETOOLONG``. A fixed-width
+    SHA-256 digest keeps the name bounded while remaining unique per session.
+    """
+    digest = hashlib.sha256(session_id.encode("utf-8")).hexdigest()
+    return f"resilient-hello-world/{digest}"
+
+
+def durable_task_id(session_id: str, invocation_id: str, user_id: str) -> str:
+    """Return the TaskManager task id derived from the user, session and invocation.
+
+    The invocations protocol accepts a *caller-supplied* invocation id, and a
+    single agent session can serve multiple users, so the invocation id alone (or
+    even session+invocation) is not a safe identity: two users — or two sessions —
+    reusing an id would collide on the TaskManager record (a ``start()`` 500) and
+    let one caller poll or cancel another's run. Composing the id from
+    ``user_id`` + ``session_id`` + ``invocation_id`` keeps every start/poll/cancel
+    path isolated. It is also used as the durable checkpoint item key.
+
+    A SHA-256 digest is used (rather than ``f"{user}/{session}/{invocation}"``)
+    for two reasons: the provider task-id contract is ``[A-Za-z0-9_-]{1,128}``
+    (a ``/`` — and ``.`` or ``:`` — is rejected), and it is bounded to 128
+    characters. The hex digest plus the ``hw-`` prefix uses only ``[a-z0-9-]``
+    and is a fixed 67 chars, so it is always valid regardless of how long the
+    protocol ids are. The ``\\x00`` separators keep the three fields unambiguous.
+    """
+    digest = hashlib.sha256(
+        f"{user_id}\x00{session_id}\x00{invocation_id}".encode("utf-8")
+    ).hexdigest()
+    return f"hw-{digest}"
+
+
+async def open_checkpoint_store(session_id: str, user_id: str) -> FoundryStateStore:
+    """Open the session-scoped, **user-isolated** checkpoint store.
+
+    A single agent session can serve multiple users, so on top of the
+    session-scoped store name the store is created with ``user_isolation=True``
+    and the explicit ``user_id`` — the platform then partitions items per user, so
+    one user cannot read or overwrite another's checkpoint even within the same
+    session. Every start/poll/recover path opens it the same way (and the task
+    carries ``user_id`` in its durable input so recovery reopens the same
+    partition).
+    """
+    return await FoundryStateStore.get_or_create(
+        checkpoint_store_name(session_id),
+        user_isolation=True,
+        user_id=user_id or None,
+    )
+
+
+@task(name="hello_world")
+async def hello_world(ctx: TaskContext[dict]) -> dict[str, Any]:
+    """Count through ``steps`` steps, checkpointing after each one.
+
+    The checkpoint (``completed_steps``) lives in a durable, session-scoped,
+    user-isolated state store keyed by ``ctx.task_id``, so a crash mid-run resumes
+    from the next step.
+    """
+
+    data = ctx.input or {}
+    name = str(data.get("name", "world"))
+    steps = int(data.get("steps", 10))
+    # ``session_id`` and ``user_id`` are carried in the durable input so recovery
+    # re-enters with the same store scope / user partition as the original run.
+    session_id = str(data.get("session_id", ""))
+    user_id = str(data.get("user_id", ""))
+
+    store = await open_checkpoint_store(session_id, user_id)
+    try:
+        item = await store.get_item(ctx.task_id)
+        completed = int((item.value.get("completed_steps", 0) if item else 0) or 0)
+        status_at_entry = (item.value.get("status") if item else None)
+        etag = item.etag if item else None
+
+        if ctx.entry_mode == "recovered":
+            logger.warning(
+                "Recovered — resuming '%s' at step %d/%d", name, completed + 1, steps
+            )
+
+        # Already finalized (e.g. recovered after the terminal write): nothing to
+        # do, and re-writing would needlessly churn the ETag.
+        if completed >= steps and status_at_entry == "completed":
+            return {"name": name, "steps": steps, "status": "complete"}
+
+        try:
+            done = completed
+            for i in range(completed, steps):
+                await asyncio.sleep(_STEP_DELAY)  # stand-in for long-running work
+                logger.info("step %d/%d done for %s", i + 1, steps, name)
+
+                # ── CHECKPOINT — the durable crash-recovery boundary ──
+                # After this write, a crash resumes at step (i + 2), not step 1.
+                ref = await store.set_item(
+                    ctx.task_id,
+                    {
+                        "name": name,
+                        "steps": steps,
+                        "completed_steps": i + 1,
+                        "status": "in_progress",
+                    },
+                    if_match=etag,
+                )
+                etag = ref.etag
+                done = i + 1  # advance so a later failure records real progress
+
+            logger.info("Finished %d steps for %s", steps, name)
+            # ── TERMINAL SUCCESS ──
+            # The one-shot task record is deleted on terminal exit, so the poll
+            # endpoint has only this durable item to read. Persist an explicit
+            # terminal status so a completed (or failed) run is not indefinitely
+            # reported as ``in_progress``.
+            await store.set_item(
+                ctx.task_id,
+                {
+                    "name": name,
+                    "steps": steps,
+                    "completed_steps": steps,
+                    "status": "completed",
+                },
+                if_match=etag,
+            )
+            return {"name": name, "steps": steps, "status": "complete"}
+        except Exception as exc:  # noqa: BLE001 — record failure, then re-raise
+            # A raised exception is terminal (the record is deleted), so without
+            # this the durable item would sit below ``steps`` forever and polling
+            # would report ``in_progress`` indefinitely. Record the *actual*
+            # progress (``done``, advanced after each successful checkpoint) so
+            # failure never rolls ``completed_steps`` backward. Best-effort write;
+            # if the ETag moved we still re-raise so the framework marks the task
+            # failed.
+            logger.exception("hello_world failed for %s", name)
+            try:
+                # Keep THIS execution's last-owned ETag. Re-reading the latest
+                # ETag would defeat the checkpoint CAS: if we lost a race to a
+                # recovered/new owner, our stale ``done`` must NOT clobber the
+                # winner's newer progress — the if_match then fails and we simply
+                # skip the failure write.
+                await store.set_item(
+                    ctx.task_id,
+                    {
+                        "name": name,
+                        "steps": steps,
+                        "completed_steps": done,
+                        "status": "failed",
+                        "error": str(exc),
+                    },
+                    if_match=etag,
+                )
+            except Exception:  # noqa: BLE001 — never mask the original failure
+                logger.warning("could not persist failed status for %s", name)
+            raise
+    finally:
+        await store.aclose()
+
+
+__all__ = [
+    "hello_world",
+    "checkpoint_store_name",
+    "durable_task_id",
+    "open_checkpoint_store",
+]

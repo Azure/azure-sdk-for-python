@@ -27,7 +27,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             backend_address_pool_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -382,6 +382,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -402,6 +405,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -466,6 +472,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                             "id": "str"
                                                                                                         }
                                                                                                     },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -558,6 +565,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -582,6 +592,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -649,6 +662,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                     "id": "str"
                                                                                                                 }
                                                                                                             },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -816,6 +830,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -1098,6 +1115,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                 "id": "str"
                                                                                                             }
                                                                                                         },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -1188,6 +1206,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                         "id": "str"
                                                                                                                     }
                                                                                                                 },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -1257,6 +1276,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -1388,7 +1410,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                     },
                                                 },
                                             },
-                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                            "ipTags": [
+                                                {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                            ],
                                             "linkedPublicIPAddress": ...,
                                             "migrationPhase": "str",
                                             "natGateway": {
@@ -1420,6 +1444,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                             "publicIPPrefix": {"id": "str"},
                                             "resourceGuid": "str",
                                             "servicePublicIPAddress": ...,
+                                            "upgradedToV2": bool,
                                         },
                                         "sku": {"name": "str", "tier": "str"},
                                         "tags": {"str": "str"},
@@ -1497,7 +1522,13 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                 "idleTimeoutInMinutes": 0,
                                                                 "ipAddress": "str",
                                                                 "ipConfiguration": ...,
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -1529,6 +1560,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -1718,6 +1750,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -1738,6 +1773,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -1797,6 +1835,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -1852,6 +1891,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -1903,6 +1943,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -1982,6 +2023,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2004,6 +2048,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2067,6 +2114,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                     "id": "str"
                                                                                                 }
                                                                                             },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -2128,6 +2176,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -2195,6 +2244,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -2339,6 +2389,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -2602,6 +2653,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -2663,6 +2715,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -2728,6 +2781,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2795,6 +2849,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                         "id": "str"
                                                                                                     }
                                                                                                 },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2856,6 +2911,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                         },
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -2923,6 +2979,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -2971,6 +3028,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -3111,6 +3169,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                        "enableConnectionTracking": bool,
                                                         "gatewayLoadBalancer": {"id": "str"},
                                                         "inboundNatPools": [{"id": "str"}],
                                                         "inboundNatRules": [{"id": "str"}],
@@ -3422,6 +3481,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -3446,6 +3508,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -3575,6 +3640,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -3599,6 +3667,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -3797,6 +3868,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -4159,6 +4233,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -4300,7 +4377,13 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                         },
                                                                     },
                                                                 },
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -4332,6 +4415,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -4425,6 +4509,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                     "ipConfiguration": ...,
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -4472,6 +4557,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -4685,6 +4771,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -4707,6 +4796,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -4828,6 +4920,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -4852,6 +4947,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -5027,6 +5125,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -5369,6 +5470,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -5558,7 +5662,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                     },
                     "type": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5573,7 +5677,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                 resource_group_name=resource_group.name,
                 load_balancer_name="str",
                 backend_address_pool_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5586,7 +5690,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
         response = self.client.load_balancer_backend_address_pools.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

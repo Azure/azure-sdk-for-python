@@ -17,5 +17,7 @@ configure_azure_monitor(
         "requests": {"enabled": True},
         "urllib": {"enabled": False},
         "urllib3": {"enabled": True},
+        "httpx": {"enabled": True},
+        "httpx2": {"enabled": True},
     }
 )

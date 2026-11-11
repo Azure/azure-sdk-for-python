@@ -145,6 +145,15 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """STANDARD."""
 
 
+class TlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TLS versions supported by Relay namespaces."""
+
+    ENUM_1_2 = "1.2"
+    """TLS version 1.2."""
+    ENUM_1_3 = "1.3"
+    """TLS version 1.3."""
+
+
 class UnavailableReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the reason for the unavailability of the service."""
 

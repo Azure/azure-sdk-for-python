@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2022-09-01/RegisteredServers_Get.json
+# x-ms-original-file: 2025-12-01/RegisteredServers_Get.json
 if __name__ == "__main__":
     main()

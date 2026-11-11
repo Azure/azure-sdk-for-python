@@ -32,7 +32,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
 
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import errno
 import socket
 import ssl
@@ -273,28 +273,25 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
                 self.connected = False
             raise
 
-    def _get_tcp_socket_defaults(self, sock):
+    def _get_tcp_socket_defaults(self):
         tcp_opts = {}
-        for opt in KNOWN_TCP_OPTS:
+        for opt, val in DEFAULT_SOCKET_SETTINGS.items():
+            if opt not in KNOWN_TCP_OPTS:
+                continue
             enum = None
             if opt == "TCP_USER_TIMEOUT":
                 try:
                     from socket import TCP_USER_TIMEOUT as enum
                 except ImportError:
-                    # should be in Python 3.6+ on Linux.
                     enum = 18
             elif hasattr(socket, opt):
                 enum = getattr(socket, opt)
-
             if enum:
-                if opt in DEFAULT_SOCKET_SETTINGS:
-                    tcp_opts[enum] = DEFAULT_SOCKET_SETTINGS[opt]
-                elif hasattr(socket, opt):
-                    tcp_opts[enum] = sock.getsockopt(SOL_TCP, getattr(socket, opt))
+                tcp_opts[enum] = val
         return tcp_opts
 
     def _set_socket_options(self, sock, socket_settings):
-        tcp_opts = self._get_tcp_socket_defaults(sock)
+        tcp_opts = self._get_tcp_socket_defaults()
         if socket_settings:
             tcp_opts.update(socket_settings)
         for opt, val in tcp_opts.items():

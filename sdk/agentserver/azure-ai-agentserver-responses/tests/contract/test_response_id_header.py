@@ -50,7 +50,7 @@ def _collect_sse_events(response: Any) -> list[dict[str, Any]]:
 _last_context: Any = None
 
 
-def _tracking_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _tracking_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that records its context for inspection."""
     global _last_context
     _last_context = context
@@ -63,7 +63,7 @@ def _tracking_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     async def _events():
         if False:
             yield None

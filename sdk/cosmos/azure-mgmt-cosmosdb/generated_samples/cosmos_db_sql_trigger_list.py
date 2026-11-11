@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBSqlTriggerList.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBSqlTriggerList.json
 if __name__ == "__main__":
     main()

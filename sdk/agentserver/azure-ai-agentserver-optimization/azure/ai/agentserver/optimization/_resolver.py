@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import pathlib
 import shutil
 from typing import Any
@@ -42,6 +43,41 @@ _downloaded: set[str] = set()
 # API path and version constants
 _API_VERSION = "2025-11-15-preview"
 _AUTH_SCOPE = "https://ai.azure.com/.default"
+
+# Foundry hosting environment variables
+_FOUNDRY_AGENT_NAME_ENV = "FOUNDRY_AGENT_NAME"
+_FOUNDRY_AGENT_VERSION_ENV = "FOUNDRY_AGENT_VERSION"
+
+# Request headers carrying the current agent's identity
+_AGENT_NAME_HEADER = "x-ms-optimization-agent-name"
+_AGENT_VERSION_HEADER = "x-ms-optimization-agent-version"
+
+
+def _agent_identity_headers() -> dict[str, str]:
+    """Build request headers describing the current agent name and version.
+
+    Reads the ``FOUNDRY_AGENT_NAME`` and ``FOUNDRY_AGENT_VERSION`` environment
+    variables injected by the Foundry hosting environment. Headers are only
+    included when the corresponding environment variable is set to a nonempty
+    value.
+
+    :return: Mapping of header names to values (may be empty).
+    :rtype: dict[str, str]
+    """
+    headers: dict[str, str] = {}
+    agent_name = os.environ.get(_FOUNDRY_AGENT_NAME_ENV)
+    if agent_name:
+        headers[_AGENT_NAME_HEADER] = agent_name
+    agent_version = os.environ.get(_FOUNDRY_AGENT_VERSION_ENV)
+    if agent_version:
+        headers[_AGENT_VERSION_HEADER] = agent_version
+    if headers:
+        logger.info(
+            "Resolved agent identity headers: name length=%d, version length=%d",
+            len(agent_name or ""),
+            len(agent_version or ""),
+        )
+    return headers
 
 
 def resolve_candidate(
@@ -370,6 +406,7 @@ def _api_get_json(
     """
     url = f"{client._base_url.rstrip('/')}{path}"  # pylint: disable=protected-access
     request = HttpRequest("GET", url, params=params)
+    request.headers.update(_agent_identity_headers())
     logger.debug("GET %s", url)
     response = client.send_request(request)
     response.raise_for_status()
@@ -392,6 +429,7 @@ def _api_get_text(
     """
     url = f"{client._base_url.rstrip('/')}{path}"  # pylint: disable=protected-access
     request = HttpRequest("GET", url, params=params)
+    request.headers.update(_agent_identity_headers())
     logger.debug("GET %s", url)
     response = client.send_request(request)
     response.raise_for_status()

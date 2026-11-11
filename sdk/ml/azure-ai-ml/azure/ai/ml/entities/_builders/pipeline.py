@@ -27,16 +27,16 @@ class Pipeline(BaseNode):
     """Base class for pipeline node, used for pipeline component version consumption. You should not instantiate this
     class directly. Instead, you should use @pipeline decorator to create a pipeline node.
 
-    :param component: Id or instance of the pipeline component/job to be run for the step.
-    :type component: Union[~azure.ai.ml.entities.Component, str]
-    :param inputs: Inputs of the pipeline node.
-    :type inputs: Optional[Dict[str, Union[
+    :keyword component: Id or instance of the pipeline component/job to be run for the step.
+    :paramtype component: Union[~azure.ai.ml.entities.Component, str]
+    :keyword inputs: Inputs of the pipeline node.
+    :paramtype inputs: Optional[Dict[str, Union[
                                     ~azure.ai.ml.entities.Input,
                                     str, bool, int, float, Enum, "Input"]]].
-    :param outputs: Outputs of the pipeline node.
-    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, "Output"]]]
-    :param settings: Setting of pipeline node, only taking effect for root pipeline job.
-    :type settings: Optional[~azure.ai.ml.entities._job.pipeline.pipeline_job_settings.PipelineJobSettings]
+    :keyword outputs: Outputs of the pipeline node.
+    :paramtype outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, "Output"]]]
+    :keyword settings: Setting of pipeline node, only taking effect for root pipeline job.
+    :paramtype settings: Optional[~azure.ai.ml.entities._job.pipeline.pipeline_job_settings.PipelineJobSettings]
     """
 
     def __init__(

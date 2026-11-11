@@ -55,5 +55,5 @@
         "azure.mgmt.hybridkubernetes.operations.ConnectedClusterOperations.list_cluster_user_credential": "Microsoft.Kubernetes.ConnectedClusters.listClusterUserCredential",
         "azure.mgmt.hybridkubernetes.aio.operations.ConnectedClusterOperations.list_cluster_user_credential": "Microsoft.Kubernetes.ConnectedClusters.listClusterUserCredential"
     },
-    "CrossLanguageVersion": "14ab4c210f36"
+    "CrossLanguageVersion": "d21de7bd0fe1"
 }

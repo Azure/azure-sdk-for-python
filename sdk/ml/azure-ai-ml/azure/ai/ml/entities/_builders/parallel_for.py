@@ -26,14 +26,14 @@ class ParallelFor(LoopNode, NodeIOMixin):
     parallel for loop can be implemented. It will be initialized when calling dsl.parallel_for or when loading the
     pipeline yml containing parallel_for node. Please do not manually initialize this class.
 
-    :param body: Pipeline job for the parallel for loop body.
-    :type body: ~azure.ai.ml.entities.Pipeline
-    :param items: The loop body's input which will bind to the loop node.
-    :type items: typing.Union[list, dict, str, ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+    :keyword body: Pipeline job for the parallel for loop body.
+    :paramtype body: ~azure.ai.ml.entities.Pipeline
+    :keyword items: The loop body's input which will bind to the loop node.
+    :paramtype items: typing.Union[list, dict, str, ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
         ~azure.ai.ml.entities._job.pipeline._io.PipelineInput]
-    :param max_concurrency: Maximum number of concurrent iterations to run. All loop body nodes will be executed
+    :keyword max_concurrency: Maximum number of concurrent iterations to run. All loop body nodes will be executed
         in parallel if not specified.
-    :type max_concurrency: int
+    :paramtype max_concurrency: int
     """
 
     OUT_TYPE_MAPPING = {

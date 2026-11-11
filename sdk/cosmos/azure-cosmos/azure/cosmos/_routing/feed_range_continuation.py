@@ -307,7 +307,6 @@ def _validate_token_identity(
 def _should_bridge_legacy_continuation(
     inbound_serialized_continuation: Optional[str],
     inbound_token_payload: Optional[dict],
-    is_full_pk_scope: bool,
     is_single_partition_scope: bool,
 ) -> bool:
     """Whether to bridge an inbound legacy continuation into pagination state.
@@ -316,16 +315,12 @@ def _should_bridge_legacy_continuation(
     structured ``v=1`` (legacy/opaque token), and the current request scope can
     be represented safely by a single legacy continuation slot:
 
-    * full-PK scope (structurally single-partition forever), or
-    * non-full-PK scope that currently maps to one physical partition.
+    * a feed-range or prefix scope that currently maps to one physical partition.
 
     :param inbound_serialized_continuation: Caller-supplied continuation string, if any.
     :type inbound_serialized_continuation: Optional[str]
     :param inbound_token_payload: Decoded structured payload, or ``None`` for legacy/absent token.
     :type inbound_token_payload: Optional[dict]
-    :param is_full_pk_scope: Whether request scope is a full partition-key query
-        (always emits legacy outbound regardless of partition count).
-    :type is_full_pk_scope: bool
     :param is_single_partition_scope: Whether the current input scope maps to one partition.
     :type is_single_partition_scope: bool
     :returns: ``True`` when the legacy continuation can safely be bridged.
@@ -334,7 +329,7 @@ def _should_bridge_legacy_continuation(
     return bool(
         inbound_serialized_continuation
         and inbound_token_payload is None
-        and (is_full_pk_scope or is_single_partition_scope)
+        and is_single_partition_scope
     )
 
 
@@ -505,10 +500,10 @@ class _FeedRangePaginationState:
         """Build state for one feedrange where a backend continuation
         already exists.
 
-        Used for legacy-token compatibility on full-PK queries:
-        we keep the decoder strict, then bridge a legacy continuation
-        string into the queue head's ``bc`` slot for the single target
-        range.
+        Used for legacy-token compatibility when a feed-range or prefix query
+        currently maps to one physical partition. We keep the decoder strict,
+        then bridge a legacy continuation string into the queue head's ``bc``
+        slot for the single target range.
 
         :param feedrange: Single feedrange to seed.
         :type feedrange: ~azure.cosmos._routing.routing_range.Range
@@ -634,16 +629,13 @@ def _write_query_outbound_continuation(
     resource_id: str,
     query: Any,
     feed_range_epk: routing_range.Range,
-    is_full_pk_scope: bool,
     emit_legacy_for_single_partition: bool,
 ) -> None:
     """Write outbound continuation for feed-range pagination.
 
-    Full-PK queries always emit the legacy single-string continuation
-    so persisted bookmarks remain readable by older SDK versions.
-    Feed-range/prefix queries emit legacy continuation when the caller's
-    input scope currently maps to a single physical partition; otherwise
-    they emit the structured envelope.
+    Feed-range and prefix queries emit legacy continuation when the caller's
+    input scope currently maps to a single physical partition; otherwise they
+    emit the structured envelope.
 
     Defense in depth: even when the caller requests legacy emission, the
     writer verifies that the pagination queue can actually be represented
@@ -664,16 +656,13 @@ def _write_query_outbound_continuation(
     :type query: Any
     :param feed_range_epk: Original request feed range.
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
-    :param is_full_pk_scope: Whether request scope is a full partition-key query
-        (always emits legacy outbound regardless of partition count).
-    :type is_full_pk_scope: bool
-    :param emit_legacy_for_single_partition: Whether non-full-PK scope currently maps to a
+    :param emit_legacy_for_single_partition: Whether the input scope currently maps to a
         single physical partition and can safely emit legacy continuation.
     :type emit_legacy_for_single_partition: bool
     :returns: None. Mutates ``last_response_headers`` in place.
     :rtype: None
     """
-    if is_full_pk_scope or emit_legacy_for_single_partition:
+    if emit_legacy_for_single_partition:
         # A single legacy string can represent at most one queue entry's
         # backend continuation. If the queue grew past that (e.g. a
         # mid-page split exploded the head into children), emitting
@@ -690,12 +679,11 @@ def _write_query_outbound_continuation(
             return
         _LOGGER.warning(
             "Pagination queue has %d entries but caller requested legacy emission "
-            "(is_full_pk_scope=%s, emit_legacy_for_single_partition=%s). Falling "
+            "(emit_legacy_for_single_partition=%s). Falling "
             "through to structured envelope to preserve full pagination state; "
             "this indicates a caller-side single-partition classification that is "
             "out of sync with the actual queue shape.",
             len(pagination_state.queue),
-            is_full_pk_scope,
             emit_legacy_for_single_partition,
         )
     pagination_state.write_outbound_continuation(

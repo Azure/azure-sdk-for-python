@@ -127,8 +127,6 @@ class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP_APPROVAL_RESPONSE."""
     OUTPUT_AUDIO_BUFFER_CLEAR = "output_audio_buffer.clear"
     """Client request to clear the avatar output buffer."""
-    RTC_CALL_SDP_CREATE = "rtc.call.sdp.create"
-    """Sent by the client to initiate a WebRTC session with an SDP offer."""
     INPUT_TEXT_DELTA = "input_text.delta"
     """Streamed delta of input text content being appended to an item."""
     INPUT_TEXT_DONE = "input_text.done"
@@ -514,14 +512,6 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Audio transcript annotation added."""
     RESPONSE_INVOCATION_DELTA = "response.invocation.delta"
     """Invocation passthrough delta from hosted agent."""
-    RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
-    """Returned when the WebRTC SDP negotiation completes successfully."""
-    RTC_CALL_ERROR = "rtc.call.error"
-    """Returned when a WebRTC call operation fails."""
-    OUTPUT_AUDIO_BUFFER_STARTED = "output_audio_buffer.started"
-    """Output audio buffer playback started."""
-    OUTPUT_AUDIO_BUFFER_STOPPED = "output_audio_buffer.stopped"
-    """Output audio buffer playback stopped."""
 
 
 class SessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):

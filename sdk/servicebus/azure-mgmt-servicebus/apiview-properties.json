@@ -240,5 +240,5 @@
         "azure.mgmt.servicebus.operations.SubscriptionsOperations.list_by_topic": "Microsoft.ServiceBus.SBSubscriptions.listByTopic",
         "azure.mgmt.servicebus.aio.operations.SubscriptionsOperations.list_by_topic": "Microsoft.ServiceBus.SBSubscriptions.listByTopic"
     },
-    "CrossLanguageVersion": "2a9972a468cb"
+    "CrossLanguageVersion": "bf492fba2a6e"
 }

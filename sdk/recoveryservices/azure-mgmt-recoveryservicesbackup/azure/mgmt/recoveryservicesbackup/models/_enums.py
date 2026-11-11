@@ -11,6 +11,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether access to the storage account is key-based or identity-based."""
+
+    KEY_BASED = "KeyBased"
+    """Access using storage account keys."""
+    IDENTITY_BASED = "IdentityBased"
+    """Access using managed identity."""
+
+
 class AcquireStorageAccountLock(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether storage account lock is to be acquired for this container or not."""
 
@@ -425,21 +434,6 @@ class InquiryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FAILED."""
 
 
-class InstanceProtectionReadiness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of instance protection."""
-
-    UNKNOWN = "Unknown"
-    """Instance protection readiness is unknown."""
-    READY = "Ready"
-    """Instance is ready for protection."""
-    SCHEDULE_DISABLED = "ScheduleDisabled"
-    """Backup schedule is disabled for this instance."""
-    PARTIAL_PROTECTION = "PartialProtection"
-    """Instance is partially protected."""
-    PROTECTION_ERROR = "ProtectionError"
-    """Instance protection encountered an error."""
-
-
 class JobSupportedAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of JobSupportedAction."""
 
@@ -720,15 +714,6 @@ class ProtectionIntentItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_WORKLOAD_SQL_AUTO_PROTECTION_INTENT."""
 
 
-class ProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Protection type in case protected as part of a parent."""
-
-    DATABASE = "Database"
-    """Protected at database level."""
-    DATABASE_UNDER_INSTANCE = "DatabaseUnderInstance"
-    """Database protected under an instance."""
-
-
 class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup state of this backup item."""
 
@@ -944,6 +929,15 @@ class SoftDeleteFeatureState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ALWAYS_ON."""
 
 
+class SourceScanAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source scan configuration status for enabling or disabling source scan."""
+
+    ENABLE = "Enable"
+    """Enable source scan."""
+    DISABLE = "Disable"
+    """Disable source scan."""
+
+
 class SourceSideScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat status of the container."""
 
@@ -953,6 +947,8 @@ class SourceSideScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Source side scan is not configured."""
     NOT_APPLICABLE = "NotApplicable"
     """Source side scan is not applicable."""
+    CONFIGURATION_FAILED = "ConfigurationFailed"
+    """Source side scan configuration failed."""
 
 
 class SourceSideScanSummary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -966,6 +962,8 @@ class SourceSideScanSummary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scan summary is suspicious."""
     HEALTHY = "Healthy"
     """Scan summary indicates healthy state."""
+    NO_THREATS_REPORTED = "NoThreatsReported"
+    """No threats reported."""
 
 
 class SQLDataDirectoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1132,19 +1130,6 @@ class VaultSubResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_BACKUP_SECONDARY."""
     AZURE_SITE_RECOVERY = "AzureSiteRecovery"
     """AZURE_SITE_RECOVERY."""
-
-
-class VMWorkloadPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the protection policy."""
-
-    INVALID = "Invalid"
-    """Invalid policy type."""
-    SNAPSHOT_V1 = "SnapshotV1"
-    """Snapshot V1 policy type."""
-    SNAPSHOT_V2 = "SnapshotV2"
-    """Snapshot V2 policy type."""
-    STREAMING = "Streaming"
-    """Streaming policy type."""
 
 
 class WeekOfMonth(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -15,7 +15,7 @@ DESCRIPTION:
 USAGE: python hello_world_sample_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
 
 import asyncio
@@ -26,11 +26,13 @@ async def main():
     # [START create_app_config_client]
     import os
     from azure.appconfiguration.aio import AzureAppConfigurationClient
+    from azure.identity.aio import DefaultAzureCredential
 
-    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+    endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+    credential = DefaultAzureCredential()
 
     # Create an app config client
-    client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
+    client = AzureAppConfigurationClient(endpoint, credential)
     # [END create_app_config_client]
 
     print("Add new configuration setting")
@@ -59,6 +61,7 @@ async def main():
 
     print("Delete configuration setting")
     await client.delete_configuration_setting(key="MyKey", label="MyLabel")
+    await credential.close()
 
 
 if __name__ == "__main__":

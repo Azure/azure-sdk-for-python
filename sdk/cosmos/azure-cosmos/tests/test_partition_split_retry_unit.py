@@ -13,7 +13,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 from azure.core.exceptions import ServiceRequestError
 
-from azure.cosmos import exceptions
+from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos import _retry_utility
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
@@ -1231,41 +1231,113 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert result == [{"id": "1"}]
         assert headers is canned_headers
 
-    def test_queryfeed_full_pk_no_overlap_fallback_preserves_partition_key_header(self):
-        """Full-PK no-overlap fallback must retain legacy PartitionKey header on __Post."""
+    def test_queryfeed_full_partition_key_count_uses_partition_key_routing(self):
+        """Complete single-path and hierarchical keys must avoid EPK feed-range routing."""
         client = self._create_minimal_connection()
         client._query_compatibility_mode = client._QueryCompatibilityMode.Default
         client._routing_map_provider = MagicMock()
-        client._routing_map_provider.get_overlapping_ranges.return_value = []
+        client._routing_map_provider.get_overlapping_ranges.side_effect = AssertionError(
+            "complete partition keys must not resolve EPK overlaps"
+        )
 
-        seen_partition_key_headers = []
+        for partition_key, partition_key_header in (
+            ("PowerCut", '["PowerCut"]'),
+            (["tenant", "user"], '["tenant","user"]'),
+        ):
+            with self.subTest(partition_key=partition_key):
+                seen_headers = []
+
+                def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+                    seen_headers.append(dict(req_headers))
+                    return {"Documents": [30735986]}, {}
+
+                with patch(
+                    "azure.cosmos._cosmos_client_connection.base.GetHeaders",
+                    return_value={HttpHeaders.PartitionKey: partition_key_header},
+                ):
+                    with patch(
+                        "azure.cosmos._cosmos_client_connection.base.set_session_token_header",
+                        return_value=None,
+                    ):
+                        with patch.object(
+                            client,
+                            "_CosmosClientConnection__Post",
+                            side_effect=post_side_effect,
+                        ):
+                            docs, headers = client.QueryFeed(
+                                path="/dbs/db/colls/c1/docs",
+                                collection_id="rid-c1",
+                                query="SELECT VALUE COUNT(1) FROM c",
+                                options={
+                                    "partitionKey": partition_key,
+                                    "enableCrossPartitionQuery": False,
+                                    "populateQueryMetrics": True,
+                                },
+                            )
+
+                assert docs == [30735986]
+                assert HttpHeaders.Continuation not in headers
+                assert len(seen_headers) == 1
+                assert seen_headers[0][HttpHeaders.PartitionKey] == partition_key_header
+                assert HttpHeaders.PartitionKeyRangeID not in seen_headers[0]
+                assert HttpHeaders.ReadFeedKeyType not in seen_headers[0]
+                assert HttpHeaders.StartEpkString not in seen_headers[0]
+                assert HttpHeaders.EndEpkString not in seen_headers[0]
+
+        client._routing_map_provider.get_overlapping_ranges.assert_not_called()
+
+    def test_queryfeed_hpk_prefix_count_keeps_split_safe_epk_routing(self):
+        """A hierarchical-key prefix still spans logical partitions and uses EPK pagination."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        def overlap_side_effect(_rid, ranges, _options):
+            requested = ranges[0]
+            return [{
+                "id": "0",
+                "minInclusive": requested.min,
+                "maxExclusive": requested.max,
+            }]
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+        seen_headers = []
 
         def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
-            seen_partition_key_headers.append(req_headers.get(HttpHeaders.PartitionKey))
-            return {"Documents": [{"id": "doc-1"}]}, {}
-
-        container_properties = {"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
-        options = {"partitionKey": ["mypk"]}
+            seen_headers.append(dict(req_headers))
+            return {"Documents": [42]}, {}
 
         with patch(
             "azure.cosmos._cosmos_client_connection.base.GetHeaders",
-            return_value={HttpHeaders.PartitionKey: '["mypk"]'},
+            return_value={},
         ):
-            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
-                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
-                    docs, _headers = client.QueryFeed(
+            with patch(
+                "azure.cosmos._cosmos_client_connection.base.set_session_token_header",
+                return_value=None,
+            ):
+                with patch.object(
+                    client,
+                    "_CosmosClientConnection__Post",
+                    side_effect=post_side_effect,
+                ):
+                    docs, headers = client.QueryFeed(
                         path="/dbs/db/colls/c1/docs",
                         collection_id="rid-c1",
-                        query="SELECT * FROM c",
-                        options=options,
-                        container_properties=container_properties,
+                        query="SELECT VALUE COUNT(1) FROM c",
+                        options={},
+                        prefix_partition_key_object=PartitionKey(
+                            path=["/tenant", "/user"], kind="MultiHash"
+                        ),
+                        prefix_partition_key_value=["tenant"],
                     )
 
-        assert docs == [{"id": "doc-1"}]
-        assert seen_partition_key_headers == ['["mypk"]'], (
-            "When full-PK routing finds no overlaps and falls back to __Post, "
-            "the legacy PartitionKey header must be preserved."
-        )
+        assert docs == [42]
+        assert HttpHeaders.Continuation not in headers
+        assert len(seen_headers) == 1
+        assert HttpHeaders.PartitionKey not in seen_headers[0]
+        assert seen_headers[0][HttpHeaders.PartitionKeyRangeID] == "0"
+        assert seen_headers[0][HttpHeaders.ReadFeedKeyType] == "EffectivePartitionKeyRange"
+        assert client._routing_map_provider.get_overlapping_ranges.call_count >= 2
 
     def test_queryfeed_feed_range_legacy_inbound_single_partition_honors_and_emits_legacy(self):
         """Legacy inbound continuation is honored when feed_range currently maps to one partition."""

@@ -51,9 +51,9 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gpt41Nano model."""
     GPT5 = "gpt-5"
     """Gpt5 model."""
-    GPT_5_MINI = "gpt-5-mini"
+    GPT5_MINI = "gpt-5-mini"
     """Gpt5Mini model."""
-    GPT_5_NANO = "gpt-5-nano"
+    GPT5_NANO = "gpt-5-nano"
     """Gpt5Nano model."""
     GPT51 = "gpt-5.1"
     """Gpt51 model."""
@@ -61,10 +61,18 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gpt52 model."""
     GPT54 = "gpt-5.4"
     """Gpt54 model."""
-    GPT_5_4_MINI = "gpt-5.4-mini"
+    GPT5_4_MINI = "gpt-5.4-mini"
     """Gpt54Mini model."""
-    GPT_5_4_NANO = "gpt-5.4-nano"
+    GPT5_4_NANO = "gpt-5.4-nano"
     """Gpt54Nano model."""
+    GPT55 = "gpt-5.5"
+    """Gpt55 model."""
+    GPT56_SOL = "gpt-5.6-sol"
+    """Gpt56Sol model."""
+    GPT56_TERRA = "gpt-5.6-terra"
+    """Gpt56Terra model."""
+    GPT56_LUNA = "gpt-5.6-luna"
+    """Gpt56Luna model."""
 
 
 class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -368,6 +376,17 @@ class EntityRecognitionSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Swedish."""
     TR = "tr"
     """Turkish."""
+
+
+class FileKnowledgeSourceExtractionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The extraction effort applied to an individual file. 'minimal' (the default) uses built-in
+    extraction; 'standard' uses Content Understanding.
+    """
+
+    MINIMAL = "minimal"
+    """Built-in extraction was performed."""
+    STANDARD = "standard"
+    """Content Understanding extraction was performed."""
 
 
 class ImageAnalysisSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -682,6 +701,16 @@ class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A knowledge source that retrieves data from Microsoft Fabric Ontology ontologies."""
 
 
+class KnowledgeSourceResultsProcessing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls whether a knowledge source's results are reranked."""
+
+    RERANK = "rerank"
+    """Results from this knowledge source go through the reranking pipeline. This is the default
+    behavior."""
+    NONE = "none"
+    """Results from this knowledge source bypass reranking and preserve their underlying order."""
+
+
 class KnowledgeSourceSynchronizationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current synchronization status of the knowledge source."""
 
@@ -978,6 +1007,15 @@ class LexicalTokenizerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/core/WhitespaceTokenizer.html>`_."""
 
 
+class ListingSearchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies how the search parameter is interpreted when narrowing down a listing result set.
+    Currently only 'prefix' is supported.
+    """
+
+    PREFIX = "prefix"
+    """Matches items whose name starts with the value of the search parameter."""
+
+
 class MarkdownHeaderDepth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the max header depth that will be considered while grouping markdown content. Default
     is ``h6``.
@@ -1031,16 +1069,6 @@ class McpServerOutputParsingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Split the output into pages using the configured split parameters."""
     NONE = "none"
     """Treat the output as a single block without any parsing."""
-
-
-class McpServerToolInclusionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Controls how parsed MCP tool results are integrated into the final result set."""
-
-    RERANKED = "reranked"
-    """Tool results go through the reranking and aggregation pipeline alongside results from other
-    knowledge sources. This is the default behavior."""
-    ALWAYS = "always"
-    """Tool results bypass reranking and are always included in the agent context."""
 
 
 class MicrosoftStemmingTokenizerLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1763,6 +1791,15 @@ class SearchIndexerDataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates a Microsoft Fabric OneLake datasource."""
     SHAREPOINT = "sharepoint"
     """Indicates a SharePoint datasource."""
+
+
+class SearchIndexKnowledgeSourceBoostKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of boost hint for a search index knowledge source."""
+
+    FIELD_VALUE = "fieldValue"
+    """Boost documents based on a field value."""
+    MULTI_WORD_EXPRESSION = "multiWordExpression"
+    """Boost documents based on a multi-word expression."""
 
 
 class SearchIndexPermissionFilterOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):

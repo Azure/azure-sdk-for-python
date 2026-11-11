@@ -86,7 +86,8 @@ class TestContainerServiceFleetMgmtFleetManagedNamespacesOperations(AzureMgmtRec
                                     "clusterNames": ["str"],
                                     "placementType": "str",
                                     "tolerations": [{"effect": "str", "key": "str", "operator": "str", "value": "str"}],
-                                }
+                                },
+                                "rolloutStrategy": {"clusterUpdateStrategy": {"name": "str"}, "type": "str"},
                             }
                         },
                     },
@@ -148,7 +149,58 @@ class TestContainerServiceFleetMgmtFleetManagedNamespacesOperations(AzureMgmtRec
             resource_group_name=resource_group.name,
             fleet_name="str",
             managed_namespace_name="str",
-            properties={"tags": {"str": "str"}},
+            properties={
+                "properties": {
+                    "adoptionPolicy": "str",
+                    "deletePolicy": "str",
+                    "managedNamespaceProperties": {
+                        "annotations": {"str": "str"},
+                        "defaultNetworkPolicy": {"egress": "str", "ingress": "str"},
+                        "defaultResourceQuota": {
+                            "cpuLimit": "str",
+                            "cpuRequest": "str",
+                            "memoryLimit": "str",
+                            "memoryRequest": "str",
+                        },
+                        "labels": {"str": "str"},
+                    },
+                    "propagationPolicy": {
+                        "placementProfile": {
+                            "defaultClusterResourcePlacement": {
+                                "policy": {
+                                    "affinity": {
+                                        "clusterAffinity": {
+                                            "requiredDuringSchedulingIgnoredDuringExecution": {
+                                                "clusterSelectorTerms": [
+                                                    {
+                                                        "labelSelector": {
+                                                            "matchExpressions": [
+                                                                {"key": "str", "operator": "str", "values": ["str"]}
+                                                            ],
+                                                            "matchLabels": {"str": "str"},
+                                                        },
+                                                        "propertySelector": {
+                                                            "matchExpressions": [
+                                                                {"name": "str", "operator": "str", "values": ["str"]}
+                                                            ]
+                                                        },
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "clusterNames": ["str"],
+                                    "placementType": "str",
+                                    "tolerations": [{"effect": "str", "key": "str", "operator": "str", "value": "str"}],
+                                },
+                                "rolloutStrategy": {"clusterUpdateStrategy": {"name": "str"}, "type": "str"},
+                            }
+                        },
+                        "type": "str",
+                    },
+                },
+                "tags": {"str": "str"},
+            },
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

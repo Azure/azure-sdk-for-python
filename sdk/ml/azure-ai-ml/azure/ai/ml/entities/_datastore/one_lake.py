@@ -8,11 +8,11 @@ from abc import ABC
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import LakeHouseArtifact as RestLakeHouseArtifact
-from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore as RestOneLakeDatastore
+from azure.ai.ml._restclient.arm_ml_service.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.arm_ml_service.models import DatastoreType
+from azure.ai.ml._restclient.arm_ml_service.models import LakeHouseArtifact as RestLakeHouseArtifact
+from azure.ai.ml._restclient.arm_ml_service.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
+from azure.ai.ml._restclient.arm_ml_service.models import OneLakeDatastore as RestOneLakeDatastore
 from azure.ai.ml._schema._datastore.one_lake import OneLakeSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
@@ -27,10 +27,10 @@ from azure.ai.ml.entities._util import load_from_dict
 class OneLakeArtifact(RestTranslatableMixin, DictMixin, ABC):
     """OneLake artifact (data source) backing the OneLake workspace.
 
-    :param name: OneLake artifact name/GUID. ex) 01234567-abcd-1234-5678-012345678901
-    :type name: str
-    :param type: OneLake artifact type. Only LakeHouse artifacts are currently supported.
-    :type type: str
+    :keyword name: OneLake artifact name/GUID. ex) 01234567-abcd-1234-5678-012345678901
+    :paramtype name: str
+    :keyword type: OneLake artifact type. Only LakeHouse artifacts are currently supported.
+    :paramtype type: str
     """
 
     def __init__(self, *, name: str, type: Optional[str] = None):
@@ -58,22 +58,22 @@ class LakeHouseArtifact(OneLakeArtifact):
 class OneLakeDatastore(Datastore):
     """OneLake datastore that is linked to an Azure ML workspace.
 
-    :param name: Name of the datastore.
-    :type name: str
-    :param artifact: OneLake Artifact. Only LakeHouse artifacts are currently supported.
-    :type artifact: ~azure.ai.ml.entities.OneLakeArtifact
-    :param one_lake_workspace_name: OneLake workspace name/GUID. ex) 01234567-abcd-1234-5678-012345678901
-    :type one_lake_workspace_name: str
-    :param endpoint: OneLake endpoint to use for the datastore. ex) https://onelake.dfs.fabric.microsoft.com
-    :type endpoint: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param credentials: Credentials to use to authenticate against OneLake.
-    :type credentials: Union[
+    :keyword name: Name of the datastore.
+    :paramtype name: str
+    :keyword artifact: OneLake Artifact. Only LakeHouse artifacts are currently supported.
+    :paramtype artifact: ~azure.ai.ml.entities.OneLakeArtifact
+    :keyword one_lake_workspace_name: OneLake workspace name/GUID. ex) 01234567-abcd-1234-5678-012345678901
+    :paramtype one_lake_workspace_name: str
+    :keyword endpoint: OneLake endpoint to use for the datastore. ex) https://onelake.dfs.fabric.microsoft.com
+    :paramtype endpoint: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword credentials: Credentials to use to authenticate against OneLake.
+    :paramtype credentials: Union[
         ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.NoneCredentialConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict

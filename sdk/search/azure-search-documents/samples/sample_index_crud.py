@@ -18,7 +18,6 @@ USAGE:
     2) AZURE_SEARCH_API_KEY - the admin key for your search service
 """
 
-
 import os
 from typing import List
 
@@ -131,11 +130,16 @@ def list_index_names():
     # [START list_index_names]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes import SearchIndexClient
+    from azure.search.documents.indexes.models import ListingSearchType
 
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
-    print("Listing all index names:")
-    for name in index_client.list_index_names():
+    print("Listing matching index names:")
+    for name in index_client.list_index_names(
+        search="hotels-sample",
+        page_size=10,
+        search_type=ListingSearchType.PREFIX,
+    ):
         print(f"  - {name}")
     # [END list_index_names]
 

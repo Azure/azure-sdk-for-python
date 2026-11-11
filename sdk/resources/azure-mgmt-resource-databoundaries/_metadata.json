@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.Resources": "2024-08-01"
   },
-  "commit": "f34830624e2040e4777496c73aa7c6fe764f4bfc",
+  "commit": "050576fbe2e66b311b5f72f30de27c0f04c7881d",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/resources/resource-manager/Microsoft.Resources/databoundaries",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
 }

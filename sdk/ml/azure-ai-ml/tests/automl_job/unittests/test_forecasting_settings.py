@@ -2,7 +2,7 @@ from typing import Any, List, Tuple
 
 import pytest
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AutoForecastHorizon,
     AutoSeasonality,
     AutoTargetLags,
@@ -12,8 +12,8 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CustomTargetLags,
     CustomTargetRollingWindowSize,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingSettings as RestForecastingSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ShortSeriesHandlingConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import ForecastingSettings as RestForecastingSettings
+from azure.ai.ml._restclient.arm_ml_service.models import ShortSeriesHandlingConfiguration
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 
 
@@ -77,7 +77,7 @@ class TestForecastingSettings:
     @pytest.mark.parametrize(
         "settings",
         [
-            (RestForecastingSettings(target_lags=CustomTargetLags(values=[10, 20])), [10, 20]),
+            (RestForecastingSettings(target_lags=CustomTargetLags(values_property=[10, 20])), [10, 20]),
             (RestForecastingSettings(target_lags=AutoTargetLags()), "auto"),
             (RestForecastingSettings(target_lags=None), None),
         ],
@@ -91,8 +91,8 @@ class TestForecastingSettings:
     @pytest.mark.parametrize(
         "settings",
         [
-            (ForecastingSettings(target_lags=10), CustomTargetLags(values=[10])),
-            (ForecastingSettings(target_lags=[10, 20, 30]), CustomTargetLags(values=[10, 20, 30])),
+            (ForecastingSettings(target_lags=10), CustomTargetLags(values_property=[10])),
+            (ForecastingSettings(target_lags=[10, 20, 30]), CustomTargetLags(values_property=[10, 20, 30])),
             (ForecastingSettings(target_lags="auto"), AutoTargetLags()),
         ],
     )

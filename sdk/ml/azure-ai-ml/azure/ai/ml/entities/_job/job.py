@@ -14,13 +14,15 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101Preview
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase, JobService
+from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    CommonYamlFields,
+)
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.job import JobServices, JobType
 from azure.ai.ml.entities._mixins import TelemetryMixin
@@ -207,7 +209,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-        from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
+        from azure.ai.ml.entities._job.distillation.distillation_job import (
+            DistillationJob,
+        )
         from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
@@ -285,15 +289,15 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         return job
 
     @classmethod
-    def _from_rest_object(  # pylint: disable=too-many-return-statements
-        cls, obj: Union[JobBase, JobBase_2401, Run]
-    ) -> "Job":
+    def _from_rest_object(cls, obj: Union[JobBase, Run]) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.base_job import _BaseJob
-        from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
+        from azure.ai.ml.entities._job.distillation.distillation_job import (
+            DistillationJob,
+        )
         from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
@@ -323,7 +327,11 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 return SweepJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.AUTO_ML:
                 return AutoMLJob._load_from_rest(obj)
-            if obj.properties.job_type == RestJobType_20240101Preview.FINE_TUNING:
+            # The shared arm_ml_service JobType enum has no FINE_TUNING member, but the wire discriminator
+            # for fine-tuning jobs is the literal string "FineTuning" (emitted by both the arm and v2024_01
+            # FineTuningJob models). Compare against the literal so this works regardless of which client
+            # deserialized the object.
+            if obj.properties.job_type == "FineTuning":
                 if obj.properties.properties.get("azureml.enable_distillation", False):
                     return DistillationJob._load_from_rest(obj)
                 return FineTuningJob._load_from_rest(obj)

@@ -5,7 +5,10 @@
 
 from ._validation_constants import MessageRole, ContentType
 from ._validator_interface import ValidatorInterface
-from ._conversation_validator import ConversationValidator
+from ._conversation_validator import (
+    ConversationValidator,
+    GroundednessConversationValidator,
+)
 from ._tool_definitions_validator import ToolDefinitionsValidator
 from ._tool_calls_validator import ToolCallsValidator
 from ._task_navigation_efficiency_validator import TaskNavigationEfficiencyValidator
@@ -16,6 +19,7 @@ __all__ = [
     "ContentType",
     "ValidatorInterface",
     "ConversationValidator",
+    "GroundednessConversationValidator",
     "ToolDefinitionsValidator",
     "ToolCallsValidator",
     "TaskNavigationEfficiencyValidator",

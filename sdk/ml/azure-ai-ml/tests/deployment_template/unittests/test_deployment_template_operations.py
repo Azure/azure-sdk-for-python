@@ -243,7 +243,7 @@ class TestDeploymentTemplateOperations:
         )
 
         with pytest.raises(HttpResponseError):
-            deployment_template_ops.get("nonexistent-template")
+            deployment_template_ops.get("nonexistent-template", "1.0")
 
     def test_list_deployment_templates(self, deployment_template_ops, sample_rest_template):
         """Test list operation for deployment templates."""
@@ -331,7 +331,74 @@ class TestDeploymentTemplateOperations:
         deployment_template_ops._operation_scope.workspace_name = "test-workspace"
 
         with pytest.raises(HttpResponseError):
-            deployment_template_ops.delete("nonexistent-template")
+            deployment_template_ops.delete("nonexistent-template", "1.0")
+
+    def test_get_no_version_resolves_latest(self, deployment_template_ops, sample_rest_template):
+        """get() without a version resolves the highest available version instead of sending 'latest'."""
+        deployment_template_ops._service_client.deployment_templates.get = Mock(return_value=sample_rest_template)
+        # list() returns versions out of order; the highest (5) must be selected.
+        deployment_template_ops.list = Mock(
+            return_value=[
+                DeploymentTemplate(name="test-template", version="2"),
+                DeploymentTemplate(name="test-template", version="5"),
+                DeploymentTemplate(name="test-template", version="3"),
+            ]
+        )
+
+        result = deployment_template_ops.get("test-template")
+
+        deployment_template_ops.list.assert_called_once_with(name="test-template")
+        call_args = deployment_template_ops._service_client.deployment_templates.get.call_args
+        assert call_args[1]["version"] == "5"
+        assert isinstance(result, DeploymentTemplate)
+
+    def test_get_label_latest_resolves_latest(self, deployment_template_ops, sample_rest_template):
+        """get(label='latest') resolves to the highest available version."""
+        deployment_template_ops._service_client.deployment_templates.get = Mock(return_value=sample_rest_template)
+        deployment_template_ops.list = Mock(
+            return_value=[
+                DeploymentTemplate(name="test-template", version="1"),
+                DeploymentTemplate(name="test-template", version="4"),
+            ]
+        )
+
+        result = deployment_template_ops.get("test-template", label="latest")
+
+        call_args = deployment_template_ops._service_client.deployment_templates.get.call_args
+        assert call_args[1]["version"] == "4"
+        assert isinstance(result, DeploymentTemplate)
+
+    def test_get_version_and_label_raises(self, deployment_template_ops):
+        """get() with both version and label is rejected."""
+        with pytest.raises(ValueError):
+            deployment_template_ops.get("test-template", version="1", label="latest")
+
+    def test_get_unsupported_label_raises(self, deployment_template_ops):
+        """Only the 'latest' label is supported; other labels raise ResourceNotFoundError."""
+        with pytest.raises(ResourceNotFoundError):
+            deployment_template_ops.get("test-template", label="production")
+
+    def test_get_no_versions_raises_not_found(self, deployment_template_ops):
+        """get() without a version raises when no versions exist to resolve."""
+        deployment_template_ops.list = Mock(return_value=[])
+
+        with pytest.raises(ResourceNotFoundError):
+            deployment_template_ops.get("test-template")
+
+    def test_delete_no_version_resolves_latest(self, deployment_template_ops):
+        """delete() without a version resolves the highest available version instead of sending 'latest'."""
+        deployment_template_ops._service_client.deployment_templates.delete = Mock(return_value=None)
+        deployment_template_ops.list = Mock(
+            return_value=[
+                DeploymentTemplate(name="test-template", version="2"),
+                DeploymentTemplate(name="test-template", version="5"),
+            ]
+        )
+
+        deployment_template_ops.delete("test-template")
+
+        call_args = deployment_template_ops._service_client.deployment_templates.delete.call_args
+        assert call_args[1]["version"] == "5"
 
     def test_create_or_update_with_none_input(self, deployment_template_ops):
         """Test create_or_update with None input."""
@@ -416,7 +483,7 @@ class TestDeploymentTemplateOperations:
         )
 
         with pytest.raises(HttpResponseError):
-            deployment_template_ops.get("")
+            deployment_template_ops.get("", "1.0")
 
     def test_delete_with_invalid_name(self, deployment_template_ops):
         """Test delete operation with invalid template name."""
@@ -434,7 +501,7 @@ class TestDeploymentTemplateOperations:
         deployment_template_ops._operation_scope.workspace_name = "test-workspace"
 
         with pytest.raises(HttpResponseError):
-            deployment_template_ops.delete("")
+            deployment_template_ops.delete("", "1.0")
 
     @patch("azure.ai.ml.entities._load_functions.load_deployment_template")
     def test_create_or_update_yaml_file_not_found(self, mock_load, deployment_template_ops):
@@ -813,27 +880,39 @@ class TestDeploymentTemplateOperations:
             deployment_template_ops.create_or_update({"name": "test"})
 
     def test_delete_default_version(self, deployment_template_ops):
-        """Test delete operation with default version."""
+        """Test delete resolves the latest version when no version is provided."""
         deployment_template_ops._service_client.deployment_templates.delete = Mock()
+        deployment_template_ops.list = Mock(
+            return_value=[
+                DeploymentTemplate(name="test-template", version="1"),
+                DeploymentTemplate(name="test-template", version="3"),
+            ]
+        )
         deployment_template_ops._operation_scope.subscription_id = "test-sub"
         deployment_template_ops._operation_scope.resource_group_name = "test-rg"
         deployment_template_ops._operation_scope.registry_name = "test-registry"
 
         deployment_template_ops.delete("test-template")
 
-        # Verify version defaults to "latest"
+        # Verify version defaults to the highest available version (not the literal string "latest")
         call_args = deployment_template_ops._service_client.deployment_templates.delete.call_args
-        assert call_args[1]["version"] == "latest"
+        assert call_args[1]["version"] == "3"
 
     def test_get_default_version(self, deployment_template_ops, sample_rest_template):
-        """Test get operation with default version."""
+        """Test get resolves the latest version when no version is provided."""
         deployment_template_ops._service_client.deployment_templates.get = Mock(return_value=sample_rest_template)
+        deployment_template_ops.list = Mock(
+            return_value=[
+                DeploymentTemplate(name="test-template", version="1"),
+                DeploymentTemplate(name="test-template", version="3"),
+            ]
+        )
         deployment_template_ops._operation_scope.subscription_id = "test-sub"
         deployment_template_ops._operation_scope.resource_group_name = "test-rg"
         deployment_template_ops._operation_scope.registry_name = "test-registry"
 
         deployment_template_ops.get("test-template")
 
-        # Verify version defaults to "latest"
+        # Verify version defaults to the highest available version (not the literal string "latest")
         call_args = deployment_template_ops._service_client.deployment_templates.get.call_args
-        assert call_args[1]["version"] == "latest"
+        assert call_args[1]["version"] == "3"

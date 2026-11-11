@@ -23,7 +23,7 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import Any, IO, Sequence, Type, Union, cast, overload
+from typing import Any, IO, Mapping, Sequence, Type, Union, cast, overload
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt32, _UInt64, _UInt128
@@ -33,6 +33,12 @@ from ._routing.routing_range import Range as _Range
 
 _MaximumExclusiveEffectivePartitionKey = 0xFF
 _MinimumInclusiveEffectivePartitionKey = 0x00
+# The minimum effective partition key is the empty hex string, and its immediate successor is "00":
+# effective partition keys are compared as hex strings, so nothing sorts between the two. Using the
+# successor as an exclusive upper bound keeps the range normalized, since an inclusive point range at
+# the minimum normalizes to an empty range.
+_MinimumInclusiveEffectivePartitionKeyString = ""
+_MinimumEffectivePartitionKeySuccessorString = "00"
 _MaxStringChars = 100
 _MaxStringBytesToAppend = 100
 _MaxPartitionKeyBinarySize = \
@@ -217,6 +223,15 @@ class PartitionKey(dict):
             self,
             pk_value: PartitionKeyType
     ) -> _Range:
+        # _Empty is the sentinel for a partition key value missing from an item in a system key
+        # (migrated) container. Unlike the other sentinels it does not stand for a partition key
+        # *component*, it stands for an empty list of components -- it is serialized on the wire as
+        # `[]` rather than `[{}]` -- so it has no binary encoding and cannot be hashed. It maps to
+        # the minimum effective partition key, which is what hashing an empty component list yields.
+        if isinstance(pk_value, _Empty):
+            return _Range(_MinimumInclusiveEffectivePartitionKeyString,
+                          _MinimumEffectivePartitionKeySuccessorString, True, False)
+
         if self._is_prefix_partition_key(pk_value):
             return self._get_epk_range_for_prefix_partition_key(
                 cast(_SequentialPartitionKeyType, pk_value))
@@ -246,7 +261,8 @@ class PartitionKey(dict):
         if isinstance(pk_value, str):
             truncated_components.append(PartitionKey._truncate_for_v1_hashing(pk_value))
         else:
-            truncated_components = [PartitionKey._truncate_for_v1_hashing(v) for v in pk_value]
+            truncated_components = [PartitionKey._truncate_for_v1_hashing(_normalize_undefined_component(v))
+                                    for v in pk_value]
         with BytesIO() as ms:
             for component in truncated_components:
                 if isinstance(component, int) and not isinstance(component, bool):
@@ -335,7 +351,7 @@ class PartitionKey(dict):
     ) -> str:
         with BytesIO() as ms:
             for component in pk_value:
-                PartitionKey._write_for_hashing_v2(component, ms)
+                PartitionKey._write_for_hashing_v2(_normalize_undefined_component(component), ms)
 
             ms_bytes = ms.getvalue()
             hash128 = _murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
@@ -358,7 +374,7 @@ class PartitionKey(dict):
             binary_writer = ms  # In Python, you can write bytes directly to a BytesIO object
 
             # Assuming paths[i] is the correct object to call write_for_hashing_v2 on
-            PartitionKey._write_for_hashing_v2(value, binary_writer)
+            PartitionKey._write_for_hashing_v2(_normalize_undefined_component(value), binary_writer)
 
             ms_bytes = ms.getvalue()
             hash128 = _murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
@@ -386,6 +402,23 @@ def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empt
     if is_system_key:
         return _Empty()
     return _Undefined()
+
+
+def _normalize_undefined_component(value: Any) -> Any:
+    """Normalize the sentinels that mean "the item has no value for this partition key path".
+
+    ``{}`` is the legacy spelling of an absent partition key value, and ``NonePartitionKeyValue``
+    is the modern one. Both are serialized on the wire as ``[{}]`` and must therefore hash to
+    ``Undefined``, not ``Null``. Without this normalization ``{}`` raises ``TypeError`` on Hash V1
+    partition keys and hashes to the ``Null`` effective partition key on Hash V2 ones.
+
+    :param any value: A single partition key component.
+    :return: ``_Undefined()`` when the component means "no value", otherwise the component itself.
+    :rtype: any
+    """
+    if value is NonePartitionKeyValue or (isinstance(value, Mapping) and not value):
+        return _Undefined()
+    return value
 
 
 def _to_hex(bytes_object: bytearray, start: int, length: int) -> str:
@@ -459,7 +492,9 @@ def _write_for_binary_encoding_v1(
         utf8_value = value.encode('utf-8')
         short_string = len(utf8_value) <= _MaxStringBytesToAppend
 
-        for index in range(short_string and len(utf8_value) or _MaxStringBytesToAppend + 1):
+        # `short_string and len(...) or ...` mis-evaluates to the long-string branch for the
+        # empty string, which then indexes past the end of `utf8_value`.
+        for index in range(len(utf8_value) if short_string else _MaxStringBytesToAppend + 1):
             char_byte = utf8_value[index]
             char_byte += 1
             binary_writer.write(bytes([char_byte]))

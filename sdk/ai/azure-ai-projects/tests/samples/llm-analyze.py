@@ -7,16 +7,17 @@
 
 Example:
     python .\\tests\\samples\\llm-analyze.py --sample-path="samples\\agents\\tools\\sample_agent_file_search.py" \
-        --foundry_project_endpoint="https://foundy6maq.services.ai.azure.com/api/projects/project6maq" \
-        --foundry_model_name="gpt-5" \
-        --llm_endpoint="https://foundy6maq.services.ai.azure.com/api/projects/project6maq", \
-        --llm_model_name="gpt-5"
+        --foundry_project_endpoint="https://<your-resource>.services.ai.azure.com/api/projects/<your-project>" \
+        --foundry_model_name="gpt-5.2" \
+        --llm_endpoint="https://<your-resource>.services.ai.azure.com/api/projects/<your-project>" \
+        --llm_model_name="gpt-5.2"
 
 Example JSON output:
     {
       "correct": true,
       "llm_comment": "Execution completed successfully with substantive output.",
       "log_file": "C:\\Users\\<user>\\AppData\\Local\\Temp\\sample_agent_file_search_success_<timestamp>.log",
+      "print_output_file": "C:\\Users\\<user>\\AppData\\Local\\Temp\\sample_agent_file_search_output_<timestamp>.log",
       "duration": 117.912
     }
 
@@ -60,12 +61,7 @@ sys.path.insert(0, str(TESTS_ROOT))
 from sample_executor import AsyncSampleExecutor, SyncSampleExecutor  # pylint: disable=wrong-import-position
 from test_base import patched_open_crlf_to_lf  # pylint: disable=wrong-import-position
 
-LOG_FILE_PATTERNS = {
-    "AZURE_TEST_RUN_LIVE": "true",
-    "SAMPLE_TEST_PASSED_LOG": "<sample_filename>_success_<timestamp>.log",
-    "SAMPLE_TEST_FAILED_LOG": "<sample_filename>_failed_<timestamp>.log",
-    "SAMPLE_TEST_ERROR_LOG": "<sample_filename>_errors_<timestamp>.log",
-}
+LIVE_MODE_ENV = {"AZURE_TEST_RUN_LIVE": "true"}
 
 
 class _CredentialProvider:
@@ -88,9 +84,12 @@ class _CliSampleExecutor(SyncSampleExecutor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.log_file_path: str | None = None
+        self.print_output_file_path: str | None = None
 
     def _capture_print(self, *args, **_kwargs):
-        self.print_calls.append(" ".join(str(arg) for arg in args))
+        text = " ".join(str(arg) for arg in args)
+        self.print_calls.append(text)
+        self.print_output_calls.append(text)
 
     def _write_error_log(self, reason: str, exception_info: str) -> str | None:
         self.log_file_path = super()._write_error_log(reason, exception_info)
@@ -103,6 +102,10 @@ class _CliSampleExecutor(SyncSampleExecutor):
     def _write_passed_log(self, reason: str = "Validation passed") -> str | None:
         self.log_file_path = super()._write_passed_log(reason)
         return self.log_file_path
+
+    def _write_output_log(self) -> str | None:
+        self.print_output_file_path = super()._write_output_log()
+        return self.print_output_file_path
 
     def validate_print_calls_by_llm(self, *, endpoint: str, model: str, instructions: str | None = None) -> dict:
         instructions = self._resolve_validation_instructions(instructions)
@@ -159,9 +162,12 @@ class _CliAsyncSampleExecutor(AsyncSampleExecutor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.log_file_path: str | None = None
+        self.print_output_file_path: str | None = None
 
     def _capture_print(self, *args, **_kwargs):
-        self.print_calls.append(" ".join(str(arg) for arg in args))
+        text = " ".join(str(arg) for arg in args)
+        self.print_calls.append(text)
+        self.print_output_calls.append(text)
 
     def _write_error_log(self, reason: str, exception_info: str) -> str | None:
         self.log_file_path = super()._write_error_log(reason, exception_info)
@@ -174,6 +180,10 @@ class _CliAsyncSampleExecutor(AsyncSampleExecutor):
     def _write_passed_log(self, reason: str = "Validation passed") -> str | None:
         self.log_file_path = super()._write_passed_log(reason)
         return self.log_file_path
+
+    def _write_output_log(self) -> str | None:
+        self.print_output_file_path = super()._write_output_log()
+        return self.print_output_file_path
 
     async def validate_print_calls_by_llm_async(
         self, *, endpoint: str, model: str, instructions: str | None = None
@@ -288,11 +298,12 @@ def _parse_args() -> tuple[argparse.Namespace, dict[str, str]]:
     return args, env_vars
 
 
-def _build_result(report: dict, *, log_file: str | None, start_time: float) -> dict:
+def _build_result(report: dict, *, log_file: str | None, print_output_file: str | None, start_time: float) -> dict:
     return {
         "correct": report.get("correct", False),
         "llm_comment": report.get("reason"),
         "log_file": log_file,
+        "print_output_file": print_output_file,
         "duration": round(time.perf_counter() - start_time, 3),
     }
 
@@ -302,7 +313,7 @@ def _run_sync_sample(sample_path: str, args: argparse.Namespace, env_vars: dict[
         executor = _CliSampleExecutor(
             _CredentialProvider(credential),
             sample_path,
-            env_vars={**LOG_FILE_PATTERNS, **env_vars},
+            env_vars={**LIVE_MODE_ENV, **env_vars},
         )
         try:
             with _suppress_terminal_output():
@@ -310,7 +321,13 @@ def _run_sync_sample(sample_path: str, args: argparse.Namespace, env_vars: dict[
                 report = executor.validate_print_calls_by_llm(endpoint=args.llm_endpoint, model=args.llm_model_name)
         except Exception as ex:  # pylint: disable=broad-exception-caught
             report = {"correct": False, "reason": f"Sample execution failed: {type(ex).__name__}: {ex}"}
-    return _build_result(report, log_file=executor.log_file_path, start_time=start_time)
+        print_output_file = executor.print_output_file_path
+    return _build_result(
+        report,
+        log_file=executor.log_file_path,
+        print_output_file=print_output_file,
+        start_time=start_time,
+    )
 
 
 async def _run_async_sample(
@@ -320,7 +337,7 @@ async def _run_async_sample(
         executor = _CliAsyncSampleExecutor(
             _AsyncCredentialProvider(credential),
             sample_path,
-            env_vars={**LOG_FILE_PATTERNS, **env_vars},
+            env_vars={**LIVE_MODE_ENV, **env_vars},
         )
         try:
             with _suppress_terminal_output():
@@ -331,7 +348,13 @@ async def _run_async_sample(
                 )
         except Exception as ex:  # pylint: disable=broad-exception-caught
             report = {"correct": False, "reason": f"Sample execution failed: {type(ex).__name__}: {ex}"}
-    return _build_result(report, log_file=executor.log_file_path, start_time=start_time)
+        print_output_file = executor.print_output_file_path
+    return _build_result(
+        report,
+        log_file=executor.log_file_path,
+        print_output_file=print_output_file,
+        start_time=start_time,
+    )
 
 
 def main() -> int:
@@ -340,7 +363,7 @@ def main() -> int:
         str((PROJECT_ROOT / args.sample_path).resolve()) if not os.path.isabs(args.sample_path) else args.sample_path
     )
     start_time = time.perf_counter()
-    with _temporary_env(LOG_FILE_PATTERNS):
+    with _temporary_env(LIVE_MODE_ENV):
         result = (
             asyncio.run(_run_async_sample(sample_path, args, env_vars, start_time))
             if sample_path.endswith("_async.py")

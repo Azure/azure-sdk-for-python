@@ -10,7 +10,6 @@
       "url": "https://wttr.in"
     }
   ],
-  "auth": [],
   "paths": {
     "/{location}": {
       "get": {
@@ -55,8 +54,5 @@
         "deprecated": false
       }
     }
-  },
-  "components": {
-    "schemes": {}
   }
 }

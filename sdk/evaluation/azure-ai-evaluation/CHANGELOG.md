@@ -1,6 +1,6 @@
 # Release History
 
-## 1.18.1 (Unreleased)
+## 1.18.9 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,111 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.18.8 (2026-10-08)
+
+### Bugs Fixed
+
+- Added Microsoft-scoped evaluation status and boolean pass/fail attributes to Application Insights result events.
+
+- Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
+- Fixed multi-turn evaluations failing during Azure OpenAI result conversion when per-turn token-count lists were routed into scalar token-usage fields. Per-turn breakdowns are now excluded from scalar result-field routing, preserving aggregate token counts and scores. ([#49242](https://github.com/Azure/azure-sdk-for-python/pull/49242))
+- Fixed conversation-history formatting falling back to raw input when included system messages use typed text content blocks instead of plain strings, including the tool-call-aware formatting path.
+
+## 1.18.7 (2026-09-25)
+
+### Breaking Changes
+
+- Removed the `aoai_output_items_page_size` option from `evaluate` and its input validation.
+  Callers using this option must remove it; it no longer configures native Azure OpenAI grader output retrieval.
+  Output-item requests again use a fixed page size of 100 and the existing OpenAI client's configured retry
+  policy, without adaptive page-size reduction or a separate SDK-level retry budget. All cursor pages are
+  still retrieved, and result ordering and missing-row alignment are unchanged.
+
+### Bugs Fixed
+
+- Fixed native Azure OpenAI grader evaluations overriding explicit item-schema types and constraints with inferred schemas and converting corresponding typed input values to strings during request construction, including fields governed by a schema-valued `additionalProperties`.
+
+## 1.18.6 (2026-09-23)
+
+### Bugs Fixed
+
+- Fixed automatic mappings for Azure OpenAI graders omitting nested input fields with duplicate leaf names from the evaluation schema, and corrected type inference for wrapped input fields.
+- Prevented AOAI data-source generation from mutating nested input data shared with callable evaluators.
+
+## 1.18.5 (2026-09-02)
+
+### Bugs Fixed
+
+- Made Application Insights export failures best-effort for evaluations using project managed identity authentication.
+
+- Fixed keyword argument routing so bare `messages=[...]` input, with optional top-level `context`, `ground_truth`,
+  and `tool_definitions`, is normalized into the already-supported conversation path for `RelevanceEvaluator`,
+  `SimilarityEvaluator`, `FluencyEvaluator`, `RetrievalEvaluator`, `ResponseCompletenessEvaluator`,
+  `ViolenceEvaluator`, `HateUnfairnessEvaluator`, `SelfHarmEvaluator`, `SexualEvaluator`,
+  `ProtectedMaterialEvaluator`, `IndirectAttackEvaluator`, `CodeVulnerabilityEvaluator`, and `ECIEvaluator`.
+  Existing scalar and `conversation={...}` input semantics are unchanged.
+  [#48629](https://github.com/Azure/azure-sdk-for-python/pull/48629)
+
+## 1.18.3 (2026-07-28)
+
+### Features Added
+
+- Added support for Entra authentication for evaluation results emitted to Application Insights.
+
+## 1.18.2 (2026-07-21)
+
+### Features Added
+
+- Added support for admin-connected (BYO) judge models in prompty-based evaluators. Models configured
+  with `byo_model` and `project_endpoint` are routed through the Foundry project Responses API, which
+  resolves the connection and its authentication.
+
+### Bugs Fixed
+
+- Updated `TaskNavigationEfficiencyEvaluator` validation errors to name both accepted input aliases:
+  `response` / `actions` and `ground_truth` / `expected_actions`.
+
+## 1.18.1 (2026-07-09)
+
+### Bugs Fixed
+
+- Enabled `azure_ai_search`, `azure_fabric`, and `sharepoint_grounding` tool
+  calls for `ToolCallSuccessEvaluator` and `ToolOutputUtilizationEvaluator`.
+  These tools were previously rejected because their `tool_result` payloads
+  are structured (dict / list of dicts) and the internal
+  `[TOOL_RESULT] {result}` formatter rendered them with `str()`, producing
+  Python `repr` output (single quotes, `'role': 'user'`) that the LLM judges
+  could not reliably ground on. The shared formatter now JSON-encodes
+  non-string payloads via a new `_stringify_tool_result` helper
+  (`ensure_ascii=False` to preserve customer locale data), and the shared
+  `ConversationValidator.UNSUPPORTED_TOOLS` list (inherited by
+  `ToolDefinitionsValidator`) is narrowed to allow these three tools.
+  `GroundednessEvaluator` now uses a new `GroundednessConversationValidator`
+  subclass that keeps the wider rejection list, matching the corresponding
+  behavior in azureml-assets where Groundedness was intentionally not part
+  of the enablement (a follow-up will land a context-extractor helper so
+  Groundedness can also accept these tools). The remaining restricted tools
+  (`bing_grounding`, `bing_custom_search`, `web_search`,
+  `browser_automation`, `code_interpreter_call`, `computer_call`,
+  `openapi_call`) continue to be rejected. `ToolCallAccuracyEvaluator` and
+  `ToolInputAccuracyEvaluator` are unaffected — they do not render tool
+  results into the judge prompt and already opt out of the unsupported-tool
+  check.
+- Fixed OpenAPI tool-call validation in tool evaluators (e.g. `ToolCallAccuracyEvaluator`). OpenAPI
+  tool definitions are expanded into their nested functions when present, so tool calls referencing a
+  nested function name validate correctly, while OpenAPI tool definitions without nested functions are
+  kept as is so tool calls referencing the top-level tool name continue to validate.
+
+### Other Changes
+
+- Conversation/tool message preprocessing now normalizes `openapi_call` / `openapi_call_output` content
+  items to `tool_call` / `tool_result` (previously only `function_call` / `function_call_output` were
+  normalized), so evaluators correctly handle OpenAPI-tool agent transcripts.
+- Evaluators no longer log raw customer payloads in fallback/debug paths. `reformat_agent_response`,
+  `reformat_conversation_history`, `reformat_tool_definitions`, the tool-call-success reformat helpers,
+  and Groundedness context extraction now emit structural summaries only (via `_log_safe_summary`),
+  never raw query/response/tool payloads.
 
 ## 1.18.0 (2026-07-06)
 
@@ -19,12 +124,6 @@
   appropriate `category` and `target`. Affected evaluators include `ContentSafetyEvaluator`,
   `QAEvaluator`, `RougeScoreEvaluator`, `DocumentRetrievalEvaluator`, the task navigation efficiency
   evaluator, and the shared evaluator base (conversation/tool-call input validation).
-
-- Fixed OpenAPI tool-call validation in tool evaluators (e.g. `ToolCallAccuracyEvaluator`). OpenAPI
-  tool definitions are expanded into their nested functions when present, so tool calls referencing a
-  nested function name validate correctly, while OpenAPI tool definitions without nested functions are
-  kept as is so tool calls referencing the top-level tool name continue to validate.
-
 - Fixed `RedTeam.scan()` storing decoded plaintext instead of the actual
   encoded payload for converter-based attack strategies (Base64, Flip,
   Morse, ROT13, etc.) in `evaluation_results.json` / `results.json`. The
@@ -36,19 +135,6 @@
   which continues to expose only `role`/`content`/`name`). Baseline
   (non-encoded) strategies are unaffected.
   Resolves [#47228](https://github.com/Azure/azure-sdk-for-python/issues/47228).
-
-### Other Changes
-
-- Conversation/tool message preprocessing now normalizes `openapi_call` / `openapi_call_output` content
-  items to `tool_call` / `tool_result` (previously only `function_call` / `function_call_output` were
-  normalized), so evaluators correctly handle OpenAPI-tool agent transcripts.
-- Tool results are now serialized as JSON when rendering agent responses for LLM-judge evaluators, so
-  list/dict outputs from grounding tools (Azure AI Search, SharePoint, Fabric) are readable instead of a
-  Python `repr`. Plain string tool results are unchanged.
-- Evaluators no longer log raw customer payloads in fallback/debug paths. `reformat_agent_response`,
-  `reformat_conversation_history`, `reformat_tool_definitions`, the tool-call-success reformat helpers,
-  and Groundedness context extraction now emit structural summaries only (via `_log_safe_summary`),
-  never raw query/response/tool payloads.
 
 ## 1.17.0 (2026-06-03)
 

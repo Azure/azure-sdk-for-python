@@ -672,10 +672,10 @@
   - Model `WorkspaceTagOperations` added parameter `match_condition` in method `delete`
   - Model `WorkspaceTagOperations` added parameter `etag` in method `update`
   - Model `WorkspaceTagOperations` added parameter `match_condition` in method `update`
-  - Added model `ApiGatewayHostnameBindingOperations`
-  - Added model `ApiToolOperations`
-  - Added model `ClientApplicationOperations`
-  - Added model `ClientApplicationProductLinkOperations`
+  - Added operation group `ApiGatewayHostnameBindingOperations`
+  - Added operation group `ApiToolOperations`
+  - Added operation group `ClientApplicationOperations`
+  - Added operation group `ClientApplicationProductLinkOperations`
 
 ### Breaking Changes
 

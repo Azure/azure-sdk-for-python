@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -44,7 +45,14 @@ def main():
                 "identityProviders": {
                     "facebook": {"registration": {"appId": "123", "appSecretSettingName": "facebook-secret"}}
                 },
-                "login": {"tokenStore": {"azureBlobStorage": {"sasUrlSettingName": "sasUrlSettingName1"}}},
+                "login": {
+                    "tokenStore": {
+                        "azureBlobStorage": {
+                            "blobContainerUri": "https://test.blob.core.windows.net/container1",
+                            "managedIdentityResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1",
+                        }
+                    }
+                },
                 "platform": {"enabled": True},
             }
         },
@@ -52,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/AuthConfigs_BlobStorageTokenStore_CreateOrUpdate.json
+# x-ms-original-file: 2026-07-01/AuthConfigs_BlobStorageTokenStore_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

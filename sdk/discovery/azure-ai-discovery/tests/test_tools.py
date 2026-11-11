@@ -11,9 +11,11 @@ Covers all 5 methods on WorkspaceClient.tools:
   - get_operations
   - get_compute_usage
 """
+
 import os
 
 from devtools_testutils import recorded_by_proxy
+from azure.core.exceptions import HttpResponseError
 from .testcase import DiscoveryWorkspaceTestCase
 from .constants import TOOL_ID, NODE_POOL_ID, WORKSPACE_ENDPOINT, PROJECT_NAME
 
@@ -23,13 +25,14 @@ class TestToolsOperations(DiscoveryWorkspaceTestCase):
 
     # ---- helpers ---------------------------------------------------------
 
-    def _begin_run(self, client, *, command='echo "hello world"'):
+    def _begin_run(self, client, *, command='echo "hello world"', polling=True):
         """Start a tool run and return the poller."""
         return client.tools.begin_run(
             project_name=PROJECT_NAME,
             tool_id=TOOL_ID,
             node_pool_ids=[NODE_POOL_ID],
             command=command,
+            polling=polling,
         )
 
     @staticmethod
@@ -99,18 +102,44 @@ class TestToolsOperations(DiscoveryWorkspaceTestCase):
         assert "result" in status
 
     @recorded_by_proxy
-    def test_cancel_run(self):
-        """Test cancelling a tool run by starting one and immediately cancelling it."""
+    def test_begin_cancel_run_lro(self):
+        """Test cancelling a tool run by starting one and immediately cancelling it.
+
+        Was the synchronous ``tools.cancel_run`` in beta; replaced by the
+        long-running ``tools.begin_cancel_run_lro`` in GA.
+
+        The cancel LRO's terminal status reflects the state of the original
+        Tool.Run operation: ``Canceled`` when the cancel succeeded, or
+        ``Succeeded`` if the run finished before cancellation took effect.
+        """
         client = self.create_workspace_client(endpoint=WORKSPACE_ENDPOINT)
 
-        # Start a long-running command so we have time to cancel it
-        poller = self._begin_run(client, command='echo "cancel test" && sleep 300')
+        # Start the run with ``polling=False`` so no background run-poller thread
+        # is created. Both the run poller and the cancel poller poll the same
+        # operation-status URL; leaving the run poller polling races it against
+        # the cancel poller for the recorded responses and makes playback flaky.
+        # We only need the run's operation_id here, not its terminal result.
+        poller = self._begin_run(client, command='echo "cancel test" && sleep 300', polling=False)
         operation_id = self._operation_id_from_poller(poller)
 
-        client.tools.cancel_run(
+        cancel_poller = client.tools.begin_cancel_run_lro(
             project_name=PROJECT_NAME,
             operation_id=operation_id,
         )
+        # The cancel LRO reports terminal status ``Canceled`` which azure-core's
+        # base polling treats as ``OperationFailed`` and re-raises as
+        # ``HttpResponseError``. For a cancel operation that's the success path,
+        # so we catch the exception and verify the terminal status.
+        try:
+            cancel_poller.wait()
+            terminal_status = cancel_poller.status()
+        except HttpResponseError:
+            terminal_status = cancel_poller.status()
+        assert cancel_poller.done()
+        assert terminal_status in (
+            "Canceled",
+            "Succeeded",
+        ), f"Expected terminal Canceled or Succeeded, got {terminal_status!r}"
 
     @recorded_by_proxy
     def test_get_operations(self):

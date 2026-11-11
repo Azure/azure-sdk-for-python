@@ -43,6 +43,9 @@ def main():
             },
             "location": "East US",
             "properties": {
+                "appInsightsConfiguration": {
+                    "connectionString": "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+                },
                 "appLogsConfiguration": {"logAnalyticsConfiguration": {"customerId": "string", "sharedKey": "string"}},
                 "customDomainConfiguration": {
                     "certificatePassword": "1234",
@@ -55,6 +58,22 @@ def main():
                     "requestIdleTimeout": 5,
                     "terminationGracePeriodSeconds": 3600,
                     "workloadProfileName": "My-CO-01",
+                },
+                "openTelemetryConfiguration": {
+                    "destinationsConfiguration": {
+                        "dataDogConfiguration": {"key": "000000000000000000000000", "site": "string"},
+                        "otlpConfigurations": [
+                            {
+                                "endpoint": "dashboard.k8s.region.azurecontainerapps.io:80",
+                                "headers": [{"key": "api-key", "value": "xxxxxxxxxxx"}],
+                                "insecure": True,
+                                "name": "dashboard",
+                            }
+                        ],
+                    },
+                    "logsConfiguration": {"destinations": ["appInsights"]},
+                    "metricsConfiguration": {"destinations": ["dataDog"], "includeKeda": True},
+                    "tracesConfiguration": {"destinations": ["appInsights"], "includeDapr": True},
                 },
                 "peerAuthentication": {"mtls": {"enabled": True}},
                 "peerTrafficConfiguration": {"encryption": {"enabled": True}},
@@ -89,6 +108,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/ManagedEnvironments_CreateOrUpdate.json
+# x-ms-original-file: 2026-07-01/ManagedEnvironments_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

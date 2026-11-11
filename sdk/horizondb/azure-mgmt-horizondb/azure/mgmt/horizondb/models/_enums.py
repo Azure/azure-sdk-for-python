@@ -19,6 +19,15 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AuthenticationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if authentication state is enabled or not."""
+
+    ENABLED = "Enabled"
+    """Is enabled."""
+    DISABLED = "Disabled"
+    """Is disabled."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -33,7 +42,7 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CreateModeCluster(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The mode to create a new HorizonDb cluster."""
+    """The mode to create a new HorizonDB cluster."""
 
     CREATE = "Create"
     """Create a new cluster."""
@@ -44,12 +53,36 @@ class CreateModeCluster(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CreateModePool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The mode to create a new HorizonDb cluster."""
+    """The mode to create a new HorizonDB cluster."""
 
     CREATE = "Create"
     """Create a new pool."""
     UPDATE = "Update"
     """Update an existing pool."""
+
+
+class HorizonDbComputeModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The compute model type."""
+
+    PROVISIONED = "Provisioned"
+    """Provisioned compute."""
+    SERVERLESS = "Serverless"
+    """Serverless compute."""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    """No managed identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """System and user assigned managed identity."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -63,6 +96,19 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class PrincipalTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the Entra ID principal."""
+
+    UNKNOWN = "Unknown"
+    """Unknown or unrecognized type (internal only, not accepted in requests)."""
+    USER = "User"
+    """An Entra ID user account (UPN-based principal)."""
+    GROUP = "Group"
+    """An Entra ID security group. All members of the group inherit admin privileges."""
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    """An Entra ID application / service principal (used for automated workloads)."""
 
 
 class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
@@ -143,6 +189,10 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Is being updated."""
     HEALTHY = "Healthy"
     """Is healthy."""
+    SUCCEEDED = "Succeeded"
+    """Is succeeded."""
+    UPGRADING = "Upgrading"
+    """Is upgrading."""
 
 
 class ZonePlacementPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):

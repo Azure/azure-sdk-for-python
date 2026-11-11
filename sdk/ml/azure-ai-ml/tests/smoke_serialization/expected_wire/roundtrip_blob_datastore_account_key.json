@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "accountName": "smokeaccount",
+    "containerName": "smoke-container",
+    "credentials": {
+      "credentialsType": "AccountKey",
+      "secrets": {
+        "key": "smoke-account-key",
+        "secretsType": "AccountKey"
+      }
+    },
+    "datastoreType": "AzureBlob",
+    "description": "smoke blob datastore",
+    "endpoint": "core.windows.net",
+    "protocol": "https",
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

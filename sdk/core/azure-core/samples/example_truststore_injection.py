@@ -26,6 +26,9 @@ import truststore
 # Inject truststore BEFORE importing Azure SDK libraries
 truststore.inject_into_ssl()
 
+# Azure SDK imports must follow truststore injection so the OS certificate
+# store is used for TLS; the out-of-order position is intentional here.
+# pylint: disable=wrong-import-position
 # Synchronous imports
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient

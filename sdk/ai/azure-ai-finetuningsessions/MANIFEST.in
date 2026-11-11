@@ -1,0 +1,27 @@
+include *.md
+include LICENSE
+include scripts/verify_generation.py
+include scripts/verify_reference_snapshot.py
+include scripts/verify_compatibility.py
+include scripts/verify_surface.py
+include scripts/check_review_contracts.py
+include scripts/check_maintainer_tools.py
+include eng/generation/reference.json
+include eng/generation/review-deltas.json
+include eng/generation/provenance.json
+include eng/generation/emitter-package.json
+include eng/generation/emitter-package-lock.json
+include eng/generation/requirements.txt
+include tsp-location.yaml
+include review_tests/DEFERRED.md
+include REVIEW.md
+include api.md
+include api.metadata.yml
+include azure/ai/finetuningsessions/py.typed
+recursive-include doc *.rst
+recursive-include tests *.py
+recursive-include samples *.py *.md
+recursive-exclude scripts __pycache__ *.pyc *.pyo
+recursive-exclude tests __pycache__ *.pyc *.pyo
+include azure/__init__.py
+include azure/ai/__init__.py

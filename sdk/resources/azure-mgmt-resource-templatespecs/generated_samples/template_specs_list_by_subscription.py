@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/templateSpecs/stable/2021-05-01/examples/TemplateSpecsListBySubscription.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/templateSpecs/stable/2022-02-01/examples/TemplateSpecsListBySubscription.json
 if __name__ == "__main__":
     main()

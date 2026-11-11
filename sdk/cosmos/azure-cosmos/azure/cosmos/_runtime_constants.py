@@ -35,6 +35,7 @@ class MediaTypes(object):
     ImagePng = "image/png"
     JavaScript = "application/x-javascript"
     Json = "application/json"
+    JsonPatch = "application/json-patch+json"
     OctetStream = "application/octet-stream"
     QueryJson = "application/query+json"
     SQL = "application/sql"

@@ -63,41 +63,52 @@ class ManagementOperation(object):
             extra=self._network_trace_params,
         )
 
-        if operation_result in (ManagementExecuteOperationResult.ERROR, ManagementExecuteOperationResult.LINK_CLOSED):
-            self._mgmt_error = error
-            _LOGGER.error(
-                "Failed to complete management operation due to error: %r.", error, extra=self._network_trace_params
-            )
-        else:
-            self._responses[operation_id] = (status_code, status_description, raw_message)
+        with self._mgmt_link.lock:
+            if operation_id not in self._responses:
+                return
+            if operation_result in (
+                ManagementExecuteOperationResult.ERROR,
+                ManagementExecuteOperationResult.LINK_CLOSED,
+            ):
+                self._mgmt_error = error
+                _LOGGER.error(
+                    "Failed to complete management operation due to error: %r.", error, extra=self._network_trace_params
+                )
+            else:
+                self._responses[operation_id] = (status_code, status_description, raw_message)
 
     def execute(self, message, operation=None, operation_type=None, timeout=0):
-        start_time = time.time()
+        start_time = time.monotonic()
         operation_id = str(uuid.uuid4())
         self._responses[operation_id] = None
         self._mgmt_error = None
 
-        self._mgmt_link.execute_operation(
-            message,
-            partial(self._on_execute_operation_complete, operation_id),
-            timeout=timeout,
-            operation=operation,
-            type=operation_type,
-        )
+        pending_operation = None
+        try:
+            pending_operation = self._mgmt_link.execute_operation(
+                message,
+                partial(self._on_execute_operation_complete, operation_id),
+                timeout=timeout,
+                operation=operation,
+                type=operation_type,
+            )
 
-        while not self._responses[operation_id] and not self._mgmt_error:
-            if timeout and timeout > 0:
-                now = time.time()
-                if (now - start_time) >= timeout:
-                    raise TimeoutError("Failed to receive mgmt response in {}ms".format(timeout))
-            self._connection.listen()
+            while not self._responses[operation_id] and not self._mgmt_error:
+                if timeout and timeout > 0:
+                    now = time.monotonic()
+                    if (now - start_time) >= timeout:
+                        raise TimeoutError("Failed to receive mgmt response in {} seconds".format(timeout))
+                self._connection.listen()
 
-        if self._mgmt_error:
-            self._responses.pop(operation_id)
-            raise self._mgmt_error
+            if self._mgmt_error:
+                raise self._mgmt_error
 
-        response = self._responses.pop(operation_id)
-        return response
+            return self._responses[operation_id]
+        finally:
+            with self._mgmt_link.lock:
+                self._responses.pop(operation_id, None)
+            if pending_operation:
+                self._mgmt_link.cancel_operation(pending_operation)
 
     def open(self):
         self._mgmt_link_open_status = ManagementOpenResult.OPENING

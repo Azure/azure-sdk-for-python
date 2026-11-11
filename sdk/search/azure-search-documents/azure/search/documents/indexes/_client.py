@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, TYPE_CHECKING, Union
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -19,11 +19,18 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import SearchIndexClientConfiguration, SearchIndexerClientConfiguration
 from ._operations import _SearchIndexClientOperationsMixin, _SearchIndexerClientOperationsMixin
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SearchIndexClient(_SearchIndexClientOperationsMixin):
+class SearchIndexClient(
+    _SearchIndexClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SearchIndexClient.
 
     :param endpoint: The endpoint URL of the search service. Required.
@@ -33,8 +40,9 @@ class SearchIndexClient(_SearchIndexClientOperationsMixin):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-01-preview". Default value is "2026-05-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-08-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -102,7 +110,9 @@ class SearchIndexClient(_SearchIndexClientOperationsMixin):
         self._client.__exit__(*exc_details)
 
 
-class SearchIndexerClient(_SearchIndexerClientOperationsMixin):
+class SearchIndexerClient(
+    _SearchIndexerClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SearchIndexerClient.
 
     :param endpoint: The endpoint URL of the search service. Required.
@@ -112,8 +122,9 @@ class SearchIndexerClient(_SearchIndexerClientOperationsMixin):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-01-preview". Default value is "2026-05-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-08-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 

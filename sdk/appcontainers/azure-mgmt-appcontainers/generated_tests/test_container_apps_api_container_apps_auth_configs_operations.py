@@ -136,7 +136,12 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperations(AzureMgmtRecordedTe
                         "preserveUrlFragmentsForLogins": bool,
                         "routes": {"logoutEndpoint": "str"},
                         "tokenStore": {
-                            "azureBlobStorage": {"sasUrlSettingName": "str"},
+                            "azureBlobStorage": {
+                                "blobContainerUri": "str",
+                                "clientId": "str",
+                                "managedIdentityResourceId": "str",
+                                "sasUrlSettingName": "str",
+                            },
                             "enabled": bool,
                             "tokenRefreshExtensionHours": 0.0,
                         },

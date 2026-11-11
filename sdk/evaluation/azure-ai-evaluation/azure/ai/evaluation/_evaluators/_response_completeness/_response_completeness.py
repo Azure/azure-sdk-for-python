@@ -10,7 +10,7 @@ from typing import Dict, List, Union, Optional
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
 from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._model_configurations import Conversation, Message
 from azure.ai.evaluation._common._experimental import experimental
@@ -140,6 +140,15 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         For detailed parameter types and return value documentation, see the overloaded __call__ definition.
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        """Normalize a bare ``messages=[...]`` kwarg (plus optional scalar
+        ``context`` / ``ground_truth`` / ``tool_definitions``) into
+        ``conversation={...}`` so the base ``_derive_conversation_converter``
+        can extract per-turn q/r/ground_truth for the judge."""
+        hoist_messages_to_conversation(kwargs)
+        return super()._convert_kwargs_to_eval_input(**kwargs)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]

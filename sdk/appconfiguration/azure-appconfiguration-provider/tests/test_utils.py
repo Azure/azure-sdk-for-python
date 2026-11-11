@@ -183,11 +183,11 @@ class TestCalculateBackoffDuration(unittest.TestCase):
         self.assertLessEqual(result, MAX_STARTUP_BACKOFF_DURATION * (1 + JITTER_RATIO))
 
     def test_invalid_attempts_raises_error(self):
-        """Test that attempts < 1 raises ValueError."""
+        """Test that attempts < 0 raises ValueError."""
         # Input -1 -> internal 0, which is < 1
         with self.assertRaises(ValueError) as context:
             _calculate_backoff_duration(-1)
-        self.assertIn("Number of attempts must be at least 1", str(context.exception))
+        self.assertIn("Number of attempts must be at least 0", str(context.exception))
 
         with self.assertRaises(ValueError):
             _calculate_backoff_duration(-2)

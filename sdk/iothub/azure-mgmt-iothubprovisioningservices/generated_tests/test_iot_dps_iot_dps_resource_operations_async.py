@@ -58,20 +58,19 @@ class TestIotDpsIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
                             {"keyName": "str", "rights": "str", "primaryKey": "str", "secondaryKey": "str"}
                         ],
                         "deviceProvisioningHostName": "str",
-                        "deviceRegistryNamespace": {
-                            "authenticationType": "str",
-                            "resourceId": "str",
-                            "selectedUserAssignedIdentityResourceId": "str",
-                        },
+                        "disableLocalAuth": bool,
                         "enableDataResidency": bool,
                         "idScope": "str",
                         "iotHubs": [
                             {
-                                "connectionString": "str",
                                 "location": "str",
                                 "allocationWeight": 0,
                                 "applyAllocationPolicy": bool,
+                                "authenticationType": "str",
+                                "connectionString": "str",
+                                "hostName": "str",
                                 "name": "str",
+                                "selectedUserAssignedIdentityResourceId": "str",
                             }
                         ],
                         "ipFilterRules": [{"action": "str", "filterName": "str", "ipMask": "str", "target": "str"}],
@@ -227,11 +226,11 @@ class TestIotDpsIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_iot_dps_resource_list_private_link_resources(self, resource_group):
-        response = self.client.iot_dps_resource.list_private_link_resources(
+        response = await self.client.iot_dps_resource.list_private_link_resources(
             resource_group_name=resource_group.name,
             resource_name="str",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...
 

@@ -119,7 +119,7 @@ class SessionContainer(object):
                         collection_pk_definition = container_properties_cache[collection_name]["partitionKey"]
                         partition_key = PartitionKey(path=collection_pk_definition['paths'],
                                                      kind=collection_pk_definition['kind'],
-                                                     version=collection_pk_definition['version'])
+                                                     version=collection_pk_definition.get('version', 1))
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
                         pk_range = routing_map_provider.get_overlapping_ranges(collection_name,
                                                                                [epk_range],
@@ -213,7 +213,7 @@ class SessionContainer(object):
                         collection_pk_definition = container_properties_cache[collection_name]["partitionKey"]
                         partition_key = PartitionKey(path=collection_pk_definition['paths'],
                                                      kind=collection_pk_definition['kind'],
-                                                     version=collection_pk_definition['version'])
+                                                     version=collection_pk_definition.get('version', 1))
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
                         pk_range = await routing_map_provider.get_overlapping_ranges(collection_name,
                                                                                      [epk_range],

@@ -1,5 +1,16 @@
 # Release History
 
+## 4.22.1 (2026-07-28)
+
+### Bugs Fixed
+
+- Fixed a security issue where the legacy `EventGridPublisherClient` (sync and async) could re-send credential headers to a different host when following an HTTP 3xx redirect. A `SensitiveHeaderCleanupPolicy` is now added to the pipeline to strip `Authorization`, `aeg-sas-key` and `aeg-sas-token` headers on cross-host redirects.
+
+### Other Changes
+
+- Raised the minimum `azure-core` dependency to `1.38.3` so that credential headers remain stripped across retries following a cross-host redirect (`insecure_domain_change` flag persistence).
+- Increased the minimum supported Python version to 3.10. Python 3.9 and earlier are no longer supported.
+
 ## 4.22.0 (2025-05-14)
 
 ### Features Added

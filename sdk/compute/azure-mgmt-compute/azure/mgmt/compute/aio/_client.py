@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -53,10 +54,13 @@ from .operations import (
     SharedGalleriesOperations,
     SharedGalleryImageVersionsOperations,
     SharedGalleryImagesOperations,
+    SharedGalleryInvitesOperations,
     SnapshotsOperations,
     SoftDeletedResourceOperations,
     SshPublicKeysOperations,
+    TenantLevelSharedGalleryInvitesOperations,
     UsageOperations,
+    VirtualMachineDiagnosticRunCommandsOperations,
     VirtualMachineExtensionImagesOperations,
     VirtualMachineExtensionsOperations,
     VirtualMachineImagesEdgeZoneOperations,
@@ -65,6 +69,7 @@ from .operations import (
     VirtualMachineScaleSetExtensionsOperations,
     VirtualMachineScaleSetLifeCycleHookEventsOperations,
     VirtualMachineScaleSetRollingUpgradesOperations,
+    VirtualMachineScaleSetVMDiagnosticRunCommandsOperations,
     VirtualMachineScaleSetVMExtensionsOperations,
     VirtualMachineScaleSetVMRunCommandsOperations,
     VirtualMachineScaleSetVMsOperations,
@@ -83,7 +88,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Compute Client.
 
     :ivar operations: Operations operations
@@ -142,6 +147,14 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
      operations
     :vartype virtual_machine_scale_set_vm_run_commands:
      azure.mgmt.compute.aio.operations.VirtualMachineScaleSetVMRunCommandsOperations
+    :ivar virtual_machine_diagnostic_run_commands: VirtualMachineDiagnosticRunCommandsOperations
+     operations
+    :vartype virtual_machine_diagnostic_run_commands:
+     azure.mgmt.compute.aio.operations.VirtualMachineDiagnosticRunCommandsOperations
+    :ivar virtual_machine_scale_set_vm_diagnostic_run_commands:
+     VirtualMachineScaleSetVMDiagnosticRunCommandsOperations operations
+    :vartype virtual_machine_scale_set_vm_diagnostic_run_commands:
+     azure.mgmt.compute.aio.operations.VirtualMachineScaleSetVMDiagnosticRunCommandsOperations
     :ivar disks: DisksOperations operations
     :vartype disks: azure.mgmt.compute.aio.operations.DisksOperations
     :ivar disk_accesses: DiskAccessesOperations operations
@@ -190,6 +203,12 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar community_gallery_image_versions: CommunityGalleryImageVersionsOperations operations
     :vartype community_gallery_image_versions:
      azure.mgmt.compute.aio.operations.CommunityGalleryImageVersionsOperations
+    :ivar shared_gallery_invites: SharedGalleryInvitesOperations operations
+    :vartype shared_gallery_invites:
+     azure.mgmt.compute.aio.operations.SharedGalleryInvitesOperations
+    :ivar tenant_level_shared_gallery_invites: TenantLevelSharedGalleryInvitesOperations operations
+    :vartype tenant_level_shared_gallery_invites:
+     azure.mgmt.compute.aio.operations.TenantLevelSharedGalleryInvitesOperations
     :ivar resource_skus: ResourceSkusOperations operations
     :vartype resource_skus: azure.mgmt.compute.aio.operations.ResourceSkusOperations
     :ivar virtual_machine_scale_set_rolling_upgrades:
@@ -334,6 +353,14 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.virtual_machine_diagnostic_run_commands = VirtualMachineDiagnosticRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_vm_diagnostic_run_commands = (
+            VirtualMachineScaleSetVMDiagnosticRunCommandsOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
         self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.disk_accesses = DiskAccessesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.disk_encryption_sets = DiskEncryptionSetsOperations(
@@ -377,6 +404,12 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_gallery_invites = SharedGalleryInvitesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.tenant_level_shared_gallery_invites = TenantLevelSharedGalleryInvitesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_skus = ResourceSkusOperations(self._client, self._config, self._serialize, self._deserialize)

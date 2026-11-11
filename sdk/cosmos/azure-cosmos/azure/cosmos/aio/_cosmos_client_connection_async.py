@@ -139,6 +139,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             consistency_level: Optional[str] = None,
             availability_strategy: Union[bool, dict[str, Any]] = False,
             availability_strategy_max_concurrency: Optional[int] = None,
+            enable_compact_utf8_item_writes: bool = False,
             **kwargs: Any
     ) -> None:
         """
@@ -153,10 +154,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
             The default consistency policy for client operations.
+        :param bool enable_compact_utf8_item_writes:
+            Whether item write bodies should use compact UTF-8 serialization.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for the
             client. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
+        self._enable_compact_utf8_item_writes = _utils._validate_enable_compact_utf8_item_writes(
+            enable_compact_utf8_item_writes
+        )
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
         self.availability_strategy: Union[CrossRegionHedgingStrategy, None] =\
@@ -3164,33 +3170,17 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Check if the overlapping ranges can be populated
         feed_range_epk = None
-        is_full_pk_scope = False
         if "feed_range" in kwargs:
             feed_range = kwargs.pop("feed_range")
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
         elif options.get("partitionKey") is not None and container_property is not None:
             partition_key_value = options["partitionKey"]
             partition_key_obj = _build_partition_key_from_properties(container_property)
+            # Only HPK prefixes require EPK routing; complete keys keep the normal PartitionKey request path.
             if partition_key_obj._is_prefix_partition_key(partition_key_value):
                 req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
                 partition_key_value = cast(_SequentialPartitionKeyType, partition_key_value)
                 feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(partition_key_value)
-            else:
-                # Full-PK returns a single-value inclusive range; normalize to
-                # [min, max) before routing-map overlap resolution.
-                #
-                # Do not pop the PartitionKey header here. The pop is deferred
-                # until we have confirmed the feed-range routing path is taking
-                # over (see the pop below, gated on `pagination_state is not None`
-                # and `is_full_pk_scope`). If routing returns zero overlaps we
-                # fall through to the regular __Post path, which still needs the
-                # legacy PK header — otherwise the backend receives an unscoped
-                # request and either raises BAD_REQUEST or silently runs an
-                # unscoped cross-partition query.
-                feed_range_epk = partition_key_obj._get_epk_range_for_partition_key(
-                    partition_key_value
-                ).to_normalized_range()
-                is_full_pk_scope = True
 
         if feed_range_epk is not None:
             if id_ is None:
@@ -3236,21 +3226,17 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 return cached_is_single_partition
 
             if inbound_serialized_continuation and inbound_token_payload is None:
-                scope_is_single_partition = False
-                if not is_full_pk_scope:
-                    scope_is_single_partition = await _is_input_scope_single_partition()
+                scope_is_single_partition = await _is_input_scope_single_partition()
                 if _should_bridge_legacy_continuation(
                     inbound_serialized_continuation,
                     inbound_token_payload,
-                    is_full_pk_scope,
                     scope_is_single_partition,
                 ):
                     legacy_bridge_in_use = True
-                    # Hot path: legacy is the normal inbound shape for full-PK
-                    # and currently-single-partition feed-range queries (we
-                    # just emitted one). The bridge wires the legacy string
-                    # into the internal pagination queue; the outbound token
-                    # format on the next page is unchanged.
+                    # Hot path: legacy is the normal inbound shape for currently
+                    # single-partition feed-range queries. The bridge wires the
+                    # string into the internal pagination queue; the outbound
+                    # token format on the next page is unchanged.
                     _LOGGER.debug(
                         "Bridging inbound legacy continuation into internal pagination state; "
                         "outbound token format will remain unchanged (legacy single-string)."
@@ -3296,13 +3282,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         )
 
             if pagination_state is not None:
-                if is_full_pk_scope:
-                    # Drop the legacy partition-key header now that the
-                    # feed-range routing path is taking over. The inner POSTs
-                    # in the loop set PartitionKeyRangeID / StartEpkString /
-                    # EndEpkString explicitly; sending both routing styles on
-                    # one request is undefined on the service side.
-                    req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
                 results: dict[str, Any] = {}
                 feedrange_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                 consecutive_no_progress_pages = 0
@@ -3312,16 +3291,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     # for any mid-page failure, then re-raise the original error.
                     self.last_response_headers = feedrange_response_headers
                     try:
-                        single_partition_scope_for_outbound = (
-                            (not is_full_pk_scope) and (await _is_input_scope_single_partition())
-                        )
+                        single_partition_scope_for_outbound = await _is_input_scope_single_partition()
                         _write_query_outbound_continuation(
                             feedrange_response_headers,
                             pagination_state,
                             resource_id_str,
                             query,
                             feed_range_epk,
-                            is_full_pk_scope,
                             single_partition_scope_for_outbound,
                         )
                     except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
@@ -3489,16 +3465,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # Pagination loop is done — write the final outbound
                 # continuation (or clear the header if the queue is fully
                 # drained) so the caller's ``by_page`` loop terminates.
-                single_partition_scope_for_outbound = (
-                    (not is_full_pk_scope) and (await _is_input_scope_single_partition())
-                )
+                single_partition_scope_for_outbound = await _is_input_scope_single_partition()
                 _write_query_outbound_continuation(
                     feedrange_response_headers,
                     pagination_state,
                     resource_id_str,
                     query,
                     feed_range_epk,
-                    is_full_pk_scope,
                     single_partition_scope_for_outbound,
                 )
                 # End feed_range pagination block.

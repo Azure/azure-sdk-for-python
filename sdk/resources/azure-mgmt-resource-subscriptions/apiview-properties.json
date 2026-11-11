@@ -45,5 +45,5 @@
         "azure.mgmt.resource.subscriptions.SubscriptionClient.check_resource_name": "Microsoft.Resources.checkResourceName",
         "azure.mgmt.resource.subscriptions.aio.SubscriptionClient.check_resource_name": "Microsoft.Resources.checkResourceName"
     },
-    "CrossLanguageVersion": "5a8d9878d973"
+    "CrossLanguageVersion": "252e52f83826"
 }

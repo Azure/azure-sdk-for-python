@@ -12,9 +12,9 @@ from unittest import mock
 import msrest
 from marshmallow.exceptions import ValidationError
 
-from .._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
-from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
-from .._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from .._restclient.arm_ml_service.models import JobInput as RestJobInput
+from .._restclient.arm_ml_service.models import JobInputType as JobInputType10
+from .._restclient.arm_ml_service.models import JobOutput as RestJobOutput
 from .._schema._datastore import AzureBlobSchema, AzureDataLakeGen1Schema, AzureDataLakeGen2Schema, AzureFileSchema
 from .._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from .._schema._deployment.online.online_deployment import (
@@ -389,6 +389,14 @@ def get_rest_dict_for_node_attrs(
     if isinstance(target_obj, msrest.serialization.Model):
         # can't use result.as_dict() as data binding expression may not fit rest object structure
         return get_rest_dict_for_node_attrs(target_obj.__dict__, clear_empty_value=clear_empty_value)
+
+    # arm_ml_service hybrid models (``_is_model`` marker) are dict subclasses but are NOT
+    # msrest.serialization.Model; convert to a snake_case attribute dict (matching the msrest
+    # ``__dict__`` shape) so data-binding expressions survive the same way for both generators.
+    if getattr(target_obj, "_is_model", False) is True:
+        from azure.core.serialization import as_attribute_dict
+
+        return get_rest_dict_for_node_attrs(as_attribute_dict(target_obj), clear_empty_value=clear_empty_value)
 
     if isinstance(target_obj, PipelineInput):
         return get_rest_dict_for_node_attrs(str(target_obj), clear_empty_value=clear_empty_value)

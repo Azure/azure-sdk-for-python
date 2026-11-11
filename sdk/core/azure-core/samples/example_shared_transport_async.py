@@ -19,6 +19,7 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the endpoint of your Azure Metrics Advisor service
 """
 
+# pylint: disable=non-abstract-transport-import,networking-import-outside-azure-core-transport
 import os
 import asyncio
 from azure.core.pipeline.transport import AioHttpTransport
@@ -34,7 +35,8 @@ async def shared_transport_async():
     session = aiohttp.ClientSession()
     shared_transport = AioHttpTransport(
         session=session, session_owner=False
-    )  # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
+    )  # here we set session_owner to False to indicate that we don't want to
+    # close the session when the client is closed
     async with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
             connection_string,

@@ -18,15 +18,15 @@ class PromptSettings:
     ):
         """Initialize PromptSettings.
 
-        :param enable_chain_of_thought: Whether or not to enable chain of thought which modifies the system prompt
+        :keyword enable_chain_of_thought: Whether or not to enable chain of thought which modifies the system prompt
             used. Can be used for all `data_generation_task_type` values except `SUMMARIZATION`, defaults to False
-        :type enable_chain_of_thought: bool, optional
-        :param enable_chain_of_density: Whether or not to enable chain of density which modifies the system prompt
+        :paramtype enable_chain_of_thought: bool, optional
+        :keyword enable_chain_of_density: Whether or not to enable chain of density which modifies the system prompt
             used. Can only be used for `data_generation_task_type` of `SUMMARIZATION`, defaults to False
-        :type enable_chain_of_density: bool, optional
-        :param max_len_summary: The maximum length of the summary generated for data_generation_task_type` of
+        :paramtype enable_chain_of_density: bool, optional
+        :keyword max_len_summary: The maximum length of the summary generated for data_generation_task_type` of
             `SUMMARIZATION`, defaults to None
-        :type max_len_summary: typing.Optional[int]
+        :paramtype max_len_summary: typing.Optional[int]
         """
         self._enable_chain_of_thought = enable_chain_of_thought
         self._enable_chain_of_density = enable_chain_of_density

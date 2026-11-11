@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2026-05-01-preview",
+  "apiVersion": "2026-08-01-preview",
   "apiVersions": {
-    "Microsoft.Chaos": "2026-05-01-preview"
+    "Microsoft.Chaos": "2026-08-01-preview"
   },
-  "commit": "84d40416fbb3d2416cb7abe7ec82e63c76832963",
+  "commit": "358882ad707dcc3b0d1de9df6ba4dfba7e85da1a",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/chaos/resource-manager/Microsoft.Chaos/Chaos",
-  "emitterVersion": "0.61.3"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }

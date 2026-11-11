@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2026-10-06",
+  "apiVersions": {
+    "Storage.File": "2026-10-06"
+  }
+}

@@ -46,7 +46,7 @@ USAGE:
     - AGENT_CONVERSATION_ID - Existing conversation ID to continue
     - AGENT_VOICE - Voice to use (default: en-US-Ava:DragonHDLatestNeural)
     - AZURE_VOICELIVE_API_VERSION - VoiceLive API version to use for the agent connection
-        (default: 2026-04-10)
+        (default: 2026-07-15)
     - FOUNDRY_RESOURCE_OVERRIDE - Override for the Foundry resource URL
     - AGENT_AUTH_IDENTITY_CLIENT_ID - Client ID for agent authentication
 """
@@ -113,7 +113,7 @@ agent_project_name = os.environ.get("AGENT_PROJECT_NAME")
 agent_version = os.environ.get("AGENT_VERSION")  # Optional
 agent_conversation_id = os.environ.get("AGENT_CONVERSATION_ID")  # Optional
 agent_voice = os.environ.get("AGENT_VOICE", "en-US-Ava:DragonHDLatestNeural")
-agent_api_version = os.environ.get("AZURE_VOICELIVE_API_VERSION", "2026-04-10")
+agent_api_version = os.environ.get("AZURE_VOICELIVE_API_VERSION", "2026-07-15")
 foundry_resource_override = os.environ.get("FOUNDRY_RESOURCE_OVERRIDE")  # Optional
 agent_auth_identity_client_id = os.environ.get("AGENT_AUTH_IDENTITY_CLIENT_ID")  # Optional
 

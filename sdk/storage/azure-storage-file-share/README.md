@@ -17,7 +17,7 @@ Azure file shares can be used to:
 ## Getting started
 
 ### Prerequisites
-* Python 3.9 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
+* Python 3.10 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://learn.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessKeys(_Model):
+class AccessKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace/Relay Connection String.
 
     :ivar primary_connection_string: Primary connection string of the created namespace
@@ -122,7 +122,7 @@ class ProxyResource(Resource):
     """
 
 
-class AuthorizationRule(ProxyResource):
+class AuthorizationRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single item in a List or Get AuthorizationRule operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -187,7 +187,7 @@ class AuthorizationRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AuthorizationRuleProperties(_Model):
+class AuthorizationRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties supplied to create or update AuthorizationRule.
 
     :ivar rights: The rights associated with the rule. Required.
@@ -217,7 +217,7 @@ class AuthorizationRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailability(_Model):
+class CheckNameAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the check name availability request properties.
 
     :ivar name: The namespace name to check for availability. The namespace name can contain only
@@ -249,7 +249,7 @@ class CheckNameAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResult(_Model):
+class CheckNameAvailabilityResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the check name availability request properties.
 
     :ivar message: The detailed info regarding the reason associated with the namespace.
@@ -296,7 +296,7 @@ class CheckNameAvailabilityResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionState(_Model):
+class ConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionState information.
 
     :ivar status: Status of the connection. Known values are: "Pending", "Approved", "Rejected",
@@ -377,7 +377,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -405,7 +405,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HybridConnection(ProxyResource):
+class HybridConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of hybrid connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -470,7 +470,7 @@ class HybridConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class HybridConnectionProperties(_Model):
+class HybridConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the HybridConnection.
 
     :ivar created_at: The time the hybrid connection was created.
@@ -526,7 +526,7 @@ class HybridConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSet(ProxyResource):
+class NetworkRuleSet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of topic resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -587,7 +587,7 @@ class NetworkRuleSet(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkRuleSetProperties(_Model):
+class NetworkRuleSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkRuleSet properties.
 
     :ivar trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
@@ -642,7 +642,7 @@ class NetworkRuleSetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NWRuleSetIpRules(_Model):
+class NWRuleSetIpRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from the List namespace operation.
 
     :ivar ip_mask: IP Mask.
@@ -677,7 +677,7 @@ class NWRuleSetIpRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -765,7 +765,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateEndpoint information.
 
     :ivar id: The ARM identifier for Private Endpoint.
@@ -793,7 +793,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the PrivateEndpointConnection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -858,7 +858,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection resource.
 
     :ivar private_endpoint: The Private Endpoint resource for this Connection.
@@ -904,7 +904,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A resource that supports private link capabilities.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -965,7 +965,7 @@ class PrivateLinkResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of PrivateLinkResource.
 
     :ivar group_id: The private link resource group id.
@@ -1007,7 +1007,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourcesListResult(_Model):
+class PrivateLinkResourcesListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the List private link resources operation.
 
     :ivar value: A collection of private link resources. Required.
@@ -1040,7 +1040,7 @@ class PrivateLinkResourcesListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegenerateAccessKeyParameters(_Model):
+class RegenerateAccessKeyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the regenerate authorization rule operation, specifies which key needs
     to be reset.
 
@@ -1079,7 +1079,7 @@ class RegenerateAccessKeyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1123,7 +1123,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class RelayNamespace(TrackedResource):
+class RelayNamespace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a namespace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1163,6 +1163,7 @@ class RelayNamespace(TrackedResource):
         "metric_id",
         "private_endpoint_connections",
         "public_network_access",
+        "minimum_tls_version",
     ]
 
     @overload
@@ -1204,7 +1205,7 @@ class RelayNamespace(TrackedResource):
             super().__setattr__(key, value)
 
 
-class RelayNamespaceProperties(_Model):
+class RelayNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the namespace.
 
     :ivar provisioning_state: Provisioning state of the Namespace.
@@ -1224,6 +1225,10 @@ class RelayNamespaceProperties(_Model):
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.relay.models.PublicNetworkAccess
+    :ivar minimum_tls_version: The minimum TLS version for the namespace. Supported values are 1.2
+     and 1.3. The service defaults to 1.2 when the property is omitted. Existing namespaces
+     configured with TLS 1.0 or 1.1 are reported as TLS 1.2. Known values are: "1.2" and "1.3".
+    :vartype minimum_tls_version: str or ~azure.mgmt.relay.models.TlsVersion
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -1247,6 +1252,12 @@ class RelayNamespaceProperties(_Model):
     )
     """This determines if traffic is allowed over public network. By default it is enabled. Known
      values are: \"Enabled\", \"Disabled\", and \"SecuredByPerimeter\"."""
+    minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = rest_field(
+        name="minimumTlsVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum TLS version for the namespace. Supported values are 1.2 and 1.3. The service
+     defaults to 1.2 when the property is omitted. Existing namespaces configured with TLS 1.0 or
+     1.1 are reported as TLS 1.2. Known values are: \"1.2\" and \"1.3\"."""
 
     @overload
     def __init__(
@@ -1254,6 +1265,7 @@ class RelayNamespaceProperties(_Model):
         *,
         private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
     ) -> None: ...
 
     @overload
@@ -1267,7 +1279,7 @@ class RelayNamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceNamespacePatch(Resource):
+class ResourceNamespacePatch(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1306,7 +1318,7 @@ class ResourceNamespacePatch(Resource):
         super().__init__(*args, **kwargs)
 
 
-class RelayUpdateParameters(ResourceNamespacePatch):
+class RelayUpdateParameters(ResourceNamespacePatch):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a namespace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1344,6 +1356,7 @@ class RelayUpdateParameters(ResourceNamespacePatch):
         "metric_id",
         "private_endpoint_connections",
         "public_network_access",
+        "minimum_tls_version",
     ]
 
     @overload
@@ -1384,7 +1397,7 @@ class RelayUpdateParameters(ResourceNamespacePatch):
             super().__setattr__(key, value)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU of the namespace.
 
     :ivar name: Name of this SKU. Required. "Standard"
@@ -1419,7 +1432,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1486,7 +1499,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WcfRelay(ProxyResource):
+class WcfRelay(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of the WCF relay resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1560,7 +1573,7 @@ class WcfRelay(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WcfRelayProperties(_Model):
+class WcfRelayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the WCF relay.
 
     :ivar is_dynamic: Returns true if the relay is dynamic; otherwise, false.

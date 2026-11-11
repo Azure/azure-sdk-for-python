@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.migration.begin_start(
+    response = client.migrations.begin_start(
         resource_group_name="rg1",
         cluster_name="cache1",
         parameters={
@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/RedisEnterpriseMigrationStart.json
+# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseMigrationStart.json
 if __name__ == "__main__":
     main()

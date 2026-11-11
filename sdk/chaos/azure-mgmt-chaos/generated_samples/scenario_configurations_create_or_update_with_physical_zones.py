@@ -38,13 +38,15 @@ def main():
         scenario_configuration_name="config-physical-zone",
         resource={
             "properties": {
-                "exclusions": {
-                    "resources": [
-                        "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Compute/virtualMachines/protectedVM"
-                    ]
-                },
-                "filters": {"locations": ["westus2"], "physicalZones": ["westus2-az1"]},
                 "parameters": [{"key": "duration", "value": "PT10M"}],
+                "resourceTargeting": {
+                    "exclude": {
+                        "resources": [
+                            "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Compute/virtualMachines/protectedVM"
+                        ]
+                    },
+                    "include": {"physicalZones": ["westus2-az1"]},
+                },
                 "scenarioId": "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Chaos/workspaces/exampleWorkspace/scenarios/12345678-1234-1234-1234-123456789012",
             }
         },
@@ -52,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/ScenarioConfigurations_CreateOrUpdate_With_Physical_Zones.json
+# x-ms-original-file: 2026-08-01-preview/ScenarioConfigurations_CreateOrUpdate_With_Physical_Zones.json
 if __name__ == "__main__":
     main()

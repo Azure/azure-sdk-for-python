@@ -55,6 +55,11 @@ class TestOracleDatabaseMgmtNetworkAnchorsOperations(AzureMgmtRecordedTestCase):
                     "ociVcnDnsLabel": "str",
                     "ociVcnId": "str",
                     "provisioningState": "str",
+                    "proximityPlacementGroup": {
+                        "entityTypeIntendedToUse": "str",
+                        "proximityPlacementGroupId": "str",
+                        "proximityAnchorId": "str",
+                    },
                     "vnetId": "str",
                 },
                 "systemData": {

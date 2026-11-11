@@ -24,26 +24,27 @@ module_logger = logging.getLogger(__name__)
 class BatchEndpoint(Endpoint):
     """Batch endpoint entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param auth_mode: Possible values include: "AMLToken", "Key", "AADToken", defaults to None
-    :type auth_mode: str
-    :param description: Description of the inference endpoint, defaults to None
-    :type description: str
-    :param location: defaults to None
-    :type location: str
-    :param defaults:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type defaults: Dict[str, str]
-    :param default_deployment_name:  Equivalent to defaults.default_deployment, will be ignored if defaults is present.
-    :type default_deployment_name: str
-    :param scoring_uri: URI to use to perform a prediction, readonly.
-    :type scoring_uri: str
-    :param openapi_uri: URI to check the open API definition of the endpoint.
-    :type openapi_uri: str
+    :keyword name: Name of the resource.
+    :paramtype name: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword auth_mode: Possible values include: "AMLToken", "Key", "AADToken", defaults to None
+    :paramtype auth_mode: str
+    :keyword description: Description of the inference endpoint, defaults to None
+    :paramtype description: str
+    :keyword location: defaults to None
+    :paramtype location: str
+    :keyword defaults:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
+    :paramtype defaults: Dict[str, str]
+    :keyword default_deployment_name: Equivalent to defaults.default_deployment, will be ignored if defaults
+        is present.
+    :paramtype default_deployment_name: str
+    :keyword scoring_uri: URI to use to perform a prediction, readonly.
+    :paramtype scoring_uri: str
+    :keyword openapi_uri: URI to check the open API definition of the endpoint.
+    :paramtype openapi_uri: str
     """
 
     def __init__(

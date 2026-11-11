@@ -27,13 +27,13 @@ from .component import Component
 class DataTransferComponent(Component):
     """DataTransfer component version, used to define a data transfer component.
 
-    :param task: Task type in the data transfer component. Possible values are "copy_data",
+    :keyword task: Task type in the data transfer component. Possible values are "copy_data",
                  "import_data", and "export_data".
-    :type task: str
-    :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: dict
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: dict
+    :paramtype task: str
+    :keyword inputs: Mapping of input data bindings used in the job.
+    :paramtype inputs: dict
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: dict
     :param kwargs: Additional parameters for the data transfer component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
         Details will be provided in the error message.
@@ -138,13 +138,13 @@ class DataTransferComponent(Component):
 class DataTransferCopyComponent(DataTransferComponent):
     """DataTransfer copy component version, used to define a data transfer copy component.
 
-    :param data_copy_mode: Data copy mode in the copy task.
+    :keyword data_copy_mode: Data copy mode in the copy task.
                            Possible values are "merge_with_overwrite" and "fail_if_conflict".
-    :type data_copy_mode: str
-    :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: dict
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: dict
+    :paramtype data_copy_mode: str
+    :keyword inputs: Mapping of input data bindings used in the job.
+    :paramtype inputs: dict
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: dict
     :param kwargs: Additional parameters for the data transfer copy component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
         Details will be provided in the error message.
@@ -235,11 +235,11 @@ class DataTransferCopyComponent(DataTransferComponent):
 class DataTransferImportComponent(DataTransferComponent):
     """DataTransfer import component version, used to define a data transfer import component.
 
-    :param source: The data source of the file system or database.
-    :type source: dict
-    :param outputs: Mapping of output data bindings used in the job.
+    :keyword source: The data source of the file system or database.
+    :paramtype source: dict
+    :keyword outputs: Mapping of output data bindings used in the job.
                     Default value is an output port with the key "sink" and the type "mltable".
-    :type outputs: dict
+    :paramtype outputs: dict
     :param kwargs: Additional parameters for the data transfer import component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
         Details will be provided in the error message.
@@ -283,10 +283,10 @@ class DataTransferImportComponent(DataTransferComponent):
 class DataTransferExportComponent(DataTransferComponent):
     """DataTransfer export component version, used to define a data transfer export component.
 
-    :param sink: The sink of external data and databases.
-    :type sink: Union[Dict, Database, FileSystem]
-    :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: dict
+    :keyword sink: The sink of external data and databases.
+    :paramtype sink: Union[Dict, Database, FileSystem]
+    :keyword inputs: Mapping of input data bindings used in the job.
+    :paramtype inputs: dict
     :param kwargs: Additional parameters for the data transfer export component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
         Details will be provided in the error message.

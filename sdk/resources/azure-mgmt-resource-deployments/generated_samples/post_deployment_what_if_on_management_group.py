@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/PostDeploymentWhatIfOnManagementGroup.json
+# x-ms-original-file: 2026-06-01/PostDeploymentWhatIfOnManagementGroup.json
 if __name__ == "__main__":
     main()

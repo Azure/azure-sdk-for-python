@@ -6,8 +6,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Union, cast
 
-from azure.ai.ml._restclient.arm_ml_service.models import JobResourceConfiguration as RestJobResourceConfiguration202501
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -161,37 +160,54 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         else:
             raise TypeError("properties must be a dict.")
 
-    def _to_rest_object(self) -> Union[RestJobResourceConfiguration, RestJobResourceConfiguration202501]:
+    def _to_rest_object(self) -> RestJobResourceConfiguration:
         if self.docker_args and isinstance(self.docker_args, list):
             # NOTE: max_instance_count is intentionally NOT set here. The 2025-01-01-preview wire
             # contract (mfe.json) has no maxInstanceCount on JobResourceConfiguration/ResourceConfiguration,
             # and the old v2025 autorest model silently ignored it too, so omitting it keeps the wire
-            # output identical. It remains supported on the v2023_04 path below, whose swagger declares it.
-            return RestJobResourceConfiguration202501(
+            # output identical. It remains supported on the string-docker_args path below.
+            return RestJobResourceConfiguration(
                 instance_count=self.instance_count,
                 instance_type=self.instance_type,
                 properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
                 docker_args_list=self.docker_args,
                 shm_size=self.shm_size,
             )
-        return RestJobResourceConfiguration(
-            locations=self.locations,
+        # ``locations`` and ``max_instance_count`` are not fields on the shared arm_ml_service (2025-01)
+        # JobResourceConfiguration model, so carry them as camelCase wire keys on the hybrid model. This
+        # reproduces the legacy v2023_04 wire byte-for-byte (verified).
+        rest_obj = RestJobResourceConfiguration(
             instance_count=self.instance_count,
             instance_type=self.instance_type,
-            max_instance_count=self.max_instance_count,
             properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
             docker_args=self.docker_args,
             shm_size=self.shm_size,
         )
+        if self.locations is not None:
+            rest_obj["locations"] = self.locations
+        if self.max_instance_count is not None:
+            rest_obj["maxInstanceCount"] = self.max_instance_count
+        return rest_obj
 
     @classmethod
     def _from_rest_object(
-        cls, obj: Optional[Union[RestJobResourceConfiguration, RestJobResourceConfiguration202501]]
+        cls, obj: Optional[Union[RestJobResourceConfiguration, Dict]]
     ) -> Optional["JobResourceConfiguration"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
-            return cls(**obj)
+            # Node dicts / unit tests provide snake_case keys, while the shared arm_ml_service response carries the
+            # ``resources`` bag as an untyped camelCase dict (e.g. ``instanceCount``). Normalize the known camelCase
+            # wire keys to their snake_case constructor kwargs so the value survives either way.
+            camel_to_snake = {
+                "instanceCount": "instance_count",
+                "instanceType": "instance_type",
+                "maxInstanceCount": "max_instance_count",
+                "dockerArgs": "docker_args",
+                "shmSize": "shm_size",
+            }
+            normalized: Dict[str, Any] = {camel_to_snake.get(str(key), str(key)): value for key, value in obj.items()}
+            return cls(**normalized)
         return JobResourceConfiguration(
             # ``locations`` is on the v2023_04 msrest model but not the shared arm_ml_service model
             # (2025-01 path). It is still carried on the wire via dict assignment, so fall back to dict

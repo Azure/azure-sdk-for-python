@@ -10,46 +10,50 @@
 from typing import Any, Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import BackupPolicyType, ServiceType
+from .models._enums import BackupPolicyType, CopyJobType, DataTransferComponent, ServiceType
 
 if TYPE_CHECKING:
     from .models import (
+        AllocationState,
         AnalyticalStorageSchemaType,
-        ApiType,
         AuthenticationMethod,
         AutoReplicate,
         AzureConnectionType,
         BackupPolicyMigrationStatus,
         BackupPolicyType,
         BackupStorageRedundancy,
+        CapacityMode,
+        ClusterType,
         CompositePathSortOrder,
         ConflictResolutionMode,
-        ConnectionState,
         ConnectorOffer,
         ContinuousTier,
+        CopyJobMode,
+        CopyJobStatus,
         CreateMode,
         CreatedByType,
+        DataTransferJobMode,
         DataType,
         DatabaseAccountKind,
         DedicatedGatewayType,
         DefaultConsistencyLevel,
         DefaultPriorityLevel,
         DistanceFunction,
+        EnableFullTextQuery,
+        FleetAnalyticsPropertiesStorageLocationType,
         FleetspacePropertiesFleetspaceApiKind,
         FleetspacePropertiesServiceTier,
+        GarnetAuthenticationType,
+        GarnetCacheProvisioningState,
         IndexKind,
         IndexingMode,
         KeyKind,
-        Kind,
         ManagedCassandraProvisioningState,
         ManagedCassandraResourceIdentityType,
         MinimalTlsVersion,
         MongoRoleDefinitionType,
         NetworkAclBypass,
-        NodeState,
-        OperationType,
         PartitionKind,
-        PrimaryAggregationType,
         PublicNetworkAccess,
         ResourceIdentityType,
         RestoreMode,
@@ -57,13 +61,12 @@ if TYPE_CHECKING:
         ScheduledEventStrategy,
         ServerVersion,
         ServiceSize,
-        ServiceStatus,
         SpatialType,
         Status,
+        SupportedActions,
+        ThroughputPolicyType,
         TriggerOperation,
         TriggerType,
-        Type,
-        UnitType,
         VectorDataType,
         VectorIndexType,
     )
@@ -72,23 +75,30 @@ if TYPE_CHECKING:
 class AccountKeyMetadata(TypedDict, total=False):
     """The metadata related to an access key for a given database account.
 
-    :ivar generation_time: Generation time in UTC of the key in ISO-8601 format. If the value is
+    :ivar generationTime: Generation time in UTC of the key in ISO-8601 format. If the value is
      missing from the object, it means that the last key regeneration was triggered before
      2022-06-18.
-    :vartype generation_time: str
+    :vartype generationTime: str
+    :ivar approximateLastUsageTime: Approximate time in UTC of the most recent usage of the key in
+     ISO-8601 format. If the value is missing from the object, it means there is no recorded data
+     plane usage for this key.
+    :vartype approximateLastUsageTime: str
     """
 
     generationTime: str
     """Generation time in UTC of the key in ISO-8601 format. If the value is missing from the object,
      it means that the last key regeneration was triggered before 2022-06-18."""
+    approximateLastUsageTime: str
+    """Approximate time in UTC of the most recent usage of the key in ISO-8601 format. If the value is
+     missing from the object, it means there is no recorded data plane usage for this key."""
 
 
 class AnalyticalStorageConfiguration(TypedDict, total=False):
     """Analytical storage specific properties.
 
-    :ivar schema_type: Describes the types of schema for analytical storage. Known values are:
+    :ivar schemaType: Describes the types of schema for analytical storage. Known values are:
      "WellDefined" and "FullFidelity".
-    :vartype schema_type: Union[str, "AnalyticalStorageSchemaType"]
+    :vartype schemaType: Union[str, "AnalyticalStorageSchemaType"]
     """
 
     schemaType: Union[str, "AnalyticalStorageSchemaType"]
@@ -99,9 +109,9 @@ class AnalyticalStorageConfiguration(TypedDict, total=False):
 class ApiProperties(TypedDict, total=False):
     """ApiProperties.
 
-    :ivar server_version: Describes the version of the MongoDB account. Known values are: "3.2",
+    :ivar serverVersion: Describes the version of the MongoDB account. Known values are: "3.2",
      "3.6", "4.0", "4.2", "5.0", "6.0", and "7.0".
-    :vartype server_version: Union[str, "ServerVersion"]
+    :vartype serverVersion: Union[str, "ServerVersion"]
     """
 
     serverVersion: Union[str, "ServerVersion"]
@@ -173,26 +183,26 @@ class ARMResourceProperties(TypedDict, total=False):
 class AuthenticationMethodLdapProperties(TypedDict, total=False):
     """Ldap authentication method properties. This feature is in preview.
 
-    :ivar server_hostname: Hostname of the LDAP server.
-    :vartype server_hostname: str
-    :ivar server_port: Port of the LDAP server.
-    :vartype server_port: int
-    :ivar service_user_distinguished_name: Distinguished name of the look up user account, who can
+    :ivar serverHostname: Hostname of the LDAP server.
+    :vartype serverHostname: str
+    :ivar serverPort: Port of the LDAP server.
+    :vartype serverPort: int
+    :ivar serviceUserDistinguishedName: Distinguished name of the look up user account, who can
      look up user details on authentication.
-    :vartype service_user_distinguished_name: str
-    :ivar service_user_password: Password of the look up user.
-    :vartype service_user_password: str
-    :ivar search_base_distinguished_name: Distinguished name of the object to start the recursive
+    :vartype serviceUserDistinguishedName: str
+    :ivar serviceUserPassword: Password of the look up user.
+    :vartype serviceUserPassword: str
+    :ivar searchBaseDistinguishedName: Distinguished name of the object to start the recursive
      search of users from.
-    :vartype search_base_distinguished_name: str
-    :ivar search_filter_template: Template to use for searching. Defaults to (cn=%s) where %s will
-     be replaced by the username used to login.
-    :vartype search_filter_template: str
-    :ivar server_certificates:
-    :vartype server_certificates: list["Certificate"]
-    :ivar connection_timeout_in_ms: Timeout for connecting to the LDAP server in miliseconds. The
+    :vartype searchBaseDistinguishedName: str
+    :ivar searchFilterTemplate: Template to use for searching. Defaults to (cn=%s) where %s will be
+     replaced by the username used to login.
+    :vartype searchFilterTemplate: str
+    :ivar serverCertificates:
+    :vartype serverCertificates: list["Certificate"]
+    :ivar connectionTimeoutInMs: Timeout for connecting to the LDAP server in miliseconds. The
      default is 5000 ms.
-    :vartype connection_timeout_in_ms: int
+    :vartype connectionTimeoutInMs: int
     """
 
     serverHostname: str
@@ -216,8 +226,8 @@ class AuthenticationMethodLdapProperties(TypedDict, total=False):
 class AutoscaleSettings(TypedDict, total=False):
     """AutoscaleSettings.
 
-    :ivar max_throughput: Represents maximum throughput, the resource can scale up to.
-    :vartype max_throughput: int
+    :ivar maxThroughput: Represents maximum throughput, the resource can scale up to.
+    :vartype maxThroughput: int
     """
 
     maxThroughput: int
@@ -227,13 +237,13 @@ class AutoscaleSettings(TypedDict, total=False):
 class AutoscaleSettingsResource(TypedDict, total=False):
     """Cosmos DB provisioned throughput settings object.
 
-    :ivar max_throughput: Represents maximum throughput container can scale up to. Required.
-    :vartype max_throughput: int
-    :ivar auto_upgrade_policy: Cosmos DB resource auto-upgrade policy.
-    :vartype auto_upgrade_policy: "AutoUpgradePolicyResource"
-    :ivar target_max_throughput: Represents target maximum throughput container can scale up to
-     once offer is no longer in pending state.
-    :vartype target_max_throughput: int
+    :ivar maxThroughput: Represents maximum throughput container can scale up to. Required.
+    :vartype maxThroughput: int
+    :ivar autoUpgradePolicy: Cosmos DB resource auto-upgrade policy.
+    :vartype autoUpgradePolicy: "AutoUpgradePolicyResource"
+    :ivar targetMaxThroughput: Represents target maximum throughput container can scale up to once
+     offer is no longer in pending state.
+    :vartype targetMaxThroughput: int
     """
 
     maxThroughput: Required[int]
@@ -248,24 +258,53 @@ class AutoscaleSettingsResource(TypedDict, total=False):
 class AutoUpgradePolicyResource(TypedDict, total=False):
     """Cosmos DB resource auto-upgrade policy.
 
-    :ivar throughput_policy: Represents throughput policy which service must adhere to for
+    :ivar throughputPolicy: Represents throughput policy which service must adhere to for
      auto-upgrade.
-    :vartype throughput_policy: "ThroughputPolicyResource"
+    :vartype throughputPolicy: "ThroughputPolicyResource"
     """
 
     throughputPolicy: "ThroughputPolicyResource"
     """Represents throughput policy which service must adhere to for auto-upgrade."""
 
 
-class BackupInformation(TypedDict, total=False):
-    """Backup information of a resource.
+class AzureBlobContainer(TypedDict, total=False):
+    """An Azure Blob container.
 
-    :ivar continuous_backup_information: Information about the status of continuous backups.
-    :vartype continuous_backup_information: "ContinuousBackupInformation"
+    :ivar containerName: Azure Blob container. Required.
+    :vartype containerName: str
     """
 
-    continuousBackupInformation: "ContinuousBackupInformation"
-    """Information about the status of continuous backups."""
+    containerName: Required[str]
+    """Azure Blob container. Required."""
+
+
+class AzureBlobDataTransferDataSourceSink(TypedDict, total=False):
+    """An Azure Blob Storage data source/sink.
+
+    :ivar containerName: Required.
+    :vartype containerName: str
+    :ivar endpointUrl:
+    :vartype endpointUrl: str
+    :ivar component: Required. AZURE_BLOB_STORAGE.
+    :vartype component: Literal[DataTransferComponent.AZURE_BLOB_STORAGE]
+    """
+
+    containerName: Required[str]
+    """Required."""
+    endpointUrl: str
+    component: Required[Literal[DataTransferComponent.AZURE_BLOB_STORAGE]]
+    """Required. AZURE_BLOB_STORAGE."""
+
+
+class AzureBlobSourceSinkDetails(TypedDict, total=False):
+    """An Azure Blob Storage data source/sink.
+
+    :ivar endpointUrl: Azure Blob container endpoint. Required.
+    :vartype endpointUrl: str
+    """
+
+    endpointUrl: Required[str]
+    """Azure Blob container endpoint. Required."""
 
 
 class BackupPolicyMigrationState(TypedDict, total=False):
@@ -274,11 +313,11 @@ class BackupPolicyMigrationState(TypedDict, total=False):
     :ivar status: Describes the status of migration between backup policy types. Known values are:
      "Invalid", "InProgress", "Completed", and "Failed".
     :vartype status: Union[str, "BackupPolicyMigrationStatus"]
-    :ivar target_type: Describes the target backup policy type of the backup policy migration.
-     Known values are: "Periodic" and "Continuous".
-    :vartype target_type: Union[str, "BackupPolicyType"]
-    :ivar start_time: Time at which the backup policy migration started (ISO-8601 format).
-    :vartype start_time: str
+    :ivar targetType: Describes the target backup policy type of the backup policy migration. Known
+     values are: "Periodic" and "Continuous".
+    :vartype targetType: Union[str, "BackupPolicyType"]
+    :ivar startTime: Time at which the backup policy migration started (ISO-8601 format).
+    :vartype startTime: str
     """
 
     status: Union[str, "BackupPolicyMigrationStatus"]
@@ -294,13 +333,13 @@ class BackupPolicyMigrationState(TypedDict, total=False):
 class BackupSchedule(TypedDict, total=False):
     """BackupSchedule.
 
-    :ivar schedule_name: The unique identifier of backup schedule.
-    :vartype schedule_name: str
-    :ivar cron_expression: The cron expression that defines when you want to back up your data.
-    :vartype cron_expression: str
-    :ivar retention_in_hours: The retention period (hours) of the backups. If you want to retain
-     data forever, set retention to 0.
-    :vartype retention_in_hours: int
+    :ivar scheduleName: The unique identifier of backup schedule.
+    :vartype scheduleName: str
+    :ivar cronExpression: The cron expression that defines when you want to back up your data.
+    :vartype cronExpression: str
+    :ivar retentionInHours: The retention period (hours) of the backups. If you want to retain data
+     forever, set retention to 0.
+    :vartype retentionInHours: int
     """
 
     scheduleName: str
@@ -310,6 +349,63 @@ class BackupSchedule(TypedDict, total=False):
     retentionInHours: int
     """The retention period (hours) of the backups. If you want to retain data forever, set retention
      to 0."""
+
+
+class BaseCopyJobTask(TypedDict, total=False):
+    """The properties of a Copy Job Task.
+
+    :ivar totalCount: Task level Total Count.
+    :vartype totalCount: int
+    :ivar processedCount: Task level Processed Count.
+    :vartype processedCount: int
+    """
+
+    totalCount: int
+    """Task level Total Count."""
+    processedCount: int
+    """Task level Processed Count."""
+
+
+class BlobToCassandraRUCopyJobProperties(TypedDict, total=False):
+    """Source Azure Blob Storage to Destination Cassandra copy job properties.
+
+    :ivar sourceDetails: Azure Storage container DataStore details. Required.
+    :vartype sourceDetails: "AzureBlobSourceSinkDetails"
+    :ivar destinationDetails: Destination Cassandra DataStore details.
+    :vartype destinationDetails: "CosmosDBSourceSinkDetails"
+    :ivar tasks: Copy Job tasks. Required.
+    :vartype tasks: list["BlobToCassandraRUCopyJobTask"]
+    :ivar jobType: Copy Job Type. Required. AZURE_BLOB_STORAGE_TO_CASSANDRA_RU.
+    :vartype jobType: Literal[CopyJobType.AZURE_BLOB_STORAGE_TO_CASSANDRA_RU]
+    """
+
+    sourceDetails: Required["AzureBlobSourceSinkDetails"]
+    """Azure Storage container DataStore details. Required."""
+    destinationDetails: "CosmosDBSourceSinkDetails"
+    """Destination Cassandra DataStore details."""
+    tasks: Required[list["BlobToCassandraRUCopyJobTask"]]
+    """Copy Job tasks. Required."""
+    jobType: Required[Literal[CopyJobType.AZURE_BLOB_STORAGE_TO_CASSANDRA_RU]]
+    """Copy Job Type. Required. AZURE_BLOB_STORAGE_TO_CASSANDRA_RU."""
+
+
+class BlobToCassandraRUCopyJobTask(BaseCopyJobTask):
+    """BlobToCassandraRUCopyJobTask.
+
+    :ivar totalCount: Task level Total Count.
+    :vartype totalCount: int
+    :ivar processedCount: Task level Processed Count.
+    :vartype processedCount: int
+    :ivar source: Source Azure Blob container. Required.
+    :vartype source: "AzureBlobContainer"
+    :ivar destination: Destination Cassandra table. Required.
+    :vartype destination: "CosmosDBCassandraTable"
+    """
+
+    source: Required["AzureBlobContainer"]
+    """Source Azure Blob container. Required."""
+    destination: Required["CosmosDBCassandraTable"]
+    """Destination Cassandra table. Required."""
 
 
 class Capability(TypedDict, total=False):
@@ -328,147 +424,17 @@ class Capability(TypedDict, total=False):
 class Capacity(TypedDict, total=False):
     """The object that represents all properties related to capacity enforcement on an account.
 
-    :ivar total_throughput_limit: The total throughput limit imposed on the account. A
+    :ivar totalThroughputLimit: The total throughput limit imposed on the account. A
      totalThroughputLimit of 2000 imposes a strict limit of max throughput that can be provisioned
      on that account to be 2000. A totalThroughputLimit of -1 indicates no limits on provisioning of
      throughput.
-    :vartype total_throughput_limit: int
+    :vartype totalThroughputLimit: int
     """
 
     totalThroughputLimit: int
     """The total throughput limit imposed on the account. A totalThroughputLimit of 2000 imposes a
      strict limit of max throughput that can be provisioned on that account to be 2000. A
      totalThroughputLimit of -1 indicates no limits on provisioning of throughput."""
-
-
-class CassandraClusterDataCenterNodeItem(TypedDict, total=False):
-    """CassandraClusterDataCenterNodeItem.
-
-    :ivar address: The node's IP address.
-    :vartype address: str
-    :ivar state: The state of the node in Cassandra ring. Known values are: "Normal", "Leaving",
-     "Joining", "Moving", and "Stopped".
-    :vartype state: Union[str, "NodeState"]
-    :ivar status:
-    :vartype status: str
-    :ivar cassandra_process_status: Cassandra service status on this node.
-    :vartype cassandra_process_status: str
-    :ivar load: The amount of file system data in the data directory (e.g., 47.66 kB), excluding
-     all content in the snapshots subdirectories. Because all SSTable data files are included, any
-     data that is not cleaned up (such as TTL-expired cells or tombstones) is counted.
-    :vartype load: str
-    :ivar tokens: List of tokens this node covers.
-    :vartype tokens: list[str]
-    :ivar size:
-    :vartype size: int
-    :ivar host_id: The network ID of the node.
-    :vartype host_id: str
-    :ivar rack: The rack this node is part of.
-    :vartype rack: str
-    :ivar timestamp: The timestamp when these statistics were captured.
-    :vartype timestamp: str
-    :ivar disk_used_kb: The amount of disk used, in kB, of the directory /var/lib/cassandra.
-    :vartype disk_used_kb: int
-    :ivar disk_free_kb: The amount of disk free, in kB, of the directory /var/lib/cassandra.
-    :vartype disk_free_kb: int
-    :ivar memory_used_kb: Used memory (calculated as total - free - buffers - cache), in kB.
-    :vartype memory_used_kb: int
-    :ivar memory_buffers_and_cached_kb: Memory used by kernel buffers (Buffers in /proc/meminfo)
-     and page cache and slabs (Cached and SReclaimable in /proc/meminfo), in kB.
-    :vartype memory_buffers_and_cached_kb: int
-    :ivar memory_free_kb: Unused memory (MemFree and SwapFree in /proc/meminfo), in kB.
-    :vartype memory_free_kb: int
-    :ivar memory_total_kb: Total installed memory (MemTotal and SwapTotal in /proc/meminfo), in kB.
-    :vartype memory_total_kb: int
-    :ivar cpu_usage: A float representing the current system-wide CPU utilization as a percentage.
-    :vartype cpu_usage: float
-    :ivar is_latest_model: If node has been updated to latest model.
-    :vartype is_latest_model: bool
-    """
-
-    address: str
-    """The node's IP address."""
-    state: Union[str, "NodeState"]
-    """The state of the node in Cassandra ring. Known values are: \"Normal\", \"Leaving\",
-     \"Joining\", \"Moving\", and \"Stopped\"."""
-    status: str
-    cassandraProcessStatus: str
-    """Cassandra service status on this node."""
-    load: str
-    """The amount of file system data in the data directory (e.g., 47.66 kB), excluding all content in
-     the snapshots subdirectories. Because all SSTable data files are included, any data that is not
-     cleaned up (such as TTL-expired cells or tombstones) is counted."""
-    tokens: list[str]
-    """List of tokens this node covers."""
-    size: int
-    hostID: str
-    """The network ID of the node."""
-    rack: str
-    """The rack this node is part of."""
-    timestamp: str
-    """The timestamp when these statistics were captured."""
-    diskUsedKB: int
-    """The amount of disk used, in kB, of the directory /var/lib/cassandra."""
-    diskFreeKB: int
-    """The amount of disk free, in kB, of the directory /var/lib/cassandra."""
-    memoryUsedKB: int
-    """Used memory (calculated as total - free - buffers - cache), in kB."""
-    memoryBuffersAndCachedKB: int
-    """Memory used by kernel buffers (Buffers in /proc/meminfo) and page cache and slabs (Cached and
-     SReclaimable in /proc/meminfo), in kB."""
-    memoryFreeKB: int
-    """Unused memory (MemFree and SwapFree in /proc/meminfo), in kB."""
-    memoryTotalKB: int
-    """Total installed memory (MemTotal and SwapTotal in /proc/meminfo), in kB."""
-    cpuUsage: float
-    """A float representing the current system-wide CPU utilization as a percentage."""
-    isLatestModel: bool
-    """If node has been updated to latest model."""
-
-
-class CassandraClusterPublicStatus(TypedDict, total=False):
-    """Properties of a managed Cassandra cluster public status.
-
-    :ivar e_tag:
-    :vartype e_tag: str
-    :ivar reaper_status:
-    :vartype reaper_status: "ManagedCassandraReaperStatus"
-    :ivar connection_errors: List relevant information about any connection errors to the
-     Datacenters.
-    :vartype connection_errors: list["ConnectionError"]
-    :ivar errors: List relevant information about any errors about cluster, data center and
-     connection error.
-    :vartype errors: list["CassandraError"]
-    :ivar data_centers: List of the status of each datacenter in this cluster.
-    :vartype data_centers: list["CassandraClusterPublicStatusDataCentersItem"]
-    """
-
-    eTag: str
-    reaperStatus: "ManagedCassandraReaperStatus"
-    connectionErrors: list["ConnectionError"]
-    """List relevant information about any connection errors to the Datacenters."""
-    errors: list["CassandraError"]
-    """List relevant information about any errors about cluster, data center and connection error."""
-    dataCenters: list["CassandraClusterPublicStatusDataCentersItem"]
-    """List of the status of each datacenter in this cluster."""
-
-
-class CassandraClusterPublicStatusDataCentersItem(TypedDict, total=False):  # pylint: disable=name-too-long
-    """CassandraClusterPublicStatusDataCentersItem.
-
-    :ivar name: The name of this Datacenter.
-    :vartype name: str
-    :ivar seed_nodes: A list of all seed nodes in the cluster, managed and unmanaged.
-    :vartype seed_nodes: list[str]
-    :ivar nodes:
-    :vartype nodes: list["CassandraClusterDataCenterNodeItem"]
-    """
-
-    name: str
-    """The name of this Datacenter."""
-    seedNodes: list[str]
-    """A list of all seed nodes in the cluster, managed and unmanaged."""
-    nodes: list["CassandraClusterDataCenterNodeItem"]
 
 
 class CassandraError(TypedDict, total=False):
@@ -480,8 +446,8 @@ class CassandraError(TypedDict, total=False):
     :vartype message: str
     :ivar target: The target resource of the error.
     :vartype target: str
-    :ivar additional_error_info: Additional information about the error.
-    :vartype additional_error_info: str
+    :ivar additionalErrorInfo: Additional information about the error.
+    :vartype additionalErrorInfo: str
     """
 
     code: str
@@ -539,47 +505,6 @@ class CassandraKeyspaceCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class CassandraKeyspaceGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB Cassandra keyspace.
-
-    :ivar resource:
-    :vartype resource: "CassandraKeyspaceGetPropertiesResource"
-    :ivar options:
-    :vartype options: "CassandraKeyspaceGetPropertiesOptions"
-    """
-
-    resource: "CassandraKeyspaceGetPropertiesResource"
-    options: "CassandraKeyspaceGetPropertiesOptions"
-
-
-class OptionsResource(TypedDict, total=False):
-    """Cosmos DB options resource object.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-    throughput: int
-    """Value of the Cosmos DB resource throughput or autoscaleSettings. Use the ThroughputSetting
-     resource when retrieving offer details."""
-    autoscaleSettings: "AutoscaleSettings"
-    """Specifies the Autoscale settings."""
-
-
-class CassandraKeyspaceGetPropertiesOptions(OptionsResource):
-    """CassandraKeyspaceGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-
 class CassandraKeyspaceResource(TypedDict, total=False):
     """Cosmos DB Cassandra keyspace resource object.
 
@@ -589,29 +514,6 @@ class CassandraKeyspaceResource(TypedDict, total=False):
 
     id: Required[str]
     """Name of the Cosmos DB Cassandra keyspace. Required."""
-
-
-class CassandraKeyspaceGetPropertiesResource(CassandraKeyspaceResource):
-    """CassandraKeyspaceGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB Cassandra keyspace. Required.
-    :vartype id: str
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
 
 
 class Resource(TypedDict, total=False):
@@ -625,9 +527,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -653,54 +555,10 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
-
-
-class CassandraKeyspaceGetResults(ProxyResource):
-    """An Azure Cosmos DB Cassandra keyspace.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB Cassandra keyspace.
-    :vartype properties: "CassandraKeyspaceGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "CassandraKeyspaceGetProperties"
-    """The properties of an Azure Cosmos DB Cassandra keyspace."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
 
 
 class CassandraPartitionKey(TypedDict, total=False):
@@ -725,9 +583,9 @@ class CassandraRoleAssignmentResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties to create and update an Azure Cosmos DB Cassandra Role Assignment.
     :vartype properties: "CassandraRoleAssignmentResourceProperties"
     """
@@ -739,17 +597,17 @@ class CassandraRoleAssignmentResource(ProxyResource):
 class CassandraRoleAssignmentResourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Azure Cosmos DB Cassandra Role Assignment resource object.
 
-    :ivar role_definition_id: The unique identifier for the associated Role Definition.
-    :vartype role_definition_id: str
+    :ivar roleDefinitionId: The unique identifier for the associated Role Definition.
+    :vartype roleDefinitionId: str
     :ivar scope: The data plane resource path for which access is being granted through this
      Cassandra Role Assignment.
     :vartype scope: str
-    :ivar principal_id: The unique identifier for the associated AAD principal in the AAD graph to
+    :ivar principalId: The unique identifier for the associated AAD principal in the AAD graph to
      which access is being granted through this Cassandra Role Assignment. Tenant ID for the
      principal is inferred using the tenant associated with the subscription.
-    :vartype principal_id: str
-    :ivar provisioning_state: Provisioning state of the resource.
-    :vartype provisioning_state: str
+    :vartype principalId: str
+    :ivar provisioningState: Provisioning state of the resource.
+    :vartype provisioningState: str
     """
 
     roleDefinitionId: str
@@ -776,9 +634,9 @@ class CassandraRoleDefinitionResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties to create and update an Azure Cosmos DB Cassandra Role Definition.
     :vartype properties: "CassandraRoleDefinitionResourceProperties"
     """
@@ -792,18 +650,18 @@ class CassandraRoleDefinitionResourceProperties(TypedDict, total=False):  # pyli
 
     :ivar id: The path id for the Role Definition.
     :vartype id: str
-    :ivar role_name: A user-friendly name for the Role Definition. Must be unique for the database
+    :ivar roleName: A user-friendly name for the Role Definition. Must be unique for the database
      account.
-    :vartype role_name: str
+    :vartype roleName: str
     :ivar type: Indicates whether the Role Definition was built-in or user created. Known values
      are: "BuiltInRole" and "CustomRole".
     :vartype type: Union[str, "RoleDefinitionType"]
-    :ivar assignable_scopes: A set of fully qualified Scopes at or below which Cassandra Role
+    :ivar assignableScopes: A set of fully qualified Scopes at or below which Cassandra Role
      Assignments may be created using this Role Definition. This will allow application of this Role
      Definition on the entire database account or any underlying Database / Collection. Must have at
      least one element. Scopes higher than Database account are not enforceable as assignable
      Scopes. Note that resources referenced in assignable Scopes need not exist.
-    :vartype assignable_scopes: list[str]
+    :vartype assignableScopes: list[str]
     :ivar permissions: The set of operations allowed through this Role Definition.
     :vartype permissions: list["Permission"]
     """
@@ -825,15 +683,99 @@ class CassandraRoleDefinitionResourceProperties(TypedDict, total=False):  # pyli
     """The set of operations allowed through this Role Definition."""
 
 
+class CassandraRUToBlobCopyJobProperties(TypedDict, total=False):
+    """Source Cassandra to Destination Azure Blob Storage copy job properties.
+
+    :ivar sourceDetails: Source Cassandra DataStore details.
+    :vartype sourceDetails: "CosmosDBSourceSinkDetails"
+    :ivar destinationDetails: Destination Cassandra DataStore details. Required.
+    :vartype destinationDetails: "AzureBlobSourceSinkDetails"
+    :ivar tasks: Copy Job tasks. Required.
+    :vartype tasks: list["CassandraRUToBlobCopyJobTask"]
+    :ivar jobType: Copy Job Type. Required. CASSANDRA_RU_TO_AZURE_BLOB_STORAGE.
+    :vartype jobType: Literal[CopyJobType.CASSANDRA_RU_TO_AZURE_BLOB_STORAGE]
+    """
+
+    sourceDetails: "CosmosDBSourceSinkDetails"
+    """Source Cassandra DataStore details."""
+    destinationDetails: Required["AzureBlobSourceSinkDetails"]
+    """Destination Cassandra DataStore details. Required."""
+    tasks: Required[list["CassandraRUToBlobCopyJobTask"]]
+    """Copy Job tasks. Required."""
+    jobType: Required[Literal[CopyJobType.CASSANDRA_RU_TO_AZURE_BLOB_STORAGE]]
+    """Copy Job Type. Required. CASSANDRA_RU_TO_AZURE_BLOB_STORAGE."""
+
+
+class CassandraRUToBlobCopyJobTask(BaseCopyJobTask):
+    """CassandraRUToBlobCopyJobTask.
+
+    :ivar totalCount: Task level Total Count.
+    :vartype totalCount: int
+    :ivar processedCount: Task level Processed Count.
+    :vartype processedCount: int
+    :ivar source: Source Cassandra table. Required.
+    :vartype source: "CosmosDBCassandraTable"
+    :ivar destination: Destination Azure Blob container. Required.
+    :vartype destination: "AzureBlobContainer"
+    """
+
+    source: Required["CosmosDBCassandraTable"]
+    """Source Cassandra table. Required."""
+    destination: Required["AzureBlobContainer"]
+    """Destination Azure Blob container. Required."""
+
+
+class CassandraRUToCassandraRUCopyJobProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Source Cassandra to Destination Cassandra copy job properties.
+
+    :ivar sourceDetails: Source Cassandra DataStore details.
+    :vartype sourceDetails: "CosmosDBSourceSinkDetails"
+    :ivar destinationDetails: Destination Cassandra DataStore details.
+    :vartype destinationDetails: "CosmosDBSourceSinkDetails"
+    :ivar tasks: Copy Job tasks. Required.
+    :vartype tasks: list["CassandraRUToCassandraRUCopyJobTask"]
+    :ivar jobType: Copy Job Type. Required. CASSANDRA_RU_TO_CASSANDRA_RU.
+    :vartype jobType: Literal[CopyJobType.CASSANDRA_RU_TO_CASSANDRA_RU]
+    """
+
+    sourceDetails: "CosmosDBSourceSinkDetails"
+    """Source Cassandra DataStore details."""
+    destinationDetails: "CosmosDBSourceSinkDetails"
+    """Destination Cassandra DataStore details."""
+    tasks: Required[list["CassandraRUToCassandraRUCopyJobTask"]]
+    """Copy Job tasks. Required."""
+    jobType: Required[Literal[CopyJobType.CASSANDRA_RU_TO_CASSANDRA_RU]]
+    """Copy Job Type. Required. CASSANDRA_RU_TO_CASSANDRA_RU."""
+
+
+class CassandraRUToCassandraRUCopyJobTask(BaseCopyJobTask):
+    """CassandraRUToCassandraRUCopyJobTask.
+
+    :ivar totalCount: Task level Total Count.
+    :vartype totalCount: int
+    :ivar processedCount: Task level Processed Count.
+    :vartype processedCount: int
+    :ivar source: Source Cassandra table. Required.
+    :vartype source: "CosmosDBCassandraTable"
+    :ivar destination: Destination Cassandra table. Required.
+    :vartype destination: "CosmosDBCassandraTable"
+    """
+
+    source: Required["CosmosDBCassandraTable"]
+    """Source Cassandra table. Required."""
+    destination: Required["CosmosDBCassandraTable"]
+    """Destination Cassandra table. Required."""
+
+
 class CassandraSchema(TypedDict, total=False):
     """Cosmos DB Cassandra table schema.
 
     :ivar columns: List of Cassandra table columns.
     :vartype columns: list["Column"]
-    :ivar partition_keys: List of partition key.
-    :vartype partition_keys: list["CassandraPartitionKey"]
-    :ivar cluster_keys: List of cluster key.
-    :vartype cluster_keys: list["ClusterKey"]
+    :ivar partitionKeys: List of partition key.
+    :vartype partitionKeys: list["CassandraPartitionKey"]
+    :ivar clusterKeys: List of cluster key.
+    :vartype clusterKeys: list["ClusterKey"]
     """
 
     columns: list["Column"]
@@ -889,41 +831,17 @@ class CassandraTableCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class CassandraTableGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB Cassandra table.
-
-    :ivar resource:
-    :vartype resource: "CassandraTableGetPropertiesResource"
-    :ivar options:
-    :vartype options: "CassandraTableGetPropertiesOptions"
-    """
-
-    resource: "CassandraTableGetPropertiesResource"
-    options: "CassandraTableGetPropertiesOptions"
-
-
-class CassandraTableGetPropertiesOptions(OptionsResource):
-    """CassandraTableGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-
 class CassandraTableResource(TypedDict, total=False):
     """Cosmos DB Cassandra table resource object.
 
     :ivar id: Name of the Cosmos DB Cassandra table. Required.
     :vartype id: str
-    :ivar default_ttl: Time to live of the Cosmos DB Cassandra table.
-    :vartype default_ttl: int
+    :ivar defaultTtl: Time to live of the Cosmos DB Cassandra table.
+    :vartype defaultTtl: int
     :ivar schema: Schema of the Cosmos DB Cassandra table.
     :vartype schema: "CassandraSchema"
-    :ivar analytical_storage_ttl: Analytical TTL.
-    :vartype analytical_storage_ttl: int
+    :ivar analyticalStorageTtl: Analytical TTL.
+    :vartype analyticalStorageTtl: int
     """
 
     id: Required[str]
@@ -936,77 +854,64 @@ class CassandraTableResource(TypedDict, total=False):
     """Analytical TTL."""
 
 
-class CassandraTableGetPropertiesResource(CassandraTableResource):
-    """CassandraTableGetPropertiesResource.
+class CassandraViewCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB Cassandra view.
 
-    :ivar id: Name of the Cosmos DB Cassandra table. Required.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar default_ttl: Time to live of the Cosmos DB Cassandra table.
-    :vartype default_ttl: int
-    :ivar schema: Schema of the Cosmos DB Cassandra table.
-    :vartype schema: "CassandraSchema"
-    :ivar analytical_storage_ttl: Analytical TTL.
-    :vartype analytical_storage_ttl: int
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class CassandraTableGetResults(ProxyResource):
-    """An Azure Cosmos DB Cassandra table.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
+    :ivar type: The type of Azure resource.
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB Cassandra table.
-    :vartype properties: "CassandraTableGetProperties"
     :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
     :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
      used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
      be provided for a resource. Each tag must have a key no greater than 128 characters and value
      no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
+     "Graph", "DocumentDB", and "MongoDB".
     :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: "ManagedServiceIdentity"
+    :ivar properties: Properties to create and update Azure Cosmos DB Cassandra view. Required.
+    :vartype properties: "CassandraViewCreateUpdateProperties"
     """
 
-    properties: "CassandraTableGetProperties"
-    """The properties of an Azure Cosmos DB Cassandra table."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
+    properties: Required["CassandraViewCreateUpdateProperties"]
+    """Properties to create and update Azure Cosmos DB Cassandra view. Required."""
+
+
+class CassandraViewCreateUpdateProperties(TypedDict, total=False):
+    """Properties to create and update Azure Cosmos DB Cassandra view.
+
+    :ivar resource: The standard JSON format of a Cassandra view. Required.
+    :vartype resource: "CassandraViewResource"
+    :ivar options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
+    :vartype options: "CreateUpdateOptions"
+    """
+
+    resource: Required["CassandraViewResource"]
+    """The standard JSON format of a Cassandra view. Required."""
+    options: "CreateUpdateOptions"
+    """A key-value pair of options to be applied for the request. This corresponds to the headers sent
+     with the request."""
+
+
+class CassandraViewResource(TypedDict, total=False):
+    """Cosmos DB Cassandra view resource object.
+
+    :ivar id: Name of the Cosmos DB Cassandra view. Required.
+    :vartype id: str
+    :ivar viewDefinition: View Definition of the Cosmos DB Cassandra view. Required.
+    :vartype viewDefinition: str
+    """
+
+    id: Required[str]
+    """Name of the Cosmos DB Cassandra view. Required."""
+    viewDefinition: Required[str]
+    """View Definition of the Cosmos DB Cassandra view. Required."""
 
 
 class Certificate(TypedDict, total=False):
@@ -1020,20 +925,71 @@ class Certificate(TypedDict, total=False):
     """PEM formatted public key."""
 
 
+class ChaosFaultProperties(TypedDict, total=False):
+    """A request object to enable/disable the chaos fault.
+
+    :ivar action: Indicates whether what action to take for the Chaos Fault. Known values are:
+     "Enable" and "Disable".
+    :vartype action: Union[str, "SupportedActions"]
+    :ivar region: Region of the account where the Chaos Fault is to be enabled/disabled.
+    :vartype region: str
+    :ivar databaseName: Database name.
+    :vartype databaseName: str
+    :ivar containerName: Container name.
+    :vartype containerName: str
+    :ivar provisioningState: A provisioning state of the Chaos Fault.
+    :vartype provisioningState: str
+    """
+
+    action: Union[str, "SupportedActions"]
+    """Indicates whether what action to take for the Chaos Fault. Known values are: \"Enable\" and
+     \"Disable\"."""
+    region: str
+    """Region of the account where the Chaos Fault is to be enabled/disabled."""
+    databaseName: str
+    """Database name."""
+    containerName: str
+    """Container name."""
+    provisioningState: str
+    """A provisioning state of the Chaos Fault."""
+
+
+class ChaosFaultResource(ProxyResource):
+    """A request object to enable/disable the chaos fault.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: A request object to enable/disable the chaos fault.
+    :vartype properties: "ChaosFaultProperties"
+    """
+
+    properties: "ChaosFaultProperties"
+    """A request object to enable/disable the chaos fault."""
+
+
 class ClientEncryptionIncludedPath(TypedDict, total=False):
     """.
 
     :ivar path: Path that needs to be encrypted. Required.
     :vartype path: str
-    :ivar client_encryption_key_id: The identifier of the Client Encryption Key to be used to
-     encrypt the path. Required.
-    :vartype client_encryption_key_id: str
-    :ivar encryption_type: The type of encryption to be performed. Eg - Deterministic, Randomized.
+    :ivar clientEncryptionKeyId: The identifier of the Client Encryption Key to be used to encrypt
+     the path. Required.
+    :vartype clientEncryptionKeyId: str
+    :ivar encryptionType: The type of encryption to be performed. Eg - Deterministic, Randomized.
      Required.
-    :vartype encryption_type: str
-    :ivar encryption_algorithm: The encryption algorithm which will be used. Eg -
+    :vartype encryptionType: str
+    :ivar encryptionAlgorithm: The encryption algorithm which will be used. Eg -
      AEAD_AES_256_CBC_HMAC_SHA256. Required.
-    :vartype encryption_algorithm: str
+    :vartype encryptionAlgorithm: str
     """
 
     path: Required[str]
@@ -1068,30 +1024,20 @@ class ClientEncryptionKeyCreateUpdateProperties(TypedDict, total=False):  # pyli
     """The standard JSON format of a ClientEncryptionKey. Required."""
 
 
-class ClientEncryptionKeyGetProperties(TypedDict, total=False):
-    """The properties of a ClientEncryptionKey resource.
-
-    :ivar resource:
-    :vartype resource: "ClientEncryptionKeyGetPropertiesResource"
-    """
-
-    resource: "ClientEncryptionKeyGetPropertiesResource"
-
-
 class ClientEncryptionKeyResource(TypedDict, total=False):
     """Cosmos DB client encryption key resource object.
 
     :ivar id: Name of the ClientEncryptionKey.
     :vartype id: str
-    :ivar encryption_algorithm: Encryption algorithm that will be used along with this client
+    :ivar encryptionAlgorithm: Encryption algorithm that will be used along with this client
      encryption key to encrypt/decrypt data.
-    :vartype encryption_algorithm: str
-    :ivar wrapped_data_encryption_key: Wrapped (encrypted) form of the key represented as a byte
+    :vartype encryptionAlgorithm: str
+    :ivar wrappedDataEncryptionKey: Wrapped (encrypted) form of the key represented as a byte
      array.
-    :vartype wrapped_data_encryption_key: str
-    :ivar key_wrap_metadata: Metadata for the wrapping provider that can be used to unwrap the
+    :vartype wrappedDataEncryptionKey: str
+    :ivar keyWrapMetadata: Metadata for the wrapping provider that can be used to unwrap the
      wrapped client encryption key.
-    :vartype key_wrap_metadata: "KeyWrapMetadata"
+    :vartype keyWrapMetadata: "KeyWrapMetadata"
     """
 
     id: str
@@ -1106,69 +1052,15 @@ class ClientEncryptionKeyResource(TypedDict, total=False):
      key."""
 
 
-class ClientEncryptionKeyGetPropertiesResource(ClientEncryptionKeyResource):
-    """ClientEncryptionKeyGetPropertiesResource.
-
-    :ivar id: Name of the ClientEncryptionKey.
-    :vartype id: str
-    :ivar encryption_algorithm: Encryption algorithm that will be used along with this client
-     encryption key to encrypt/decrypt data.
-    :vartype encryption_algorithm: str
-    :ivar wrapped_data_encryption_key: Wrapped (encrypted) form of the key represented as a byte
-     array.
-    :vartype wrapped_data_encryption_key: str
-    :ivar key_wrap_metadata: Metadata for the wrapping provider that can be used to unwrap the
-     wrapped client encryption key.
-    :vartype key_wrap_metadata: "KeyWrapMetadata"
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class ClientEncryptionKeyGetResults(ProxyResource):
-    """Client Encryption Key.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of a ClientEncryptionKey.
-    :vartype properties: "ClientEncryptionKeyGetProperties"
-    """
-
-    properties: "ClientEncryptionKeyGetProperties"
-    """The properties of a ClientEncryptionKey."""
-
-
 class ClientEncryptionPolicy(TypedDict, total=False):
     """Cosmos DB client encryption policy.
 
-    :ivar included_paths: Paths of the item that need encryption along with path-specific settings.
+    :ivar includedPaths: Paths of the item that need encryption along with path-specific settings.
      Required.
-    :vartype included_paths: list["ClientEncryptionIncludedPath"]
-    :ivar policy_format_version: Version of the client encryption policy definition. Supported
+    :vartype includedPaths: list["ClientEncryptionIncludedPath"]
+    :ivar policyFormatVersion: Version of the client encryption policy definition. Supported
      versions are 1 and 2. Version 2 supports id and partition key path encryption. Required.
-    :vartype policy_format_version: int
+    :vartype policyFormatVersion: int
     """
 
     includedPaths: Required[list["ClientEncryptionIncludedPath"]]
@@ -1178,25 +1070,14 @@ class ClientEncryptionPolicy(TypedDict, total=False):
      supports id and partition key path encryption. Required."""
 
 
-class CloudError(TypedDict, total=False):
-    """An error response from the service.
-
-    :ivar error: Error Response.
-    :vartype error: "ErrorResponseAutoGenerated"
-    """
-
-    error: "ErrorResponseAutoGenerated"
-    """Error Response."""
-
-
 class ClusterKey(TypedDict, total=False):
     """Cosmos DB Cassandra table cluster key.
 
     :ivar name: Name of the Cosmos DB Cassandra table cluster key.
     :vartype name: str
-    :ivar order_by: Order of the Cosmos DB Cassandra table cluster key, only support "Asc" and
+    :ivar orderBy: Order of the Cosmos DB Cassandra table cluster key, only support "Asc" and
      "Desc".
-    :vartype order_by: str
+    :vartype orderBy: str
     """
 
     name: str
@@ -1216,9 +1097,9 @@ class ClusterResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of a managed Cassandra cluster.
     :vartype properties: "ClusterResourceProperties"
     :ivar location: The location of the resource group to which the resource belongs.
@@ -1252,89 +1133,91 @@ class ClusterResource(ProxyResource):
 class ClusterResourceProperties(TypedDict, total=False):
     """Properties of a managed Cassandra cluster.
 
-    :ivar provisioning_state: The status of the resource at the time the operation was called.
-     Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ManagedCassandraProvisioningState"]
-    :ivar restore_from_backup_id: To create an empty cluster, omit this field or set it to null. To
+    :ivar provisioningState: The status of the resource at the time the operation was called. Known
+     values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "ManagedCassandraProvisioningState"]
+    :ivar restoreFromBackupId: To create an empty cluster, omit this field or set it to null. To
      restore a backup into a new cluster, set this field to the resource id of the backup.
-    :vartype restore_from_backup_id: str
-    :ivar delegated_management_subnet_id: Resource id of a subnet that this cluster's management
+    :vartype restoreFromBackupId: str
+    :ivar delegatedManagementSubnetId: Resource id of a subnet that this cluster's management
      service should have its network interface attached to. The subnet must be routable to all
      subnets that will be delegated to data centers. The resource id must be of the form
      '/subscriptions/<subscription id>/resourceGroups/<resource
      group>/providers/Microsoft.Network/virtualNetworks/<virtual network>/subnets/<subnet>'.
-    :vartype delegated_management_subnet_id: str
-    :ivar cassandra_version: Which version of Cassandra should this cluster converge to running
+    :vartype delegatedManagementSubnetId: str
+    :ivar cassandraVersion: Which version of Cassandra should this cluster converge to running
      (e.g., 3.11). When updated, the cluster may take some time to migrate to the new version.
-    :vartype cassandra_version: str
-    :ivar cluster_name_override: If you need to set the clusterName property in cassandra.yaml to
+    :vartype cassandraVersion: str
+    :ivar clusterNameOverride: If you need to set the clusterName property in cassandra.yaml to
      something besides the resource name of the cluster, set the value to use on this property.
-    :vartype cluster_name_override: str
-    :ivar authentication_method: Which authentication method Cassandra should use to authenticate
+    :vartype clusterNameOverride: str
+    :ivar authenticationMethod: Which authentication method Cassandra should use to authenticate
      clients. 'None' turns off authentication, so should not be used except in emergencies.
      'Cassandra' is the default password based authentication. The default is 'Cassandra'. Known
      values are: "None", "Cassandra", and "Ldap".
-    :vartype authentication_method: Union[str, "AuthenticationMethod"]
-    :ivar initial_cassandra_admin_password: Initial password for clients connecting as admin to the
+    :vartype authenticationMethod: Union[str, "AuthenticationMethod"]
+    :ivar initialCassandraAdminPassword: Initial password for clients connecting as admin to the
      cluster. Should be changed after cluster creation. Returns null on GET. This field only applies
      when the authenticationMethod field is 'Cassandra'.
-    :vartype initial_cassandra_admin_password: str
-    :ivar prometheus_endpoint: Hostname or IP address where the Prometheus endpoint containing data
+    :vartype initialCassandraAdminPassword: str
+    :ivar prometheusEndpoint: Hostname or IP address where the Prometheus endpoint containing data
      about the managed Cassandra nodes can be reached.
-    :vartype prometheus_endpoint: "SeedNode"
-    :ivar repair_enabled: Should automatic repairs run on this cluster? If omitted, this is true,
+    :vartype prometheusEndpoint: "SeedNode"
+    :ivar repairEnabled: Should automatic repairs run on this cluster? If omitted, this is true,
      and should stay true unless you are running a hybrid cluster where you are already doing your
      own repairs.
-    :vartype repair_enabled: bool
-    :ivar auto_replicate: The form of AutoReplicate that is being used by this cluster. Known
-     values are: "None", "SystemKeyspaces", and "AllKeyspaces".
-    :vartype auto_replicate: Union[str, "AutoReplicate"]
-    :ivar client_certificates: List of TLS certificates used to authorize clients connecting to the
+    :vartype repairEnabled: bool
+    :ivar autoReplicate: The form of AutoReplicate that is being used by this cluster. Known values
+     are: "None", "SystemKeyspaces", and "AllKeyspaces".
+    :vartype autoReplicate: Union[str, "AutoReplicate"]
+    :ivar clientCertificates: List of TLS certificates used to authorize clients connecting to the
      cluster. All connections are TLS encrypted whether clientCertificates is set or not, but if
      clientCertificates is set, the managed Cassandra cluster will reject all connections not
      bearing a TLS client certificate that can be validated from one or more of the public
      certificates in this property.
-    :vartype client_certificates: list["Certificate"]
-    :ivar external_gossip_certificates: List of TLS certificates used to authorize gossip from
+    :vartype clientCertificates: list["Certificate"]
+    :ivar externalGossipCertificates: List of TLS certificates used to authorize gossip from
      unmanaged data centers. The TLS certificates of all nodes in unmanaged data centers must be
      verifiable using one of the certificates provided in this property.
-    :vartype external_gossip_certificates: list["Certificate"]
-    :ivar gossip_certificates: List of TLS certificates that unmanaged nodes must trust for gossip
+    :vartype externalGossipCertificates: list["Certificate"]
+    :ivar gossipCertificates: List of TLS certificates that unmanaged nodes must trust for gossip
      with managed nodes. All managed nodes will present TLS client certificates that are verifiable
      using one of the certificates provided in this property.
-    :vartype gossip_certificates: list["Certificate"]
-    :ivar external_seed_nodes: List of IP addresses of seed nodes in unmanaged data centers. These
+    :vartype gossipCertificates: list["Certificate"]
+    :ivar externalSeedNodes: List of IP addresses of seed nodes in unmanaged data centers. These
      will be added to the seed node lists of all managed nodes.
-    :vartype external_seed_nodes: list["SeedNode"]
-    :ivar seed_nodes: List of IP addresses of seed nodes in the managed data centers. These should
+    :vartype externalSeedNodes: list["SeedNode"]
+    :ivar seedNodes: List of IP addresses of seed nodes in the managed data centers. These should
      be added to the seed node lists of all unmanaged nodes.
-    :vartype seed_nodes: list["SeedNode"]
-    :ivar external_data_centers: List of the data center names for unmanaged data centers in this
+    :vartype seedNodes: list["SeedNode"]
+    :ivar externalDataCenters: List of the data center names for unmanaged data centers in this
      cluster to be included in auto-replication.
-    :vartype external_data_centers: list[str]
-    :ivar hours_between_backups: (Deprecated) Number of hours to wait between taking a backup of
-     the cluster.
-    :vartype hours_between_backups: int
+    :vartype externalDataCenters: list[str]
+    :ivar hoursBetweenBackups: (Deprecated) Number of hours to wait between taking a backup of the
+     cluster.
+    :vartype hoursBetweenBackups: int
     :ivar deallocated: Whether the cluster and associated data centers has been deallocated.
     :vartype deallocated: bool
-    :ivar cassandra_audit_logging_enabled: Whether Cassandra audit logging is enabled.
-    :vartype cassandra_audit_logging_enabled: bool
-    :ivar provision_error: Error related to resource provisioning.
-    :vartype provision_error: "CassandraError"
+    :ivar cassandraAuditLoggingEnabled: Whether Cassandra audit logging is enabled.
+    :vartype cassandraAuditLoggingEnabled: bool
+    :ivar clusterType: Type of the cluster. If set to Production, some operations might not be
+     permitted on cluster. Known values are: "Production" and "NonProduction".
+    :vartype clusterType: Union[str, "ClusterType"]
+    :ivar provisionError: Error related to resource provisioning.
+    :vartype provisionError: "CassandraError"
     :ivar extensions: Extensions to be added or updated on cluster.
     :vartype extensions: list[str]
-    :ivar backup_schedules: List of backup schedules that define when you want to back up your
-     data.
-    :vartype backup_schedules: list["BackupSchedule"]
-    :ivar scheduled_event_strategy: How the nodes in the cluster react to scheduled events. Known
+    :ivar backupSchedules: List of backup schedules that define when you want to back up your data.
+    :vartype backupSchedules: list["BackupSchedule"]
+    :ivar scheduledEventStrategy: How the nodes in the cluster react to scheduled events. Known
      values are: "Ignore", "StopAny", and "StopByRack".
-    :vartype scheduled_event_strategy: Union[str, "ScheduledEventStrategy"]
-    :ivar azure_connection_method: How to connect to the azure services needed for running the
+    :vartype scheduledEventStrategy: Union[str, "ScheduledEventStrategy"]
+    :ivar azureConnectionMethod: How to connect to the azure services needed for running the
      cluster. Known values are: "None" and "VPN".
-    :vartype azure_connection_method: Union[str, "AzureConnectionType"]
-    :ivar private_link_resource_id: If the Connection Method is Vpn, this is the Id of the private
+    :vartype azureConnectionMethod: Union[str, "AzureConnectionType"]
+    :ivar privateLinkResourceId: If the Connection Method is Vpn, this is the Id of the private
      link resource that the datacenters need to connect to.
-    :vartype private_link_resource_id: str
+    :vartype privateLinkResourceId: str
     """
 
     provisioningState: Union[str, "ManagedCassandraProvisioningState"]
@@ -1401,6 +1284,9 @@ class ClusterResourceProperties(TypedDict, total=False):
     """Whether the cluster and associated data centers has been deallocated."""
     cassandraAuditLoggingEnabled: bool
     """Whether Cassandra audit logging is enabled."""
+    clusterType: Union[str, "ClusterType"]
+    """Type of the cluster. If set to Production, some operations might not be permitted on cluster.
+     Known values are: \"Production\" and \"NonProduction\"."""
     provisionError: "CassandraError"
     """Error related to resource provisioning."""
     extensions: list[str]
@@ -1433,15 +1319,32 @@ class Column(TypedDict, total=False):
     """Type of the Cosmos DB Cassandra table column."""
 
 
-class CommandOutput(TypedDict, total=False):
-    """Response of /command api.
+CommandAsyncPostBody = TypedDict(
+    "CommandAsyncPostBody",
+    {
+        "command": Required[str],
+        "arguments": Any,
+        "host": Required[str],
+        "cassandra-stop-start": bool,
+        "readWrite": bool,
+    },
+    total=False,
+)
+CommandAsyncPostBody.__doc__ = """Specification of which command to run where.
 
-    :ivar command_output: Output of the command.
-    :vartype command_output: str
-    """
-
-    commandOutput: str
-    """Output of the command."""
+:ivar command: The command which should be run. Required.
+:vartype command: str
+:ivar arguments: The arguments for the command to be run.
+:vartype arguments: Any
+:ivar host: IP address of the cassandra host to run the command on. Required.
+:vartype host: str
+:ivar cassandra-stop-start: If true, stops cassandra before executing the command and then
+ start it again.
+:vartype cassandra-stop-start: bool
+:ivar readWrite: If true, allows the command to *write* to the cassandra directory, otherwise
+ read-only.
+:vartype readWrite: bool
+"""
 
 
 CommandPostBody = TypedDict(
@@ -1463,9 +1366,9 @@ CommandPostBody.__doc__ = """Specification of which command to run where.
 :vartype arguments: dict[str, str]
 :ivar host: IP address of the cassandra host to run the command on. Required.
 :vartype host: str
-:ivar cassandra_stop_start: If true, stops cassandra before executing the command and then
+:ivar cassandra-stop-start: If true, stops cassandra before executing the command and then
  start it again.
-:vartype cassandra_stop_start: bool
+:vartype cassandra-stop-start: bool
 :ivar readwrite: If true, allows the command to *write* to the cassandra directory, otherwise
  read-only.
 :vartype readwrite: bool
@@ -1512,12 +1415,11 @@ class ConflictResolutionPolicy(TypedDict, total=False):
     :ivar mode: Indicates the conflict resolution mode. Known values are: "LastWriterWins" and
      "Custom".
     :vartype mode: Union[str, "ConflictResolutionMode"]
-    :ivar conflict_resolution_path: The conflict resolution path in the case of LastWriterWins
+    :ivar conflictResolutionPath: The conflict resolution path in the case of LastWriterWins mode.
+    :vartype conflictResolutionPath: str
+    :ivar conflictResolutionProcedure: The procedure to resolve conflicts in the case of custom
      mode.
-    :vartype conflict_resolution_path: str
-    :ivar conflict_resolution_procedure: The procedure to resolve conflicts in the case of custom
-     mode.
-    :vartype conflict_resolution_procedure: str
+    :vartype conflictResolutionProcedure: str
     """
 
     mode: Union[str, "ConflictResolutionMode"]
@@ -1528,52 +1430,21 @@ class ConflictResolutionPolicy(TypedDict, total=False):
     """The procedure to resolve conflicts in the case of custom mode."""
 
 
-class ConnectionError(TypedDict, total=False):
-    """ConnectionError.
-
-    :ivar connection_state: The kind of connection error that occurred. Known values are:
-     "Unknown", "OK", "OperatorToDataCenterNetworkError", "DatacenterToDatacenterNetworkError",
-     "InternalOperatorToDataCenterCertificateError", and "InternalError".
-    :vartype connection_state: Union[str, "ConnectionState"]
-    :ivar i_p_from: The IP of host that originated the failed connection.
-    :vartype i_p_from: str
-    :ivar i_p_to: The IP that the connection attempted to reach.
-    :vartype i_p_to: str
-    :ivar port: The TCP port the connection was attempted on.
-    :vartype port: int
-    :ivar exception: Detailed error message about the failed connection.
-    :vartype exception: str
-    """
-
-    connectionState: Union[str, "ConnectionState"]
-    """The kind of connection error that occurred. Known values are: \"Unknown\", \"OK\",
-     \"OperatorToDataCenterNetworkError\", \"DatacenterToDatacenterNetworkError\",
-     \"InternalOperatorToDataCenterCertificateError\", and \"InternalError\"."""
-    iPFrom: str
-    """The IP of host that originated the failed connection."""
-    iPTo: str
-    """The IP that the connection attempted to reach."""
-    port: int
-    """The TCP port the connection was attempted on."""
-    exception: str
-    """Detailed error message about the failed connection."""
-
-
 class ConsistencyPolicy(TypedDict, total=False):
     """The consistency policy for the Cosmos DB database account.
 
-    :ivar default_consistency_level: The default consistency level and configuration settings of
-     the Cosmos DB account. Required. Known values are: "Eventual", "Session", "BoundedStaleness",
+    :ivar defaultConsistencyLevel: The default consistency level and configuration settings of the
+     Cosmos DB account. Required. Known values are: "Eventual", "Session", "BoundedStaleness",
      "Strong", and "ConsistentPrefix".
-    :vartype default_consistency_level: Union[str, "DefaultConsistencyLevel"]
-    :ivar max_staleness_prefix: When used with the Bounded Staleness consistency level, this value
+    :vartype defaultConsistencyLevel: Union[str, "DefaultConsistencyLevel"]
+    :ivar maxStalenessPrefix: When used with the Bounded Staleness consistency level, this value
      represents the number of stale requests tolerated. Accepted range for this value is 1 –
      2,147,483,647. Required when defaultConsistencyPolicy is set to 'BoundedStaleness'.
-    :vartype max_staleness_prefix: int
-    :ivar max_interval_in_seconds: When used with the Bounded Staleness consistency level, this
-     value represents the time amount of staleness (in seconds) tolerated. Accepted range for this
-     value is 5 - 86400. Required when defaultConsistencyPolicy is set to 'BoundedStaleness'.
-    :vartype max_interval_in_seconds: int
+    :vartype maxStalenessPrefix: int
+    :ivar maxIntervalInSeconds: When used with the Bounded Staleness consistency level, this value
+     represents the time amount of staleness (in seconds) tolerated. Accepted range for this value
+     is 5 - 86400. Required when defaultConsistencyPolicy is set to 'BoundedStaleness'.
+    :vartype maxIntervalInSeconds: int
     """
 
     defaultConsistencyLevel: Required[Union[str, "DefaultConsistencyLevel"]]
@@ -1602,8 +1473,8 @@ class ContainerPartitionKey(TypedDict, total=False):
     :vartype kind: Union[str, "PartitionKind"]
     :ivar version: Indicates the version of the partition key definition.
     :vartype version: int
-    :ivar system_key: Indicates if the container is using a system generated partition key.
-    :vartype system_key: bool
+    :ivar systemKey: Indicates if the container is using a system generated partition key.
+    :vartype systemKey: bool
     """
 
     paths: list[str]
@@ -1616,17 +1487,6 @@ class ContainerPartitionKey(TypedDict, total=False):
     """Indicates the version of the partition key definition."""
     systemKey: bool
     """Indicates if the container is using a system generated partition key."""
-
-
-class ContinuousBackupInformation(TypedDict, total=False):
-    """Information about the status of continuous backups.
-
-    :ivar latest_restorable_timestamp: The latest restorable timestamp for a resource.
-    :vartype latest_restorable_timestamp: str
-    """
-
-    latestRestorableTimestamp: str
-    """The latest restorable timestamp for a resource."""
 
 
 class ContinuousBackupRestoreLocation(TypedDict, total=False):
@@ -1643,11 +1503,11 @@ class ContinuousBackupRestoreLocation(TypedDict, total=False):
 class ContinuousModeBackupPolicy(TypedDict, total=False):
     """The object representing continuous mode backup policy.
 
-    :ivar migration_state: The object representing the state of the migration between the backup
+    :ivar migrationState: The object representing the state of the migration between the backup
      policies.
-    :vartype migration_state: "BackupPolicyMigrationState"
-    :ivar continuous_mode_properties: Configuration values for continuous mode backup.
-    :vartype continuous_mode_properties: "ContinuousModeProperties"
+    :vartype migrationState: "BackupPolicyMigrationState"
+    :ivar continuousModeProperties: Configuration values for continuous mode backup.
+    :vartype continuousModeProperties: "ContinuousModeProperties"
     :ivar type: Describes the mode of backups. Required. CONTINUOUS.
     :vartype type: Literal[BackupPolicyType.CONTINUOUS]
     """
@@ -1663,34 +1523,101 @@ class ContinuousModeBackupPolicy(TypedDict, total=False):
 class ContinuousModeProperties(TypedDict, total=False):
     """Configuration values for periodic mode backup.
 
-    :ivar tier: Enum to indicate type of Continuos backup mode. Known values are: "Continuous7Days"
-     and "Continuous30Days".
+    :ivar tier: Enum to indicate type of Continuos backup mode. Known values are:
+     "Continuous7Days", "Continuous30Days", and "Continuous35Days".
     :vartype tier: Union[str, "ContinuousTier"]
     """
 
     tier: Union[str, "ContinuousTier"]
-    """Enum to indicate type of Continuos backup mode. Known values are: \"Continuous7Days\" and
-     \"Continuous30Days\"."""
+    """Enum to indicate type of Continuos backup mode. Known values are: \"Continuous7Days\",
+     \"Continuous30Days\", and \"Continuous35Days\"."""
+
+
+class CopyJobGetResults(ProxyResource):
+    """A Cosmos DB Copy Job.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The properties of a Copy Job. Required.
+    :vartype properties: "CopyJobProperties"
+    """
+
+    properties: Required["CopyJobProperties"]
+    """The properties of a Copy Job. Required."""
+
+
+class CopyJobProperties(TypedDict, total=False):
+    """The properties of a Copy Job.
+
+    :ivar jobProperties: Job Properties. Required.
+    :vartype jobProperties: "BaseCopyJobProperties"
+    :ivar status: Job Status. Known values are: "Pending", "Partitioning", "Running", "Paused",
+     "Completed", "Faulted", and "Cancelled".
+    :vartype status: Union[str, "CopyJobStatus"]
+    :ivar processedCount: Processed Count.
+    :vartype processedCount: int
+    :ivar totalCount: Total Count.
+    :vartype totalCount: int
+    :ivar lastUpdatedUtcTime: Last Updated Time (ISO-8601 format).
+    :vartype lastUpdatedUtcTime: str
+    :ivar workerCount: Worker count.
+    :vartype workerCount: int
+    :ivar error: Error response for Faulted job.
+    :vartype error: "ErrorResponse"
+    :ivar duration: Total Duration of Job.
+    :vartype duration: str
+    :ivar mode: Mode of job execution. Known values are: "Offline" and "Online".
+    :vartype mode: Union[str, "CopyJobMode"]
+    """
+
+    jobProperties: Required["BaseCopyJobProperties"]
+    """Job Properties. Required."""
+    status: Union[str, "CopyJobStatus"]
+    """Job Status. Known values are: \"Pending\", \"Partitioning\", \"Running\", \"Paused\",
+     \"Completed\", \"Faulted\", and \"Cancelled\"."""
+    processedCount: int
+    """Processed Count."""
+    totalCount: int
+    """Total Count."""
+    lastUpdatedUtcTime: str
+    """Last Updated Time (ISO-8601 format)."""
+    workerCount: int
+    """Worker count."""
+    error: "ErrorResponse"
+    """Error response for Faulted job."""
+    duration: str
+    """Total Duration of Job."""
+    mode: Union[str, "CopyJobMode"]
+    """Mode of job execution. Known values are: \"Offline\" and \"Online\"."""
 
 
 class CorsPolicy(TypedDict, total=False):
     """The CORS policy for the Cosmos DB database account.
 
-    :ivar allowed_origins: The origin domains that are permitted to make a request against the
+    :ivar allowedOrigins: The origin domains that are permitted to make a request against the
      service via CORS. Required.
-    :vartype allowed_origins: str
-    :ivar allowed_methods: The methods (HTTP request verbs) that the origin domain may use for a
+    :vartype allowedOrigins: str
+    :ivar allowedMethods: The methods (HTTP request verbs) that the origin domain may use for a
      CORS request.
-    :vartype allowed_methods: str
-    :ivar allowed_headers: The request headers that the origin domain may specify on the CORS
+    :vartype allowedMethods: str
+    :ivar allowedHeaders: The request headers that the origin domain may specify on the CORS
      request.
-    :vartype allowed_headers: str
-    :ivar exposed_headers: The response headers that may be sent in the response to the CORS
-     request and exposed by the browser to the request issuer.
-    :vartype exposed_headers: str
-    :ivar max_age_in_seconds: The maximum amount time that a browser should cache the preflight
+    :vartype allowedHeaders: str
+    :ivar exposedHeaders: The response headers that may be sent in the response to the CORS request
+     and exposed by the browser to the request issuer.
+    :vartype exposedHeaders: str
+    :ivar maxAgeInSeconds: The maximum amount time that a browser should cache the preflight
      OPTIONS request.
-    :vartype max_age_in_seconds: int
+    :vartype maxAgeInSeconds: int
     """
 
     allowedOrigins: Required[str]
@@ -1706,15 +1633,194 @@ class CorsPolicy(TypedDict, total=False):
     """The maximum amount time that a browser should cache the preflight OPTIONS request."""
 
 
+class CosmosCassandraDataTransferDataSourceSink(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A CosmosDB Cassandra API data source/sink.
+
+    :ivar remoteAccountName:
+    :vartype remoteAccountName: str
+    :ivar keyspaceName: Required.
+    :vartype keyspaceName: str
+    :ivar tableName: Required.
+    :vartype tableName: str
+    :ivar component: Required. COSMOS_DB_CASSANDRA.
+    :vartype component: Literal[DataTransferComponent.COSMOS_DB_CASSANDRA]
+    """
+
+    remoteAccountName: str
+    keyspaceName: Required[str]
+    """Required."""
+    tableName: Required[str]
+    """Required."""
+    component: Required[Literal[DataTransferComponent.COSMOS_DB_CASSANDRA]]
+    """Required. COSMOS_DB_CASSANDRA."""
+
+
+class CosmosDBCassandraTable(TypedDict, total=False):
+    """A CosmosDB Cassandra table.
+
+    :ivar keyspaceName: Azure Cosmos DB for Apache Cassandra keyspace. Required.
+    :vartype keyspaceName: str
+    :ivar tableName: Azure Cosmos DB for Apache Cassandra table. Required.
+    :vartype tableName: str
+    """
+
+    keyspaceName: Required[str]
+    """Azure Cosmos DB for Apache Cassandra keyspace. Required."""
+    tableName: Required[str]
+    """Azure Cosmos DB for Apache Cassandra table. Required."""
+
+
+class CosmosDBMongoCollection(TypedDict, total=False):
+    """A CosmosDB Mongo collection.
+
+    :ivar databaseName: Azure Cosmos DB for MongoDB (RU) database. Required.
+    :vartype databaseName: str
+    :ivar collectionName: Azure Cosmos DB for MongoDB (RU) collection. Required.
+    :vartype collectionName: str
+    """
+
+    databaseName: Required[str]
+    """Azure Cosmos DB for MongoDB (RU) database. Required."""
+    collectionName: Required[str]
+    """Azure Cosmos DB for MongoDB (RU) collection. Required."""
+
+
+class CosmosDBMongoVCoreCollection(TypedDict, total=False):
+    """A CosmosDB Mongo vCore collection.
+
+    :ivar databaseName: Azure Cosmos DB for MongoDB (vCore) database. Required.
+    :vartype databaseName: str
+    :ivar collectionName: Azure Cosmos DB for MongoDB (vCore) collection. Required.
+    :vartype collectionName: str
+    """
+
+    databaseName: Required[str]
+    """Azure Cosmos DB for MongoDB (vCore) database. Required."""
+    collectionName: Required[str]
+    """Azure Cosmos DB for MongoDB (vCore) collection. Required."""
+
+
+class CosmosDBNoSqlContainer(TypedDict, total=False):
+    """A CosmosDB NoSQL container.
+
+    :ivar databaseName: Azure Cosmos DB for NoSQL database. Required.
+    :vartype databaseName: str
+    :ivar containerName: Azure Cosmos DB for NoSQL container. Required.
+    :vartype containerName: str
+    """
+
+    databaseName: Required[str]
+    """Azure Cosmos DB for NoSQL database. Required."""
+    containerName: Required[str]
+    """Azure Cosmos DB for NoSQL container. Required."""
+
+
+class CosmosDBSourceSinkDetails(TypedDict, total=False):
+    """A CosmosDB data source/sink details.
+
+    :ivar remoteAccountName: Name of remote account in case of cross-account data transfer.
+    :vartype remoteAccountName: str
+    """
+
+    remoteAccountName: str
+    """Name of remote account in case of cross-account data transfer."""
+
+
+class CosmosMongoDataTransferDataSourceSink(TypedDict, total=False):
+    """A CosmosDB Mongo API data source/sink.
+
+    :ivar remoteAccountName:
+    :vartype remoteAccountName: str
+    :ivar databaseName: Required.
+    :vartype databaseName: str
+    :ivar collectionName: Required.
+    :vartype collectionName: str
+    :ivar component: Required. COSMOS_DB_MONGO.
+    :vartype component: Literal[DataTransferComponent.COSMOS_DB_MONGO]
+    """
+
+    remoteAccountName: str
+    databaseName: Required[str]
+    """Required."""
+    collectionName: Required[str]
+    """Required."""
+    component: Required[Literal[DataTransferComponent.COSMOS_DB_MONGO]]
+    """Required. COSMOS_DB_MONGO."""
+
+
+class CosmosMongoVCoreDataTransferDataSourceSink(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A CosmosDB Mongo vCore API data source/sink.
+
+    :ivar databaseName: Required.
+    :vartype databaseName: str
+    :ivar collectionName: Required.
+    :vartype collectionName: str
+    :ivar hostName:
+    :vartype hostName: str
+    :ivar connectionStringKeyVaultUri:
+    :vartype connectionStringKeyVaultUri: str
+    :ivar component: Required. COSMOS_DB_MONGO_V_CORE.
+    :vartype component: Literal[DataTransferComponent.COSMOS_DB_MONGO_V_CORE]
+    """
+
+    databaseName: Required[str]
+    """Required."""
+    collectionName: Required[str]
+    """Required."""
+    hostName: str
+    connectionStringKeyVaultUri: str
+    component: Required[Literal[DataTransferComponent.COSMOS_DB_MONGO_V_CORE]]
+    """Required. COSMOS_DB_MONGO_V_CORE."""
+
+
+class CosmosSqlDataTransferDataSourceSink(TypedDict, total=False):
+    """A CosmosDB No Sql API data source/sink.
+
+    :ivar remoteAccountName:
+    :vartype remoteAccountName: str
+    :ivar databaseName: Required.
+    :vartype databaseName: str
+    :ivar containerName: Required.
+    :vartype containerName: str
+    :ivar component: Required. COSMOS_DB_SQL.
+    :vartype component: Literal[DataTransferComponent.COSMOS_DB_SQL]
+    """
+
+    remoteAccountName: str
+    databaseName: Required[str]
+    """Required."""
+    containerName: Required[str]
+    """Required."""
+    component: Required[Literal[DataTransferComponent.COSMOS_DB_SQL]]
+    """Required. COSMOS_DB_SQL."""
+
+
+class CreateJobRequest(ARMProxyResource):
+    """Parameters to create Data Transfer Job.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar properties: Data Transfer Create Job Properties. Required.
+    :vartype properties: "DataTransferJobProperties"
+    """
+
+    properties: Required["DataTransferJobProperties"]
+    """Data Transfer Create Job Properties. Required."""
+
+
 class CreateUpdateOptions(TypedDict, total=False):
     """CreateUpdateOptions are a list of key-value pairs that describe the resource. Supported keys
     are "If-Match", "If-None-Match", "Session-Token" and "Throughput".
 
     :ivar throughput: Request Units per second. For example, "throughput": 10000.
     :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings. Note: Either throughput or
+    :ivar autoscaleSettings: Specifies the Autoscale settings. Note: Either throughput or
      autoscaleSettings is required, but not both.
-    :vartype autoscale_settings: "AutoscaleSettings"
+    :vartype autoscaleSettings: "AutoscaleSettings"
     """
 
     throughput: int
@@ -1722,35 +1828,6 @@ class CreateUpdateOptions(TypedDict, total=False):
     autoscaleSettings: "AutoscaleSettings"
     """Specifies the Autoscale settings. Note: Either throughput or autoscaleSettings is required, but
      not both."""
-
-
-class DatabaseAccountConnectionString(TypedDict, total=False):
-    """Connection string for the Cosmos DB account.
-
-    :ivar connection_string: Value of the connection string.
-    :vartype connection_string: str
-    :ivar description: Description of the connection string.
-    :vartype description: str
-    :ivar key_kind: Kind of the connection string key. Known values are: "Primary", "Secondary",
-     "PrimaryReadonly", and "SecondaryReadonly".
-    :vartype key_kind: Union[str, "Kind"]
-    :ivar type: Type of the connection string. Known values are: "Sql", "Table", "MongoDB",
-     "Cassandra", "CassandraConnectorMetadata", "Gremlin", "SqlDedicatedGateway", "GremlinV2", and
-     "Undefined".
-    :vartype type: Union[str, "Type"]
-    """
-
-    connectionString: str
-    """Value of the connection string."""
-    description: str
-    """Description of the connection string."""
-    keyKind: Union[str, "Kind"]
-    """Kind of the connection string key. Known values are: \"Primary\", \"Secondary\",
-     \"PrimaryReadonly\", and \"SecondaryReadonly\"."""
-    type: Union[str, "Type"]
-    """Type of the connection string. Known values are: \"Sql\", \"Table\", \"MongoDB\",
-     \"Cassandra\", \"CassandraConnectorMetadata\", \"Gremlin\", \"SqlDedicatedGateway\",
-     \"GremlinV2\", and \"Undefined\"."""
 
 
 class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
@@ -1790,106 +1867,120 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
 class DatabaseAccountCreateUpdateProperties(TypedDict, total=False):
     """Properties to create and update Azure Cosmos DB database accounts.
 
-    :ivar consistency_policy: The consistency policy for the Cosmos DB account.
-    :vartype consistency_policy: "ConsistencyPolicy"
+    :ivar consistencyPolicy: The consistency policy for the Cosmos DB account.
+    :vartype consistencyPolicy: "ConsistencyPolicy"
     :ivar locations: An array that contains the georeplication locations enabled for the Cosmos DB
      account. Required.
     :vartype locations: list["Location"]
-    :ivar database_account_offer_type: The offer type for the Cosmos DB database account. Required.
+    :ivar databaseAccountOfferType: The offer type for the Cosmos DB database account. Required.
      Default value is "Standard".
-    :vartype database_account_offer_type: Literal["Standard"]
-    :ivar ip_rules: List of IpRules.
-    :vartype ip_rules: list["IpAddressOrRange"]
-    :ivar is_virtual_network_filter_enabled: Flag to indicate whether to enable/disable Virtual
-     Network ACL rules.
-    :vartype is_virtual_network_filter_enabled: bool
-    :ivar enable_automatic_failover: Enables automatic failover of the write region in the rare
-     event that the region is unavailable due to an outage. Automatic failover will result in a new
-     write region for the account and is chosen based on the failover priorities configured for the
+    :vartype databaseAccountOfferType: Literal["Standard"]
+    :ivar ipRules: List of IpRules.
+    :vartype ipRules: list["IpAddressOrRange"]
+    :ivar isVirtualNetworkFilterEnabled: Flag to indicate whether to enable/disable Virtual Network
+     ACL rules.
+    :vartype isVirtualNetworkFilterEnabled: bool
+    :ivar enableAutomaticFailover: Enables automatic failover of the write region in the rare event
+     that the region is unavailable due to an outage. Automatic failover will result in a new write
+     region for the account and is chosen based on the failover priorities configured for the
      account.
-    :vartype enable_automatic_failover: bool
+    :vartype enableAutomaticFailover: bool
     :ivar capabilities: List of Cosmos DB capabilities for the account.
     :vartype capabilities: list["Capability"]
-    :ivar virtual_network_rules: List of Virtual Network ACL rules configured for the Cosmos DB
+    :ivar virtualNetworkRules: List of Virtual Network ACL rules configured for the Cosmos DB
      account.
-    :vartype virtual_network_rules: list["VirtualNetworkRule"]
-    :ivar enable_multiple_write_locations: Enables the account to write in multiple locations.
-    :vartype enable_multiple_write_locations: bool
-    :ivar enable_cassandra_connector: Enables the cassandra connector on the Cosmos DB C* account.
-    :vartype enable_cassandra_connector: bool
-    :ivar connector_offer: The cassandra connector offer type for the Cosmos DB database C*
-     account. "Small"
-    :vartype connector_offer: Union[str, "ConnectorOffer"]
-    :ivar disable_key_based_metadata_write_access: Disable write operations on metadata resources
+    :vartype virtualNetworkRules: list["VirtualNetworkRule"]
+    :ivar enableMultipleWriteLocations: Enables the account to write in multiple locations.
+    :vartype enableMultipleWriteLocations: bool
+    :ivar enableCassandraConnector: Enables the cassandra connector on the Cosmos DB C* account.
+    :vartype enableCassandraConnector: bool
+    :ivar connectorOffer: The cassandra connector offer type for the Cosmos DB database C* account.
+     "Small"
+    :vartype connectorOffer: Union[str, "ConnectorOffer"]
+    :ivar disableKeyBasedMetadataWriteAccess: Disable write operations on metadata resources
      (databases, containers, throughput) via account keys.
-    :vartype disable_key_based_metadata_write_access: bool
-    :ivar key_vault_key_uri: The URI of the key vault.
-    :vartype key_vault_key_uri: str
-    :ivar default_identity: The default identity for accessing key vault used in features like
+    :vartype disableKeyBasedMetadataWriteAccess: bool
+    :ivar keyVaultKeyUri: The URI of the key vault.
+    :vartype keyVaultKeyUri: str
+    :ivar defaultIdentity: The default identity for accessing key vault used in features like
      customer managed keys. The default identity needs to be explicitly set by the users. It can be
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
-    :vartype default_identity: str
-    :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled", "Disabled", and "SecuredByPerimeter".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
-    :vartype enable_free_tier: bool
-    :ivar api_properties: API specific properties. Currently, supported only for MongoDB API.
-    :vartype api_properties: "ApiProperties"
-    :ivar enable_analytical_storage: Flag to indicate whether to enable storage analytics.
-    :vartype enable_analytical_storage: bool
-    :ivar analytical_storage_configuration: Analytical storage specific properties.
-    :vartype analytical_storage_configuration: "AnalyticalStorageConfiguration"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
+    :vartype defaultIdentity: str
+    :ivar publicNetworkAccess: Whether requests from Public Network are allowed. Known values are:
+     "Enabled", "Disabled", and "SecuredByPerimeter".
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar enableFreeTier: Flag to indicate whether Free Tier is enabled.
+    :vartype enableFreeTier: bool
+    :ivar apiProperties: API specific properties. Currently, supported only for MongoDB API.
+    :vartype apiProperties: "ApiProperties"
+    :ivar enableAnalyticalStorage: Flag to indicate whether to enable storage analytics.
+    :vartype enableAnalyticalStorage: bool
+    :ivar analyticalStorageConfiguration: Analytical storage specific properties.
+    :vartype analyticalStorageConfiguration: "AnalyticalStorageConfiguration"
+    :ivar createMode: Enum to indicate the mode of account creation. Known values are: "Default"
      and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar backup_policy: The object representing the policy for taking backups on an account.
-    :vartype backup_policy: "BackupPolicy"
+    :vartype createMode: Union[str, "CreateMode"]
+    :ivar backupPolicy: The object representing the policy for taking backups on an account.
+    :vartype backupPolicy: "BackupPolicy"
     :ivar cors: The CORS policy for the Cosmos DB database account.
     :vartype cors: list["CorsPolicy"]
-    :ivar network_acl_bypass: Indicates what services are allowed to bypass firewall checks. Known
+    :ivar networkAclBypass: Indicates what services are allowed to bypass firewall checks. Known
      values are: "None" and "AzureServices".
-    :vartype network_acl_bypass: Union[str, "NetworkAclBypass"]
-    :ivar network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
+    :vartype networkAclBypass: Union[str, "NetworkAclBypass"]
+    :ivar networkAclBypassResourceIds: An array that contains the Resource Ids for Network Acl
      Bypass for the Cosmos DB account.
-    :vartype network_acl_bypass_resource_ids: list[str]
-    :ivar disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
-     used exclusively for authentication.
-    :vartype disable_local_auth: bool
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "RestoreParameters"
+    :vartype networkAclBypassResourceIds: list[str]
+    :ivar diagnosticLogSettings: The Object representing the different Diagnostic log settings for
+     the Cosmos DB Account.
+    :vartype diagnosticLogSettings: "DiagnosticLogSettings"
+    :ivar disableLocalAuth: Opt-out of local authentication and ensure only MSI and AAD can be used
+     exclusively for authentication.
+    :vartype disableLocalAuth: bool
+    :ivar restoreParameters: Parameters to indicate the information about the restore.
+    :vartype restoreParameters: "RestoreParameters"
     :ivar capacity: The object that represents all properties related to capacity enforcement on an
      account.
     :vartype capacity: "Capacity"
-    :ivar keys_metadata: This property is ignored during the update/create operation, as the
+    :ivar capacityMode: Indicates the capacityMode of the Cosmos DB account. Known values are:
+     "None", "Provisioned", and "Serverless".
+    :vartype capacityMode: Union[str, "CapacityMode"]
+    :ivar enableMaterializedViews: Flag to indicate whether to enable MaterializedViews on the
+     Cosmos DB account.
+    :vartype enableMaterializedViews: bool
+    :ivar keysMetadata: This property is ignored during the update/create operation, as the
      metadata is read-only. The object represents the metadata for the Account Keys of the Cosmos DB
      account.
-    :vartype keys_metadata: "DatabaseAccountKeysMetadata"
-    :ivar enable_partition_merge: Flag to indicate enabling/disabling of Partition Merge feature on
+    :vartype keysMetadata: "DatabaseAccountKeysMetadata"
+    :ivar enablePartitionMerge: Flag to indicate enabling/disabling of Partition Merge feature on
      the account.
-    :vartype enable_partition_merge: bool
-    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
+    :vartype enablePartitionMerge: bool
+    :ivar enableBurstCapacity: Flag to indicate enabling/disabling of Burst Capacity Preview
      feature on the account.
-    :vartype enable_burst_capacity: bool
-    :ivar minimal_tls_version: Indicates the minimum allowed Tls version. The default is Tls 1.0,
+    :vartype enableBurstCapacity: bool
+    :ivar minimalTlsVersion: Indicates the minimum allowed Tls version. The default is Tls 1.0,
      except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are: "Tls",
      "Tls11", and "Tls12".
-    :vartype minimal_tls_version: Union[str, "MinimalTlsVersion"]
-    :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
-     the account. In case there are errors, the property provides troubleshooting guidance.
-    :vartype customer_managed_key_status: str
-    :ivar enable_priority_based_execution: Flag to indicate enabling/disabling of Priority Based
+    :vartype minimalTlsVersion: Union[str, "MinimalTlsVersion"]
+    :ivar customerManagedKeyStatus: Indicates the status of the Customer Managed Key feature on the
+     account. In case there are errors, the property provides troubleshooting guidance.
+    :vartype customerManagedKeyStatus: str
+    :ivar enablePriorityBasedExecution: Flag to indicate enabling/disabling of Priority Based
      Execution Preview feature on the account.
-    :vartype enable_priority_based_execution: bool
-    :ivar default_priority_level: Enum to indicate default Priority Level of request for Priority
+    :vartype enablePriorityBasedExecution: bool
+    :ivar defaultPriorityLevel: Enum to indicate default Priority Level of request for Priority
      Based Execution. Known values are: "High" and "Low".
-    :vartype default_priority_level: Union[str, "DefaultPriorityLevel"]
-    :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
-     Per-Region Per-partition autoscale Preview feature on the account.
-    :vartype enable_per_region_per_partition_autoscale: bool
-    :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
+    :vartype defaultPriorityLevel: Union[str, "DefaultPriorityLevel"]
+    :ivar enablePerRegionPerPartitionAutoscale: Flag to indicate enabling/disabling of Per-Region
+     Per-partition autoscale Preview feature on the account.
+    :vartype enablePerRegionPerPartitionAutoscale: bool
+    :ivar enableAllVersionsAndDeletesChangeFeed: Flag to indicate if All Versions and Deletes
+     Change feed feature is enabled on the account.
+    :vartype enableAllVersionsAndDeletesChangeFeed: bool
+    :ivar softDeleteConfiguration: The configuration for soft delete on the Cosmos DB account.
+    :vartype softDeleteConfiguration: "SoftDeleteConfiguration"
+    :ivar enforceHierarchicalPartitionKeyIdLastLevel: Flag to indicate enabling/disabling of
      hierarchical partition key ID last level enforcement on the account.
-    :vartype enforce_hierarchical_partition_key_id_last_level: bool
+    :vartype enforceHierarchicalPartitionKeyIdLastLevel: bool
     """
 
     consistencyPolicy: "ConsistencyPolicy"
@@ -1948,6 +2039,8 @@ class DatabaseAccountCreateUpdateProperties(TypedDict, total=False):
      \"AzureServices\"."""
     networkAclBypassResourceIds: list[str]
     """An array that contains the Resource Ids for Network Acl Bypass for the Cosmos DB account."""
+    diagnosticLogSettings: "DiagnosticLogSettings"
+    """The Object representing the different Diagnostic log settings for the Cosmos DB Account."""
     disableLocalAuth: bool
     """Opt-out of local authentication and ensure only MSI and AAD can be used exclusively for
      authentication."""
@@ -1955,6 +2048,11 @@ class DatabaseAccountCreateUpdateProperties(TypedDict, total=False):
     """Parameters to indicate the information about the restore."""
     capacity: "Capacity"
     """The object that represents all properties related to capacity enforcement on an account."""
+    capacityMode: Union[str, "CapacityMode"]
+    """Indicates the capacityMode of the Cosmos DB account. Known values are: \"None\",
+     \"Provisioned\", and \"Serverless\"."""
+    enableMaterializedViews: bool
+    """Flag to indicate whether to enable MaterializedViews on the Cosmos DB account."""
     keysMetadata: "DatabaseAccountKeysMetadata"
     """This property is ignored during the update/create operation, as the metadata is read-only. The
      object represents the metadata for the Account Keys of the Cosmos DB account."""
@@ -1976,303 +2074,30 @@ class DatabaseAccountCreateUpdateProperties(TypedDict, total=False):
     enablePerRegionPerPartitionAutoscale: bool
     """Flag to indicate enabling/disabling of Per-Region Per-partition autoscale Preview feature on
      the account."""
+    enableAllVersionsAndDeletesChangeFeed: bool
+    """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
+    softDeleteConfiguration: "SoftDeleteConfiguration"
+    """The configuration for soft delete on the Cosmos DB account."""
     enforceHierarchicalPartitionKeyIdLastLevel: bool
     """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
      the account."""
-
-
-class DatabaseAccountGetProperties(TypedDict, total=False):
-    """Properties for the database account.
-
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
-    :ivar document_endpoint: The connection endpoint for the Cosmos DB database account.
-    :vartype document_endpoint: str
-    :ivar database_account_offer_type: The offer type for the Cosmos DB database account. Default
-     value: Standard. Default value is "Standard".
-    :vartype database_account_offer_type: Literal["Standard"]
-    :ivar ip_rules: List of IpRules.
-    :vartype ip_rules: list["IpAddressOrRange"]
-    :ivar is_virtual_network_filter_enabled: Flag to indicate whether to enable/disable Virtual
-     Network ACL rules.
-    :vartype is_virtual_network_filter_enabled: bool
-    :ivar enable_automatic_failover: Enables automatic failover of the write region in the rare
-     event that the region is unavailable due to an outage. Automatic failover will result in a new
-     write region for the account and is chosen based on the failover priorities configured for the
-     account.
-    :vartype enable_automatic_failover: bool
-    :ivar consistency_policy: The consistency policy for the Cosmos DB database account.
-    :vartype consistency_policy: "ConsistencyPolicy"
-    :ivar capabilities: List of Cosmos DB capabilities for the account.
-    :vartype capabilities: list["Capability"]
-    :ivar write_locations: An array that contains the write location for the Cosmos DB account.
-    :vartype write_locations: list["Location"]
-    :ivar read_locations: An array that contains of the read locations enabled for the Cosmos DB
-     account.
-    :vartype read_locations: list["Location"]
-    :ivar locations: An array that contains all of the locations enabled for the Cosmos DB account.
-    :vartype locations: list["Location"]
-    :ivar failover_policies: An array that contains the regions ordered by their failover
-     priorities.
-    :vartype failover_policies: list["FailoverPolicy"]
-    :ivar virtual_network_rules: List of Virtual Network ACL rules configured for the Cosmos DB
-     account.
-    :vartype virtual_network_rules: list["VirtualNetworkRule"]
-    :ivar private_endpoint_connections: List of Private Endpoint Connections configured for the
-     Cosmos DB account.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar enable_multiple_write_locations: Enables the account to write in multiple locations.
-    :vartype enable_multiple_write_locations: bool
-    :ivar enable_cassandra_connector: Enables the cassandra connector on the Cosmos DB C* account.
-    :vartype enable_cassandra_connector: bool
-    :ivar connector_offer: The cassandra connector offer type for the Cosmos DB database C*
-     account. "Small"
-    :vartype connector_offer: Union[str, "ConnectorOffer"]
-    :ivar disable_key_based_metadata_write_access: Disable write operations on metadata resources
-     (databases, containers, throughput) via account keys.
-    :vartype disable_key_based_metadata_write_access: bool
-    :ivar key_vault_key_uri: The URI of the key vault.
-    :vartype key_vault_key_uri: str
-    :ivar default_identity: The default identity for accessing key vault used in features like
-     customer managed keys. The default identity needs to be explicitly set by the users. It can be
-     "FirstPartyIdentity", "SystemAssignedIdentity" and more.
-    :vartype default_identity: str
-    :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled", "Disabled", and "SecuredByPerimeter".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
-    :vartype enable_free_tier: bool
-    :ivar api_properties: API specific properties.
-    :vartype api_properties: "ApiProperties"
-    :ivar enable_analytical_storage: Flag to indicate whether to enable storage analytics.
-    :vartype enable_analytical_storage: bool
-    :ivar analytical_storage_configuration: Analytical storage specific properties.
-    :vartype analytical_storage_configuration: "AnalyticalStorageConfiguration"
-    :ivar instance_id: A unique identifier assigned to the database account.
-    :vartype instance_id: str
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "RestoreParameters"
-    :ivar backup_policy: The object representing the policy for taking backups on an account.
-    :vartype backup_policy: "BackupPolicy"
-    :ivar cors: The CORS policy for the Cosmos DB database account.
-    :vartype cors: list["CorsPolicy"]
-    :ivar network_acl_bypass: Indicates what services are allowed to bypass firewall checks. Known
-     values are: "None" and "AzureServices".
-    :vartype network_acl_bypass: Union[str, "NetworkAclBypass"]
-    :ivar network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
-     Bypass for the Cosmos DB account.
-    :vartype network_acl_bypass_resource_ids: list[str]
-    :ivar disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
-     used exclusively for authentication.
-    :vartype disable_local_auth: bool
-    :ivar capacity: The object that represents all properties related to capacity enforcement on an
-     account.
-    :vartype capacity: "Capacity"
-    :ivar keys_metadata: The object that represents the metadata for the Account Keys of the Cosmos
-     DB account.
-    :vartype keys_metadata: "DatabaseAccountKeysMetadata"
-    :ivar enable_partition_merge: Flag to indicate enabling/disabling of Partition Merge feature on
-     the account.
-    :vartype enable_partition_merge: bool
-    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
-     feature on the account.
-    :vartype enable_burst_capacity: bool
-    :ivar minimal_tls_version: Indicates the minimum allowed Tls version. The default is Tls 1.0,
-     except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are: "Tls",
-     "Tls11", and "Tls12".
-    :vartype minimal_tls_version: Union[str, "MinimalTlsVersion"]
-    :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
-     the account. In case there are errors, the property provides troubleshooting guidance.
-    :vartype customer_managed_key_status: str
-    :ivar key_vault_key_uri_version: The version of the Customer Managed Key currently being used
-     by the account.
-    :vartype key_vault_key_uri_version: str
-    :ivar enable_priority_based_execution: Flag to indicate enabling/disabling of Priority Based
-     Execution Preview feature on the account.
-    :vartype enable_priority_based_execution: bool
-    :ivar default_priority_level: Enum to indicate default Priority Level of request for Priority
-     Based Execution. Known values are: "High" and "Low".
-    :vartype default_priority_level: Union[str, "DefaultPriorityLevel"]
-    :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
-     Per-Region Per-partition autoscale Preview feature on the account.
-    :vartype enable_per_region_per_partition_autoscale: bool
-    :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
-     hierarchical partition key ID last level enforcement on the account.
-    :vartype enforce_hierarchical_partition_key_id_last_level: bool
-    """
-
-    provisioningState: str
-    """The provisioning state of the resource."""
-    documentEndpoint: str
-    """The connection endpoint for the Cosmos DB database account."""
-    databaseAccountOfferType: Literal["Standard"]
-    """The offer type for the Cosmos DB database account. Default value: Standard. Default value is
-     \"Standard\"."""
-    ipRules: list["IpAddressOrRange"]
-    """List of IpRules."""
-    isVirtualNetworkFilterEnabled: bool
-    """Flag to indicate whether to enable/disable Virtual Network ACL rules."""
-    enableAutomaticFailover: bool
-    """Enables automatic failover of the write region in the rare event that the region is unavailable
-     due to an outage. Automatic failover will result in a new write region for the account and is
-     chosen based on the failover priorities configured for the account."""
-    consistencyPolicy: "ConsistencyPolicy"
-    """The consistency policy for the Cosmos DB database account."""
-    capabilities: list["Capability"]
-    """List of Cosmos DB capabilities for the account."""
-    writeLocations: list["Location"]
-    """An array that contains the write location for the Cosmos DB account."""
-    readLocations: list["Location"]
-    """An array that contains of the read locations enabled for the Cosmos DB account."""
-    locations: list["Location"]
-    """An array that contains all of the locations enabled for the Cosmos DB account."""
-    failoverPolicies: list["FailoverPolicy"]
-    """An array that contains the regions ordered by their failover priorities."""
-    virtualNetworkRules: list["VirtualNetworkRule"]
-    """List of Virtual Network ACL rules configured for the Cosmos DB account."""
-    privateEndpointConnections: list["PrivateEndpointConnection"]
-    """List of Private Endpoint Connections configured for the Cosmos DB account."""
-    enableMultipleWriteLocations: bool
-    """Enables the account to write in multiple locations."""
-    enableCassandraConnector: bool
-    """Enables the cassandra connector on the Cosmos DB C* account."""
-    connectorOffer: Union[str, "ConnectorOffer"]
-    """The cassandra connector offer type for the Cosmos DB database C* account. \"Small\""""
-    disableKeyBasedMetadataWriteAccess: bool
-    """Disable write operations on metadata resources (databases, containers, throughput) via account
-     keys."""
-    keyVaultKeyUri: str
-    """The URI of the key vault."""
-    defaultIdentity: str
-    """The default identity for accessing key vault used in features like customer managed keys. The
-     default identity needs to be explicitly set by the users. It can be \"FirstPartyIdentity\",
-     \"SystemAssignedIdentity\" and more."""
-    publicNetworkAccess: Union[str, "PublicNetworkAccess"]
-    """Whether requests from Public Network are allowed. Known values are: \"Enabled\", \"Disabled\",
-     and \"SecuredByPerimeter\"."""
-    enableFreeTier: bool
-    """Flag to indicate whether Free Tier is enabled."""
-    apiProperties: "ApiProperties"
-    """API specific properties."""
-    enableAnalyticalStorage: bool
-    """Flag to indicate whether to enable storage analytics."""
-    analyticalStorageConfiguration: "AnalyticalStorageConfiguration"
-    """Analytical storage specific properties."""
-    instanceId: str
-    """A unique identifier assigned to the database account."""
-    createMode: Union[str, "CreateMode"]
-    """Enum to indicate the mode of account creation. Known values are: \"Default\" and \"Restore\"."""
-    restoreParameters: "RestoreParameters"
-    """Parameters to indicate the information about the restore."""
-    backupPolicy: "BackupPolicy"
-    """The object representing the policy for taking backups on an account."""
-    cors: list["CorsPolicy"]
-    """The CORS policy for the Cosmos DB database account."""
-    networkAclBypass: Union[str, "NetworkAclBypass"]
-    """Indicates what services are allowed to bypass firewall checks. Known values are: \"None\" and
-     \"AzureServices\"."""
-    networkAclBypassResourceIds: list[str]
-    """An array that contains the Resource Ids for Network Acl Bypass for the Cosmos DB account."""
-    disableLocalAuth: bool
-    """Opt-out of local authentication and ensure only MSI and AAD can be used exclusively for
-     authentication."""
-    capacity: "Capacity"
-    """The object that represents all properties related to capacity enforcement on an account."""
-    keysMetadata: "DatabaseAccountKeysMetadata"
-    """The object that represents the metadata for the Account Keys of the Cosmos DB account."""
-    enablePartitionMerge: bool
-    """Flag to indicate enabling/disabling of Partition Merge feature on the account."""
-    enableBurstCapacity: bool
-    """Flag to indicate enabling/disabling of Burst Capacity Preview feature on the account."""
-    minimalTlsVersion: Union[str, "MinimalTlsVersion"]
-    """Indicates the minimum allowed Tls version. The default is Tls 1.0, except for Cassandra and
-     Mongo API's, which only work with Tls 1.2. Known values are: \"Tls\", \"Tls11\", and \"Tls12\"."""
-    customerManagedKeyStatus: str
-    """Indicates the status of the Customer Managed Key feature on the account. In case there are
-     errors, the property provides troubleshooting guidance."""
-    keyVaultKeyUriVersion: str
-    """The version of the Customer Managed Key currently being used by the account."""
-    enablePriorityBasedExecution: bool
-    """Flag to indicate enabling/disabling of Priority Based Execution Preview feature on the account."""
-    defaultPriorityLevel: Union[str, "DefaultPriorityLevel"]
-    """Enum to indicate default Priority Level of request for Priority Based Execution. Known values
-     are: \"High\" and \"Low\"."""
-    enablePerRegionPerPartitionAutoscale: bool
-    """Flag to indicate enabling/disabling of Per-Region Per-partition autoscale Preview feature on
-     the account."""
-    enforceHierarchicalPartitionKeyIdLastLevel: bool
-    """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
-     the account."""
-
-
-class DatabaseAccountGetResults(ProxyResource):
-    """An Azure Cosmos DB database account.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Properties for the database account.
-    :vartype properties: "DatabaseAccountGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    :ivar kind: Indicates the type of database account. This can only be set at database account
-     creation. Known values are: "GlobalDocumentDB", "MongoDB", and "Parse".
-    :vartype kind: Union[str, "DatabaseAccountKind"]
-    """
-
-    properties: "DatabaseAccountGetProperties"
-    """Properties for the database account."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
-    kind: Union[str, "DatabaseAccountKind"]
-    """Indicates the type of database account. This can only be set at database account creation.
-     Known values are: \"GlobalDocumentDB\", \"MongoDB\", and \"Parse\"."""
 
 
 class DatabaseAccountKeysMetadata(TypedDict, total=False):
     """The metadata related to each access key for the given Cosmos DB database account.
 
-    :ivar primary_master_key: The metadata related to the Primary Read-Write Key for the given
+    :ivar primaryMasterKey: The metadata related to the Primary Read-Write Key for the given Cosmos
+     DB database account.
+    :vartype primaryMasterKey: "AccountKeyMetadata"
+    :ivar secondaryMasterKey: The metadata related to the Secondary Read-Write Key for the given
      Cosmos DB database account.
-    :vartype primary_master_key: "AccountKeyMetadata"
-    :ivar secondary_master_key: The metadata related to the Secondary Read-Write Key for the given
+    :vartype secondaryMasterKey: "AccountKeyMetadata"
+    :ivar primaryReadonlyMasterKey: The metadata related to the Primary Read-Only Key for the given
      Cosmos DB database account.
-    :vartype secondary_master_key: "AccountKeyMetadata"
-    :ivar primary_readonly_master_key: The metadata related to the Primary Read-Only Key for the
+    :vartype primaryReadonlyMasterKey: "AccountKeyMetadata"
+    :ivar secondaryReadonlyMasterKey: The metadata related to the Secondary Read-Only Key for the
      given Cosmos DB database account.
-    :vartype primary_readonly_master_key: "AccountKeyMetadata"
-    :ivar secondary_readonly_master_key: The metadata related to the Secondary Read-Only Key for
-     the given Cosmos DB database account.
-    :vartype secondary_readonly_master_key: "AccountKeyMetadata"
+    :vartype secondaryReadonlyMasterKey: "AccountKeyMetadata"
     """
 
     primaryMasterKey: "AccountKeyMetadata"
@@ -2285,63 +2110,22 @@ class DatabaseAccountKeysMetadata(TypedDict, total=False):
     """The metadata related to the Secondary Read-Only Key for the given Cosmos DB database account."""
 
 
-class DatabaseAccountListConnectionStringsResult(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The connection strings for the given database account.
-
-    :ivar connection_strings: An array that contains the connection strings for the Cosmos DB
-     account.
-    :vartype connection_strings: list["DatabaseAccountConnectionString"]
-    """
-
-    connectionStrings: list["DatabaseAccountConnectionString"]
-    """An array that contains the connection strings for the Cosmos DB account."""
-
-
-class DatabaseAccountListReadOnlyKeysResult(TypedDict, total=False):
-    """The read-only access keys for the given database account.
-
-    :ivar primary_readonly_master_key: Base 64 encoded value of the primary read-only key.
-    :vartype primary_readonly_master_key: str
-    :ivar secondary_readonly_master_key: Base 64 encoded value of the secondary read-only key.
-    :vartype secondary_readonly_master_key: str
-    """
-
-    primaryReadonlyMasterKey: str
-    """Base 64 encoded value of the primary read-only key."""
-    secondaryReadonlyMasterKey: str
-    """Base 64 encoded value of the secondary read-only key."""
-
-
-class DatabaseAccountListKeysResult(DatabaseAccountListReadOnlyKeysResult):
-    """The access keys for the given database account.
-
-    :ivar primary_readonly_master_key: Base 64 encoded value of the primary read-only key.
-    :vartype primary_readonly_master_key: str
-    :ivar secondary_readonly_master_key: Base 64 encoded value of the secondary read-only key.
-    :vartype secondary_readonly_master_key: str
-    :ivar primary_master_key: Base 64 encoded value of the primary read-write key.
-    :vartype primary_master_key: str
-    :ivar secondary_master_key: Base 64 encoded value of the secondary read-write key.
-    :vartype secondary_master_key: str
-    """
-
-    primaryMasterKey: str
-    """Base 64 encoded value of the primary read-write key."""
-    secondaryMasterKey: str
-    """Base 64 encoded value of the secondary read-write key."""
-
-
 class DatabaseAccountRegenerateKeyParameters(TypedDict, total=False):
     """Parameters to regenerate the keys within the database account.
 
-    :ivar key_kind: The access key to regenerate. Required. Known values are: "primary",
+    :ivar keyKind: The access key to regenerate. Required. Known values are: "primary",
      "secondary", "primaryReadonly", and "secondaryReadonly".
-    :vartype key_kind: Union[str, "KeyKind"]
+    :vartype keyKind: Union[str, "KeyKind"]
+    :ivar skipAccountKeysLastUsageCheck: Optional flag indicating whether to skip account keys last
+     usage check.
+    :vartype skipAccountKeysLastUsageCheck: bool
     """
 
     keyKind: Required[Union[str, "KeyKind"]]
     """The access key to regenerate. Required. Known values are: \"primary\", \"secondary\",
      \"primaryReadonly\", and \"secondaryReadonly\"."""
+    skipAccountKeysLastUsageCheck: bool
+    """Optional flag indicating whether to skip account keys last usage check."""
 
 
 class DatabaseAccountUpdateParameters(TypedDict, total=False):
@@ -2380,97 +2164,111 @@ class DatabaseAccountUpdateParameters(TypedDict, total=False):
 class DatabaseAccountUpdateProperties(TypedDict, total=False):
     """Properties to update Azure Cosmos DB database accounts.
 
-    :ivar consistency_policy: The consistency policy for the Cosmos DB account.
-    :vartype consistency_policy: "ConsistencyPolicy"
+    :ivar consistencyPolicy: The consistency policy for the Cosmos DB account.
+    :vartype consistencyPolicy: "ConsistencyPolicy"
     :ivar locations: An array that contains the georeplication locations enabled for the Cosmos DB
      account.
     :vartype locations: list["Location"]
-    :ivar ip_rules: List of IpRules.
-    :vartype ip_rules: list["IpAddressOrRange"]
-    :ivar is_virtual_network_filter_enabled: Flag to indicate whether to enable/disable Virtual
-     Network ACL rules.
-    :vartype is_virtual_network_filter_enabled: bool
-    :ivar enable_automatic_failover: Enables automatic failover of the write region in the rare
-     event that the region is unavailable due to an outage. Automatic failover will result in a new
-     write region for the account and is chosen based on the failover priorities configured for the
+    :ivar ipRules: List of IpRules.
+    :vartype ipRules: list["IpAddressOrRange"]
+    :ivar isVirtualNetworkFilterEnabled: Flag to indicate whether to enable/disable Virtual Network
+     ACL rules.
+    :vartype isVirtualNetworkFilterEnabled: bool
+    :ivar enableAutomaticFailover: Enables automatic failover of the write region in the rare event
+     that the region is unavailable due to an outage. Automatic failover will result in a new write
+     region for the account and is chosen based on the failover priorities configured for the
      account.
-    :vartype enable_automatic_failover: bool
+    :vartype enableAutomaticFailover: bool
     :ivar capabilities: List of Cosmos DB capabilities for the account.
     :vartype capabilities: list["Capability"]
-    :ivar virtual_network_rules: List of Virtual Network ACL rules configured for the Cosmos DB
+    :ivar virtualNetworkRules: List of Virtual Network ACL rules configured for the Cosmos DB
      account.
-    :vartype virtual_network_rules: list["VirtualNetworkRule"]
-    :ivar enable_multiple_write_locations: Enables the account to write in multiple locations.
-    :vartype enable_multiple_write_locations: bool
-    :ivar enable_cassandra_connector: Enables the cassandra connector on the Cosmos DB C* account.
-    :vartype enable_cassandra_connector: bool
-    :ivar connector_offer: The cassandra connector offer type for the Cosmos DB database C*
-     account. "Small"
-    :vartype connector_offer: Union[str, "ConnectorOffer"]
-    :ivar disable_key_based_metadata_write_access: Disable write operations on metadata resources
+    :vartype virtualNetworkRules: list["VirtualNetworkRule"]
+    :ivar enableMultipleWriteLocations: Enables the account to write in multiple locations.
+    :vartype enableMultipleWriteLocations: bool
+    :ivar enableCassandraConnector: Enables the cassandra connector on the Cosmos DB C* account.
+    :vartype enableCassandraConnector: bool
+    :ivar connectorOffer: The cassandra connector offer type for the Cosmos DB database C* account.
+     "Small"
+    :vartype connectorOffer: Union[str, "ConnectorOffer"]
+    :ivar disableKeyBasedMetadataWriteAccess: Disable write operations on metadata resources
      (databases, containers, throughput) via account keys.
-    :vartype disable_key_based_metadata_write_access: bool
-    :ivar key_vault_key_uri: The URI of the key vault.
-    :vartype key_vault_key_uri: str
-    :ivar default_identity: The default identity for accessing key vault used in features like
+    :vartype disableKeyBasedMetadataWriteAccess: bool
+    :ivar keyVaultKeyUri: The URI of the key vault.
+    :vartype keyVaultKeyUri: str
+    :ivar defaultIdentity: The default identity for accessing key vault used in features like
      customer managed keys. The default identity needs to be explicitly set by the users. It can be
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
-    :vartype default_identity: str
-    :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled", "Disabled", and "SecuredByPerimeter".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
-    :vartype enable_free_tier: bool
-    :ivar api_properties: API specific properties. Currently, supported only for MongoDB API.
-    :vartype api_properties: "ApiProperties"
-    :ivar enable_analytical_storage: Flag to indicate whether to enable storage analytics.
-    :vartype enable_analytical_storage: bool
-    :ivar analytical_storage_configuration: Analytical storage specific properties.
-    :vartype analytical_storage_configuration: "AnalyticalStorageConfiguration"
-    :ivar backup_policy: The object representing the policy for taking backups on an account.
-    :vartype backup_policy: "BackupPolicy"
+    :vartype defaultIdentity: str
+    :ivar publicNetworkAccess: Whether requests from Public Network are allowed. Known values are:
+     "Enabled", "Disabled", and "SecuredByPerimeter".
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar enableFreeTier: Flag to indicate whether Free Tier is enabled.
+    :vartype enableFreeTier: bool
+    :ivar apiProperties: API specific properties. Currently, supported only for MongoDB API.
+    :vartype apiProperties: "ApiProperties"
+    :ivar enableAnalyticalStorage: Flag to indicate whether to enable storage analytics.
+    :vartype enableAnalyticalStorage: bool
+    :ivar analyticalStorageConfiguration: Analytical storage specific properties.
+    :vartype analyticalStorageConfiguration: "AnalyticalStorageConfiguration"
+    :ivar backupPolicy: The object representing the policy for taking backups on an account.
+    :vartype backupPolicy: "BackupPolicy"
     :ivar cors: The CORS policy for the Cosmos DB database account.
     :vartype cors: list["CorsPolicy"]
-    :ivar network_acl_bypass: Indicates what services are allowed to bypass firewall checks. Known
+    :ivar networkAclBypass: Indicates what services are allowed to bypass firewall checks. Known
      values are: "None" and "AzureServices".
-    :vartype network_acl_bypass: Union[str, "NetworkAclBypass"]
-    :ivar network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
+    :vartype networkAclBypass: Union[str, "NetworkAclBypass"]
+    :ivar networkAclBypassResourceIds: An array that contains the Resource Ids for Network Acl
      Bypass for the Cosmos DB account.
-    :vartype network_acl_bypass_resource_ids: list[str]
-    :ivar disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
-     used exclusively for authentication.
-    :vartype disable_local_auth: bool
+    :vartype networkAclBypassResourceIds: list[str]
+    :ivar diagnosticLogSettings: The Object representing the different Diagnostic log settings for
+     the Cosmos DB Account.
+    :vartype diagnosticLogSettings: "DiagnosticLogSettings"
+    :ivar disableLocalAuth: Opt-out of local authentication and ensure only MSI and AAD can be used
+     exclusively for authentication.
+    :vartype disableLocalAuth: bool
     :ivar capacity: The object that represents all properties related to capacity enforcement on an
      account.
     :vartype capacity: "Capacity"
-    :ivar keys_metadata: This property is ignored during the update operation, as the metadata is
+    :ivar capacityMode: Indicates the capacityMode of the Cosmos DB account. Known values are:
+     "None", "Provisioned", and "Serverless".
+    :vartype capacityMode: Union[str, "CapacityMode"]
+    :ivar enableMaterializedViews: Flag to indicate whether to enable MaterializedViews on the
+     Cosmos DB account.
+    :vartype enableMaterializedViews: bool
+    :ivar keysMetadata: This property is ignored during the update operation, as the metadata is
      read-only. The object represents the metadata for the Account Keys of the Cosmos DB account.
-    :vartype keys_metadata: "DatabaseAccountKeysMetadata"
-    :ivar enable_partition_merge: Flag to indicate enabling/disabling of Partition Merge feature on
+    :vartype keysMetadata: "DatabaseAccountKeysMetadata"
+    :ivar enablePartitionMerge: Flag to indicate enabling/disabling of Partition Merge feature on
      the account.
-    :vartype enable_partition_merge: bool
-    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
+    :vartype enablePartitionMerge: bool
+    :ivar enableBurstCapacity: Flag to indicate enabling/disabling of Burst Capacity Preview
      feature on the account.
-    :vartype enable_burst_capacity: bool
-    :ivar minimal_tls_version: Indicates the minimum allowed Tls version. The default is Tls 1.0,
+    :vartype enableBurstCapacity: bool
+    :ivar minimalTlsVersion: Indicates the minimum allowed Tls version. The default is Tls 1.0,
      except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are: "Tls",
      "Tls11", and "Tls12".
-    :vartype minimal_tls_version: Union[str, "MinimalTlsVersion"]
-    :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
-     the account. In case there are errors, the property provides troubleshooting guidance.
-    :vartype customer_managed_key_status: str
-    :ivar enable_priority_based_execution: Flag to indicate enabling/disabling of Priority Based
+    :vartype minimalTlsVersion: Union[str, "MinimalTlsVersion"]
+    :ivar customerManagedKeyStatus: Indicates the status of the Customer Managed Key feature on the
+     account. In case there are errors, the property provides troubleshooting guidance.
+    :vartype customerManagedKeyStatus: str
+    :ivar enablePriorityBasedExecution: Flag to indicate enabling/disabling of Priority Based
      Execution Preview feature on the account.
-    :vartype enable_priority_based_execution: bool
-    :ivar default_priority_level: Enum to indicate default Priority Level of request for Priority
+    :vartype enablePriorityBasedExecution: bool
+    :ivar defaultPriorityLevel: Enum to indicate default Priority Level of request for Priority
      Based Execution. Known values are: "High" and "Low".
-    :vartype default_priority_level: Union[str, "DefaultPriorityLevel"]
-    :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
-     Per-Region Per-partition autoscale Preview feature on the account.
-    :vartype enable_per_region_per_partition_autoscale: bool
-    :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
+    :vartype defaultPriorityLevel: Union[str, "DefaultPriorityLevel"]
+    :ivar enablePerRegionPerPartitionAutoscale: Flag to indicate enabling/disabling of Per-Region
+     Per-partition autoscale Preview feature on the account.
+    :vartype enablePerRegionPerPartitionAutoscale: bool
+    :ivar enableAllVersionsAndDeletesChangeFeed: Flag to indicate if All Versions and Deletes
+     Change feed feature is enabled on the account.
+    :vartype enableAllVersionsAndDeletesChangeFeed: bool
+    :ivar softDeleteConfiguration: The configuration for soft delete on the Cosmos DB account.
+    :vartype softDeleteConfiguration: "SoftDeleteConfiguration"
+    :ivar enforceHierarchicalPartitionKeyIdLastLevel: Flag to indicate enabling/disabling of
      hierarchical partition key ID last level enforcement on the account.
-    :vartype enforce_hierarchical_partition_key_id_last_level: bool
+    :vartype enforceHierarchicalPartitionKeyIdLastLevel: bool
     """
 
     consistencyPolicy: "ConsistencyPolicy"
@@ -2524,11 +2322,18 @@ class DatabaseAccountUpdateProperties(TypedDict, total=False):
      \"AzureServices\"."""
     networkAclBypassResourceIds: list[str]
     """An array that contains the Resource Ids for Network Acl Bypass for the Cosmos DB account."""
+    diagnosticLogSettings: "DiagnosticLogSettings"
+    """The Object representing the different Diagnostic log settings for the Cosmos DB Account."""
     disableLocalAuth: bool
     """Opt-out of local authentication and ensure only MSI and AAD can be used exclusively for
      authentication."""
     capacity: "Capacity"
     """The object that represents all properties related to capacity enforcement on an account."""
+    capacityMode: Union[str, "CapacityMode"]
+    """Indicates the capacityMode of the Cosmos DB account. Known values are: \"None\",
+     \"Provisioned\", and \"Serverless\"."""
+    enableMaterializedViews: bool
+    """Flag to indicate whether to enable MaterializedViews on the Cosmos DB account."""
     keysMetadata: "DatabaseAccountKeysMetadata"
     """This property is ignored during the update operation, as the metadata is read-only. The object
      represents the metadata for the Account Keys of the Cosmos DB account."""
@@ -2550,6 +2355,10 @@ class DatabaseAccountUpdateProperties(TypedDict, total=False):
     enablePerRegionPerPartitionAutoscale: bool
     """Flag to indicate enabling/disabling of Per-Region Per-partition autoscale Preview feature on
      the account."""
+    enableAllVersionsAndDeletesChangeFeed: bool
+    """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
+    softDeleteConfiguration: "SoftDeleteConfiguration"
+    """The configuration for soft delete on the Cosmos DB account."""
     enforceHierarchicalPartitionKeyIdLastLevel: bool
     """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
      the account."""
@@ -2558,10 +2367,10 @@ class DatabaseAccountUpdateProperties(TypedDict, total=False):
 class DatabaseRestoreResource(TypedDict, total=False):
     """Specific Databases to restore.
 
-    :ivar database_name: The name of the database available for restore.
-    :vartype database_name: str
-    :ivar collection_names: The names of the collections available for restore.
-    :vartype collection_names: list[str]
+    :ivar databaseName: The name of the database available for restore.
+    :vartype databaseName: str
+    :ivar collectionNames: The names of the collections available for restore.
+    :vartype collectionNames: list[str]
     """
 
     databaseName: str
@@ -2581,9 +2390,9 @@ class DataCenterResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of a managed Cassandra data center.
     :vartype properties: "DataCenterResourceProperties"
     """
@@ -2595,55 +2404,55 @@ class DataCenterResource(ProxyResource):
 class DataCenterResourceProperties(TypedDict, total=False):
     """Properties of a managed Cassandra data center.
 
-    :ivar provisioning_state: The status of the resource at the time the operation was called.
-     Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ManagedCassandraProvisioningState"]
-    :ivar data_center_location: The region this data center should be created in.
-    :vartype data_center_location: str
-    :ivar delegated_subnet_id: Resource id of a subnet the nodes in this data center should have
+    :ivar provisioningState: The status of the resource at the time the operation was called. Known
+     values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "ManagedCassandraProvisioningState"]
+    :ivar dataCenterLocation: The region this data center should be created in.
+    :vartype dataCenterLocation: str
+    :ivar delegatedSubnetId: Resource id of a subnet the nodes in this data center should have
      their network interfaces connected to. The subnet must be in the same region specified in
      'dataCenterLocation' and must be able to route to the subnet specified in the cluster's
      'delegatedManagementSubnetId' property. This resource id will be of the form
      '/subscriptions/<subscription id>/resourceGroups/<resource
      group>/providers/Microsoft.Network/virtualNetworks/<virtual network>/subnets/<subnet>'.
-    :vartype delegated_subnet_id: str
-    :ivar node_count: The number of nodes the data center should have. This is the desired number.
+    :vartype delegatedSubnetId: str
+    :ivar nodeCount: The number of nodes the data center should have. This is the desired number.
      After it is set, it may take some time for the data center to be scaled to match. To monitor
      the number of nodes and their status, use the fetchNodeStatus method on the cluster.
-    :vartype node_count: int
-    :ivar seed_nodes: IP addresses for seed nodes in this data center. This is for reference.
+    :vartype nodeCount: int
+    :ivar seedNodes: IP addresses for seed nodes in this data center. This is for reference.
      Generally you will want to use the seedNodes property on the cluster, which aggregates the seed
      nodes from all data centers in the cluster.
-    :vartype seed_nodes: list["SeedNode"]
-    :ivar base64_encoded_cassandra_yaml_fragment: A fragment of a cassandra.yaml configuration file
-     to be included in the cassandra.yaml for all nodes in this data center. The fragment should be
+    :vartype seedNodes: list["SeedNode"]
+    :ivar base64EncodedCassandraYamlFragment: A fragment of a cassandra.yaml configuration file to
+     be included in the cassandra.yaml for all nodes in this data center. The fragment should be
      Base64 encoded, and only a subset of keys are allowed.
-    :vartype base64_encoded_cassandra_yaml_fragment: str
-    :ivar managed_disk_customer_key_uri: Key uri to use for encryption of managed disks. Ensure the
+    :vartype base64EncodedCassandraYamlFragment: str
+    :ivar managedDiskCustomerKeyUri: Key uri to use for encryption of managed disks. Ensure the
      system assigned identity of the cluster has been assigned appropriate permissions(key
      get/wrap/unwrap permissions) on the key.
-    :vartype managed_disk_customer_key_uri: str
-    :ivar backup_storage_customer_key_uri: Indicates the Key Uri of the customer key to use for
+    :vartype managedDiskCustomerKeyUri: str
+    :ivar backupStorageCustomerKeyUri: Indicates the Key Uri of the customer key to use for
      encryption of the backup storage account.
-    :vartype backup_storage_customer_key_uri: str
+    :vartype backupStorageCustomerKeyUri: str
     :ivar sku: Virtual Machine SKU used for data centers. Default value is Standard_DS14_v2.
     :vartype sku: str
-    :ivar disk_sku: Disk SKU used for data centers. Default value is P30.
-    :vartype disk_sku: str
-    :ivar disk_capacity: Number of disks attached to each node. Default is 4.
-    :vartype disk_capacity: int
-    :ivar availability_zone: If the data center has Availability Zone support, apply it to the
+    :ivar diskSku: Disk SKU used for data centers. Default value is P30.
+    :vartype diskSku: str
+    :ivar diskCapacity: Number of disks attached to each node. Default is 4.
+    :vartype diskCapacity: int
+    :ivar availabilityZone: If the data center has Availability Zone support, apply it to the
      Virtual Machine ScaleSet that host the cassandra data center virtual machines.
-    :vartype availability_zone: bool
-    :ivar authentication_method_ldap_properties: Ldap authentication method properties. This
-     feature is in preview.
-    :vartype authentication_method_ldap_properties: "AuthenticationMethodLdapProperties"
+    :vartype availabilityZone: bool
+    :ivar authenticationMethodLdapProperties: Ldap authentication method properties. This feature
+     is in preview.
+    :vartype authenticationMethodLdapProperties: "AuthenticationMethodLdapProperties"
     :ivar deallocated: Whether the data center has been deallocated.
     :vartype deallocated: bool
-    :ivar provision_error: Error related to resource provisioning.
-    :vartype provision_error: "CassandraError"
-    :ivar private_endpoint_ip_address: Ip of the VPN Endpoint for this data center.
-    :vartype private_endpoint_ip_address: str
+    :ivar provisionError: Error related to resource provisioning.
+    :vartype provisionError: "CassandraError"
+    :ivar privateEndpointIpAddress: Ip of the VPN Endpoint for this data center.
+    :vartype privateEndpointIpAddress: str
     """
 
     provisioningState: Union[str, "ManagedCassandraProvisioningState"]
@@ -2694,50 +2503,120 @@ class DataCenterResourceProperties(TypedDict, total=False):
     """Ip of the VPN Endpoint for this data center."""
 
 
-class RegionalServiceResource(TypedDict, total=False):
-    """Resource for a regional service location.
+class DataMaskingPolicy(TypedDict, total=False):
+    """Data masking policy for the container.
 
-    :ivar name: The regional service name.
-    :vartype name: str
-    :ivar location: The location name.
-    :vartype location: str
-    :ivar status: Describes the status of a service. Known values are: "Creating", "Running",
-     "Updating", "Deleting", "Error", and "Stopped".
-    :vartype status: Union[str, "ServiceStatus"]
+    :ivar includedPaths: List of JSON paths to include in the masking policy.
+    :vartype includedPaths: list["DataMaskingPolicyIncludedPathsItem"]
+    :ivar excludedPaths: List of JSON paths to exclude from masking.
+    :vartype excludedPaths: list["DataMaskingPolicyExcludedPathsItem"]
+    :ivar isPolicyEnabled: Flag indicating whether the data masking policy is enabled.
+    :vartype isPolicyEnabled: bool
     """
 
-    name: str
-    """The regional service name."""
-    location: str
-    """The location name."""
-    status: Union[str, "ServiceStatus"]
-    """Describes the status of a service. Known values are: \"Creating\", \"Running\", \"Updating\",
-     \"Deleting\", \"Error\", and \"Stopped\"."""
+    includedPaths: list["DataMaskingPolicyIncludedPathsItem"]
+    """List of JSON paths to include in the masking policy."""
+    excludedPaths: list["DataMaskingPolicyExcludedPathsItem"]
+    """List of JSON paths to exclude from masking."""
+    isPolicyEnabled: bool
+    """Flag indicating whether the data masking policy is enabled."""
 
 
-class DataTransferRegionalServiceResource(RegionalServiceResource):
-    """Resource for a regional service location.
+class DataMaskingPolicyExcludedPathsItem(TypedDict, total=False):
+    """JSON path to exclude from masking.
 
-    :ivar name: The regional service name.
-    :vartype name: str
-    :ivar location: The location name.
-    :vartype location: str
-    :ivar status: Describes the status of a service. Known values are: "Creating", "Running",
-     "Updating", "Deleting", "Error", and "Stopped".
-    :vartype status: Union[str, "ServiceStatus"]
+    :ivar path: The JSON path to exclude from masking (e.g. "/id"). Required.
+    :vartype path: str
     """
+
+    path: Required[str]
+    """The JSON path to exclude from masking (e.g. \"/id\"). Required."""
+
+
+class DataMaskingPolicyIncludedPathsItem(TypedDict, total=False):
+    """JSON path to include in the masking policy.
+
+    :ivar path: The JSON path to apply masking (e.g. "/contact/phones"). Required.
+    :vartype path: str
+    :ivar strategy: Masking strategy to apply (e.g. "MaskSubstring").
+    :vartype strategy: str
+    :ivar startPosition: Start position for substring masking (when applicable).
+    :vartype startPosition: int
+    :ivar length: Length of substring to mask (when applicable).
+    :vartype length: int
+    """
+
+    path: Required[str]
+    """The JSON path to apply masking (e.g. \"/contact/phones\"). Required."""
+    strategy: str
+    """Masking strategy to apply (e.g. \"MaskSubstring\")."""
+    startPosition: int
+    """Start position for substring masking (when applicable)."""
+    length: int
+    """Length of substring to mask (when applicable)."""
+
+
+class DataTransferJobProperties(TypedDict, total=False):
+    """The properties of a DataTransfer Job.
+
+    :ivar jobName: Job Name.
+    :vartype jobName: str
+    :ivar source: Source DataStore details. Required.
+    :vartype source: "DataTransferDataSourceSink"
+    :ivar destination: Destination DataStore details. Required.
+    :vartype destination: "DataTransferDataSourceSink"
+    :ivar status: Job Status.
+    :vartype status: str
+    :ivar processedCount: Processed Count.
+    :vartype processedCount: int
+    :ivar totalCount: Total Count.
+    :vartype totalCount: int
+    :ivar lastUpdatedUtcTime: Last Updated Time (ISO-8601 format).
+    :vartype lastUpdatedUtcTime: str
+    :ivar workerCount: Worker count.
+    :vartype workerCount: int
+    :ivar error: Error response for Faulted job.
+    :vartype error: "ErrorResponseAutoGenerated"
+    :ivar duration: Total Duration of Job.
+    :vartype duration: str
+    :ivar mode: Mode of job execution. Known values are: "Offline" and "Online".
+    :vartype mode: Union[str, "DataTransferJobMode"]
+    """
+
+    jobName: str
+    """Job Name."""
+    source: Required["DataTransferDataSourceSink"]
+    """Source DataStore details. Required."""
+    destination: Required["DataTransferDataSourceSink"]
+    """Destination DataStore details. Required."""
+    status: str
+    """Job Status."""
+    processedCount: int
+    """Processed Count."""
+    totalCount: int
+    """Total Count."""
+    lastUpdatedUtcTime: str
+    """Last Updated Time (ISO-8601 format)."""
+    workerCount: int
+    """Worker count."""
+    error: "ErrorResponseAutoGenerated"
+    """Error response for Faulted job."""
+    duration: str
+    """Total Duration of Job."""
+    mode: Union[str, "DataTransferJobMode"]
+    """Mode of job execution. Known values are: \"Offline\" and \"Online\"."""
 
 
 class DataTransferServiceResourceCreateUpdateProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Properties for Create or Update request for DataTransferServiceResource.
 
-    :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
+    :ivar instanceSize: Instance type for the service. Known values are: "Cosmos.D4s",
      "Cosmos.D8s", and "Cosmos.D16s".
-    :vartype instance_size: Union[str, "ServiceSize"]
-    :ivar instance_count: Instance count for the service.
-    :vartype instance_count: int
-    :ivar service_type: ServiceType for the service. Required. DATA_TRANSFER.
-    :vartype service_type: Literal[ServiceType.DATA_TRANSFER]
+    :vartype instanceSize: Union[str, "ServiceSize"]
+    :ivar instanceCount: Instance count for the service.
+    :vartype instanceCount: int
+    :ivar serviceType: ServiceType for the service. Required. DATA_TRANSFER.
+    :vartype serviceType: Literal[ServiceType.DATA_TRANSFER]
     """
 
     instanceSize: Union[str, "ServiceSize"]
@@ -2749,39 +2628,17 @@ class DataTransferServiceResourceCreateUpdateProperties(TypedDict, total=False):
     """ServiceType for the service. Required. DATA_TRANSFER."""
 
 
-class DataTransferServiceResourceProperties(TypedDict, total=False):
-    """Properties for DataTransferServiceResource.
+class DiagnosticLogSettings(TypedDict, total=False):
+    """Indicates what diagnostic log settings are to be enabled.
 
-    :ivar creation_time: Time of the last state change (ISO-8601 format).
-    :vartype creation_time: str
-    :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
-     "Cosmos.D8s", and "Cosmos.D16s".
-    :vartype instance_size: Union[str, "ServiceSize"]
-    :ivar instance_count: Instance count for the service.
-    :vartype instance_count: int
-    :ivar status: Describes the status of a service. Known values are: "Creating", "Running",
-     "Updating", "Deleting", "Error", and "Stopped".
-    :vartype status: Union[str, "ServiceStatus"]
-    :ivar locations: An array that contains all of the locations for the service.
-    :vartype locations: list["DataTransferRegionalServiceResource"]
-    :ivar service_type: ServiceType for the service. Required. DATA_TRANSFER.
-    :vartype service_type: Literal[ServiceType.DATA_TRANSFER]
+    :ivar enableFullTextQuery: Describe the level of detail with which queries are to be logged.
+     Known values are: "None", "True", and "False".
+    :vartype enableFullTextQuery: Union[str, "EnableFullTextQuery"]
     """
 
-    creationTime: str
-    """Time of the last state change (ISO-8601 format)."""
-    instanceSize: Union[str, "ServiceSize"]
-    """Instance type for the service. Known values are: \"Cosmos.D4s\", \"Cosmos.D8s\", and
-     \"Cosmos.D16s\"."""
-    instanceCount: int
-    """Instance count for the service."""
-    status: Union[str, "ServiceStatus"]
-    """Describes the status of a service. Known values are: \"Creating\", \"Running\", \"Updating\",
-     \"Deleting\", \"Error\", and \"Stopped\"."""
-    locations: list["DataTransferRegionalServiceResource"]
-    """An array that contains all of the locations for the service."""
-    serviceType: Required[Literal[ServiceType.DATA_TRANSFER]]
-    """ServiceType for the service. Required. DATA_TRANSFER."""
+    enableFullTextQuery: Union[str, "EnableFullTextQuery"]
+    """Describe the level of detail with which queries are to be logged. Known values are: \"None\",
+     \"True\", and \"False\"."""
 
 
 class ErrorAdditionalInfo(TypedDict, total=False):
@@ -2810,8 +2667,8 @@ class ErrorDetail(TypedDict, total=False):
     :vartype target: str
     :ivar details: The error details.
     :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
+    :ivar additionalInfo: The error additional info.
+    :vartype additionalInfo: list["ErrorAdditionalInfo"]
     """
 
     code: str
@@ -2868,8 +2725,8 @@ class ExcludedPath(TypedDict, total=False):
 class FailoverPolicies(TypedDict, total=False):
     """The list of new failover policies for the failover priority change.
 
-    :ivar failover_policies: List of failover policies. Required.
-    :vartype failover_policies: list["FailoverPolicy"]
+    :ivar failoverPolicies: List of failover policies. Required.
+    :vartype failoverPolicies: list["FailoverPolicy"]
     """
 
     failoverPolicies: Required[list["FailoverPolicy"]]
@@ -2882,13 +2739,13 @@ class FailoverPolicy(TypedDict, total=False):
     :ivar id: The unique identifier of the region in which the database account replicates to.
      Example: &lt;accountName&gt;-&lt;locationName&gt;.
     :vartype id: str
-    :ivar location_name: The name of the region in which the database account exists.
-    :vartype location_name: str
-    :ivar failover_priority: The failover priority of the region. A failover priority of 0
-     indicates a write region. The maximum value for a failover priority = (total number of regions
-     - 1). Failover priority values must be unique for each of the regions in which the database
-     account exists.
-    :vartype failover_priority: int
+    :ivar locationName: The name of the region in which the database account exists.
+    :vartype locationName: str
+    :ivar failoverPriority: The failover priority of the region. A failover priority of 0 indicates
+     a write region. The maximum value for a failover priority = (total number of regions - 1).
+     Failover priority values must be unique for each of the regions in which the database account
+     exists.
+    :vartype failoverPriority: int
     """
 
     id: str
@@ -2902,6 +2759,52 @@ class FailoverPolicy(TypedDict, total=False):
      must be unique for each of the regions in which the database account exists."""
 
 
+class FleetAnalyticsProperties(TypedDict, total=False):
+    """FleetAnalyticsProperties.
+
+    :ivar provisioningState: A provisioning state of the FleetAnalytics. Known values are:
+     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+     "Failed", "Canceled", "Updating", and "Creating".
+    :vartype provisioningState: Union[str, "Status"]
+    :ivar storageLocationType: The type of the fleet analytics resource. Known values are:
+     "StorageAccount" and "FabricLakehouse".
+    :vartype storageLocationType: Union[str, "FleetAnalyticsPropertiesStorageLocationType"]
+    :ivar storageLocationUri: The unique identifier of the fleet analytics resource.
+    :vartype storageLocationUri: str
+    """
+
+    provisioningState: Union[str, "Status"]
+    """A provisioning state of the FleetAnalytics. Known values are: \"Uninitialized\",
+     \"Initializing\", \"InternallyReady\", \"Online\", \"Deleting\", \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Updating\", and \"Creating\"."""
+    storageLocationType: Union[str, "FleetAnalyticsPropertiesStorageLocationType"]
+    """The type of the fleet analytics resource. Known values are: \"StorageAccount\" and
+     \"FabricLakehouse\"."""
+    storageLocationUri: str
+    """The unique identifier of the fleet analytics resource."""
+
+
+class FleetAnalyticsResource(ProxyResource):
+    """An Azure Cosmos DB FleetAnalytics.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties:
+    :vartype properties: "FleetAnalyticsProperties"
+    """
+
+    properties: "FleetAnalyticsProperties"
+
+
 class TrackedResource(Resource):
     """Tracked Resource.
 
@@ -2913,9 +2816,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -2939,9 +2842,9 @@ class FleetResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -2957,10 +2860,10 @@ class FleetResource(TrackedResource):
 class FleetResourceProperties(TypedDict, total=False):
     """Properties to update Azure Cosmos DB fleet resource.
 
-    :ivar provisioning_state: A provisioning state of the Fleet. Known values are: "Uninitialized",
+    :ivar provisioningState: A provisioning state of the Fleet. Known values are: "Uninitialized",
      "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded", "Failed", "Canceled",
      "Updating", and "Creating".
-    :vartype provisioning_state: Union[str, "Status"]
+    :vartype provisioningState: Union[str, "Status"]
     """
 
     provisioningState: Union[str, "Status"]
@@ -2987,13 +2890,12 @@ class FleetResourceUpdate(TypedDict, total=False):
 class FleetspaceAccountProperties(TypedDict, total=False):
     """An Azure Cosmos DB Global Database Account which is part of a Fleetspace Account.
 
-    :ivar provisioning_state: A provisioning state of the Fleetspace Account. Known values are:
+    :ivar provisioningState: A provisioning state of the Fleetspace Account. Known values are:
      "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
      "Failed", "Canceled", "Updating", and "Creating".
-    :vartype provisioning_state: Union[str, "Status"]
-    :ivar global_database_account_properties: Configuration for fleetspace Account in the
-     fleetspace.
-    :vartype global_database_account_properties:
+    :vartype provisioningState: Union[str, "Status"]
+    :ivar globalDatabaseAccountProperties: Configuration for fleetspace Account in the fleetspace.
+    :vartype globalDatabaseAccountProperties:
      "FleetspaceAccountPropertiesGlobalDatabaseAccountProperties"
     """
 
@@ -3010,11 +2912,10 @@ class FleetspaceAccountPropertiesGlobalDatabaseAccountProperties(
 ):  # pylint: disable=name-too-long
     """Configuration for fleetspace Account in the fleetspace.
 
-    :ivar resource_id: The resource identifier of global database account in the Fleetspace
-     Account.
-    :vartype resource_id: str
-    :ivar arm_location: The location of  global database account in the Fleetspace Account.
-    :vartype arm_location: str
+    :ivar resourceId: The resource identifier of global database account in the Fleetspace Account.
+    :vartype resourceId: str
+    :ivar armLocation: The location of  global database account in the Fleetspace Account.
+    :vartype armLocation: str
     """
 
     resourceId: str
@@ -3034,9 +2935,9 @@ class FleetspaceAccountResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: An Azure Cosmos DB Global Database Account which is part of a Fleetspace
      Account.
     :vartype properties: "FleetspaceAccountProperties"
@@ -3049,21 +2950,21 @@ class FleetspaceAccountResource(ProxyResource):
 class FleetspaceProperties(TypedDict, total=False):
     """Properties to update Azure Cosmos DB Fleetspace.
 
-    :ivar provisioning_state: A provisioning state of the Fleetspace. Known values are:
+    :ivar provisioningState: A provisioning state of the Fleetspace. Known values are:
      "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
      "Failed", "Canceled", "Updating", and "Creating".
-    :vartype provisioning_state: Union[str, "Status"]
-    :ivar fleetspace_api_kind: The kind of API this fleetspace belongs to. Acceptable values:
+    :vartype provisioningState: Union[str, "Status"]
+    :ivar fleetspaceApiKind: The kind of API this fleetspace belongs to. Acceptable values:
      'NoSQL'. "NoSQL"
-    :vartype fleetspace_api_kind: Union[str, "FleetspacePropertiesFleetspaceApiKind"]
-    :ivar service_tier: Service Tier for the fleetspace. GeneralPurpose types refers to single
-     write region accounts that can be added to this fleetspace, whereas BusinessCritical refers to
-     multi write region. Known values are: "GeneralPurpose" and "BusinessCritical".
-    :vartype service_tier: Union[str, "FleetspacePropertiesServiceTier"]
-    :ivar data_regions: List of data regions assigned to the fleetspace. Eg [westus2].
-    :vartype data_regions: list[str]
-    :ivar throughput_pool_configuration: Configuration for throughput pool in the fleetspace.
-    :vartype throughput_pool_configuration: "FleetspacePropertiesThroughputPoolConfiguration"
+    :vartype fleetspaceApiKind: Union[str, "FleetspacePropertiesFleetspaceApiKind"]
+    :ivar serviceTier: Service Tier for the fleetspace. GeneralPurpose types refers to single write
+     region accounts that can be added to this fleetspace, whereas BusinessCritical refers to multi
+     write region. Known values are: "GeneralPurpose" and "BusinessCritical".
+    :vartype serviceTier: Union[str, "FleetspacePropertiesServiceTier"]
+    :ivar dataRegions: List of data regions assigned to the fleetspace. Eg [westus2].
+    :vartype dataRegions: list[str]
+    :ivar throughputPoolConfiguration: Configuration for throughput pool in the fleetspace.
+    :vartype throughputPoolConfiguration: "FleetspacePropertiesThroughputPoolConfiguration"
     """
 
     provisioningState: Union[str, "Status"]
@@ -3085,19 +2986,18 @@ class FleetspaceProperties(TypedDict, total=False):
 class FleetspacePropertiesThroughputPoolConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
     """Configuration for throughput pool in the fleetspace.
 
-    :ivar min_throughput: Minimum throughput for the pool.
-    :vartype min_throughput: int
-    :ivar max_throughput: Maximum throughput for the pool.
-    :vartype max_throughput: int
-    :ivar dedicated_r_us: Total dedicated throughput (RU/s) for fleetspace. Represents the sum of
-     all manual provisioned throughput and all autoscale max RU/s across all shared throughput
-     databases and dedicated throughput containers across all accounts in the fleetspace for 1
-     region.
-    :vartype dedicated_r_us: int
-    :ivar max_consumable_r_us: Maximum consumable throughput (RU/s) for fleetspace. Represents the
+    :ivar minThroughput: Minimum throughput for the pool.
+    :vartype minThroughput: int
+    :ivar maxThroughput: Maximum throughput for the pool.
+    :vartype maxThroughput: int
+    :ivar dedicatedRUs: Total dedicated throughput (RU/s) for fleetspace. Represents the sum of all
+     manual provisioned throughput and all autoscale max RU/s across all shared throughput databases
+     and dedicated throughput containers across all accounts in the fleetspace for 1 region.
+    :vartype dedicatedRUs: int
+    :ivar maxConsumableRUs: Maximum consumable throughput (RU/s) for fleetspace. Represents the
      maximum throughput that resources in the fleetspace can consume from the fleetspace's pool in 1
      region.
-    :vartype max_consumable_r_us: int
+    :vartype maxConsumableRUs: int
     """
 
     minThroughput: int
@@ -3124,9 +3024,9 @@ class FleetspaceResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties to update Azure Cosmos DB Fleetspace.
     :vartype properties: "FleetspaceProperties"
     """
@@ -3175,10 +3075,10 @@ class FullTextPath(TypedDict, total=False):
 class FullTextPolicy(TypedDict, total=False):
     """Cosmos DB FullText Policy.
 
-    :ivar default_language: The default language for a full text paths.
-    :vartype default_language: str
-    :ivar full_text_paths: List of FullText Paths.
-    :vartype full_text_paths: list["FullTextPath"]
+    :ivar defaultLanguage: The default language for a full text paths.
+    :vartype defaultLanguage: str
+    :ivar fullTextPaths: List of FullText Paths.
+    :vartype fullTextPaths: list["FullTextPath"]
     """
 
     defaultLanguage: str
@@ -3187,34 +3087,174 @@ class FullTextPolicy(TypedDict, total=False):
     """List of FullText Paths."""
 
 
-class GraphAPIComputeRegionalServiceResource(RegionalServiceResource):
-    """Resource for a regional service location.
+class GarnetClusterResource(TrackedResource):
+    """Representation of a Garnet cache cluster.
 
-    :ivar name: The regional service name.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar location: The location name.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar status: Describes the status of a service. Known values are: "Creating", "Running",
-     "Updating", "Deleting", "Error", and "Stopped".
-    :vartype status: Union[str, "ServiceStatus"]
-    :ivar graph_api_compute_endpoint: The regional endpoint for GraphAPICompute.
-    :vartype graph_api_compute_endpoint: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "GarnetClusterResourceProperties"
+    :ivar identity: Identity for the resource.
+    :vartype identity: "ManagedCassandraManagedServiceIdentity"
     """
 
-    graphApiComputeEndpoint: str
-    """The regional endpoint for GraphAPICompute."""
+    properties: "GarnetClusterResourceProperties"
+    """The resource-specific properties for this resource."""
+    identity: "ManagedCassandraManagedServiceIdentity"
+    """Identity for the resource."""
+
+
+class GarnetClusterResourcePatch(TypedDict, total=False):
+    """Representation of a Garnet cache cluster for updates.
+
+    :ivar properties: Properties of a Garnet cache cluster for updates.
+    :vartype properties: "GarnetClusterResourcePatchProperties"
+    """
+
+    properties: "GarnetClusterResourcePatchProperties"
+    """Properties of a Garnet cache cluster for updates."""
+
+
+class GarnetClusterResourcePatchProperties(TypedDict, total=False):
+    """Properties of a Garnet cache cluster for updates.
+
+    :ivar clusterType: Type of the cluster. If set to Production, some operations might not be
+     permitted on cluster. Known values are: "Production" and "NonProduction".
+    :vartype clusterType: Union[str, "ClusterType"]
+    :ivar extensions: Extensions to be added or updated on cluster.
+    :vartype extensions: list[str]
+    :ivar authenticationMethod: The authentication method used for the Garnet cluster. "Entra"
+    :vartype authenticationMethod: Union[str, "GarnetAuthenticationType"]
+    :ivar persistence: Flag to indicate if persistence is enabled for the Garnet cluster.
+    :vartype persistence: bool
+    """
+
+    clusterType: Union[str, "ClusterType"]
+    """Type of the cluster. If set to Production, some operations might not be permitted on cluster.
+     Known values are: \"Production\" and \"NonProduction\"."""
+    extensions: list[str]
+    """Extensions to be added or updated on cluster."""
+    authenticationMethod: Union[str, "GarnetAuthenticationType"]
+    """The authentication method used for the Garnet cluster. \"Entra\""""
+    persistence: bool
+    """Flag to indicate if persistence is enabled for the Garnet cluster."""
+
+
+class GarnetClusterResourceProperties(TypedDict, total=False):
+    """Properties of a Garnet cache cluster.
+
+    :ivar provisioningState: The provisioning state of the resource. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "GarnetCacheProvisioningState"]
+    :ivar subnetId: Resource id of a subnet that this cluster's management service should have its
+     network interface attached to. The subnet must be routable to all subnets that will be
+     delegated to data centers. The resource id must be of the form '/subscriptions/<subscription
+     id>/resourceGroups/<resource group>/providers/Microsoft.Network/virtualNetworks/<virtual
+     network>/subnets/<subnet>'.
+    :vartype subnetId: str
+    :ivar endPoints: Endpoints for clients to connect to the cluster.
+    :vartype endPoints: list["GarnetClusterResourcePropertiesEndPointsItem"]
+    :ivar replicationFactor: Number of copies of data maintained by the cluster.
+    :vartype replicationFactor: int
+    :ivar shardCount: Number of shards in the cluster.
+    :vartype shardCount: int
+    :ivar nodeSku: Virtual Machine SKU used for clusters. Default value is Standard_DS14_v2.
+    :vartype nodeSku: str
+    :ivar availabilityZone: If the data center has Availability Zone support, apply it to the
+     Virtual Machine ScaleSet that host the garnet cluster virtual machines.
+    :vartype availabilityZone: bool
+    :ivar authenticationMethod: The authentication method used for the Garnet cluster. "Entra"
+    :vartype authenticationMethod: Union[str, "GarnetAuthenticationType"]
+    :ivar persistence: Flag to indicate if persistence is enabled for the Garnet cluster.
+    :vartype persistence: bool
+    :ivar allocationState: Allocation state of the cluster and data center resources. Active
+     implies the virtual machines of the cluster are allocated, deallocated implies virtual machines
+     and resources are deallocated. Known values are: "Active" and "Deallocated".
+    :vartype allocationState: Union[str, "AllocationState"]
+    :ivar clusterType: Type of the cluster. If set to Production, some operations might not be
+     permitted on cluster. Known values are: "Production" and "NonProduction".
+    :vartype clusterType: Union[str, "ClusterType"]
+    :ivar provisionError: Error related to resource provisioning.
+    :vartype provisionError: "ErrorDetail"
+    :ivar extensions: Extensions to be added or updated on cluster.
+    :vartype extensions: list[str]
+    """
+
+    provisioningState: Union[str, "GarnetCacheProvisioningState"]
+    """The provisioning state of the resource. Known values are: \"Creating\", \"Updating\",
+     \"Deleting\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+    subnetId: str
+    """Resource id of a subnet that this cluster's management service should have its network
+     interface attached to. The subnet must be routable to all subnets that will be delegated to
+     data centers. The resource id must be of the form '/subscriptions/<subscription
+     id>/resourceGroups/<resource group>/providers/Microsoft.Network/virtualNetworks/<virtual
+     network>/subnets/<subnet>'."""
+    endPoints: list["GarnetClusterResourcePropertiesEndPointsItem"]
+    """Endpoints for clients to connect to the cluster."""
+    replicationFactor: int
+    """Number of copies of data maintained by the cluster."""
+    shardCount: int
+    """Number of shards in the cluster."""
+    nodeSku: str
+    """Virtual Machine SKU used for clusters. Default value is Standard_DS14_v2."""
+    availabilityZone: bool
+    """If the data center has Availability Zone support, apply it to the Virtual Machine ScaleSet that
+     host the garnet cluster virtual machines."""
+    authenticationMethod: Union[str, "GarnetAuthenticationType"]
+    """The authentication method used for the Garnet cluster. \"Entra\""""
+    persistence: bool
+    """Flag to indicate if persistence is enabled for the Garnet cluster."""
+    allocationState: Union[str, "AllocationState"]
+    """Allocation state of the cluster and data center resources. Active implies the virtual machines
+     of the cluster are allocated, deallocated implies virtual machines and resources are
+     deallocated. Known values are: \"Active\" and \"Deallocated\"."""
+    clusterType: Union[str, "ClusterType"]
+    """Type of the cluster. If set to Production, some operations might not be permitted on cluster.
+     Known values are: \"Production\" and \"NonProduction\"."""
+    provisionError: "ErrorDetail"
+    """Error related to resource provisioning."""
+    extensions: list[str]
+    """Extensions to be added or updated on cluster."""
+
+
+class GarnetClusterResourcePropertiesEndPointsItem(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Endpoint for clients to connect to the cluster.
+
+    :ivar ipAddress: Ipv4 address of the endpoint.
+    :vartype ipAddress: str
+    :ivar port: Port number.
+    :vartype port: int
+    """
+
+    ipAddress: str
+    """Ipv4 address of the endpoint."""
+    port: int
+    """Port number."""
 
 
 class GraphAPIComputeServiceResourceCreateUpdateProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Properties for Create or Update request for GraphAPIComputeServiceResource.
 
-    :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
+    :ivar instanceSize: Instance type for the service. Known values are: "Cosmos.D4s",
      "Cosmos.D8s", and "Cosmos.D16s".
-    :vartype instance_size: Union[str, "ServiceSize"]
-    :ivar instance_count: Instance count for the service.
-    :vartype instance_count: int
-    :ivar service_type: ServiceType for the service. Required. GRAPH_API_COMPUTE.
-    :vartype service_type: Literal[ServiceType.GRAPH_API_COMPUTE]
+    :vartype instanceSize: Union[str, "ServiceSize"]
+    :ivar instanceCount: Instance count for the service.
+    :vartype instanceCount: int
+    :ivar serviceType: ServiceType for the service. Required. GRAPH_API_COMPUTE.
+    :vartype serviceType: Literal[ServiceType.GRAPH_API_COMPUTE]
     """
 
     instanceSize: Union[str, "ServiceSize"]
@@ -3226,43 +3266,60 @@ class GraphAPIComputeServiceResourceCreateUpdateProperties(TypedDict, total=Fals
     """ServiceType for the service. Required. GRAPH_API_COMPUTE."""
 
 
-class GraphAPIComputeServiceResourceProperties(TypedDict, total=False):
-    """Properties for GraphAPIComputeServiceResource.
+class GraphResource(TypedDict, total=False):
+    """Cosmos DB Graph resource object.
 
-    :ivar creation_time: Time of the last state change (ISO-8601 format).
-    :vartype creation_time: str
-    :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
-     "Cosmos.D8s", and "Cosmos.D16s".
-    :vartype instance_size: Union[str, "ServiceSize"]
-    :ivar instance_count: Instance count for the service.
-    :vartype instance_count: int
-    :ivar status: Describes the status of a service. Known values are: "Creating", "Running",
-     "Updating", "Deleting", "Error", and "Stopped".
-    :vartype status: Union[str, "ServiceStatus"]
-    :ivar graph_api_compute_endpoint: GraphAPICompute endpoint for the service.
-    :vartype graph_api_compute_endpoint: str
-    :ivar locations: An array that contains all of the locations for the service.
-    :vartype locations: list["GraphAPIComputeRegionalServiceResource"]
-    :ivar service_type: ServiceType for the service. Required. GRAPH_API_COMPUTE.
-    :vartype service_type: Literal[ServiceType.GRAPH_API_COMPUTE]
+    :ivar id: Name of the Cosmos DB Graph. Required.
+    :vartype id: str
     """
 
-    creationTime: str
-    """Time of the last state change (ISO-8601 format)."""
-    instanceSize: Union[str, "ServiceSize"]
-    """Instance type for the service. Known values are: \"Cosmos.D4s\", \"Cosmos.D8s\", and
-     \"Cosmos.D16s\"."""
-    instanceCount: int
-    """Instance count for the service."""
-    status: Union[str, "ServiceStatus"]
-    """Describes the status of a service. Known values are: \"Creating\", \"Running\", \"Updating\",
-     \"Deleting\", \"Error\", and \"Stopped\"."""
-    graphApiComputeEndpoint: str
-    """GraphAPICompute endpoint for the service."""
-    locations: list["GraphAPIComputeRegionalServiceResource"]
-    """An array that contains all of the locations for the service."""
-    serviceType: Required[Literal[ServiceType.GRAPH_API_COMPUTE]]
-    """ServiceType for the service. Required. GRAPH_API_COMPUTE."""
+    id: Required[str]
+    """Name of the Cosmos DB Graph. Required."""
+
+
+class GraphResourceCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB Graph resource.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar location: The location of the resource group to which the resource belongs.
+    :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
+     "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar properties: Properties to create and update Azure Cosmos DB Graph resource. Required.
+    :vartype properties: "GraphResourceCreateUpdateProperties"
+    """
+
+    properties: Required["GraphResourceCreateUpdateProperties"]
+    """Properties to create and update Azure Cosmos DB Graph resource. Required."""
+
+
+class GraphResourceCreateUpdateProperties(TypedDict, total=False):
+    """Properties to create and update Azure Cosmos DB Graph resource.
+
+    :ivar resource: The standard JSON format of a Graph resource. Required.
+    :vartype resource: "GraphResource"
+    :ivar options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
+    :vartype options: "CreateUpdateOptions"
+    """
+
+    resource: Required["GraphResource"]
+    """The standard JSON format of a Graph resource. Required."""
+    options: "CreateUpdateOptions"
+    """A key-value pair of options to be applied for the request. This corresponds to the headers sent
+     with the request."""
 
 
 class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -3310,40 +3367,16 @@ class GremlinDatabaseCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class GremlinDatabaseGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB SQL database.
-
-    :ivar resource:
-    :vartype resource: "GremlinDatabaseGetPropertiesResource"
-    :ivar options:
-    :vartype options: "GremlinDatabaseGetPropertiesOptions"
-    """
-
-    resource: "GremlinDatabaseGetPropertiesResource"
-    options: "GremlinDatabaseGetPropertiesOptions"
-
-
-class GremlinDatabaseGetPropertiesOptions(OptionsResource):
-    """GremlinDatabaseGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-
 class GremlinDatabaseResource(TypedDict, total=False):
     """Cosmos DB Gremlin database resource object.
 
     :ivar id: Name of the Cosmos DB Gremlin database. Required.
     :vartype id: str
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of resource creation. Known values are: "Default"
+    :ivar restoreParameters: Parameters to indicate the information about the restore.
+    :vartype restoreParameters: "ResourceRestoreParameters"
+    :ivar createMode: Enum to indicate the mode of resource creation. Known values are: "Default"
      and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
+    :vartype createMode: Union[str, "CreateMode"]
     """
 
     id: Required[str]
@@ -3354,85 +3387,13 @@ class GremlinDatabaseResource(TypedDict, total=False):
     """Enum to indicate the mode of resource creation. Known values are: \"Default\" and \"Restore\"."""
 
 
-class GremlinDatabaseGetPropertiesResource(GremlinDatabaseResource):
-    """GremlinDatabaseGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB Gremlin database. Required.
-    :vartype id: str
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of resource creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class GremlinDatabaseGetResults(ProxyResource):
-    """An Azure Cosmos DB Gremlin database.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB SQL database.
-    :vartype properties: "GremlinDatabaseGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "GremlinDatabaseGetProperties"
-    """The properties of an Azure Cosmos DB SQL database."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
-
-
 class GremlinDatabaseRestoreResource(TypedDict, total=False):
     """Specific Gremlin Databases to restore.
 
-    :ivar database_name: The name of the gremlin database available for restore.
-    :vartype database_name: str
-    :ivar graph_names: The names of the graphs available for restore.
-    :vartype graph_names: list[str]
+    :ivar databaseName: The name of the gremlin database available for restore.
+    :vartype databaseName: str
+    :ivar graphNames: The names of the graphs available for restore.
+    :vartype graphNames: list[str]
     """
 
     databaseName: str
@@ -3486,55 +3447,31 @@ class GremlinGraphCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class GremlinGraphGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB Gremlin graph.
-
-    :ivar resource:
-    :vartype resource: "GremlinGraphGetPropertiesResource"
-    :ivar options:
-    :vartype options: "GremlinGraphGetPropertiesOptions"
-    """
-
-    resource: "GremlinGraphGetPropertiesResource"
-    options: "GremlinGraphGetPropertiesOptions"
-
-
-class GremlinGraphGetPropertiesOptions(OptionsResource):
-    """GremlinGraphGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-
 class GremlinGraphResource(TypedDict, total=False):
     """Cosmos DB Gremlin graph resource object.
 
     :ivar id: Name of the Cosmos DB Gremlin graph. Required.
     :vartype id: str
-    :ivar indexing_policy: The configuration of the indexing policy. By default, the indexing is
+    :ivar indexingPolicy: The configuration of the indexing policy. By default, the indexing is
      automatic for all document paths within the graph.
-    :vartype indexing_policy: "IndexingPolicy"
-    :ivar partition_key: The configuration of the partition key to be used for partitioning data
+    :vartype indexingPolicy: "IndexingPolicy"
+    :ivar partitionKey: The configuration of the partition key to be used for partitioning data
      into multiple partitions.
-    :vartype partition_key: "ContainerPartitionKey"
-    :ivar default_ttl: Default time to live.
-    :vartype default_ttl: int
-    :ivar unique_key_policy: The unique key policy configuration for specifying uniqueness
+    :vartype partitionKey: "ContainerPartitionKey"
+    :ivar defaultTtl: Default time to live.
+    :vartype defaultTtl: int
+    :ivar uniqueKeyPolicy: The unique key policy configuration for specifying uniqueness
      constraints on documents in the collection in the Azure Cosmos DB service.
-    :vartype unique_key_policy: "UniqueKeyPolicy"
-    :ivar conflict_resolution_policy: The conflict resolution policy for the graph.
-    :vartype conflict_resolution_policy: "ConflictResolutionPolicy"
-    :ivar analytical_storage_ttl: Analytical TTL.
-    :vartype analytical_storage_ttl: int
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of resource creation. Known values are: "Default"
+    :vartype uniqueKeyPolicy: "UniqueKeyPolicy"
+    :ivar conflictResolutionPolicy: The conflict resolution policy for the graph.
+    :vartype conflictResolutionPolicy: "ConflictResolutionPolicy"
+    :ivar analyticalStorageTtl: Analytical TTL.
+    :vartype analyticalStorageTtl: int
+    :ivar restoreParameters: Parameters to indicate the information about the restore.
+    :vartype restoreParameters: "ResourceRestoreParameters"
+    :ivar createMode: Enum to indicate the mode of resource creation. Known values are: "Default"
      and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
+    :vartype createMode: Union[str, "CreateMode"]
     """
 
     id: Required[str]
@@ -3560,93 +3497,6 @@ class GremlinGraphResource(TypedDict, total=False):
     """Enum to indicate the mode of resource creation. Known values are: \"Default\" and \"Restore\"."""
 
 
-class GremlinGraphGetPropertiesResource(GremlinGraphResource):
-    """GremlinGraphGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB Gremlin graph. Required.
-    :vartype id: str
-    :ivar indexing_policy: The configuration of the indexing policy. By default, the indexing is
-     automatic for all document paths within the graph.
-    :vartype indexing_policy: "IndexingPolicy"
-    :ivar partition_key: The configuration of the partition key to be used for partitioning data
-     into multiple partitions.
-    :vartype partition_key: "ContainerPartitionKey"
-    :ivar default_ttl: Default time to live.
-    :vartype default_ttl: int
-    :ivar unique_key_policy: The unique key policy configuration for specifying uniqueness
-     constraints on documents in the collection in the Azure Cosmos DB service.
-    :vartype unique_key_policy: "UniqueKeyPolicy"
-    :ivar conflict_resolution_policy: The conflict resolution policy for the graph.
-    :vartype conflict_resolution_policy: "ConflictResolutionPolicy"
-    :ivar analytical_storage_ttl: Analytical TTL.
-    :vartype analytical_storage_ttl: int
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of resource creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class GremlinGraphGetResults(ProxyResource):
-    """An Azure Cosmos DB Gremlin graph.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB Gremlin graph.
-    :vartype properties: "GremlinGraphGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "GremlinGraphGetProperties"
-    """The properties of an Azure Cosmos DB Gremlin graph."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
-
-
 class GremlinRoleAssignmentResource(ProxyResource):
     """Parameters to create and update an Azure Cosmos DB Gremlin Role Assignment.
 
@@ -3658,9 +3508,9 @@ class GremlinRoleAssignmentResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties to create and update an Azure Cosmos DB Gremlin Role Assignment.
     :vartype properties: "GremlinRoleAssignmentResourceProperties"
     """
@@ -3672,17 +3522,17 @@ class GremlinRoleAssignmentResource(ProxyResource):
 class GremlinRoleAssignmentResourceProperties(TypedDict, total=False):
     """Azure Cosmos DB Gremlin Role Assignment resource object.
 
-    :ivar role_definition_id: The unique identifier for the associated Role Definition.
-    :vartype role_definition_id: str
+    :ivar roleDefinitionId: The unique identifier for the associated Role Definition.
+    :vartype roleDefinitionId: str
     :ivar scope: The data plane resource path for which access is being granted through this
      Gremlin Role Assignment.
     :vartype scope: str
-    :ivar principal_id: The unique identifier for the associated AAD principal in the AAD graph to
+    :ivar principalId: The unique identifier for the associated AAD principal in the AAD graph to
      which access is being granted through this Gremlin Role Assignment. Tenant ID for the principal
      is inferred using the tenant associated with the subscription.
-    :vartype principal_id: str
-    :ivar provisioning_state: Provisioning state of the resource.
-    :vartype provisioning_state: str
+    :vartype principalId: str
+    :ivar provisioningState: Provisioning state of the resource.
+    :vartype provisioningState: str
     """
 
     roleDefinitionId: str
@@ -3709,9 +3559,9 @@ class GremlinRoleDefinitionResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties to create and update an Azure Cosmos DB Gremlin Role Definition.
     :vartype properties: "GremlinRoleDefinitionResourceProperties"
     """
@@ -3725,18 +3575,18 @@ class GremlinRoleDefinitionResourceProperties(TypedDict, total=False):
 
     :ivar id: The path id for the Role Definition.
     :vartype id: str
-    :ivar role_name: A user-friendly name for the Role Definition. Must be unique for the database
+    :ivar roleName: A user-friendly name for the Role Definition. Must be unique for the database
      account.
-    :vartype role_name: str
+    :vartype roleName: str
     :ivar type: Indicates whether the Role Definition was built-in or user created. Known values
      are: "BuiltInRole" and "CustomRole".
     :vartype type: Union[str, "RoleDefinitionType"]
-    :ivar assignable_scopes: A set of fully qualified Scopes at or below which Gremlin Role
+    :ivar assignableScopes: A set of fully qualified Scopes at or below which Gremlin Role
      Assignments may be created using this Role Definition. This will allow application of this Role
      Definition on the entire database account or any underlying Database / Collection. Must have at
      least one element. Scopes higher than Database account are not enforceable as assignable
      Scopes. Note that resources referenced in assignable Scopes need not exist.
-    :vartype assignable_scopes: list[str]
+    :vartype assignableScopes: list[str]
     :ivar permissions: The set of operations allowed through this Role Definition.
     :vartype permissions: list["Permission"]
     """
@@ -3778,9 +3628,9 @@ class IncludedPath(TypedDict, total=False):
 class Indexes(TypedDict, total=False):
     """The indexes for the path.
 
-    :ivar data_type: The datatype for which the indexing behavior is applied to. Known values are:
+    :ivar dataType: The datatype for which the indexing behavior is applied to. Known values are:
      "String", "Number", "Point", "Polygon", "LineString", and "MultiPolygon".
-    :vartype data_type: Union[str, "DataType"]
+    :vartype dataType: Union[str, "DataType"]
     :ivar precision: The precision of the index. -1 is maximum precision.
     :vartype precision: int
     :ivar kind: Indicates the type of index. Known values are: "Hash", "Range", and "Spatial".
@@ -3801,21 +3651,21 @@ class IndexingPolicy(TypedDict, total=False):
 
     :ivar automatic: Indicates if the indexing policy is automatic.
     :vartype automatic: bool
-    :ivar indexing_mode: Indicates the indexing mode. Known values are: "consistent", "lazy", and
+    :ivar indexingMode: Indicates the indexing mode. Known values are: "consistent", "lazy", and
      "none".
-    :vartype indexing_mode: Union[str, "IndexingMode"]
-    :ivar included_paths: List of paths to include in the indexing.
-    :vartype included_paths: list["IncludedPath"]
-    :ivar excluded_paths: List of paths to exclude from indexing.
-    :vartype excluded_paths: list["ExcludedPath"]
-    :ivar composite_indexes: List of composite path list.
-    :vartype composite_indexes: list[list["CompositePath"]]
-    :ivar spatial_indexes: List of spatial specifics.
-    :vartype spatial_indexes: list["SpatialSpec"]
-    :ivar vector_indexes: List of paths to include in the vector indexing.
-    :vartype vector_indexes: list["VectorIndex"]
-    :ivar full_text_indexes: List of paths to include in the full text indexing.
-    :vartype full_text_indexes: list["FullTextIndexPath"]
+    :vartype indexingMode: Union[str, "IndexingMode"]
+    :ivar includedPaths: List of paths to include in the indexing.
+    :vartype includedPaths: list["IncludedPath"]
+    :ivar excludedPaths: List of paths to exclude from indexing.
+    :vartype excludedPaths: list["ExcludedPath"]
+    :ivar compositeIndexes: List of composite path list.
+    :vartype compositeIndexes: list[list["CompositePath"]]
+    :ivar spatialIndexes: List of spatial specifics.
+    :vartype spatialIndexes: list["SpatialSpec"]
+    :ivar vectorIndexes: List of paths to include in the vector indexing.
+    :vartype vectorIndexes: list["VectorIndex"]
+    :ivar fullTextIndexes: List of paths to include in the full text indexing.
+    :vartype fullTextIndexes: list["FullTextIndexPath"]
     """
 
     automatic: bool
@@ -3839,11 +3689,11 @@ class IndexingPolicy(TypedDict, total=False):
 class IpAddressOrRange(TypedDict, total=False):
     """IpAddressOrRange object.
 
-    :ivar ip_address_or_range: A single IPv4 address or a single IPv4 address range in CIDR format.
+    :ivar ipAddressOrRange: A single IPv4 address or a single IPv4 address range in CIDR format.
      Provided IPs must be well-formatted and cannot be contained in one of the following ranges:
      10.0.0.0/8, 100.64.0.0/10, 172.16.0.0/12, 192.168.0.0/16, since these are not enforceable by
      the IP address filter. Example of valid inputs: “23.40.210.245” or “23.40.210.0/8”.
-    :vartype ip_address_or_range: str
+    :vartype ipAddressOrRange: str
     """
 
     ipAddressOrRange: str
@@ -3883,21 +3733,21 @@ class Location(TypedDict, total=False):
     :ivar id: The unique identifier of the region within the database account. Example:
      &lt;accountName&gt;-&lt;locationName&gt;.
     :vartype id: str
-    :ivar location_name: The name of the region.
-    :vartype location_name: str
-    :ivar document_endpoint: The connection endpoint for the specific region. Example:
+    :ivar locationName: The name of the region.
+    :vartype locationName: str
+    :ivar documentEndpoint: The connection endpoint for the specific region. Example:
      https://&lt;accountName&gt;-&lt;locationName&gt;.documents.azure.com:443/.
-    :vartype document_endpoint: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
-    :ivar failover_priority: The failover priority of the region. A failover priority of 0
-     indicates a write region. The maximum value for a failover priority = (total number of regions
-     - 1). Failover priority values must be unique for each of the regions in which the database
-     account exists.
-    :vartype failover_priority: int
-    :ivar is_zone_redundant: Flag to indicate whether or not this region is an AvailabilityZone
+    :vartype documentEndpoint: str
+    :ivar provisioningState: The provisioning state of the resource.
+    :vartype provisioningState: str
+    :ivar failoverPriority: The failover priority of the region. A failover priority of 0 indicates
+     a write region. The maximum value for a failover priority = (total number of regions - 1).
+     Failover priority values must be unique for each of the regions in which the database account
+     exists.
+    :vartype failoverPriority: int
+    :ivar isZoneRedundant: Flag to indicate whether or not this region is an AvailabilityZone
      region.
-    :vartype is_zone_redundant: bool
+    :vartype isZoneRedundant: bool
     """
 
     id: str
@@ -3918,73 +3768,13 @@ class Location(TypedDict, total=False):
     """Flag to indicate whether or not this region is an AvailabilityZone region."""
 
 
-class LocationGetResult(ProxyResource):
-    """Cosmos DB location get result.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Cosmos DB location metadata.
-    :vartype properties: "LocationProperties"
-    """
-
-    properties: "LocationProperties"
-    """Cosmos DB location metadata."""
-
-
-class LocationProperties(TypedDict, total=False):
-    """Cosmos DB location metadata.
-
-    :ivar supports_availability_zone: Flag indicating whether the location supports availability
-     zones or not.
-    :vartype supports_availability_zone: bool
-    :ivar is_residency_restricted: Flag indicating whether the location is residency sensitive.
-    :vartype is_residency_restricted: bool
-    :ivar backup_storage_redundancies: The properties of available backup storage redundancies.
-    :vartype backup_storage_redundancies: list[Union[str, "BackupStorageRedundancy"]]
-    :ivar is_subscription_region_access_allowed_for_regular: Flag indicating whether the
-     subscription have access in region for Non-Availability Zones.
-    :vartype is_subscription_region_access_allowed_for_regular: bool
-    :ivar is_subscription_region_access_allowed_for_az: Flag indicating whether the subscription
-     have access in region for Availability Zones(Az).
-    :vartype is_subscription_region_access_allowed_for_az: bool
-    :ivar status: Enum to indicate current buildout status of the region. Known values are:
-     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
-     "Failed", "Canceled", "Updating", and "Creating".
-    :vartype status: Union[str, "Status"]
-    """
-
-    supportsAvailabilityZone: bool
-    """Flag indicating whether the location supports availability zones or not."""
-    isResidencyRestricted: bool
-    """Flag indicating whether the location is residency sensitive."""
-    backupStorageRedundancies: list[Union[str, "BackupStorageRedundancy"]]
-    """The properties of available backup storage redundancies."""
-    isSubscriptionRegionAccessAllowedForRegular: bool
-    """Flag indicating whether the subscription have access in region for Non-Availability Zones."""
-    isSubscriptionRegionAccessAllowedForAz: bool
-    """Flag indicating whether the subscription have access in region for Availability Zones(Az)."""
-    status: Union[str, "Status"]
-    """Enum to indicate current buildout status of the region. Known values are: \"Uninitialized\",
-     \"Initializing\", \"InternallyReady\", \"Online\", \"Deleting\", \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Updating\", and \"Creating\"."""
-
-
 class ManagedCassandraManagedServiceIdentity(TypedDict, total=False):
     """Identity for the resource.
 
-    :ivar principal_id: The object id of the identity resource.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant id of the resource.
-    :vartype tenant_id: str
+    :ivar principalId: The object id of the identity resource.
+    :vartype principalId: str
+    :ivar tenantId: The tenant id of the resource.
+    :vartype tenantId: str
     :ivar type: The type of the resource. Known values are: "SystemAssigned" and "None".
     :vartype type: Union[str, "ManagedCassandraResourceIdentityType"]
     """
@@ -3997,42 +3787,24 @@ class ManagedCassandraManagedServiceIdentity(TypedDict, total=False):
     """The type of the resource. Known values are: \"SystemAssigned\" and \"None\"."""
 
 
-class ManagedCassandraReaperStatus(TypedDict, total=False):
-    """ManagedCassandraReaperStatus.
-
-    :ivar healthy:
-    :vartype healthy: bool
-    :ivar repair_run_ids: Dictionary of <string>.
-    :vartype repair_run_ids: dict[str, str]
-    :ivar repair_schedules: Dictionary of <string>.
-    :vartype repair_schedules: dict[str, str]
-    """
-
-    healthy: bool
-    repairRunIds: dict[str, str]
-    """Dictionary of <string>."""
-    repairSchedules: dict[str, str]
-    """Dictionary of <string>."""
-
-
 class ManagedServiceIdentity(TypedDict, total=False):
     """Identity for the resource.
 
-    :ivar principal_id: The principal id of the system assigned identity. This property will only
-     be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant id of the system assigned identity. This property will only be
+    :ivar principalId: The principal id of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype principalId: str
+    :ivar tenantId: The tenant id of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenantId: str
     :ivar type: The type of identity used for the resource. The type 'SystemAssigned,UserAssigned'
      includes both an implicitly created identity and a set of user assigned identities. The type
      'None' will remove any identities from the service. Known values are: "SystemAssigned",
      "UserAssigned", "SystemAssigned,UserAssigned", and "None".
     :vartype type: Union[str, "ResourceIdentityType"]
-    :ivar user_assigned_identities: The list of user identities associated with resource. The user
+    :ivar userAssignedIdentities: The list of user identities associated with resource. The user
      identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype user_assigned_identities: dict[str, "ManagedServiceIdentityUserAssignedIdentity"]
+    :vartype userAssignedIdentities: dict[str, "ManagedServiceIdentityUserAssignedIdentity"]
     """
 
     principalId: str
@@ -4055,10 +3827,10 @@ class ManagedServiceIdentity(TypedDict, total=False):
 class ManagedServiceIdentityUserAssignedIdentity(TypedDict, total=False):  # pylint: disable=name-too-long
     """ManagedServiceIdentityUserAssignedIdentity.
 
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal id of user assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client id of user assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -4067,17 +3839,47 @@ class ManagedServiceIdentityUserAssignedIdentity(TypedDict, total=False):  # pyl
     """The client id of user assigned identity."""
 
 
-class MaterializedViewsBuilderRegionalServiceResource(RegionalServiceResource):  # pylint: disable=name-too-long
-    """Resource for a regional service location.
+class MaterializedViewDefinition(TypedDict, total=False):
+    """Materialized View definition for the container.
 
-    :ivar name: The regional service name.
-    :vartype name: str
-    :ivar location: The location name.
-    :vartype location: str
-    :ivar status: Describes the status of a service. Known values are: "Creating", "Running",
-     "Updating", "Deleting", "Error", and "Stopped".
-    :vartype status: Union[str, "ServiceStatus"]
+    :ivar sourceCollectionRid: An unique identifier for the source collection. This is a system
+     generated property.
+    :vartype sourceCollectionRid: str
+    :ivar sourceCollectionId: The name of the source container on which the Materialized View will
+     be created. Required.
+    :vartype sourceCollectionId: str
+    :ivar definition: The definition should be an SQL query which would be used to fetch data from
+     the source container to populate into the Materialized View container. Required.
+    :vartype definition: str
+    :ivar throughputBucketForBuild: Throughput bucket assigned for the materialized view operations
+     on target container.
+    :vartype throughputBucketForBuild: int
     """
+
+    sourceCollectionRid: str
+    """An unique identifier for the source collection. This is a system generated property."""
+    sourceCollectionId: Required[str]
+    """The name of the source container on which the Materialized View will be created. Required."""
+    definition: Required[str]
+    """The definition should be an SQL query which would be used to fetch data from the source
+     container to populate into the Materialized View container. Required."""
+    throughputBucketForBuild: int
+    """Throughput bucket assigned for the materialized view operations on target container."""
+
+
+class MaterializedViewDetails(TypedDict, total=False):
+    """MaterializedViewDetails, contains Id & _rid fields of materialized view.
+
+    :ivar id: Id field of Materialized container.
+    :vartype id: str
+    :ivar _rid: _rid field of Materialized container.
+    :vartype _rid: str
+    """
+
+    id: str
+    """Id field of Materialized container."""
+    _rid: str
+    """_rid field of Materialized container."""
 
 
 class MaterializedViewsBuilderServiceResourceCreateUpdateProperties(
@@ -4085,13 +3887,13 @@ class MaterializedViewsBuilderServiceResourceCreateUpdateProperties(
 ):  # pylint: disable=name-too-long
     """Properties for Create or Update request for MaterializedViewsBuilderServiceResource.
 
-    :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
+    :ivar instanceSize: Instance type for the service. Known values are: "Cosmos.D4s",
      "Cosmos.D8s", and "Cosmos.D16s".
-    :vartype instance_size: Union[str, "ServiceSize"]
-    :ivar instance_count: Instance count for the service.
-    :vartype instance_count: int
-    :ivar service_type: ServiceType for the service. Required. MATERIALIZED_VIEWS_BUILDER.
-    :vartype service_type: Literal[ServiceType.MATERIALIZED_VIEWS_BUILDER]
+    :vartype instanceSize: Union[str, "ServiceSize"]
+    :ivar instanceCount: Instance count for the service.
+    :vartype instanceCount: int
+    :ivar serviceType: ServiceType for the service. Required. MATERIALIZED_VIEWS_BUILDER.
+    :vartype serviceType: Literal[ServiceType.MATERIALIZED_VIEWS_BUILDER]
     """
 
     instanceSize: Union[str, "ServiceSize"]
@@ -4103,164 +3905,27 @@ class MaterializedViewsBuilderServiceResourceCreateUpdateProperties(
     """ServiceType for the service. Required. MATERIALIZED_VIEWS_BUILDER."""
 
 
-class MaterializedViewsBuilderServiceResourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Properties for MaterializedViewsBuilderServiceResource.
+class MaterializedViewsProperties(TypedDict, total=False):
+    """Materialized Views Properties for the source container.
 
-    :ivar creation_time: Time of the last state change (ISO-8601 format).
-    :vartype creation_time: str
-    :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
-     "Cosmos.D8s", and "Cosmos.D16s".
-    :vartype instance_size: Union[str, "ServiceSize"]
-    :ivar instance_count: Instance count for the service.
-    :vartype instance_count: int
-    :ivar status: Describes the status of a service. Known values are: "Creating", "Running",
-     "Updating", "Deleting", "Error", and "Stopped".
-    :vartype status: Union[str, "ServiceStatus"]
-    :ivar locations: An array that contains all of the locations for the service.
-    :vartype locations: list["MaterializedViewsBuilderRegionalServiceResource"]
-    :ivar service_type: ServiceType for the service. Required. MATERIALIZED_VIEWS_BUILDER.
-    :vartype service_type: Literal[ServiceType.MATERIALIZED_VIEWS_BUILDER]
+    :ivar throughputBucketForBuild: Throughput bucket assigned for the materialized view operations
+     on source container.
+    :vartype throughputBucketForBuild: int
     """
 
-    creationTime: str
-    """Time of the last state change (ISO-8601 format)."""
-    instanceSize: Union[str, "ServiceSize"]
-    """Instance type for the service. Known values are: \"Cosmos.D4s\", \"Cosmos.D8s\", and
-     \"Cosmos.D16s\"."""
-    instanceCount: int
-    """Instance count for the service."""
-    status: Union[str, "ServiceStatus"]
-    """Describes the status of a service. Known values are: \"Creating\", \"Running\", \"Updating\",
-     \"Deleting\", \"Error\", and \"Stopped\"."""
-    locations: list["MaterializedViewsBuilderRegionalServiceResource"]
-    """An array that contains all of the locations for the service."""
-    serviceType: Required[Literal[ServiceType.MATERIALIZED_VIEWS_BUILDER]]
-    """ServiceType for the service. Required. MATERIALIZED_VIEWS_BUILDER."""
+    throughputBucketForBuild: int
+    """Throughput bucket assigned for the materialized view operations on source container."""
 
 
-class Metric(TypedDict, total=False):
-    """Metric data.
+class MergeParameters(TypedDict, total=False):
+    """The properties of an Azure Cosmos DB merge operations.
 
-    :ivar start_time: The start time for the metric (ISO-8601 format).
-    :vartype start_time: str
-    :ivar end_time: The end time for the metric (ISO-8601 format).
-    :vartype end_time: str
-    :ivar time_grain: The time grain to be used to summarize the metric values.
-    :vartype time_grain: str
-    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
-     "CountPerSecond", "BytesPerSecond", and "Milliseconds".
-    :vartype unit: Union[str, "UnitType"]
-    :ivar name: The name information for the metric.
-    :vartype name: "MetricName"
-    :ivar metric_values: The metric values for the specified time window and timestep.
-    :vartype metric_values: list["MetricValue"]
+    :ivar isDryRun: Specifies whether the operation is a real merge operation or a simulation.
+    :vartype isDryRun: bool
     """
 
-    startTime: str
-    """The start time for the metric (ISO-8601 format)."""
-    endTime: str
-    """The end time for the metric (ISO-8601 format)."""
-    timeGrain: str
-    """The time grain to be used to summarize the metric values."""
-    unit: Union[str, "UnitType"]
-    """The unit of the metric. Known values are: \"Count\", \"Bytes\", \"Seconds\", \"Percent\",
-     \"CountPerSecond\", \"BytesPerSecond\", and \"Milliseconds\"."""
-    name: "MetricName"
-    """The name information for the metric."""
-    metricValues: list["MetricValue"]
-    """The metric values for the specified time window and timestep."""
-
-
-class MetricAvailability(TypedDict, total=False):
-    """The availability of the metric.
-
-    :ivar time_grain: The time grain to be used to summarize the metric values.
-    :vartype time_grain: str
-    :ivar retention: The retention for the metric values.
-    :vartype retention: str
-    """
-
-    timeGrain: str
-    """The time grain to be used to summarize the metric values."""
-    retention: str
-    """The retention for the metric values."""
-
-
-class MetricDefinition(TypedDict, total=False):
-    """The definition of a metric.
-
-    :ivar metric_availabilities: The list of metric availabilities for the account.
-    :vartype metric_availabilities: list["MetricAvailability"]
-    :ivar primary_aggregation_type: The primary aggregation type of the metric. Known values are:
-     "None", "Average", "Total", "Minimum", "Maximum", and "Last".
-    :vartype primary_aggregation_type: Union[str, "PrimaryAggregationType"]
-    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
-     "CountPerSecond", "BytesPerSecond", and "Milliseconds".
-    :vartype unit: Union[str, "UnitType"]
-    :ivar resource_uri: The resource uri of the database.
-    :vartype resource_uri: str
-    :ivar name: The name information for the metric.
-    :vartype name: "MetricName"
-    """
-
-    metricAvailabilities: list["MetricAvailability"]
-    """The list of metric availabilities for the account."""
-    primaryAggregationType: Union[str, "PrimaryAggregationType"]
-    """The primary aggregation type of the metric. Known values are: \"None\", \"Average\", \"Total\",
-     \"Minimum\", \"Maximum\", and \"Last\"."""
-    unit: Union[str, "UnitType"]
-    """The unit of the metric. Known values are: \"Count\", \"Bytes\", \"Seconds\", \"Percent\",
-     \"CountPerSecond\", \"BytesPerSecond\", and \"Milliseconds\"."""
-    resourceUri: str
-    """The resource uri of the database."""
-    name: "MetricName"
-    """The name information for the metric."""
-
-
-class MetricName(TypedDict, total=False):
-    """A metric name.
-
-    :ivar value: The name of the metric.
-    :vartype value: str
-    :ivar localized_value: The friendly name of the metric.
-    :vartype localized_value: str
-    """
-
-    value: str
-    """The name of the metric."""
-    localizedValue: str
-    """The friendly name of the metric."""
-
-
-class MetricValue(TypedDict, total=False):
-    """Represents metrics values.
-
-    :ivar count: The number of values for the metric.
-    :vartype count: int
-    :ivar average: The average value of the metric.
-    :vartype average: float
-    :ivar maximum: The max value of the metric.
-    :vartype maximum: float
-    :ivar minimum: The min value of the metric.
-    :vartype minimum: float
-    :ivar timestamp: The metric timestamp (ISO-8601 format).
-    :vartype timestamp: str
-    :ivar total: The total value of the metric.
-    :vartype total: float
-    """
-
-    _count: int
-    """The number of values for the metric."""
-    average: float
-    """The average value of the metric."""
-    maximum: float
-    """The max value of the metric."""
-    minimum: float
-    """The min value of the metric."""
-    timestamp: str
-    """The metric timestamp (ISO-8601 format)."""
-    total: float
-    """The total value of the metric."""
+    isDryRun: bool
+    """Specifies whether the operation is a real merge operation or a simulation."""
 
 
 class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
@@ -4308,46 +3973,22 @@ class MongoDBCollectionCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class MongoDBCollectionGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB MongoDB collection.
-
-    :ivar resource:
-    :vartype resource: "MongoDBCollectionGetPropertiesResource"
-    :ivar options:
-    :vartype options: "MongoDBCollectionGetPropertiesOptions"
-    """
-
-    resource: "MongoDBCollectionGetPropertiesResource"
-    options: "MongoDBCollectionGetPropertiesOptions"
-
-
-class MongoDBCollectionGetPropertiesOptions(OptionsResource):
-    """MongoDBCollectionGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-
 class MongoDBCollectionResource(TypedDict, total=False):
     """Cosmos DB MongoDB collection resource object.
 
     :ivar id: Name of the Cosmos DB MongoDB collection. Required.
     :vartype id: str
-    :ivar shard_key: A key-value pair of shard keys to be applied for the request.
-    :vartype shard_key: dict[str, str]
+    :ivar shardKey: A key-value pair of shard keys to be applied for the request.
+    :vartype shardKey: dict[str, str]
     :ivar indexes: List of index keys.
     :vartype indexes: list["MongoIndex"]
-    :ivar analytical_storage_ttl: Analytical TTL.
-    :vartype analytical_storage_ttl: int
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of resource creation. Known values are: "Default"
+    :ivar analyticalStorageTtl: Analytical TTL.
+    :vartype analyticalStorageTtl: int
+    :ivar restoreParameters: Parameters to indicate the information about the restore.
+    :vartype restoreParameters: "ResourceRestoreParameters"
+    :ivar createMode: Enum to indicate the mode of resource creation. Known values are: "Default"
      and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
+    :vartype createMode: Union[str, "CreateMode"]
     """
 
     id: Required[str]
@@ -4362,84 +4003,6 @@ class MongoDBCollectionResource(TypedDict, total=False):
     """Parameters to indicate the information about the restore."""
     createMode: Union[str, "CreateMode"]
     """Enum to indicate the mode of resource creation. Known values are: \"Default\" and \"Restore\"."""
-
-
-class MongoDBCollectionGetPropertiesResource(MongoDBCollectionResource):
-    """MongoDBCollectionGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB MongoDB collection. Required.
-    :vartype id: str
-    :ivar shard_key: A key-value pair of shard keys to be applied for the request.
-    :vartype shard_key: dict[str, str]
-    :ivar indexes: List of index keys.
-    :vartype indexes: list["MongoIndex"]
-    :ivar analytical_storage_ttl: Analytical TTL.
-    :vartype analytical_storage_ttl: int
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of resource creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class MongoDBCollectionGetResults(ProxyResource):
-    """An Azure Cosmos DB MongoDB collection.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB MongoDB collection.
-    :vartype properties: "MongoDBCollectionGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "MongoDBCollectionGetProperties"
-    """The properties of an Azure Cosmos DB MongoDB collection."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
 
 
 class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -4487,40 +4050,16 @@ class MongoDBDatabaseCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class MongoDBDatabaseGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB MongoDB database.
-
-    :ivar resource:
-    :vartype resource: "MongoDBDatabaseGetPropertiesResource"
-    :ivar options:
-    :vartype options: "MongoDBDatabaseGetPropertiesOptions"
-    """
-
-    resource: "MongoDBDatabaseGetPropertiesResource"
-    options: "MongoDBDatabaseGetPropertiesOptions"
-
-
-class MongoDBDatabaseGetPropertiesOptions(OptionsResource):
-    """MongoDBDatabaseGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-
 class MongoDBDatabaseResource(TypedDict, total=False):
     """Cosmos DB MongoDB database resource object.
 
     :ivar id: Name of the Cosmos DB MongoDB database. Required.
     :vartype id: str
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
+    :ivar restoreParameters: Parameters to indicate the information about the restore.
+    :vartype restoreParameters: "ResourceRestoreParameters"
+    :ivar createMode: Enum to indicate the mode of account creation. Known values are: "Default"
      and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
+    :vartype createMode: Union[str, "CreateMode"]
     """
 
     id: Required[str]
@@ -4529,78 +4068,6 @@ class MongoDBDatabaseResource(TypedDict, total=False):
     """Parameters to indicate the information about the restore."""
     createMode: Union[str, "CreateMode"]
     """Enum to indicate the mode of account creation. Known values are: \"Default\" and \"Restore\"."""
-
-
-class MongoDBDatabaseGetPropertiesResource(MongoDBDatabaseResource):
-    """MongoDBDatabaseGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB MongoDB database. Required.
-    :vartype id: str
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class MongoDBDatabaseGetResults(ProxyResource):
-    """An Azure Cosmos DB MongoDB database.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB MongoDB database.
-    :vartype properties: "MongoDBDatabaseGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "MongoDBDatabaseGetProperties"
-    """The properties of an Azure Cosmos DB MongoDB database."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
 
 
 class MongoIndex(TypedDict, total=False):
@@ -4621,8 +4088,8 @@ class MongoIndex(TypedDict, total=False):
 class MongoIndexKeys(TypedDict, total=False):
     """Cosmos DB MongoDB collection resource object.
 
-    :ivar keys_property: List of keys for each MongoDB collection in the Azure Cosmos DB service.
-    :vartype keys_property: list[str]
+    :ivar keys: List of keys for each MongoDB collection in the Azure Cosmos DB service.
+    :vartype keys: list[str]
     """
 
     keys: list[str]
@@ -4632,8 +4099,8 @@ class MongoIndexKeys(TypedDict, total=False):
 class MongoIndexOptions(TypedDict, total=False):
     """Cosmos DB MongoDB collection index options.
 
-    :ivar expire_after_seconds: Expire after seconds.
-    :vartype expire_after_seconds: int
+    :ivar expireAfterSeconds: Expire after seconds.
+    :vartype expireAfterSeconds: int
     :ivar unique: Is unique or not.
     :vartype unique: bool
     """
@@ -4655,9 +4122,9 @@ class MongoMIRoleAssignmentResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties to create and update an Azure Cosmos DB MongoMI Role Assignment.
     :vartype properties: "MongoMIRoleAssignmentResourceProperties"
     """
@@ -4669,17 +4136,17 @@ class MongoMIRoleAssignmentResource(ProxyResource):
 class MongoMIRoleAssignmentResourceProperties(TypedDict, total=False):
     """Azure Cosmos DB MongoMI Role Assignment resource object.
 
-    :ivar role_definition_id: The unique identifier for the associated Role Definition.
-    :vartype role_definition_id: str
+    :ivar roleDefinitionId: The unique identifier for the associated Role Definition.
+    :vartype roleDefinitionId: str
     :ivar scope: The data plane resource path for which access is being granted through this
      MongoMI Role Assignment.
     :vartype scope: str
-    :ivar principal_id: The unique identifier for the associated AAD principal in the AAD graph to
+    :ivar principalId: The unique identifier for the associated AAD principal in the AAD graph to
      which access is being granted through this MongoMI Role Assignment. Tenant ID for the principal
      is inferred using the tenant associated with the subscription.
-    :vartype principal_id: str
-    :ivar provisioning_state: Provisioning state of the resource.
-    :vartype provisioning_state: str
+    :vartype principalId: str
+    :ivar provisioningState: Provisioning state of the resource.
+    :vartype provisioningState: str
     """
 
     roleDefinitionId: str
@@ -4706,9 +4173,9 @@ class MongoMIRoleDefinitionResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties to create and update an Azure Cosmos DB MongoMI Role Definition.
     :vartype properties: "MongoMIRoleDefinitionResourceProperties"
     """
@@ -4722,18 +4189,18 @@ class MongoMIRoleDefinitionResourceProperties(TypedDict, total=False):
 
     :ivar id: The path id for the Role Definition.
     :vartype id: str
-    :ivar role_name: A user-friendly name for the Role Definition. Must be unique for the database
+    :ivar roleName: A user-friendly name for the Role Definition. Must be unique for the database
      account.
-    :vartype role_name: str
+    :vartype roleName: str
     :ivar type: Indicates whether the Role Definition was built-in or user created. Known values
      are: "BuiltInRole" and "CustomRole".
     :vartype type: Union[str, "RoleDefinitionType"]
-    :ivar assignable_scopes: A set of fully qualified Scopes at or below which MongoMI Role
+    :ivar assignableScopes: A set of fully qualified Scopes at or below which MongoMI Role
      Assignments may be created using this Role Definition. This will allow application of this Role
      Definition on the entire database account or any underlying Database / Collection. Must have at
      least one element. Scopes higher than Database account are not enforceable as assignable
      Scopes. Note that resources referenced in assignable Scopes need not exist.
-    :vartype assignable_scopes: list[str]
+    :vartype assignableScopes: list[str]
     :ivar permissions: The set of operations allowed through this Role Definition.
     :vartype permissions: list["Permission"]
     """
@@ -4766,40 +4233,18 @@ class MongoRoleDefinitionCreateUpdateParameters(TypedDict, total=False):  # pyli
     """Properties to create and update an Azure Cosmos DB Mongo Role Definition."""
 
 
-class MongoRoleDefinitionGetResults(ProxyResource):
-    """An Azure Cosmos DB Mongo Role Definition.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Properties related to the Mongo Role Definition.
-    :vartype properties: "MongoRoleDefinitionResource"
-    """
-
-    properties: "MongoRoleDefinitionResource"
-    """Properties related to the Mongo Role Definition."""
-
-
 class MongoRoleDefinitionResource(TypedDict, total=False):
     """Azure Cosmos DB Mongo Role Definition resource object.
 
-    :ivar role_name: A user-friendly name for the Role Definition. Must be unique for the database
+    :ivar roleName: A user-friendly name for the Role Definition. Must be unique for the database
      account.
-    :vartype role_name: str
+    :vartype roleName: str
     :ivar type: Indicates whether the Role Definition was built-in or user created. Known values
      are: "BuiltInRole" and "CustomRole".
     :vartype type: Union[str, "MongoRoleDefinitionType"]
-    :ivar database_name: The database name for which access is being granted for this Role
+    :ivar databaseName: The database name for which access is being granted for this Role
      Definition.
-    :vartype database_name: str
+    :vartype databaseName: str
     :ivar privileges: A set of privileges contained by the Role Definition. This will allow
      application of this Role Definition on the entire database account or any underlying Database /
      Collection. Scopes higher than Database are not enforceable as privilege.
@@ -4823,6 +4268,90 @@ class MongoRoleDefinitionResource(TypedDict, total=False):
     """The set of roles inherited by this Role Definition."""
 
 
+class MongoRUToMongoRUCopyJobProperties(TypedDict, total=False):
+    """Source Mongo to Destination Mongo copy job properties.
+
+    :ivar sourceDetails: Source Mongo DataStore details.
+    :vartype sourceDetails: "CosmosDBSourceSinkDetails"
+    :ivar destinationDetails: Destination Mongo DataStore details.
+    :vartype destinationDetails: "CosmosDBSourceSinkDetails"
+    :ivar tasks: Copy Job tasks. Required.
+    :vartype tasks: list["MongoRUToMongoRUCopyJobTask"]
+    :ivar jobType: Copy Job Type. Required. MONGO_RU_TO_MONGO_RU.
+    :vartype jobType: Literal[CopyJobType.MONGO_RU_TO_MONGO_RU]
+    """
+
+    sourceDetails: "CosmosDBSourceSinkDetails"
+    """Source Mongo DataStore details."""
+    destinationDetails: "CosmosDBSourceSinkDetails"
+    """Destination Mongo DataStore details."""
+    tasks: Required[list["MongoRUToMongoRUCopyJobTask"]]
+    """Copy Job tasks. Required."""
+    jobType: Required[Literal[CopyJobType.MONGO_RU_TO_MONGO_RU]]
+    """Copy Job Type. Required. MONGO_RU_TO_MONGO_RU."""
+
+
+class MongoRUToMongoRUCopyJobTask(BaseCopyJobTask):
+    """MongoRUToMongoRUCopyJobTask.
+
+    :ivar totalCount: Task level Total Count.
+    :vartype totalCount: int
+    :ivar processedCount: Task level Processed Count.
+    :vartype processedCount: int
+    :ivar source: Source Mongo (RU) collection. Required.
+    :vartype source: "CosmosDBMongoCollection"
+    :ivar destination: Destination Mongo (RU) collection. Required.
+    :vartype destination: "CosmosDBMongoCollection"
+    """
+
+    source: Required["CosmosDBMongoCollection"]
+    """Source Mongo (RU) collection. Required."""
+    destination: Required["CosmosDBMongoCollection"]
+    """Destination Mongo (RU) collection. Required."""
+
+
+class MongoRUToMongoVCoreCopyJobProperties(TypedDict, total=False):
+    """Source Mongo to Destination Mongo vCore copy job properties.
+
+    :ivar sourceDetails: Source Mongo (RU) DataStore details.
+    :vartype sourceDetails: "CosmosDBSourceSinkDetails"
+    :ivar destinationDetails: Destination Mongo (vCore) DataStore details. Required.
+    :vartype destinationDetails: "MongoVCoreSourceSinkDetails"
+    :ivar tasks: Copy Job tasks. Required.
+    :vartype tasks: list["MongoRUToMongoVCoreCopyJobTask"]
+    :ivar jobType: Copy Job Type. Required. MONGO_RU_TO_MONGO_V_CORE.
+    :vartype jobType: Literal[CopyJobType.MONGO_RU_TO_MONGO_V_CORE]
+    """
+
+    sourceDetails: "CosmosDBSourceSinkDetails"
+    """Source Mongo (RU) DataStore details."""
+    destinationDetails: Required["MongoVCoreSourceSinkDetails"]
+    """Destination Mongo (vCore) DataStore details. Required."""
+    tasks: Required[list["MongoRUToMongoVCoreCopyJobTask"]]
+    """Copy Job tasks. Required."""
+    jobType: Required[Literal[CopyJobType.MONGO_RU_TO_MONGO_V_CORE]]
+    """Copy Job Type. Required. MONGO_RU_TO_MONGO_V_CORE."""
+
+
+class MongoRUToMongoVCoreCopyJobTask(BaseCopyJobTask):
+    """MongoRUToMongoVCoreCopyJobTask.
+
+    :ivar totalCount: Task level Total Count.
+    :vartype totalCount: int
+    :ivar processedCount: Task level Processed Count.
+    :vartype processedCount: int
+    :ivar source: Source Mongo (RU) collection. Required.
+    :vartype source: "CosmosDBMongoCollection"
+    :ivar destination: Destination Mongo (vCore) collection. Required.
+    :vartype destination: "CosmosDBMongoVCoreCollection"
+    """
+
+    source: Required["CosmosDBMongoCollection"]
+    """Source Mongo (RU) collection. Required."""
+    destination: Required["CosmosDBMongoVCoreCollection"]
+    """Destination Mongo (vCore) collection. Required."""
+
+
 class MongoUserDefinitionCreateUpdateParameters(TypedDict, total=False):  # pylint: disable=name-too-long
     """Parameters to create and update an Azure Cosmos DB Mongo User Definition.
 
@@ -4834,40 +4363,18 @@ class MongoUserDefinitionCreateUpdateParameters(TypedDict, total=False):  # pyli
     """Properties to create and update an Azure Cosmos DB Mongo User Definition."""
 
 
-class MongoUserDefinitionGetResults(ProxyResource):
-    """An Azure Cosmos DB User Definition.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Properties related to the User Definition.
-    :vartype properties: "MongoUserDefinitionResource"
-    """
-
-    properties: "MongoUserDefinitionResource"
-    """Properties related to the User Definition."""
-
-
 class MongoUserDefinitionResource(TypedDict, total=False):
     """Azure Cosmos DB Mongo User Definition resource object.
 
-    :ivar user_name: The user name for User Definition.
-    :vartype user_name: str
+    :ivar userName: The user name for User Definition.
+    :vartype userName: str
     :ivar password: The password for User Definition. Response does not contain user password.
     :vartype password: str
-    :ivar database_name: The database name for which access is being granted for this User
+    :ivar databaseName: The database name for which access is being granted for this User
      Definition.
-    :vartype database_name: str
-    :ivar custom_data: A custom definition for the USer Definition.
-    :vartype custom_data: str
+    :vartype databaseName: str
+    :ivar customData: A custom definition for the USer Definition.
+    :vartype customData: str
     :ivar roles: The set of roles inherited by the User Definition.
     :vartype roles: list["Role"]
     :ivar mechanisms: The Mongo Auth mechanism. For now, we only support auth mechanism
@@ -4889,42 +4396,60 @@ class MongoUserDefinitionResource(TypedDict, total=False):
     """The Mongo Auth mechanism. For now, we only support auth mechanism SCRAM-SHA-256."""
 
 
-class NotebookWorkspace(ProxyResource):
-    """A notebook workspace resource.
+class MongoVCoreSourceSinkDetails(TypedDict, total=False):
+    """A CosmosDB Mongo vCore data source/sink details.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Resource properties.
-    :vartype properties: "NotebookWorkspaceProperties"
+    :ivar hostName:
+    :vartype hostName: str
+    :ivar connectionStringKeyVaultUri: URI of Azure KeyVault secret containing connection string.
+    :vartype connectionStringKeyVaultUri: str
     """
 
-    properties: "NotebookWorkspaceProperties"
-    """Resource properties."""
+    hostName: str
+    connectionStringKeyVaultUri: str
+    """URI of Azure KeyVault secret containing connection string."""
 
 
-class NotebookWorkspaceConnectionInfoResult(TypedDict, total=False):
-    """The connection info for the given notebook workspace.
+class NoSqlRUToNoSqlRUCopyJobProperties(TypedDict, total=False):
+    """Source SQL to Destination SQL copy job properties.
 
-    :ivar auth_token: Specifies auth token used for connecting to Notebook server (uses token-based
-     auth).
-    :vartype auth_token: str
-    :ivar notebook_server_endpoint: Specifies the endpoint of Notebook server.
-    :vartype notebook_server_endpoint: str
+    :ivar sourceDetails: Source SQL DataStore details.
+    :vartype sourceDetails: "CosmosDBSourceSinkDetails"
+    :ivar destinationDetails: Destination SQL DataStore details.
+    :vartype destinationDetails: "CosmosDBSourceSinkDetails"
+    :ivar tasks: Copy Job tasks. Required.
+    :vartype tasks: list["NoSqlRUToNoSqlRUCopyJobTask"]
+    :ivar jobType: Copy Job Type. Required. NO_SQL_RU_TO_NO_SQL_RU.
+    :vartype jobType: Literal[CopyJobType.NO_SQL_RU_TO_NO_SQL_RU]
     """
 
-    authToken: str
-    """Specifies auth token used for connecting to Notebook server (uses token-based auth)."""
-    notebookServerEndpoint: str
-    """Specifies the endpoint of Notebook server."""
+    sourceDetails: "CosmosDBSourceSinkDetails"
+    """Source SQL DataStore details."""
+    destinationDetails: "CosmosDBSourceSinkDetails"
+    """Destination SQL DataStore details."""
+    tasks: Required[list["NoSqlRUToNoSqlRUCopyJobTask"]]
+    """Copy Job tasks. Required."""
+    jobType: Required[Literal[CopyJobType.NO_SQL_RU_TO_NO_SQL_RU]]
+    """Copy Job Type. Required. NO_SQL_RU_TO_NO_SQL_RU."""
+
+
+class NoSqlRUToNoSqlRUCopyJobTask(BaseCopyJobTask):
+    """NoSqlRUToNoSqlRUCopyJobTask.
+
+    :ivar totalCount: Task level Total Count.
+    :vartype totalCount: int
+    :ivar processedCount: Task level Processed Count.
+    :vartype processedCount: int
+    :ivar source: Source SQL container. Required.
+    :vartype source: "CosmosDBNoSqlContainer"
+    :ivar destination: Destination SQL container. Required.
+    :vartype destination: "CosmosDBNoSqlContainer"
+    """
+
+    source: Required["CosmosDBNoSqlContainer"]
+    """Source SQL container. Required."""
+    destination: Required["CosmosDBNoSqlContainer"]
+    """Destination SQL container. Required."""
 
 
 class NotebookWorkspaceCreateUpdateParameters(ARMProxyResource):
@@ -4939,233 +4464,14 @@ class NotebookWorkspaceCreateUpdateParameters(ARMProxyResource):
     """
 
 
-class NotebookWorkspaceProperties(TypedDict, total=False):
-    """Properties of a notebook workspace resource.
-
-    :ivar notebook_server_endpoint: Specifies the endpoint of Notebook server.
-    :vartype notebook_server_endpoint: str
-    :ivar status: Status of the notebook workspace. Possible values are: Creating, Online,
-     Deleting, Failed, Updating.
-    :vartype status: str
-    """
-
-    notebookServerEndpoint: str
-    """Specifies the endpoint of Notebook server."""
-    status: str
-    """Status of the notebook workspace. Possible values are: Creating, Online, Deleting, Failed,
-     Updating."""
-
-
-class Operation(TypedDict, total=False):
-    """REST API operation.
-
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
-    :vartype name: str
-    :ivar display: The object that represents the operation.
-    :vartype display: "OperationDisplay"
-    """
-
-    name: str
-    """Operation name: {provider}/{resource}/{operation}."""
-    display: "OperationDisplay"
-    """The object that represents the operation."""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """The object that represents the operation.
-
-    :ivar provider: Service provider: Microsoft.ResourceProvider.
-    :vartype provider: str
-    :ivar resource: Resource on which the operation is performed: Profile, endpoint, etc.
-    :vartype resource: str
-    :ivar operation: Operation type: Read, write, delete, etc.
-    :vartype operation: str
-    :ivar description: Description of operation.
-    :vartype description: str
-    """
-
-    Provider: str
-    """Service provider: Microsoft.ResourceProvider."""
-    Resource: str
-    """Resource on which the operation is performed: Profile, endpoint, etc."""
-    Operation: str
-    """Operation type: Read, write, delete, etc."""
-    Description: str
-    """Description of operation."""
-
-
-class PartitionMetric(Metric):
-    """The metric values for a single partition.
-
-    :ivar start_time: The start time for the metric (ISO-8601 format).
-    :vartype start_time: str
-    :ivar end_time: The end time for the metric (ISO-8601 format).
-    :vartype end_time: str
-    :ivar time_grain: The time grain to be used to summarize the metric values.
-    :vartype time_grain: str
-    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
-     "CountPerSecond", "BytesPerSecond", and "Milliseconds".
-    :vartype unit: Union[str, "UnitType"]
-    :ivar name: The name information for the metric.
-    :vartype name: "MetricName"
-    :ivar metric_values: The metric values for the specified time window and timestep.
-    :vartype metric_values: list["MetricValue"]
-    :ivar partition_id: The partition id (GUID identifier) of the metric values.
-    :vartype partition_id: str
-    :ivar partition_key_range_id: The partition key range id (integer identifier) of the metric
-     values.
-    :vartype partition_key_range_id: str
-    """
-
-    partitionId: str
-    """The partition id (GUID identifier) of the metric values."""
-    partitionKeyRangeId: str
-    """The partition key range id (integer identifier) of the metric values."""
-
-
-class Usage(TypedDict, total=False):
-    """The usage data for a usage request.
-
-    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
-     "CountPerSecond", "BytesPerSecond", and "Milliseconds".
-    :vartype unit: Union[str, "UnitType"]
-    :ivar name: The name information for the metric.
-    :vartype name: "MetricName"
-    :ivar quota_period: The quota period used to summarize the usage values.
-    :vartype quota_period: str
-    :ivar limit: Maximum value for this metric.
-    :vartype limit: int
-    :ivar current_value: Current value for this metric.
-    :vartype current_value: int
-    """
-
-    unit: Union[str, "UnitType"]
-    """The unit of the metric. Known values are: \"Count\", \"Bytes\", \"Seconds\", \"Percent\",
-     \"CountPerSecond\", \"BytesPerSecond\", and \"Milliseconds\"."""
-    name: "MetricName"
-    """The name information for the metric."""
-    quotaPeriod: str
-    """The quota period used to summarize the usage values."""
-    limit: int
-    """Maximum value for this metric."""
-    currentValue: int
-    """Current value for this metric."""
-
-
-class PartitionUsage(Usage):
-    """The partition level usage data for a usage request.
-
-    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
-     "CountPerSecond", "BytesPerSecond", and "Milliseconds".
-    :vartype unit: Union[str, "UnitType"]
-    :ivar name: The name information for the metric.
-    :vartype name: "MetricName"
-    :ivar quota_period: The quota period used to summarize the usage values.
-    :vartype quota_period: str
-    :ivar limit: Maximum value for this metric.
-    :vartype limit: int
-    :ivar current_value: Current value for this metric.
-    :vartype current_value: int
-    :ivar partition_id: The partition id (GUID identifier) of the usages.
-    :vartype partition_id: str
-    :ivar partition_key_range_id: The partition key range id (integer identifier) of the usages.
-    :vartype partition_key_range_id: str
-    """
-
-    partitionId: str
-    """The partition id (GUID identifier) of the usages."""
-    partitionKeyRangeId: str
-    """The partition key range id (integer identifier) of the usages."""
-
-
-class PercentileMetric(TypedDict, total=False):
-    """Percentile Metric data.
-
-    :ivar start_time: The start time for the metric (ISO-8601 format).
-    :vartype start_time: str
-    :ivar end_time: The end time for the metric (ISO-8601 format).
-    :vartype end_time: str
-    :ivar time_grain: The time grain to be used to summarize the metric values.
-    :vartype time_grain: str
-    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
-     "CountPerSecond", "BytesPerSecond", and "Milliseconds".
-    :vartype unit: Union[str, "UnitType"]
-    :ivar name: The name information for the metric.
-    :vartype name: "MetricName"
-    :ivar metric_values: The percentile metric values for the specified time window and timestep.
-    :vartype metric_values: list["PercentileMetricValue"]
-    """
-
-    startTime: str
-    """The start time for the metric (ISO-8601 format)."""
-    endTime: str
-    """The end time for the metric (ISO-8601 format)."""
-    timeGrain: str
-    """The time grain to be used to summarize the metric values."""
-    unit: Union[str, "UnitType"]
-    """The unit of the metric. Known values are: \"Count\", \"Bytes\", \"Seconds\", \"Percent\",
-     \"CountPerSecond\", \"BytesPerSecond\", and \"Milliseconds\"."""
-    name: "MetricName"
-    """The name information for the metric."""
-    metricValues: list["PercentileMetricValue"]
-    """The percentile metric values for the specified time window and timestep."""
-
-
-class PercentileMetricValue(MetricValue):
-    """Represents percentile metrics values.
-
-    :ivar count: The number of values for the metric.
-    :vartype count: int
-    :ivar average: The average value of the metric.
-    :vartype average: float
-    :ivar maximum: The max value of the metric.
-    :vartype maximum: float
-    :ivar minimum: The min value of the metric.
-    :vartype minimum: float
-    :ivar timestamp: The metric timestamp (ISO-8601 format).
-    :vartype timestamp: str
-    :ivar total: The total value of the metric.
-    :vartype total: float
-    :ivar p10: The 10th percentile value for the metric.
-    :vartype p10: float
-    :ivar p25: The 25th percentile value for the metric.
-    :vartype p25: float
-    :ivar p50: The 50th percentile value for the metric.
-    :vartype p50: float
-    :ivar p75: The 75th percentile value for the metric.
-    :vartype p75: float
-    :ivar p90: The 90th percentile value for the metric.
-    :vartype p90: float
-    :ivar p95: The 95th percentile value for the metric.
-    :vartype p95: float
-    :ivar p99: The 99th percentile value for the metric.
-    :vartype p99: float
-    """
-
-    P10: float
-    """The 10th percentile value for the metric."""
-    P25: float
-    """The 25th percentile value for the metric."""
-    P50: float
-    """The 50th percentile value for the metric."""
-    P75: float
-    """The 75th percentile value for the metric."""
-    P90: float
-    """The 90th percentile value for the metric."""
-    P95: float
-    """The 95th percentile value for the metric."""
-    P99: float
-    """The 99th percentile value for the metric."""
-
-
 class PeriodicModeBackupPolicy(TypedDict, total=False):
     """The object representing periodic mode backup policy.
 
-    :ivar migration_state: The object representing the state of the migration between the backup
+    :ivar migrationState: The object representing the state of the migration between the backup
      policies.
-    :vartype migration_state: "BackupPolicyMigrationState"
-    :ivar periodic_mode_properties: Configuration values for periodic mode backup.
-    :vartype periodic_mode_properties: "PeriodicModeProperties"
+    :vartype migrationState: "BackupPolicyMigrationState"
+    :ivar periodicModeProperties: Configuration values for periodic mode backup.
+    :vartype periodicModeProperties: "PeriodicModeProperties"
     :ivar type: Describes the mode of backups. Required. PERIODIC.
     :vartype type: Literal[BackupPolicyType.PERIODIC]
     """
@@ -5181,15 +4487,15 @@ class PeriodicModeBackupPolicy(TypedDict, total=False):
 class PeriodicModeProperties(TypedDict, total=False):
     """Configuration values for periodic mode backup.
 
-    :ivar backup_interval_in_minutes: An integer representing the interval in minutes between two
+    :ivar backupIntervalInMinutes: An integer representing the interval in minutes between two
      backups.
-    :vartype backup_interval_in_minutes: int
-    :ivar backup_retention_interval_in_hours: An integer representing the time (in hours) that each
+    :vartype backupIntervalInMinutes: int
+    :ivar backupRetentionIntervalInHours: An integer representing the time (in hours) that each
      backup is retained.
-    :vartype backup_retention_interval_in_hours: int
-    :ivar backup_storage_redundancy: Enum to indicate type of backup residency. Known values are:
+    :vartype backupRetentionIntervalInHours: int
+    :ivar backupStorageRedundancy: Enum to indicate type of backup residency. Known values are:
      "Geo", "Local", and "Zone".
-    :vartype backup_storage_redundancy: Union[str, "BackupStorageRedundancy"]
+    :vartype backupStorageRedundancy: Union[str, "BackupStorageRedundancy"]
     """
 
     backupIntervalInMinutes: int
@@ -5205,10 +4511,10 @@ class Permission(TypedDict, total=False):
 
     :ivar id: The id for the permission.
     :vartype id: str
-    :ivar data_actions: An array of data actions that are allowed.
-    :vartype data_actions: list[str]
-    :ivar not_data_actions: An array of data actions that are denied.
-    :vartype not_data_actions: list[str]
+    :ivar dataActions: An array of data actions that are allowed.
+    :vartype dataActions: list[str]
+    :ivar notDataActions: An array of data actions that are denied.
+    :vartype notDataActions: list[str]
     """
 
     id: str
@@ -5217,6 +4523,36 @@ class Permission(TypedDict, total=False):
     """An array of data actions that are allowed."""
     notDataActions: list[str]
     """An array of data actions that are denied."""
+
+
+class PhysicalPartitionId(TypedDict, total=False):
+    """PhysicalPartitionId object.
+
+    :ivar id: Id of a physical partition. Required.
+    :vartype id: str
+    """
+
+    id: Required[str]
+    """Id of a physical partition. Required."""
+
+
+class PhysicalPartitionThroughputInfoResource(TypedDict, total=False):
+    """PhysicalPartitionThroughputInfo object.
+
+    :ivar id: Id of a physical partition. Required.
+    :vartype id: str
+    :ivar throughput: Throughput of a physical partition.
+    :vartype throughput: float
+    :ivar targetThroughput: Target throughput of a physical partition.
+    :vartype targetThroughput: float
+    """
+
+    id: Required[str]
+    """Id of a physical partition. Required."""
+    throughput: float
+    """Throughput of a physical partition."""
+    targetThroughput: float
+    """Target throughput of a physical partition."""
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -5230,9 +4566,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Resource properties.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -5244,15 +4580,14 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of a private endpoint connection.
 
-    :ivar private_endpoint: Private endpoint which the connection belongs to.
-    :vartype private_endpoint: "PrivateEndpointProperty"
-    :ivar private_link_service_connection_state: Connection State of the Private Endpoint
-     Connection.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionStateProperty"
-    :ivar group_id: Group id of the private endpoint.
-    :vartype group_id: str
-    :ivar provisioning_state: Provisioning state of the private endpoint.
-    :vartype provisioning_state: str
+    :ivar privateEndpoint: Private endpoint which the connection belongs to.
+    :vartype privateEndpoint: "PrivateEndpointProperty"
+    :ivar privateLinkServiceConnectionState: Connection State of the Private Endpoint Connection.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionStateProperty"
+    :ivar groupId: Group id of the private endpoint.
+    :vartype groupId: str
+    :ivar provisioningState: Provisioning state of the private endpoint.
+    :vartype provisioningState: str
     """
 
     privateEndpoint: "PrivateEndpointProperty"
@@ -5276,47 +4611,6 @@ class PrivateEndpointProperty(TypedDict, total=False):
     """Resource id of the private endpoint."""
 
 
-class PrivateLinkResource(ProxyResource):
-    """A private link resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Resource properties.
-    :vartype properties: "PrivateLinkResourceProperties"
-    """
-
-    properties: "PrivateLinkResourceProperties"
-    """Resource properties."""
-
-
-class PrivateLinkResourceProperties(TypedDict, total=False):
-    """Properties of a private link resource.
-
-    :ivar group_id: The private link resource group id.
-    :vartype group_id: str
-    :ivar required_members: The private link resource required member names.
-    :vartype required_members: list[str]
-    :ivar required_zone_names: The private link resource required zone names.
-    :vartype required_zone_names: list[str]
-    """
-
-    groupId: str
-    """The private link resource group id."""
-    requiredMembers: list[str]
-    """The private link resource required member names."""
-    requiredZoneNames: list[str]
-    """The private link resource required zone names."""
-
-
 class PrivateLinkServiceConnectionStateProperty(TypedDict, total=False):  # pylint: disable=name-too-long
     """Connection State of the Private Endpoint Connection.
 
@@ -5324,9 +4618,9 @@ class PrivateLinkServiceConnectionStateProperty(TypedDict, total=False):  # pyli
     :vartype status: str
     :ivar description: The private link service connection description.
     :vartype description: str
-    :ivar actions_required: Any action that is required beyond basic workflow (approve/ reject/
+    :ivar actionsRequired: Any action that is required beyond basic workflow (approve/ reject/
      disconnect).
-    :vartype actions_required: str
+    :vartype actionsRequired: str
     """
 
     status: str
@@ -5367,6 +4661,68 @@ class PrivilegeResource(TypedDict, total=False):
     """The collection name the role is applied."""
 
 
+class RedistributeThroughputParameters(ARMResourceProperties):
+    """Cosmos DB redistribute throughput parameters object.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar location: The location of the resource group to which the resource belongs.
+    :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
+     "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar properties: Properties to redistribute throughput parameters object. Required.
+    :vartype properties: "RedistributeThroughputProperties"
+    """
+
+    properties: Required["RedistributeThroughputProperties"]
+    """Properties to redistribute throughput parameters object. Required."""
+
+
+class RedistributeThroughputProperties(TypedDict, total=False):
+    """Properties to redistribute throughput for Azure Cosmos DB resource.
+
+    :ivar resource: The standard JSON format of a resource throughput. Required.
+    :vartype resource: "RedistributeThroughputPropertiesResource"
+    """
+
+    resource: Required["RedistributeThroughputPropertiesResource"]
+    """The standard JSON format of a resource throughput. Required."""
+
+
+class RedistributeThroughputPropertiesResource(TypedDict, total=False):
+    """Resource to redistribute throughput for Azure Cosmos DB resource.
+
+    :ivar throughputPolicy: ThroughputPolicy to apply for throughput redistribution. Required.
+     Known values are: "none", "equal", and "custom".
+    :vartype throughputPolicy: Union[str, "ThroughputPolicyType"]
+    :ivar targetPhysicalPartitionThroughputInfo: Array of PhysicalPartitionThroughputInfoResource
+     objects. Required.
+    :vartype targetPhysicalPartitionThroughputInfo: list["PhysicalPartitionThroughputInfoResource"]
+    :ivar sourcePhysicalPartitionThroughputInfo: Array of PhysicalPartitionThroughputInfoResource
+     objects. Required.
+    :vartype sourcePhysicalPartitionThroughputInfo: list["PhysicalPartitionThroughputInfoResource"]
+    """
+
+    throughputPolicy: Required[Union[str, "ThroughputPolicyType"]]
+    """ThroughputPolicy to apply for throughput redistribution. Required. Known values are: \"none\",
+     \"equal\", and \"custom\"."""
+    targetPhysicalPartitionThroughputInfo: Required[list["PhysicalPartitionThroughputInfoResource"]]
+    """Array of PhysicalPartitionThroughputInfoResource objects. Required."""
+    sourcePhysicalPartitionThroughputInfo: Required[list["PhysicalPartitionThroughputInfoResource"]]
+    """Array of PhysicalPartitionThroughputInfoResource objects. Required."""
+
+
 class RegionForOnlineOffline(TypedDict, total=False):
     """Cosmos DB region to online or offline.
 
@@ -5381,15 +4737,15 @@ class RegionForOnlineOffline(TypedDict, total=False):
 class RestoreParametersBase(TypedDict, total=False):
     """Parameters to indicate the information about the restore.
 
-    :ivar restore_source: The id of the restorable database account from which the restore has to
-     be initiated. For example:
+    :ivar restoreSource: The id of the restorable database account from which the restore has to be
+     initiated. For example:
      /subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{restorableDatabaseAccountName}.
-    :vartype restore_source: str
-    :ivar restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601 format).
-    :vartype restore_timestamp_in_utc: str
-    :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
+    :vartype restoreSource: str
+    :ivar restoreTimestampInUtc: Time to which the account has to be restored (ISO-8601 format).
+    :vartype restoreTimestampInUtc: str
+    :ivar restoreWithTtlDisabled: Specifies whether the restored account will have Time-To-Live
      disabled upon the successful restore.
-    :vartype restore_with_ttl_disabled: bool
+    :vartype restoreWithTtlDisabled: bool
     """
 
     restoreSource: str
@@ -5406,522 +4762,16 @@ class RestoreParametersBase(TypedDict, total=False):
 class ResourceRestoreParameters(RestoreParametersBase):
     """Parameters to indicate the information about the restore.
 
-    :ivar restore_source: The id of the restorable database account from which the restore has to
-     be initiated. For example:
+    :ivar restoreSource: The id of the restorable database account from which the restore has to be
+     initiated. For example:
      /subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{restorableDatabaseAccountName}.
-    :vartype restore_source: str
-    :ivar restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601 format).
-    :vartype restore_timestamp_in_utc: str
-    :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
+    :vartype restoreSource: str
+    :ivar restoreTimestampInUtc: Time to which the account has to be restored (ISO-8601 format).
+    :vartype restoreTimestampInUtc: str
+    :ivar restoreWithTtlDisabled: Specifies whether the restored account will have Time-To-Live
      disabled upon the successful restore.
-    :vartype restore_with_ttl_disabled: bool
+    :vartype restoreWithTtlDisabled: bool
     """
-
-
-class RestorableDatabaseAccountGetResult(ProxyResource):
-    """A Azure Cosmos DB restorable database account.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of a restorable database account.
-    :vartype properties: "RestorableDatabaseAccountProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    """
-
-    properties: "RestorableDatabaseAccountProperties"
-    """The properties of a restorable database account."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-
-
-class RestorableDatabaseAccountProperties(TypedDict, total=False):
-    """The properties of a restorable database account.
-
-    :ivar account_name: The name of the global database account.
-    :vartype account_name: str
-    :ivar creation_time: The creation time of the restorable database account (ISO-8601 format).
-    :vartype creation_time: str
-    :ivar oldest_restorable_time: The least recent time at which the database account can be
-     restored to (ISO-8601 format).
-    :vartype oldest_restorable_time: str
-    :ivar deletion_time: The time at which the restorable database account has been deleted
-     (ISO-8601 format).
-    :vartype deletion_time: str
-    :ivar api_type: The API type of the restorable database account. Known values are: "MongoDB",
-     "Gremlin", "Cassandra", "Table", "Sql", and "GremlinV2".
-    :vartype api_type: Union[str, "ApiType"]
-    :ivar restorable_locations: List of regions where the of the database account can be restored
-     from.
-    :vartype restorable_locations: list["RestorableLocationResource"]
-    """
-
-    accountName: str
-    """The name of the global database account."""
-    creationTime: str
-    """The creation time of the restorable database account (ISO-8601 format)."""
-    oldestRestorableTime: str
-    """The least recent time at which the database account can be restored to (ISO-8601 format)."""
-    deletionTime: str
-    """The time at which the restorable database account has been deleted (ISO-8601 format)."""
-    apiType: Union[str, "ApiType"]
-    """The API type of the restorable database account. Known values are: \"MongoDB\", \"Gremlin\",
-     \"Cassandra\", \"Table\", \"Sql\", and \"GremlinV2\"."""
-    restorableLocations: list["RestorableLocationResource"]
-    """List of regions where the of the database account can be restored from."""
-
-
-class RestorableGremlinDatabaseGetResult(TypedDict, total=False):
-    """An Azure Cosmos DB Gremlin database event.
-
-    :ivar properties: The properties of a Gremlin database event.
-    :vartype properties: "RestorableGremlinDatabaseProperties"
-    :ivar id: The unique resource Identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    """
-
-    properties: "RestorableGremlinDatabaseProperties"
-    """The properties of a Gremlin database event."""
-    id: str
-    """The unique resource Identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-
-
-class RestorableGremlinDatabaseProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB Gremlin database event.
-
-    :ivar resource: The resource of an Azure Cosmos DB Gremlin database event.
-    :vartype resource: "RestorableGremlinDatabasePropertiesResource"
-    """
-
-    resource: "RestorableGremlinDatabasePropertiesResource"
-    """The resource of an Azure Cosmos DB Gremlin database event."""
-
-
-class RestorableGremlinDatabasePropertiesResource(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The resource of an Azure Cosmos DB Gremlin database event.
-
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar operation_type: The operation type of this database event. Known values are: "Create",
-     "Replace", "Delete", "Recreate", and "SystemOperation".
-    :vartype operation_type: Union[str, "OperationType"]
-    :ivar can_undelete: A state of this database to identify if this database is restorable in same
-     account.
-    :vartype can_undelete: str
-    :ivar can_undelete_reason: The reason why this database can not be restored in same account.
-    :vartype can_undelete_reason: str
-    :ivar event_timestamp: The time when this database event happened.
-    :vartype event_timestamp: str
-    :ivar owner_id: The name of this Gremlin database.
-    :vartype owner_id: str
-    :ivar owner_resource_id: The resource ID of this Gremlin database.
-    :vartype owner_resource_id: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    operationType: Union[str, "OperationType"]
-    """The operation type of this database event. Known values are: \"Create\", \"Replace\",
-     \"Delete\", \"Recreate\", and \"SystemOperation\"."""
-    canUndelete: str
-    """A state of this database to identify if this database is restorable in same account."""
-    canUndeleteReason: str
-    """The reason why this database can not be restored in same account."""
-    eventTimestamp: str
-    """The time when this database event happened."""
-    ownerId: str
-    """The name of this Gremlin database."""
-    ownerResourceId: str
-    """The resource ID of this Gremlin database."""
-
-
-class RestorableGremlinGraphGetResult(TypedDict, total=False):
-    """An Azure Cosmos DB Gremlin graph event.
-
-    :ivar properties: The properties of a Gremlin graph event.
-    :vartype properties: "RestorableGremlinGraphProperties"
-    :ivar id: The unique resource Identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    """
-
-    properties: "RestorableGremlinGraphProperties"
-    """The properties of a Gremlin graph event."""
-    id: str
-    """The unique resource Identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-
-
-class RestorableGremlinGraphProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB Gremlin graph event.
-
-    :ivar resource: The resource of an Azure Cosmos DB Gremlin graph event.
-    :vartype resource: "RestorableGremlinGraphPropertiesResource"
-    """
-
-    resource: "RestorableGremlinGraphPropertiesResource"
-    """The resource of an Azure Cosmos DB Gremlin graph event."""
-
-
-class RestorableGremlinGraphPropertiesResource(TypedDict, total=False):
-    """The resource of an Azure Cosmos DB Gremlin graph event.
-
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar operation_type: The operation type of this graph event. Known values are: "Create",
-     "Replace", "Delete", "Recreate", and "SystemOperation".
-    :vartype operation_type: Union[str, "OperationType"]
-    :ivar can_undelete: A state of this graph to identify if this graph is restorable in same
-     account.
-    :vartype can_undelete: str
-    :ivar can_undelete_reason: The reason why this graph can not be restored in same account.
-    :vartype can_undelete_reason: str
-    :ivar event_timestamp: The time when this graph event happened.
-    :vartype event_timestamp: str
-    :ivar owner_id: The name of this Gremlin graph.
-    :vartype owner_id: str
-    :ivar owner_resource_id: The resource ID of this Gremlin graph.
-    :vartype owner_resource_id: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    operationType: Union[str, "OperationType"]
-    """The operation type of this graph event. Known values are: \"Create\", \"Replace\", \"Delete\",
-     \"Recreate\", and \"SystemOperation\"."""
-    canUndelete: str
-    """A state of this graph to identify if this graph is restorable in same account."""
-    canUndeleteReason: str
-    """The reason why this graph can not be restored in same account."""
-    eventTimestamp: str
-    """The time when this graph event happened."""
-    ownerId: str
-    """The name of this Gremlin graph."""
-    ownerResourceId: str
-    """The resource ID of this Gremlin graph."""
-
-
-class RestorableGremlinResourcesGetResult(TypedDict, total=False):
-    """Specific Databases to restore.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar database_name: The name of the gremlin database available for restore.
-    :vartype database_name: str
-    :ivar graph_names: The names of the graphs available for restore.
-    :vartype graph_names: list[str]
-    """
-
-    id: str
-    """The unique resource identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-    databaseName: str
-    """The name of the gremlin database available for restore."""
-    graphNames: list[str]
-    """The names of the graphs available for restore."""
-
-
-class RestorableLocationResource(TypedDict, total=False):
-    """Properties of the regional restorable account.
-
-    :ivar location_name: The location of the regional restorable account.
-    :vartype location_name: str
-    :ivar regional_database_account_instance_id: The instance id of the regional restorable
-     account.
-    :vartype regional_database_account_instance_id: str
-    :ivar creation_time: The creation time of the regional restorable database account (ISO-8601
-     format).
-    :vartype creation_time: str
-    :ivar deletion_time: The time at which the regional restorable database account has been
-     deleted (ISO-8601 format).
-    :vartype deletion_time: str
-    """
-
-    locationName: str
-    """The location of the regional restorable account."""
-    regionalDatabaseAccountInstanceId: str
-    """The instance id of the regional restorable account."""
-    creationTime: str
-    """The creation time of the regional restorable database account (ISO-8601 format)."""
-    deletionTime: str
-    """The time at which the regional restorable database account has been deleted (ISO-8601 format)."""
-
-
-class RestorableMongodbCollectionGetResult(TypedDict, total=False):
-    """An Azure Cosmos DB MongoDB collection event.
-
-    :ivar properties: The properties of a MongoDB collection event.
-    :vartype properties: "RestorableMongodbCollectionProperties"
-    :ivar id: The unique resource Identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    """
-
-    properties: "RestorableMongodbCollectionProperties"
-    """The properties of a MongoDB collection event."""
-    id: str
-    """The unique resource Identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-
-
-class RestorableMongodbCollectionProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB MongoDB collection event.
-
-    :ivar resource: The resource of an Azure Cosmos DB MongoDB collection event.
-    :vartype resource: "RestorableMongodbCollectionPropertiesResource"
-    """
-
-    resource: "RestorableMongodbCollectionPropertiesResource"
-    """The resource of an Azure Cosmos DB MongoDB collection event."""
-
-
-class RestorableMongodbCollectionPropertiesResource(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The resource of an Azure Cosmos DB MongoDB collection event.
-
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar operation_type: The operation type of this collection event. Known values are: "Create",
-     "Replace", "Delete", "Recreate", and "SystemOperation".
-    :vartype operation_type: Union[str, "OperationType"]
-    :ivar can_undelete: A state of this collection to identify if this container is restorable in
-     same account.
-    :vartype can_undelete: str
-    :ivar can_undelete_reason: The reason why this collection can not be restored in same account.
-    :vartype can_undelete_reason: str
-    :ivar event_timestamp: The time when this collection event happened.
-    :vartype event_timestamp: str
-    :ivar owner_id: The name of this MongoDB collection.
-    :vartype owner_id: str
-    :ivar owner_resource_id: The resource ID of this MongoDB collection.
-    :vartype owner_resource_id: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    operationType: Union[str, "OperationType"]
-    """The operation type of this collection event. Known values are: \"Create\", \"Replace\",
-     \"Delete\", \"Recreate\", and \"SystemOperation\"."""
-    canUndelete: str
-    """A state of this collection to identify if this container is restorable in same account."""
-    canUndeleteReason: str
-    """The reason why this collection can not be restored in same account."""
-    eventTimestamp: str
-    """The time when this collection event happened."""
-    ownerId: str
-    """The name of this MongoDB collection."""
-    ownerResourceId: str
-    """The resource ID of this MongoDB collection."""
-
-
-class RestorableMongodbDatabaseGetResult(TypedDict, total=False):
-    """An Azure Cosmos DB MongoDB database event.
-
-    :ivar properties: The properties of a MongoDB database event.
-    :vartype properties: "RestorableMongodbDatabaseProperties"
-    :ivar id: The unique resource Identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    """
-
-    properties: "RestorableMongodbDatabaseProperties"
-    """The properties of a MongoDB database event."""
-    id: str
-    """The unique resource Identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-
-
-class RestorableMongodbDatabaseProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB MongoDB database event.
-
-    :ivar resource: The resource of an Azure Cosmos DB MongoDB database event.
-    :vartype resource: "RestorableMongodbDatabasePropertiesResource"
-    """
-
-    resource: "RestorableMongodbDatabasePropertiesResource"
-    """The resource of an Azure Cosmos DB MongoDB database event."""
-
-
-class RestorableMongodbDatabasePropertiesResource(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The resource of an Azure Cosmos DB MongoDB database event.
-
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar operation_type: The operation type of this database event. Known values are: "Create",
-     "Replace", "Delete", "Recreate", and "SystemOperation".
-    :vartype operation_type: Union[str, "OperationType"]
-    :ivar can_undelete: A state of this database to identify if this database is restorable in same
-     account.
-    :vartype can_undelete: str
-    :ivar can_undelete_reason: The reason why this database can not be restored in same account.
-    :vartype can_undelete_reason: str
-    :ivar event_timestamp: The time when this database event happened.
-    :vartype event_timestamp: str
-    :ivar owner_id: The name of this MongoDB database.
-    :vartype owner_id: str
-    :ivar owner_resource_id: The resource ID of this MongoDB database.
-    :vartype owner_resource_id: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    operationType: Union[str, "OperationType"]
-    """The operation type of this database event. Known values are: \"Create\", \"Replace\",
-     \"Delete\", \"Recreate\", and \"SystemOperation\"."""
-    canUndelete: str
-    """A state of this database to identify if this database is restorable in same account."""
-    canUndeleteReason: str
-    """The reason why this database can not be restored in same account."""
-    eventTimestamp: str
-    """The time when this database event happened."""
-    ownerId: str
-    """The name of this MongoDB database."""
-    ownerResourceId: str
-    """The resource ID of this MongoDB database."""
-
-
-class RestorableMongodbResourcesGetResult(TypedDict, total=False):
-    """Specific Databases to restore.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar database_name: The name of the database available for restore.
-    :vartype database_name: str
-    :ivar collection_names: The names of the collections available for restore.
-    :vartype collection_names: list[str]
-    """
-
-    id: str
-    """The unique resource identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-    databaseName: str
-    """The name of the database available for restore."""
-    collectionNames: list[str]
-    """The names of the collections available for restore."""
-
-
-class RestorableSqlContainerGetResult(TypedDict, total=False):
-    """An Azure Cosmos DB SQL container event.
-
-    :ivar properties: The properties of a SQL container event.
-    :vartype properties: "RestorableSqlContainerProperties"
-    :ivar id: The unique resource Identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    """
-
-    properties: "RestorableSqlContainerProperties"
-    """The properties of a SQL container event."""
-    id: str
-    """The unique resource Identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-
-
-class RestorableSqlContainerProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB SQL container event.
-
-    :ivar resource: The resource of an Azure Cosmos DB SQL container event.
-    :vartype resource: "RestorableSqlContainerPropertiesResource"
-    """
-
-    resource: "RestorableSqlContainerPropertiesResource"
-    """The resource of an Azure Cosmos DB SQL container event."""
-
-
-class RestorableSqlContainerPropertiesResource(TypedDict, total=False):
-    """The resource of an Azure Cosmos DB SQL container event.
-
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar operation_type: The operation type of this container event. Known values are: "Create",
-     "Replace", "Delete", "Recreate", and "SystemOperation".
-    :vartype operation_type: Union[str, "OperationType"]
-    :ivar can_undelete: A state of this container to identify if this container is restorable in
-     same account.
-    :vartype can_undelete: str
-    :ivar can_undelete_reason: The reason why this container can not be restored in same account.
-    :vartype can_undelete_reason: str
-    :ivar event_timestamp: The when this container event happened.
-    :vartype event_timestamp: str
-    :ivar owner_id: The name of this SQL container.
-    :vartype owner_id: str
-    :ivar owner_resource_id: The resource ID of this SQL container.
-    :vartype owner_resource_id: str
-    :ivar container: Cosmos DB SQL container resource object.
-    :vartype container: "RestorableSqlContainerPropertiesResourceContainer"
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    operationType: Union[str, "OperationType"]
-    """The operation type of this container event. Known values are: \"Create\", \"Replace\",
-     \"Delete\", \"Recreate\", and \"SystemOperation\"."""
-    canUndelete: str
-    """A state of this container to identify if this container is restorable in same account."""
-    canUndeleteReason: str
-    """The reason why this container can not be restored in same account."""
-    eventTimestamp: str
-    """The when this container event happened."""
-    ownerId: str
-    """The name of this SQL container."""
-    ownerResourceId: str
-    """The resource ID of this SQL container."""
-    container: "RestorableSqlContainerPropertiesResourceContainer"
-    """Cosmos DB SQL container resource object."""
 
 
 class SqlContainerResource(TypedDict, total=False):
@@ -5929,34 +4779,43 @@ class SqlContainerResource(TypedDict, total=False):
 
     :ivar id: Name of the Cosmos DB SQL container. Required.
     :vartype id: str
-    :ivar indexing_policy: The configuration of the indexing policy. By default, the indexing is
+    :ivar indexingPolicy: The configuration of the indexing policy. By default, the indexing is
      automatic for all document paths within the container.
-    :vartype indexing_policy: "IndexingPolicy"
-    :ivar partition_key: The configuration of the partition key to be used for partitioning data
+    :vartype indexingPolicy: "IndexingPolicy"
+    :ivar partitionKey: The configuration of the partition key to be used for partitioning data
      into multiple partitions.
-    :vartype partition_key: "ContainerPartitionKey"
-    :ivar default_ttl: Default time to live.
-    :vartype default_ttl: int
-    :ivar unique_key_policy: The unique key policy configuration for specifying uniqueness
+    :vartype partitionKey: "ContainerPartitionKey"
+    :ivar defaultTtl: Default time to live.
+    :vartype defaultTtl: int
+    :ivar uniqueKeyPolicy: The unique key policy configuration for specifying uniqueness
      constraints on documents in the collection in the Azure Cosmos DB service.
-    :vartype unique_key_policy: "UniqueKeyPolicy"
-    :ivar conflict_resolution_policy: The conflict resolution policy for the container.
-    :vartype conflict_resolution_policy: "ConflictResolutionPolicy"
-    :ivar client_encryption_policy: The client encryption policy for the container.
-    :vartype client_encryption_policy: "ClientEncryptionPolicy"
-    :ivar analytical_storage_ttl: Analytical TTL.
-    :vartype analytical_storage_ttl: int
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
+    :vartype uniqueKeyPolicy: "UniqueKeyPolicy"
+    :ivar conflictResolutionPolicy: The conflict resolution policy for the container.
+    :vartype conflictResolutionPolicy: "ConflictResolutionPolicy"
+    :ivar clientEncryptionPolicy: The client encryption policy for the container.
+    :vartype clientEncryptionPolicy: "ClientEncryptionPolicy"
+    :ivar analyticalStorageTtl: Analytical TTL.
+    :vartype analyticalStorageTtl: int
+    :ivar restoreParameters: Parameters to indicate the information about the restore.
+    :vartype restoreParameters: "ResourceRestoreParameters"
+    :ivar createMode: Enum to indicate the mode of account creation. Known values are: "Default"
      and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar computed_properties: List of computed properties.
-    :vartype computed_properties: list["ComputedProperty"]
-    :ivar vector_embedding_policy: The vector embedding policy for the container.
-    :vartype vector_embedding_policy: "VectorEmbeddingPolicy"
-    :ivar full_text_policy: The FullText policy for the container.
-    :vartype full_text_policy: "FullTextPolicy"
+    :vartype createMode: Union[str, "CreateMode"]
+    :ivar materializedViewDefinition: The configuration for defining Materialized Views. This must
+     be specified only for creating a Materialized View container.
+    :vartype materializedViewDefinition: "MaterializedViewDefinition"
+    :ivar materializedViews: Materialized Views defined on the container.
+    :vartype materializedViews: list["MaterializedViewDetails"]
+    :ivar materializedViewsProperties: Materialized Views Properties defined for source container.
+    :vartype materializedViewsProperties: "MaterializedViewsProperties"
+    :ivar computedProperties: List of computed properties.
+    :vartype computedProperties: list["ComputedProperty"]
+    :ivar vectorEmbeddingPolicy: The vector embedding policy for the container.
+    :vartype vectorEmbeddingPolicy: "VectorEmbeddingPolicy"
+    :ivar fullTextPolicy: The FullText policy for the container.
+    :vartype fullTextPolicy: "FullTextPolicy"
+    :ivar dataMaskingPolicy: The Data Masking policy for the container.
+    :vartype dataMaskingPolicy: "DataMaskingPolicy"
     """
 
     id: Required[str]
@@ -5982,144 +4841,21 @@ class SqlContainerResource(TypedDict, total=False):
     """Parameters to indicate the information about the restore."""
     createMode: Union[str, "CreateMode"]
     """Enum to indicate the mode of account creation. Known values are: \"Default\" and \"Restore\"."""
+    materializedViewDefinition: "MaterializedViewDefinition"
+    """The configuration for defining Materialized Views. This must be specified only for creating a
+     Materialized View container."""
+    materializedViews: list["MaterializedViewDetails"]
+    """Materialized Views defined on the container."""
+    materializedViewsProperties: "MaterializedViewsProperties"
+    """Materialized Views Properties defined for source container."""
     computedProperties: list["ComputedProperty"]
     """List of computed properties."""
     vectorEmbeddingPolicy: "VectorEmbeddingPolicy"
     """The vector embedding policy for the container."""
     fullTextPolicy: "FullTextPolicy"
     """The FullText policy for the container."""
-
-
-class RestorableSqlContainerPropertiesResourceContainer(SqlContainerResource):  # pylint: disable=name-too-long
-    """Cosmos DB SQL container resource object.
-
-    :ivar id: Name of the Cosmos DB SQL container. Required.
-    :vartype id: str
-    :ivar indexing_policy: The configuration of the indexing policy. By default, the indexing is
-     automatic for all document paths within the container.
-    :vartype indexing_policy: "IndexingPolicy"
-    :ivar partition_key: The configuration of the partition key to be used for partitioning data
-     into multiple partitions.
-    :vartype partition_key: "ContainerPartitionKey"
-    :ivar default_ttl: Default time to live.
-    :vartype default_ttl: int
-    :ivar unique_key_policy: The unique key policy configuration for specifying uniqueness
-     constraints on documents in the collection in the Azure Cosmos DB service.
-    :vartype unique_key_policy: "UniqueKeyPolicy"
-    :ivar conflict_resolution_policy: The conflict resolution policy for the container.
-    :vartype conflict_resolution_policy: "ConflictResolutionPolicy"
-    :ivar client_encryption_policy: The client encryption policy for the container.
-    :vartype client_encryption_policy: "ClientEncryptionPolicy"
-    :ivar analytical_storage_ttl: Analytical TTL.
-    :vartype analytical_storage_ttl: int
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar computed_properties: List of computed properties.
-    :vartype computed_properties: list["ComputedProperty"]
-    :ivar vector_embedding_policy: The vector embedding policy for the container.
-    :vartype vector_embedding_policy: "VectorEmbeddingPolicy"
-    :ivar full_text_policy: The FullText policy for the container.
-    :vartype full_text_policy: "FullTextPolicy"
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    :ivar self_property: A system generated property that specifies the addressable path of the
-     container resource.
-    :vartype self_property: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-    _self: str
-    """A system generated property that specifies the addressable path of the container resource."""
-
-
-class RestorableSqlDatabaseGetResult(TypedDict, total=False):
-    """An Azure Cosmos DB SQL database event.
-
-    :ivar properties: The properties of a SQL database event.
-    :vartype properties: "RestorableSqlDatabaseProperties"
-    :ivar id: The unique resource Identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    """
-
-    properties: "RestorableSqlDatabaseProperties"
-    """The properties of a SQL database event."""
-    id: str
-    """The unique resource Identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-
-
-class RestorableSqlDatabaseProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB SQL database event.
-
-    :ivar resource: The resource of an Azure Cosmos DB SQL database event.
-    :vartype resource: "RestorableSqlDatabasePropertiesResource"
-    """
-
-    resource: "RestorableSqlDatabasePropertiesResource"
-    """The resource of an Azure Cosmos DB SQL database event."""
-
-
-class RestorableSqlDatabasePropertiesResource(TypedDict, total=False):
-    """The resource of an Azure Cosmos DB SQL database event.
-
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar operation_type: The operation type of this database event. Known values are: "Create",
-     "Replace", "Delete", "Recreate", and "SystemOperation".
-    :vartype operation_type: Union[str, "OperationType"]
-    :ivar can_undelete: A state of this database to identify if this database is restorable in same
-     account.
-    :vartype can_undelete: str
-    :ivar can_undelete_reason: The reason why this database can not be restored in same account.
-    :vartype can_undelete_reason: str
-    :ivar event_timestamp: The time when this database event happened.
-    :vartype event_timestamp: str
-    :ivar owner_id: The name of the SQL database.
-    :vartype owner_id: str
-    :ivar owner_resource_id: The resource ID of the SQL database.
-    :vartype owner_resource_id: str
-    :ivar database: Cosmos DB SQL database resource object.
-    :vartype database: "RestorableSqlDatabasePropertiesResourceDatabase"
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    operationType: Union[str, "OperationType"]
-    """The operation type of this database event. Known values are: \"Create\", \"Replace\",
-     \"Delete\", \"Recreate\", and \"SystemOperation\"."""
-    canUndelete: str
-    """A state of this database to identify if this database is restorable in same account."""
-    canUndeleteReason: str
-    """The reason why this database can not be restored in same account."""
-    eventTimestamp: str
-    """The time when this database event happened."""
-    ownerId: str
-    """The name of the SQL database."""
-    ownerResourceId: str
-    """The resource ID of the SQL database."""
-    database: "RestorableSqlDatabasePropertiesResourceDatabase"
-    """Cosmos DB SQL database resource object."""
+    dataMaskingPolicy: "DataMaskingPolicy"
+    """The Data Masking policy for the container."""
 
 
 class SqlDatabaseResource(TypedDict, total=False):
@@ -6127,11 +4863,11 @@ class SqlDatabaseResource(TypedDict, total=False):
 
     :ivar id: Name of the Cosmos DB SQL database. Required.
     :vartype id: str
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
+    :ivar restoreParameters: Parameters to indicate the information about the restore.
+    :vartype restoreParameters: "ResourceRestoreParameters"
+    :ivar createMode: Enum to indicate the mode of account creation. Known values are: "Default"
      and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
+    :vartype createMode: Union[str, "CreateMode"]
     """
 
     id: Required[str]
@@ -6142,189 +4878,28 @@ class SqlDatabaseResource(TypedDict, total=False):
     """Enum to indicate the mode of account creation. Known values are: \"Default\" and \"Restore\"."""
 
 
-class RestorableSqlDatabasePropertiesResourceDatabase(SqlDatabaseResource):  # pylint: disable=name-too-long
-    """Cosmos DB SQL database resource object.
-
-    :ivar id: Name of the Cosmos DB SQL database. Required.
-    :vartype id: str
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    :ivar colls: A system generated property that specified the addressable path of the collections
-     resource.
-    :vartype colls: str
-    :ivar users: A system generated property that specifies the addressable path of the users
-     resource.
-    :vartype users: str
-    :ivar self_property: A system generated property that specifies the addressable path of the
-     database resource.
-    :vartype self_property: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-    _colls: str
-    """A system generated property that specified the addressable path of the collections resource."""
-    _users: str
-    """A system generated property that specifies the addressable path of the users resource."""
-    _self: str
-    """A system generated property that specifies the addressable path of the database resource."""
-
-
-class RestorableSqlResourcesGetResult(TypedDict, total=False):
-    """Specific Databases to restore.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar database_name: The name of the database available for restore.
-    :vartype database_name: str
-    :ivar collection_names: The names of the collections available for restore.
-    :vartype collection_names: list[str]
-    """
-
-    id: str
-    """The unique resource identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-    databaseName: str
-    """The name of the database available for restore."""
-    collectionNames: list[str]
-    """The names of the collections available for restore."""
-
-
-class RestorableTableGetResult(TypedDict, total=False):
-    """An Azure Cosmos DB Table event.
-
-    :ivar properties: The properties of a Table event.
-    :vartype properties: "RestorableTableProperties"
-    :ivar id: The unique resource Identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    """
-
-    properties: "RestorableTableProperties"
-    """The properties of a Table event."""
-    id: str
-    """The unique resource Identifier of the ARM resource."""
-    name: str
-    """The name of the ARM resource."""
-    type: str
-    """The type of Azure resource."""
-
-
-class RestorableTableProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB Table event.
-
-    :ivar resource: The resource of an Azure Cosmos DB Table event.
-    :vartype resource: "RestorableTablePropertiesResource"
-    """
-
-    resource: "RestorableTablePropertiesResource"
-    """The resource of an Azure Cosmos DB Table event."""
-
-
-class RestorableTablePropertiesResource(TypedDict, total=False):
-    """The resource of an Azure Cosmos DB Table event.
-
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar operation_type: The operation type of this table event. Known values are: "Create",
-     "Replace", "Delete", "Recreate", and "SystemOperation".
-    :vartype operation_type: Union[str, "OperationType"]
-    :ivar can_undelete: A state of this table to identify if this table is restorable in same
-     account.
-    :vartype can_undelete: str
-    :ivar can_undelete_reason: The reason why this table can not be restored in same account.
-    :vartype can_undelete_reason: str
-    :ivar event_timestamp: The time when this table event happened.
-    :vartype event_timestamp: str
-    :ivar owner_id: The name of this Table.
-    :vartype owner_id: str
-    :ivar owner_resource_id: The resource ID of this Table.
-    :vartype owner_resource_id: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    operationType: Union[str, "OperationType"]
-    """The operation type of this table event. Known values are: \"Create\", \"Replace\", \"Delete\",
-     \"Recreate\", and \"SystemOperation\"."""
-    canUndelete: str
-    """A state of this table to identify if this table is restorable in same account."""
-    canUndeleteReason: str
-    """The reason why this table can not be restored in same account."""
-    eventTimestamp: str
-    """The time when this table event happened."""
-    ownerId: str
-    """The name of this Table."""
-    ownerResourceId: str
-    """The resource ID of this Table."""
-
-
-class RestorableTableResourcesGetResult(TypedDict, total=False):
-    """Specific Databases to restore.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the Table.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    """
-
-    id: str
-    """The unique resource identifier of the ARM resource."""
-    name: str
-    """The name of the Table."""
-    type: str
-    """The type of Azure resource."""
-
-
 class RestoreParameters(RestoreParametersBase):
     """Parameters to indicate the information about the restore.
 
-    :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
+    :ivar restoreWithTtlDisabled: Specifies whether the restored account will have Time-To-Live
      disabled upon the successful restore.
-    :vartype restore_with_ttl_disabled: bool
-    :ivar restore_mode: Describes the mode of the restore. "PointInTime"
-    :vartype restore_mode: Union[str, "RestoreMode"]
-    :ivar restore_source: The id of the restorable database account from which the restore has to
-     be initiated. For example:
+    :vartype restoreWithTtlDisabled: bool
+    :ivar restoreMode: Describes the mode of the restore. "PointInTime"
+    :vartype restoreMode: Union[str, "RestoreMode"]
+    :ivar restoreSource: The id of the restorable database account from which the restore has to be
+     initiated. For example:
      /subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{restorableDatabaseAccountName}.
-    :vartype restore_source: str
-    :ivar restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601 format).
-    :vartype restore_timestamp_in_utc: str
-    :ivar databases_to_restore: List of specific databases available for restore.
-    :vartype databases_to_restore: list["DatabaseRestoreResource"]
-    :ivar gremlin_databases_to_restore: List of specific gremlin databases available for restore.
-    :vartype gremlin_databases_to_restore: list["GremlinDatabaseRestoreResource"]
-    :ivar tables_to_restore: List of specific tables available for restore.
-    :vartype tables_to_restore: list[str]
-    :ivar source_backup_location: The source backup location for restore.
-    :vartype source_backup_location: str
+    :vartype restoreSource: str
+    :ivar restoreTimestampInUtc: Time to which the account has to be restored (ISO-8601 format).
+    :vartype restoreTimestampInUtc: str
+    :ivar databasesToRestore: List of specific databases available for restore.
+    :vartype databasesToRestore: list["DatabaseRestoreResource"]
+    :ivar gremlinDatabasesToRestore: List of specific gremlin databases available for restore.
+    :vartype gremlinDatabasesToRestore: list["GremlinDatabaseRestoreResource"]
+    :ivar tablesToRestore: List of specific tables available for restore.
+    :vartype tablesToRestore: list[str]
+    :ivar sourceBackupLocation: The source backup location for restore.
+    :vartype sourceBackupLocation: str
     """
 
     restoreMode: Union[str, "RestoreMode"]
@@ -6337,6 +4912,56 @@ class RestoreParameters(RestoreParametersBase):
     """List of specific tables available for restore."""
     sourceBackupLocation: str
     """The source backup location for restore."""
+
+
+class RetrieveThroughputParameters(ARMResourceProperties):
+    """Cosmos DB retrieve throughput parameters object.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar location: The location of the resource group to which the resource belongs.
+    :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
+     "Graph", "DocumentDB", and "MongoDB".
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar properties: Properties to retrieve throughput parameters object. Required.
+    :vartype properties: "RetrieveThroughputProperties"
+    """
+
+    properties: Required["RetrieveThroughputProperties"]
+    """Properties to retrieve throughput parameters object. Required."""
+
+
+class RetrieveThroughputProperties(TypedDict, total=False):
+    """Properties to retrieve throughput for Azure Cosmos DB resource.
+
+    :ivar resource: The standard JSON format of a resource throughput. Required.
+    :vartype resource: "RetrieveThroughputPropertiesResource"
+    """
+
+    resource: Required["RetrieveThroughputPropertiesResource"]
+    """The standard JSON format of a resource throughput. Required."""
+
+
+class RetrieveThroughputPropertiesResource(TypedDict, total=False):
+    """Resource to retrieve throughput information for Cosmos DB resource.
+
+    :ivar physicalPartitionIds: Array of PhysicalPartitionId objects. Required.
+    :vartype physicalPartitionIds: list["PhysicalPartitionId"]
+    """
+
+    physicalPartitionIds: Required[list["PhysicalPartitionId"]]
+    """Array of PhysicalPartitionId objects. Required."""
 
 
 class Role(TypedDict, total=False):
@@ -6357,34 +4982,12 @@ class Role(TypedDict, total=False):
 class SeedNode(TypedDict, total=False):
     """SeedNode.
 
-    :ivar ip_address: IP address of this seed node.
-    :vartype ip_address: str
+    :ivar ipAddress: IP address of this seed node.
+    :vartype ipAddress: str
     """
 
     ipAddress: str
     """IP address of this seed node."""
-
-
-class ServiceResource(ProxyResource):
-    """Properties for the database account.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Services response resource.
-    :vartype properties: "ServiceResourceProperties"
-    """
-
-    properties: "ServiceResourceProperties"
-    """Services response resource."""
 
 
 class ServiceResourceCreateUpdateParameters(TypedDict, total=False):
@@ -6396,6 +4999,27 @@ class ServiceResourceCreateUpdateParameters(TypedDict, total=False):
 
     properties: "ServiceResourceCreateUpdateProperties"
     """Properties in ServiceResourceCreateUpdateParameters."""
+
+
+class SoftDeleteConfiguration(TypedDict, total=False):
+    """Configuration for soft delete on the Cosmos DB account.
+
+    :ivar softDeletionEnabled: Flag to indicate whether soft delete is enabled on the account.
+    :vartype softDeletionEnabled: bool
+    :ivar minMinutesBeforePermanentDeletionAllowed: Minimum number of minutes before a soft deleted
+     resource can be permanently deleted.
+    :vartype minMinutesBeforePermanentDeletionAllowed: int
+    :ivar softDeleteRetentionPeriodInMinutes: Soft delete retention period in minutes for
+     resources.
+    :vartype softDeleteRetentionPeriodInMinutes: int
+    """
+
+    softDeletionEnabled: bool
+    """Flag to indicate whether soft delete is enabled on the account."""
+    minMinutesBeforePermanentDeletionAllowed: int
+    """Minimum number of minutes before a soft deleted resource can be permanently deleted."""
+    softDeleteRetentionPeriodInMinutes: int
+    """Soft delete retention period in minutes for resources."""
 
 
 class SpatialSpec(TypedDict, total=False):
@@ -6460,125 +5084,6 @@ class SqlContainerCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class SqlContainerGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB container.
-
-    :ivar resource:
-    :vartype resource: "SqlContainerGetPropertiesResource"
-    :ivar options:
-    :vartype options: "SqlContainerGetPropertiesOptions"
-    """
-
-    resource: "SqlContainerGetPropertiesResource"
-    options: "SqlContainerGetPropertiesOptions"
-
-
-class SqlContainerGetPropertiesOptions(OptionsResource):
-    """SqlContainerGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-
-class SqlContainerGetPropertiesResource(SqlContainerResource):
-    """SqlContainerGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB SQL container. Required.
-    :vartype id: str
-    :ivar indexing_policy: The configuration of the indexing policy. By default, the indexing is
-     automatic for all document paths within the container.
-    :vartype indexing_policy: "IndexingPolicy"
-    :ivar partition_key: The configuration of the partition key to be used for partitioning data
-     into multiple partitions.
-    :vartype partition_key: "ContainerPartitionKey"
-    :ivar default_ttl: Default time to live.
-    :vartype default_ttl: int
-    :ivar unique_key_policy: The unique key policy configuration for specifying uniqueness
-     constraints on documents in the collection in the Azure Cosmos DB service.
-    :vartype unique_key_policy: "UniqueKeyPolicy"
-    :ivar conflict_resolution_policy: The conflict resolution policy for the container.
-    :vartype conflict_resolution_policy: "ConflictResolutionPolicy"
-    :ivar client_encryption_policy: The client encryption policy for the container.
-    :vartype client_encryption_policy: "ClientEncryptionPolicy"
-    :ivar analytical_storage_ttl: Analytical TTL.
-    :vartype analytical_storage_ttl: int
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar computed_properties: List of computed properties.
-    :vartype computed_properties: list["ComputedProperty"]
-    :ivar vector_embedding_policy: The vector embedding policy for the container.
-    :vartype vector_embedding_policy: "VectorEmbeddingPolicy"
-    :ivar full_text_policy: The FullText policy for the container.
-    :vartype full_text_policy: "FullTextPolicy"
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class SqlContainerGetResults(ProxyResource):
-    """An Azure Cosmos DB container.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB container.
-    :vartype properties: "SqlContainerGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "SqlContainerGetProperties"
-    """The properties of an Azure Cosmos DB container."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
-
-
 class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
     """Parameters to create and update Cosmos DB SQL database.
 
@@ -6624,143 +5129,19 @@ class SqlDatabaseCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class SqlDatabaseGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB SQL database.
-
-    :ivar resource:
-    :vartype resource: "SqlDatabaseGetPropertiesResource"
-    :ivar options:
-    :vartype options: "SqlDatabaseGetPropertiesOptions"
-    """
-
-    resource: "SqlDatabaseGetPropertiesResource"
-    options: "SqlDatabaseGetPropertiesOptions"
-
-
-class SqlDatabaseGetPropertiesOptions(OptionsResource):
-    """SqlDatabaseGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-
-class SqlDatabaseGetPropertiesResource(SqlDatabaseResource):
-    """SqlDatabaseGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB SQL database. Required.
-    :vartype id: str
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    :ivar colls: A system generated property that specified the addressable path of the collections
-     resource.
-    :vartype colls: str
-    :ivar users: A system generated property that specifies the addressable path of the users
-     resource.
-    :vartype users: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-    _colls: str
-    """A system generated property that specified the addressable path of the collections resource."""
-    _users: str
-    """A system generated property that specifies the addressable path of the users resource."""
-
-
-class SqlDatabaseGetResults(ProxyResource):
-    """An Azure Cosmos DB SQL database.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB SQL database.
-    :vartype properties: "SqlDatabaseGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "SqlDatabaseGetProperties"
-    """The properties of an Azure Cosmos DB SQL database."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
-
-
-class SqlDedicatedGatewayRegionalServiceResource(RegionalServiceResource):  # pylint: disable=name-too-long
-    """Resource for a regional service location.
-
-    :ivar name: The regional service name.
-    :vartype name: str
-    :ivar location: The location name.
-    :vartype location: str
-    :ivar status: Describes the status of a service. Known values are: "Creating", "Running",
-     "Updating", "Deleting", "Error", and "Stopped".
-    :vartype status: Union[str, "ServiceStatus"]
-    :ivar sql_dedicated_gateway_endpoint: The regional endpoint for SqlDedicatedGateway.
-    :vartype sql_dedicated_gateway_endpoint: str
-    """
-
-    sqlDedicatedGatewayEndpoint: str
-    """The regional endpoint for SqlDedicatedGateway."""
-
-
 class SqlDedicatedGatewayServiceResourceCreateUpdateProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Properties for Create or Update request for SqlDedicatedGatewayServiceResource.
 
-    :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
+    :ivar instanceSize: Instance type for the service. Known values are: "Cosmos.D4s",
      "Cosmos.D8s", and "Cosmos.D16s".
-    :vartype instance_size: Union[str, "ServiceSize"]
-    :ivar instance_count: Instance count for the service.
-    :vartype instance_count: int
-    :ivar dedicated_gateway_type: DedicatedGatewayType for the service. Known values are:
+    :vartype instanceSize: Union[str, "ServiceSize"]
+    :ivar instanceCount: Instance count for the service.
+    :vartype instanceCount: int
+    :ivar dedicatedGatewayType: DedicatedGatewayType for the service. Known values are:
      "IntegratedCache" and "DistributedQuery".
-    :vartype dedicated_gateway_type: Union[str, "DedicatedGatewayType"]
-    :ivar service_type: ServiceType for the service. Required. SQL_DEDICATED_GATEWAY.
-    :vartype service_type: Literal[ServiceType.SQL_DEDICATED_GATEWAY]
+    :vartype dedicatedGatewayType: Union[str, "DedicatedGatewayType"]
+    :ivar serviceType: ServiceType for the service. Required. SQL_DEDICATED_GATEWAY.
+    :vartype serviceType: Literal[ServiceType.SQL_DEDICATED_GATEWAY]
     """
 
     instanceSize: Union[str, "ServiceSize"]
@@ -6771,51 +5152,6 @@ class SqlDedicatedGatewayServiceResourceCreateUpdateProperties(TypedDict, total=
     dedicatedGatewayType: Union[str, "DedicatedGatewayType"]
     """DedicatedGatewayType for the service. Known values are: \"IntegratedCache\" and
      \"DistributedQuery\"."""
-    serviceType: Required[Literal[ServiceType.SQL_DEDICATED_GATEWAY]]
-    """ServiceType for the service. Required. SQL_DEDICATED_GATEWAY."""
-
-
-class SqlDedicatedGatewayServiceResourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Properties for SqlDedicatedGatewayServiceResource.
-
-    :ivar creation_time: Time of the last state change (ISO-8601 format).
-    :vartype creation_time: str
-    :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
-     "Cosmos.D8s", and "Cosmos.D16s".
-    :vartype instance_size: Union[str, "ServiceSize"]
-    :ivar instance_count: Instance count for the service.
-    :vartype instance_count: int
-    :ivar status: Describes the status of a service. Known values are: "Creating", "Running",
-     "Updating", "Deleting", "Error", and "Stopped".
-    :vartype status: Union[str, "ServiceStatus"]
-    :ivar sql_dedicated_gateway_endpoint: SqlDedicatedGateway endpoint for the service.
-    :vartype sql_dedicated_gateway_endpoint: str
-    :ivar dedicated_gateway_type: DedicatedGatewayType for the service. Known values are:
-     "IntegratedCache" and "DistributedQuery".
-    :vartype dedicated_gateway_type: Union[str, "DedicatedGatewayType"]
-    :ivar locations: An array that contains all of the locations for the service.
-    :vartype locations: list["SqlDedicatedGatewayRegionalServiceResource"]
-    :ivar service_type: ServiceType for the service. Required. SQL_DEDICATED_GATEWAY.
-    :vartype service_type: Literal[ServiceType.SQL_DEDICATED_GATEWAY]
-    """
-
-    creationTime: str
-    """Time of the last state change (ISO-8601 format)."""
-    instanceSize: Union[str, "ServiceSize"]
-    """Instance type for the service. Known values are: \"Cosmos.D4s\", \"Cosmos.D8s\", and
-     \"Cosmos.D16s\"."""
-    instanceCount: int
-    """Instance count for the service."""
-    status: Union[str, "ServiceStatus"]
-    """Describes the status of a service. Known values are: \"Creating\", \"Running\", \"Updating\",
-     \"Deleting\", \"Error\", and \"Stopped\"."""
-    sqlDedicatedGatewayEndpoint: str
-    """SqlDedicatedGateway endpoint for the service."""
-    dedicatedGatewayType: Union[str, "DedicatedGatewayType"]
-    """DedicatedGatewayType for the service. Known values are: \"IntegratedCache\" and
-     \"DistributedQuery\"."""
-    locations: list["SqlDedicatedGatewayRegionalServiceResource"]
-    """An array that contains all of the locations for the service."""
     serviceType: Required[Literal[ServiceType.SQL_DEDICATED_GATEWAY]]
     """ServiceType for the service. Required. SQL_DEDICATED_GATEWAY."""
 
@@ -6831,40 +5167,18 @@ class SqlRoleAssignmentCreateUpdateParameters(TypedDict, total=False):
     """Properties to create and update an Azure Cosmos DB SQL Role Assignment."""
 
 
-class SqlRoleAssignmentGetResults(ProxyResource):
-    """An Azure Cosmos DB Role Assignment.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Properties related to the Role Assignment.
-    :vartype properties: "SqlRoleAssignmentResource"
-    """
-
-    properties: "SqlRoleAssignmentResource"
-    """Properties related to the Role Assignment."""
-
-
 class SqlRoleAssignmentResource(TypedDict, total=False):
     """Azure Cosmos DB SQL Role Assignment resource object.
 
-    :ivar role_definition_id: The unique identifier for the associated Role Definition.
-    :vartype role_definition_id: str
+    :ivar roleDefinitionId: The unique identifier for the associated Role Definition.
+    :vartype roleDefinitionId: str
     :ivar scope: The data plane resource path for which access is being granted through this Role
      Assignment.
     :vartype scope: str
-    :ivar principal_id: The unique identifier for the associated AAD principal in the AAD graph to
+    :ivar principalId: The unique identifier for the associated AAD principal in the AAD graph to
      which access is being granted through this Role Assignment. Tenant ID for the principal is
      inferred using the tenant associated with the subscription.
-    :vartype principal_id: str
+    :vartype principalId: str
     """
 
     roleDefinitionId: str
@@ -6888,43 +5202,21 @@ class SqlRoleDefinitionCreateUpdateParameters(TypedDict, total=False):
     """Properties to create and update an Azure Cosmos DB SQL Role Definition."""
 
 
-class SqlRoleDefinitionGetResults(ProxyResource):
-    """An Azure Cosmos DB SQL Role Definition.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Properties related to the Role Definition.
-    :vartype properties: "SqlRoleDefinitionResource"
-    """
-
-    properties: "SqlRoleDefinitionResource"
-    """Properties related to the Role Definition."""
-
-
 class SqlRoleDefinitionResource(TypedDict, total=False):
     """Azure Cosmos DB SQL Role Definition resource object.
 
-    :ivar role_name: A user-friendly name for the Role Definition. Must be unique for the database
+    :ivar roleName: A user-friendly name for the Role Definition. Must be unique for the database
      account.
-    :vartype role_name: str
+    :vartype roleName: str
     :ivar type: Indicates whether the Role Definition was built-in or user created. Known values
      are: "BuiltInRole" and "CustomRole".
     :vartype type: Union[str, "RoleDefinitionType"]
-    :ivar assignable_scopes: A set of fully qualified Scopes at or below which Role Assignments may
+    :ivar assignableScopes: A set of fully qualified Scopes at or below which Role Assignments may
      be created using this Role Definition. This will allow application of this Role Definition on
      the entire database account or any underlying Database / Collection. Must have at least one
      element. Scopes higher than Database account are not enforceable as assignable Scopes. Note
      that resources referenced in assignable Scopes need not exist.
-    :vartype assignable_scopes: list[str]
+    :vartype assignableScopes: list[str]
     :ivar permissions: The set of operations allowed through this Role Definition.
     :vartype permissions: list["Permission"]
     """
@@ -6989,16 +5281,6 @@ class SqlStoredProcedureCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class SqlStoredProcedureGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB StoredProcedure.
-
-    :ivar resource:
-    :vartype resource: "SqlStoredProcedureGetPropertiesResource"
-    """
-
-    resource: "SqlStoredProcedureGetPropertiesResource"
-
-
 class SqlStoredProcedureResource(TypedDict, total=False):
     """Cosmos DB SQL storedProcedure resource object.
 
@@ -7012,75 +5294,6 @@ class SqlStoredProcedureResource(TypedDict, total=False):
     """Name of the Cosmos DB SQL storedProcedure. Required."""
     body: str
     """Body of the Stored Procedure."""
-
-
-class SqlStoredProcedureGetPropertiesResource(SqlStoredProcedureResource):
-    """SqlStoredProcedureGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB SQL storedProcedure. Required.
-    :vartype id: str
-    :ivar body: Body of the Stored Procedure.
-    :vartype body: str
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class SqlStoredProcedureGetResults(ProxyResource):
-    """An Azure Cosmos DB storedProcedure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB storedProcedure.
-    :vartype properties: "SqlStoredProcedureGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "SqlStoredProcedureGetProperties"
-    """The properties of an Azure Cosmos DB storedProcedure."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
 
 
 class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
@@ -7128,16 +5341,6 @@ class SqlTriggerCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class SqlTriggerGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB trigger.
-
-    :ivar resource:
-    :vartype resource: "SqlTriggerGetPropertiesResource"
-    """
-
-    resource: "SqlTriggerGetPropertiesResource"
-
-
 class SqlTriggerResource(TypedDict, total=False):
     """Cosmos DB SQL trigger resource object.
 
@@ -7145,11 +5348,11 @@ class SqlTriggerResource(TypedDict, total=False):
     :vartype id: str
     :ivar body: Body of the Trigger.
     :vartype body: str
-    :ivar trigger_type: Type of the Trigger. Known values are: "Pre" and "Post".
-    :vartype trigger_type: Union[str, "TriggerType"]
-    :ivar trigger_operation: The operation the trigger is associated with. Known values are: "All",
+    :ivar triggerType: Type of the Trigger. Known values are: "Pre" and "Post".
+    :vartype triggerType: Union[str, "TriggerType"]
+    :ivar triggerOperation: The operation the trigger is associated with. Known values are: "All",
      "Create", "Update", "Delete", and "Replace".
-    :vartype trigger_operation: Union[str, "TriggerOperation"]
+    :vartype triggerOperation: Union[str, "TriggerOperation"]
     """
 
     id: Required[str]
@@ -7161,80 +5364,6 @@ class SqlTriggerResource(TypedDict, total=False):
     triggerOperation: Union[str, "TriggerOperation"]
     """The operation the trigger is associated with. Known values are: \"All\", \"Create\",
      \"Update\", \"Delete\", and \"Replace\"."""
-
-
-class SqlTriggerGetPropertiesResource(SqlTriggerResource):
-    """SqlTriggerGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB SQL trigger. Required.
-    :vartype id: str
-    :ivar body: Body of the Trigger.
-    :vartype body: str
-    :ivar trigger_type: Type of the Trigger. Known values are: "Pre" and "Post".
-    :vartype trigger_type: Union[str, "TriggerType"]
-    :ivar trigger_operation: The operation the trigger is associated with. Known values are: "All",
-     "Create", "Update", "Delete", and "Replace".
-    :vartype trigger_operation: Union[str, "TriggerOperation"]
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class SqlTriggerGetResults(ProxyResource):
-    """An Azure Cosmos DB trigger.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB trigger.
-    :vartype properties: "SqlTriggerGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "SqlTriggerGetProperties"
-    """The properties of an Azure Cosmos DB trigger."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
 
 
 class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):  # pylint: disable=name-too-long
@@ -7283,16 +5412,6 @@ class SqlUserDefinedFunctionCreateUpdateProperties(TypedDict, total=False):  # p
      with the request."""
 
 
-class SqlUserDefinedFunctionGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB userDefinedFunction.
-
-    :ivar resource:
-    :vartype resource: "SqlUserDefinedFunctionGetPropertiesResource"
-    """
-
-    resource: "SqlUserDefinedFunctionGetPropertiesResource"
-
-
 class SqlUserDefinedFunctionResource(TypedDict, total=False):
     """Cosmos DB SQL userDefinedFunction resource object.
 
@@ -7308,92 +5427,23 @@ class SqlUserDefinedFunctionResource(TypedDict, total=False):
     """Body of the User Defined Function."""
 
 
-class SqlUserDefinedFunctionGetPropertiesResource(SqlUserDefinedFunctionResource):  # pylint: disable=name-too-long
-    """SqlUserDefinedFunctionGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB SQL userDefinedFunction. Required.
-    :vartype id: str
-    :ivar body: Body of the User Defined Function.
-    :vartype body: str
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class SqlUserDefinedFunctionGetResults(ProxyResource):
-    """An Azure Cosmos DB userDefinedFunction.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB userDefinedFunction.
-    :vartype properties: "SqlUserDefinedFunctionGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "SqlUserDefinedFunctionGetProperties"
-    """The properties of an Azure Cosmos DB userDefinedFunction."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
-
-
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -7457,40 +5507,16 @@ class TableCreateUpdateProperties(TypedDict, total=False):
      with the request."""
 
 
-class TableGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos Table.
-
-    :ivar resource:
-    :vartype resource: "TableGetPropertiesResource"
-    :ivar options:
-    :vartype options: "TableGetPropertiesOptions"
-    """
-
-    resource: "TableGetPropertiesResource"
-    options: "TableGetPropertiesOptions"
-
-
-class TableGetPropertiesOptions(OptionsResource):
-    """TableGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: "AutoscaleSettings"
-    """
-
-
 class TableResource(TypedDict, total=False):
     """Cosmos DB table resource object.
 
     :ivar id: Name of the Cosmos DB table. Required.
     :vartype id: str
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
+    :ivar restoreParameters: Parameters to indicate the information about the restore.
+    :vartype restoreParameters: "ResourceRestoreParameters"
+    :ivar createMode: Enum to indicate the mode of account creation. Known values are: "Default"
      and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
+    :vartype createMode: Union[str, "CreateMode"]
     """
 
     id: Required[str]
@@ -7499,78 +5525,6 @@ class TableResource(TypedDict, total=False):
     """Parameters to indicate the information about the restore."""
     createMode: Union[str, "CreateMode"]
     """Enum to indicate the mode of account creation. Known values are: \"Default\" and \"Restore\"."""
-
-
-class TableGetPropertiesResource(TableResource):
-    """TableGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB table. Required.
-    :vartype id: str
-    :ivar restore_parameters: Parameters to indicate the information about the restore.
-    :vartype restore_parameters: "ResourceRestoreParameters"
-    :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
-     and "Restore".
-    :vartype create_mode: Union[str, "CreateMode"]
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class TableGetResults(ProxyResource):
-    """An Azure Cosmos DB Table.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB Table.
-    :vartype properties: "TableGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "TableGetProperties"
-    """The properties of an Azure Cosmos DB Table."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
 
 
 class TableRoleAssignmentResource(ProxyResource):
@@ -7584,9 +5538,9 @@ class TableRoleAssignmentResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties to create and update an Azure Cosmos DB Table Role Assignment.
     :vartype properties: "TableRoleAssignmentResourceProperties"
     """
@@ -7598,17 +5552,17 @@ class TableRoleAssignmentResource(ProxyResource):
 class TableRoleAssignmentResourceProperties(TypedDict, total=False):
     """Azure Cosmos DB Table Role Assignment resource object.
 
-    :ivar role_definition_id: The unique identifier for the associated Role Definition.
-    :vartype role_definition_id: str
+    :ivar roleDefinitionId: The unique identifier for the associated Role Definition.
+    :vartype roleDefinitionId: str
     :ivar scope: The data plane resource path for which access is being granted through this Table
      Role Assignment.
     :vartype scope: str
-    :ivar principal_id: The unique identifier for the associated AAD principal in the AAD graph to
+    :ivar principalId: The unique identifier for the associated AAD principal in the AAD graph to
      which access is being granted through this Table Role Assignment. Tenant ID for the principal
      is inferred using the tenant associated with the subscription.
-    :vartype principal_id: str
-    :ivar provisioning_state: Provisioning state of the resource.
-    :vartype provisioning_state: str
+    :vartype principalId: str
+    :ivar provisioningState: Provisioning state of the resource.
+    :vartype provisioningState: str
     """
 
     roleDefinitionId: str
@@ -7635,9 +5589,9 @@ class TableRoleDefinitionResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties to create and update an Azure Cosmos DB Table Role Definition.
     :vartype properties: "TableRoleDefinitionResourceProperties"
     """
@@ -7651,18 +5605,18 @@ class TableRoleDefinitionResourceProperties(TypedDict, total=False):
 
     :ivar id: The path id for the Role Definition.
     :vartype id: str
-    :ivar role_name: A user-friendly name for the Role Definition. Must be unique for the database
+    :ivar roleName: A user-friendly name for the Role Definition. Must be unique for the database
      account.
-    :vartype role_name: str
+    :vartype roleName: str
     :ivar type: Indicates whether the Role Definition was built-in or user created. Known values
      are: "BuiltInRole" and "CustomRole".
     :vartype type: Union[str, "RoleDefinitionType"]
-    :ivar assignable_scopes: A set of fully qualified Scopes at or below which Table Role
+    :ivar assignableScopes: A set of fully qualified Scopes at or below which Table Role
      Assignments may be created using this Role Definition. This will allow application of this Role
      Definition on the entire database account or any underlying Database / Collection. Must have at
      least one element. Scopes higher than Database account are not enforceable as assignable
      Scopes. Note that resources referenced in assignable Scopes need not exist.
-    :vartype assignable_scopes: list[str]
+    :vartype assignableScopes: list[str]
     :ivar permissions: The set of operations allowed through this Role Definition.
     :vartype permissions: list["Permission"]
     """
@@ -7684,14 +5638,34 @@ class TableRoleDefinitionResourceProperties(TypedDict, total=False):
     """The set of operations allowed through this Role Definition."""
 
 
+class ThroughputBucketResource(TypedDict, total=False):
+    """Cosmos DB throughput bucket object.
+
+    :ivar id: Represents the throughput bucket id. Required.
+    :vartype id: int
+    :ivar maxThroughputPercentage: Represents maximum percentage throughput that can be used by the
+     bucket. Required.
+    :vartype maxThroughputPercentage: int
+    :ivar isDefaultBucket: Indicates whether this is the default throughput bucket.
+    :vartype isDefaultBucket: bool
+    """
+
+    id: Required[int]
+    """Represents the throughput bucket id. Required."""
+    maxThroughputPercentage: Required[int]
+    """Represents maximum percentage throughput that can be used by the bucket. Required."""
+    isDefaultBucket: bool
+    """Indicates whether this is the default throughput bucket."""
+
+
 class ThroughputPolicyResource(TypedDict, total=False):
     """Cosmos DB resource throughput policy.
 
-    :ivar is_enabled: Determines whether the ThroughputPolicy is active or not.
-    :vartype is_enabled: bool
-    :ivar increment_percent: Represents the percentage by which throughput can increase every time
+    :ivar isEnabled: Determines whether the ThroughputPolicy is active or not.
+    :vartype isEnabled: bool
+    :ivar incrementPercent: Represents the percentage by which throughput can increase every time
      throughput policy kicks in.
-    :vartype increment_percent: int
+    :vartype incrementPercent: int
     """
 
     isEnabled: bool
@@ -7701,14 +5675,110 @@ class ThroughputPolicyResource(TypedDict, total=False):
      in."""
 
 
-class ThroughputSettingsGetProperties(TypedDict, total=False):
-    """The properties of an Azure Cosmos DB resource throughput.
+class ThroughputPoolAccountProperties(TypedDict, total=False):
+    """An Azure Cosmos DB Global Database Account which is part of a Throughputpool.
 
-    :ivar resource:
-    :vartype resource: "ThroughputSettingsGetPropertiesResource"
+    :ivar provisioningState: A provisioning state of the ThroughputPool Account. Known values are:
+     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+     "Failed", "Canceled", "Updating", and "Creating".
+    :vartype provisioningState: Union[str, "Status"]
+    :ivar accountResourceIdentifier: The resource identifier of global database account in the
+     throughputPool.
+    :vartype accountResourceIdentifier: str
+    :ivar accountLocation: The location of  global database account in the throughputPool.
+    :vartype accountLocation: str
+    :ivar accountInstanceId: The instance id of global database account in the throughputPool.
+    :vartype accountInstanceId: str
     """
 
-    resource: "ThroughputSettingsGetPropertiesResource"
+    provisioningState: Union[str, "Status"]
+    """A provisioning state of the ThroughputPool Account. Known values are: \"Uninitialized\",
+     \"Initializing\", \"InternallyReady\", \"Online\", \"Deleting\", \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Updating\", and \"Creating\"."""
+    accountResourceIdentifier: str
+    """The resource identifier of global database account in the throughputPool."""
+    accountLocation: str
+    """The location of  global database account in the throughputPool."""
+    accountInstanceId: str
+    """The instance id of global database account in the throughputPool."""
+
+
+class ThroughputPoolAccountResource(ProxyResource):
+    """An Azure Cosmos DB Throughputpool Account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: An Azure Cosmos DB Global Database Account which is part of a Throughputpool.
+    :vartype properties: "ThroughputPoolAccountProperties"
+    """
+
+    properties: "ThroughputPoolAccountProperties"
+    """An Azure Cosmos DB Global Database Account which is part of a Throughputpool."""
+
+
+class ThroughputPoolProperties(TypedDict, total=False):
+    """Properties to update Azure Cosmos DB throughput pool.
+
+    :ivar provisioningState: A provisioning state of the ThroughputPool. Known values are:
+     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
+     "Failed", "Canceled", "Updating", and "Creating".
+    :vartype provisioningState: Union[str, "Status"]
+    :ivar maxThroughput: Value for throughput to be shared among CosmosDB resources in the pool.
+    :vartype maxThroughput: int
+    """
+
+    provisioningState: Union[str, "Status"]
+    """A provisioning state of the ThroughputPool. Known values are: \"Uninitialized\",
+     \"Initializing\", \"InternallyReady\", \"Online\", \"Deleting\", \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Updating\", and \"Creating\"."""
+    maxThroughput: int
+    """Value for throughput to be shared among CosmosDB resources in the pool."""
+
+
+class ThroughputPoolResource(TrackedResource):
+    """An Azure Cosmos DB Throughputpool.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties to update Azure Cosmos DB throughput pool.
+    :vartype properties: "ThroughputPoolProperties"
+    """
+
+    properties: "ThroughputPoolProperties"
+    """Properties to update Azure Cosmos DB throughput pool."""
+
+
+class ThroughputPoolUpdate(TypedDict, total=False):
+    """Represents a throughput pool resource for updates.
+
+    :ivar properties: Properties of the throughput pool.
+    :vartype properties: "ThroughputPoolProperties"
+    """
+
+    properties: "ThroughputPoolProperties"
+    """Properties of the throughput pool."""
 
 
 class ThroughputSettingsResource(TypedDict, total=False):
@@ -7718,19 +5788,22 @@ class ThroughputSettingsResource(TypedDict, total=False):
     :ivar throughput: Value of the Cosmos DB resource throughput. Either throughput is required or
      autoscaleSettings is required, but not both.
     :vartype throughput: int
-    :ivar autoscale_settings: Cosmos DB resource for autoscale settings. Either throughput is
+    :ivar autoscaleSettings: Cosmos DB resource for autoscale settings. Either throughput is
      required or autoscaleSettings is required, but not both.
-    :vartype autoscale_settings: "AutoscaleSettingsResource"
-    :ivar minimum_throughput: The minimum throughput of the resource.
-    :vartype minimum_throughput: str
-    :ivar offer_replace_pending: The throughput replace is pending.
-    :vartype offer_replace_pending: str
-    :ivar instant_maximum_throughput: The offer throughput value to instantly scale up without
+    :vartype autoscaleSettings: "AutoscaleSettingsResource"
+    :ivar minimumThroughput: The minimum throughput of the resource.
+    :vartype minimumThroughput: str
+    :ivar offerReplacePending: The throughput replace is pending.
+    :vartype offerReplacePending: str
+    :ivar instantMaximumThroughput: The offer throughput value to instantly scale up without
      triggering splits.
-    :vartype instant_maximum_throughput: str
-    :ivar soft_allowed_maximum_throughput: The maximum throughput value or the maximum
-     maxThroughput value (for autoscale) that can be specified.
-    :vartype soft_allowed_maximum_throughput: str
+    :vartype instantMaximumThroughput: str
+    :ivar softAllowedMaximumThroughput: The maximum throughput value or the maximum maxThroughput
+     value (for autoscale) that can be specified.
+    :vartype softAllowedMaximumThroughput: str
+    :ivar throughputBuckets: Array of throughput bucket limits to be applied to the Cosmos DB
+     container.
+    :vartype throughputBuckets: list["ThroughputBucketResource"]
     """
 
     throughput: int
@@ -7748,87 +5821,8 @@ class ThroughputSettingsResource(TypedDict, total=False):
     softAllowedMaximumThroughput: str
     """The maximum throughput value or the maximum maxThroughput value (for autoscale) that can be
      specified."""
-
-
-class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource):
-    """ThroughputSettingsGetPropertiesResource.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput. Either throughput is required or
-     autoscaleSettings is required, but not both.
-    :vartype throughput: int
-    :ivar autoscale_settings: Cosmos DB resource for autoscale settings. Either throughput is
-     required or autoscaleSettings is required, but not both.
-    :vartype autoscale_settings: "AutoscaleSettingsResource"
-    :ivar minimum_throughput: The minimum throughput of the resource.
-    :vartype minimum_throughput: str
-    :ivar offer_replace_pending: The throughput replace is pending.
-    :vartype offer_replace_pending: str
-    :ivar instant_maximum_throughput: The offer throughput value to instantly scale up without
-     triggering splits.
-    :vartype instant_maximum_throughput: str
-    :ivar soft_allowed_maximum_throughput: The maximum throughput value or the maximum
-     maxThroughput value (for autoscale) that can be specified.
-    :vartype soft_allowed_maximum_throughput: str
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    _rid: str
-    """A system generated property. A unique identifier."""
-    _ts: float
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    _etag: str
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-
-class ThroughputSettingsGetResults(ProxyResource):
-    """An Azure Cosmos DB resource throughput.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of an Azure Cosmos DB resource throughput.
-    :vartype properties: "ThroughputSettingsGetProperties"
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "ManagedServiceIdentity"
-    """
-
-    properties: "ThroughputSettingsGetProperties"
-    """The properties of an Azure Cosmos DB resource throughput."""
-    location: str
-    """The location of the resource group to which the resource belongs."""
-    tags: dict[str, str]
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: "ManagedServiceIdentity"
-    """Identity for the resource."""
+    throughputBuckets: list["ThroughputBucketResource"]
+    """Array of throughput bucket limits to be applied to the Cosmos DB container."""
 
 
 class ThroughputSettingsUpdateParameters(ARMResourceProperties):
@@ -7886,9 +5880,9 @@ class UniqueKeyPolicy(TypedDict, total=False):
     """The unique key policy configuration for specifying uniqueness constraints on documents in the
     collection in the Azure Cosmos DB service.
 
-    :ivar unique_keys: List of unique keys on that enforces uniqueness constraint on documents in
+    :ivar uniqueKeys: List of unique keys on that enforces uniqueness constraint on documents in
      the collection in the Azure Cosmos DB service.
-    :vartype unique_keys: list["UniqueKey"]
+    :vartype uniqueKeys: list["UniqueKey"]
     """
 
     uniqueKeys: list["UniqueKey"]
@@ -7902,12 +5896,12 @@ class VectorEmbedding(TypedDict, total=False):
 
     :ivar path: The path to the vector field in the document. Required.
     :vartype path: str
-    :ivar data_type: Indicates the data type of vector. Required. Known values are: "float32",
+    :ivar dataType: Indicates the data type of vector. Required. Known values are: "float32",
      "uint8", "int8", and "float16".
-    :vartype data_type: Union[str, "VectorDataType"]
-    :ivar distance_function: The distance function to use for distance calculation in between
+    :vartype dataType: Union[str, "VectorDataType"]
+    :ivar distanceFunction: The distance function to use for distance calculation in between
      vectors. Required. Known values are: "euclidean", "cosine", and "dotproduct".
-    :vartype distance_function: Union[str, "DistanceFunction"]
+    :vartype distanceFunction: Union[str, "DistanceFunction"]
     :ivar dimensions: The number of dimensions in the vector. Required.
     :vartype dimensions: int
     """
@@ -7927,8 +5921,8 @@ class VectorEmbedding(TypedDict, total=False):
 class VectorEmbeddingPolicy(TypedDict, total=False):
     """Cosmos DB Vector Embedding Policy.
 
-    :ivar vector_embeddings: List of vector embeddings.
-    :vartype vector_embeddings: list["VectorEmbedding"]
+    :ivar vectorEmbeddings: List of vector embeddings.
+    :vartype vectorEmbeddings: list["VectorEmbedding"]
     """
 
     vectorEmbeddings: list["VectorEmbedding"]
@@ -7943,18 +5937,18 @@ class VectorIndex(TypedDict, total=False):
     :ivar type: The index type of the vector. Currently, flat, diskANN, and quantizedFlat are
      supported. Required. Known values are: "flat", "diskANN", and "quantizedFlat".
     :vartype type: Union[str, "VectorIndexType"]
-    :ivar quantization_byte_size: The number of bytes used in product quantization of the vectors.
-     A larger value may result in better recall for vector searches at the expense of latency. This
-     is only applicable for the quantizedFlat and diskANN vector index types.
-    :vartype quantization_byte_size: int
-    :ivar indexing_search_list_size: This is the size of the candidate list of approximate
-     neighbors stored while building the DiskANN index as part of the optimization processes. Large
-     values may improve recall at the expense of latency. This is only applicable for the diskANN
-     vector index type.
-    :vartype indexing_search_list_size: int
-    :ivar vector_index_shard_key: Array of shard keys for the vector index. This is only applicable
+    :ivar quantizationByteSize: The number of bytes used in product quantization of the vectors. A
+     larger value may result in better recall for vector searches at the expense of latency. This is
+     only applicable for the quantizedFlat and diskANN vector index types.
+    :vartype quantizationByteSize: int
+    :ivar indexingSearchListSize: This is the size of the candidate list of approximate neighbors
+     stored while building the DiskANN index as part of the optimization processes. Large values may
+     improve recall at the expense of latency. This is only applicable for the diskANN vector index
+     type.
+    :vartype indexingSearchListSize: int
+    :ivar vectorIndexShardKey: Array of shard keys for the vector index. This is only applicable
      for the quantizedFlat and diskANN vector index types.
-    :vartype vector_index_shard_key: list[str]
+    :vartype vectorIndexShardKey: list[str]
     """
 
     path: Required[str]
@@ -7981,9 +5975,9 @@ class VirtualNetworkRule(TypedDict, total=False):
     :ivar id: Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
     :vartype id: str
-    :ivar ignore_missing_v_net_service_endpoint: Create firewall rule before the virtual network
-     has vnet service endpoint enabled.
-    :vartype ignore_missing_v_net_service_endpoint: bool
+    :ivar ignoreMissingVNetServiceEndpoint: Create firewall rule before the virtual network has
+     vnet service endpoint enabled.
+    :vartype ignoreMissingVNetServiceEndpoint: bool
     """
 
     id: str
@@ -7993,16 +5987,31 @@ class VirtualNetworkRule(TypedDict, total=False):
     """Create firewall rule before the virtual network has vnet service endpoint enabled."""
 
 
+BaseCosmosDataTransferDataSourceSink = Union[
+    CosmosCassandraDataTransferDataSourceSink,
+    CosmosMongoDataTransferDataSourceSink,
+    CosmosSqlDataTransferDataSourceSink,
+]
+DataTransferDataSourceSink = Union[
+    AzureBlobDataTransferDataSourceSink,
+    BaseCosmosDataTransferDataSourceSink,
+    CosmosCassandraDataTransferDataSourceSink,
+    CosmosMongoDataTransferDataSourceSink,
+    CosmosMongoVCoreDataTransferDataSourceSink,
+    CosmosSqlDataTransferDataSourceSink,
+]
 BackupPolicy = Union[ContinuousModeBackupPolicy, PeriodicModeBackupPolicy]
+BaseCopyJobProperties = Union[
+    BlobToCassandraRUCopyJobProperties,
+    CassandraRUToBlobCopyJobProperties,
+    CassandraRUToCassandraRUCopyJobProperties,
+    MongoRUToMongoRUCopyJobProperties,
+    MongoRUToMongoVCoreCopyJobProperties,
+    NoSqlRUToNoSqlRUCopyJobProperties,
+]
 ServiceResourceCreateUpdateProperties = Union[
     DataTransferServiceResourceCreateUpdateProperties,
     GraphAPIComputeServiceResourceCreateUpdateProperties,
     MaterializedViewsBuilderServiceResourceCreateUpdateProperties,
     SqlDedicatedGatewayServiceResourceCreateUpdateProperties,
-]
-ServiceResourceProperties = Union[
-    DataTransferServiceResourceProperties,
-    GraphAPIComputeServiceResourceProperties,
-    MaterializedViewsBuilderServiceResourceProperties,
-    SqlDedicatedGatewayServiceResourceProperties,
 ]
