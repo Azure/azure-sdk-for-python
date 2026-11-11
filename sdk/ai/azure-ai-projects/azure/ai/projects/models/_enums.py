@@ -69,21 +69,21 @@ class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An access boundary for the activity protocol."""
 
-    READ_1_ON1_DEVELOPERS = "read.1on1.developers"
+    READ1_ON1_DEVELOPERS = "read.1on1.developers"
     """Allows read access to one-on-one developer conversations."""
-    READ_1_ON1_MANAGER = "read.1on1.manager"
+    READ1_ON1_MANAGER = "read.1on1.manager"
     """Allows read access to one-on-one manager conversations."""
-    READ_1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+    READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
     """Allows read access to allowlisted one-on-one conversations."""
-    READ_1_ON1_TENANT = "read.1on1.tenant"
+    READ1_ON1_TENANT = "read.1on1.tenant"
     """Allows read access to tenant-wide one-on-one conversations."""
-    WRITE_1_ON1_DEVELOPERS = "write.1on1.developers"
+    WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
     """Allows write access to one-on-one developer conversations."""
-    WRITE_1_ON1_MANAGER = "write.1on1.manager"
+    WRITE1_ON1_MANAGER = "write.1on1.manager"
     """Allows write access to one-on-one manager conversations."""
-    WRITE_1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+    WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
     """Allows write access to allowlisted one-on-one conversations."""
-    WRITE_1_ON1_TENANT = "write.1on1.tenant"
+    WRITE1_ON1_TENANT = "write.1on1.tenant"
     """Allows write access to tenant-wide one-on-one conversations."""
     READ_GROUP_DEVELOPERS = "read.group.developers"
     """Allows read access to developer group conversations."""
@@ -1372,6 +1372,8 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Job failed."""
     CANCELLED = "cancelled"
     """Job was cancelled by the caller."""
+    SKIPPED = "skipped"
+    """Job was skipped."""
 
 
 class LiveAudioFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

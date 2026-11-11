@@ -3586,19 +3586,19 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        READ_1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
-        READ_1_ON1_DEVELOPERS = "read.1on1.developers"
-        READ_1_ON1_MANAGER = "read.1on1.manager"
-        READ_1_ON1_TENANT = "read.1on1.tenant"
+        READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+        READ1_ON1_DEVELOPERS = "read.1on1.developers"
+        READ1_ON1_MANAGER = "read.1on1.manager"
+        READ1_ON1_TENANT = "read.1on1.tenant"
         READ_GROUP_ALLOWLISTED = "read.group.allowlisted"
         READ_GROUP_DEVELOPERS = "read.group.developers"
         READ_GROUP_MANAGER_INVITED = "read.group.manager-invited"
         READ_GROUP_MANAGER_PRESENT = "read.group.manager-present"
         READ_GROUP_TENANT = "read.group.tenant"
-        WRITE_1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
-        WRITE_1_ON1_DEVELOPERS = "write.1on1.developers"
-        WRITE_1_ON1_MANAGER = "write.1on1.manager"
-        WRITE_1_ON1_TENANT = "write.1on1.tenant"
+        WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+        WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+        WRITE1_ON1_MANAGER = "write.1on1.manager"
+        WRITE1_ON1_TENANT = "write.1on1.tenant"
         WRITE_GROUP_ALLOWLISTED = "write.group.allowlisted"
         WRITE_GROUP_DEVELOPERS = "write.group.developers"
         WRITE_GROUP_MANAGER_INVITED = "write.group.manager-invited"
@@ -10551,6 +10551,7 @@ namespace azure.ai.projects.models
         FAILED = "failed"
         IN_PROGRESS = "in_progress"
         QUEUED = "queued"
+        SKIPPED = "skipped"
         SUCCEEDED = "succeeded"
 
 
