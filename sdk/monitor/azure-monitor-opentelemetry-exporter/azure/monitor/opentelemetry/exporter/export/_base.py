@@ -40,6 +40,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
     _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
+    _APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE,
     _INVALID_STATUS_CODES,
     _REACHED_INGESTION_STATUS_CODES,
     _REDIRECT_STATUS_CODES,
@@ -59,6 +60,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 from azure.monitor.opentelemetry.exporter._connection_string_parser import (
     ConnectionStringParser,
 )
+from azure.monitor.opentelemetry.exporter._routing import _is_trusted_routed_redirect, _RoutedRedirectPolicy
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter._configuration._state import (
     get_configuration_manager,
@@ -145,6 +147,7 @@ class BaseExporter:
         :rtype: None
         """
         route: Optional[tuple[str, bool]] = kwargs.pop("_route", None)
+        routed_aad_audience: Optional[str] = kwargs.pop("_routed_aad_audience", None)
         connection_string_parser: Optional[ConnectionStringParser] = kwargs.pop("_connection_string_parser", None)
         self._enable_multi_endpoint_routing = (
             self._is_experimental_feature_enabled("multi_endpoint_routing")
@@ -184,12 +187,20 @@ class BaseExporter:
             # We use the credential on a regular exporter or customer sdkStats exporter
             self._credential = _get_authentication_credential(**kwargs)
         self._consecutive_redirects = 0  # To prevent circular redirects
+        self._routed_redirect_policy = _RoutedRedirectPolicy()
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._connection_string = parsed_connection_string._connection_string
         self._endpoint = route[0].rstrip("/") if route is not None else parsed_connection_string.endpoint
         self._region = parsed_connection_string.region
         self._instrumentation_key = parsed_connection_string.instrumentation_key
-        self._aad_audience = parsed_connection_string.aad_audience
+        self._routed_aad_audience = ""
+        if self._enable_multi_endpoint_routing:
+            self._routed_aad_audience = (
+                routed_aad_audience
+                if routed_aad_audience is not None
+                else os.environ.get(_APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE, "").strip()
+            )
+        self._aad_audience = self._routed_aad_audience if route is not None else parsed_connection_string.aad_audience
         self._storage_maintenance_period = kwargs.get(
             "storage_maintenance_period", 60
         )  # Maintenance interval in seconds.
@@ -244,6 +255,8 @@ class BaseExporter:
             # Explicitly disabling to avoid infinite loop of Span creation when data is exported
             # DistributedTracingPolicy(**kwargs),
         ]
+        if route is not None:
+            policies.insert(0, self._routed_redirect_policy)
 
         # Exclude HttpLoggingPolicy for the sdkstats exporter so its HTTP
         # traffic does not appear in the user's logs.
@@ -330,6 +343,7 @@ class BaseExporter:
             "connection_string": self._connection_string,
             "credential": self._credential if is_aad else None,
             "authentication_policy": None,
+            "_routed_aad_audience": self._routed_aad_audience,
             "max_envelopes_per_second": 0,
         }
         if temporary:
@@ -722,12 +736,12 @@ class BaseExporter:
                             redirect_has_headers = False
                         if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
                             current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
-                            is_insecure_routed_redirect = self._route is not None and url.scheme.lower() != "https"
-                            is_cross_origin_redirect = not self._is_same_registered_domain(
+                            is_insecure_routed_redirect = self._route is not None and not _is_trusted_routed_redirect(
+                                self.client._config.host, location
+                            )
+                            is_cross_origin_redirect = self._route is None and not self._is_same_registered_domain(
                                 current_url.netloc, url.netloc
                             )
-                            # Routed endpoints are HTTPS-only. Also refuse cross-origin
-                            # redirects so auth is never attached for a foreign host.
                             if is_insecure_routed_redirect or is_cross_origin_redirect:
                                 if not self._is_stats_exporter():
                                     if self._should_collect_customer_sdkstats():
@@ -736,14 +750,18 @@ class BaseExporter:
                                             DropCode.CLIENT_EXCEPTION,
                                             _exception_categories.CLIENT_EXCEPTION.value,
                                         )
-                                    logger.error(
-                                        "Refusing %s redirect to %s://%s.",
-                                        "non-HTTPS routed" if is_insecure_routed_redirect else "cross-origin",
-                                        url.scheme,
-                                        url.netloc,
-                                    )
+                                    if is_insecure_routed_redirect:
+                                        logger.error("Refusing untrusted routed redirect.")
+                                    else:
+                                        logger.error(
+                                            "Refusing cross-origin redirect to %s://%s.",
+                                            url.scheme,
+                                            url.netloc,
+                                        )
                                 result = ExportResult.FAILED_NOT_RETRYABLE
                             else:
+                                if self._route is not None:
+                                    self._routed_redirect_policy.redirect_url = location
                                 # Change the host to the new redirected host
                                 self.client._config.host = "{}://{}".format(
                                     url.scheme, url.netloc
@@ -1134,6 +1152,11 @@ def _get_authentication_credential(
 
 
 def _validate_routing_policy_options(options: Dict[str, Any]) -> None:
+    if options.get("authentication_policy") is not None:
+        raise ValueError(
+            "Custom authentication policies are not supported with multi-endpoint routing. "
+            "Pass a token credential and use microsoft.ingestion_auth instead."
+        )
     for name in _ROUTING_REUSED_NAMED_POLICY_OPTIONS:
         if isinstance(options.get(name), HTTPPolicy):
             raise ValueError(
