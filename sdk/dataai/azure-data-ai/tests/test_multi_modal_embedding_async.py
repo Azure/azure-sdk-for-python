@@ -22,6 +22,7 @@ from test_multi_modal_embedding_sync import (
     BOTH_RESULT,
     DENSE_RESULT,
     ENDPOINT,
+    ERROR_CASES,
     LINK_RESULT,
     MULTI_BASE64,
     MULTI_RESULT,
@@ -120,9 +121,12 @@ async def test_truncated_text_returns_warning(async_transport, async_respond):
 
 
 @pytest.mark.asyncio
-async def test_blob_read_error_exposes_service_error_code(async_transport, async_respond, async_token_credential):
-    message = "The model service couldn't read the blob: inputs[0].url: storage returned 404 (BlobNotFound)"
-    async_respond((400, {"error": {"code": "EMBEDDING_BLOB_READ_FAILED", "message": message}}, {}))
+@pytest.mark.parametrize("status, code, error_model", ERROR_CASES)
+async def test_embed_errors_expose_service_error_code(
+    async_transport, async_respond, async_token_credential, status, code, error_model
+):
+    message = "Explains what to fix."
+    async_respond((status, {"error": {"code": code, "message": message}}, {}))
 
     async with AsyncInferenceClient(
         ENDPOINT, async_token_credential, transport=async_transport, retry_total=0
@@ -130,6 +134,7 @@ async def test_blob_read_error_exposes_service_error_code(async_transport, async
         with pytest.raises(HttpResponseError) as caught:
             await client.get_embeddings({"inputs": [_blob_image()]})
 
-    assert caught.value.status_code == 400
-    assert caught.value.model.error.code == "EMBEDDING_BLOB_READ_FAILED"
+    assert caught.value.status_code == status
+    assert isinstance(caught.value.model, error_model)
+    assert caught.value.model.error.code == code
     assert caught.value.model.error.message == message

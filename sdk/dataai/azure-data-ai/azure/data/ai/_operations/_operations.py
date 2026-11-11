@@ -479,26 +479,17 @@ class _InferenceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = None
-            if response.status_code == 400:
-                error = _failsafe_deserialize(_models.EmbeddingBadRequestResult, response)
-            elif response.status_code == 403:
-                error = _failsafe_deserialize(_models.EmbeddingForbiddenResult, response)
-            elif response.status_code == 413:
-                error = _failsafe_deserialize(_models.EmbeddingPayloadTooLargeResult, response)
-            elif response.status_code == 429:
-                error = _failsafe_deserialize(_models.TooManyRequestsResult, response)
-            elif response.status_code == 502:
-                error = _failsafe_deserialize(_models.EmbeddingBadGatewayResult, response)
-            elif response.status_code == 503:
-                error = _failsafe_deserialize(_models.EmbeddingServiceUnavailableResult, response)
-            elif response.status_code == 504:
-                error = _failsafe_deserialize(_models.EmbeddingGatewayTimeoutResult, response)
-            else:
-                error = _failsafe_deserialize(
-                    _models.InferenceErrorResult,
-                    response,
-                )
+            # Preserve this lookup on regeneration until the generator avoids Pylint R0915.
+            error_model = {
+                400: _models.EmbeddingBadRequestResult,
+                403: _models.EmbeddingForbiddenResult,
+                413: _models.EmbeddingPayloadTooLargeResult,
+                429: _models.TooManyRequestsResult,
+                502: _models.EmbeddingBadGatewayResult,
+                503: _models.EmbeddingServiceUnavailableResult,
+                504: _models.EmbeddingGatewayTimeoutResult,
+            }.get(response.status_code, _models.InferenceErrorResult)
+            error = _failsafe_deserialize(error_model, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

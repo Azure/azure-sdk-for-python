@@ -14,7 +14,7 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 
-from azure.data.ai import InferenceClient
+from azure.data.ai import InferenceClient, models
 from azure.data.ai.models import (
     EmbeddingWarningCode,
     MultimodalDenseAndMultiVectorEmbedding,
@@ -33,6 +33,18 @@ BLOB_URL = "https://contoso.blob.core.windows.net/pages/p1.jpg"
 SAS_TOKEN = "sv=2025-07-05&sr=b&sp=r&spr=https&sig=REDACTED"
 MULTI_VALUES = (0.5, -0.25, 1.0, 0.0, 0.75, -1.0)
 MULTI_BASE64 = base64.b64encode(struct.pack("<6e", *MULTI_VALUES)).decode("ascii")
+ERROR_CASES = [
+    (400, "EMBEDDING_URL_NOT_ALLOWED", models.EmbeddingBadRequestResult),
+    (400, "EMBEDDING_BLOB_READ_FAILED", models.EmbeddingBadRequestResult),
+    (400, "EMBEDDING_DELIVERY_NOT_SUPPORTED", models.EmbeddingBadRequestResult),
+    (403, "Forbidden", models.EmbeddingForbiddenResult),
+    (413, "EMBEDDING_BLOB_READ_FAILED", models.EmbeddingPayloadTooLargeResult),
+    (429, "TooManyRequests", models.TooManyRequestsResult),
+    (500, "InternalServerError", models.InferenceErrorResult),
+    (502, "EMBEDDING_BLOB_READ_FAILED", models.EmbeddingBadGatewayResult),
+    (503, "EMBEDDING_OUTPUT_WRITE_FAILED", models.EmbeddingServiceUnavailableResult),
+    (504, "EMBEDDING_BLOB_READ_FAILED", models.EmbeddingGatewayTimeoutResult),
+]
 
 
 def _blob_image(item_id="page-1"):
@@ -419,20 +431,8 @@ def test_unknown_kind_deserializes_to_base_item(transport, respond):
     assert item["values"] == [1, 2]
 
 
-@pytest.mark.parametrize(
-    "status, code",
-    [
-        (400, "EMBEDDING_URL_NOT_ALLOWED"),
-        (400, "EMBEDDING_BLOB_READ_FAILED"),
-        (400, "EMBEDDING_DELIVERY_NOT_SUPPORTED"),
-        (403, "Forbidden"),
-        (413, "EMBEDDING_BLOB_READ_FAILED"),
-        (502, "EMBEDDING_BLOB_READ_FAILED"),
-        (503, "EMBEDDING_OUTPUT_WRITE_FAILED"),
-        (504, "EMBEDDING_BLOB_READ_FAILED"),
-    ],
-)
-def test_embed_errors_expose_service_error_code(transport, respond, token_credential, status, code):
+@pytest.mark.parametrize("status, code, error_model", ERROR_CASES)
+def test_embed_errors_expose_service_error_code(transport, respond, token_credential, status, code, error_model):
     respond((status, {"error": {"code": code, "message": "Explains what to fix."}}, {}))
     request = {"inputs": [_blob_image()], "delivery": "link"}
 
@@ -442,6 +442,7 @@ def test_embed_errors_expose_service_error_code(transport, respond, token_creden
 
     assert _sent_json(transport.send.call_args.args[0]) == request
     assert caught.value.status_code == status
+    assert isinstance(caught.value.model, error_model)
     assert caught.value.model.error.code == code
     assert caught.value.model.error.message == "Explains what to fix."
 
