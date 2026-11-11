@@ -218,7 +218,7 @@ class ClustersOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-01",
         params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
-        api_versions_list=["2026-09-01"],
+        api_versions_list=["2026-09-01", "2026-10-01-preview"],
     )
     async def _unlink_migrated_endpoint_initial(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
@@ -286,7 +286,7 @@ class ClustersOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-01",
         params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
-        api_versions_list=["2026-09-01"],
+        api_versions_list=["2026-09-01", "2026-10-01-preview"],
     )
     async def begin_unlink_migrated_endpoint(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
@@ -4012,6 +4012,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-01-preview",
             "2026-06-01-preview",
             "2026-09-01",
+            "2026-10-01-preview",
         ],
     )
     async def _undo_initial(
@@ -4190,6 +4191,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-01-preview",
             "2026-06-01-preview",
             "2026-09-01",
+            "2026-10-01-preview",
         ],
     )
     async def begin_undo(
@@ -4267,7 +4269,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-01",
         params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
-        api_versions_list=["2026-09-01"],
+        api_versions_list=["2026-09-01", "2026-10-01-preview"],
     )
     async def _unlink_migrated_endpoint_initial(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
@@ -4335,7 +4337,7 @@ class MigrationsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-01",
         params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
-        api_versions_list=["2026-09-01"],
+        api_versions_list=["2026-09-01", "2026-10-01-preview"],
     )
     async def begin_unlink_migrated_endpoint(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any

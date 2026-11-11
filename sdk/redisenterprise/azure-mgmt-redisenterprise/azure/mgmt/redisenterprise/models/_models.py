@@ -101,7 +101,7 @@ class AccessPolicyAssignment(ProxyResource):  # pylint: disable=docstring-keywor
     )
     """Properties of the access policy assignment."""
 
-    __flattened_items = ["provisioning_state", "access_policy_name", "user"]
+    __flattened_items = ["provisioning_state", "access_policy_name", "access_string", "provisioning_error", "user"]
 
     @overload
     def __init__(
@@ -145,9 +145,16 @@ class AccessPolicyAssignmentProperties(_Model):  # pylint: disable=docstring-key
     :ivar provisioning_state: Current provisioning status of the access policy assignment. Known
      values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
-    :ivar access_policy_name: Name of access policy under specific access policy assignment. Only
-     "default" policy is supported for now. Required.
+    :ivar access_policy_name: **Deprecated.** This property always returns "default". Use
+     ``accessString`` to configure custom Redis ACL permissions instead.
     :vartype access_policy_name: str
+    :ivar access_string: The Redis ACL permissions string applied to this assignment, for example
+     ``+@read ~cache:*``. Defaults to ``+@all ~*`` if not specified.
+    :vartype access_string: str
+    :ivar provisioning_error: Provisioning error details when the access string failed to apply
+     (e.g., invalid ACL syntax). Null when provisioning succeeded.
+    :vartype provisioning_error:
+     ~azure.mgmt.redisenterprise.models.AccessPolicyAssignmentProvisioningError
     :ivar user: The user associated with the access policy. Required.
     :vartype user: ~azure.mgmt.redisenterprise.models.AccessPolicyAssignmentPropertiesUser
     """
@@ -157,11 +164,21 @@ class AccessPolicyAssignmentProperties(_Model):  # pylint: disable=docstring-key
     )
     """Current provisioning status of the access policy assignment. Known values are: \"Succeeded\",
      \"Failed\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
-    access_policy_name: str = rest_field(
+    access_policy_name: Optional[str] = rest_field(
         name="accessPolicyName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Name of access policy under specific access policy assignment. Only \"default\" policy is
-     supported for now. Required."""
+    """**Deprecated.** This property always returns \"default\". Use ``accessString`` to configure
+     custom Redis ACL permissions instead."""
+    access_string: Optional[str] = rest_field(
+        name="accessString", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Redis ACL permissions string applied to this assignment, for example ``+@read ~cache:*``.
+     Defaults to ``+@all ~*`` if not specified."""
+    provisioning_error: Optional["_models.AccessPolicyAssignmentProvisioningError"] = rest_field(
+        name="provisioningError", visibility=["read"]
+    )
+    """Provisioning error details when the access string failed to apply (e.g., invalid ACL syntax).
+     Null when provisioning succeeded."""
     user: "_models.AccessPolicyAssignmentPropertiesUser" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -171,8 +188,9 @@ class AccessPolicyAssignmentProperties(_Model):  # pylint: disable=docstring-key
     def __init__(
         self,
         *,
-        access_policy_name: str,
         user: "_models.AccessPolicyAssignmentPropertiesUser",
+        access_policy_name: Optional[str] = None,
+        access_string: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -201,6 +219,44 @@ class AccessPolicyAssignmentPropertiesUser(_Model):  # pylint: disable=docstring
         self,
         *,
         object_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AccessPolicyAssignmentProvisioningError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Error details for access policy assignment provisioning failures.
+
+    :ivar code: Machine-readable error code (e.g., "InvalidAccessString"). Required.
+    :vartype code: str
+    :ivar message: Human-readable error message describing the failure. Required.
+    :vartype message: str
+    :ivar target: The property that caused the error (e.g., "properties.accessString").
+    :vartype target: str
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Machine-readable error code (e.g., \"InvalidAccessString\"). Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable error message describing the failure. Required."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The property that caused the error (e.g., \"properties.accessString\")."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        target: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -477,6 +533,7 @@ class Cluster(TrackedResource):  # pylint: disable=docstring-keyword-should-matc
         "minimum_tls_version",
         "encryption",
         "maintenance_configuration",
+        "firewall_rules",
         "host_name",
         "provisioning_state",
         "redundancy_mode",
@@ -545,6 +602,22 @@ class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
     :ivar maintenance_configuration: Cluster-level maintenance configuration.
     :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
+    :ivar firewall_rules: The complete set of firewall rules for an Azure Managed Redis (AMR)
+     cluster. At most 250 rules are supported, and non-empty rules require publicNetworkAccess to be
+     Enabled.
+
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request.
+    :vartype firewall_rules: list[~azure.mgmt.redisenterprise.models.FirewallRule]
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -590,6 +663,23 @@ class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
         name="maintenanceConfiguration", visibility=["read", "create", "update"]
     )
     """Cluster-level maintenance configuration."""
+    firewall_rules: Optional[list["_models.FirewallRule"]] = rest_field(
+        name="firewallRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The complete set of firewall rules for an Azure Managed Redis (AMR) cluster. At most 250 rules
+     are supported, and non-empty rules require publicNetworkAccess to be Enabled.
+     
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+     
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+     
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+     
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request."""
     host_name: Optional[str] = rest_field(name="hostName", visibility=["read"])
     """DNS name of the cluster endpoint."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -627,6 +717,7 @@ class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
         maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
+        firewall_rules: Optional[list["_models.FirewallRule"]] = None,
     ) -> None: ...
 
     @overload
@@ -656,6 +747,22 @@ class ClusterCreateProperties(ClusterProperties):  # pylint: disable=docstring-k
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
     :ivar maintenance_configuration: Cluster-level maintenance configuration.
     :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
+    :ivar firewall_rules: The complete set of firewall rules for an Azure Managed Redis (AMR)
+     cluster. At most 250 rules are supported, and non-empty rules require publicNetworkAccess to be
+     Enabled.
+
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request.
+    :vartype firewall_rules: list[~azure.mgmt.redisenterprise.models.FirewallRule]
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -702,6 +809,7 @@ class ClusterCreateProperties(ClusterProperties):  # pylint: disable=docstring-k
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
         maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
+        firewall_rules: Optional[list["_models.FirewallRule"]] = None,
     ) -> None: ...
 
     @overload
@@ -877,6 +985,7 @@ class ClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-k
         "minimum_tls_version",
         "encryption",
         "maintenance_configuration",
+        "firewall_rules",
         "host_name",
         "provisioning_state",
         "redundancy_mode",
@@ -942,6 +1051,22 @@ class ClusterUpdateProperties(ClusterProperties):  # pylint: disable=docstring-k
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
     :ivar maintenance_configuration: Cluster-level maintenance configuration.
     :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
+    :ivar firewall_rules: The complete set of firewall rules for an Azure Managed Redis (AMR)
+     cluster. At most 250 rules are supported, and non-empty rules require publicNetworkAccess to be
+     Enabled.
+
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request.
+    :vartype firewall_rules: list[~azure.mgmt.redisenterprise.models.FirewallRule]
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -987,6 +1112,7 @@ class ClusterUpdateProperties(ClusterProperties):  # pylint: disable=docstring-k
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
         maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
+        firewall_rules: Optional[list["_models.FirewallRule"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
     ) -> None: ...
 
@@ -1575,6 +1701,47 @@ class ExportClusterParameters(_Model):  # pylint: disable=docstring-keyword-shou
         self,
         *,
         sas_uri: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FirewallRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A firewall rule associated with the cluster.
+
+    :ivar name: The name of the firewall rule, unique within the cluster ignoring case. Must be
+     1-80 characters and contain only letters, numbers, hyphens, or underscores. Required.
+    :vartype name: str
+    :ivar source_address_prefix: An IPv4 address (for example, "203.0.113.1"), IPv4 CIDR prefix
+     (for example, "203.0.113.0/24"), or Azure service tag (for example, "AzureCloud"). IPv6
+     addresses are not supported. Required.
+    :vartype source_address_prefix: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the firewall rule, unique within the cluster ignoring case. Must be 1-80 characters
+     and contain only letters, numbers, hyphens, or underscores. Required."""
+    source_address_prefix: str = rest_field(
+        name="sourceAddressPrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An IPv4 address (for example, \"203.0.113.1\"), IPv4 CIDR prefix (for example,
+     \"203.0.113.0/24\"), or Azure service tag (for example, \"AzureCloud\"). IPv6 addresses are not
+     supported. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        source_address_prefix: str,
     ) -> None: ...
 
     @overload

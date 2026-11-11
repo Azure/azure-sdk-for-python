@@ -1398,10 +1398,12 @@ class RecommendVmSkuTokenBudget(_Model):  # pylint: disable=docstring-keyword-sh
     """The per-request token budget used to size the inference key-value cache.
 
     :ivar prompt_tokens: The number of prompt, or input, tokens per inference request. Must be
-     supplied together with ``maxOutputTokens``, and the two must total from 1 through 131072.
+     supplied together with ``maxOutputTokens``, and the two must total from 1 through 2147483647
+     without exceeding the model's maximum context length.
     :vartype prompt_tokens: int
     :ivar max_output_tokens: The maximum number of generated output tokens per inference request.
-     Must be supplied together with ``promptTokens``, and the two must total from 1 through 131072.
+     Must be supplied together with ``promptTokens``, and the two must total from 1 through
+     2147483647 without exceeding the model's maximum context length.
     :vartype max_output_tokens: int
     """
 
@@ -1409,12 +1411,14 @@ class RecommendVmSkuTokenBudget(_Model):  # pylint: disable=docstring-keyword-sh
         name="promptTokens", visibility=["read", "create", "update", "delete", "query"]
     )
     """The number of prompt, or input, tokens per inference request. Must be supplied together with
-     ``maxOutputTokens``, and the two must total from 1 through 131072."""
+     ``maxOutputTokens``, and the two must total from 1 through 2147483647 without exceeding the
+     model's maximum context length."""
     max_output_tokens: Optional[int] = rest_field(
         name="maxOutputTokens", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum number of generated output tokens per inference request. Must be supplied together
-     with ``promptTokens``, and the two must total from 1 through 131072."""
+     with ``promptTokens``, and the two must total from 1 through 2147483647 without exceeding the
+     model's maximum context length."""
 
     @overload
     def __init__(
