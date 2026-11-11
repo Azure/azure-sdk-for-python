@@ -116,11 +116,16 @@ class SearchIndexingBufferedSender:
             endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
         )
         self._auto_flush_task: Optional[asyncio.Task] = None
+        self._process_lock = asyncio.Lock()
+        self._process_task: Optional[asyncio.Task] = None
+        self._closed = False
         if self._auto_flush:
             self._schedule_auto_flush()
 
     def _schedule_auto_flush(self) -> None:
         """Schedule the auto flush task."""
+        if not self._auto_flush or self._closed:
+            return
         if (
             self._auto_flush_task
             and not self._auto_flush_task.done()
@@ -144,10 +149,20 @@ class SearchIndexingBufferedSender:
 
         :param bool flush: Flush the actions queue before shutdown the client. Default to True.
         """
+        self._closed = True
+        if self._process_task is not asyncio.current_task():
+            # Dequeued actions are absent from the queue while an upload is in flight.
+            async with self._process_lock:
+                pass
+        task = self._auto_flush_task
+        if task and task is not asyncio.current_task() and not task.done():
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
         if flush:
             await self.flush()
-        if self._auto_flush_task and not self._auto_flush_task.done():
-            self._auto_flush_task.cancel()
 
     def __repr__(self) -> str:
         return "<SearchIndexingBufferedSender [endpoint={}, index={}]>".format(
@@ -201,6 +216,17 @@ class SearchIndexingBufferedSender:
         return has_error
 
     async def _process(self, timeout: int = 86400, **kwargs) -> bool:
+        if self._process_task is asyncio.current_task():
+            return await self._process_batch(timeout=timeout, **kwargs)
+        async with self._process_lock:
+            self._process_task = asyncio.current_task()
+            try:
+                return await self._process_batch(timeout=timeout, **kwargs)
+            finally:
+                self._process_task = None
+                self._schedule_auto_flush()
+
+    async def _process_batch(self, timeout: int = 86400, **kwargs) -> bool:
         raise_error = kwargs.pop("raise_error", True)
         actions = self._index_documents_batch.dequeue_actions()
         has_error = False
@@ -223,8 +249,6 @@ class SearchIndexingBufferedSender:
                         await client.close()
             except Exception:  # pylint: disable=broad-except
                 pass
-
-        self._schedule_auto_flush()
 
         try:
             results = await self._index_documents_actions(actions=actions, timeout=timeout)

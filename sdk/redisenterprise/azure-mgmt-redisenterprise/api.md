@@ -3,6 +3,7 @@ namespace azure.mgmt.redisenterprise
 
     class azure.mgmt.redisenterprise.RedisEnterpriseManagementClient: implements ContextManager 
         access_policy_assignment: AccessPolicyAssignmentOperations
+        clusters: ClustersOperations
         databases: DatabasesOperations
         migrations: MigrationsOperations
         operations: Operations
@@ -38,6 +39,7 @@ namespace azure.mgmt.redisenterprise.aio
 
     class azure.mgmt.redisenterprise.aio.RedisEnterpriseManagementClient: implements AsyncContextManager 
         access_policy_assignment: AccessPolicyAssignmentOperations
+        clusters: ClustersOperations
         databases: DatabasesOperations
         migrations: MigrationsOperations
         operations: Operations
@@ -146,6 +148,24 @@ namespace azure.mgmt.redisenterprise.aio.operations
                 database_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[AccessPolicyAssignment]: ...
+
+
+    class azure.mgmt.redisenterprise.aio.operations.ClustersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01', '2026-10-01-preview'])
+        async def begin_unlink_migrated_endpoint(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
 
 
     class azure.mgmt.redisenterprise.aio.operations.DatabasesOperations:
@@ -497,14 +517,6 @@ namespace azure.mgmt.redisenterprise.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace_async
-        async def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
         @overload
         async def begin_start(
                 self, 
@@ -537,6 +549,48 @@ namespace azure.mgmt.redisenterprise.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[Migration]: ...
+
+        @overload
+        async def begin_undo(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: Optional[MigrationUndoRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_undo(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: Optional[MigrationUndoRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_undo(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01', '2026-10-01-preview'])
+        async def begin_unlink_migrated_endpoint(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
         async def get(
@@ -923,6 +977,7 @@ namespace azure.mgmt.redisenterprise.models
         force_migrate: Optional[bool]
         last_modified_time: datetime
         provisioning_state: Union[str, MigrationProvisioningState]
+        rollback_eligible_until: datetime
         skip_data_migration: bool
         source_resource_id: str
         source_type: Literal[SourceType.AZURE_CACHE_FOR_REDIS]
@@ -983,6 +1038,7 @@ namespace azure.mgmt.redisenterprise.models
 
     class azure.mgmt.redisenterprise.models.ClusterCreateProperties(ClusterProperties):
         encryption: ClusterPropertiesEncryption
+        firewall_rules: list[FirewallRule]
         high_availability: Union[str, HighAvailability]
         host_name: str
         maintenance_configuration: MaintenanceConfiguration
@@ -1000,6 +1056,7 @@ namespace azure.mgmt.redisenterprise.models
                 self, 
                 *, 
                 encryption: Optional[ClusterPropertiesEncryption] = ..., 
+                firewall_rules: Optional[list[FirewallRule]] = ..., 
                 high_availability: Optional[Union[str, HighAvailability]] = ..., 
                 maintenance_configuration: Optional[MaintenanceConfiguration] = ..., 
                 minimum_tls_version: Optional[Union[str, TlsVersion]] = ..., 
@@ -1012,6 +1069,7 @@ namespace azure.mgmt.redisenterprise.models
 
     class azure.mgmt.redisenterprise.models.ClusterProperties(_Model):
         encryption: Optional[ClusterPropertiesEncryption]
+        firewall_rules: Optional[list[FirewallRule]]
         high_availability: Optional[Union[str, HighAvailability]]
         host_name: Optional[str]
         maintenance_configuration: Optional[MaintenanceConfiguration]
@@ -1028,6 +1086,7 @@ namespace azure.mgmt.redisenterprise.models
                 self, 
                 *, 
                 encryption: Optional[ClusterPropertiesEncryption] = ..., 
+                firewall_rules: Optional[list[FirewallRule]] = ..., 
                 high_availability: Optional[Union[str, HighAvailability]] = ..., 
                 maintenance_configuration: Optional[MaintenanceConfiguration] = ..., 
                 minimum_tls_version: Optional[Union[str, TlsVersion]] = ...
@@ -1113,6 +1172,7 @@ namespace azure.mgmt.redisenterprise.models
 
     class azure.mgmt.redisenterprise.models.ClusterUpdateProperties(ClusterProperties):
         encryption: ClusterPropertiesEncryption
+        firewall_rules: list[FirewallRule]
         high_availability: Union[str, HighAvailability]
         host_name: str
         maintenance_configuration: MaintenanceConfiguration
@@ -1130,6 +1190,7 @@ namespace azure.mgmt.redisenterprise.models
                 self, 
                 *, 
                 encryption: Optional[ClusterPropertiesEncryption] = ..., 
+                firewall_rules: Optional[list[FirewallRule]] = ..., 
                 high_availability: Optional[Union[str, HighAvailability]] = ..., 
                 maintenance_configuration: Optional[MaintenanceConfiguration] = ..., 
                 minimum_tls_version: Optional[Union[str, TlsVersion]] = ..., 
@@ -1384,6 +1445,22 @@ namespace azure.mgmt.redisenterprise.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.redisenterprise.models.FirewallRule(_Model):
+        name: str
+        source_address_prefix: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                source_address_prefix: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.redisenterprise.models.FlushParameters(_Model):
         ids: Optional[list[str]]
 
@@ -1598,6 +1675,7 @@ namespace azure.mgmt.redisenterprise.models
         creation_time: Optional[datetime]
         last_modified_time: Optional[datetime]
         provisioning_state: Optional[Union[str, MigrationProvisioningState]]
+        rollback_eligible_until: Optional[datetime]
         source_type: str
         status_details: Optional[str]
         target_resource_id: Optional[str]
@@ -1622,6 +1700,34 @@ namespace azure.mgmt.redisenterprise.models
         IN_PROGRESS = "InProgress"
         READY_FOR_DNS_SWITCH = "ReadyForDnsSwitch"
         SUCCEEDED = "Succeeded"
+        UNLINKED = "Unlinked"
+        UNLINKING = "Unlinking"
+        UNLINK_FAILED = "UnlinkFailed"
+
+
+    class azure.mgmt.redisenterprise.models.MigrationRollbackReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLIENT_CONNECTION = "clientConnection"
+        COMPATIBILITY = "compatibility"
+        COST = "cost"
+        DATA_LOSS = "dataLoss"
+        OTHER = "other"
+        PERFORMANCE = "performance"
+        STABILITY = "stability"
+        TESTING = "testing"
+
+
+    class azure.mgmt.redisenterprise.models.MigrationUndoRequest(_Model):
+        rollback_reason: Optional[Union[str, MigrationRollbackReason]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                rollback_reason: Optional[Union[str, MigrationRollbackReason]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.redisenterprise.models.MigrationValidationDisparity(_Model):
@@ -1655,7 +1761,6 @@ namespace azure.mgmt.redisenterprise.models
 
 
     class azure.mgmt.redisenterprise.models.MigrationValidationRequest(_Model):
-        force_migrate: Optional[bool]
         skip_data_migration: Optional[bool]
         source_resource_id: str
 
@@ -1663,7 +1768,6 @@ namespace azure.mgmt.redisenterprise.models
         def __init__(
                 self, 
                 *, 
-                force_migrate: Optional[bool] = ..., 
                 skip_data_migration: Optional[bool] = ..., 
                 source_resource_id: str
             ) -> None: ...
@@ -2217,6 +2321,24 @@ namespace azure.mgmt.redisenterprise.operations
             ) -> ItemPaged[AccessPolicyAssignment]: ...
 
 
+    class azure.mgmt.redisenterprise.operations.ClustersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01', '2026-10-01-preview'])
+        def begin_unlink_migrated_endpoint(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+
     class azure.mgmt.redisenterprise.operations.DatabasesOperations:
 
         def __init__(
@@ -2566,14 +2688,6 @@ namespace azure.mgmt.redisenterprise.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace
-        def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
         @overload
         def begin_start(
                 self, 
@@ -2606,6 +2720,48 @@ namespace azure.mgmt.redisenterprise.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[Migration]: ...
+
+        @overload
+        def begin_undo(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: Optional[MigrationUndoRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_undo(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: Optional[MigrationUndoRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_undo(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01', '2026-10-01-preview'])
+        def begin_unlink_migrated_endpoint(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
 
         @distributed_trace
         def get(
@@ -2894,7 +3050,7 @@ namespace azure.mgmt.redisenterprise.types
         id: str
         name: str
         properties: AccessPolicyAssignmentProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2904,16 +3060,16 @@ namespace azure.mgmt.redisenterprise.types
         key "provisioningError": ForwardRef('AccessPolicyAssignmentProvisioningError', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "user": Required[AccessPolicyAssignmentPropertiesUser]
-        access_policy_name: str
-        access_string: str
-        provisioning_error: AccessPolicyAssignmentProvisioningError
-        provisioning_state: Union[str, ProvisioningState]
+        accessPolicyName: str
+        accessString: str
+        provisioningError: AccessPolicyAssignmentProvisioningError
+        provisioningState: Union[str, ProvisioningState]
         user: AccessPolicyAssignmentPropertiesUser
 
 
     class azure.mgmt.redisenterprise.types.AccessPolicyAssignmentPropertiesUser(TypedDict, total=False):
         key "objectId": str
-        object_id: str
+        objectId: str
 
 
     class azure.mgmt.redisenterprise.types.AccessPolicyAssignmentProvisioningError(TypedDict, total=False):
@@ -2930,22 +3086,24 @@ namespace azure.mgmt.redisenterprise.types
         key "forceMigrate": bool
         key "lastModifiedTime": str
         key "provisioningState": Union[str, MigrationProvisioningState]
+        key "rollbackEligibleUntil": str
         key "skipDataMigration": Required[bool]
         key "sourceResourceId": Required[str]
         key "sourceType": Required[Literal[SourceType.AZURE_CACHE_FOR_REDIS]]
-        key "statusDetails": str
+        key "statusDetails": Optional[str]
         key "switchDns": Required[bool]
         key "targetResourceId": str
-        creation_time: str
-        force_migrate: bool
-        last_modified_time: str
-        provisioning_state: Union[str, MigrationProvisioningState]
-        skip_data_migration: bool
-        source_resource_id: str
-        source_type: Literal[SourceType.AZURE_CACHE_FOR_REDIS]
-        status_details: str
-        switch_dns: bool
-        target_resource_id: str
+        creationTime: str
+        forceMigrate: bool
+        lastModifiedTime: str
+        provisioningState: Union[str, MigrationProvisioningState]
+        rollbackEligibleUntil: str
+        skipDataMigration: bool
+        sourceResourceId: str
+        sourceType: Literal[SourceType.AZURE_CACHE_FOR_REDIS]
+        statusDetails: str
+        switchDns: bool
+        targetResourceId: str
 
 
     class azure.mgmt.redisenterprise.types.Cluster(TrackedResource):
@@ -2965,7 +3123,7 @@ namespace azure.mgmt.redisenterprise.types
         name: str
         properties: ClusterCreateProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
         zones: list[str]
@@ -2984,18 +3142,18 @@ namespace azure.mgmt.redisenterprise.types
         key "redundancyMode": Union[str, RedundancyMode]
         key "resourceState": Union[str, ResourceState]
         encryption: ClusterPropertiesEncryption
-        high_availability: Union[str, HighAvailability]
-        host_name: str
-        maintenance_configuration: MaintenanceConfiguration
-        migrated_endpoint: str
-        minimum_tls_version: Union[str, TlsVersion]
+        firewallRules: list[FirewallRule]
+        highAvailability: Union[str, HighAvailability]
+        hostName: str
+        maintenanceConfiguration: MaintenanceConfiguration
+        migratedEndpoint: str
+        minimumTlsVersion: Union[str, TlsVersion]
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        public_network_access: Union[str, PublicNetworkAccess]
-        redis_version: str
-        redundancy_mode: Union[str, RedundancyMode]
-        resource_state: Union[str, ResourceState]
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        redisVersion: str
+        redundancyMode: Union[str, RedundancyMode]
+        resourceState: Union[str, ResourceState]
 
 
     class azure.mgmt.redisenterprise.types.ClusterProperties(TypedDict, total=False):
@@ -3010,36 +3168,36 @@ namespace azure.mgmt.redisenterprise.types
         key "redundancyMode": Union[str, RedundancyMode]
         key "resourceState": Union[str, ResourceState]
         encryption: ClusterPropertiesEncryption
-        high_availability: Union[str, HighAvailability]
-        host_name: str
-        maintenance_configuration: MaintenanceConfiguration
-        migrated_endpoint: str
-        minimum_tls_version: Union[str, TlsVersion]
+        firewallRules: list[FirewallRule]
+        highAvailability: Union[str, HighAvailability]
+        hostName: str
+        maintenanceConfiguration: MaintenanceConfiguration
+        migratedEndpoint: str
+        minimumTlsVersion: Union[str, TlsVersion]
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        redis_version: str
-        redundancy_mode: Union[str, RedundancyMode]
-        resource_state: Union[str, ResourceState]
+        provisioningState: Union[str, ProvisioningState]
+        redisVersion: str
+        redundancyMode: Union[str, RedundancyMode]
+        resourceState: Union[str, ResourceState]
 
 
     class azure.mgmt.redisenterprise.types.ClusterPropertiesEncryption(TypedDict, total=False):
         key "customerManagedKeyEncryption": ForwardRef('ClusterPropertiesEncryptionCustomerManagedKeyEncryption', module='types')
-        customer_managed_key_encryption: ClusterPropertiesEncryptionCustomerManagedKeyEncryption
+        customerManagedKeyEncryption: ClusterPropertiesEncryptionCustomerManagedKeyEncryption
 
 
     class azure.mgmt.redisenterprise.types.ClusterPropertiesEncryptionCustomerManagedKeyEncryption(TypedDict, total=False):
         key "keyEncryptionKeyIdentity": ForwardRef('ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity', module='types')
         key "keyEncryptionKeyUrl": str
-        key_encryption_key_identity: ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity
-        key_encryption_key_url: str
+        keyEncryptionKeyIdentity: ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity
+        keyEncryptionKeyUrl: str
 
 
     class azure.mgmt.redisenterprise.types.ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(TypedDict, total=False):
         key "identityType": Union[str, CmkIdentityType]
         key "userAssignedIdentityResourceId": str
-        identity_type: Union[str, CmkIdentityType]
-        user_assigned_identity_resource_id: str
+        identityType: Union[str, CmkIdentityType]
+        userAssignedIdentityResourceId: str
 
 
     class azure.mgmt.redisenterprise.types.ClusterUpdate(TypedDict, total=False):
@@ -3065,18 +3223,18 @@ namespace azure.mgmt.redisenterprise.types
         key "redundancyMode": Union[str, RedundancyMode]
         key "resourceState": Union[str, ResourceState]
         encryption: ClusterPropertiesEncryption
-        high_availability: Union[str, HighAvailability]
-        host_name: str
-        maintenance_configuration: MaintenanceConfiguration
-        migrated_endpoint: str
-        minimum_tls_version: Union[str, TlsVersion]
+        firewallRules: list[FirewallRule]
+        highAvailability: Union[str, HighAvailability]
+        hostName: str
+        maintenanceConfiguration: MaintenanceConfiguration
+        migratedEndpoint: str
+        minimumTlsVersion: Union[str, TlsVersion]
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        public_network_access: Union[str, PublicNetworkAccess]
-        redis_version: str
-        redundancy_mode: Union[str, RedundancyMode]
-        resource_state: Union[str, ResourceState]
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        redisVersion: str
+        redundancyMode: Union[str, RedundancyMode]
+        resourceState: Union[str, ResourceState]
 
 
     class azure.mgmt.redisenterprise.types.Database(ProxyResource):
@@ -3088,7 +3246,7 @@ namespace azure.mgmt.redisenterprise.types
         id: str
         name: str
         properties: DatabaseCreateProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3105,19 +3263,19 @@ namespace azure.mgmt.redisenterprise.types
         key "provisioningState": Union[str, ProvisioningState]
         key "redisVersion": str
         key "resourceState": Union[str, ResourceState]
-        access_keys_authentication: Union[str, AccessKeysAuthentication]
-        client_protocol: Union[str, Protocol]
-        clustering_policy: Union[str, ClusteringPolicy]
-        defer_upgrade: Union[str, DeferUpgradeSetting]
-        eviction_policy: Union[str, EvictionPolicy]
-        geo_replication: DatabasePropertiesGeoReplication
+        accessKeysAuthentication: Union[str, AccessKeysAuthentication]
+        clientProtocol: Union[str, Protocol]
+        clusteringPolicy: Union[str, ClusteringPolicy]
+        deferUpgrade: Union[str, DeferUpgradeSetting]
+        evictionPolicy: Union[str, EvictionPolicy]
+        geoReplication: DatabasePropertiesGeoReplication
         modules: list[Module]
-        notify_keyspace_events: str
+        notifyKeyspaceEvents: str
         persistence: Persistence
         port: int
-        provisioning_state: Union[str, ProvisioningState]
-        redis_version: str
-        resource_state: Union[str, ResourceState]
+        provisioningState: Union[str, ProvisioningState]
+        redisVersion: str
+        resourceState: Union[str, ResourceState]
 
 
     class azure.mgmt.redisenterprise.types.DatabaseProperties(TypedDict, total=False):
@@ -3133,26 +3291,25 @@ namespace azure.mgmt.redisenterprise.types
         key "provisioningState": Union[str, ProvisioningState]
         key "redisVersion": str
         key "resourceState": Union[str, ResourceState]
-        access_keys_authentication: Union[str, AccessKeysAuthentication]
-        client_protocol: Union[str, Protocol]
-        clustering_policy: Union[str, ClusteringPolicy]
-        defer_upgrade: Union[str, DeferUpgradeSetting]
-        eviction_policy: Union[str, EvictionPolicy]
-        geo_replication: DatabasePropertiesGeoReplication
+        accessKeysAuthentication: Union[str, AccessKeysAuthentication]
+        clientProtocol: Union[str, Protocol]
+        clusteringPolicy: Union[str, ClusteringPolicy]
+        deferUpgrade: Union[str, DeferUpgradeSetting]
+        evictionPolicy: Union[str, EvictionPolicy]
+        geoReplication: DatabasePropertiesGeoReplication
         modules: list[Module]
-        notify_keyspace_events: str
+        notifyKeyspaceEvents: str
         persistence: Persistence
         port: int
-        provisioning_state: Union[str, ProvisioningState]
-        redis_version: str
-        resource_state: Union[str, ResourceState]
+        provisioningState: Union[str, ProvisioningState]
+        redisVersion: str
+        resourceState: Union[str, ResourceState]
 
 
     class azure.mgmt.redisenterprise.types.DatabasePropertiesGeoReplication(TypedDict, total=False):
         key "groupNickname": str
-        group_nickname: str
+        groupNickname: str
         linkedDatabases: list[LinkedDatabase]
-        linked_databases: list[LinkedDatabase]
 
 
     class azure.mgmt.redisenterprise.types.DatabaseUpdate(TypedDict, total=False):
@@ -3173,24 +3330,31 @@ namespace azure.mgmt.redisenterprise.types
         key "provisioningState": Union[str, ProvisioningState]
         key "redisVersion": str
         key "resourceState": Union[str, ResourceState]
-        access_keys_authentication: Union[str, AccessKeysAuthentication]
-        client_protocol: Union[str, Protocol]
-        clustering_policy: Union[str, ClusteringPolicy]
-        defer_upgrade: Union[str, DeferUpgradeSetting]
-        eviction_policy: Union[str, EvictionPolicy]
-        geo_replication: DatabasePropertiesGeoReplication
+        accessKeysAuthentication: Union[str, AccessKeysAuthentication]
+        clientProtocol: Union[str, Protocol]
+        clusteringPolicy: Union[str, ClusteringPolicy]
+        deferUpgrade: Union[str, DeferUpgradeSetting]
+        evictionPolicy: Union[str, EvictionPolicy]
+        geoReplication: DatabasePropertiesGeoReplication
         modules: list[Module]
-        notify_keyspace_events: str
+        notifyKeyspaceEvents: str
         persistence: Persistence
         port: int
-        provisioning_state: Union[str, ProvisioningState]
-        redis_version: str
-        resource_state: Union[str, ResourceState]
+        provisioningState: Union[str, ProvisioningState]
+        redisVersion: str
+        resourceState: Union[str, ResourceState]
 
 
     class azure.mgmt.redisenterprise.types.ExportClusterParameters(TypedDict, total=False):
         key "sasUri": Required[str]
-        sas_uri: str
+        sasUri: str
+
+
+    class azure.mgmt.redisenterprise.types.FirewallRule(TypedDict, total=False):
+        key "name": Required[str]
+        key "sourceAddressPrefix": Required[str]
+        name: str
+        sourceAddressPrefix: str
 
 
     class azure.mgmt.redisenterprise.types.FlushParameters(TypedDict, total=False):
@@ -3199,14 +3363,13 @@ namespace azure.mgmt.redisenterprise.types
 
     class azure.mgmt.redisenterprise.types.ForceLinkParameters(TypedDict, total=False):
         key "geoReplication": Required[ForceLinkParametersGeoReplication]
-        geo_replication: ForceLinkParametersGeoReplication
+        geoReplication: ForceLinkParametersGeoReplication
 
 
     class azure.mgmt.redisenterprise.types.ForceLinkParametersGeoReplication(TypedDict, total=False):
         key "groupNickname": str
-        group_nickname: str
+        groupNickname: str
         linkedDatabases: list[LinkedDatabase]
-        linked_databases: list[LinkedDatabase]
 
 
     class azure.mgmt.redisenterprise.types.ForceUnlinkParameters(TypedDict, total=False):
@@ -3216,7 +3379,7 @@ namespace azure.mgmt.redisenterprise.types
 
     class azure.mgmt.redisenterprise.types.ImportClusterParameters(TypedDict, total=False):
         key "sasUris": Required[list[str]]
-        sas_uris: list[str]
+        sasUris: list[str]
 
 
     class azure.mgmt.redisenterprise.types.LinkedDatabase(TypedDict, total=False):
@@ -3228,7 +3391,6 @@ namespace azure.mgmt.redisenterprise.types
 
     class azure.mgmt.redisenterprise.types.MaintenanceConfiguration(TypedDict, total=False):
         maintenanceWindows: list[MaintenanceWindow]
-        maintenance_windows: list[MaintenanceWindow]
 
 
     class azure.mgmt.redisenterprise.types.MaintenanceWindow(TypedDict, total=False):
@@ -3238,24 +3400,23 @@ namespace azure.mgmt.redisenterprise.types
         key "type": Required[Union[str, MaintenanceWindowType]]
         duration: str
         schedule: MaintenanceWindowSchedule
-        start_hour_utc: int
+        startHourUtc: int
         type: Union[str, MaintenanceWindowType]
 
 
     class azure.mgmt.redisenterprise.types.MaintenanceWindowSchedule(TypedDict, total=False):
         key "dayOfWeek": Union[str, MaintenanceDayOfWeek]
-        day_of_week: Union[str, MaintenanceDayOfWeek]
+        dayOfWeek: Union[str, MaintenanceDayOfWeek]
 
 
     class azure.mgmt.redisenterprise.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.redisenterprise.types.Migration(ProxyResource):
@@ -3267,7 +3428,7 @@ namespace azure.mgmt.redisenterprise.types
         id: str
         name: str
         properties: MigrationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3276,31 +3437,36 @@ namespace azure.mgmt.redisenterprise.types
         key "forceMigrate": bool
         key "lastModifiedTime": str
         key "provisioningState": Union[str, MigrationProvisioningState]
+        key "rollbackEligibleUntil": str
         key "skipDataMigration": Required[bool]
         key "sourceResourceId": Required[str]
         key "sourceType": Required[Literal[SourceType.AZURE_CACHE_FOR_REDIS]]
-        key "statusDetails": str
+        key "statusDetails": Optional[str]
         key "switchDns": Required[bool]
         key "targetResourceId": str
-        creation_time: str
-        force_migrate: bool
-        last_modified_time: str
-        provisioning_state: Union[str, MigrationProvisioningState]
-        skip_data_migration: bool
-        source_resource_id: str
-        source_type: Literal[SourceType.AZURE_CACHE_FOR_REDIS]
-        status_details: str
-        switch_dns: bool
-        target_resource_id: str
+        creationTime: str
+        forceMigrate: bool
+        lastModifiedTime: str
+        provisioningState: Union[str, MigrationProvisioningState]
+        rollbackEligibleUntil: str
+        skipDataMigration: bool
+        sourceResourceId: str
+        sourceType: Literal[SourceType.AZURE_CACHE_FOR_REDIS]
+        statusDetails: str
+        switchDns: bool
+        targetResourceId: str
+
+
+    class azure.mgmt.redisenterprise.types.MigrationUndoRequest(TypedDict, total=False):
+        key "rollbackReason": Union[str, MigrationRollbackReason]
+        rollbackReason: Union[str, MigrationRollbackReason]
 
 
     class azure.mgmt.redisenterprise.types.MigrationValidationRequest(TypedDict, total=False):
-        key "forceMigrate": bool
         key "skipDataMigration": bool
         key "sourceResourceId": Required[str]
-        force_migrate: bool
-        skip_data_migration: bool
-        source_resource_id: str
+        skipDataMigration: bool
+        sourceResourceId: str
 
 
     class azure.mgmt.redisenterprise.types.Module(TypedDict, total=False):
@@ -3317,10 +3483,10 @@ namespace azure.mgmt.redisenterprise.types
         key "aofFrequency": Union[str, AofFrequency]
         key "rdbEnabled": bool
         key "rdbFrequency": Union[str, RdbFrequency]
-        aof_enabled: bool
-        aof_frequency: Union[str, AofFrequency]
-        rdb_enabled: bool
-        rdb_frequency: Union[str, RdbFrequency]
+        aofEnabled: bool
+        aofFrequency: Union[str, AofFrequency]
+        rdbEnabled: bool
+        rdbFrequency: Union[str, RdbFrequency]
 
 
     class azure.mgmt.redisenterprise.types.PrivateEndpoint(TypedDict, total=False):
@@ -3337,7 +3503,7 @@ namespace azure.mgmt.redisenterprise.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3346,17 +3512,16 @@ namespace azure.mgmt.redisenterprise.types
         key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
         key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
 
 
     class azure.mgmt.redisenterprise.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": str
         key "description": str
         key "status": Union[str, PrivateEndpointServiceConnectionStatus]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateEndpointServiceConnectionStatus]
 
@@ -3368,13 +3533,13 @@ namespace azure.mgmt.redisenterprise.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.redisenterprise.types.RegenerateKeyParameters(TypedDict, total=False):
         key "keyType": Required[Union[str, AccessKeyType]]
-        key_type: Union[str, AccessKeyType]
+        keyType: Union[str, AccessKeyType]
 
 
     class azure.mgmt.redisenterprise.types.Resource(TypedDict, total=False):
@@ -3384,7 +3549,7 @@ namespace azure.mgmt.redisenterprise.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3406,12 +3571,12 @@ namespace azure.mgmt.redisenterprise.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.redisenterprise.types.TrackedResource(Resource):
@@ -3423,7 +3588,7 @@ namespace azure.mgmt.redisenterprise.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -3431,8 +3596,8 @@ namespace azure.mgmt.redisenterprise.types
     class azure.mgmt.redisenterprise.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
 ```

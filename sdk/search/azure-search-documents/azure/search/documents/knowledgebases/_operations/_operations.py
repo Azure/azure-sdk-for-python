@@ -683,5 +683,9 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
 
         deserialized: Stream[Union[_models1.KnowledgeBaseRetrievalStartedEvent, _models1.KnowledgeBaseActivityStartedEvent, _models1.KnowledgeBaseActivityRecord, _models1.KnowledgeBaseAnswerCompletedEvent, list[_models1.KnowledgeBaseReference], _models1.KnowledgeBaseStreamErrorEvent, _models1.KnowledgeBaseResponseCompletedEvent]] = Stream(response=response, deserialization_callback=_callback, terminal_event_names=["error", "response.completed"])  # type: ignore
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            try:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            except BaseException:
+                deserialized.close()
+                raise
         return deserialized

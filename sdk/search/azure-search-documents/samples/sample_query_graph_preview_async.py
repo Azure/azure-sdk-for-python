@@ -44,8 +44,10 @@ async def sample_query_graph():
             filter=f"graph_name eq '{graph_name}'",
             include_statistics=False,
             provenance=GraphQueryProvenanceParameters(kind="ids", max_evidence_per_row=5),
-            client_request_id=run_tag,
-            accept="application/json;odata.metadata=none",
+            headers={
+                "x-ms-client-request-id": run_tag,
+                "Accept": "application/json;odata.metadata=none",
+            },
         )
         for row in result.value:
             print(row)

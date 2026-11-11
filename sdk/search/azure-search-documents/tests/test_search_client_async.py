@@ -101,6 +101,47 @@ class TestSearchClientConstructorAsync:
 
 class TestSearchRequestBuildingAsync:
     @pytest.mark.asyncio
+    async def test_graph_sample_passes_headers_without_unsupported_transport_options(self, monkeypatch):
+        from pathlib import Path
+        import runpy
+        from azure.core.pipeline.transport import AsyncHttpTransport
+        from azure.core.rest import AsyncHttpResponse
+
+        require_capability("azure.search.documents.aio.SearchClient.graph")
+        for name, value in {
+            "SEARCH_SERVICE_ENDPOINT": SEARCH_ENDPOINT,
+            "SEARCH_API_KEY": API_KEY,
+            "SEARCH_GRAPH_INDEX_NAME": INDEX_NAME,
+            "SEARCH_GRAPH_NAME": "hotel-graph",
+        }.items():
+            monkeypatch.setenv(name, value)
+        response = mock.Mock(spec=AsyncHttpResponse)
+        response.status_code = 200
+        response.headers = {"Content-Type": "application/json"}
+        response.content_type = "application/json"
+        response.text.return_value = '{"value": []}'
+        response.json.return_value = {"value": []}
+        requests = []
+
+        async def send(request, *, stream=False):
+            requests.append(request)
+            return response
+
+        transport = mock.AsyncMock(spec=AsyncHttpTransport)
+        transport.send.side_effect = send
+        sample = runpy.run_path(
+            str(Path(__file__).resolve().parents[1].joinpath("samples", "sample_query_graph_preview_async.py"))
+        )
+        with mock.patch(
+            "azure.search.documents.aio.SearchClient",
+            side_effect=lambda *args, **kwargs: SearchClient(*args, transport=transport, **kwargs),
+        ):
+            await sample["sample_query_graph"]()
+        assert len(requests) == 1
+        assert requests[0].headers["Accept"] == "application/json;odata.metadata=none"
+        assert requests[0].headers["x-ms-client-request-id"]
+
+    @pytest.mark.asyncio
     async def test_get_document_count_preserves_explicit_older_api_version(self):
         client = create_search_client(api_version=ApiVersion.V2020_06_30)
         response = mock.Mock()

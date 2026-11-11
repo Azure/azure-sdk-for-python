@@ -346,7 +346,11 @@ def test_claims_challenge_raises_error(get_token_method):
     claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
     credential = AzureDeveloperCliCredential()
 
-    expected_message = "Suggestion: re-authentication required, run `azd auth login` to acquire a new token."
+    expected_message = (
+        "ERROR: fetching token: AADSTS50076: Due to a configuration change made by your administrator, "
+        "or because you moved to a new location, you must use multi-factor authentication to access "
+        "'tenant-id'. Trace ID: trace-id Correlation ID: correlation-id Timestamp: 2025-08-18 22:08:14Z"
+    )
     error_output = """\
 {"data":{"message":"\\nERROR: fetching token: AADSTS50076: Due to a configuration change made by your administrator, or because you moved to a new location, you must use multi-factor authentication to access 'tenant-id'. Trace ID: trace-id Correlation ID: correlation-id Timestamp: 2025-08-18 22:08:14Z\\n"}}
 {"data":{"message":"Suggestion: re-authentication required, run `azd auth login` to acquire a new token.\\n"}}"""
@@ -439,36 +443,8 @@ def test_claims_command_line_argument(get_token_method):
 class TestExtractCliErrorMessage:
     """Tests for the error message extraction function."""
 
-    def test_extract_suggestion_message_preferred(self):
-        """Should prefer messages containing 'Suggestion' (case-insensitive)"""
-        output = """\
-{"type":"consoleMessage","timestamp":"2025-08-18T15:08:14.4849845-07:00","data":{"message":"\\nERROR: fetching token: AADSTS50076: Due to a configuration change made by your administrator, or because you moved to a new location, you must use multi-factor authentication to access 'tenant-id'. Trace ID: trace-id Correlation ID: correlation-id Timestamp: 2025-08-18 22:08:14Z\\n"}}
-{"type":"consoleMessage","timestamp":"2025-08-18T15:08:14.4849845-07:00","data":{"message":"Suggestion: re-authentication required, run `azd auth login` to acquire a new token.\\n"}}"""
-
-        result = extract_cli_error_message(output)
-        assert result == "Suggestion: re-authentication required, run `azd auth login` to acquire a new token."
-
-    def test_extract_suggestion_case_insensitive(self):
-        """Should find 'suggestion' in any case"""
-        output = """\
-{"type":"consoleMessage","data":{"message":"First message"}}
-{"type":"consoleMessage","data":{"message":"SUGGESTION: Try running azd auth login"}}"""
-
-        result = extract_cli_error_message(output)
-        assert result == "SUGGESTION: Try running azd auth login"
-
-    def test_extract_last_message_when_no_suggestion(self):
-        """Should return last message when multiple messages but no suggestion"""
-        output = """\
-{"type":"consoleMessage","data":{"message":"First error message"}}
-{"type":"consoleMessage","data":{"message":"Second error message"}}
-{"type":"consoleMessage","data":{"message":"Third error message"}}"""
-
-        result = extract_cli_error_message(output)
-        assert result == "Third error message"
-
     def test_extract_first_message_when_only_one(self):
-        """Should return first message when only one exists"""
+        """Should return the first message when only one exists"""
         output = '{"type":"consoleMessage","data":{"message":"Only error message"}}'
 
         result = extract_cli_error_message(output)
@@ -481,32 +457,51 @@ class TestExtractCliErrorMessage:
         result = extract_cli_error_message(output)
         assert result == "Error in nested data"
 
-    def test_extract_message_from_root_level(self):
-        """Should extract message from root level of JSON"""
-        output = '{"message":"Root level error message"}'
+    def test_extract_first_non_empty_data_message(self):
+        """Should return the first non-empty data.message; later messages are ignored.
+
+        ``azd auth token`` (pre-v1.23.7) emits the entire ``ERROR: ... Suggestion: ...``
+        blob inside a single ``consoleMessage`` line, so multi-line legacy output is
+        only seen if a separate ``Message(ctx, "")`` precedes it. The first non-empty
+        line is always the substantive error.
+        """
+        output = """\
+{"type":"consoleMessage","timestamp":"2025-08-18T15:08:14.4849845-07:00","data":{"message":"\\nERROR: fetching token: AADSTS50076: multi-factor authentication required\\n\\nSuggestion: re-authentication required, run `azd auth login` to acquire a new token.\\n"}}"""
 
         result = extract_cli_error_message(output)
-        assert result == "Root level error message"
+        assert result == (
+            "ERROR: fetching token: AADSTS50076: multi-factor authentication required\n\n"
+            "Suggestion: re-authentication required, run `azd auth login` to acquire a new token."
+        )
 
-    def test_extract_mixed_message_locations(self):
-        """Should handle messages at different JSON levels"""
+    def test_extract_first_message_when_multiple_present(self):
+        """Multiple consoleMessage lines: first non-empty wins (matches Go/.NET)."""
         output = """\
-{"message":"Root level message"}
-{"data":{"message":"Nested message"}}
-{"data":{"message":"suggestion: Use this suggestion"}}"""
+{"type":"consoleMessage","data":{"message":"First error message"}}
+{"type":"consoleMessage","data":{"message":"Second error message"}}
+{"type":"consoleMessage","data":{"message":"Third error message"}}"""
 
         result = extract_cli_error_message(output)
-        assert result == "suggestion: Use this suggestion"
+        assert result == "First error message"
 
-    def test_ignore_empty_messages(self):
-        """Should ignore empty or whitespace-only messages"""
+    def test_skip_empty_console_message_then_take_first_non_empty(self):
+        """Empty consoleMessage lines are skipped; the first non-empty one is returned."""
         output = """\
-{"data":{"message":"   "}}
-{"data":{"message":""}}
-{"data":{"message":"Valid message"}}"""
+{"type":"consoleMessage","data":{"message":"   "}}
+{"type":"consoleMessage","data":{"message":""}}
+{"type":"consoleMessage","data":{"message":"Valid message"}}"""
 
         result = extract_cli_error_message(output)
         assert result == "Valid message"
+
+    def test_root_level_message_field_not_extracted(self):
+        """Only the structured ``error`` field or legacy ``data.message`` is extracted."""
+        # Root-level "message" alone (no "error", no "data.message") is friendly text like
+        # "Authentication with Azure failed." that we intentionally do not surface.
+        output = '{"message":"Root level error message"}'
+
+        result = extract_cli_error_message(output)
+        assert result is None
 
     def test_ignore_non_json_lines(self):
         """Should ignore lines that are not valid JSON"""
@@ -517,7 +512,7 @@ Another non-JSON line
 {"data":{"message":"Suggestion: Another valid message"}}"""
 
         result = extract_cli_error_message(output)
-        assert result == "Suggestion: Another valid message"
+        assert result == "Valid JSON message"
 
     def test_ignore_non_string_messages(self):
         """Should ignore messages that are not strings"""
@@ -540,7 +535,7 @@ Another non-JSON line
 """
 
         result = extract_cli_error_message(output)
-        assert result == "Second message"
+        assert result == "First message"
 
     def test_sanitize_token_in_output(self):
         """Should sanitize tokens in the extracted message"""
@@ -571,15 +566,20 @@ This is not JSON"""
         result = extract_cli_error_message("   \n\n   \t  ")
         assert result is None
 
-    def test_complex_real_world_example(self):
-        """Should handle complex real-world azd output"""
-        output = """\
-{"type":"consoleMessage","timestamp":"2025-08-18T15:08:14.4849845-07:00","data":{"message":"\\nERROR: fetching token: AADSTS50076: Due to a configuration change made by your administrator, or because you moved to a new location, you must use multi-factor authentication to access 'tenant-id'. Trace ID: trace-id Correlation ID: correlation-id Timestamp: 2025-08-18 22:08:14Z\\n"}}
-{"type":"consoleMessage","timestamp":"2025-08-18T15:08:14.4849845-07:00","data":{"message":"Suggestion: re-authentication required, run `azd auth login` to acquire a new token.\\n"}}
-{"type":"progress","data":{"activity":"Cleaning up"}}"""
+    def test_complex_real_world_pre_v1_23_7_example(self):
+        """Pre-v1.23.7 ``azd auth token`` output: a single consoleMessage containing the full error."""
+        output = (
+            '{"type":"consoleMessage","timestamp":"2026-04-14T22:03:37.687535934Z",'
+            '"data":{"message":"\\nERROR: fetching token: failed to authenticate:\\n'
+            "(invalid_tenant) AADSTS90002: Tenant 'test' not found...\\n\\n"
+            '"}}'
+        )
 
         result = extract_cli_error_message(output)
-        assert result == "Suggestion: re-authentication required, run `azd auth login` to acquire a new token."
+        assert result == (
+            "ERROR: fetching token: failed to authenticate:\n"
+            "(invalid_tenant) AADSTS90002: Tenant 'test' not found..."
+        )
 
     def test_strip_whitespace_from_messages(self):
         """Should strip leading and trailing whitespace from messages"""
@@ -597,3 +597,68 @@ This is not JSON"""
 
         result = extract_cli_error_message(output)
         assert result == "suggestion: This should be found"
+
+    def test_extract_structured_error_v1_24_format(self):
+        """Should extract the 'error' field from azd v1.24.0+ structured stderr."""
+        # The AAD error here intentionally contains an embedded newline (decoded from \n in JSON).
+        aad_error = "fetching token: failed to authenticate:\n" "(invalid_tenant) AADSTS90002: Tenant 'test' not found"
+        output = (
+            '{"error":"fetching token: failed to authenticate:\\n'
+            "(invalid_tenant) AADSTS90002: Tenant 'test' not found"
+            '","links":[{"title":"azd auth login reference","url":"https://example.com"}],'
+            '"message":"Authentication with Azure failed.",'
+            '"suggestion":"Run \'azd auth login\' to sign in again."}'
+        )
+
+        result = extract_cli_error_message(output)
+        assert result == aad_error
+        assert "Authentication with Azure failed." not in result
+        assert "suggestion" not in result.lower()
+
+    def test_extract_structured_error_preceded_by_empty_console_message(self):
+        """v1.23.7 - v1.23.15: empty consoleMessage line precedes the structured error."""
+        aad_error = "fetching token: failed to authenticate"
+        output = (
+            '{"type":"consoleMessage","timestamp":"2026-04-13T17:43:24.7558297-07:00",'
+            '"data":{"message":"\\n"}}\n'
+            '{"error":"' + aad_error + '",'
+            '"message":"Authentication with Azure failed.",'
+            '"suggestion":"Run \'azd auth login\' to sign in again."}'
+        )
+
+        result = extract_cli_error_message(output)
+        assert result == aad_error
+        assert "consoleMessage" not in result
+
+    def test_structured_error_takes_precedence_over_console_message(self):
+        """The structured 'error' field should win over a non-empty consoleMessage line."""
+        aad_error = "AADSTS70008: Refresh token expired"
+        output = (
+            '{"type":"consoleMessage","timestamp":"...",'
+            '"data":{"message":"some informational console output"}}\n'
+            '{"error":"' + aad_error + '",'
+            '"message":"Authentication with Azure failed."}'
+        )
+
+        result = extract_cli_error_message(output)
+        assert result == aad_error
+        assert "informational console output" not in result
+
+    def test_structured_error_empty_falls_back_to_console_message(self):
+        """An empty 'error' field shouldn't short-circuit; legacy parsing should still run."""
+        output = (
+            '{"error":"","message":"Authentication with Azure failed."}\n'
+            '{"type":"consoleMessage","data":{"message":"ERROR: real message"}}'
+        )
+
+        result = extract_cli_error_message(output)
+        assert result == "ERROR: real message"
+
+    def test_structured_error_sanitizes_token(self):
+        """Tokens embedded in the structured 'error' field should be sanitized."""
+        output = '{"error":"got \\"token\\": \\"secret-abc\\" leaked"}'
+
+        result = extract_cli_error_message(output)
+        assert result is not None
+        assert "secret-abc" not in result
+        assert "****" in result

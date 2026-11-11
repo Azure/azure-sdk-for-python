@@ -29,14 +29,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import KeyVaultClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 from .._validation import api_version_validation
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -49,7 +48,7 @@ def build_key_vault_set_secret_request(secret_name: str, **kwargs: Any) -> HttpR
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,7 +74,7 @@ def build_key_vault_delete_secret_request(secret_name: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +99,7 @@ def build_key_vault_update_secret_request(secret_name: str, secret_version: str,
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +132,7 @@ def build_key_vault_get_secret_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +159,7 @@ def build_key_vault_get_secrets_request(*, maxresults: Optional[int] = None, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -183,7 +182,7 @@ def build_key_vault_get_secret_versions_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -211,7 +210,7 @@ def build_key_vault_get_deleted_secrets_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -234,7 +233,7 @@ def build_key_vault_get_deleted_secret_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -259,7 +258,7 @@ def build_key_vault_purge_deleted_secret_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/deletedsecrets/{secret-name}"
     path_format_arguments = {
@@ -280,7 +279,7 @@ def build_key_vault_recover_deleted_secret_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -304,7 +303,7 @@ def build_key_vault_backup_secret_request(secret_name: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -329,7 +328,7 @@ def build_key_vault_restore_secret_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -381,7 +380,12 @@ class _KeyVaultClientOperationsMixin(
 
     @overload
     def set_secret(
-        self, secret_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        secret_name: str,
+        parameters: _types.SecretSetParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SecretBundle:
         """Sets a secret in a specified key vault.
 
@@ -394,7 +398,7 @@ class _KeyVaultClientOperationsMixin(
          identifiable or sensitive information. Required.
         :type secret_name: str
         :param parameters: The parameters for setting the secret. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.keyvault.secrets._generated.types.SecretSetParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -429,7 +433,10 @@ class _KeyVaultClientOperationsMixin(
 
     @distributed_trace
     def set_secret(
-        self, secret_name: str, parameters: Union[_models.SecretSetParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        secret_name: str,
+        parameters: Union[_models.SecretSetParameters, _types.SecretSetParameters, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SecretBundle:
         """Sets a secret in a specified key vault.
 
@@ -441,10 +448,10 @@ class _KeyVaultClientOperationsMixin(
          the purpose of running the service. The value provided should not include personally
          identifiable or sensitive information. Required.
         :type secret_name: str
-        :param parameters: The parameters for setting the secret. Is one of the following types:
-         SecretSetParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.secrets._generated.models.SecretSetParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters for setting the secret. Is either a SecretSetParameters type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.keyvault.secrets._generated.models.SecretSetParameters or
+         ~azure.keyvault.secrets._generated.types.SecretSetParameters or IO[bytes]
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -621,7 +628,7 @@ class _KeyVaultClientOperationsMixin(
         self,
         secret_name: str,
         secret_version: str,
-        parameters: JSON,
+        parameters: _types.SecretUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -637,7 +644,7 @@ class _KeyVaultClientOperationsMixin(
         :param secret_version: The version of the secret. Required.
         :type secret_version: str
         :param parameters: The parameters for update secret operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.keyvault.secrets._generated.types.SecretUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -681,7 +688,7 @@ class _KeyVaultClientOperationsMixin(
         self,
         secret_name: str,
         secret_version: str,
-        parameters: Union[_models.SecretUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SecretUpdateParameters, _types.SecretUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecretBundle:
         """Updates the attributes associated with a specified secret in a given key vault.
@@ -694,10 +701,10 @@ class _KeyVaultClientOperationsMixin(
         :type secret_name: str
         :param secret_version: The version of the secret. Required.
         :type secret_version: str
-        :param parameters: The parameters for update secret operation. Is one of the following types:
-         SecretUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.secrets._generated.models.SecretUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters for update secret operation. Is either a
+         SecretUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.keyvault.secrets._generated.models.SecretUpdateParameters or
+         ~azure.keyvault.secrets._generated.types.SecretUpdateParameters or IO[bytes]
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -773,7 +780,16 @@ class _KeyVaultClientOperationsMixin(
     @distributed_trace
     @api_version_validation(
         params_added_on={"2025-06-01-preview": ["out_content_type"]},
-        api_versions_list=["7.5", "7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01"],
+        api_versions_list=[
+            "7.5",
+            "7.6-preview.2",
+            "7.6",
+            "2025-06-01-preview",
+            "2025-07-01",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def get_secret(
         self,
@@ -917,7 +933,10 @@ class _KeyVaultClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -1018,7 +1037,10 @@ class _KeyVaultClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -1117,7 +1139,10 @@ class _KeyVaultClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -1450,7 +1475,7 @@ class _KeyVaultClientOperationsMixin(
 
     @overload
     def restore_secret(
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: _types.SecretRestoreParameters, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SecretBundle:
         """Restores a backed up secret to a vault.
 
@@ -1458,7 +1483,7 @@ class _KeyVaultClientOperationsMixin(
         secrets/restore permission.
 
         :param parameters: The parameters to restore the secret. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.keyvault.secrets._generated.types.SecretRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1488,17 +1513,19 @@ class _KeyVaultClientOperationsMixin(
 
     @distributed_trace
     def restore_secret(
-        self, parameters: Union[_models.SecretRestoreParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        parameters: Union[_models.SecretRestoreParameters, _types.SecretRestoreParameters, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SecretBundle:
         """Restores a backed up secret to a vault.
 
         Restores a backed up secret, and all its versions, to a vault. This operation requires the
         secrets/restore permission.
 
-        :param parameters: The parameters to restore the secret. Is one of the following types:
-         SecretRestoreParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.secrets._generated.models.SecretRestoreParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters to restore the secret. Is either a SecretRestoreParameters
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.keyvault.secrets._generated.models.SecretRestoreParameters or
+         ~azure.keyvault.secrets._generated.types.SecretRestoreParameters or IO[bytes]
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:

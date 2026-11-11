@@ -49,20 +49,30 @@ class TestChaosManagementScenariosOperationsAsync(AzureMgmtRecordedTestCase):
                             "name": "str",
                             "description": "str",
                             "externalResource": {"resourceId": "str"},
+                            "failureBehavior": "str",
                             "parameters": [{"key": "str", "value": "str"}],
                             "runAfter": {
                                 "items": [{"name": "str", "type": "str", "onActionLifecycle": "str"}],
                                 "behavior": "str",
                             },
+                            "selectors": [{"name": "str", "value": "str"}],
                             "timeout": "str",
                             "waitBefore": "str",
                         }
                     ],
-                    "parameters": [
-                        {"name": "str", "type": "str", "default": "str", "description": "str", "required": bool}
-                    ],
                     "createdFrom": "str",
                     "description": "str",
+                    "failureBehavior": "str",
+                    "parameters": [
+                        {
+                            "name": "str",
+                            "type": "str",
+                            "default": "str",
+                            "description": "str",
+                            "format": {"examples": ["str"], "formatType": "str"},
+                            "required": bool,
+                        }
+                    ],
                     "provisioningState": "str",
                     "recommendation": {"recommendationStatus": "str", "evaluationRunAt": "2020-02-20 00:00:00"},
                     "version": "str",

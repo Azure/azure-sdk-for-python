@@ -251,6 +251,127 @@ class TestSearchIndexingBufferedSenderQueueingAsync:
 
 class TestSearchIndexingBufferedSenderProcessingAsync:
     @pytest.mark.asyncio
+    async def test_processing_callback_can_queue_another_threshold_batch(self):
+        sent = []
+
+        async def on_progress(action):
+            if action["HotelName"] == "Old name":
+                await sender.upload_documents([create_hotel_document(hotel_name="New name")])
+
+        async def index_actions(actions, **kwargs):
+            sent.append(actions[0]["HotelName"])
+            return [create_indexing_result()]
+
+        sender = SearchIndexingBufferedSender(
+            SEARCH_ENDPOINT,
+            INDEX_NAME,
+            CREDENTIAL,
+            initial_batch_action_count=1,
+            auto_flush_interval=3600,
+            on_progress=on_progress,
+        )
+        sender._index_key = "HotelId"
+        try:
+            with mock.patch.object(sender, "_index_documents_actions", side_effect=index_actions):
+                await asyncio.wait_for(
+                    sender.upload_documents([create_hotel_document(hotel_name="Old name")]), timeout=5
+                )
+            assert sent == ["Old name", "New name"]
+        finally:
+            await sender.close()
+
+    @pytest.mark.asyncio
+    async def test_auto_flush_tracks_active_worker_and_serializes_explicit_flush(self):
+        started = asyncio.Event()
+        release = asyncio.Event()
+        flushing = asyncio.Event()
+        sent = []
+
+        async def index_actions(actions, **kwargs):
+            sent.append(actions[0]["HotelName"])
+            if len(sent) == 1:
+                started.set()
+                await release.wait()
+            return [create_indexing_result()]
+
+        sender = SearchIndexingBufferedSender(SEARCH_ENDPOINT, INDEX_NAME, CREDENTIAL, auto_flush_interval=0.01)
+        sender._index_key = "HotelId"
+        worker = sender._auto_flush_task
+        flush_task = None
+
+        async def flush():
+            flushing.set()
+            await sender.flush()
+
+        try:
+            with mock.patch.object(sender, "_index_documents_actions", side_effect=index_actions):
+                await sender.upload_documents([create_hotel_document(hotel_name="Old name")])
+                await asyncio.wait_for(started.wait(), timeout=5)
+                await sender.upload_documents([create_hotel_document(hotel_name="New name")])
+                flush_task = asyncio.create_task(flush())
+                await asyncio.wait_for(flushing.wait(), timeout=5)
+
+                assert sender._auto_flush_task is worker
+                assert sent == ["Old name"]
+                release.set()
+                await asyncio.wait_for(asyncio.gather(worker, flush_task), timeout=5)
+                assert sent == ["Old name", "New name"]
+        finally:
+            release.set()
+            if flush_task is not None:
+                await flush_task
+            await sender.close()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("queue_another_update", [False, True])
+    async def test_close_waits_for_active_upload_before_draining_and_closing(self, queue_another_update):
+        started = asyncio.Event()
+        release = asyncio.Event()
+        closing = asyncio.Event()
+        sent = []
+
+        async def index_actions(actions, **kwargs):
+            sent.append(actions[0]["HotelName"])
+            if len(sent) == 1:
+                started.set()
+                await release.wait()
+            return [create_indexing_result()]
+
+        sender = SearchIndexingBufferedSender(SEARCH_ENDPOINT, INDEX_NAME, CREDENTIAL, auto_flush_interval=0.01)
+        sender._index_key = "HotelId"
+        worker = sender._auto_flush_task
+        close_task = None
+
+        async def close():
+            closing.set()
+            await sender.close()
+
+        try:
+            with mock.patch.object(sender, "_index_documents_actions", side_effect=index_actions), mock.patch.object(
+                sender._client, "close", new_callable=mock.AsyncMock
+            ) as close_client:
+                await sender.upload_documents([create_hotel_document(hotel_name="Old name")])
+                await asyncio.wait_for(started.wait(), timeout=5)
+                if queue_another_update:
+                    await sender.upload_documents([create_hotel_document(hotel_name="New name")])
+                close_task = asyncio.create_task(close())
+                await asyncio.wait_for(closing.wait(), timeout=5)
+
+                close_client.assert_not_awaited()
+                assert not close_task.done()
+                assert sent == ["Old name"]
+                release.set()
+                await asyncio.wait_for(asyncio.gather(worker, close_task), timeout=5)
+                assert sent == (["Old name", "New name"] if queue_another_update else ["Old name"])
+                close_client.assert_awaited_once_with()
+                assert sender._auto_flush_task.done()
+        finally:
+            release.set()
+            if close_task is not None:
+                await close_task
+            await sender.close()
+
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("shared_resource", [None, "transport", "pipeline", "both"])
     @pytest.mark.parametrize("failure", [None, "lookup", "fields"])
     async def test_process_preserves_schema_options_and_client_ownership(self, shared_resource, failure):

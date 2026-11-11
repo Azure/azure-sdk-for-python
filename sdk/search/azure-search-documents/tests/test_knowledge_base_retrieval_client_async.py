@@ -82,6 +82,32 @@ class TestKnowledgeBaseRetrievalClientConstructorAsync:
 
 @pytest.mark.asyncio
 class TestKnowledgeBaseRetrievalStreamAsync:
+    @pytest.mark.parametrize("exception_type", [RuntimeError, asyncio.CancelledError])
+    async def test_retrieve_stream_closes_response_when_cls_raises(self, exception_type):
+        from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
+        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
+
+        response = _AsyncResponse()
+        response.raw_stream = _AsyncRawStream([])
+        response.close = mock.AsyncMock(wraps=response.close)
+        failure = exception_type("response callback failed")
+        callback = mock.Mock(side_effect=failure)
+        async with KnowledgeBaseRetrievalClient(
+            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+        ) as client:
+            with mock.patch.object(
+                client._client._pipeline,
+                "run",
+                new_callable=mock.AsyncMock,
+                return_value=SimpleNamespace(http_response=response),
+            ):
+                with pytest.raises(exception_type) as error:
+                    await client.retrieve_stream(KnowledgeBaseRetrievalRequest(), cls=callback)
+        assert error.value is failure
+        callback.assert_called_once()
+        response.close.assert_awaited_once_with()
+        assert response.closed
+
     async def test_stream_deserializes_all_known_event_types(self):
         require_capability("AsyncKnowledgeBaseRetrievalStream", "KnowledgeBaseRetrievalEvent")
         from azure.search.documents.knowledgebases.aio import AsyncKnowledgeBaseRetrievalStream

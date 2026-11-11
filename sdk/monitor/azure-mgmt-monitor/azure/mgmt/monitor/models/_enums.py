@@ -89,6 +89,15 @@ class BaselineSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """High."""
 
 
+class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the diagnostic settings category."""
+
+    METRICS = "Metrics"
+    """Metrics."""
+    LOGS = "Logs"
+    """Logs."""
+
+
 class ComparisonOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the operator that is used to compare the metric data and the threshold."""
 
@@ -143,6 +152,18 @@ class CriterionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """StaticThresholdCriterion."""
     DYNAMIC_THRESHOLD_CRITERION = "DynamicThresholdCriterion"
     """DynamicThresholdCriterion."""
+
+
+class DataStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of VM Insights data from the resource. When reported as ``present`` the data array
+    will contain information about the data containers to which data for the specified resource is
+    being routed.
+    """
+
+    PRESENT = "present"
+    """present."""
+    NOT_PRESENT = "notPresent"
+    """notPresent."""
 
 
 class DimensionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -772,19 +793,19 @@ class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable
     """
 
     SUCCEEDED = "Succeeded"
-    """SUCCEEDED."""
+    """The configuration was provisioned successfully."""
     CREATING = "Creating"
-    """CREATING."""
+    """The configuration is being created."""
     UPDATING = "Updating"
-    """UPDATING."""
+    """The configuration is being updated."""
     DELETING = "Deleting"
-    """DELETING."""
+    """The configuration is being deleted."""
     ACCEPTED = "Accepted"
-    """ACCEPTED."""
+    """The configuration request was accepted and provisioning has not started yet."""
     FAILED = "Failed"
-    """FAILED."""
+    """The configuration failed to provision."""
     CANCELED = "Canceled"
-    """CANCELED."""
+    """The configuration provisioning was canceled."""
 
 
 class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -804,6 +825,19 @@ class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria."""
     MICROSOFT_AZURE_MONITOR_PROM_QL_CRITERIA = "Microsoft.Azure.Monitor.PromQLCriteria"
     """Microsoft.Azure.Monitor.PromQLCriteria."""
+
+
+class OnboardingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The onboarding status for the resource. Note that, a higher level scope, e.g., resource group
+    or subscription, is considered onboarded if at least one resource under it is onboarded.
+    """
+
+    ONBOARDED = "onboarded"
+    """onboarded."""
+    NOT_ONBOARDED = "notOnboarded"
+    """notOnboarded."""
+    UNKNOWN = "unknown"
+    """unknown."""
 
 
 class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -999,9 +1033,9 @@ class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity of the issue."""
 
     WARNING = "Warning"
-    """WARNING."""
+    """The issue is a warning and does not prevent the configuration from being applied."""
     ERROR = "Error"
-    """ERROR."""
+    """The issue is an error and prevents the configuration from being applied."""
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):

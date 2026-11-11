@@ -84,6 +84,31 @@ and response closure. Both existing SSE recordings replay with direct typed
 payload assertions, and the corresponding samples use those payloads directly.
 This is SDK-owned compatibility, not a service-spec change or emitter defect.
 
+The generated callback invocation has a separate cleanup defect: it returns
+`cls(pipeline_response, deserialized, {})` without closing the typed stream if
+the callback raises. The response is still open, and no stream is returned to
+the caller. Sync and async regressions reproduce the leak using the real
+generated operations, including an async cancellation exception.
+The existing exact-match post-generation rewriter adds an exception guard
+around only the streaming callback, closing the native stream (awaited for
+async) before re-raising. It does not wrap typed payloads in legacy envelopes,
+change signatures, or affect non-streaming response callbacks.
+This Python exception-handling behavior cannot be expressed by service model
+or operation decorators. The pinned emitter inputs are recorded above; its
+template cache is not present in this workspace, and full regeneration was
+not repeated for this fix. Report the missing callback cleanup upstream to
+`@typespec/http-client-python` using the pinned Search operation and these
+regressions. Remove the replacements when unmodified generated output passes
+the raising-callback tests. The previously approved rewriter fallback remains
+in use because the customization MCP's global `azure-search-nspkg` build failed.
+
+The asynchronous buffered sender is entirely handwritten. Its processing
+lock now serializes uploads, preserves reentrant callback queueing, and keeps
+the auto-flush worker tracked until processing finishes. Shutdown disables
+rescheduling, waits for dequeued uploads, and then drains the remaining queue
+before closing the client. This task lifecycle belongs in Python SDK code,
+not the service specification or emitter.
+
 ## October GA compatibility carry-forward
 
 The Python comparison baseline is PR #49365 at

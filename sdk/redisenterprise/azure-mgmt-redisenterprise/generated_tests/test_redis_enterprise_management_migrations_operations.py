@@ -67,8 +67,19 @@ class TestRedisEnterpriseManagementMigrationsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_migrations_begin_cancel(self, resource_group):
-        response = self.client.migrations.begin_cancel(
+    def test_migrations_begin_undo(self, resource_group):
+        response = self.client.migrations.begin_undo(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_migrations_begin_unlink_migrated_endpoint(self, resource_group):
+        response = self.client.migrations.begin_unlink_migrated_endpoint(
             resource_group_name=resource_group.name,
             cluster_name="str",
         ).result()  # call '.result()' to poll until service return final result
@@ -82,7 +93,7 @@ class TestRedisEnterpriseManagementMigrationsOperations(AzureMgmtRecordedTestCas
         response = self.client.migrations.validate(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            body={"sourceResourceId": "str", "forceMigrate": bool, "skipDataMigration": bool},
+            body={"sourceResourceId": "str", "skipDataMigration": bool},
         )
 
         # please add some check logic here by yourself

@@ -70,6 +70,26 @@ class TestKnowledgeBaseRetrievalClientConstructor:
 
 
 class TestKnowledgeBaseRetrievalStream:
+    def test_retrieve_stream_closes_response_when_cls_raises(self):
+        from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
+        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
+
+        response = _Response()
+        response.raw_stream = _RawStream([])
+        failure = RuntimeError("response callback failed")
+        callback = mock.Mock(side_effect=failure)
+        with KnowledgeBaseRetrievalClient(
+            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+        ) as client:
+            with mock.patch.object(
+                client._client._pipeline, "run", return_value=SimpleNamespace(http_response=response)
+            ):
+                with pytest.raises(RuntimeError) as error:
+                    client.retrieve_stream(KnowledgeBaseRetrievalRequest(), cls=callback)
+        assert error.value is failure
+        callback.assert_called_once()
+        assert response.closed
+
     def test_stream_deserializes_all_known_event_types(self):
         require_capability("KnowledgeBaseRetrievalEvent", "KnowledgeBaseRetrievalStream")
         from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalStream

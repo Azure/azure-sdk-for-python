@@ -600,5 +600,9 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
 
         deserialized: AsyncStream[Union[_models2.KnowledgeBaseRetrievalStartedEvent, _models2.KnowledgeBaseActivityStartedEvent, _models2.KnowledgeBaseActivityRecord, _models2.KnowledgeBaseAnswerCompletedEvent, list[_models2.KnowledgeBaseReference], _models2.KnowledgeBaseStreamErrorEvent, _models2.KnowledgeBaseResponseCompletedEvent]] = AsyncStream(response=response, deserialization_callback=_callback, terminal_event_names=["error", "response.completed"])  # type: ignore
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            try:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            except BaseException:
+                await deserialized.close()
+                raise
         return deserialized

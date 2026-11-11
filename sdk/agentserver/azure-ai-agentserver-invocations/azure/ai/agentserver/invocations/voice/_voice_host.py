@@ -30,6 +30,7 @@ from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     configure_observability as _CORE_CONFIGURE_OBSERVABILITY,
     experimental,
     set_request_context,
@@ -657,6 +658,46 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         connection_trace = _SpanScope()
         scope = getattr(websocket, "scope", None)
         try:
+            try:
+                original_subject = FoundryOriginalSubject.from_headers(websocket.headers)
+            except ValueError:
+                logger.warning("Voice WebSocket rejected: invalid original-subject platform header.")
+                error_code = "invalid_original_subject"
+                try:
+                    # Accept before closing so the peer receives 1011, not an HTTP handshake rejection.
+                    accept_error = await self._accept_voice_websocket(websocket)
+                    error_code = "accept_failed" if accept_error is not None else "invalid_original_subject"
+                    if websocket.application_state == WebSocketState.CONNECTED:
+                        try:
+                            close_attempt = _session_transport._start_close_attempt(
+                                asyncio.Lock(),
+                                websocket,
+                                InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                                "Internal server error",
+                            )
+                            await Session._wait_close(close_attempt, _selected_voice_termination_deadline(websocket))
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            logger.debug("Voice WebSocket close failed")
+                    await _raise_pending_cancellation()
+                    if accept_error is not None:
+                        self._report_voice_accept_failure(
+                            session_id,
+                            start_ns,
+                            emit_event=False,
+                            connection_trace=connection_trace,
+                        )
+                except asyncio.CancelledError:
+                    error_code = "cancelled"
+                    raise
+                finally:
+                    self._emit_voice_close_event(
+                        session_id=session_id,
+                        start_ns=start_ns,
+                        close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                        error_code=error_code,
+                        connection_trace=connection_trace,
+                    )
+                return
             extracted_context = _extract_voice_websocket_context(websocket)
             parent_attachment = _attach_context(extracted_context)
             if parent_attachment is not None:
@@ -677,6 +718,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                     call_id=websocket.headers.get(FOUNDRY_CALL_ID) or None,
                     user_id=websocket.headers.get(USER_ID) or None,
                     session_id=session_id,
+                    original_subject=original_subject,
                 )
             )
             try:

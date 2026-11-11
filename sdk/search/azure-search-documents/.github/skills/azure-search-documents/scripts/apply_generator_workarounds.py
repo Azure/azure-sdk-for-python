@@ -295,6 +295,29 @@ REPLACEMENTS += tuple(
 )
 
 
+for _folder, _stream, _await in (("", "Stream", ""), ("aio/", "AsyncStream", "await ")):
+    _stream_assignment = (
+        f" = {_stream}(response=response, deserialization_callback=_callback, "
+        'terminal_event_names=["error", "response.completed"])  # type: ignore\n'
+    )
+    REPLACEMENTS += (
+        Replacement(
+            f"azure/search/documents/knowledgebases/{_folder}_operations/_operations.py",
+            f"close the {_stream} when the response callback raises",
+            _stream_assignment + "        if cls:\n"
+            "            return cls(pipeline_response, deserialized, {})  # type: ignore\n"
+            "        return deserialized\n",
+            _stream_assignment + "        if cls:\n"
+            "            try:\n"
+            "                return cls(pipeline_response, deserialized, {})  # type: ignore\n"
+            "            except BaseException:\n"
+            f"                {_await}deserialized.close()\n"
+            "                raise\n"
+            "        return deserialized\n",
+        ),
+    )
+
+
 def _add_knowledge_base_input(source: str) -> tuple[str, bool]:
     declaration = "KnowledgeBase = TypedDict(\n"
     documentation = 'KnowledgeBase.__doc__ = """'
