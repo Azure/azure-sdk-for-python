@@ -292,14 +292,6 @@ class TestSamples(AzureRecordedTestCase):
                 },
             ),
             AdditionalSampleTestDetail(
-                test_id="sample_create_hosted_agent_from_code",
-                sample_filename="sample_create_hosted_agent_from_code.py",
-                env_vars={
-                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "false",
-                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent-prebuilt.zip",
-                },
-            ),
-            AdditionalSampleTestDetail(
                 test_id="sample_session_log_stream",
                 sample_filename="sample_session_log_stream.py",
                 env_vars={
