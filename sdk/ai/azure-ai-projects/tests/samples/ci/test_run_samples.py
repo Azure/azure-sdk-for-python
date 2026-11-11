@@ -120,7 +120,14 @@ def test_async_sample_node_is_preserved():
 
 
 @pytest.mark.parametrize(
-    "key", ["MCP_GITHUB_PAT", "LLM_VALIDATION_PROJECT_ENDPOINT", "PROJ_CONN_MCP_KEY", "UNKNOWN_SETTING"]
+    "key",
+    [
+        "MCP_GITHUB_PAT",
+        "PROJ_CONN_OPEN_API_KEY",
+        "LLM_VALIDATION_PROJECT_ENDPOINT",
+        "PROJ_CONN_MCP_KEY",
+        "UNKNOWN_SETTING",
+    ],
 )
 def test_unexpected_or_secret_bindings_cannot_become_cli_options(key):
     state = ready_state()
@@ -158,7 +165,9 @@ def test_plan_must_declare_valid_bindings(bindings):
         build_command(state, Path("results.xml"))
 
 
-@pytest.mark.parametrize("name", ["MCP_GITHUB_PAT", "PROJ_CONN_MCP_KEY", "ACCESS_TOKEN", "DB_PASSWORD"])
+@pytest.mark.parametrize(
+    "name", ["MCP_GITHUB_PAT", "PROJ_CONN_OPEN_API_KEY", "PROJ_CONN_MCP_KEY", "ACCESS_TOKEN", "DB_PASSWORD"]
+)
 def test_plan_cannot_declare_secret_looking_bindings(name):
     state = ready_state()
     state["plan"]["environmentBindings"].append(name)
@@ -296,6 +305,7 @@ def test_external_validation_endpoint_is_env_only_in_real_runner_invocation(tmp_
     monkeypatch.setenv("SAMPLE_QUEUE_NAME", "q1")
     monkeypatch.setenv("SYSTEM_ACCESSTOKEN", "unit-test-ado-token")
     monkeypatch.setenv("MCP_GITHUB_PAT", "github_pat_unit_test_placeholder")
+    monkeypatch.setenv("PROJ_CONN_OPEN_API_KEY", "unit-test-openapi-key")
     monkeypatch.setattr(run_samples.sys, "argv", ["run_samples.py", "--state", str(state_path), "--junit", str(junit)])
     monkeypatch.setattr(run_samples, "wait_for_project", Mock())
     process = Mock(return_value=SimpleNamespace(returncode=0))
@@ -313,6 +323,7 @@ def test_external_validation_endpoint_is_env_only_in_real_runner_invocation(tmp_
         state["plan"]["environmentBindings"]
     )
     assert "MCP_GITHUB_PAT" not in environment
+    assert "PROJ_CONN_OPEN_API_KEY" not in environment
     assert "SYSTEM_ACCESSTOKEN" not in environment
     assert all(endpoint not in argument and "llm-validation-project-endpoint" not in argument for argument in command)
     assert endpoint not in state_path.read_text(encoding="utf-8")
