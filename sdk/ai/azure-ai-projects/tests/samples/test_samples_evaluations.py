@@ -6,6 +6,7 @@
 import functools
 import os
 import re
+from unittest.mock import patch
 import pytest
 from devtools_testutils import (
     add_remove_header_sanitizer,
@@ -19,7 +20,13 @@ from sample_executor import (
     get_sample_paths,
     SamplePathPasser,
 )
-from test_samples_helpers import get_sample_env_vars
+from test_samples_helpers import (
+    get_sample_env_vars,
+    audioEvaluationsPreparer,
+    voiceSimulationPreparer,
+    sanitize_audio_evaluation_dataset,
+    assert_audio_evaluation_results,
+)
 
 # Preparer with only the variables needed for evaluation samples
 evaluationsPreparer = functools.partial(
@@ -151,6 +158,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         get_sample_paths(
             "evaluations",
             samples_to_skip=[
+                "sample_audio_conversation_evaluation.py",  # Covered by test_audio_conversation_sample below
+                "sample_voice_agent_simulation_evaluation.py",  # Covered by test_voice_agent_simulation_sample below
                 "sample_evaluations_ai_assisted.py",  # Similarity evaluator returns FAILED_EXECUTION ('query' is missing)
                 "sample_evaluations_builtin_with_inline_data_oai.py",  # 401 AuthenticationError (invalid subscription key or API endpoint)
                 "sample_evaluations_builtin_with_traces.py",  # Missing required env var APPINSIGHTS_RESOURCE_ID (KeyError)
@@ -196,6 +205,45 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         )
         executor.execute()
         executor.validate_print_calls_by_llm()
+
+    @audioEvaluationsPreparer()
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "evaluations", samples_to_test=["sample_audio_conversation_evaluation.py"]
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    def test_audio_conversation_sample(self, sample_path: str, **kwargs) -> None:
+        sanitize_audio_evaluation_dataset()
+        executor = SyncSampleExecutor(
+            self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs
+        )
+        with patch("pprint.pprint") as output:
+            executor.execute()
+        assert_audio_evaluation_results(
+            output.call_args_list,
+            ("task_completion", "groundedness", "customer_satisfaction", "coherence"),
+        )
+
+    @voiceSimulationPreparer()
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "evaluations",
+            samples_to_test=["sample_voice_agent_simulation_evaluation.py"],
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    def test_voice_agent_simulation_sample(self, sample_path: str, **kwargs) -> None:
+        executor = SyncSampleExecutor(
+            self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs
+        )
+        with patch("pprint.pprint") as output:
+            executor.execute()
+        assert_audio_evaluation_results(output.call_args_list, ("task_completion",))
 
     @evaluationsPreparer()
     @pytest.mark.parametrize(

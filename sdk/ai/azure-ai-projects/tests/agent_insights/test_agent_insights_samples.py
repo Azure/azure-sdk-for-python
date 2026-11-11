@@ -3,24 +3,32 @@
 # cspell:ignore capsys
 
 from pathlib import Path
+import io
+import json
 import runpy
 from types import SimpleNamespace
 from unittest.mock import MagicMock, call
 
 import pytest
+import requests
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from opentelemetry.trace import get_tracer_provider
+from urllib3.response import HTTPResponse
 
 from agent_insights.sample_test_helpers import assert_agent_insights_output
 
+from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentInsight,
+    AgentInsightPriorities,
     AgentInsightRun,
     AgentInsightRunResult,
     AgentInsightStatus,
 )
 from azure.ai.projects.operations import AgentInsightMonitorsOperations
+from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceExistsError
+from azure.core.pipeline import transport
 from azure.monitor.query import LogsQueryStatus
 
 
@@ -63,6 +71,42 @@ def test_longest_agent_prefix_fits_service_limit(on_demand_sample):
     assert len(creation["agent_name"]) == 63
     assert creation["agent_name"].startswith("a" * 30 + "-")
     assert creation["definition"].otel_agent_id == creation["agent_name"]
+
+
+def test_external_agent_and_monitor_use_ga_without_preview_headers(on_demand_sample):
+    responses = []
+    for status_code, payload in (
+        (200, {"name": "test-agent", "version": "1"}),
+        (201, {"id": "monitor-test", "agent_name": "test-agent", "enabled": False}),
+    ):
+        response = requests.Response()
+        response.status_code = status_code
+        response.headers["content-type"] = "application/json"
+        content = json.dumps(payload).encode()
+        response.raw = HTTPResponse(body=io.BytesIO(content), preload_content=False)
+        response._content = content
+        response._content_consumed = True
+        responses.append(response)
+    session = MagicMock()
+    session.request.side_effect = responses
+    credential = MagicMock(spec=["get_token"])
+    credential.get_token.return_value = AccessToken("test-token", 4102444800)
+
+    with AIProjectClient(
+        endpoint="https://example.test",
+        credential=credential,
+        transport=transport.RequestsTransport(session=session),
+    ) as client:
+        agent = on_demand_sample["create_agent"](client, "test-agent")
+        client.agent_insight_monitors.create(agent_name=agent.name, model_deployment_name="test-model", enabled=False)
+
+    agent_request, monitor_request = session.request.call_args_list
+    agent_headers = {key.lower(): value for key, value in agent_request.kwargs["headers"].items()}
+    monitor_headers = {key.lower(): value for key, value in monitor_request.kwargs["headers"].items()}
+    assert "foundry-features" not in agent_headers
+    assert "foundry-features" not in monitor_headers
+    monitor_url = monitor_request.args[1] if len(monitor_request.args) > 1 else monitor_request.kwargs["url"]
+    assert "api-version=v1" in monitor_url
 
 
 def test_cleanup_cancels_active_run(cleanup_sample):
@@ -225,6 +269,20 @@ def test_on_demand_accepts_future_severity(on_demand_main, capsys):
     assert operations.update_insight.call_args.kwargs["status"] == AgentInsightStatus.RESOLVED
 
 
+def test_on_demand_sets_priorities_and_filters_active_insights(on_demand_main):
+    main, operations = on_demand_main
+
+    main()
+
+    priorities = operations.create.call_args.kwargs["priorities"]
+    assert isinstance(priorities, AgentInsightPriorities)
+    assert priorities.categories == []
+    assert priorities.instructions == "Focus on tool calls made without the user's approval."
+    operations.list_insights.assert_called_once_with(
+        "new-monitor", statuses=[AgentInsightStatus.ACTIVE], include_details=True
+    )
+
+
 def test_on_demand_reports_no_insights(on_demand_main, capsys):
     main, operations = on_demand_main
     operations.list_insights.return_value = []
@@ -301,6 +359,38 @@ def test_scheduled_sample_cleans_up_after_configuration_error(
     ) < project.mock_calls.index(call.agents.delete("test-agent", force=True))
 
 
+def test_scheduled_sample_replaces_complete_priorities(scheduled_sample, on_demand_main, monkeypatch, capsys):
+    main = scheduled_sample["main"]
+    configured_main, operations = on_demand_main
+    for name in (
+        "AIProjectClient",
+        "DefaultAzureCredential",
+        "load_dotenv",
+        "LogsQueryClient",
+        "seed_traces",
+        "wait_for_ingestion",
+    ):
+        monkeypatch.setitem(main.__globals__, name, configured_main.__globals__[name])
+    operations.update.return_value = SimpleNamespace(
+        enabled=True, run_interval_hours=6, next_scheduled_run_at="2026-11-11T00:00:00Z"
+    )
+
+    main()
+
+    assert operations.create.call_args.kwargs["enabled"] is False
+    schedule_update = operations.update.call_args_list[0]
+    assert schedule_update.args == ("new-monitor",)
+    assert schedule_update.kwargs["enabled"] is True
+    assert schedule_update.kwargs["run_interval_hours"] == 6
+    priorities = schedule_update.kwargs["priorities"]
+    assert isinstance(priorities, AgentInsightPriorities)
+    assert priorities.categories == []
+    assert priorities.instructions == "Focus on tool calls made without the user's approval."
+    operations.begin_create_run.assert_not_called()
+    operations.delete.assert_called_once_with("new-monitor")
+    assert_agent_insights_output("sample_agent_insights_scheduled.py", capsys.readouterr().out.splitlines())
+
+
 def test_scheduled_creation_failure_leaves_existing_monitor(scheduled_sample, monkeypatch, on_demand_main):
     main = scheduled_sample["main"]
     configured_main, operations = on_demand_main
@@ -355,7 +445,7 @@ def test_partial_setup_cleans_up_only_owned_agent(request, sample_fixture, name_
     creation = project.agents.create_version.call_args.kwargs
     assert creation["agent_name"].startswith(f"{name_prefix or 'agent-insights-sample'}-")
     assert creation["definition"].otel_agent_id == creation["agent_name"]
-    assert main.__globals__["AIProjectClient"].call_args.kwargs["allow_preview"] is True
+    assert main.__globals__["AIProjectClient"].call_args.kwargs.get("allow_preview", False) is False
     project.agents.delete.assert_called_once_with("test-agent", force=True)
     operations.create.assert_not_called()
     operations.delete.assert_not_called()
