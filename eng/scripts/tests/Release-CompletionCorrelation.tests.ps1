@@ -81,14 +81,40 @@ Describe 'Python template completion correlation' {
     It 'imports the triggering SDK PR only for post-merge CI on main' {
         @($stage.variables | Where-Object { $_['name'] -eq 'AutoReleaseSdkPullRequestUrl' }).Count | Should -Be 0
         $completionJob.Contains('variables') | Should -BeTrue
-        @($completionJob.variables.Keys) | Should -Be @($autoGuard)
+        @($completionJob.variables.Keys | Sort-Object) | Should -Be @(@($autoGuard, '${{ else }}') | Sort-Object)
         $binding = $completionJob.variables[$autoGuard]
         @($binding.Keys) | Should -Be @('AutoReleaseSdkPullRequestUrl')
         $binding.AutoReleaseSdkPullRequestUrl | Should -BeExactly '$[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs[''resolve.AutoReleaseSdkPullRequestUrl''] ]'
+        # Every other run (manual releases) gets an explicit empty value, so the variable is always defined.
+        $fallback = $completionJob.variables['${{ else }}']
+        @($fallback.Keys) | Should -Be @('AutoReleaseSdkPullRequestUrl')
+        $fallback.AutoReleaseSdkPullRequestUrl | Should -BeExactly ''
         $clientRelay.parameters.Contains('TestPipeline') | Should -BeFalse
         $clientRelay.parameters[$templateGuard].TestPipeline | Should -BeTrue
         $artifactRelay.parameters.TestPipeline | Should -BeExactly '${{ parameters.TestPipeline }}'
         $stage.dependsOn[1][$autoGuard] | Should -Be @('AutoReleasePrepare')
+    }
+
+    It 'shows the auto-release SDK PR in the log before marking completion' {
+        $steps = @($completionJob.steps)
+        $show = @($steps | Where-Object { $_.Contains('displayName') -and $_.displayName -eq 'Show auto-release SDK PR' })
+        $show.Count | Should -Be 1
+        $show[0].env.AUTO_RELEASE_SDK_PR | Should -BeExactly '$(AutoReleaseSdkPullRequestUrl)'
+        $completionStep = @($steps | Where-Object { $_.Contains('template') -and $_.template -eq '/eng/common/pipelines/templates/steps/mark-release-completion.yml' })
+        $completionStep.Count | Should -Be 1
+        [array]::IndexOf($steps, $show[0]) | Should -BeLessThan ([array]::IndexOf($steps, $completionStep[0]))
+
+        $script = [scriptblock]::Create($show[0].pwsh)
+        $saved = $env:AUTO_RELEASE_SDK_PR
+        try {
+            $env:AUTO_RELEASE_SDK_PR = 'https://github.com/Azure/azure-sdk-for-python/pull/49841'
+            $withPr = @(& $script 6>&1 | ForEach-Object { $_.ToString() }) -join "`n"
+            $env:AUTO_RELEASE_SDK_PR = ''
+            $withoutPr = @(& $script 6>&1 | ForEach-Object { $_.ToString() }) -join "`n"
+        }
+        finally { $env:AUTO_RELEASE_SDK_PR = $saved }
+        $withPr | Should -BeExactly 'Auto-release SDK PR: https://github.com/Azure/azure-sdk-for-python/pull/49841'
+        $withoutPr | Should -Match '^No auto-release SDK PR'
     }
 
     It 'uses the shared empty-value initializer when no explicit SDK PR is supplied' {
