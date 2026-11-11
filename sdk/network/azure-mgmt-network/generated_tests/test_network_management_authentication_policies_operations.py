@@ -24,7 +24,7 @@ class TestNetworkManagementAuthenticationPoliciesOperations(AzureMgmtRecordedTes
         response = self.client.authentication_policies.get(
             resource_group_name=resource_group.name,
             authentication_policy_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestNetworkManagementAuthenticationPoliciesOperations(AzureMgmtRecordedTes
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestNetworkManagementAuthenticationPoliciesOperations(AzureMgmtRecordedTes
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestNetworkManagementAuthenticationPoliciesOperations(AzureMgmtRecordedTes
         response = self.client.authentication_policies.delete(
             resource_group_name=resource_group.name,
             authentication_policy_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -119,7 +119,7 @@ class TestNetworkManagementAuthenticationPoliciesOperations(AzureMgmtRecordedTes
     def test_authentication_policies_list(self, resource_group):
         response = self.client.authentication_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -129,7 +129,7 @@ class TestNetworkManagementAuthenticationPoliciesOperations(AzureMgmtRecordedTes
     @recorded_by_proxy
     def test_authentication_policies_list_all(self, resource_group):
         response = self.client.authentication_policies.list_all(
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -15,22 +15,22 @@ keywords = [
     "azure",
     "azure sdk",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
     "isodate>=0.6.1",
-    "azure-core>=1.31.0",
+    "azure-core>=1.37.0",
     "typing-extensions>=4.6.0",
 ]
 dynamic = [

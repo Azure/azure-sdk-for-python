@@ -4,13 +4,14 @@
 
 import json
 import logging
+import math
 import re
 from copy import deepcopy
 from time import sleep
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Type, Union, cast
 
 import pandas as pd
-from openai import AzureOpenAI, OpenAI
+from openai import AzureOpenAI, BadRequestError, OpenAI, UnprocessableEntityError
 
 # import aoai_mapping
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
@@ -225,7 +226,8 @@ def _begin_single_aoai_evaluation(
             target=ErrorTarget.AOAI_GRADER,
         )
     for name, criteria in zip(grader_name_list, eval_group_info.testing_criteria):
-        grader_name_map[criteria.id] = name
+        # Native OpenAI grader models may omit id; their results are keyed by name.
+        grader_name_map[getattr(criteria, "id", None) or criteria.name] = name
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")
@@ -907,7 +909,8 @@ def _get_data_source(
             if pd.api.types.is_integer(val):
                 return int(val)
             if pd.api.types.is_float(val):
-                return float(val)
+                # Pandas fills absent numeric fields with NaN, which is not valid JSON; send null instead.
+                return None if math.isnan(val) else float(val)
             return deepcopy(val)
         if val is None:
             return ""
@@ -1147,13 +1150,22 @@ def _begin_eval_run(
     if data_source_params is not None:
         data_source.update(data_source_params)
 
-    eval_run = client.evals.runs.create(
-        eval_id=eval_group_id,
-        data_source=cast(Any, data_source),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
-        name=run_name,
-        metadata={"sample_generation": "off", "file_format": "jsonl", "is_foundry_eval": "true"},
-        # TODO decide if we want to add our own timeout value?
-    )
+    try:
+        eval_run = client.evals.runs.create(
+            eval_id=eval_group_id,
+            data_source=cast(Any, data_source),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
+            name=run_name,
+            metadata={"sample_generation": "off", "file_format": "jsonl", "is_foundry_eval": "true"},
+            # TODO decide if we want to add our own timeout value?
+        )
+    except (BadRequestError, UnprocessableEntityError) as error:
+        raise EvaluationException(
+            message=f"AOAI rejected the evaluation run input: {error.message}",
+            internal_message="AOAI rejected the evaluation run input.",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.INVALID_VALUE,
+            target=ErrorTarget.AOAI_GRADER,
+        ) from error
     LOGGER.info(f"AOAI: Eval run created successfully with ID: {eval_run.id}")
     return eval_run.id
 

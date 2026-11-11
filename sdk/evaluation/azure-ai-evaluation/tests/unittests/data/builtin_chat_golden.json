@@ -1,0 +1,3397 @@
+{
+ "coherence/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "coherence.prompty"
+   },
+   {
+    "flow": "coherence.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "coherence.prompty",
+    "inputs": {
+     "query": "And in Rome?",
+     "response": "Rome is 25C.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "coherence": 4.0,
+    "coherence_passed": 1.0,
+    "coherence_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "coherence_reason": "Recorded reason.",
+    "coherence_result": "pass",
+    "coherence_score": 4.0,
+    "coherence_status": "completed",
+    "coherence_threshold": 3.0,
+    "evaluation_per_turn": {
+     "coherence": [
+      4.0,
+      4.0
+     ],
+     "coherence_passed": [
+      true,
+      true
+     ],
+     "coherence_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "coherence_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "coherence_result": [
+      "pass",
+      "pass"
+     ],
+     "coherence_score": [
+      4.0,
+      4.0
+     ],
+     "coherence_status": [
+      "completed",
+      "completed"
+     ],
+     "coherence_threshold": [
+      3,
+      3
+     ]
+    }
+   }
+  ]
+ },
+ "coherence/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "coherence.prompty"
+   },
+   {
+    "flow": "coherence.prompty",
+    "inputs": {
+     "query": [
+      {
+       "content": "You are a weather assistant.",
+       "role": "system"
+      },
+      {
+       "content": [
+        {
+         "text": "What is the weather in Paris?",
+         "type": "text"
+        }
+       ],
+       "role": "user"
+      }
+     ],
+     "response": [
+      {
+       "content": [
+        {
+         "arguments": {
+          "location": "Paris"
+         },
+         "name": "fetch_weather",
+         "tool_call_id": "call_1",
+         "type": "tool_call"
+        }
+       ],
+       "role": "assistant"
+      },
+      {
+       "content": [
+        {
+         "tool_result": {
+          "sky": "sunny",
+          "temperature": "20C"
+         },
+         "type": "tool_result"
+        }
+       ],
+       "role": "tool",
+       "tool_call_id": "call_1"
+      },
+      {
+       "content": [
+        {
+         "text": "It is 20C and sunny in Paris.",
+         "type": "text"
+        }
+       ],
+       "role": "assistant"
+      }
+     ],
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "coherence": 4.0,
+    "coherence_passed": true,
+    "coherence_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "coherence_reason": "Recorded reason.",
+    "coherence_result": "pass",
+    "coherence_score": 4.0,
+    "coherence_status": "completed",
+    "coherence_threshold": 3
+   }
+  ]
+ },
+ "coherence/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "coherence.prompty"
+   },
+   {
+    "flow": "coherence.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "coherence": null,
+    "coherence_passed": null,
+    "coherence_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "coherence_reason": "Not applicable: Recorded reason.",
+    "coherence_result": "not_applicable",
+    "coherence_score": null,
+    "coherence_status": "skipped",
+    "coherence_threshold": 3
+   }
+  ]
+ },
+ "coherence/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "coherence.prompty"
+   },
+   {
+    "flow": "coherence.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "coherence": 4.0,
+    "coherence_passed": true,
+    "coherence_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "coherence_reason": "Recorded reason.",
+    "coherence_result": "pass",
+    "coherence_score": 4.0,
+    "coherence_status": "completed",
+    "coherence_threshold": 3
+   }
+  ]
+ },
+ "fluency/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "fluency.prompty"
+   },
+   {
+    "flow": "fluency.prompty",
+    "inputs": {
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "fluency.prompty",
+    "inputs": {
+     "response": "Rome is 25C.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "fluency": [
+      4.0,
+      4.0
+     ],
+     "fluency_passed": [
+      true,
+      true
+     ],
+     "fluency_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "fluency_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "fluency_result": [
+      "pass",
+      "pass"
+     ],
+     "fluency_score": [
+      4.0,
+      4.0
+     ],
+     "fluency_status": [
+      "completed",
+      "completed"
+     ],
+     "fluency_threshold": [
+      3,
+      3
+     ]
+    },
+    "fluency": 4.0,
+    "fluency_passed": 1.0,
+    "fluency_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "fluency_reason": "Recorded reason.",
+    "fluency_result": "pass",
+    "fluency_score": 4.0,
+    "fluency_status": "completed",
+    "fluency_threshold": 3.0
+   }
+  ]
+ },
+ "fluency/json_response": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "fluency.prompty"
+   },
+   {
+    "flow": "fluency.prompty",
+    "inputs": {
+     "response": "[{\"role\": \"assistant\", \"content\": [{\"type\": \"tool_call\", \"tool_call_id\": \"call_1\", \"name\": \"fetch_weather\", \"arguments\": {\"location\": \"Paris\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_1\", \"content\": [{\"type\": \"tool_result\", \"tool_result\": {\"temperature\": \"20C\", \"sky\": \"sunny\"}}]}, {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"text\": \"It is 20C and sunny in Paris.\"}]}]",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "fluency": 4.0,
+    "fluency_passed": true,
+    "fluency_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "fluency_reason": "Recorded reason.",
+    "fluency_result": "pass",
+    "fluency_score": 4.0,
+    "fluency_status": "completed",
+    "fluency_threshold": 3
+   }
+  ]
+ },
+ "fluency/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "fluency.prompty"
+   },
+   {
+    "flow": "fluency.prompty",
+    "inputs": {
+     "response": [
+      {
+       "content": [
+        {
+         "arguments": {
+          "location": "Paris"
+         },
+         "name": "fetch_weather",
+         "tool_call_id": "call_1",
+         "type": "tool_call"
+        }
+       ],
+       "role": "assistant"
+      },
+      {
+       "content": [
+        {
+         "tool_result": {
+          "sky": "sunny",
+          "temperature": "20C"
+         },
+         "type": "tool_result"
+        }
+       ],
+       "role": "tool",
+       "tool_call_id": "call_1"
+      },
+      {
+       "content": [
+        {
+         "text": "It is 20C and sunny in Paris.",
+         "type": "text"
+        }
+       ],
+       "role": "assistant"
+      }
+     ],
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "fluency": 4.0,
+    "fluency_passed": true,
+    "fluency_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "fluency_reason": "Recorded reason.",
+    "fluency_result": "pass",
+    "fluency_score": 4.0,
+    "fluency_status": "completed",
+    "fluency_threshold": 3
+   }
+  ]
+ },
+ "fluency/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "fluency.prompty"
+   },
+   {
+    "flow": "fluency.prompty",
+    "inputs": {
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "fluency": null,
+    "fluency_passed": null,
+    "fluency_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "fluency_reason": "Not applicable: Recorded reason.",
+    "fluency_result": "not_applicable",
+    "fluency_score": null,
+    "fluency_status": "skipped",
+    "fluency_threshold": 3
+   }
+  ]
+ },
+ "fluency/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "fluency.prompty"
+   },
+   {
+    "flow": "fluency.prompty",
+    "inputs": {
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "fluency": 4.0,
+    "fluency_passed": true,
+    "fluency_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "fluency_reason": "Recorded reason.",
+    "fluency_result": "pass",
+    "fluency_score": 4.0,
+    "fluency_status": "completed",
+    "fluency_threshold": 3
+   }
+  ]
+ },
+ "groundedness/alternating": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_without_query.prompty"
+   },
+   {
+    "flow": "groundedness_without_query.prompty",
+    "inputs": {
+     "context": "Paris weather report: 20C and sunny.",
+     "query": null,
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": null
+    }
+   },
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_with_query.prompty"
+   },
+   {
+    "flow": "groundedness_with_query.prompty",
+    "inputs": {
+     "context": "Paris weather report: 20C and sunny.",
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "groundedness_with_query.prompty",
+    "inputs": {
+     "context": "Paris weather report: 20C and sunny.",
+     "query": null,
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": null
+    }
+   }
+  ],
+  "results": [
+   {
+    "groundedness": 4.0,
+    "groundedness_passed": true,
+    "groundedness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "groundedness_reason": "Recorded reason.",
+    "groundedness_result": "pass",
+    "groundedness_score": 4.0,
+    "groundedness_status": "completed",
+    "groundedness_threshold": 3
+   },
+   {
+    "groundedness": 4.0,
+    "groundedness_passed": true,
+    "groundedness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "groundedness_reason": "Recorded reason.",
+    "groundedness_result": "pass",
+    "groundedness_score": 4.0,
+    "groundedness_status": "completed",
+    "groundedness_threshold": 3
+   },
+   {
+    "groundedness": 4.0,
+    "groundedness_passed": true,
+    "groundedness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "groundedness_reason": "Recorded reason.",
+    "groundedness_result": "pass",
+    "groundedness_score": 4.0,
+    "groundedness_status": "completed",
+    "groundedness_threshold": 3
+   }
+  ]
+ },
+ "groundedness/context": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_without_query.prompty"
+   },
+   {
+    "flow": "groundedness_without_query.prompty",
+    "inputs": {
+     "context": "Paris weather report: 20C and sunny.",
+     "query": null,
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": null
+    }
+   }
+  ],
+  "results": [
+   {
+    "groundedness": 4.0,
+    "groundedness_passed": true,
+    "groundedness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "groundedness_reason": "Recorded reason.",
+    "groundedness_result": "pass",
+    "groundedness_score": 4.0,
+    "groundedness_status": "completed",
+    "groundedness_threshold": 3
+   }
+  ]
+ },
+ "groundedness/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_without_query.prompty"
+   },
+   {
+    "flow": "groundedness_without_query.prompty",
+    "inputs": {
+     "context": "{'global_context': 'Weather data for European cities.', 'query_context': 'The user asks about Paris.', 'response_context': 'Paris weather report: 20C and sunny.'}",
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "groundedness_without_query.prompty",
+    "inputs": {
+     "context": "{'global_context': 'Weather data for European cities.'}",
+     "query": "And in Rome?",
+     "response": "Rome is 25C.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "groundedness": [
+      4.0,
+      4.0
+     ],
+     "groundedness_passed": [
+      true,
+      true
+     ],
+     "groundedness_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "groundedness_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "groundedness_result": [
+      "pass",
+      "pass"
+     ],
+     "groundedness_score": [
+      4.0,
+      4.0
+     ],
+     "groundedness_status": [
+      "completed",
+      "completed"
+     ],
+     "groundedness_threshold": [
+      3,
+      3
+     ]
+    },
+    "groundedness": 4.0,
+    "groundedness_passed": 1.0,
+    "groundedness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "groundedness_reason": "Recorded reason.",
+    "groundedness_result": "pass",
+    "groundedness_score": 4.0,
+    "groundedness_status": "completed",
+    "groundedness_threshold": 3.0
+   }
+  ]
+ },
+ "groundedness/file_search": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_without_query.prompty"
+   },
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_with_query.prompty"
+   },
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_with_query.prompty"
+   },
+   {
+    "flow": "groundedness_with_query.prompty",
+    "inputs": {
+     "context": "weather.txt:\n- Paris weather report: 20C and sunny.---\n\n",
+     "query": [
+      {
+       "content": [
+        "What is the weather in Paris?"
+       ],
+       "role": "user"
+      }
+     ],
+     "response": [
+      {
+       "content": [
+        {
+         "arguments": {},
+         "name": "file_search",
+         "tool_call_id": "call_fs",
+         "type": "tool_call"
+        }
+       ],
+       "role": "assistant"
+      },
+      {
+       "content": [
+        "It is 20C and sunny in Paris."
+       ],
+       "role": "assistant"
+      }
+     ],
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "groundedness": 4.0,
+    "groundedness_passed": true,
+    "groundedness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "groundedness_reason": "Recorded reason.",
+    "groundedness_result": "pass",
+    "groundedness_score": 4.0,
+    "groundedness_status": "completed",
+    "groundedness_threshold": 3
+   }
+  ]
+ },
+ "groundedness/query_context": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_without_query.prompty"
+   },
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_with_query.prompty"
+   },
+   {
+    "flow": "groundedness_with_query.prompty",
+    "inputs": {
+     "context": "Paris weather report: 20C and sunny.",
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "groundedness": 4.0,
+    "groundedness_passed": true,
+    "groundedness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "groundedness_reason": "Recorded reason.",
+    "groundedness_result": "pass",
+    "groundedness_score": 4.0,
+    "groundedness_status": "completed",
+    "groundedness_threshold": 3
+   }
+  ]
+ },
+ "groundedness/query_without_context": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_without_query.prompty"
+   },
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_with_query.prompty"
+   },
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_with_query.prompty"
+   },
+   {
+    "flow": "groundedness_with_query.prompty",
+    "inputs": {
+     "context": "It is 20C and sunny in Paris.",
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "groundedness": 4.0,
+    "groundedness_passed": true,
+    "groundedness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "groundedness_reason": "Recorded reason.",
+    "groundedness_result": "pass",
+    "groundedness_score": 4.0,
+    "groundedness_status": "completed",
+    "groundedness_threshold": 3
+   }
+  ]
+ },
+ "groundedness/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "groundedness_without_query.prompty"
+   },
+   {
+    "flow": "groundedness_without_query.prompty",
+    "inputs": {
+     "context": "Paris weather report: 20C and sunny.",
+     "query": null,
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": null
+    }
+   }
+  ],
+  "results": [
+   {
+    "groundedness": null,
+    "groundedness_passed": null,
+    "groundedness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "groundedness_reason": "Not applicable: Recorded reason.",
+    "groundedness_result": "not_applicable",
+    "groundedness_score": null,
+    "groundedness_status": "skipped",
+    "groundedness_threshold": 3
+   }
+  ]
+ },
+ "intent_resolution/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "intent_resolution.prompty"
+   },
+   {
+    "flow": "intent_resolution.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "intent_resolution.prompty",
+    "inputs": {
+     "query": "And in Rome?",
+     "response": "Rome is 25C.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "intent_resolution": [
+      4.0,
+      4.0
+     ],
+     "intent_resolution_passed": [
+      true,
+      true
+     ],
+     "intent_resolution_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "intent_resolution_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "intent_resolution_result": [
+      "pass",
+      "pass"
+     ],
+     "intent_resolution_score": [
+      4.0,
+      4.0
+     ],
+     "intent_resolution_status": [
+      "completed",
+      "completed"
+     ],
+     "intent_resolution_threshold": [
+      3,
+      3
+     ]
+    },
+    "intent_resolution": 4.0,
+    "intent_resolution_passed": 1.0,
+    "intent_resolution_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "intent_resolution_reason": "Recorded reason.",
+    "intent_resolution_result": "pass",
+    "intent_resolution_score": 4.0,
+    "intent_resolution_status": "completed",
+    "intent_resolution_threshold": 3.0
+   }
+  ]
+ },
+ "intent_resolution/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "intent_resolution.prompty"
+   },
+   {
+    "flow": "intent_resolution.prompty",
+    "inputs": {
+     "query": "User turn 1:\n  What is the weather in Paris?\n\n",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": [
+      {
+       "description": "Fetches the weather for a location.",
+       "name": "fetch_weather",
+       "parameters": {
+        "properties": {
+         "location": {
+          "description": "City.",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "type": "function"
+      }
+     ]
+    }
+   }
+  ],
+  "results": [
+   {
+    "intent_resolution": 4.0,
+    "intent_resolution_passed": true,
+    "intent_resolution_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "intent_resolution_reason": "Recorded reason.",
+    "intent_resolution_result": "pass",
+    "intent_resolution_score": 4.0,
+    "intent_resolution_status": "completed",
+    "intent_resolution_threshold": 3
+   }
+  ]
+ },
+ "intent_resolution/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "intent_resolution.prompty"
+   },
+   {
+    "flow": "intent_resolution.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": null
+    }
+   }
+  ],
+  "results": [
+   {
+    "intent_resolution": null,
+    "intent_resolution_passed": null,
+    "intent_resolution_properties": null,
+    "intent_resolution_reason": "Not applicable: Recorded reason.",
+    "intent_resolution_result": "not_applicable",
+    "intent_resolution_score": null,
+    "intent_resolution_status": "skipped",
+    "intent_resolution_threshold": 3
+   }
+  ]
+ },
+ "intent_resolution/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "intent_resolution.prompty"
+   },
+   {
+    "flow": "intent_resolution.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": null
+    }
+   }
+  ],
+  "results": [
+   {
+    "intent_resolution": 4.0,
+    "intent_resolution_passed": true,
+    "intent_resolution_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "intent_resolution_reason": "Recorded reason.",
+    "intent_resolution_result": "pass",
+    "intent_resolution_score": 4.0,
+    "intent_resolution_status": "completed",
+    "intent_resolution_threshold": 3
+   }
+  ]
+ },
+ "relevance/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "relevance.prompty"
+   },
+   {
+    "flow": "relevance.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "relevance.prompty",
+    "inputs": {
+     "query": "And in Rome?",
+     "response": "Rome is 25C.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "relevance": [
+      4.0,
+      4.0
+     ],
+     "relevance_passed": [
+      true,
+      true
+     ],
+     "relevance_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "relevance_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "relevance_result": [
+      "pass",
+      "pass"
+     ],
+     "relevance_score": [
+      4.0,
+      4.0
+     ],
+     "relevance_status": [
+      "completed",
+      "completed"
+     ],
+     "relevance_threshold": [
+      3,
+      3
+     ]
+    },
+    "relevance": 4.0,
+    "relevance_passed": 1.0,
+    "relevance_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "relevance_reason": "Recorded reason.",
+    "relevance_result": "pass",
+    "relevance_score": 4.0,
+    "relevance_status": "completed",
+    "relevance_threshold": 3.0
+   }
+  ]
+ },
+ "relevance/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "relevance.prompty"
+   },
+   {
+    "flow": "relevance.prompty",
+    "inputs": {
+     "query": "User turn 1:\n  What is the weather in Paris?\n\n",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "relevance": 4.0,
+    "relevance_passed": true,
+    "relevance_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "relevance_reason": "Recorded reason.",
+    "relevance_result": "pass",
+    "relevance_score": 4.0,
+    "relevance_status": "completed",
+    "relevance_threshold": 3
+   }
+  ]
+ },
+ "relevance/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "relevance.prompty"
+   },
+   {
+    "flow": "relevance.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "relevance": null,
+    "relevance_passed": null,
+    "relevance_properties": null,
+    "relevance_reason": "Not applicable: Recorded reason.",
+    "relevance_result": "not_applicable",
+    "relevance_score": null,
+    "relevance_status": "skipped",
+    "relevance_threshold": 3
+   }
+  ]
+ },
+ "relevance/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "relevance.prompty"
+   },
+   {
+    "flow": "relevance.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "relevance": 4.0,
+    "relevance_passed": true,
+    "relevance_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "relevance_reason": "Recorded reason.",
+    "relevance_result": "pass",
+    "relevance_score": 4.0,
+    "relevance_status": "completed",
+    "relevance_threshold": 3
+   }
+  ]
+ },
+ "response_completeness/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "response_completeness.prompty"
+   },
+   {
+    "flow": "response_completeness.prompty",
+    "inputs": {
+     "ground_truth": "Paris is 20C and sunny.",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "response_completeness.prompty",
+    "inputs": {
+     "ground_truth": "Rome is 25C and cloudy.",
+     "response": "Rome is 25C.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "response_completeness": [
+      4.0,
+      4.0
+     ],
+     "response_completeness_passed": [
+      true,
+      true
+     ],
+     "response_completeness_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "response_completeness_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "response_completeness_result": [
+      "pass",
+      "pass"
+     ],
+     "response_completeness_score": [
+      4.0,
+      4.0
+     ],
+     "response_completeness_status": [
+      "completed",
+      "completed"
+     ],
+     "response_completeness_threshold": [
+      3,
+      3
+     ]
+    },
+    "response_completeness": 4.0,
+    "response_completeness_passed": 1.0,
+    "response_completeness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "response_completeness_reason": "Recorded reason.",
+    "response_completeness_result": "pass",
+    "response_completeness_score": 4.0,
+    "response_completeness_status": "completed",
+    "response_completeness_threshold": 3.0
+   }
+  ]
+ },
+ "response_completeness/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "response_completeness.prompty"
+   },
+   {
+    "flow": "response_completeness.prompty",
+    "inputs": {
+     "ground_truth": "Paris is 20C and sunny.",
+     "response": [
+      {
+       "content": [
+        {
+         "arguments": {
+          "location": "Paris"
+         },
+         "name": "fetch_weather",
+         "tool_call_id": "call_1",
+         "type": "tool_call"
+        }
+       ],
+       "role": "assistant"
+      },
+      {
+       "content": [
+        {
+         "tool_result": {
+          "sky": "sunny",
+          "temperature": "20C"
+         },
+         "type": "tool_result"
+        }
+       ],
+       "role": "tool",
+       "tool_call_id": "call_1"
+      },
+      {
+       "content": [
+        {
+         "text": "It is 20C and sunny in Paris.",
+         "type": "text"
+        }
+       ],
+       "role": "assistant"
+      }
+     ],
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "response_completeness": 4.0,
+    "response_completeness_passed": true,
+    "response_completeness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "response_completeness_reason": "Recorded reason.",
+    "response_completeness_result": "pass",
+    "response_completeness_score": 4.0,
+    "response_completeness_status": "completed",
+    "response_completeness_threshold": 3
+   }
+  ]
+ },
+ "response_completeness/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "response_completeness.prompty"
+   },
+   {
+    "flow": "response_completeness.prompty",
+    "inputs": {
+     "ground_truth": "Paris is 20C and sunny.",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "response_completeness": null,
+    "response_completeness_passed": null,
+    "response_completeness_properties": null,
+    "response_completeness_reason": "Not applicable: Recorded reason.",
+    "response_completeness_result": "not_applicable",
+    "response_completeness_score": null,
+    "response_completeness_status": "skipped",
+    "response_completeness_threshold": 3
+   }
+  ]
+ },
+ "response_completeness/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "response_completeness.prompty"
+   },
+   {
+    "flow": "response_completeness.prompty",
+    "inputs": {
+     "ground_truth": "Paris is 20C and sunny.",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "response_completeness": 4.0,
+    "response_completeness_passed": true,
+    "response_completeness_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "response_completeness_reason": "Recorded reason.",
+    "response_completeness_result": "pass",
+    "response_completeness_score": 4.0,
+    "response_completeness_status": "completed",
+    "response_completeness_threshold": 3
+   }
+  ]
+ },
+ "retrieval/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "retrieval.prompty"
+   },
+   {
+    "flow": "retrieval.prompty",
+    "inputs": {
+     "context": "{'global_context': 'Weather data for European cities.', 'query_context': 'The user asks about Paris.'}",
+     "query": "What is the weather in Paris?",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "retrieval.prompty",
+    "inputs": {
+     "context": "{'global_context': 'Weather data for European cities.'}",
+     "query": "And in Rome?",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "retrieval": [
+      4.0,
+      4.0
+     ],
+     "retrieval_passed": [
+      true,
+      true
+     ],
+     "retrieval_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "retrieval_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "retrieval_result": [
+      "pass",
+      "pass"
+     ],
+     "retrieval_score": [
+      4.0,
+      4.0
+     ],
+     "retrieval_status": [
+      "completed",
+      "completed"
+     ],
+     "retrieval_threshold": [
+      3,
+      3
+     ]
+    },
+    "retrieval": 4.0,
+    "retrieval_passed": 1.0,
+    "retrieval_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "retrieval_reason": "Recorded reason.",
+    "retrieval_result": "pass",
+    "retrieval_score": 4.0,
+    "retrieval_status": "completed",
+    "retrieval_threshold": 3.0
+   }
+  ]
+ },
+ "retrieval/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "retrieval.prompty"
+   },
+   {
+    "flow": "retrieval.prompty",
+    "inputs": {
+     "context": "Paris weather report: 20C and sunny.",
+     "query": "What is the weather in Paris?",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "retrieval": null,
+    "retrieval_passed": null,
+    "retrieval_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "retrieval_reason": "Not applicable: Recorded reason.",
+    "retrieval_result": "not_applicable",
+    "retrieval_score": null,
+    "retrieval_status": "skipped",
+    "retrieval_threshold": 3
+   }
+  ]
+ },
+ "retrieval/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "retrieval.prompty"
+   },
+   {
+    "flow": "retrieval.prompty",
+    "inputs": {
+     "context": "Paris weather report: 20C and sunny.",
+     "query": "What is the weather in Paris?",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "retrieval": 4.0,
+    "retrieval_passed": true,
+    "retrieval_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "retrieval_reason": "Recorded reason.",
+    "retrieval_result": "pass",
+    "retrieval_score": 4.0,
+    "retrieval_status": "completed",
+    "retrieval_threshold": 3
+   }
+  ]
+ },
+ "similarity/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "similarity.prompty"
+   },
+   {
+    "flow": "similarity.prompty",
+    "inputs": {
+     "ground_truth": "Paris is 20C and sunny.",
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "similarity.prompty",
+    "inputs": {
+     "ground_truth": "Rome is 25C and cloudy.",
+     "query": "And in Rome?",
+     "response": "Rome is 25C.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "similarity": [
+      4.0,
+      4.0
+     ],
+     "similarity_passed": [
+      true,
+      true
+     ],
+     "similarity_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "similarity_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "similarity_result": [
+      "pass",
+      "pass"
+     ],
+     "similarity_score": [
+      4.0,
+      4.0
+     ],
+     "similarity_status": [
+      "completed",
+      "completed"
+     ],
+     "similarity_threshold": [
+      3,
+      3
+     ]
+    },
+    "similarity": 4.0,
+    "similarity_passed": 1.0,
+    "similarity_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "similarity_reason": "Recorded reason.",
+    "similarity_result": "pass",
+    "similarity_score": 4.0,
+    "similarity_status": "completed",
+    "similarity_threshold": 3.0
+   }
+  ]
+ },
+ "similarity/json_response": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "similarity.prompty"
+   },
+   {
+    "flow": "similarity.prompty",
+    "inputs": {
+     "ground_truth": "Paris is 20C and sunny.",
+     "query": "What is the weather in Paris?",
+     "response": "[{\"role\": \"assistant\", \"content\": [{\"type\": \"tool_call\", \"tool_call_id\": \"call_1\", \"name\": \"fetch_weather\", \"arguments\": {\"location\": \"Paris\"}}]}, {\"role\": \"tool\", \"tool_call_id\": \"call_1\", \"content\": [{\"type\": \"tool_result\", \"tool_result\": {\"temperature\": \"20C\", \"sky\": \"sunny\"}}]}, {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"text\": \"It is 20C and sunny in Paris.\"}]}]",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "similarity": 4.0,
+    "similarity_passed": true,
+    "similarity_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "similarity_reason": "Recorded reason.",
+    "similarity_result": "pass",
+    "similarity_score": 4.0,
+    "similarity_status": "completed",
+    "similarity_threshold": 3
+   }
+  ]
+ },
+ "similarity/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "similarity.prompty"
+   },
+   {
+    "flow": "similarity.prompty",
+    "inputs": {
+     "ground_truth": "Paris is 20C and sunny.",
+     "query": [
+      {
+       "content": "You are a weather assistant.",
+       "role": "system"
+      },
+      {
+       "content": [
+        {
+         "text": "What is the weather in Paris?",
+         "type": "text"
+        }
+       ],
+       "role": "user"
+      }
+     ],
+     "response": [
+      {
+       "content": [
+        {
+         "arguments": {
+          "location": "Paris"
+         },
+         "name": "fetch_weather",
+         "tool_call_id": "call_1",
+         "type": "tool_call"
+        }
+       ],
+       "role": "assistant"
+      },
+      {
+       "content": [
+        {
+         "tool_result": {
+          "sky": "sunny",
+          "temperature": "20C"
+         },
+         "type": "tool_result"
+        }
+       ],
+       "role": "tool",
+       "tool_call_id": "call_1"
+      },
+      {
+       "content": [
+        {
+         "text": "It is 20C and sunny in Paris.",
+         "type": "text"
+        }
+       ],
+       "role": "assistant"
+      }
+     ],
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "similarity": 4.0,
+    "similarity_passed": true,
+    "similarity_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "similarity_reason": "Recorded reason.",
+    "similarity_result": "pass",
+    "similarity_score": 4.0,
+    "similarity_status": "completed",
+    "similarity_threshold": 3
+   }
+  ]
+ },
+ "similarity/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "similarity.prompty"
+   },
+   {
+    "flow": "similarity.prompty",
+    "inputs": {
+     "ground_truth": "Paris is 20C and sunny.",
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "similarity": null,
+    "similarity_passed": null,
+    "similarity_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "similarity_reason": "Not applicable: Recorded reason.",
+    "similarity_result": "not_applicable",
+    "similarity_score": null,
+    "similarity_status": "skipped",
+    "similarity_threshold": 3
+   }
+  ]
+ },
+ "similarity/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "similarity.prompty"
+   },
+   {
+    "flow": "similarity.prompty",
+    "inputs": {
+     "ground_truth": "Paris is 20C and sunny.",
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "similarity": 4.0,
+    "similarity_passed": true,
+    "similarity_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "similarity_reason": "Recorded reason.",
+    "similarity_result": "pass",
+    "similarity_score": 4.0,
+    "similarity_status": "completed",
+    "similarity_threshold": 3
+   }
+  ]
+ },
+ "task_adherence/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "task_adherence.prompty"
+   },
+   {
+    "flow": "task_adherence.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "system_message": "",
+     "timeout": 600,
+     "tool_calls": ""
+    }
+   },
+   {
+    "flow": "task_adherence.prompty",
+    "inputs": {
+     "query": "And in Rome?",
+     "response": "Rome is 25C.",
+     "system_message": "",
+     "timeout": 600,
+     "tool_calls": ""
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "task_adherence": [
+      1.0,
+      1.0
+     ],
+     "task_adherence_passed": [
+      true,
+      true
+     ],
+     "task_adherence_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "task_adherence_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "task_adherence_result": [
+      "pass",
+      "pass"
+     ],
+     "task_adherence_score": [
+      1.0,
+      1.0
+     ],
+     "task_adherence_status": [
+      "completed",
+      "completed"
+     ],
+     "task_adherence_threshold": [
+      3,
+      3
+     ]
+    },
+    "task_adherence": 1.0,
+    "task_adherence_passed": 1.0,
+    "task_adherence_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "task_adherence_reason": "Recorded reason.",
+    "task_adherence_result": "pass",
+    "task_adherence_score": 1.0,
+    "task_adherence_status": "completed",
+    "task_adherence_threshold": 3.0
+   }
+  ]
+ },
+ "task_adherence/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "task_adherence.prompty"
+   },
+   {
+    "flow": "task_adherence.prompty",
+    "inputs": {
+     "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
+     "response": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}\nIt is 20C and sunny in Paris.",
+     "system_message": "",
+     "timeout": 600,
+     "tool_calls": ""
+    }
+   }
+  ],
+  "results": [
+   {
+    "task_adherence": 1.0,
+    "task_adherence_passed": true,
+    "task_adherence_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "task_adherence_reason": "Recorded reason.",
+    "task_adherence_result": "pass",
+    "task_adherence_score": 1.0,
+    "task_adherence_status": "completed",
+    "task_adherence_threshold": 3
+   }
+  ]
+ },
+ "task_adherence/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "task_adherence.prompty"
+   },
+   {
+    "flow": "task_adherence.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "system_message": "",
+     "timeout": 600,
+     "tool_calls": ""
+    }
+   }
+  ],
+  "results": [
+   {
+    "task_adherence": null,
+    "task_adherence_passed": null,
+    "task_adherence_properties": null,
+    "task_adherence_reason": "Not applicable: Recorded reason.",
+    "task_adherence_result": "not_applicable",
+    "task_adherence_score": null,
+    "task_adherence_status": "skipped",
+    "task_adherence_threshold": 3
+   }
+  ]
+ },
+ "task_adherence/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "task_adherence.prompty"
+   },
+   {
+    "flow": "task_adherence.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "system_message": "",
+     "timeout": 600,
+     "tool_calls": ""
+    }
+   }
+  ],
+  "results": [
+   {
+    "task_adherence": 1.0,
+    "task_adherence_passed": true,
+    "task_adherence_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "task_adherence_reason": "Recorded reason.",
+    "task_adherence_result": "pass",
+    "task_adherence_score": 1.0,
+    "task_adherence_status": "completed",
+    "task_adherence_threshold": 3
+   }
+  ]
+ },
+ "task_completion/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "task_completion.prompty"
+   },
+   {
+    "flow": "task_completion.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600
+    }
+   },
+   {
+    "flow": "task_completion.prompty",
+    "inputs": {
+     "query": "And in Rome?",
+     "response": "Rome is 25C.",
+     "timeout": 600
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "task_completion": [
+      1.0,
+      1.0
+     ],
+     "task_completion_passed": [
+      true,
+      true
+     ],
+     "task_completion_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "task_completion_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "task_completion_result": [
+      "pass",
+      "pass"
+     ],
+     "task_completion_score": [
+      1.0,
+      1.0
+     ],
+     "task_completion_status": [
+      "completed",
+      "completed"
+     ],
+     "task_completion_threshold": [
+      3,
+      3
+     ]
+    },
+    "task_completion": 1.0,
+    "task_completion_passed": 1.0,
+    "task_completion_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "task_completion_reason": "Recorded reason.",
+    "task_completion_result": "pass",
+    "task_completion_score": 1.0,
+    "task_completion_status": "completed",
+    "task_completion_threshold": 3.0
+   }
+  ]
+ },
+ "task_completion/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "task_completion.prompty"
+   },
+   {
+    "flow": "task_completion.prompty",
+    "inputs": {
+     "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
+     "response": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}\nIt is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": "TOOL_DEFINITIONS:\n- fetch_weather: Fetches the weather for a location. (inputs: location)"
+    }
+   }
+  ],
+  "results": [
+   {
+    "task_completion": 1.0,
+    "task_completion_passed": true,
+    "task_completion_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "task_completion_reason": "Recorded reason.",
+    "task_completion_result": "pass",
+    "task_completion_score": 1.0,
+    "task_completion_status": "completed",
+    "task_completion_threshold": 3
+   }
+  ]
+ },
+ "task_completion/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "task_completion.prompty"
+   },
+   {
+    "flow": "task_completion.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": null
+    }
+   }
+  ],
+  "results": [
+   {
+    "task_completion": null,
+    "task_completion_passed": null,
+    "task_completion_properties": null,
+    "task_completion_reason": "Not applicable: Recorded reason.",
+    "task_completion_result": "not_applicable",
+    "task_completion_score": null,
+    "task_completion_status": "skipped",
+    "task_completion_threshold": 3
+   }
+  ]
+ },
+ "task_completion/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "task_completion.prompty"
+   },
+   {
+    "flow": "task_completion.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": null
+    }
+   }
+  ],
+  "results": [
+   {
+    "task_completion": 1.0,
+    "task_completion_passed": true,
+    "task_completion_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "task_completion_reason": "Recorded reason.",
+    "task_completion_result": "pass",
+    "task_completion_score": 1.0,
+    "task_completion_status": "completed",
+    "task_completion_threshold": 3
+   }
+  ]
+ },
+ "tool_call_accuracy/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_call_accuracy.prompty"
+   }
+  ],
+  "error": {
+   "category": "MISSING FIELD",
+   "message": "(UserError) Query is a required input and cannot be None.",
+   "target": "ToolCallAccuracyEvaluator",
+   "type": "EvaluationException"
+  },
+  "results": []
+ },
+ "tool_call_accuracy/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_call_accuracy.prompty"
+   },
+   {
+    "flow": "tool_call_accuracy.prompty",
+    "inputs": {
+     "query": [
+      {
+       "content": "You are a weather assistant.",
+       "role": "system"
+      },
+      {
+       "content": [
+        {
+         "text": "What is the weather in Paris?",
+         "type": "text"
+        }
+       ],
+       "role": "user"
+      }
+     ],
+     "timeout": 600,
+     "tool_calls": [
+      {
+       "arguments": {
+        "location": "Paris"
+       },
+       "name": "fetch_weather",
+       "tool_call_id": "call_1",
+       "tool_result": {
+        "sky": "sunny",
+        "temperature": "20C"
+       },
+       "type": "tool_call"
+      }
+     ],
+     "tool_definitions": [
+      {
+       "description": "Fetches the weather for a location.",
+       "name": "fetch_weather",
+       "parameters": {
+        "properties": {
+         "location": {
+          "description": "City.",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "type": "function"
+      }
+     ]
+    }
+   }
+  ],
+  "results": [
+   {
+    "gpt_tool_call_accuracy": 4.0,
+    "tool_call_accuracy": 4.0,
+    "tool_call_accuracy_passed": true,
+    "tool_call_accuracy_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "tool_call_accuracy_reason": "Recorded reason.",
+    "tool_call_accuracy_result": "pass",
+    "tool_call_accuracy_score": 4.0,
+    "tool_call_accuracy_status": "completed",
+    "tool_call_accuracy_threshold": 3
+   }
+  ]
+ },
+ "tool_call_accuracy/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_call_accuracy.prompty"
+   },
+   {
+    "flow": "tool_call_accuracy.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "timeout": 600,
+     "tool_calls": [
+      {
+       "arguments": {
+        "location": "Paris"
+       },
+       "name": "fetch_weather",
+       "tool_call_id": "call_1",
+       "type": "tool_call"
+      }
+     ],
+     "tool_definitions": [
+      {
+       "description": "Fetches the weather for a location.",
+       "name": "fetch_weather",
+       "parameters": {
+        "properties": {
+         "location": {
+          "description": "City.",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "type": "function"
+      }
+     ]
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_call_accuracy": null,
+    "tool_call_accuracy_passed": null,
+    "tool_call_accuracy_properties": null,
+    "tool_call_accuracy_reason": "Not applicable: Recorded reason.",
+    "tool_call_accuracy_result": "not_applicable",
+    "tool_call_accuracy_score": null,
+    "tool_call_accuracy_status": "skipped",
+    "tool_call_accuracy_threshold": 3
+   }
+  ]
+ },
+ "tool_call_accuracy/tool_calls": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_call_accuracy.prompty"
+   },
+   {
+    "flow": "tool_call_accuracy.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "timeout": 600,
+     "tool_calls": [
+      {
+       "arguments": {
+        "location": "Paris"
+       },
+       "name": "fetch_weather",
+       "tool_call_id": "call_1",
+       "type": "tool_call"
+      }
+     ],
+     "tool_definitions": [
+      {
+       "description": "Fetches the weather for a location.",
+       "name": "fetch_weather",
+       "parameters": {
+        "properties": {
+         "location": {
+          "description": "City.",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "type": "function"
+      }
+     ]
+    }
+   }
+  ],
+  "results": [
+   {
+    "gpt_tool_call_accuracy": 4.0,
+    "tool_call_accuracy": 4.0,
+    "tool_call_accuracy_passed": true,
+    "tool_call_accuracy_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "tool_call_accuracy_reason": "Recorded reason.",
+    "tool_call_accuracy_result": "pass",
+    "tool_call_accuracy_score": 4.0,
+    "tool_call_accuracy_status": "completed",
+    "tool_call_accuracy_threshold": 3
+   }
+  ]
+ },
+ "tool_call_success/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_call_success.prompty"
+   },
+   {
+    "flow": "tool_call_success.prompty",
+    "inputs": {
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_calls": "It is 20C and sunny in Paris."
+    }
+   },
+   {
+    "flow": "tool_call_success.prompty",
+    "inputs": {
+     "response": "Rome is 25C.",
+     "timeout": 600,
+     "tool_calls": "Rome is 25C."
+    }
+   }
+  ],
+  "results": [
+   {
+    "evaluation_per_turn": {
+     "tool_call_success": [
+      1.0,
+      1.0
+     ],
+     "tool_call_success_passed": [
+      true,
+      true
+     ],
+     "tool_call_success_properties": [
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      },
+      {
+       "completion_tokens": 7,
+       "finish_reason": "stop",
+       "model": "chat-model",
+       "note": 1,
+       "prompt_tokens": 11,
+       "sample_input": "sample input",
+       "sample_output": "sample output",
+       "total_tokens": 18
+      }
+     ],
+     "tool_call_success_reason": [
+      "Recorded reason.",
+      "Recorded reason."
+     ],
+     "tool_call_success_result": [
+      "pass",
+      "pass"
+     ],
+     "tool_call_success_score": [
+      1.0,
+      1.0
+     ],
+     "tool_call_success_status": [
+      "completed",
+      "completed"
+     ],
+     "tool_call_success_threshold": [
+      1,
+      1
+     ]
+    },
+    "tool_call_success": 1.0,
+    "tool_call_success_passed": 1.0,
+    "tool_call_success_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "tool_call_success_reason": "Recorded reason.",
+    "tool_call_success_result": "pass",
+    "tool_call_success_score": 1.0,
+    "tool_call_success_status": "completed",
+    "tool_call_success_threshold": 1.0
+   }
+  ]
+ },
+ "tool_call_success/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_call_success.prompty"
+   },
+   {
+    "flow": "tool_call_success.prompty",
+    "inputs": {
+     "response": [
+      {
+       "content": [
+        {
+         "arguments": {
+          "location": "Paris"
+         },
+         "name": "fetch_weather",
+         "tool_call_id": "call_1",
+         "type": "tool_call"
+        }
+       ],
+       "role": "assistant"
+      },
+      {
+       "content": [
+        {
+         "tool_result": {
+          "sky": "sunny",
+          "temperature": "20C"
+         },
+         "type": "tool_result"
+        }
+       ],
+       "role": "tool",
+       "tool_call_id": "call_1"
+      },
+      {
+       "content": [
+        {
+         "text": "It is 20C and sunny in Paris.",
+         "type": "text"
+        }
+       ],
+       "role": "assistant"
+      }
+     ],
+     "timeout": 600,
+     "tool_calls": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}",
+     "tool_definitions": "TOOL_DEFINITIONS:\n- fetch_weather: Fetches the weather for a location. (inputs: location)"
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_call_success": 1.0,
+    "tool_call_success_passed": true,
+    "tool_call_success_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "tool_call_success_reason": "Recorded reason.",
+    "tool_call_success_result": "pass",
+    "tool_call_success_score": 1.0,
+    "tool_call_success_status": "completed",
+    "tool_call_success_threshold": 1
+   }
+  ]
+ },
+ "tool_call_success/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_call_success.prompty"
+   },
+   {
+    "flow": "tool_call_success.prompty",
+    "inputs": {
+     "response": [
+      {
+       "content": [
+        {
+         "arguments": {
+          "location": "Paris"
+         },
+         "name": "fetch_weather",
+         "tool_call_id": "call_1",
+         "type": "tool_call"
+        }
+       ],
+       "role": "assistant"
+      },
+      {
+       "content": [
+        {
+         "tool_result": {
+          "sky": "sunny",
+          "temperature": "20C"
+         },
+         "type": "tool_result"
+        }
+       ],
+       "role": "tool",
+       "tool_call_id": "call_1"
+      },
+      {
+       "content": [
+        {
+         "text": "It is 20C and sunny in Paris.",
+         "type": "text"
+        }
+       ],
+       "role": "assistant"
+      }
+     ],
+     "timeout": 600,
+     "tool_calls": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}",
+     "tool_definitions": "TOOL_DEFINITIONS:\n- fetch_weather: Fetches the weather for a location. (inputs: location)"
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_call_success": null,
+    "tool_call_success_passed": null,
+    "tool_call_success_properties": null,
+    "tool_call_success_reason": "Not applicable: Recorded reason.",
+    "tool_call_success_result": "not_applicable",
+    "tool_call_success_score": null,
+    "tool_call_success_status": "skipped",
+    "tool_call_success_threshold": 1
+   }
+  ]
+ },
+ "tool_call_success/string": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_call_success.prompty"
+   },
+   {
+    "flow": "tool_call_success.prompty",
+    "inputs": {
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_calls": "It is 20C and sunny in Paris.",
+     "tool_definitions": null
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_call_success": 1.0,
+    "tool_call_success_passed": true,
+    "tool_call_success_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "tool_call_success_reason": "Recorded reason.",
+    "tool_call_success_result": "pass",
+    "tool_call_success_score": 1.0,
+    "tool_call_success_status": "completed",
+    "tool_call_success_threshold": 1
+   }
+  ]
+ },
+ "tool_input_accuracy/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_input_accuracy.prompty"
+   }
+  ],
+  "error": {
+   "category": "MISSING FIELD",
+   "message": "(UserError) Tool definitions input is required but not provided.",
+   "target": "_ToolInputAccuracyEvaluator",
+   "type": "EvaluationException"
+  },
+  "results": []
+ },
+ "tool_input_accuracy/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_input_accuracy.prompty"
+   },
+   {
+    "flow": "tool_input_accuracy.prompty",
+    "inputs": {
+     "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
+     "timeout": 600,
+     "tool_calls": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}\nIt is 20C and sunny in Paris.",
+     "tool_definitions": [
+      {
+       "description": "Fetches the weather for a location.",
+       "name": "fetch_weather",
+       "parameters": {
+        "properties": {
+         "location": {
+          "description": "City.",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "type": "function"
+      }
+     ]
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_input_accuracy": 1.0,
+    "tool_input_accuracy_passed": true,
+    "tool_input_accuracy_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "parameter_extraction_accuracy": 100.0,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "tool_input_accuracy_reason": "Recorded reason.",
+    "tool_input_accuracy_result": "pass",
+    "tool_input_accuracy_score": 1.0,
+    "tool_input_accuracy_status": "completed",
+    "tool_input_accuracy_threshold": 1
+   }
+  ]
+ },
+ "tool_input_accuracy/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_input_accuracy.prompty"
+   },
+   {
+    "flow": "tool_input_accuracy.prompty",
+    "inputs": {
+     "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
+     "timeout": 600,
+     "tool_calls": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}\nIt is 20C and sunny in Paris.",
+     "tool_definitions": [
+      {
+       "description": "Fetches the weather for a location.",
+       "name": "fetch_weather",
+       "parameters": {
+        "properties": {
+         "location": {
+          "description": "City.",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "type": "function"
+      }
+     ]
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_input_accuracy": null,
+    "tool_input_accuracy_passed": null,
+    "tool_input_accuracy_properties": null,
+    "tool_input_accuracy_reason": "Not applicable: Recorded reason.",
+    "tool_input_accuracy_result": "not_applicable",
+    "tool_input_accuracy_score": null,
+    "tool_input_accuracy_status": "skipped",
+    "tool_input_accuracy_threshold": 1
+   }
+  ]
+ },
+ "tool_output_utilization/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_output_utilization.prompty"
+   }
+  ],
+  "error": {
+   "category": "MISSING FIELD",
+   "message": "(UserError) Tool definitions input is required but not provided.",
+   "target": "ToolOutputUtilizationEvaluator",
+   "type": "EvaluationException"
+  },
+  "results": []
+ },
+ "tool_output_utilization/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_output_utilization.prompty"
+   },
+   {
+    "flow": "tool_output_utilization.prompty",
+    "inputs": {
+     "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
+     "response": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}\nIt is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": "TOOL_DEFINITIONS:\n- fetch_weather: Fetches the weather for a location. (inputs: location)"
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_output_utilization": 1.0,
+    "tool_output_utilization_passed": true,
+    "tool_output_utilization_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "tool_output_utilization_reason": "Recorded reason.",
+    "tool_output_utilization_result": "pass",
+    "tool_output_utilization_score": 1.0,
+    "tool_output_utilization_status": "completed",
+    "tool_output_utilization_threshold": 1
+   }
+  ]
+ },
+ "tool_output_utilization/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_output_utilization.prompty"
+   },
+   {
+    "flow": "tool_output_utilization.prompty",
+    "inputs": {
+     "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
+     "response": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}\nIt is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": "TOOL_DEFINITIONS:\n- fetch_weather: Fetches the weather for a location. (inputs: location)"
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_output_utilization": null,
+    "tool_output_utilization_passed": null,
+    "tool_output_utilization_properties": null,
+    "tool_output_utilization_reason": "Not applicable: Recorded reason.",
+    "tool_output_utilization_result": "not_applicable",
+    "tool_output_utilization_score": null,
+    "tool_output_utilization_status": "skipped",
+    "tool_output_utilization_threshold": 1
+   }
+  ]
+ },
+ "tool_output_utilization/strings": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_output_utilization.prompty"
+   },
+   {
+    "flow": "tool_output_utilization.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "response": "It is 20C and sunny in Paris.",
+     "timeout": 600,
+     "tool_definitions": "TOOL_DEFINITIONS:\n- fetch_weather: Fetches the weather for a location. (inputs: location)"
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_output_utilization": 1.0,
+    "tool_output_utilization_passed": true,
+    "tool_output_utilization_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "total_tokens": 18
+    },
+    "tool_output_utilization_reason": "Recorded reason.",
+    "tool_output_utilization_result": "pass",
+    "tool_output_utilization_score": 1.0,
+    "tool_output_utilization_status": "completed",
+    "tool_output_utilization_threshold": 1
+   }
+  ]
+ },
+ "tool_selection/conversation": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_selection.prompty"
+   }
+  ],
+  "error": {
+   "category": "MISSING FIELD",
+   "message": "(UserError) Query is a required input and cannot be None.",
+   "target": "_ToolSelectionEvaluator",
+   "type": "EvaluationException"
+  },
+  "results": []
+ },
+ "tool_selection/messages": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_selection.prompty"
+   },
+   {
+    "flow": "tool_selection.prompty",
+    "inputs": {
+     "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
+     "timeout": 600,
+     "tool_calls": [
+      "fetch_weather"
+     ],
+     "tool_definitions": [
+      {
+       "description": "Fetches the weather for a location.",
+       "name": "fetch_weather",
+       "parameters": {
+        "properties": {
+         "location": {
+          "description": "City.",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "type": "function"
+      }
+     ]
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_selection": 1.0,
+    "tool_selection_passed": true,
+    "tool_selection_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "tool_selection_accuracy": 100.0,
+     "total_tokens": 18
+    },
+    "tool_selection_reason": "Recorded reason.",
+    "tool_selection_result": "pass",
+    "tool_selection_score": 1.0,
+    "tool_selection_status": "completed",
+    "tool_selection_threshold": 1
+   }
+  ]
+ },
+ "tool_selection/skipped": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_selection.prompty"
+   },
+   {
+    "flow": "tool_selection.prompty",
+    "inputs": {
+     "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
+     "timeout": 600,
+     "tool_calls": [
+      "fetch_weather"
+     ],
+     "tool_definitions": [
+      {
+       "description": "Fetches the weather for a location.",
+       "name": "fetch_weather",
+       "parameters": {
+        "properties": {
+         "location": {
+          "description": "City.",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "type": "function"
+      }
+     ]
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_selection": null,
+    "tool_selection_passed": null,
+    "tool_selection_properties": null,
+    "tool_selection_reason": "Not applicable: Recorded reason.",
+    "tool_selection_result": "not_applicable",
+    "tool_selection_score": null,
+    "tool_selection_status": "skipped",
+    "tool_selection_threshold": 1
+   }
+  ]
+ },
+ "tool_selection/tool_calls": {
+  "calls": [
+   {
+    "is_reasoning_model": false,
+    "load": "tool_selection.prompty"
+   },
+   {
+    "flow": "tool_selection.prompty",
+    "inputs": {
+     "query": "What is the weather in Paris?",
+     "timeout": 600,
+     "tool_calls": [
+      "fetch_weather"
+     ],
+     "tool_definitions": [
+      {
+       "description": "Fetches the weather for a location.",
+       "name": "fetch_weather",
+       "parameters": {
+        "properties": {
+         "location": {
+          "description": "City.",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "type": "function"
+      }
+     ]
+    }
+   }
+  ],
+  "results": [
+   {
+    "tool_selection": 1.0,
+    "tool_selection_passed": true,
+    "tool_selection_properties": {
+     "completion_tokens": 7,
+     "finish_reason": "stop",
+     "model": "chat-model",
+     "note": 1,
+     "prompt_tokens": 11,
+     "sample_input": "sample input",
+     "sample_output": "sample output",
+     "tool_selection_accuracy": 100.0,
+     "total_tokens": 18
+    },
+    "tool_selection_reason": "Recorded reason.",
+    "tool_selection_result": "pass",
+    "tool_selection_score": 1.0,
+    "tool_selection_status": "completed",
+    "tool_selection_threshold": 1
+   }
+  ]
+ }
+}

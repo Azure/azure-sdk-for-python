@@ -2005,137 +2005,6 @@ class DataEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class DbAgent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The database agent configuration for a PostgreSQL flexible server.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.postgresqlflexibleservers.models.DbAgentProperties
-    """
-
-    properties: Optional["_models.DbAgentProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.DbAgentProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DbAgentForUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A request to enable or disable the database agent.
-
-    :ivar properties: The requested database agent properties. Required.
-    :vartype properties: ~azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdateProperties
-    """
-
-    properties: "_models.DbAgentForUpdateProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The requested database agent properties. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.DbAgentForUpdateProperties",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DbAgentForUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Writable properties of the database agent configuration.
-
-    :ivar state: The requested state of the database agent. Required. Known values are: "Enabled"
-     and "Disabled".
-    :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdateState
-    """
-
-    state: Union[str, "_models.DbAgentForUpdateState"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The requested state of the database agent. Required. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        state: Union[str, "_models.DbAgentForUpdateState"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DbAgentProperties(_Model):
-    """Properties of the database agent configuration.
-
-    :ivar state: The state of the database agent. Required. Known values are: "Enabling",
-     "Enabled", "Disabling", "Disabled", and "Failed".
-    :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.DbAgentState
-    :ivar provisioning_state: The provisioning state of the database agent resource. Known values
-     are: "Succeeded", "Failed", "Canceled", and "InProgress".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.DbAgentProvisioningState
-    :ivar last_modified_time: The time when the database agent configuration was last modified.
-    :vartype last_modified_time: ~datetime.datetime
-    """
-
-    state: Union[str, "_models.DbAgentState"] = rest_field(visibility=["read"])
-    """The state of the database agent. Required. Known values are: \"Enabling\", \"Enabled\",
-     \"Disabling\", \"Disabled\", and \"Failed\"."""
-    provisioning_state: Optional[Union[str, "_models.DbAgentProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The provisioning state of the database agent resource. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", and \"InProgress\"."""
-    last_modified_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedTime", visibility=["read"], format="rfc3339"
-    )
-    """The time when the database agent configuration was last modified."""
-
-
 class DbLevelValidationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Validation status summary for a database.
 
@@ -3189,10 +3058,8 @@ class MajorVersionUpgradePrecheckResourceProperties(
      ~azure.mgmt.postgresqlflexibleservers.models.MajorVersionUpgradePrecheckStatus
     :ivar precheck_result: The detailed result of the precheck operation.
     :vartype precheck_result: ~azure.mgmt.postgresqlflexibleservers.models.PrecheckResult
-    :ivar target_version: The target PostgreSQL major version for the upgrade. Known values are:
-     "19", "18", "17", "16", "15", "14", "13", "12", and "11".
-    :vartype target_version: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    :ivar target_version: The target PostgreSQL major version for the upgrade.
+    :vartype target_version: str
     :ivar policy_details: Array of policy validation details.
     :vartype policy_details: list[~azure.mgmt.postgresqlflexibleservers.models.PolicyDetail]
     """
@@ -3210,11 +3077,10 @@ class MajorVersionUpgradePrecheckResourceProperties(
         name="precheckResult", visibility=["read", "create", "update", "delete", "query"]
     )
     """The detailed result of the precheck operation."""
-    target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
+    target_version: Optional[str] = rest_field(
         name="targetVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The target PostgreSQL major version for the upgrade. Known values are: \"19\", \"18\", \"17\",
-     \"16\", \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    """The target PostgreSQL major version for the upgrade."""
     policy_details: Optional[list["_models.PolicyDetail"]] = rest_field(
         name="policyDetails", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3227,7 +3093,7 @@ class MajorVersionUpgradePrecheckResourceProperties(
         create_time: Optional[datetime.datetime] = None,
         status: Optional[Union[str, "_models.MajorVersionUpgradePrecheckStatus"]] = None,
         precheck_result: Optional["_models.PrecheckResult"] = None,
-        target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
+        target_version: Optional[str] = None,
         policy_details: Optional[list["_models.PolicyDetail"]] = None,
     ) -> None: ...
 
@@ -5586,9 +5452,8 @@ class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar administrator_login_password: Password assigned to the administrator login. As long as
      password authentication is enabled, this password can be changed at any time.
     :vartype administrator_login_password: str
-    :ivar version: Major version of PostgreSQL database engine. Known values are: "19", "18", "17",
-     "16", "15", "14", "13", "12", and "11".
-    :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    :ivar version: Major version of PostgreSQL database engine.
+    :vartype version: str
     :ivar minor_version: Minor version of PostgreSQL database engine.
     :vartype minor_version: str
     :ivar state: Possible states of a server. Known values are: "Ready", "Dropping", "Disabled",
@@ -5656,11 +5521,8 @@ class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     )
     """Password assigned to the administrator login. As long as password authentication is enabled,
      this password can be changed at any time."""
-    version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Major version of PostgreSQL database engine. Known values are: \"19\", \"18\", \"17\", \"16\",
-     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Major version of PostgreSQL database engine."""
     minor_version: Optional[str] = rest_field(name="minorVersion", visibility=["read"])
     """Minor version of PostgreSQL database engine."""
     state: Optional[Union[str, "_models.ServerState"]] = rest_field(visibility=["read"])
@@ -5736,7 +5598,7 @@ class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
         *,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
-        version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
+        version: Optional[str] = None,
         storage: Optional["_models.Storage"] = None,
         auth_config: Optional["_models.AuthConfig"] = None,
         data_encryption: Optional["_models.DataEncryption"] = None,
@@ -5777,9 +5639,8 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar administrator_login_password: Password assigned to the administrator login. As long as
      password authentication is enabled, this password can be changed at any time.
     :vartype administrator_login_password: str
-    :ivar version: Major version of PostgreSQL database engine. Known values are: "19", "18", "17",
-     "16", "15", "14", "13", "12", and "11".
-    :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    :ivar version: Major version of PostgreSQL database engine.
+    :vartype version: str
     :ivar storage: Storage properties of a server.
     :vartype storage: ~azure.mgmt.postgresqlflexibleservers.models.Storage
     :ivar backup: Backup properties of a server.
@@ -5827,11 +5688,8 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
     administrator_login_password: Optional[str] = rest_field(name="administratorLoginPassword", visibility=["update"])
     """Password assigned to the administrator login. As long as password authentication is enabled,
      this password can be changed at any time."""
-    version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Major version of PostgreSQL database engine. Known values are: \"19\", \"18\", \"17\", \"16\",
-     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Major version of PostgreSQL database engine."""
     storage: Optional["_models.Storage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Storage properties of a server."""
     backup: Optional["_models.BackupForPatch"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5885,7 +5743,7 @@ class ServerPropertiesForPatch(_Model):  # pylint: disable=docstring-keyword-sho
         self,
         *,
         administrator_login_password: Optional[str] = None,
-        version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
+        version: Optional[str] = None,
         storage: Optional["_models.Storage"] = None,
         backup: Optional["_models.BackupForPatch"] = None,
         high_availability: Optional["_models.HighAvailabilityForPatch"] = None,
@@ -6131,23 +5989,18 @@ class SkuForPatch(_Model):  # pylint: disable=docstring-keyword-should-match-key
 class StartMajorVersionUpgradePrecheckRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request model for starting a major version upgrade precheck.
 
-    :ivar target_version: The target major version to upgrade to. Required. Known values are: "19",
-     "18", "17", "16", "15", "14", "13", "12", and "11".
-    :vartype target_version: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    :ivar target_version: The target major version to upgrade to. Required.
+    :vartype target_version: str
     """
 
-    target_version: Union[str, "_models.PostgresMajorVersion"] = rest_field(
-        name="targetVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The target major version to upgrade to. Required. Known values are: \"19\", \"18\", \"17\",
-     \"16\", \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    target_version: str = rest_field(name="targetVersion", visibility=["read", "create", "update", "delete", "query"])
+    """The target major version to upgrade to. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        target_version: Union[str, "_models.PostgresMajorVersion"],
+        target_version: str,
     ) -> None: ...
 
     @overload
@@ -6537,33 +6390,27 @@ class TuningOptionsProperties(_Model):
 class UpgradeSequence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Upgrade sequence information.
 
-    :ivar source_version: The source PostgreSQL version. Known values are: "19", "18", "17", "16",
-     "15", "14", "13", "12", and "11".
-    :vartype source_version: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
-    :ivar target_version: The target PostgreSQL version. Known values are: "19", "18", "17", "16",
-     "15", "14", "13", "12", and "11".
-    :vartype target_version: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    :ivar source_version: The source PostgreSQL version.
+    :vartype source_version: str
+    :ivar target_version: The target PostgreSQL version.
+    :vartype target_version: str
     """
 
-    source_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
+    source_version: Optional[str] = rest_field(
         name="sourceVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The source PostgreSQL version. Known values are: \"19\", \"18\", \"17\", \"16\", \"15\",
-     \"14\", \"13\", \"12\", and \"11\"."""
-    target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = rest_field(
+    """The source PostgreSQL version."""
+    target_version: Optional[str] = rest_field(
         name="targetVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The target PostgreSQL version. Known values are: \"19\", \"18\", \"17\", \"16\", \"15\",
-     \"14\", \"13\", \"12\", and \"11\"."""
+    """The target PostgreSQL version."""
 
     @overload
     def __init__(
         self,
         *,
-        source_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
-        target_version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
+        source_version: Optional[str] = None,
+        target_version: Optional[str] = None,
     ) -> None: ...
 
     @overload

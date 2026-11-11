@@ -7,7 +7,8 @@ import logging
 import re
 from typing import Dict, List, Union, TypeVar, Optional
 from typing_extensions import overload, override
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common import LikertScoring, PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
 from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
@@ -41,7 +42,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     user needs while properly following tool definitions and using information present in the
     conversation history.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
@@ -76,7 +78,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_call_accuracy.prompty"
+    _DECISION_FILE = "tool_call_accuracy.decision.yaml"
     _RESULT_KEY = "tool_call_accuracy"
+    _supports_decision_models = True
 
     _MAX_TOOL_CALL_ACCURACY_SCORE = 5
     _MIN_TOOL_CALL_ACCURACY_SCORE = 1
@@ -113,6 +117,16 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             credential=credential,
             threshold=threshold,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(
+                self,
+                os.path.join(current_dir, self._DECISION_FILE),
+                ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                LikertScoring(self._MAX_TOOL_CALL_ACCURACY_SCORE, minimum=self._MIN_TOOL_CALL_ACCURACY_SCORE),
+            )
+            if self._uses_decision_model
+            else None
         )
 
     @overload
@@ -251,6 +265,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if isinstance(eval_input.get("query"), list):
             eval_input["query"] = _preprocess_messages(eval_input["query"])
+
+        if self._uses_decision_model:
+            state = {key: eval_input[key] for key in ("query", "tool_calls", "tool_definitions")}
+            return await self._decision.evaluate(state)
 
         # Single LLM call for all tool calls
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)

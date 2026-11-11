@@ -1,5 +1,20 @@
 # Release History
 
+## 39.0.0 (2026-10-15)
+
+### Features Added
+
+  - Model `VirtualMachineNetworkInterfaceIPConfigurationProperties` added property `private_ip_address_prefix_length`
+  - Model `VirtualMachineProperties` added property `flex_profile`
+  - Model `VirtualMachineScaleSetIPConfigurationProperties` added property `private_ip_address_prefix_length`
+  - Model `VirtualMachineScaleSetUpdateIPConfigurationProperties` added property `private_ip_address_prefix_length`
+  - Added model `FlexProfile`
+  - Model `CapacityReservationGroupsOperations` added method `begin_delete`
+
+### Breaking Changes
+
+  - Deleted or renamed method `CapacityReservationGroupsOperations.delete`
+
 ## 38.4.0 (2026-09-21)
 
 ### Features Added

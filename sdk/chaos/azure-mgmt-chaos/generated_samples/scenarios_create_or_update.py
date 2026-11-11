@@ -39,18 +39,26 @@ def main():
             "properties": {
                 "actions": [
                     {
-                        "actionId": "urn:csci:microsoft:compute:shutdown/1.0.0",
+                        "actionId": "microsoft-compute-shutdown/2.0",
                         "description": "Force shutdown VMSS instances in target zone",
                         "duration": "%%{parameters.duration}%%",
                         "name": "vmssZoneDown",
-                        "parameters": [{"key": "zones", "value": "%%{filters.zones}%%"}],
+                        "parameters": [],
+                        "selectors": [
+                            {"name": "logicalZone", "value": "%%{parameters.logicalZone}%%"},
+                            {"name": "location", "value": "%%{parameters.location}%%"},
+                        ],
                     },
                     {
-                        "actionId": "urn:csci:microsoft:compute:shutdown/1.0.0",
+                        "actionId": "microsoft-compute-shutdown/2.0",
                         "description": "Force shutdown VM instances in target zone",
                         "duration": "%%{parameters.duration}%%",
                         "name": "vmZoneDown",
-                        "parameters": [{"key": "zones", "value": "%%{filters.zones}%%"}],
+                        "parameters": [],
+                        "selectors": [
+                            {"name": "logicalZone", "value": "%%{parameters.logicalZone}%%"},
+                            {"name": "location", "value": "%%{parameters.location}%%"},
+                        ],
                     },
                     {
                         "actionId": "urn:csci:microsoft:azureClusteredCacheForRedis:Reboot/1.0.0",
@@ -74,6 +82,18 @@ def main():
                 ],
                 "description": "Induces an outage of all discovered VM and VMSS instances in the target zone with an option to invoke custom scripted actions using Automation Runbooks. Additionally, it forces failover of discovered Redis instances to simulate backend zonal outage.",
                 "parameters": [
+                    {
+                        "description": "Logical availability-zone label to test in each target subscription, for example 1.",
+                        "name": "logicalZone",
+                        "required": True,
+                        "type": "string",
+                    },
+                    {
+                        "description": "Azure location name in which to test the logical zone, for example eastus.",
+                        "name": "location",
+                        "required": True,
+                        "type": "string",
+                    },
                     {
                         "default": "PT15M",
                         "description": "The duration of the outage scenario.",
@@ -101,6 +121,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/Scenarios_CreateOrUpdate.json
+# x-ms-original-file: 2026-11-01/Scenarios_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

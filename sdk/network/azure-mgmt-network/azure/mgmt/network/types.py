@@ -10,7 +10,12 @@
 from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import AdminRuleKind, FirewallPolicyRuleCollectionType, FirewallPolicyRuleType
+from .models._enums import (
+    AdminRuleKind,
+    FirewallPolicyRuleCollectionType,
+    FirewallPolicyRuleType,
+    VirtualNetworkApplianceCapabilityKind,
+)
 
 if TYPE_CHECKING:
     from .models import (
@@ -73,8 +78,11 @@ if TYPE_CHECKING:
         CoverageLevel,
         CreatedByType,
         CustomIpPrefixType,
+        DdosContinent,
         DdosDetectionMode,
+        DdosMitigationTrafficScope,
         DdosSettingsProtectionMode,
+        DdosSourcePolicyActionType,
         DdosTrafficType,
         DeleteExistingPeering,
         DeleteOptions,
@@ -92,6 +100,7 @@ if TYPE_CHECKING:
         ExpressRouteCircuitPeeringState,
         ExpressRouteCircuitSkuFamily,
         ExpressRouteCircuitSkuTier,
+        ExpressRouteLagAuthorizationUseStatus,
         ExpressRouteLagBillingType,
         ExpressRouteLagEncapsulation,
         ExpressRouteLagLacpTimer,
@@ -228,6 +237,7 @@ if TYPE_CHECKING:
         UseHubGateway,
         UserTrustProviderType,
         VerbosityLevel,
+        VirtualNetworkApplianceCapabilityIpVersion,
         VirtualNetworkApplianceIpVersionType,
         VirtualNetworkEncryptionEnforcement,
         VirtualNetworkGatewayConnectionMode,
@@ -3457,6 +3467,51 @@ class ApprovalReference(TypedDict, total=False):
      by this connection."""
 
 
+class ArmResource(TypedDict, total=False):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    """
+
+    id: str
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: str
+    """The name of the resource."""
+    type: str
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    systemData: "SystemData"
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ArmProxyResource(ArmResource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    """
+
+
 class AuthenticationPolicy(Resource):
     """Authentication policy resource for identity integration.
 
@@ -6114,6 +6169,8 @@ class DdosCustomPolicyPropertiesFormat(TypedDict, total=False):
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar detectionRules: The list of DDoS detection rules associated with the custom policy.
     :vartype detectionRules: list["DdosDetectionRule"]
+    :ivar mitigationRules: The list of DDoS mitigation rules associated with the custom policy.
+    :vartype mitigationRules: list["DdosMitigationRule"]
     :ivar frontEndIpConfiguration: The list of frontend IP configurations associated with the
      custom policy.
     :vartype frontEndIpConfiguration: list["SubResource"]
@@ -6131,6 +6188,8 @@ class DdosCustomPolicyPropertiesFormat(TypedDict, total=False):
      \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     detectionRules: list["DdosDetectionRule"]
     """The list of DDoS detection rules associated with the custom policy."""
+    mitigationRules: list["DdosMitigationRule"]
+    """The list of DDoS mitigation rules associated with the custom policy."""
     frontEndIpConfiguration: list["SubResource"]
     """The list of frontend IP configurations associated with the custom policy."""
     publicIPAddresses: list["SubResource"]
@@ -6192,6 +6251,91 @@ class DdosFrontendIpConfigurationSettings(TypedDict, total=False):
 
     ddosCustomPolicy: "SubResource"
     """The reference to the DDoS Custom Policy resource."""
+
+
+class DdosGeoMatch(TypedDict, total=False):
+    """A geographic source match. The service validates that at least one of continent or countryCode
+    is specified. If both are specified, the service validates that the country belongs to the
+    continent according to the service-defined mapping. For example, RU, TR, and KZ map to Asia, EG
+    maps to Africa, and CY maps to Europe.
+
+    :ivar continent: The continent to match. Country membership follows the service-defined mapping
+     documented on DdosGeoMatch. Known values are: "Africa", "Antarctica", "Asia", "Europe",
+     "NorthAmerica", "Oceania", and "SouthAmerica".
+    :vartype continent: Union[str, "DdosContinent"]
+    :ivar countryCode: The uppercase two-letter ISO 3166-1 alpha-2 code for the country or
+     territory to match.
+    :vartype countryCode: str
+    """
+
+    continent: Union[str, "DdosContinent"]
+    """The continent to match. Country membership follows the service-defined mapping documented on
+     DdosGeoMatch. Known values are: \"Africa\", \"Antarctica\", \"Asia\", \"Europe\",
+     \"NorthAmerica\", \"Oceania\", and \"SouthAmerica\"."""
+    countryCode: str
+    """The uppercase two-letter ISO 3166-1 alpha-2 code for the country or territory to match."""
+
+
+class DdosMitigationRule(SubResource):
+    """A DDoS mitigation rule resource.
+
+    :ivar name: The name of the DDoS mitigation rule. Required.
+    :vartype name: str
+    :ivar id: The resource ID of the DDoS mitigation rule.
+    :vartype id: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar properties: Properties of the DDoS mitigation rule. Required.
+    :vartype properties: "DdosMitigationRulePropertiesFormat"
+    """
+
+    name: Required[str]
+    """The name of the DDoS mitigation rule. Required."""
+    etag: str
+    """A unique read-only string that changes whenever the resource is updated."""
+    type: str
+    """The resource type."""
+    properties: Required["DdosMitigationRulePropertiesFormat"]
+    """Properties of the DDoS mitigation rule. Required."""
+
+
+class DdosMitigationRulePropertiesFormat(TypedDict, total=False):
+    """DDoS mitigation rule properties. The service validates that each rule specifies at least one
+    applicable default mitigation or source policy override and that the default mitigations match
+    the selected trafficScope.
+
+    :ivar provisioningState: The provisioning state of the DDoS mitigation rule. Known values are:
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar trafficScope: The traffic protocol to which the mitigation rule applies. Required. Known
+     values are: "Tcp" and "Udp".
+    :vartype trafficScope: Union[str, "DdosMitigationTrafficScope"]
+    :ivar tcpDefaultMitigations: The default TCP mitigations. This property is valid only when
+     trafficScope is Tcp.
+    :vartype tcpDefaultMitigations: "DdosTcpDefaultMitigations"
+    :ivar udpDefaultMitigations: The default UDP mitigations. This property is valid only when
+     trafficScope is Udp.
+    :vartype udpDefaultMitigations: "DdosUdpDefaultMitigations"
+    :ivar sourcePolicyOverrides: Source-specific actions that override the default mitigations. A
+     rule supports at most one Deny override and one Permit override.
+    :vartype sourcePolicyOverrides: list["DdosSourcePolicyOverride"]
+    """
+
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the DDoS mitigation rule. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    trafficScope: Required[Union[str, "DdosMitigationTrafficScope"]]
+    """The traffic protocol to which the mitigation rule applies. Required. Known values are: \"Tcp\"
+     and \"Udp\"."""
+    tcpDefaultMitigations: "DdosTcpDefaultMitigations"
+    """The default TCP mitigations. This property is valid only when trafficScope is Tcp."""
+    udpDefaultMitigations: "DdosUdpDefaultMitigations"
+    """The default UDP mitigations. This property is valid only when trafficScope is Udp."""
+    sourcePolicyOverrides: list["DdosSourcePolicyOverride"]
+    """Source-specific actions that override the default mitigations. A rule supports at most one Deny
+     override and one Permit override."""
 
 
 class TrackedResourceWithOptionalLocation(TypedDict, total=False):
@@ -6300,6 +6444,114 @@ class DdosSettings(TypedDict, total=False):
     ddosProtectionPlan: "SubResource"
     """The DDoS protection plan associated with the public IP. Can only be set if ProtectionMode is
      Enabled."""
+
+
+class DdosSourceMatchConditions(TypedDict, total=False):
+    """Source conditions for a DDoS source policy override. A source matches when it matches any IP
+    prefix or any geographic match.
+
+    :ivar ipPrefixes: The IPv4 or IPv6 CIDR prefixes in ``<address>/<prefix-length>`` format.
+     Entries are evaluated with OR semantics.
+    :vartype ipPrefixes: list[str]
+    :ivar geoMatches: The geographic matches. Entries are evaluated with OR semantics.
+    :vartype geoMatches: list["DdosGeoMatch"]
+    """
+
+    ipPrefixes: list[str]
+    """The IPv4 or IPv6 CIDR prefixes in ``<address>/<prefix-length>`` format. Entries are evaluated
+     with OR semantics."""
+    geoMatches: list["DdosGeoMatch"]
+    """The geographic matches. Entries are evaluated with OR semantics."""
+
+
+class DdosSourcePolicyAction(TypedDict, total=False):
+    """The action to apply to traffic matching a source policy override.
+
+    :ivar actionType: The source policy action type. Required. Known values are: "Deny" and
+     "Permit".
+    :vartype actionType: Union[str, "DdosSourcePolicyActionType"]
+    """
+
+    actionType: Required[Union[str, "DdosSourcePolicyActionType"]]
+    """The source policy action type. Required. Known values are: \"Deny\" and \"Permit\"."""
+
+
+class DdosSourcePolicyOverride(TypedDict, total=False):
+    """A source-specific action that overrides the default mitigations.
+
+    :ivar policyAction: The action to apply to matching traffic. Required.
+    :vartype policyAction: "DdosSourcePolicyAction"
+    :ivar conditions: The source conditions that select traffic for the action. Required.
+    :vartype conditions: "DdosSourceMatchConditions"
+    """
+
+    policyAction: Required["DdosSourcePolicyAction"]
+    """The action to apply to matching traffic. Required."""
+    conditions: Required["DdosSourceMatchConditions"]
+    """The source conditions that select traffic for the action. Required."""
+
+
+class DdosTcpDefaultMitigations(TypedDict, total=False):
+    """Default mitigations for TCP traffic.
+
+    :ivar perSourceRateLimiting: The per-source TCP packet rate limit.
+    :vartype perSourceRateLimiting: "DdosTcpPerSourceRateLimitPolicy"
+    :ivar perSourceConnectionRateLimiting: The per-source rate limit for new TCP connection
+     establishments.
+    :vartype perSourceConnectionRateLimiting: "DdosTcpPerSourceConnectionRateLimitPolicy"
+    """
+
+    perSourceRateLimiting: "DdosTcpPerSourceRateLimitPolicy"
+    """The per-source TCP packet rate limit."""
+    perSourceConnectionRateLimiting: "DdosTcpPerSourceConnectionRateLimitPolicy"
+    """The per-source rate limit for new TCP connection establishments."""
+
+
+class DdosTcpPerSourceConnectionRateLimitPolicy(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A per-source TCP connection establishment rate limit.
+
+    :ivar connectionsPerSecond: The maximum number of new TCP connections established per second
+     from a source IP. Required.
+    :vartype connectionsPerSecond: int
+    """
+
+    connectionsPerSecond: Required[int]
+    """The maximum number of new TCP connections established per second from a source IP. Required."""
+
+
+class DdosTcpPerSourceRateLimitPolicy(TypedDict, total=False):
+    """A per-source TCP packet rate limit.
+
+    :ivar packetsPerSecond: The maximum number of TCP packets allowed per second from a source IP.
+     Required.
+    :vartype packetsPerSecond: int
+    """
+
+    packetsPerSecond: Required[int]
+    """The maximum number of TCP packets allowed per second from a source IP. Required."""
+
+
+class DdosUdpDefaultMitigations(TypedDict, total=False):
+    """Default mitigations for UDP traffic.
+
+    :ivar perSourceRateLimiting: The per-source UDP packet rate limit.
+    :vartype perSourceRateLimiting: "DdosUdpPerSourceRateLimitPolicy"
+    """
+
+    perSourceRateLimiting: "DdosUdpPerSourceRateLimitPolicy"
+    """The per-source UDP packet rate limit."""
+
+
+class DdosUdpPerSourceRateLimitPolicy(TypedDict, total=False):
+    """A per-source UDP packet rate limit.
+
+    :ivar packetsPerSecond: The maximum number of UDP packets allowed per second from a source IP.
+     Required.
+    :vartype packetsPerSecond: int
+    """
+
+    packetsPerSecond: Required[int]
+    """The maximum number of UDP packets allowed per second from a source IP. Required."""
 
 
 class DefaultAdminPropertiesFormat(TypedDict, total=False):
@@ -7595,6 +7847,69 @@ class ExpressRouteLag(Resource):
     """The identity of ExpressRouteLag, if configured."""
 
 
+class ProxyResourceWithReadOnlyID(TypedDict, total=False):
+    """Proxy resource representation.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    id: str
+    """Resource ID."""
+    name: str
+    """Resource name."""
+    type: str
+    """Resource type."""
+
+
+class ExpressRouteLagAuthorization(ProxyResourceWithReadOnlyID):
+    """ExpressRoute Lag Authorization.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: ExpressRouteLag authorization properties.
+    :vartype properties: "ExpressRouteLagAuthorizationPropertiesFormat"
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    """
+
+    properties: "ExpressRouteLagAuthorizationPropertiesFormat"
+    """ExpressRouteLag authorization properties."""
+    etag: str
+    """A unique read-only string that changes whenever the resource is updated."""
+
+
+class ExpressRouteLagAuthorizationPropertiesFormat(TypedDict, total=False):  # pylint: disable=name-too-long
+    """ExpressRoute Lag Authorization Properties.
+
+    :ivar authorizationUseStatus: The authorization use status. Known values are: "Available" and
+     "InUse".
+    :vartype authorizationUseStatus: Union[str, "ExpressRouteLagAuthorizationUseStatus"]
+    :ivar circuitResourceUri: The reference to the ExpressRoute circuit resource using the
+     authorization.
+    :vartype circuitResourceUri: str
+    :ivar provisioningState: The provisioning state of the authorization resource. Known values
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    """
+
+    authorizationUseStatus: Union[str, "ExpressRouteLagAuthorizationUseStatus"]
+    """The authorization use status. Known values are: \"Available\" and \"InUse\"."""
+    circuitResourceUri: str
+    """The reference to the ExpressRoute circuit resource using the authorization."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the authorization resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+
 class ExpressRouteLagLink(TypedDict, total=False):
     """ExpressRouteLagLink.
 
@@ -7744,6 +8059,8 @@ class ExpressRouteLagPropertiesFormat(TypedDict, total=False):
     :ivar circuits: Reference the ExpressRoute circuit(s) that are provisioned on this
      ExpressRouteLag resource.
     :vartype circuits: list["SubResource"]
+    :ivar authorizations: ExpressRouteLagAuthorizations Child-Resources.
+    :vartype authorizations: list["ExpressRouteLagAuthorization"]
     :ivar allocationDate: The date and time when the ExpressRouteLag was allocated.
     :vartype allocationDate: str
     :ivar provisioningState: The provisioning state of the express route LAG resource. Known values
@@ -7778,6 +8095,8 @@ class ExpressRouteLagPropertiesFormat(TypedDict, total=False):
     """ExpressRouteLagLink Sub-Resources."""
     circuits: list["SubResource"]
     """Reference the ExpressRoute circuit(s) that are provisioned on this ExpressRouteLag resource."""
+    authorizations: list["ExpressRouteLagAuthorization"]
+    """ExpressRouteLagAuthorizations Child-Resources."""
     allocationDate: str
     """The date and time when the ExpressRouteLag was allocated."""
     provisioningState: Union[str, "ProvisioningState"]
@@ -11305,6 +11624,68 @@ class MoveIpConfigurationsRequest(TypedDict, total=False):
     """A list of IP configuration move items. Required."""
 
 
+class ProxyResourceVirtualNetworkApplianceCapabilityProperties(ArmProxyResource):  # pylint: disable=name-too-long
+    """Concrete proxy resource types can be created by aliasing this type using a specific property
+    type.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "VirtualNetworkApplianceCapabilityProperties"
+    """
+
+    properties: "VirtualNetworkApplianceCapabilityProperties"
+    """The resource-specific properties for this resource."""
+
+
+class Nat64Capability(TypedDict, total=False):
+    """The NAT64 capability. Enables stateful NAT64 translation (IPv6-only workloads reaching IPv4
+    destinations) on the appliance's floating NIC; supported on a dual-stack appliance. This kind
+    is property-less: it carries no ``ipVersion`` (the parent appliance's dual-stack configuration
+    is the precondition, service-validated) beyond the properties common to every capability.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "VirtualNetworkApplianceCapabilityProperties"
+    :ivar kind: The NAT64 capability kind. Required. NAT64 (stateful IPv6-to-IPv4 translation).
+    :vartype kind: Literal[VirtualNetworkApplianceCapabilityKind.NAT64]
+    """
+
+    id: str
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: str
+    """The name of the resource."""
+    type: str
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    systemData: "SystemData"
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+    properties: "VirtualNetworkApplianceCapabilityProperties"
+    """The resource-specific properties for this resource."""
+    kind: Required[Literal[VirtualNetworkApplianceCapabilityKind.NAT64]]
+    """The NAT64 capability kind. Required. NAT64 (stateful IPv6-to-IPv4 translation)."""
+
+
 class NatGateway(Resource):
     """Nat Gateway resource.
 
@@ -13958,6 +14339,122 @@ class PerimeterBasedAccessRule(TypedDict, total=False):
     """Location of the NSP supplied."""
 
 
+class PLGatewayCapability(TypedDict, total=False):
+    """The Private Link Gateway (slow-path) capability. Private Link programming offloaded to the
+    appliance's gateway; IPv6 on a dual-stack appliance.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "VirtualNetworkApplianceCapabilityProperties"
+    :ivar kind: The Private Link Gateway (slow-path) capability kind. Required. Private Link
+     Gateway (slow-path).
+    :vartype kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY]
+    """
+
+    id: str
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: str
+    """The name of the resource."""
+    type: str
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    systemData: "SystemData"
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+    properties: "VirtualNetworkApplianceCapabilityProperties"
+    """The resource-specific properties for this resource."""
+    kind: Required[Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY]]
+    """The Private Link Gateway (slow-path) capability kind. Required. Private Link Gateway
+     (slow-path)."""
+
+
+class PLGatewayFastpathCapability(TypedDict, total=False):
+    """The Private Link Gateway FastPath capability. Private Link fast-path programming on the
+    appliance's gateway; supported on a dual-stack appliance.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "VirtualNetworkApplianceCapabilityProperties"
+    :ivar kind: The Private Link Gateway FastPath capability kind. Required. Private Link Gateway
+     FastPath.
+    :vartype kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH]
+    """
+
+    id: str
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: str
+    """The name of the resource."""
+    type: str
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    systemData: "SystemData"
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+    properties: "VirtualNetworkApplianceCapabilityProperties"
+    """The resource-specific properties for this resource."""
+    kind: Required[Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH]]
+    """The Private Link Gateway FastPath capability kind. Required. Private Link Gateway FastPath."""
+
+
+class PLIPForwardersCapability(TypedDict, total=False):
+    """The Private Link IP-forwarders (NVA) capability. Private Link programming offloaded to the
+    appliance NVA; IPv6 on a dual-stack appliance.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "VirtualNetworkApplianceCapabilityProperties"
+    :ivar kind: The Private Link IP-forwarders (NVA) capability kind. Required. Private Link
+     IP-forwarders (NVA).
+    :vartype kind: Literal[VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS]
+    """
+
+    id: str
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: str
+    """The name of the resource."""
+    type: str
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    systemData: "SystemData"
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+    properties: "VirtualNetworkApplianceCapabilityProperties"
+    """The resource-specific properties for this resource."""
+    kind: Required[Literal[VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS]]
+    """The Private Link IP-forwarders (NVA) capability kind. Required. Private Link IP-forwarders
+     (NVA)."""
+
+
 class PolicySettings(TypedDict, total=False):
     """Defines contents of a web application firewall global configuration.
 
@@ -14741,25 +15238,6 @@ class ProtocolSettings(TypedDict, total=False):
     """Network protocol. Known values are: \"Tcp\", \"Http\", \"Https\", and \"Icmp\"."""
     httpConfiguration: "HTTPConfiguration"
     """HTTP configuration (used when protocol is Http or Https)."""
-
-
-class ProxyResourceWithReadOnlyID(TypedDict, total=False):
-    """Proxy resource representation.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    id: str
-    """Resource ID."""
-    name: str
-    """Resource name."""
-    type: str
-    """Resource type."""
 
 
 class PublicIPAddress(Resource):
@@ -18273,6 +18751,37 @@ class VirtualNetworkAppliance(Resource):
     """A unique read-only string that changes whenever the resource is updated."""
 
 
+class VirtualNetworkApplianceCapabilityProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties common to every virtual network appliance capability, independent of kind.
+
+    :ivar linkedResourceId: The Azure resource ID of the owning virtual network. System-derived and
+     read-only.
+    :vartype linkedResourceId: str
+    :ivar provisioningState: The provisioning state of the capability resource. Known values are:
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar ipVersion: The IP version the capability applies to. Private Link Gateway FastPath
+     (``PLGatewayFastpath``) only accepts ``DualStack``; Private Link Gateway (``PLGateway``) and
+     Private Link IP-forwarders (``PLIPForwarders``) only accept ``IPv6``. Not applicable to
+     ``NAT64``, which is property-less and must omit this value. The service validates the value
+     against the resource's ``kind`` when the capability is created or updated. Known values are:
+     "IPv6" and "DualStack".
+    :vartype ipVersion: Union[str, "VirtualNetworkApplianceCapabilityIpVersion"]
+    """
+
+    linkedResourceId: str
+    """The Azure resource ID of the owning virtual network. System-derived and read-only."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the capability resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    ipVersion: Union[str, "VirtualNetworkApplianceCapabilityIpVersion"]
+    """The IP version the capability applies to. Private Link Gateway FastPath (``PLGatewayFastpath``)
+     only accepts ``DualStack``; Private Link Gateway (``PLGateway``) and Private Link IP-forwarders
+     (``PLIPForwarders``) only accept ``IPv6``. Not applicable to ``NAT64``, which is property-less
+     and must omit this value. The service validates the value against the resource's ``kind`` when
+     the capability is created or updated. Known values are: \"IPv6\" and \"DualStack\"."""
+
+
 class VirtualNetworkApplianceIpConfiguration(SubResource):
     """The virtual network appliance ip configuration.
 
@@ -18336,6 +18845,8 @@ class VirtualNetworkAppliancePropertiesFormat(TypedDict, total=False):
 
     :ivar bandwidthInGbps: Bandwidth of the VirtualNetworkAppliance resource in Gbps.
     :vartype bandwidthInGbps: float
+    :ivar capacityProvider: The reference to the capacity provider resource.
+    :vartype capacityProvider: "SubResource"
     :ivar ipConfigurations: A list of IPConfigurations of the virtual network appliance.
     :vartype ipConfigurations: list["VirtualNetworkApplianceIpConfiguration"]
     :ivar privateIPAddressVersion: Whether the specific virtual network appliance is IPv4 or Dual
@@ -18352,6 +18863,8 @@ class VirtualNetworkAppliancePropertiesFormat(TypedDict, total=False):
 
     bandwidthInGbps: float
     """Bandwidth of the VirtualNetworkAppliance resource in Gbps."""
+    capacityProvider: "SubResource"
+    """The reference to the capacity provider resource."""
     ipConfigurations: list["VirtualNetworkApplianceIpConfiguration"]
     """A list of IPConfigurations of the virtual network appliance."""
     privateIPAddressVersion: Union[str, "VirtualNetworkApplianceIpVersionType"]
@@ -20962,3 +21475,6 @@ class WebApplicationFirewallScrubbingRules(TypedDict, total=False):
 BaseAdminRule = Union[AdminRule, DefaultAdminRule]
 FirewallPolicyRule = Union[ApplicationRule, NatRule, NetworkRule]
 FirewallPolicyRuleCollection = Union[FirewallPolicyFilterRuleCollection, FirewallPolicyNatRuleCollection]
+VirtualNetworkApplianceCapability = Union[
+    Nat64Capability, PLGatewayCapability, PLGatewayFastpathCapability, PLIPForwardersCapability
+]

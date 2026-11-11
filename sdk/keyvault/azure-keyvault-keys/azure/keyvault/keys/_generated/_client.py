@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class KeyVaultClient(_KeyVaultClientOperationsMixin):
+class KeyVaultClient(_KeyVaultClientOperationsMixin):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key vault client performs cryptographic key operations and vault operations against the Key
     Vault service.
 
@@ -35,10 +35,9 @@ class KeyVaultClient(_KeyVaultClientOperationsMixin):
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

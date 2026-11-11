@@ -88,7 +88,7 @@ class TestContainerRegistryManagementCacheRulesOperationsAsync(AzureMgmtRecorded
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                     "properties": {
-                        "additionalAuthenticationProperties": "additional_authentication_properties",
+                        "additionalAuthenticationProperties": "additional_authentication_update_properties",
                         "credentialSetResourceId": "str",
                     },
                 },

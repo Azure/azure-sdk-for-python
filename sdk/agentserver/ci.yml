@@ -1,5 +1,18 @@
 # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
 
+parameters:
+  - name: PublishA2AAlpha
+    displayName: Publish A2A and core alpha packages to the dev feed (internal manual runs only)
+    type: boolean
+    default: false
+
+variables:
+  - ${{ if and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}:
+      - name: SetDevVersion
+        value: 'true'
+      - name: Skip.Release
+        value: 'true'
+
 trigger:
   branches:
     include:
@@ -37,14 +50,25 @@ extends:
         Path: sdk/agentserver/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
+    # Namespace metadata generation reads this list as raw YAML; keep every entry named.
     Artifacts:
+      - name: azure-ai-agentserver-a2a
+        safeName: azureaiagentservera2a
       - name: azure-ai-agentserver-core
         safeName: azureaiagentservercore
       - name: azure-ai-agentserver-invocations
         safeName: azureaiagentserverinvocations
+        skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+        skipPublishDocMs: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
       - name: azure-ai-agentserver-responses
         safeName: azureaiagentserverresponses
+        skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+        skipPublishDocMs: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
       - name: azure-ai-agentserver-optimization
         safeName: azureaiagentserveroptimization
+        skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+        skipPublishDocMs: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
       - name: azure-ai-agentserver-activity
         safeName: azureaiagentserveractivity
+        skipPublishDevFeed: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}
+        skipPublishDocMs: ${{ and(parameters.PublishA2AAlpha, eq(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'Manual')) }}

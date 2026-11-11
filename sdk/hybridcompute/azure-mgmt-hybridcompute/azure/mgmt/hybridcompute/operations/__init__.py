@@ -18,6 +18,7 @@ from ._operations import MachinesOperations  # type: ignore
 from ._operations import LicenseProfilesOperations  # type: ignore
 from ._operations import MachineExtensionsOperations  # type: ignore
 from ._operations import MachineRunCommandsOperations  # type: ignore
+from ._operations import VmApplicationsOperations  # type: ignore
 from ._operations import GatewaysOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
@@ -42,6 +43,7 @@ __all__ = [
     "LicenseProfilesOperations",
     "MachineExtensionsOperations",
     "MachineRunCommandsOperations",
+    "VmApplicationsOperations",
     "GatewaysOperations",
     "PrivateLinkResourcesOperations",
     "PrivateEndpointConnectionsOperations",

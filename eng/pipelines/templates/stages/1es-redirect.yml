@@ -44,7 +44,7 @@ extends:
         - 1ES.PT.Tag-refs/tags/canary
     settings:
       skipBuildTagsForGitHubPullRequests: true
-      networkIsolationPolicy: Permissive, CFSClean, AzureStorage
+      networkIsolationPolicy: Permissive, CFSClean, CFSClean2, AzureStorage
     ${{ if ne(variables['Build.DefinitionName'], 'python - core') }}:
       featureFlags:
         autoBaseline: false
