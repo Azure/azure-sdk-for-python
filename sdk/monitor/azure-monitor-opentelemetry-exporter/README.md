@@ -182,7 +182,10 @@ policy chain for each destination. `SansIOHTTPPolicy` entries remain supported.
 
 Items are grouped by normalized endpoint and authentication mode. Set
 `microsoft.ingestion_auth` to `"aad"` to use the exporter's configured credential;
-other values use key-only authentication. AAD groups without a credential fail.
+the value is trimmed and case-insensitive. Other values use key-only authentication
+and do not receive the exporter's token, even when a credential is configured.
+AAD groups without a credential fail without being sent or stored; other groups
+continue exporting.
 Span events follow their parent span's destination, instrumentation key, and
 authentication mode, not routing attributes on the events themselves.
 Metrics use routing attributes on each data point, not the resource or
@@ -190,6 +193,30 @@ instrumentation scope. Points without valid routing attributes are dropped.
 Cloud-role names come from the item's `microsoft.multi_endpoint_cloud_role` attribute;
 missing, blank, or non-string values use `unknown_service`. Span events inherit their
 parent span's role name. Cloud-role instances remain resource-derived.
+
+#### Microsoft Entra authentication
+
+1. Pass a token credential, such as `DefaultAzureCredential`, through `credential`,
+   or configure managed identity using `APPLICATIONINSIGHTS_AUTHENTICATION_STRING`.
+2. Set `microsoft.ingestion_auth` to `"aad"` on telemetry that requires Microsoft
+   Entra authentication, including resources with local authentication disabled.
+3. Assign the identity the **Monitoring Metrics Publisher** role on each destination resource.
+
+The default audience is Azure public cloud. For another cloud, set the audience
+before constructing the exporter, for example:
+
+```powershell
+$env:APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE = "https://monitor.azure.cn/"
+```
+
+All AAD destinations within an exporter share its credential and audience. Use
+separately configured exporters when identities or clouds differ. The host connection
+string's `AadAudience` does not apply to routed telemetry. Custom
+`authentication_policy` is not supported in routing mode.
+
+> **Security:** Use only trusted routing destinations. Custom headers, policies,
+> hooks, transports, or sessions may send credentials to any routed destination,
+> including key-only routes.
 
 Retry storage is separate from the host storage, partitioned by endpoint and
 authentication mode, and shares the configured storage capacity across routed
