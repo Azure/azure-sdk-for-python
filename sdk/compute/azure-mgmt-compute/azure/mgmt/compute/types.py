@@ -991,12 +991,12 @@ class CapacityReservationGroupProperties(TypedDict, total=False):
      views for all the capacity reservations that belong to the capacity reservation group.
     :vartype instanceView: "CapacityReservationGroupInstanceView"
     :ivar sharingProfile: Specifies the settings to enable sharing across subscriptions for the
-     capacity reservation group resource. The capacity reservation group resource can generally be
-     shared across subscriptions belonging to a single Azure AAD tenant or across AAD tenants if
-     there is a trust relationship established between the tenants.  Block capacity reservation does
-     not support sharing across subscriptions. **Note:** Minimum api-version: 2023-09-01. Please
-     refer to `https://aka.ms/computereservationsharing <https://aka.ms/computereservationsharing>`_
-     for more details.
+     capacity reservation group resource. The capacity reservation group resource can be shared only
+     across subscriptions belonging to the same Microsoft Entra ID tenant. Sharing across tenants is
+     not supported. Block capacity reservation does not support sharing across subscriptions.
+     **Note:** Minimum api-version: 2023-09-01. Please refer to
+     `https://aka.ms/computereservationsharing <https://aka.ms/computereservationsharing>`_ for more
+     details.
     :vartype sharingProfile: "ResourceSharingProfile"
     :ivar reservationType: Indicates the type of capacity reservation. Allowed values are 'Block'
      for block capacity reservations that enable a VM to consume capacity only from this capacity
@@ -1020,12 +1020,11 @@ class CapacityReservationGroupProperties(TypedDict, total=False):
      capacity reservations that belong to the capacity reservation group."""
     sharingProfile: "ResourceSharingProfile"
     """Specifies the settings to enable sharing across subscriptions for the capacity reservation
-     group resource. The capacity reservation group resource can generally be shared across
-     subscriptions belonging to a single Azure AAD tenant or across AAD tenants if there is a trust
-     relationship established between the tenants.  Block capacity reservation does not support
-     sharing across subscriptions. **Note:** Minimum api-version: 2023-09-01. Please refer to
-     `https://aka.ms/computereservationsharing <https://aka.ms/computereservationsharing>`_ for more
-     details."""
+     group resource. The capacity reservation group resource can be shared only across subscriptions
+     belonging to the same Microsoft Entra ID tenant. Sharing across tenants is not supported. Block
+     capacity reservation does not support sharing across subscriptions. **Note:** Minimum
+     api-version: 2023-09-01. Please refer to `https://aka.ms/computereservationsharing
+     <https://aka.ms/computereservationsharing>`_ for more details."""
     reservationType: Union[str, "ReservationType"]
     """Indicates the type of capacity reservation. Allowed values are 'Block' for block capacity
      reservations that enable a VM to consume capacity only from this capacity block when it is
@@ -6571,10 +6570,10 @@ class PatchSettings(TypedDict, total=False):
 class Placement(TypedDict, total=False):
     """Describes the user-defined constraints for resource hardware placement.
 
-    :ivar zonePlacementPolicy: Specifies the policy for resource's placement in availability zone.
-     Possible values are: **Any** (used for Virtual Machines), **Auto** (used for Virtual Machine
-     Scale Sets) - An availability zone will be automatically picked by system as part of resource
-     creation. Known values are: "Any" and "Auto".
+    :ivar zonePlacementPolicy: Specifies the policy for the resource's placement in an availability
+     zone. Use **Auto** for Virtual Machines and Virtual Machine Scale Sets to let the system
+     automatically select an availability zone during resource creation. **Any** remains supported
+     for Virtual Machines for backward compatibility. Known values are: "Any" and "Auto".
     :vartype zonePlacementPolicy: Union[str, "ZonePlacementPolicyType"]
     :ivar includeZones: This property supplements the 'zonePlacementPolicy' property. If
      'zonePlacementPolicy' is set to 'Any'/'Auto', availability zone selected by the system must be
@@ -6589,10 +6588,10 @@ class Placement(TypedDict, total=False):
     """
 
     zonePlacementPolicy: Union[str, "ZonePlacementPolicyType"]
-    """Specifies the policy for resource's placement in availability zone. Possible values are:
-     **Any** (used for Virtual Machines), **Auto** (used for Virtual Machine Scale Sets) - An
-     availability zone will be automatically picked by system as part of resource creation. Known
-     values are: \"Any\" and \"Auto\"."""
+    """Specifies the policy for the resource's placement in an availability zone. Use **Auto** for
+     Virtual Machines and Virtual Machine Scale Sets to let the system automatically select an
+     availability zone during resource creation. **Any** remains supported for Virtual Machines for
+     backward compatibility. Known values are: \"Any\" and \"Auto\"."""
     includeZones: list[str]
     """This property supplements the 'zonePlacementPolicy' property. If 'zonePlacementPolicy' is set
      to 'Any'/'Auto', availability zone selected by the system must be present in the list of
@@ -8645,8 +8644,8 @@ class StorageProfile(TypedDict, total=False):
      api-version: 2022-08-01. Known values are: "SCSI" and "NVMe".
     :vartype diskControllerType: Union[str, "DiskControllerTypes"]
     :ivar alignRegionalDisksToVMZone: Specifies whether the regional disks should be aligned/moved
-     to the VM zone. This is applicable only for VMs with placement property set. Please note that
-     this change is irreversible. Minimum api-version: 2024-11-01.
+     to the VM zone. This is applicable **only** for VMs with placement.zonePlacementPolicy set to
+     **Any**. Please note that this change is irreversible. Minimum api-version: 2024-11-01.
     :vartype alignRegionalDisksToVMZone: bool
     :ivar diskApiVersion: Specifies the Disk API version used when applying
      additionalDiskProperties to managed disks. The value must be in the format YYYY-MM-DD (e.g.,
@@ -8677,8 +8676,8 @@ class StorageProfile(TypedDict, total=False):
      are: \"SCSI\" and \"NVMe\"."""
     alignRegionalDisksToVMZone: bool
     """Specifies whether the regional disks should be aligned/moved to the VM zone. This is applicable
-     only for VMs with placement property set. Please note that this change is irreversible. Minimum
-     api-version: 2024-11-01."""
+     **only** for VMs with placement.zonePlacementPolicy set to **Any**. Please note that this
+     change is irreversible. Minimum api-version: 2024-11-01."""
     diskApiVersion: Union[str, "DiskApiVersion"]
     """Specifies the Disk API version used when applying additionalDiskProperties to managed disks.
      The value must be in the format YYYY-MM-DD (e.g., \"2026-03-02\"). Known values are:

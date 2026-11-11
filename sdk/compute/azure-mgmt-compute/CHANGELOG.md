@@ -1,5 +1,55 @@
 # Release History
 
+## 40.0.0 (2026-11-11)
+
+### Features Added
+
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_A2M_V2`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_A4M_V2`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_A8M_V2`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_B1S`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_B2S`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_D2S_V3`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_D4S_V3`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_D8S_V3`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_E2S_V3`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_E4S_V3`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_E8S_V3`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_F1S`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_F2S`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_F2S_V2`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_F4S`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_F4S_V2`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_F8S`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_F8S_V2`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_H8M`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_L4S`
+  - Enum `VirtualMachineSizeTypes` added member `STANDARD_L8S`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_A2_M_V2`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_A4_M_V2`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_A8_M_V2`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_B1_S`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_B2_S`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_D2_S_V3`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_D4_S_V3`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_D8_S_V3`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_E2_S_V3`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_E4_S_V3`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_E8_S_V3`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_F1_S`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_F2_S`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_F2_S_V2`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_F4_S`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_F4_S_V2`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_F8_S`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_F8_S_V2`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_H8_M`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_L4_S`
+  - Deleted or renamed enum value `VirtualMachineSizeTypes.STANDARD_L8_S`
+
 ## 39.0.0 (2026-10-15)
 
 ### Features Added

@@ -1693,12 +1693,12 @@ class CapacityReservationGroupProperties(_Model):  # pylint: disable=docstring-k
      instance views for all the capacity reservations that belong to the capacity reservation group.
     :vartype instance_view: ~azure.mgmt.compute.models.CapacityReservationGroupInstanceView
     :ivar sharing_profile: Specifies the settings to enable sharing across subscriptions for the
-     capacity reservation group resource. The capacity reservation group resource can generally be
-     shared across subscriptions belonging to a single Azure AAD tenant or across AAD tenants if
-     there is a trust relationship established between the tenants.  Block capacity reservation does
-     not support sharing across subscriptions. **Note:** Minimum api-version: 2023-09-01. Please
-     refer to `https://aka.ms/computereservationsharing <https://aka.ms/computereservationsharing>`_
-     for more details.
+     capacity reservation group resource. The capacity reservation group resource can be shared only
+     across subscriptions belonging to the same Microsoft Entra ID tenant. Sharing across tenants is
+     not supported. Block capacity reservation does not support sharing across subscriptions.
+     **Note:** Minimum api-version: 2023-09-01. Please refer to
+     `https://aka.ms/computereservationsharing <https://aka.ms/computereservationsharing>`_ for more
+     details.
     :vartype sharing_profile: ~azure.mgmt.compute.models.ResourceSharingProfile
     :ivar reservation_type: Indicates the type of capacity reservation. Allowed values are 'Block'
      for block capacity reservations that enable a VM to consume capacity only from this capacity
@@ -1730,12 +1730,11 @@ class CapacityReservationGroupProperties(_Model):  # pylint: disable=docstring-k
         name="sharingProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the settings to enable sharing across subscriptions for the capacity reservation
-     group resource. The capacity reservation group resource can generally be shared across
-     subscriptions belonging to a single Azure AAD tenant or across AAD tenants if there is a trust
-     relationship established between the tenants.  Block capacity reservation does not support
-     sharing across subscriptions. **Note:** Minimum api-version: 2023-09-01. Please refer to
-     `https://aka.ms/computereservationsharing <https://aka.ms/computereservationsharing>`_ for more
-     details."""
+     group resource. The capacity reservation group resource can be shared only across subscriptions
+     belonging to the same Microsoft Entra ID tenant. Sharing across tenants is not supported. Block
+     capacity reservation does not support sharing across subscriptions. **Note:** Minimum
+     api-version: 2023-09-01. Please refer to `https://aka.ms/computereservationsharing
+     <https://aka.ms/computereservationsharing>`_ for more details."""
     reservation_type: Optional[Union[str, "_models.ReservationType"]] = rest_field(
         name="reservationType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -13958,10 +13957,10 @@ class PirSharedGalleryResource(PirResource):  # pylint: disable=docstring-keywor
 class Placement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the user-defined constraints for resource hardware placement.
 
-    :ivar zone_placement_policy: Specifies the policy for resource's placement in availability
-     zone. Possible values are: **Any** (used for Virtual Machines), **Auto** (used for Virtual
-     Machine Scale Sets) - An availability zone will be automatically picked by system as part of
-     resource creation. Known values are: "Any" and "Auto".
+    :ivar zone_placement_policy: Specifies the policy for the resource's placement in an
+     availability zone. Use **Auto** for Virtual Machines and Virtual Machine Scale Sets to let the
+     system automatically select an availability zone during resource creation. **Any** remains
+     supported for Virtual Machines for backward compatibility. Known values are: "Any" and "Auto".
     :vartype zone_placement_policy: str or ~azure.mgmt.compute.models.ZonePlacementPolicyType
     :ivar include_zones: This property supplements the 'zonePlacementPolicy' property. If
      'zonePlacementPolicy' is set to 'Any'/'Auto', availability zone selected by the system must be
@@ -13978,10 +13977,10 @@ class Placement(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
     zone_placement_policy: Optional[Union[str, "_models.ZonePlacementPolicyType"]] = rest_field(
         name="zonePlacementPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the policy for resource's placement in availability zone. Possible values are:
-     **Any** (used for Virtual Machines), **Auto** (used for Virtual Machine Scale Sets) - An
-     availability zone will be automatically picked by system as part of resource creation. Known
-     values are: \"Any\" and \"Auto\"."""
+    """Specifies the policy for the resource's placement in an availability zone. Use **Auto** for
+     Virtual Machines and Virtual Machine Scale Sets to let the system automatically select an
+     availability zone during resource creation. **Any** remains supported for Virtual Machines for
+     backward compatibility. Known values are: \"Any\" and \"Auto\"."""
     include_zones: Optional[list[str]] = rest_field(
         name="includeZones", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -19384,8 +19383,9 @@ class StorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-
      api-version: 2022-08-01. Known values are: "SCSI" and "NVMe".
     :vartype disk_controller_type: str or ~azure.mgmt.compute.models.DiskControllerTypes
     :ivar align_regional_disks_to_vm_zone: Specifies whether the regional disks should be
-     aligned/moved to the VM zone. This is applicable only for VMs with placement property set.
-     Please note that this change is irreversible. Minimum api-version: 2024-11-01.
+     aligned/moved to the VM zone. This is applicable **only** for VMs with
+     placement.zonePlacementPolicy set to **Any**. Please note that this change is irreversible.
+     Minimum api-version: 2024-11-01.
     :vartype align_regional_disks_to_vm_zone: bool
     :ivar disk_api_version: Specifies the Disk API version used when applying
      additionalDiskProperties to managed disks. The value must be in the format YYYY-MM-DD (e.g.,
@@ -19426,8 +19426,8 @@ class StorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-
         name="alignRegionalDisksToVMZone", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether the regional disks should be aligned/moved to the VM zone. This is applicable
-     only for VMs with placement property set. Please note that this change is irreversible. Minimum
-     api-version: 2024-11-01."""
+     **only** for VMs with placement.zonePlacementPolicy set to **Any**. Please note that this
+     change is irreversible. Minimum api-version: 2024-11-01."""
     disk_api_version: Optional[Union[str, "_models.DiskApiVersion"]] = rest_field(
         name="diskApiVersion", visibility=["read", "create", "update", "delete", "query"]
     )
