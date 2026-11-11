@@ -434,6 +434,16 @@ class TestGetDataSource:
         assert item["empty"] is None
         assert "missing" not in item
 
+    def test_explicit_missing_numeric_values_are_sent_as_null(self):
+        schema = {"type": "object", "properties": {"score": {"type": ["number", "null"]}}}
+        frame = pd.DataFrame([{"score": 0}, {}])
+
+        data_source = _get_data_source(frame, {"score": "${data.score}"}, item_schema=schema)
+
+        items = [row["item"] for row in data_source["source"]["content"]]
+        assert items == [{"score": 0.0}, {"score": None}]
+        json.dumps(data_source, allow_nan=False)
+
     @pytest.mark.parametrize("additional_properties", [True, False])
     def test_boolean_additional_properties_keep_legacy_extra_values(self, additional_properties):
         schema = {"properties": {"label": {"type": "string"}}, "additionalProperties": additional_properties}

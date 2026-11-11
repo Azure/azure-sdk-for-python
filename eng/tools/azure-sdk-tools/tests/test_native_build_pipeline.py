@@ -14,7 +14,6 @@ import subprocess
 import pytest
 import yaml
 
-
 REPO_ROOT = Path(__file__).resolve().parents[4]
 TEMPLATES = REPO_ROOT / "eng" / "pipelines" / "templates"
 RUST_GATE = "${{ if parameters.InstallMsRustToolchain }}"
@@ -179,6 +178,77 @@ def test_dev_requirements_share_selected_target_provisioning(tmp_path):
     assert "variable=AZURESDK_PYTHON_ARM64_LIBS]" not in result.stdout
 
 
+def test_live_test_rust_support_is_opt_in_and_forwarded():
+    archetype = load_template("stages/archetype-sdk-tests.yml")
+    live = load_template("jobs/live.tests.yml")
+    parameters = RUST_PARAMETERS[:3]
+    for template in (archetype, live):
+        defaults = {parameter["name"]: parameter.get("default") for parameter in template["parameters"]}
+        assert defaults["InstallMsRustToolchain"] is False
+        assert all(defaults[name] == "" for name in parameters[1:])
+
+    stages = archetype["extends"]["parameters"]["stages"][0]
+    clouds = next(iter(stages.values()))[0]
+    cloud_gate = next(iter(clouds.values()))[0]
+    supported_gate = next(iter(cloud_gate.values()))[0]
+    stage = next(iter(supported_gate.values()))[0]
+    matrix_types = stage["jobs"][0]
+    matrix_gate = next(iter(matrix_types.values()))[0]
+    matrix = next(iter(matrix_gate.values()))[0]
+    forwarded = matrix["parameters"]["AdditionalParameters"]
+    assert all(forwarded[name] == "${{ parameters." + name + " }}" for name in parameters)
+
+    steps = live["jobs"][0]["steps"]
+    install = next(step[RUST_GATE][0] for step in steps if isinstance(step, dict) and RUST_GATE in step)
+    assert install["template"].endswith("install-msrust-toolchain.yml")
+    assert install["parameters"] == {
+        "ToolchainFeed": "${{ parameters.MsRustToolchainFeed }}",
+        "WorkingDirectory": "${{ parameters.MsRustWorkingDirectory }}",
+        "Condition": "and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))",
+    }
+    test = next(
+        step for step in steps if isinstance(step, dict) and step.get("template", "").endswith("build-test.yml")
+    )
+    credentials = test["parameters"]["EnvVars"][RUST_GATE]
+    build = load_template("steps/build-package-artifacts.yml")
+    generate = next(step for step in build["steps"] if step.get("displayName") == "Generate Packages")
+    assert credentials == generate["env"][RUST_GATE]
+    assert "${{ insert }}" in test["parameters"]["EnvVars"]
+    assert steps.index(next(step for step in steps if isinstance(step, dict) and RUST_GATE in step)) < steps.index(test)
+
+    run_tests = load_template("steps/build-test.yml")["steps"]
+    federated = next(step for step in run_tests if "${{ if eq('true', parameters.UseFederatedAuth) }}" in step)
+    non_federated = next(step for step in run_tests if "${{ else }}" in step)
+    for step in federated["${{ if eq('true', parameters.UseFederatedAuth) }}"] + non_federated["${{ else }}"]:
+        environment = step["env"]
+        assert (
+            environment.get("${{ insert }}") if isinstance(environment, dict) else environment
+        ) == "${{ parameters.EnvVars }}"
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_live_test_container_forwarding_preserves_non_rust_builds(enabled):
+    steps = load_template("jobs/live.tests.yml")["jobs"][0]["steps"]
+    configure = next(
+        step
+        for step in steps
+        if isinstance(step, dict) and step.get("displayName") == "Configure cibuildwheel for dev requirement builds"
+    )
+    build_steps = load_template("steps/build-package-artifacts.yml")["steps"]
+    build_forwarding = next(
+        step for step in build_steps if step.get("displayName") == "Forward build environment to cibuildwheel"
+    )
+    assert configure["env"] == build_forwarding["env"]
+    extra = configure["env"][RUST_GATE]["RUST_ENVIRONMENT_PASS"] if enabled else ""
+    result = run_powershell(configure["pwsh"], RUST_ENVIRONMENT_PASS=extra)
+    assert result.returncode == 0, result.stderr
+    expected = "PIP_INDEX_URL" + (" " + extra if enabled else "")
+    assert f"variable=CIBW_ENVIRONMENT_PASS_LINUX]{expected}\n" in result.stdout
+    assert "variable=CIBW_ARCHS]native" in result.stdout
+    assert "variable=CIBW_SKIP]pp* *musllinux*" in result.stdout
+    assert "variable=CIBW_TEST_SKIP]*" in result.stdout
+
+
 @pytest.mark.parametrize("sign_binaries", [False, True])
 def test_platform_selection_uses_artifact_opt_in(tmp_path, sign_binaries):
     package_info = {"Name": "example-native-package", "ArtifactDetails": {"signBinaries": sign_binaries}}
@@ -278,10 +348,12 @@ def test_build_powershell_scripts_parse():
         "steps/install-msrust-toolchain.yml",
         "steps/build-package-artifacts.yml",
         "steps/resolve-build-platforms.yml",
+        "jobs/live.tests.yml",
     ):
         template = load_template(template_path)
-        for step in template["steps"]:
-            if "pwsh" not in step:
+        steps = template["jobs"][0]["steps"] if "jobs" in template else template["steps"]
+        for step in steps:
+            if not isinstance(step, dict) or "pwsh" not in step:
                 continue
             # Azure expands template expressions and the command-valued PIP_EXE macro before parsing.
             script = re.sub(r"\$\{\{.*?\}\}", "example", step["pwsh"])
