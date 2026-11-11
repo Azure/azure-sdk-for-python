@@ -88,6 +88,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     increment_and_check_statsbeat_failure_count,
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
+    set_statsbeat_gen_ai_input_output_limit_increase_feature_set,
+    set_statsbeat_multi_endpoint_routing_feature_set,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _update_requests_map,
@@ -1369,5 +1371,10 @@ def _get_experimental_features() -> FrozenSet[str]:
                         _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
                         ", ".join(sorted(unknown_features)),
                     )
-                _enabled_experimental_features = requested_features & _SUPPORTED_EXPERIMENTAL_FEATURES
+                enabled_features = requested_features & _SUPPORTED_EXPERIMENTAL_FEATURES
+                if "gen_ai_input_output_limit_increase" in enabled_features:
+                    set_statsbeat_gen_ai_input_output_limit_increase_feature_set()
+                if "multi_endpoint_routing" in enabled_features:
+                    set_statsbeat_multi_endpoint_routing_feature_set()
+                _enabled_experimental_features = enabled_features
     return _enabled_experimental_features
