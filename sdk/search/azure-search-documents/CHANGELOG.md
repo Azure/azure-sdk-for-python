@@ -1,6 +1,6 @@
 # Release History
 
-## 12.1.0b3 (Unreleased)
+## 12.2.0b1 (Unreleased)
 
 ### Features Added
 
@@ -42,7 +42,7 @@
 
 ### Breaking Changes
 
-> These changes do not impact the API of stable versions such as 11.6.0.
+> These changes do not impact the API of stable versions such as 12.1.0.
 > Only code written against a beta version such as 12.1.0b2 may be affected.
 
 - The service removes stored `query_hints` and request-time `query_hint_overrides`

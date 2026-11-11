@@ -14815,6 +14815,7 @@ namespace azure.search.documents.knowledgebases.types
         key "knowledgeSourceName": Required[str]
         key "maxOutputDocuments": int
         key "neverQuerySource": bool
+        key "queryHintOverrides": SearchIndexKnowledgeSourceQueryHints
         key "rerankerThreshold": float
         key "resultsProcessing": Union[str, KnowledgeSourceResultsProcessing]
         alwaysQuerySource: bool
@@ -14827,7 +14828,7 @@ namespace azure.search.documents.knowledgebases.types
         knowledgeSourceName: str
         maxOutputDocuments: int
         neverQuerySource: bool
-        queryHintOverrides: ForwardRef('SearchIndexKnowledgeSourceQueryHints', module='types')
+        queryHintOverrides: SearchIndexKnowledgeSourceQueryHints
         rerankerThreshold: float
         resultsProcessing: Union[str, KnowledgeSourceResultsProcessing]
         topicGraph: ForwardRef('VectorQueryTopicGraph', module='types')

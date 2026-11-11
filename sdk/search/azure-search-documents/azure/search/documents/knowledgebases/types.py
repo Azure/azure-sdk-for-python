@@ -11,6 +11,7 @@ from typing import Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 from ..indexes.models._enums import KnowledgeSourceKind
+from ..indexes.types import SearchIndexKnowledgeSourceQueryHints as _SearchIndexKnowledgeSourceQueryHints
 from .models._enums import (
     KnowledgeBaseMessageContentType,
     KnowledgeRetrievalIntentType,
@@ -19,7 +20,6 @@ from .models._enums import (
 
 if TYPE_CHECKING:
     from ..indexes.models import KnowledgeSourceResultsProcessing
-    from ..indexes.types import SearchIndexKnowledgeSourceQueryHints
     from ..types import VectorQueryTopicGraph
     from .models import KnowledgeRetrievalOutputMode, KnowledgeSourceGraphProvenanceKind
 
@@ -1003,7 +1003,7 @@ class SearchIndexKnowledgeSourceParams(TypedDict, total=False):
     """The discriminator value. Required. A knowledge source that reads data from a Search Index."""
     filterAddOn: str
     """A filter condition applied to the index (e.g., 'State eq VA')."""
-    queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"
+    queryHintOverrides: _SearchIndexKnowledgeSourceQueryHints
     """Hints that guide query planning toward useful filters and boosts. If specified, this object
      replaces the complete set of query hints configured on the knowledge source."""
     topicGraph: "VectorQueryTopicGraph"

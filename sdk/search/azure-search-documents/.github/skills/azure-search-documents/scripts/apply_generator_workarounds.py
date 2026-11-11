@@ -96,6 +96,29 @@ REPLACEMENTS = (
     ),
     Replacement(
         "azure/search/documents/knowledgebases/types.py",
+        "bind the search-index query-hint TypedDict privately at runtime for autodoc",
+        "from ..indexes.models._enums import KnowledgeSourceKind\nfrom .models._enums import (\n",
+        "from ..indexes.models._enums import KnowledgeSourceKind\n"
+        "from ..indexes.types import SearchIndexKnowledgeSourceQueryHints as _SearchIndexKnowledgeSourceQueryHints\n"
+        "from .models._enums import (\n",
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/types.py",
+        "remove the redundant type-only search-index query-hint import",
+        "    from ..indexes.models import KnowledgeSourceResultsProcessing\n"
+        "    from ..indexes.types import SearchIndexKnowledgeSourceQueryHints\n"
+        "    from ..types import VectorQueryTopicGraph\n",
+        "    from ..indexes.models import KnowledgeSourceResultsProcessing\n"
+        "    from ..types import VectorQueryTopicGraph\n",
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/types.py",
+        "resolve the retained query-hint annotation without ambiguous Sphinx references",
+        '    queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"\n',
+        "    queryHintOverrides: _SearchIndexKnowledgeSourceQueryHints\n",
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/types.py",
         "remove the duplicate KnowledgeSourceKind type-only import",
         """        KnowledgeSourceIngestionPermissionOption,
         KnowledgeSourceKind,

@@ -82,6 +82,20 @@ the retained search-index hint type. Refresh the API snapshot after this change.
 SDK compatibility customizations must not resurrect fields excluded by the final
 service contract.
 
+With the same generation inputs, Sphinx 8.2.0 renders the remaining type-only
+forward reference as the unqualified `SearchIndexKnowledgeSourceQueryHints`.
+Build 7065814 fails because that name matches the TypedDict and two model paths.
+Changing only `:vartype` does not fix the attribute's generated `:type:` directive.
+The exact-match rewriter moves the existing import to a private runtime alias and
+uses the concrete TypedDict for only the supported `queryHintOverrides` annotation.
+This keeps its public type and optional keys unchanged without adding a public alias.
+The regression resolves the annotation using its own module's namespace.
+This is Python documentation/type-metadata behavior, not a service-spec change.
+Full regeneration was not repeated; report the ambiguous cross-namespace TypedDict
+reference upstream to `@typespec/http-client-python` with the pinned inputs above.
+Remove these replacements when unmodified generated output passes strict Sphinx
+and the annotation-resolution regression.
+
 ## Retrieval stream contract
 
 With the generation inputs recorded above, both generated `retrieve_stream`

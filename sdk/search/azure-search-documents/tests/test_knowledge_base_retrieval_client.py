@@ -90,7 +90,7 @@ class TestKnowledgeBaseRetrievalTypes:
         parameter_type = getattr(types, parameter_type_name)
         if "queryHintOverrides" in parameter_type.__optional_keys__:
             contract = TypedDict("QueryHintsContract", {"hints": parameter_type.__annotations__["queryHintOverrides"]})
-            annotations = get_type_hints(contract, globalns=vars(index_types), localns=vars(index_types))
+            annotations = get_type_hints(contract, globalns=vars(types), localns=vars(types))
             assert annotations["hints"] is index_types.SearchIndexKnowledgeSourceQueryHints
         else:
             assert "queryHintOverrides" not in parameter_type.__annotations__
