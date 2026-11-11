@@ -4,6 +4,7 @@ import os
 import pathlib
 import base64
 import json
+from copy import deepcopy
 
 from azure.ai.evaluation._common.utils import nltk_tokenize
 from azure.ai.evaluation._common.utils import validate_conversation
@@ -23,8 +24,52 @@ from azure.ai.evaluation._common.utils import (
     _collect_failed_tool_calls,
     _get_tool_calls_results,
     _reformat_tool_calls_results,
+    serialize_messages,
 )
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage, ErrorTarget
+
+
+@pytest.mark.unittest
+class TestSerializeMessagesOrder:
+    @pytest.mark.parametrize("assistant_first", [False, True])
+    @pytest.mark.parametrize("trailing_user", [False, True])
+    @pytest.mark.parametrize("content_blocks", [False, True])
+    def test_preserves_message_order(self, assistant_first, trailing_user, content_blocks):
+        messages = [
+            {"role": "system", "content": "Policy"},
+            {"role": "user", "content": "Question 1"},
+            {"role": "assistant", "content": "Answer 1"},
+            {"role": "user", "content": "Question 2"},
+            {"role": "assistant", "content": "Answer 2"},
+        ]
+        if assistant_first:
+            messages.insert(1, {"role": "assistant", "content": "Welcome"})
+        if trailing_user:
+            messages.pop()
+        if content_blocks:
+            messages = [{**message, "content": [{"type": "text", "text": message["content"]}]} for message in messages]
+        original = deepcopy(messages)
+        offset = int(assistant_first)
+        expected = "SYSTEM_PROMPT:\n  Policy\n\n"
+        if assistant_first:
+            expected += "Agent turn 1:\n  Welcome\n\n"
+        expected += f"User turn 1:\n  Question 1\n\nAgent turn {1 + offset}:\n  Answer 1\n\n"
+        expected += "User turn 2:\n  Question 2\n\n"
+        if not trailing_user:
+            expected += f"Agent turn {2 + offset}:\n  Answer 2\n\n"
+        assert serialize_messages(messages) == expected.rstrip("\n")
+        assert messages == original
+
+    def test_empty_user_does_not_split_opening(self):
+        messages = [
+            {"role": "assistant", "content": "Welcome"},
+            {"role": "user", "content": []},
+            {"role": "assistant", "content": "How can I help?"},
+            {"role": "user", "content": "Question"},
+        ]
+        assert serialize_messages(messages) == (
+            "Agent turn 1:\n  Welcome\n  How can I help?\n\nUser turn 1:\n  Question"
+        )
 
 
 @pytest.mark.unittest

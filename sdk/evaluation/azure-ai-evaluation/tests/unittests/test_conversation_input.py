@@ -18,6 +18,11 @@ Covers the six branches called out in review:
    across evaluators with different ``ground_truth`` values.
 """
 
+import asyncio
+from copy import deepcopy
+from typing import overload
+from unittest.mock import AsyncMock
+
 import pytest
 
 from azure.ai.evaluation import (
@@ -29,6 +34,112 @@ from azure.ai.evaluation import (
 )
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._evaluators._common import hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._base_eval import EvaluatorBase
+from azure.ai.evaluation._common.utils import _preprocess_messages, serialize_messages
+
+
+class _MessagesEvaluator(EvaluatorBase):
+    def __init__(self, *, whole_conversation=True, eval_last_turn=False):
+        super().__init__(eval_last_turn=eval_last_turn)
+        self.inputs = []
+        if whole_conversation:
+            self._multi_turn_flow = AsyncMock(return_value={"score": 4.0})
+
+    @overload
+    def __call__(self, *, messages: list[dict]) -> dict: ...
+
+    @overload
+    def __call__(self, *, query: str, response: str) -> dict: ...
+
+    @overload
+    def __call__(self, *, conversation: dict) -> dict: ...
+
+    def __call__(self, **kwargs):
+        return super().__call__(**kwargs)
+
+    async def _do_eval(self, eval_input):
+        self.inputs.append(deepcopy(eval_input))
+        if "messages" in eval_input:
+            transcript = serialize_messages(_preprocess_messages(eval_input["messages"]))
+            return await self._multi_turn_flow(conversation=transcript)
+        return {"score": 4.0}
+
+
+@pytest.mark.unittest
+class TestConversationMessagesCompatibility:
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("trailing_user", [False, True])
+    def test_conversation_matches_native_messages(self, asynchronous, trailing_user):
+        messages = [
+            {"role": "assistant", "content": "Welcome"},
+            {"role": "user", "content": "Question"},
+            {"role": "assistant", "content": "Answer"},
+        ]
+        if trailing_user:
+            messages.append({"role": "user", "content": "Unanswered question"})
+        actual, expected = _MessagesEvaluator(), _MessagesEvaluator()
+        if asynchronous:
+            result = asyncio.run(actual._to_async()(conversation={"messages": messages}))
+            reference = asyncio.run(expected._to_async()(messages=deepcopy(messages)))
+        else:
+            result = actual(conversation={"messages": messages})
+            reference = expected(messages=deepcopy(messages))
+        assert result == reference
+        assert actual.inputs == expected.inputs
+        assert actual._multi_turn_flow.call_args_list == expected._multi_turn_flow.call_args_list
+        actual._multi_turn_flow.assert_called_once()
+        assert actual.inputs[0]["messages"] == messages
+
+    def test_conversation_does_not_mutate_function_call_blocks(self):
+        messages = [
+            {
+                "role": "assistant",
+                "content": [{"type": "function_call", "name": "lookup", "arguments": {}, "tool_call_id": "call1"}],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call1",
+                "content": [{"type": "function_call_output", "function_call_output": "ready"}],
+            },
+            {"role": "user", "content": "Question"},
+            {"role": "assistant", "content": "Answer"},
+        ]
+        original = deepcopy(messages)
+        evaluator = _MessagesEvaluator()
+        evaluator(conversation={"messages": messages})
+        transcript = evaluator._multi_turn_flow.call_args.kwargs["conversation"]
+        assert transcript.index("[TOOL_CALL]") < transcript.index("[TOOL_RESULT]") < transcript.index("Question")
+        assert messages == original
+
+    def test_last_turn_selection(self):
+        messages = [
+            {"role": "assistant", "content": "Welcome"},
+            {"role": "user", "content": "Question"},
+            {"role": "assistant", "content": "Answer"},
+        ]
+        evaluator = _MessagesEvaluator(eval_last_turn=True)
+        evaluator(conversation={"messages": messages})
+        assert evaluator.inputs[0]["messages"] == messages[-2:]
+        assert len(messages) == 3
+
+    @pytest.mark.parametrize("extra", [{"query": "conflict"}, {"messages": [{"role": "user", "content": "conflict"}]}])
+    def test_mixed_inputs_still_rejected(self, extra):
+        evaluator = _MessagesEvaluator()
+        with pytest.raises(EvaluationException, match="Cannot provide both"):
+            evaluator(conversation={"messages": [{"role": "user", "content": "Question"}]}, **extra)
+        evaluator._multi_turn_flow.assert_not_called()
+
+    def test_legacy_evaluator_still_uses_turn_pairs(self):
+        evaluator = _MessagesEvaluator(whole_conversation=False)
+        evaluator(
+            conversation={
+                "messages": [
+                    {"role": "user", "content": "Question"},
+                    {"role": "assistant", "content": "Answer"},
+                ]
+            }
+        )
+        assert evaluator.inputs == [{"query": "Question", "response": "Answer"}]
 
 
 class TestHoistMessagesToConversation:

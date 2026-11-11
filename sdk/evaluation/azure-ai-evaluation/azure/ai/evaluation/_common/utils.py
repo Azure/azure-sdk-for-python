@@ -7,6 +7,7 @@ import posixpath
 import re
 import math
 import threading
+from itertools import zip_longest
 from typing import Any, Dict, List, Literal, Mapping, Optional, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
 
 import nltk
@@ -726,20 +727,19 @@ def _pretty_format_conversation_history(conversation_history):
     if conversation_history.get("system_message"):
         formatted_history += "SYSTEM_PROMPT:\n"
         formatted_history += "  " + conversation_history["system_message"] + "\n\n"
-    for i, (user_query, agent_response) in enumerate(
-        zip(conversation_history["user_queries"], conversation_history["agent_responses"] + [None])
-    ):
-        formatted_history += f"User turn {i+1}:\n"
-        for msg in user_query:
-            if isinstance(msg, list):
-                for submsg in msg:
-                    formatted_history += "  " + "\n  ".join(submsg.split("\n")) + "\n"
-            else:
-                formatted_history += "  " + "\n  ".join(msg.split("\n")) + "\n"
-        formatted_history += "\n"
-        if agent_response:
-            formatted_history += f"Agent turn {i+1}:\n"
-            for msg in agent_response:
+    labels = ("User", "Agent")
+    pairs = zip(conversation_history["user_queries"], conversation_history["agent_responses"] + [None])
+    if "agent_first" in conversation_history:
+        pairs = zip_longest(conversation_history["user_queries"], conversation_history["agent_responses"])
+        if conversation_history["agent_first"]:
+            labels = ("Agent", "User")
+            pairs = zip_longest(conversation_history["agent_responses"], conversation_history["user_queries"])
+    for i, pair in enumerate(pairs):
+        for label, content in zip(labels, pair):
+            if (content is None and "agent_first" in conversation_history) or (label == "Agent" and not content):
+                continue
+            formatted_history += f"{label} turn {i+1}:\n"
+            for msg in content:
                 if isinstance(msg, list):
                     for submsg in msg:
                         formatted_history += "  " + "\n  ".join(submsg.split("\n")) + "\n"
@@ -1445,6 +1445,7 @@ def serialize_messages(messages):
     all_agent_responses = []
     cur_user_query = []
     cur_agent_response = []
+    agent_first = False
     system_message = None
 
     for msg in messages:
@@ -1463,16 +1464,18 @@ def serialize_messages(messages):
             system_message = _extract_system_message_content(msg.get("content", ""))
 
         elif role == MessageRole.USER and "content" in msg:
-            if cur_agent_response:
-                formatted = _get_agent_response(cur_agent_response, include_tool_messages=True)
-                all_agent_responses.append([formatted])
-                cur_agent_response = []
             content = msg["content"]
             if isinstance(content, str):
                 text_in_msg = [content]
             else:
                 text_in_msg = _extract_text_from_content(content)
             if text_in_msg:
+                if cur_agent_response:
+                    formatted = _get_agent_response(cur_agent_response, include_tool_messages=True)
+                    if not all_user_queries:
+                        agent_first = True
+                    all_agent_responses.append([formatted])
+                    cur_agent_response = []
                 cur_user_query.append(text_in_msg)
 
         elif role in (MessageRole.ASSISTANT, MessageRole.TOOL):
@@ -1490,26 +1493,13 @@ def serialize_messages(messages):
 
     conversation_history: Dict = {
         "user_queries": all_user_queries,
-        "agent_responses": all_agent_responses[: len(all_user_queries) - 1] if len(all_user_queries) > 0 else [],
+        "agent_responses": all_agent_responses,
+        "agent_first": agent_first,
     }
     if system_message:
         conversation_history["system_message"] = system_message
 
-    result = _pretty_format_conversation_history(conversation_history)
-
-    # Append any trailing agent turn (the final response after the last user query)
-    start = max(len(all_user_queries) - 1, 0)
-    for i, agent_response in enumerate(all_agent_responses[start:], start=start):
-        result += f"Agent turn {i + 1}:\n"
-        for msg_text in agent_response:
-            if isinstance(msg_text, list):
-                for submsg in msg_text:
-                    result += "  " + "\n  ".join(submsg.split("\n")) + "\n"
-            else:
-                result += "  " + "\n  ".join(msg_text.split("\n")) + "\n"
-        result += "\n"
-
-    return result.rstrip("\n")
+    return _pretty_format_conversation_history(conversation_history).rstrip("\n")
 
 
 def _resolve_evaluation_level(

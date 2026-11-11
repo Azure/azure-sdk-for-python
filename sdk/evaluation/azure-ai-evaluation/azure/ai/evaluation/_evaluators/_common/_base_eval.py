@@ -137,7 +137,25 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
-        self._async_evaluator = AsyncEvaluatorBase(self._real_call)
+        real_call = self._real_call
+
+        async def call_with_messages(**kwargs):
+            conversation = kwargs.get("conversation")
+            inputs = self._get_all_singleton_inputs()
+            if (
+                isinstance(conversation, dict)
+                and "messages" in conversation
+                and "messages" in inputs
+                and hasattr(self, "_multi_turn_flow")
+                and not any(kwargs.get(name) for name in inputs)
+            ):
+                kwargs.update(copy.deepcopy(conversation))
+                kwargs.pop("conversation")
+                if self._eval_last_turn and isinstance(kwargs["messages"], list):
+                    kwargs["messages"] = kwargs["messages"][-2:]
+            return await real_call(**kwargs)
+
+        self._async_evaluator = AsyncEvaluatorBase(call_with_messages)
         self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
         self._higher_is_better = _higher_is_better
         self._threshold = threshold
