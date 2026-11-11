@@ -234,7 +234,8 @@ def _begin_single_aoai_evaluation(
             target=ErrorTarget.AOAI_GRADER,
         )
     for name, criteria in zip(grader_name_list, testing_criteria):
-        grader_name_map[criteria.id] = name
+        # Native OpenAI grader models may omit id; their results are keyed by name.
+        grader_name_map[getattr(criteria, "id", None) or criteria.name] = name
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")

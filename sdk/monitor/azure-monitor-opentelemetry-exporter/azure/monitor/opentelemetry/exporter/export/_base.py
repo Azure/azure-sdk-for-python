@@ -61,7 +61,7 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import (
     ConnectionStringParser,
 )
 from azure.monitor.opentelemetry.exporter._routing import _is_trusted_routed_redirect, _RoutedRedirectPolicy
-from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage, StorageExportResult
 from azure.monitor.opentelemetry.exporter._configuration._state import (
     get_configuration_manager,
 )
@@ -88,6 +88,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     increment_and_check_statsbeat_failure_count,
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
+    set_statsbeat_gen_ai_input_output_limit_increase_feature_set,
+    set_statsbeat_multi_endpoint_routing_feature_set,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _update_requests_map,
@@ -350,8 +352,8 @@ class BaseExporter:
             options["disable_offline_storage"] = True
             if not self._disable_offline_storage:
                 logger.warning(
-                    "The %s cached route and offline storage partition limit has been reached. "
-                    "This destination will transmit with a short-lived client and without offline storage.",
+                    "Multi-endpoint routing: The %s cached route and offline storage partition limit has been reached. "
+                    "Using a short-lived client without offline storage; reduce destination cardinality.",
                     _MAX_CACHED_ROUTE_EXPORTERS,
                 )
         elif not self._disable_offline_storage:
@@ -406,7 +408,10 @@ class BaseExporter:
                     try:
                         exporter._transmit_from_storage()
                     except Exception:  # pylint: disable=broad-except
-                        logger.exception("Exception occurred while retrying routed telemetry.")  # pylint: disable=C4769
+                        logger.error(
+                            "Multi-endpoint routing: Pending telemetry remains in storage after a retry failure. "
+                            "Check storage access and exporter configuration.",
+                        )
         finally:
             detach(token)
 
@@ -416,14 +421,22 @@ class BaseExporter:
         routes = []
         with self._route_lock:
             if self._routing_shutdown:
-                logger.error("Cannot export routed telemetry after shutdown.")
+                logger.error("Multi-endpoint routing: Cannot export routed telemetry after shutdown.")
                 return ExportResult.FAILED_NOT_RETRYABLE
             for (endpoint, is_aad), envelopes in groups.items():
                 try:
                     exporter, temporary = self._get_route_exporter(endpoint, is_aad)
                     routes.append((exporter, envelopes, temporary))
-                except ValueError as error:
-                    logger.error("Cannot initialize a routed exporter: %s", error)
+                except ValueError:
+                    if is_aad and self._credential is None:
+                        logger.error(
+                            "Multi-endpoint routing: An AAD route requires an exporter credential. "
+                            "Configure an exporter credential for microsoft.ingestion_auth=aad."
+                        )
+                    else:
+                        logger.error(
+                            "Multi-endpoint routing: Cannot initialize a routed exporter. Check exporter configuration."
+                        )
                     result = ExportResult.FAILED_NOT_RETRYABLE
         for exporter, envelopes, temporary in routes:
             try:
@@ -432,7 +445,7 @@ class BaseExporter:
                         locks.enter_context(self._transmit_lock)
                     locks.enter_context(exporter._transmit_lock)
                     if self._routing_shutdown:
-                        logger.error("Cannot export routed telemetry after shutdown.")
+                        logger.error("Multi-endpoint routing: Cannot export routed telemetry after shutdown.")
                         result = ExportResult.FAILED_NOT_RETRYABLE
                         continue
                     route_result = exporter._transmit(envelopes)
@@ -495,6 +508,10 @@ class BaseExporter:
                     blob.delete()
                 else:
                     # If blob.get() returns None, delete the corrupted blob
+                    if self._route is not None:
+                        logger.error(
+                            "Multi-endpoint routing: Deleting an unreadable retry blob. Check retry storage integrity.",
+                        )
                     blob.delete()
                 drained += 1
 
@@ -511,6 +528,12 @@ class BaseExporter:
                     )
                 else:
                     result_from_storage_put = storage.put(envelopes_to_store)
+                if self._route is not None and result_from_storage_put != StorageExportResult.LOCAL_FILE_BLOB_SUCCESS:
+                    logger.error(
+                        "Multi-endpoint routing: Could not store telemetry for retry. "
+                        "Check storage permissions, storage_max_size, "
+                        "and offline storage configuration."
+                    )
                 if self._should_collect_customer_sdkstats():
                     track_dropped_items_from_storage(result_from_storage_put, envelopes)
                 self._retry_after_delay_seconds = None
@@ -519,6 +542,11 @@ class BaseExporter:
                 self._transmit_from_storage()
 
         else:
+            if self._route is not None and result == ExportResult.FAILED_RETRYABLE:
+                logger.error(
+                    "Multi-endpoint routing: Retryable telemetry dropped because offline storage is disabled. "
+                    "Enable offline storage."
+                )
             # Track items that would have been retried but are dropped since client has local storage disabled
             if self._should_collect_customer_sdkstats():
                 track_dropped_items(envelopes, DropCode.CLIENT_STORAGE_DISABLED)
@@ -546,7 +574,10 @@ class BaseExporter:
                 remaining = self._route_retry_at - time.monotonic()
                 if remaining > 0:
                     self._retry_after_delay_seconds = math.ceil(remaining)
-                    logger.debug("Deferring routed telemetry to offline storage during destination backoff.")
+                    logger.debug(
+                        "Multi-endpoint routing: Deferring telemetry to offline storage "
+                        "until the destination retry window expires.",
+                    )
                     return ExportResult.FAILED_RETRYABLE
             # Client-side rate limiting: cap send rate to protect shared ingestion infrastructure.
             # Stats exporters bypass rate limiting to ensure observability data is not lost.
@@ -559,6 +590,11 @@ class BaseExporter:
                 and not self._is_customer_sdkstats_exporter()
             ):
                 granted = self._rate_limiter.try_consume(len(envelopes))
+                if self._route is not None and granted < len(envelopes):
+                    logger.warning(
+                        "Multi-endpoint routing: Rate limit reached; deferring telemetry for retry. "
+                        "Check max_envelopes_per_second and offline storage capacity.",
+                    )
                 if granted == 0:
                     logger.warning(
                         "Rate limiter rejected entire batch of %d envelopes. Routing to local storage for retry.",
@@ -581,7 +617,13 @@ class BaseExporter:
                     )
                     storage = self.storage
                     if storage:
-                        storage.put([x.as_dict() for x in overflow])
+                        storage_result = storage.put([x.as_dict() for x in overflow])
+                        if self._route is not None and storage_result != StorageExportResult.LOCAL_FILE_BLOB_SUCCESS:
+                            logger.error(
+                                "Multi-endpoint routing: Could not store rate-limited telemetry. "
+                                "Check storage permissions, storage_max_size, "
+                                "and offline storage configuration."
+                            )
                     else:
                         logger.warning(
                             "Rate limiter deferred %d envelopes but offline "
@@ -629,10 +671,15 @@ class BaseExporter:
                 else:  # 206
                     reach_ingestion = True
                     for error in track_response.errors:
+                        status_code = error.status_code if isinstance(error.status_code, int) else "unknown"
                         # Check for sampling rejection - these should not be retried
                         # because the server will always reject them based on sampling rules
                         if _is_sampling_rejection(error.message):
-                            if not self._is_stats_exporter():
+                            if self._route is not None:
+                                logger.info(
+                                    "Multi-endpoint routing: Telemetry dropped by ingestion sampling.",
+                                )
+                            elif not self._is_stats_exporter():
                                 logger.info(
                                     "Data dropped due to ingestion sampling: %s %s.",
                                     error.message,
@@ -648,6 +695,13 @@ class BaseExporter:
                             # Track retried items in customer sdkstats
                             if self._should_collect_customer_sdkstats():
                                 track_retry_items(resend_envelopes, error)
+                            if self._route is not None:
+                                logger.warning(
+                                    "Multi-endpoint routing: Ingestion rejected an item for retry. "
+                                    "Check service availability and throttling. "
+                                    "HTTP status: %s.",
+                                    status_code,
+                                )
                         else:
                             if not self._is_stats_exporter():
                                 # Track dropped items in customer sdkstats, non-retryable scenario
@@ -659,12 +713,19 @@ class BaseExporter:
                                         and isinstance(error.status_code, int)
                                     ):
                                         track_dropped_items([envelopes[error.index]], error.status_code)
-                                logger.error(
-                                    "Data drop %s: %s %s.",
-                                    error.status_code,
-                                    error.message,
-                                    (envelopes[error.index] if error.index is not None else ""),
-                                )
+                                if self._route is not None:
+                                    logger.error(
+                                        "Multi-endpoint routing: Ingestion rejected an item permanently. "
+                                        "Check telemetry format and destination configuration. HTTP status: %s.",
+                                        status_code,
+                                    )
+                                else:
+                                    logger.error(
+                                        "Data drop %s: %s %s.",
+                                        error.status_code,
+                                        error.message,
+                                        (envelopes[error.index] if error.index is not None else ""),
+                                    )
                     storage = self.storage
                     if storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
@@ -674,16 +735,39 @@ class BaseExporter:
                             else self._storage_min_retry_interval
                         )
                         result_from_storage = storage.put(envelopes_to_store, lease_period)
+                        if (
+                            self._route is not None
+                            and result_from_storage != StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
+                        ):
+                            logger.error(
+                                "Multi-endpoint routing: Could not store rejected telemetry for retry. "
+                                "Check storage permissions, "
+                                "storage_max_size, and offline storage configuration."
+                            )
                         if self._should_collect_customer_sdkstats():
                             track_dropped_items_from_storage(result_from_storage, resend_envelopes)
                         self._consecutive_redirects = 0
                     elif resend_envelopes:
                         # Track items that would have been retried but are dropped since client has local storage disabled
+                        if self._route is not None:
+                            logger.error(
+                                "Multi-endpoint routing: Retryable telemetry dropped because offline storage is disabled. "
+                                "Enable offline storage."
+                            )
                         if self._should_collect_customer_sdkstats():
                             track_dropped_items(resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
                     # Mark as not retryable because we already write to storage here
                     result = ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
+                if self._route is not None and not _is_redirect_code(response_error.status_code):
+                    status_code = (
+                        response_error.status_code if isinstance(response_error.status_code, int) else "unknown"
+                    )
+                    logger.error(
+                        "Multi-endpoint routing: Ingestion returned HTTP status: %s. "
+                        "Check destination configuration, authentication, service availability, and throttling.",
+                        status_code,
+                    )
                 # HttpResponseError is raised when a response is received
                 if _reached_ingestion_code(response_error.status_code):
                     reach_ingestion = True
@@ -695,14 +779,14 @@ class BaseExporter:
                     if not self._is_stats_exporter():
                         if self._should_collect_customer_sdkstats():
                             track_retry_items(envelopes, response_error)
-                        if response_error.status_code == 401:
+                        if response_error.status_code == 401 and self._route is None:
                             logger.error(
                                 "Retryable server side error: %s. "
                                 "Your Application Insights resource may be configured to use entra ID authentication. "
                                 "Please make sure your application is configured to use the correct token credential.",
                                 response_error.message,
                             )
-                        elif response_error.status_code == 403:
+                        elif response_error.status_code == 403 and self._route is None:
                             logger.error(
                                 "Retryable server side error: %s. "
                                 "Your application may be configured with a token credential "
@@ -778,9 +862,13 @@ class BaseExporter:
                                         DropCode.CLIENT_EXCEPTION,
                                         _exception_categories.CLIENT_EXCEPTION.value,
                                     )
-                                logger.error(
-                                    "Error parsing redirect information.",
-                                )
+                                if self._route is not None:
+                                    logger.error(
+                                        "Multi-endpoint routing: Could not parse a redirect. "
+                                        "Configure the correct HTTPS ingestion endpoint.",
+                                    )
+                                else:
+                                    logger.error("Error parsing redirect information.")
                             result = ExportResult.FAILED_NOT_RETRYABLE
                     else:
                         if not self._is_stats_exporter():
@@ -791,10 +879,16 @@ class BaseExporter:
                                     DropCode.CLIENT_EXCEPTION,
                                     _exception_categories.CLIENT_EXCEPTION.value,
                                 )
-                            logger.error(
-                                "Error sending telemetry because of circular redirects. "
-                                "Please check the integrity of your connection string."
-                            )
+                            if self._route is not None:
+                                logger.error(
+                                    "Multi-endpoint routing: Too many consecutive redirects. "
+                                    "Configure the correct HTTPS ingestion endpoint.",
+                                )
+                            else:
+                                logger.error(
+                                    "Error sending telemetry because of circular redirects. "
+                                    "Please check the integrity of your connection string."
+                                )
                         # If redirect but did not return, exception occurred
                         if self._should_collect_stats():
                             _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
@@ -806,10 +900,8 @@ class BaseExporter:
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_FAILURE_NAME[1], value=response_error.status_code)
                     if not self._is_stats_exporter():
-                        logger.error(
-                            "Non-retryable server side error: %s.",
-                            response_error.message,
-                        )
+                        if self._route is None:
+                            logger.error("Non-retryable server side error: %s.", response_error.message)
                         # Track dropped items in customer sdkstats, non-retryable scenario
                         if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
                             track_dropped_items(envelopes, response_error.status_code)
@@ -831,7 +923,13 @@ class BaseExporter:
                 # Errors when we're fairly sure that the server did not receive the
                 # request, so it should be safe to retry.
                 # ServiceRequestError is raised by azure.core for these cases
-                logger.warning("Retrying due to server request error: %s.", request_error.message)
+                if self._route is not None:
+                    logger.warning(
+                        "Multi-endpoint routing: Retrying a network request failure. "
+                        "Check connectivity and destination configuration.",
+                    )
+                else:
+                    logger.warning("Retrying due to server request error: %s.", request_error.message)
 
                 # Track retry items in customer sdkstats for client-side exceptions
                 if self._should_collect_customer_sdkstats():
@@ -846,7 +944,13 @@ class BaseExporter:
             except ServiceResponseError as response_error:
                 # The request was sent but the client failed to receive a response
                 # (e.g. read timeout).
-                logger.warning("Retrying due to server response error: %s.", response_error.message)
+                if self._route is not None:
+                    logger.warning(
+                        "Multi-endpoint routing: Retrying an incomplete response. "
+                        "Check connectivity and service availability.",
+                    )
+                else:
+                    logger.warning("Retrying due to server response error: %s.", response_error.message)
 
                 # Track retry items in customer sdkstats for client-side exceptions
                 if self._should_collect_customer_sdkstats():
@@ -859,9 +963,15 @@ class BaseExporter:
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
-                logger.exception(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-use-logging-exception
-                    "Envelopes could not be exported and are not retryable: %s.", ex
-                )
+                if self._route is not None:
+                    logger.error(
+                        "Multi-endpoint routing: Telemetry dropped after an unexpected export failure. "
+                        "Check exporter configuration.",
+                    )
+                else:
+                    logger.exception(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-use-logging-exception
+                        "Envelopes could not be exported and are not retryable: %s.", ex
+                    )
 
                 # Track dropped items in customer sdkstats for general exceptions
                 if self._should_collect_customer_sdkstats():
@@ -1261,5 +1371,10 @@ def _get_experimental_features() -> FrozenSet[str]:
                         _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
                         ", ".join(sorted(unknown_features)),
                     )
-                _enabled_experimental_features = requested_features & _SUPPORTED_EXPERIMENTAL_FEATURES
+                enabled_features = requested_features & _SUPPORTED_EXPERIMENTAL_FEATURES
+                if "gen_ai_input_output_limit_increase" in enabled_features:
+                    set_statsbeat_gen_ai_input_output_limit_increase_feature_set()
+                if "multi_endpoint_routing" in enabled_features:
+                    set_statsbeat_multi_endpoint_routing_feature_set()
+                _enabled_experimental_features = enabled_features
     return _enabled_experimental_features

@@ -25,12 +25,25 @@ class TestRouting(unittest.TestCase):
             "microsoft.ingestion_endpoint": "https://example.com/",
         }
         self.assertTrue(_is_valid_route(attributes))
-        for invalid in (None, {}, {**attributes, "microsoft.ingestion_endpoint": "http://example.com/"}):
+        for invalid in (
+            None,
+            {},
+            {**attributes, "microsoft.ingestion_endpoint": "http://example.com/"},
+            {"microsoft.instrumentation_key": "secret-key" * 100},
+            {
+                "microsoft.instrumentation_key": "secret-key",
+                "microsoft.ingestion_endpoint": "https://user:password@example.com/?token=secret",
+                "secret-attribute": "private-telemetry",
+            },
+        ):
             with self.subTest(attributes=invalid):
                 with self.assertLogs("azure.monitor.opentelemetry.exporter._routing", level="DEBUG") as logs:
                     self.assertFalse(_is_valid_route(invalid))
                 self.assertEqual(len(logs.output), 1)
-                self.assertIn("Dropping telemetry with invalid multi-endpoint routing attributes", logs.output[0])
+                self.assertEqual(logs.records[0].levelname, "DEBUG")
+                self.assertIsNone(logs.records[0].exc_info)
+                for secret in ("secret-key", "password", "example.com", "private-telemetry"):
+                    self.assertNotIn(secret, logs.output[0])
 
     def test_instrumentation_key(self):
         for value, expected in (
