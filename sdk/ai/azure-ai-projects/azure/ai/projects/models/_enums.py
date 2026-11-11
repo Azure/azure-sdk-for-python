@@ -314,6 +314,24 @@ class AgentOptimizationGoal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Search for agent configurations that improve measured evaluation quality."""
 
 
+class AgentOptimizationJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Optimization job lifecycle, including a terminal skip when required input is unavailable."""
+
+    QUEUED = "queued"
+    """Job is waiting to start."""
+    IN_PROGRESS = "in_progress"
+    """Job is actively processing."""
+    SUCCEEDED = "succeeded"
+    """Job completed successfully."""
+    FAILED = "failed"
+    """Job failed."""
+    CANCELLED = "cancelled"
+    """Job was cancelled by the caller."""
+    SKIPPED = "skipped"
+    """Required input was unavailable and optimization was skipped. Terminal, but not evidence that
+    skills were created; error explains the skip."""
+
+
 class AgentOptimizationSkillExecutionStepStatus(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):

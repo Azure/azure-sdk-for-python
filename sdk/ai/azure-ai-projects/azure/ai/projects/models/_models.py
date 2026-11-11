@@ -3823,8 +3823,8 @@ class AgentOptimizationJob(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.AgentOptimizationJobResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", and "cancelled".
-    :vartype status: str or ~azure.ai.projects.models.JobStatus
+     "succeeded", "failed", "cancelled", and "skipped".
+    :vartype status: str or ~azure.ai.projects.models.AgentOptimizationJobStatus
     :ivar error: Failure or skip reason; status distinguishes the outcomes. Omitted otherwise.
     :vartype error: ~azure.ai.projects.models.ApiError
     :ivar display_name: Human-readable label. Omitted when no label is needed; it has no
@@ -3858,9 +3858,9 @@ class AgentOptimizationJob(_Model):  # pylint: disable=docstring-keyword-should-
     """Server-assigned unique identifier. Required."""
     result: Optional["_models.AgentOptimizationJobResult"] = rest_field(visibility=["read"])
     """Result produced on success."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
+    status: Union[str, "_models.AgentOptimizationJobStatus"] = rest_field(visibility=["read"])
     """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
-     \"succeeded\", \"failed\", and \"cancelled\"."""
+     \"succeeded\", \"failed\", \"cancelled\", and \"skipped\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Failure or skip reason; status distinguishes the outcomes. Omitted otherwise."""
     display_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
