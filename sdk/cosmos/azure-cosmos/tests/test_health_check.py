@@ -254,7 +254,12 @@ def test_health_check_probe_isolation():
                 _location_cache.LocationCache.GetLocationalEndpoint(test_config.TestConfig.host, region)
                 for region in REGIONS
             ]
-            assert len(probe.call_args_list) == 3
+            unrelated = object.__new__(_cosmos_client_connection.CosmosClientConnection)
+            unrelated.health_check(endpoints[0])
+            secondary_endpoints = [
+                call.args[1] for call in probe.call_args_list if call.args[0] is connections[1]
+            ]
+            assert secondary_endpoints == [endpoints[0]]
             _assert_startup_health_checks(probe, connections[0], endpoints)
 
             connections[0].health_check(endpoints[0])
