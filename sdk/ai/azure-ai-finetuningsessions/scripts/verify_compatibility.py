@@ -99,7 +99,7 @@ LEGACY_FOUNDRY_FEATURES = {
     "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview",
 }
 FOUNDRY_FEATURES_DEFINITION = {
-    "version": 1,
+    "version": 2,
     "source": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
     "type": "FoundryFeaturesOptInKeys",
     "members": {
@@ -107,7 +107,6 @@ FOUNDRY_FEATURES_DEFINITION = {
         "SCHEDULES_V1_PREVIEW": "Schedules=V1Preview",
         "RED_TEAMS_V1_PREVIEW": "RedTeams=V1Preview",
         "INSIGHTS_V1_PREVIEW": "Insights=V1Preview",
-        "AGENT_INSIGHTS_V1_PREVIEW": "AgentInsights=V1Preview",
         "MEMORY_STORES_V1_PREVIEW": "MemoryStores=V1Preview",
         "ROUTINES_V2_PREVIEW": "Routines=V2Preview",
         "SKILLS_V1_PREVIEW": "Skills=V1Preview",
@@ -117,7 +116,7 @@ FOUNDRY_FEATURES_DEFINITION = {
         "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview",
     },
     "header": "FineTuningSessions=V1Preview",
-    "behavior": "Preserve six existing members, signatures and wire headers; add only six canonical members",
+    "behavior": "Preserve six original members, signatures and wire headers; retain five canonical additions after Agent Insights GA retirement",
 }
 SAMPLING_PROMPT_TOKENS_CONTRACT = "sampling-prompt-tokens"
 SAMPLING_PROMPT_TOKENS_DEFINITION = {

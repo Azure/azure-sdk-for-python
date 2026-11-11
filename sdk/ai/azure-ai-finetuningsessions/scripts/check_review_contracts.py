@@ -652,7 +652,7 @@ for name, path, operation, value in (
     ),
     (
         "features_missing",
-        ["cases", "surface_and_signatures", "output", "enums", "FoundryFeaturesOptInKeys", "AGENT_INSIGHTS_V1_PREVIEW"],
+        ["cases", "surface_and_signatures", "output", "enums", "FoundryFeaturesOptInKeys", "INSIGHTS_V1_PREVIEW"],
         "delete",
         None,
     ),

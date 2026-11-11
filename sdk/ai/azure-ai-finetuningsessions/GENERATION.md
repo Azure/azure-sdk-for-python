@@ -71,6 +71,14 @@ The shared SDK toolchain uses Python emitter 0.63.11, Python generator 0.40.0,
 and TypeSpec compiler 1.17.0. The central SDK manifest/lock remain authoritative;
 the package archives exact copies for independent verification.
 
+The latest Foundry release base retires the Agent Insights preview opt-in after
+that feature became generally available. Regeneration intentionally removes
+`FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW`; the current compatibility
+contract records the exact remaining eleven-member enum. No fine-tuning runtime
+code uses the retired member, and `FineTuningSessions=V1Preview` is unchanged.
+Code explicitly referencing the retired constant must be updated. All other
+Python runtime files remain identical to the pre-base-update SDK.
+
 Canonical REST routes use `/fine_tuning_sessions`. TypeSpec describes text-only
 messages/reference training and checkpoint preparation/file reads. Python-only
 projections retain the published token-native forward-backward constructor and

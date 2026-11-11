@@ -1095,7 +1095,6 @@ namespace azure.ai.finetuningsessions.models
 
 
     class azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        AGENT_INSIGHTS_V1_PREVIEW = "AgentInsights=V1Preview"
         DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
         EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
         FINETUNING_SESSIONS_V1_PREVIEW = "FineTuningSessions=V1Preview"

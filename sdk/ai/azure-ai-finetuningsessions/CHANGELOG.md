@@ -17,6 +17,10 @@
 - Preserve the latest Loom polling, sampling-limit, heartbeat shutdown, and scalar/tensor serialization behavior. Protected training is not blindly resubmitted after ambiguous submission or completion failures.
 - Generate raw operations against canonical `/fine_tuning_sessions` routes while retaining existing Python token-native constructors and convenience compatibility hooks.
 
+### Breaking Changes
+
+- Remove `FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW` to follow the shared Foundry contract after Agent Insights became generally available. This obsolete opt-in is no longer needed. Callers explicitly referencing the constant must remove that reference; fine-tuning continues to use the unchanged `FINETUNING_SESSIONS_V1_PREVIEW` value.
+
 ### Other Changes
 
 - Pin discriminated TypeSpec request-message and tool-definition hierarchies. Existing request JSON, four supported roles, function-only tools, and Python API/runtime remain unchanged; add sync/async regression checks rejecting unsupported tool definitions.
