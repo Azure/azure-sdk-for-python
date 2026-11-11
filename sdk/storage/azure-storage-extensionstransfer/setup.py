@@ -14,7 +14,7 @@ from pathlib import Path
 
 from setuptools import setup
 
-PACKAGE_NAME = "azure-storage-extensions-transfer"
+PACKAGE_NAME = "azure-storage-extensionstransfer"
 
 version_text = Path("azure", "storage", "extensions", "transfer", "_version.py").read_text()
 version = re.search(r'VERSION = "(.*?)"', version_text).group(1)

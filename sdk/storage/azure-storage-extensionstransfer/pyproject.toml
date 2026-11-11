@@ -8,7 +8,7 @@ requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "azure-storage-extensions-transfer"
+name = "azure-storage-extensionstransfer"
 authors = [
   { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
 ]
@@ -32,7 +32,7 @@ keywords = ["azure", "azure sdk"]
 dynamic = ["version"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensions-transfer"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensionstransfer"
 
 [tool.maturin]
 features = ["pyo3/extension-module"]

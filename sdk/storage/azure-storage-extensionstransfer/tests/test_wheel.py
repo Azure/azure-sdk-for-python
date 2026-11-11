@@ -16,7 +16,7 @@ from azure.storage.extensions.transfer import _native
 class TestExtensionWheel(unittest.TestCase):
     def test_native_module_available(self):
         self.assertTrue(transfer.is_available())
-        self.assertEqual(transfer.__version__, version("azure-storage-extensions-transfer"))
+        self.assertEqual(transfer.__version__, version("azure-storage-extensionstransfer"))
         self.assertIs(transfer.NativeTransferError, _native.NativeTransferError)
         self.assertTrue(issubclass(transfer.NativeTransferError, Exception))
         self.assertTrue(callable(transfer.upload_blob))

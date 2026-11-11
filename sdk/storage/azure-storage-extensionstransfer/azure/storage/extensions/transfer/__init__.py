@@ -128,7 +128,7 @@ def upload_blob(
     if not _NATIVE_AVAILABLE:
         raise ValueError(
             "Native transfer extension is not available. "
-            "Install azure-storage-extensions-transfer to use this function."
+            "Install azure-storage-extensionstransfer to use this function."
         )
     return _native_upload(
         url,
@@ -242,7 +242,7 @@ def download_blob(
     if not _NATIVE_AVAILABLE:
         raise ValueError(
             "Native transfer extension is not available. "
-            "Install azure-storage-extensions-transfer to use this function."
+            "Install azure-storage-extensionstransfer to use this function."
         )
     return _native_download(
         url,

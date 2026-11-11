@@ -45,7 +45,7 @@ changes in minor releases. Native transfer return types, request counts, and err
 may differ from transfers without the extension; unsupported options raise errors rather than
 automatically falling back to Python. Set `AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` to use
 Python transfers even when the extension is installed. Asynchronous APIs do not use the extension.
-See the [transfer extension README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensions-transfer#readme)
+See the [transfer extension README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensionstransfer#readme)
 for supported options and prerequisites.
 
 ### Create a storage account

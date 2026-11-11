@@ -46,7 +46,7 @@ extends:
     # must be scanned
     EnableCompiledCodeql: true
     InstallMsRustToolchain: true
-    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/storage/azure-storage-extensions-transfer
+    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/storage/azure-storage-extensionstransfer
     MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
     MsRustAdditionalTargets: aarch64-pc-windows-msvc
     Artifacts:
@@ -73,7 +73,7 @@ extends:
       # Pure C-based storage extension package, not generating docs at this moment.
       skipPublishDocGithubIo: true
       skipPublishDocMs: true
-    - name: azure-storage-extensions-transfer
+    - name: azure-storage-extensionstransfer
       safeName: azurestorageextensionstransfer
       signBinaries: true
     - name: azure-mgmt-storage
