@@ -356,5 +356,5 @@
         "azure.mgmt.containerregistry.operations.WebhooksOperations.get_callback_config": "Microsoft.ContainerRegistry.Webhooks.getCallbackConfig",
         "azure.mgmt.containerregistry.aio.operations.WebhooksOperations.get_callback_config": "Microsoft.ContainerRegistry.Webhooks.getCallbackConfig"
     },
-    "CrossLanguageVersion": "217aa3792612"
+    "CrossLanguageVersion": "64eba75e352e"
 }

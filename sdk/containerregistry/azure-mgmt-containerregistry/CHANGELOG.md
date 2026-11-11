@@ -1,6 +1,6 @@
 # Release History
 
-## 15.1.0b4 (2026-11-09)
+## 15.1.0b4 (2026-11-11)
 
 ### Features Added
 
@@ -12,10 +12,6 @@
   - Added model `EntraFederatedIdentityCredentialAuthenticationProperties`
   - Added model `EntraFederatedIdentityCredentialAuthenticationUpdateProperties`
   - Added model `GarAuthenticationUpdateProperties`
-
-### Breaking Changes
-
-  - Model `CacheRuleUpdateProperties` changed type of property `additional_authentication_properties` from `Optional[AdditionalAuthenticationProperties]` to `Optional[AdditionalAuthenticationUpdateProperties]`
 
 ## 15.1.0b3 (2026-09-06)
 
