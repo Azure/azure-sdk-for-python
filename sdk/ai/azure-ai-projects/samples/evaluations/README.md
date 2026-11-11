@@ -58,8 +58,8 @@ python sample_evaluations_builtin_with_inline_data.py
 
 ### Voice Evaluation
 
-[sample_audio_conversation_evaluation.py](sample_audio_conversation_evaluation.py) and its
-[async version](sample_audio_conversation_evaluation_async.py) evaluate a
+[sample_audio_conversation_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_audio_conversation_evaluation.py) and its
+[async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_audio_conversation_evaluation_async.py) evaluate a
 recorded-conversation dataset without calling a target agent. They use
 `builtin.task_completion_audio`, `builtin.groundedness_audio`,
 `builtin.customer_satisfaction_audio`, and `builtin.coherence_audio`.
@@ -74,7 +74,7 @@ the project's default Azure Storage connection and requires dataset upload permi
 
 Optionally set `FOUNDRY_DATASET_ID` to your registered JSONL dataset ID to bypass uploads.
 Existing datasets and recordings are never changed or deleted. To prepare your own inputs, adapt the existing
-[dataset workflow](../datasets/sample_datasets.py): upload the recording folder
+[dataset workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_datasets.py): upload the recording folder
 with a `file_pattern` that includes `.wav` (or omit the filter for a folder containing
 only recordings), and set `data_file` to your JSONL file instead of the sample's
 `.txt` file. Use separate dataset names for the recording folder and JSONL file.
@@ -111,8 +111,8 @@ the existing OpenAI client extension:
 extra_body={"evaluation_level": "conversation"}
 ```
 
-[sample_voice_agent_simulation_evaluation.py](sample_voice_agent_simulation_evaluation.py)
-and its [async version](sample_voice_agent_simulation_evaluation_async.py) instead generate
+[sample_voice_agent_simulation_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_voice_agent_simulation_evaluation.py)
+and its [async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_voice_agent_simulation_evaluation_async.py) instead generate
 a short call against a voice agent, then grade its recording with
 `builtin.task_completion_audio`. These simulation samples require `azure-ai-projects>=2.11.0`
 for the voice-agent configuration models. Only the endpoint and audio-judge variables above are
@@ -130,7 +130,7 @@ Optionally set `FOUNDRY_AGENT_NAME` to an **existing voice agent** to bypass cre
 a version requires an agent name. Existing agents are never changed or deleted.
 The inline seed describes store-hours assistance: use an agent configured for that task,
 or replace the seed with a task your agent supports.
-The [voice-agent samples](../agents/voice/sample_voice_agent_basic.py) show the agent
+The [voice-agent samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_basic.py) show the agent
 configuration; keep the chosen agent/version available when running evaluation.
 Set `FOUNDRY_AGENT_NAME` to that voice agent's name (`FOUNDRY_VOICE_AGENT_NAME` in
 the voice-agent samples).

@@ -16,7 +16,7 @@ tests execute the existing synchronous and asynchronous samples. Both Azure Core
 and OpenAI HTTPX transports use Test Proxy. Playback uses sanitized preparer
 values and requires no Azure credentials.
 
-For re-recording, follow the [voice evaluation setup](../../samples/evaluations/README.md#voice-evaluation)
+For re-recording, follow the [voice evaluation setup](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/README.md#voice-evaluation)
 and provide these environment variables:
 
 | Workflow | Variables |
@@ -35,7 +35,7 @@ Then run both workflows in playback with the real environment variables unset.
 The tests require completed, finite scores for all four audio evaluators, or task
 completion for simulation; low scores remain valid results. Publish the
 recordings and commit the updated package `assets.json` reference using the
-[repository recording workflow](../../../../../doc/dev/tests.md).
+[repository recording workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md).
 
 ## Sample test logging
 
