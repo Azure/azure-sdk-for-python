@@ -12,7 +12,7 @@ DESCRIPTION:
 USAGE:
     python sample_audio_conversation_evaluation_async.py
 
-    pip install "azure-ai-projects>=2.8.0" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.11.0" python-dotenv aiohttp
 
     Set these environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT - Project endpoint.

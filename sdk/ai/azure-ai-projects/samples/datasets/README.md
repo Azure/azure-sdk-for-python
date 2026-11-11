@@ -5,7 +5,7 @@
 Before running any sample:
 
 ```bash
-pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 ```
 
 To run asynchronous samples, also install `aiohttp`. Samples that produce or consume Azure OpenAI files, run evaluations, or seed agent conversations also use `openai`.
