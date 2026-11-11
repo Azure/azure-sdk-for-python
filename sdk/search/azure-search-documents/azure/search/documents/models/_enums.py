@@ -203,8 +203,8 @@ class QueryCaptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class QueryDebugMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enables a debugging tool that can be used to further explore your search results. You can
-    enable multiple debug modes simultaneously by separating them with a | character, for example:
-    semantic|queryRewrites.
+    enable multiple debug modes simultaneously by separating them with a ``|`` character, for
+    example: ``semantic|queryRewrites``.
     """
 
     DISABLED = "disabled"
