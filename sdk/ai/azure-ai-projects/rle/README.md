@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.8b1
+python install_rle_sdk.py --version 2.7.9b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -236,7 +236,40 @@ of this wheel. All 63 packaged Python files match the merged source except
 for the release version, and all nine registry wheels pass integrity and
 checksum validation.
 
-The registry selects `2.7.8b1` as `latest`, preserving all eight earlier
+At publication, the registry selected `2.7.8b1` as `latest`, preserving all eight earlier
 versions and checksums. This is an RLE preview distribution, not a PyPI
 publication. Backend deployment, live gateway/training qualification and
 consumer image rebuilds are separate work.
+
+## Version 2.7.9b1
+
+This preview isolates invalid queued V3/V4 event payloads when the SDK can
+trust their rollout correlation. Only the affected call fails; unfinished
+sibling calls and subsequent work remain usable. Malformed optional structured
+failure causes are omitted with a safe diagnostic instead of replacing the
+original terminal error or failing sibling rollouts.
+
+Diagnostics contain fixed validation categories and validated rollout IDs,
+not full frames, credentials, trajectories or terminal error text. Admission
+at 32, deadlines, authentication, existing transport defaults and no execution
+replay remain unchanged. Nullable/optional cause-schema alignment and recovery
+changes for untrustworthy framing/correlation are not included.
+
+The candidate wheel is built from SDK source commit
+[`c31afd0fd325f73fd4ab781a6b0c8833e92a7c28`](https://github.com/sujit-kamireddy/azure-sdk-for-python/commit/c31afd0fd325f73fd4ab781a6b0c8833e92a7c28)
+in [source PR #19](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/19),
+with only the staged package version overridden to `2.7.9b1`.
+Source PR #19 must receive human review and merge before this candidate is
+published.
+
+The wheel is 613555 bytes with SHA-256
+`a586a2c1e42746f192dde209056e717d3a7a3e842dfc16359095d4c34eac7486`.
+An isolated installation passed 804 offline RLE/rollout/model tests, with two
+tests skipped. All 63 packaged Python files match the pinned source except
+for the release version, dependency requirements are unchanged, and all ten
+registry wheels pass integrity and checksum validation.
+
+The prepared registry selects `2.7.9b1` as `latest`, preserving all nine
+earlier versions and entries. This is an RLE preview distribution, not a
+PyPI publication. Backend deployment, live gateway/training qualification
+and consumer image rebuilds are separate work.
