@@ -18,7 +18,7 @@ pip install "azure-storage-blob[ext-transfer]"
 
 This ensures you get compatible versions of both the SDK and the extensions package.
 
-> ⚠️ Installing `azure-storage-extensions-transfer` directly is not recommended. Use the extras syntax above to ensure compatibility.
+> ⚠️ Installing `azure-storage-extensionstransfer` directly is not recommended. Use the extras syntax above to ensure compatibility.
 
 ### Prerequisites
 * Python 3.10 or later is required.

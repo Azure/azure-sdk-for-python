@@ -7,7 +7,7 @@
 """Internal module for native transfer acceleration dispatch.
 
 This module provides the bridge between azure-storage-blob's Python upload/download
-paths and the optional azure-storage-extensions-transfer Rust extension. Transfers use
+paths and the optional azure-storage-extensionstransfer Rust extension. Transfers use
 the Rust backend whenever the extension is available and raise for unsupported native
 inputs rather than silently falling back to Python.
 """
@@ -91,7 +91,7 @@ def _native_error_type() -> Type[Exception]:
     except ImportError as error:
         raise RuntimeError(
             "The installed native transfer extension does not expose NativeTransferError. "
-            "Install a compatible azure-storage-extensions-transfer build."
+            "Install a compatible azure-storage-extensionstransfer build."
         ) from error
     return NativeTransferError
 

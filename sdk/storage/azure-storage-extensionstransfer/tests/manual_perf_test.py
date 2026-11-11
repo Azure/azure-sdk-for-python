@@ -11,7 +11,7 @@ This is NOT part of any automated test infrastructure. Run it manually:
     python manual_perf_test.py --account-name <account>
 
 It benchmarks ``azure-storage-blob`` upload and download for a range of blob sizes,
-comparing the transparent native acceleration (``azure-storage-extensions-transfer``)
+comparing the transparent native acceleration (``azure-storage-extensionstransfer``)
 against the built-in pure-Python implementation. The two paths are toggled in-process
 via the ``AZURE_STORAGE_DISABLE_NATIVE_TRANSFER`` environment variable, which the SDK's
 dispatch layer honors on every call.
