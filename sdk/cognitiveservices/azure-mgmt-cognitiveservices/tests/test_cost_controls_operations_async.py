@@ -17,7 +17,6 @@ from azure.core.credentials import AccessToken
 from azure.mgmt.cognitiveservices import models
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient
 
-
 SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
 RESOURCE_ID = (
     f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/rg/providers/"

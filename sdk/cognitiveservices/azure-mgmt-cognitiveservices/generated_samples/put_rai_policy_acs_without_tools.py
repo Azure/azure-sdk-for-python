@@ -34,27 +34,11 @@ def main():
         resource_group_name="resource-group",
         account_name="safety-account",
         rai_policy_name="input-guard",
-        rai_policy={
-            "properties": {
-                "acs": {
-                    "agent_control_specification_version": "0.4.0-alpha.1",
-                    "intervention_points": {
-                        "input": {
-                            "policy": {"id": "input-guard"},
-                            "policy_target": "$snap.input",
-                            "policy_target_kind": "user_input",
-                        }
-                    },
-                    "policies": {"input-guard": {"query": "data.input_guard.verdict", "type": "rego"}},
-                },
-                "acsRegos": [{"regoName": "input-guard"}],
-                "format": "ACS",
-            }
-        },
+        rai_policy={"properties": {}},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/PutRaiPolicyAcsWithoutTools.json
+# x-ms-original-file: 2026-11-01/PutRaiPolicyAcsWithoutTools.json
 if __name__ == "__main__":
     main()

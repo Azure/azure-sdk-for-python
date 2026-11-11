@@ -99,9 +99,7 @@ class TestCostControlsLive(AzureMgmtRecordedTestCase):
                 models.CostControlPatch(
                     properties=models.CostControlPatchProperties(
                         display_name="SDK live test updated",
-                        rules=[
-                            _cost_control_rule(amount=50, threshold_action=models.CostControlThresholdAction.BLOCK)
-                        ],
+                        rules=[_cost_control_rule(amount=50, threshold_action=models.CostControlThresholdAction.BLOCK)],
                     )
                 ),
                 etag=etag,
@@ -142,6 +140,7 @@ class TestCostControlsLive(AzureMgmtRecordedTestCase):
                     )
                 except ResourceNotFoundError:
                     pass
+
 
 def _cost_control_rule(amount, threshold_action):
     return models.CostControlRule(

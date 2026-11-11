@@ -34,69 +34,11 @@ def main():
         resource_group_name="resource-group",
         account_name="safety-account",
         rai_policy_name="agent-guard",
-        rai_policy={
-            "properties": {
-                "acs": {
-                    "agent_control_specification_version": "0.4.0-alpha.1",
-                    "intervention_points": {
-                        "input": {
-                            "policy": {
-                                "aacs_moderation": {
-                                    "harm_configs": [
-                                        {"category": "Hate", "harm_config_id": "Hate_Text_MultiSev"},
-                                        {"category": "PromptInjection"},
-                                    ],
-                                    "subject_format": "text",
-                                },
-                                "id": "input-guard",
-                            },
-                            "policy_target": "$snap.input",
-                            "policy_target_kind": "user_input",
-                        },
-                        "post_tool_call": {
-                            "policy": {"id": "tool-guard"},
-                            "policy_target": "$snap.tool_result.value",
-                            "policy_target_kind": "tool_result",
-                            "tool_name_from": "$snap.tool_call.name",
-                        },
-                        "pre_tool_call": {
-                            "policy": {"id": "tool-guard"},
-                            "policy_target": "$snap.tool_call.args",
-                            "policy_target_kind": "tool_args",
-                            "tool_name_from": "$snap.tool_call.name",
-                        },
-                    },
-                    "policies": {
-                        "input-guard": {"query": "data.input_guard.verdict", "type": "rego"},
-                        "tool-guard": {"query": "data.tool_guard.verdict", "type": "rego"},
-                    },
-                    "tools": {
-                        "web_search": {
-                            "allowed_domains": ["learn.microsoft.com", "support.microsoft.com"],
-                            "clearance": "public",
-                            "description": "Search approved public documentation and approved partner sites",
-                            "id": "web_search",
-                            "security_labels": ["network_egress", "untrusted_content"],
-                            "type": "retrieval",
-                        },
-                        "wire_transfer": {
-                            "clearance": "confidential",
-                            "id": "wire_transfer",
-                            "security_labels": ["financial_write"],
-                            "type": "financial_action",
-                        },
-                    },
-                },
-                "acsRegos": [{"regoName": "input-guard"}, {"regoName": "tool-guard"}],
-                "customBlocklists": [],
-                "customExternalSafetyProviders": [],
-                "format": "ACS",
-            }
-        },
+        rai_policy={"properties": {"customBlocklists": []}},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/UpdateRaiPolicyAcs.json
+# x-ms-original-file: 2026-11-01/UpdateRaiPolicyAcs.json
 if __name__ == "__main__":
     main()

@@ -16,7 +16,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python update_workbench_compute_properties.py
+    python create_account_with_trusted_certificate_sources.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,29 +31,33 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.workbenches.update(
-        resource_group_name="rgcognitiveservices",
+    response = client.accounts.begin_create(
+        resource_group_name="myResourceGroup",
         account_name="myAccount",
-        project_name="myProject",
-        workbench_name="myWorkbench",
-        properties={
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity": {}
-                },
-            },
+        account={
+            "identity": {"type": "SystemAssigned"},
+            "kind": "AIServices",
+            "location": "eastus",
             "properties": {
-                "gpuCount": 1,
-                "idleTimeBeforeShutdown": "PT1H",
-                "instanceType": "Singularity.ND12_H100_v5-n1",
-                "targetClusterId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/vc-rg/providers/Microsoft.MachineLearningServices/virtualClusters/test-vc",
+                "allowProjectManagement": True,
+                "customSubDomainName": "myAccount",
+                "trustedCertificateSources": [
+                    {
+                        "certificateBundleReferences": [
+                            {"secretName": "corporate-ca-bundle", "secretVersion": "11111111111111111111111111111111"},
+                            {"secretName": "partner-ca-bundle", "secretVersion": "22222222222222222222222222222222"},
+                        ],
+                        "resourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.KeyVault/vaults/myKeyVault",
+                        "type": "AzureKeyVault",
+                    }
+                ],
             },
+            "sku": {"name": "S0"},
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/UpdateWorkbenchComputeProperties.json
+# x-ms-original-file: 2026-11-01/CreateAccountWithTrustedCertificateSources.json
 if __name__ == "__main__":
     main()
