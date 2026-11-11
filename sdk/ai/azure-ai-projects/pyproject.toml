@@ -78,3 +78,4 @@ exclude = '(^|.*[\\/])samples[\\/]hosted_agents[\\/]assets[\\/].*main\.py$|(^|.*
 
 [tool.azure-sdk-conda]
 in_bundle = false
+

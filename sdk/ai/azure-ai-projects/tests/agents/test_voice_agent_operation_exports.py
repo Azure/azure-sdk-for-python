@@ -66,7 +66,7 @@ def test_ga_voice_client_surface(namespace, allow_preview):
 
 
 @pytest.mark.parametrize("namespace", ["azure.ai.projects.operations", "azure.ai.projects.aio.operations"])
-def test_beta_telephony_operation_export(namespace):
+def test_beta_campaigns_operation_export(namespace):
     operations = import_module(namespace)
     generated = import_module(f"{namespace}._operations")
     operation_name = "BetaVoiceAgentsTelephonyOperations"
@@ -89,3 +89,19 @@ def test_beta_telephony_operation_export(namespace):
         "list_validation_errors",
         "get_operation",
     }
+
+
+@pytest.mark.parametrize("namespace", ["azure.ai.projects", "azure.ai.projects.aio"])
+@pytest.mark.parametrize("allow_preview", [False, True])
+def test_beta_skills_operation_export(namespace, allow_preview):
+    operations = import_module(f"{namespace}.operations")
+    generated = import_module(f"{namespace}.operations._operations")
+    operation_type = operations.BetaSkillsOperations
+    assert "BetaSkillsOperations" in operations.__all__
+    assert "SkillsOperations" not in operations.__all__
+    assert operation_type is generated.BetaSkillsOperations
+    assert get_type_hints(operations.BetaOperations)["skills"] is operation_type
+
+    client = import_module(namespace).AIProjectClient("https://example.test", MagicMock(), allow_preview=allow_preview)
+    assert not hasattr(client, "skills")
+    assert isinstance(client.beta.skills._operation, operation_type)

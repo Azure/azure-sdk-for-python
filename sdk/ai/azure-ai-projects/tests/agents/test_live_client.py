@@ -287,7 +287,8 @@ async def test_connect_signature_has_only_live_options(live):
 @pytest.mark.parametrize("member", ["enter", "recv", "send", "iterator"])
 async def test_public_websocket_signatures_have_concrete_type_hints(is_async, protocol, member):
     public_operations = async_operations if is_async else operations
-    prefix = f"{'Async' if is_async else ''}Beta{protocol.capitalize()}"
+    protocol_type = {"live": "BetaLive", "realtime": "Realtime"}[protocol]
+    prefix = f"{'Async' if is_async else ''}{protocol_type}"
     connection_type = getattr(public_operations, f"{prefix}Connection")
     manager_type = getattr(public_operations, f"{prefix}ConnectionManager")
     client_event = getattr(public_operations, "LiveClientEvent" if protocol == "live" else "ClientEvent")
