@@ -1,5 +1,12 @@
 # Release History
 
+## 41.9.0 (2026-11-11)
+
+### Features Added
+
+  - Model `PrivateEndpointConnectionListResult` added property `next_link`
+  - Model `PrivateLinkResourcesListResult` added property `next_link`
+
 ## 41.9.0b1 (2026-10-23)
 
 ### Features Added
