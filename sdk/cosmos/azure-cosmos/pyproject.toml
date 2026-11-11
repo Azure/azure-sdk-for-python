@@ -121,6 +121,7 @@ exclude = [
 ]
 
 [tool.azure-sdk-build]
+pyo3-abi3-minimum = "3.10"
 synchronize-version-metadata = true
 mypy = true
 pyright = false
