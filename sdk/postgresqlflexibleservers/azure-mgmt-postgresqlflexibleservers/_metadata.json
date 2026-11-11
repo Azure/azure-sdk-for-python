@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2026-04-01-preview",
+  "apiVersion": "2026-10-01",
   "apiVersions": {
-    "Microsoft.DBforPostgreSQL": "2026-04-01-preview"
+    "Microsoft.DBforPostgreSQL": "2026-10-01"
   },
-  "commit": "aaff653c559c45c03ce095a49264e385df8bd9e5",
+  "commit": "2496454aee2afcc65f24368c9fb668b49d59e3be",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/postgresql/DBforPostgreSQL.Management",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.9",
+  "httpClientPythonVersion": "0.38.1"
 }

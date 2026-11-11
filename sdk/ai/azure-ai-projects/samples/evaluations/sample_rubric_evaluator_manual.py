@@ -10,7 +10,7 @@ DESCRIPTION:
     evaluator and use it as a testing criterion of an OpenAI evaluation run.
     The sample:
 
-      1. Creates a rubric evaluator with `project_client.beta.evaluators.create_version`,
+    1. Creates a rubric evaluator with `project_client.evaluators.create_version`,
          supplying scoring dimensions (each with an id, description, and integer
          weight from 1-10) and an optional pass threshold.
       2. Creates an OpenAI evaluation referencing the rubric as a testing criterion.
@@ -32,7 +32,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -90,7 +90,7 @@ with (
     # evaluation time. `weight` (1-10) controls how strongly each dimension
     # contributes to the normalized aggregate score.
     # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
-    evaluator = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
+    evaluator = project_client.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
         name=evaluator_name,
         evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": evaluator_name,
@@ -227,4 +227,4 @@ with (
     # 4. Clean up.
     print("Cleaning up.")
     openai_client.evals.delete(eval_id=eval_object.id)
-    project_client.beta.evaluators.delete_version(name=evaluator_name, version=evaluator.version)
+    project_client.evaluators.delete_version(name=evaluator_name, version=evaluator.version)

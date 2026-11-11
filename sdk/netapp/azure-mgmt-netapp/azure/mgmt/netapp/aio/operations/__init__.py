@@ -34,6 +34,12 @@ from ._operations import ElasticBackupVaultsOperations  # type: ignore
 from ._operations import ElasticBackupPoliciesOperations  # type: ignore
 from ._operations import ElasticBackupsOperations  # type: ignore
 from ._operations import ActiveDirectoryConfigsOperations  # type: ignore
+from ._operations import ExternalClustersOperations  # type: ignore
+from ._operations import ClusterPeersOperations  # type: ignore
+from ._operations import ExternalSvmsOperations  # type: ignore
+from ._operations import SvmPeersOperations  # type: ignore
+from ._operations import ExternalCachesOperations  # type: ignore
+from ._operations import ExternalCacheConnectionsOperations  # type: ignore
 from ._operations import NetAppResourceQuotaLimitsOperations  # type: ignore
 from ._operations import NetAppResourceRegionInfosOperations  # type: ignore
 from ._operations import AccountsOperations  # type: ignore
@@ -72,6 +78,12 @@ __all__ = [
     "ElasticBackupPoliciesOperations",
     "ElasticBackupsOperations",
     "ActiveDirectoryConfigsOperations",
+    "ExternalClustersOperations",
+    "ClusterPeersOperations",
+    "ExternalSvmsOperations",
+    "SvmPeersOperations",
+    "ExternalCachesOperations",
+    "ExternalCacheConnectionsOperations",
     "NetAppResourceQuotaLimitsOperations",
     "NetAppResourceRegionInfosOperations",
     "AccountsOperations",

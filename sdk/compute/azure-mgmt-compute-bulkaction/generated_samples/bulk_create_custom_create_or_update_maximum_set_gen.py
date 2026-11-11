@@ -36,13 +36,18 @@ def main():
         location="eastus",
         name="89f31926-145c-410c-a56a-5bc97359274c",
         resource={
+            "extendedLocation": {"name": "microsoftlosangeles1", "type": "EdgeZone"},
             "identity": {"type": "SystemAssigned"},
+            "placement": {"excludeZones": ["3"], "includeZones": ["1", "2"], "zonePlacementPolicy": "Auto"},
             "properties": {
                 "capacity": 2,
                 "capacityType": "VM",
                 "computeProfile": {
                     "computeApiVersion": "2024-11-01",
                     "virtualMachineProfile": {
+                        "billingProfile": {"maxPrice": 0.05},
+                        "evictionPolicy": "Deallocate",
+                        "hardwareProfile": {"vmSize": "Standard_D2s_v5"},
                         "networkProfile": {
                             "networkApiVersion": "2020-11-01",
                             "networkInterfaceConfigurations": [
@@ -81,6 +86,7 @@ def main():
                                 },
                             },
                         },
+                        "priority": "Spot",
                         "storageProfile": {
                             "imageReference": {
                                 "offer": "0001-com-ubuntu-server-jammy",
@@ -99,43 +105,23 @@ def main():
                     },
                 },
                 "executionParameters": {"retryPolicy": {"onFailureAction": "Delete", "retryWindowInMinutes": 30}},
-                "minCapacity": 1,
                 "overridesProfile": {
                     "overrides": [
-                        {"tags": {"env": "prod", "workload": "payments"}, "virtualMachineName": "bulkvm-payments-0"},
-                        {"tags": {"workload": "batch"}},
+                        {
+                            "extendedLocation": {"name": "microsoftlosangeles1", "type": "EdgeZone"},
+                            "placement": {"includeZones": ["1"], "zonePlacementPolicy": "Any"},
+                            "tags": {"env": "prod", "workload": "payments"},
+                            "virtualMachineName": "bulkvm-payments-0",
+                            "zone": "1",
+                        },
+                        {
+                            "extendedLocation": {"name": "microsoftlosangeles2", "type": "EdgeZone"},
+                            "placement": {"excludeZones": ["3"], "zonePlacementPolicy": "Auto"},
+                            "tags": {"workload": "batch"},
+                            "zone": "2",
+                        },
                     ],
                     "virtualMachineNamePrefix": "bulkvm",
-                },
-                "partialFulfillmentPolicy": {"mode": "Enabled"},
-                "priorityProfile": {
-                    "allocationStrategy": "LowestPrice",
-                    "evictionPolicy": "Delete",
-                    "maxPricePerVM": 0.2,
-                    "type": "Spot",
-                },
-                "vmSizesProfile": [
-                    {"name": "Standard_D2s_v5", "rank": 1},
-                    {
-                        "name": "Standard_D4s_v5",
-                        "override": {
-                            "virtualMachineProfile": {
-                                "storageProfile": {
-                                    "imageReference": {
-                                        "offer": "0001-com-ubuntu-server-jammy",
-                                        "publisher": "Canonical",
-                                        "sku": "22_04-lts-arm64",
-                                        "version": "latest",
-                                    }
-                                }
-                            }
-                        },
-                        "rank": 2,
-                    },
-                ],
-                "zoneAllocationPolicy": {
-                    "distributionStrategy": "BestEffortBalanced",
-                    "zonePreferences": [{"rank": 1, "zone": "1"}, {"rank": 2, "zone": "2"}],
                 },
             },
             "tags": {"env": "prod", "workload": "batch-render"},
@@ -145,6 +131,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-06-preview/BulkCreateCustom_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-06-preview/BulkCreateCustom_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

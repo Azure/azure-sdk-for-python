@@ -5,6 +5,7 @@ import:
 words:
   - abcdabcdabcda
   - abcdefghijklm
+  - acks
   - AEROJET
   - agentic
   - aiproject
@@ -13,6 +14,8 @@ words:
   - all-mpnet-base-v2
   - ansii
   - aoai
+  - AQABAA
+  - AQABAAEAAQA
   - aread
   - azcopy
   - azuread
@@ -21,6 +24,7 @@ words:
   - azureopenai
   - balapvbyostoragecanary
   - BLPHARMA
+  - capsys
   - cegr
   - closefd
   - cogsvc

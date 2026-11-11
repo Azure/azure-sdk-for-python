@@ -18,6 +18,7 @@ from ._operations import AutoExportJobsOperations  # type: ignore
 from ._operations import ImportJobsOperations  # type: ignore
 from ._operations import AutoImportJobsOperations  # type: ignore
 from ._operations import ExpansionJobsOperations  # type: ignore
+from ._operations import RebalanceJobsOperations  # type: ignore
 from ._operations import CachesOperations  # type: ignore
 from ._operations import StorageTargetsOperations  # type: ignore
 from ._operations import StorageTargetOperations  # type: ignore
@@ -38,6 +39,7 @@ __all__ = [
     "ImportJobsOperations",
     "AutoImportJobsOperations",
     "ExpansionJobsOperations",
+    "RebalanceJobsOperations",
     "CachesOperations",
     "StorageTargetsOperations",
     "StorageTargetOperations",

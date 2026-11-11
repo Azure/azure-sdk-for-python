@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2026-09-05-preview",
+  "apiVersion": "2026-10-05-preview",
   "apiVersions": {
-    "Microsoft.Compute": "2026-09-05-preview"
+    "Microsoft.Compute": "2026-10-05-preview"
   },
-  "commit": "397bf665c4d649b98bcfaf239c4b0a526301a03a",
+  "commit": "3f0d3c288ec31fa03c2a20c8395f897811d08fa5",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/compute/resource-manager/Microsoft.Compute/Recommender",
-  "emitterVersion": "0.63.5",
-  "httpClientPythonVersion": "^0.36.0"
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }

@@ -28,6 +28,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GITHUB_COPILOT_V1_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
+    MICROSOFT_COPILOT_V1_PREVIEW = "MicrosoftCopilot=V1Preview"
+    """The Microsoft Copilot V1 preview feature opt-in."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -53,10 +55,10 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DATA_GENERATION_JOBS_V1_PREVIEW."""
     MODELS_V1_PREVIEW = "Models=V1Preview"
     """MODELS_V1_PREVIEW."""
-    AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
-    """AGENTS_OPTIMIZATION_V2_PREVIEW."""
     MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
     """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
+    FINETUNING_SESSIONS_V1_PREVIEW = "FineTuningSessions=V1Preview"
+    """FINETUNING_SESSIONS_V1_PREVIEW."""
 
 
 class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -144,6 +146,9 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VOICE."""
     INVOCATIONS_WS = "invocations_ws"
     """WebSocket-based protocol for hosted voice and real-time streaming agents."""
+    VOICE_CONVERSATION_ENGINE = "voice_conversation_engine"
+    """Text conversation protocol for a hosted agent used by Voice Live Bridge. Declare version
+    ``1.0.0``; audio transport remains outside this protocol."""
 
 
 class AgentIdentityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -247,13 +252,95 @@ class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AGENT_CONTAINER."""
 
 
-class AgentOptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Discriminator values for the dataset input union."""
+class AgentOptimizationCandidateExpand(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Vocabulary for the ``expand`` query parameter on the candidate LIST endpoint. This open union
+    keeps SDKs usable when new expand keys ship server-side. Multiple values are serialized as one
+    comma-separated query parameter.
+    """
+
+    MUTATIONS = "mutations"
+    """Include mutation ``value`` fields in ``AgentOptimizationCandidate.output.mutations``. Without
+    this key each mutation item contains only its ``type``."""
+
+
+class AgentOptimizationCandidateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The candidate's lifecycle state."""
+
+    GENERATING = "generating"
+    """The optimizer is proposing and screening mutations for this candidate."""
+    EVALUATING = "evaluating"
+    """The accepted candidate is undergoing full evaluation."""
+    COMPLETED = "completed"
+    """The candidate completed full evaluation."""
+    FAILED = "failed"
+    """The optimizer stopped before this candidate completed."""
+
+
+class AgentOptimizationConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Optimization job configuration types."""
+
+    AGENT_OPTIMIZATION = "agent_optimization"
+    """Comparative agent optimization."""
+    PROMPT_OPTIMIZATION = "prompt_optimization"
+    """One-shot prompt optimization."""
+
+
+class AgentOptimizationDataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source types supported by optimization evaluation sets."""
 
     INLINE = "inline"
-    """Inline dataset — items are provided directly in the request body."""
-    REFERENCE = "reference"
-    """Reference to a registered Foundry dataset by name and version."""
+    """Test cases supplied directly in the optimization request."""
+    DATASET_REFERENCE = "dataset_reference"
+    """An explicitly versioned registered Foundry dataset."""
+
+
+class AgentOptimizationEvaluationSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Logical row formats supported by optimization evaluation sets."""
+
+    TARGET_COMPLETION = "target_completion"
+    """Independent single-turn queries evaluated against each candidate."""
+    USER_CONVERSATION_SIMULATION = "user_conversation_simulation"
+    """Scenarios used to simulate conversations against each candidate."""
+
+
+class AgentOptimizationGoal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Goal for an agent-optimization job."""
+
+    IMPROVE_QUALITY = "improve_quality"
+    """Search for agent configurations that improve measured evaluation quality."""
+
+
+class AgentOptimizationStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Stage of optimization that consumed model resources."""
+
+    AGENT = "agent"
+    """Calls made by the agent being optimized."""
+    EVALUATION = "evaluation"
+    """Calls that evaluate candidate quality."""
+    OPTIMIZATION = "optimization"
+    """Calls that generate candidate changes."""
+
+
+class AgentOptimizationTargetConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Target configuration types supported by optimization jobs."""
+
+    FOUNDRY_AGENT = "foundry_agent"
+    """A registered Foundry agent."""
+
+
+class AgentOptimizationTerminationReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason the optimization process ended. Early termination reasons still indicate a successful
+    job; completed candidates remain available.
+    """
+
+    COMPLETED = "completed"
+    """The optimization process completed normally."""
+    BUDGET_EXHAUSTED = "budget_exhausted"
+    """The job succeeded with its completed candidates, but stopped before producing more candidates
+    because its bounded evaluation-call budget was consumed."""
+    CANDIDATE_SCREENING_STALLED = "candidate_screening_stalled"
+    """The job succeeded with its completed candidates, but stopped after the configured number of
+    consecutive proposed candidates failed screening."""
 
 
 class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -455,6 +542,10 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom Keys."""
     REMOTE_TOOL = "RemoteTool_Preview"
     """Remote tool."""
+    OPEN_API = "OpenAPI"
+    """OpenAPI connection."""
+    REMOTE_A2A = "RemoteA2A"
+    """Remote agent-to-agent (A2A) connection."""
 
 
 class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -536,21 +627,22 @@ class DataGenerationJobOutputWriteMode(str, Enum, metaclass=CaseInsensitiveEnumM
     """The supported write modes for data generation job outputs."""
 
     OVERWRITE = "overwrite"
-    """Default behavior. Create the next dataset version using only newly generated rows, replacing
-    the previous version's rows in the new version."""
+    """Default behavior. Write newly generated output without merging it with an existing output. For
+    dataset outputs, creates the next dataset version using only newly generated rows."""
     MERGE = "merge"
-    """Applicable only for trace data generation jobs that output evaluation datasets. Create the next
-    dataset version by merging newly generated rows with the latest existing dataset version and
-    de-duping trace rows."""
+    """Merge newly generated output into an existing output. For trace data generation jobs that
+    output evaluation datasets, creates the next dataset version by merging newly generated rows
+    with the latest existing dataset version and de-duping trace rows. For fine-tuning file
+    outputs, merges into the file identified by ``merge_file_id``."""
 
 
 class DataGenerationJobScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported scenarios for a data generation job."""
 
-    SUPERVISED_FINETUNING = "supervised_finetuning"
-    """Supervised Fine-tuning scenario."""
-    REINFORCEMENT_FINETUNING = "reinforcement_finetuning"
-    """Reinforcement Fine-tuning scenario."""
+    SUPERVISED_FINETUNING_PREVIEW = "supervised_finetuning_preview"
+    """Supervised Fine-tuning preview scenario."""
+    REINFORCEMENT_FINETUNING_PREVIEW = "reinforcement_finetuning_preview"
+    """Reinforcement Fine-tuning preview scenario."""
     EVALUATION = "evaluation"
     """Evaluation scenario."""
 
@@ -814,7 +906,9 @@ class GenerationWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class GitHubCopilotBuiltInTool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A customer-configurable GitHub Copilot built-in tool."""
+    """The legacy GitHub Copilot built-in tool names retained for compatibility. Use
+    ``MicrosoftCopilotBuiltInTool`` for new integrations.
+    """
 
     FILESYSTEM_READ = "filesystem_read"
     """Read and search files in the harness workspace."""
@@ -975,6 +1069,34 @@ class Microsoft365PublishScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Publish the app tenant-wide."""
 
 
+class MicrosoftCopilotBuiltInTool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A customer-configurable Microsoft Copilot built-in tool."""
+
+    FILESYSTEM_READ = "filesystem_read"
+    """Read and search files in the harness workspace."""
+    FILESYSTEM_WRITE = "filesystem_write"
+    """Create and modify files in the harness workspace."""
+    SHELL = "shell"
+    """Execute operating-system commands."""
+    WEB = "web"
+    """Fetch content and search external network resources."""
+    SUBAGENTS = "subagents"
+    """Delegate work to additional agents."""
+
+
+class MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of MisalignmentErrorType."""
+
+    POTENTIALLY_UNINTENDED_DATA_TRANSFER = "potentially_unintended_data_transfer"
+    """POTENTIALLY_UNINTENDED_DATA_TRANSFER."""
+    POTENTIALLY_UNINTENDED_DATA_ACCESS = "potentially_unintended_data_access"
+    """POTENTIALLY_UNINTENDED_DATA_ACCESS."""
+    POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY = "potentially_unintended_destructive_activity"
+    """POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY."""
+    OTHER = "other"
+    """OTHER."""
+
+
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
 
@@ -1006,13 +1128,20 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
+class OptimizationContextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of context supplied to an optimization workflow."""
+
+    STEERING_PROMPT = "steering_prompt"
+    """Natural-language guidance that steers the desired optimization."""
+
+
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of PageOrder."""
 
     ASC = "asc"
-    """ASC."""
+    """Return items in ascending creation-time order."""
     DESC = "desc"
-    """DESC."""
+    """Return items in descending creation-time order."""
 
 
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1560,12 +1689,27 @@ class SessionLogEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SimpleQnAFineTuningQuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The supported question types for SimpleQnA data generation jobs used for fine-tuning scenarios."""
+    """The supported question types for SimpleQnA data generation jobs used for fine-tuning scenarios.
+    This is a preview feature.
+    """
 
     SHORT_ANSWER = "short_answer"
     """Short answer question type."""
     LONG_ANSWER = "long_answer"
     """Long answer question type."""
+
+
+class TargetAttribute(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Agent attribute that can be optimized."""
+
+    INSTRUCTIONS = "instructions"
+    """Rewrites agent instructions."""
+    MODEL = "model"
+    """Model selection from optimization_configuration.agent_optimization_space.model_search_space."""
+    SKILLS = "skills"
+    """Generates or modifies agent skill descriptions and bodies."""
+    TOOLS = "tools"
+    """Optimizes function tool descriptions and parameter descriptions."""
 
 
 class TelemetryDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1890,8 +2034,8 @@ class TelephonyCallLifecycleEventSource(str, Enum, metaclass=CaseInsensitiveEnum
 
     GATEWAY = "gateway"
     """The Foundry telephony gateway supplied the observation."""
-    TEAMS_PHONE_EXTENSION = "teams_phone_extension"
-    """Microsoft Teams Phone Extension supplied the observation."""
+    TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
+    """Microsoft Teams Phone extensibility supplied the observation."""
     TWILIO = "twilio"
     """Twilio supplied the observation."""
     VOICE_AGENT = "voice_agent"
@@ -1995,8 +2139,8 @@ class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     may be added over time.
     """
 
-    TEAMS_PHONE_EXTENSION = "teams_phone_extension"
-    """Microsoft Teams Phone Extension."""
+    TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
+    """Microsoft Teams Phone extensibility."""
     TWILIO = "twilio"
     """Twilio Programmable Voice."""
 
@@ -2060,6 +2204,8 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHELL."""
     WEB_IQ_PREVIEW = "web_iq_preview"
     """WEB_IQ_PREVIEW."""
+    BROWSER_AUTOMATION = "browser_automation"
+    """BROWSER_AUTOMATION."""
 
 
 class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2188,6 +2334,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CAPTURE_STRUCTURED_OUTPUTS."""
     OPENAPI = "openapi"
     """OPENAPI."""
+    MICROSOFT_COPILOT_TOOLSET_PREVIEW = "microsoft_copilot_toolset_preview"
+    """MICROSOFT_COPILOT_TOOLSET_PREVIEW."""
 
 
 class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2214,6 +2362,23 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence based trigger."""
     ONE_TIME = "OneTime"
     """One-time trigger."""
+
+
+class UserConversationSimulationAudioEffect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Effect that can be applied to simulated conversation audio. The union is extensible for
+    additional effects.
+    """
+
+    STREET_TRAFFIC = "street_traffic"
+    """STREET_TRAFFIC."""
+    CROWD_CHATTER = "crowd_chatter"
+    """CROWD_CHATTER."""
+    BACKGROUND_TV = "background_tv"
+    """BACKGROUND_TV."""
+    METRO_STATION = "metro_station"
+    """METRO_STATION."""
+    TELEPHONIC_VOICE = "telephonic_voice"
+    """TELEPHONIC_VOICE."""
 
 
 class VersionIndicatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2304,7 +2469,10 @@ class VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiv
 class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input-audio transcription model identifier. This is a model name, not a Foundry deployment
     name. Mirrors the transcription models supported by the managed voice backend, covering the
-    OpenAI Realtime transcription models plus the Azure and MAI models. Additional values may be
+    OpenAI Realtime transcription models plus the Azure and MAI models. ``azure-speech-streaming``
+    is supported for cascaded text-model conversations only (not realtime speech-to-speech models),
+    requires a nonempty ``language`` such as ``en-US`` (comma-separated locales are supported), and
+    supports ``custom_speech``, ``phrase_list``, and ``profanity_filter``. Additional values may be
     added over time.
     """
 
@@ -2326,6 +2494,11 @@ class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnum
     """MAI transcription."""
     AZURE_SPEECH = "azure-speech"
     """Azure AI Speech to text."""
+    AZURE_SPEECH_STREAMING = "azure-speech-streaming"
+    """Azure AI Speech streaming transcription for cascaded text-model conversations only. Requires a
+    nonempty ``language``, such as ``en-US``; comma-separated locales are supported. Supports
+    ``custom_speech``, ``phrase_list``, and ``profanity_filter``. Not supported with realtime
+    speech-to-speech models."""
 
 
 class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2338,7 +2511,15 @@ class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumM
 
 
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The input audio noise reduction mode."""
+    """The input audio noise reduction mode.
+
+    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local voice activity
+      detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
+      changing the audio used for recognition. The mode is not restricted to headset devices.
+    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice activity detection.
+      Starts with headset suppression and personalizes detection after automatic speaker enrollment. Recognition audio
+      is unchanged; headset suppression remains active when personalization is unavailable.
+    """
 
     NEAR_FIELD = "near_field"
     """NEAR_FIELD."""
@@ -2346,6 +2527,25 @@ class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """FAR_FIELD."""
     AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
     """Azure deep noise suppression."""
+    AZURE_DEEP_NOISE_SUPPRESSION_HEADSET = "azure_deep_noise_suppression_headset"
+    """Azure headset-optimized noise suppression for local voice activity detection. Optimized for
+    low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
+    changing the audio used for recognition. The mode is not restricted to headset devices."""
+    AZURE_PERSONAL_NOISE_SUPPRESSION = "azure_personal_noise_suppression"
+    """Azure personalized noise suppression for local voice activity detection. Starts with headset
+    suppression and personalizes detection after automatic speaker enrollment. Recognition audio is
+    unchanged; headset suppression remains active when personalization is unavailable."""
+
+
+class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported input-transcript profanity filtering modes."""
+
+    MASKED = "masked"
+    """Masks recognized profanity in the transcript."""
+    UNFILTERED = "unfiltered"
+    """Includes recognized profanity in the transcript, subject to mandatory service masking policies."""
+    REMOVED = "removed"
+    """Removes recognized profanity from the transcript."""
 
 
 class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2357,6 +2557,25 @@ class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMet
     """INPUT_AUDIO_TRANSCRIPTION_PHRASES."""
     FILE_SEARCH_CALL_RESULTS = "file_search_call.results"
     """FILE_SEARCH_CALL_RESULTS."""
+
+
+class VoiceAgentSoundscapeSound(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The packaged sounds accepted by a built-in soundscape source."""
+
+    OFFICE = "office"
+    """Quiet office ambience."""
+    CALL_CENTER = "call_center"
+    """Busy call-center ambience."""
+    BUSY_STREET = "busy_street"
+    """Busy street ambience."""
+    PEOPLE_TALKING = "people_talking"
+    """Crowd conversation ambience."""
+    STREET_AND_METRO_STATION = "street_and_metro_station"
+    """Street and metro-station ambience."""
+    DING1 = "ding1"
+    """The first notification tone."""
+    DING2 = "ding2"
+    """The second notification tone."""
 
 
 class VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2396,6 +2615,15 @@ class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumM
     """Interrupt the active response and create a follow-up response."""
     SKIP_IF_BUSY = "skip_if_busy"
     """Create a follow-up response only when no response is active."""
+
+
+class VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport used for a voice-agent connection."""
+
+    WEBSOCKET = "websocket"
+    """Signaling and audio are exchanged as JSON events over the WebSocket. This is the default."""
+    WEBRTC = "webrtc"
+    """WebRTC: the WebSocket carries only SDP signaling; media and the data channel are peer-to-peer."""
 
 
 class VoiceAgentTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

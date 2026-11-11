@@ -8,14 +8,14 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from azure.ai.projects.aio.operations._patch_agents_async import BetaAgentsOperations
+from azure.ai.projects.aio.operations._patch_agents_async import AgentsOperations
 from azure.ai.projects.models import AsyncAgentOptimizationLROPoller
 
 
 @pytest.mark.asyncio
 async def test_begin_create_optimization_job_exposes_job_id_async():
     """The async create operation exposes its job ID without SDK polling."""
-    operation = BetaAgentsOperations.__new__(BetaAgentsOperations)
+    operation = AgentsOperations.__new__(AgentsOperations)
     operation._client = MagicMock()  # pylint: disable=protected-access
     operation._config = MagicMock(polling_interval=0)  # pylint: disable=protected-access
     operation._serialize = MagicMock()  # pylint: disable=protected-access

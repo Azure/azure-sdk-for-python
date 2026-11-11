@@ -15,8 +15,10 @@ from typing import Any, cast
 
 import pytest
 
+from azure.ai.agentserver.responses._response_context import PlatformContext, ResponseContext
 from azure.ai.agentserver.responses.models import ResponseObject
-from azure.ai.agentserver.responses.models.runtime import StreamEventRecord
+from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags, StreamEventRecord
+from azure.ai.agentserver.responses.store import ResponseAlreadyExistsError
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
 # ---------------------------------------------------------------------------
@@ -60,6 +62,248 @@ def _output_message(item_id: str, text: str) -> dict[str, Any]:
         "status": "completed",
         "content": [{"type": "output_text", "text": text}],
     }
+
+
+_USER_KEYS = ["user_A", "user_B", None, "", " ", " user_A "]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("owner_key,other_key", [(a, b) for a in _USER_KEYS for b in _USER_KEYS if a != b])
+async def test_partitions__foreign_response_and_items_are_missing(owner_key: str | None, other_key: str | None) -> None:
+    provider = InMemoryResponseProvider()
+    owner = PlatformContext(user_id_key=owner_key, call_id="shared-call")
+    other = PlatformContext(user_id_key=other_key, call_id="shared-call")
+    response = _response("owned", output=[_output_message("output", "private")], conversation_id="conversation")
+    await provider.create_response(response, [_input_item("input", "private")], None, context=owner)
+
+    for operation in (
+        provider.get_response("owned", context=other),
+        provider.update_response(_response("owned", status="failed"), context=other),
+        provider.delete_response("owned", context=other),
+        provider.get_input_items("owned", after="input", before="output", context=other),
+    ):
+        with pytest.raises(KeyError, match="not found"):
+            await operation
+    assert await provider.get_items(["input", "output"], context=other) == [None, None]
+    assert await provider.get_history_item_ids("owned", None, 100, context=other) == []
+    assert await provider.get_history_item_ids(None, "conversation", 100, context=other) == []
+    assert await provider.get_response("owned", context=owner) == response
+
+
+@pytest.mark.asyncio
+async def test_partitions__colliding_response_item_and_conversation_ids() -> None:
+    provider = InMemoryResponseProvider()
+    contexts = [PlatformContext(user_id_key=key, call_id="create") for key in _USER_KEYS]
+    for index, context in enumerate(contexts):
+        await provider.create_response(
+            _response("same", output=[_output_message("output", str(index))], conversation_id="same"),
+            [_input_item("input", str(index))],
+            None,
+            context=context,
+        )
+        with pytest.raises(ResponseAlreadyExistsError):
+            await provider.create_response(_response("same"), None, None, context=context)
+        await provider.create_response(
+            _response(f"next_{index}", conversation_id="same"),
+            [_input_item(f"next_input_{index}", str(index))],
+            await provider.get_history_item_ids("same", None, 100, context=context),
+            context=context,
+        )
+
+    for index, context in enumerate(contexts):
+        later = PlatformContext(user_id_key=context.user_id_key, call_id="different-call")
+        items = await provider.get_items(["input", "output", "missing"], context=later)
+        assert items == [_input_item("input", str(index)), _output_message("output", str(index)), None]
+        history = await provider.get_history_item_ids(None, "same", 100, context=later)
+        assert history == ["input", "output", f"next_input_{index}"]
+        assert await provider.get_history_item_ids(f"next_{index}", None, 100, context=later) == [
+            "input",
+            "output",
+            f"next_input_{index}",
+        ]
+        assert await provider.get_input_items(
+            f"next_{index}", ascending=True, limit=1, after="input", context=later
+        ) == [_output_message("output", str(index))]
+        assert await provider.get_input_items(f"next_{index}", before="input", context=later) == [
+            _input_item(f"next_input_{index}", str(index)),
+            _output_message("output", str(index)),
+        ]
+        # An ID from another partition must behave like any other unknown cursor.
+        foreign_cursor = f"next_input_{(index + 1) % len(contexts)}"
+        assert await provider.get_input_items("same", after=foreign_cursor, context=later) == [
+            _input_item("input", str(index))
+        ]
+        items[0]["content"][0]["text"] = "mutated"
+        assert (await provider.get_items(["input"], context=later))[0] == _input_item("input", str(index))
+        await provider.update_response(
+            _response("same", output=[_output_message("output", f"updated_{index}")]), context=later
+        )
+
+    for index, context in enumerate(contexts):
+        assert (await provider.get_items(["output"], context=context))[0] == _output_message(
+            "output", f"updated_{index}"
+        )
+
+    await provider.delete_response("same", context=contexts[0])
+    with pytest.raises(ValueError, match="deleted"):
+        await provider.get_input_items("same", context=contexts[0])
+    for context in contexts[1:]:
+        assert (await provider.get_response("same", context=context))["id"] == "same"
+        assert await provider.get_history_item_ids("same", None, 100, context=context) == ["input", "output"]
+
+
+@pytest.mark.asyncio
+async def test_partitions__missing_context_and_unkeyed_context_share_anonymous_crud() -> None:
+    provider = InMemoryResponseProvider()
+    unkeyed = PlatformContext(call_id="opaque")
+    await provider.create_response(_response("anonymous"), [_input_item("input", "local")], None)
+    assert (await provider.get_response("anonymous", context=unkeyed))["id"] == "anonymous"
+    await provider.update_response(_response("anonymous", status="failed"), context=unkeyed)
+    assert (await provider.get_response("anonymous"))["status"] == "failed"
+    assert await provider.get_items(["input"], context=unkeyed) == [_input_item("input", "local")]
+    assert await provider.get_input_items("anonymous", context=unkeyed) == [_input_item("input", "local")]
+    assert await provider.get_history_item_ids("anonymous", None, 100, context=unkeyed) == ["input"]
+    await provider.delete_response("anonymous", context=unkeyed)
+    with pytest.raises(KeyError):
+        await provider.get_response("anonymous")
+    await provider.create_response(_response("anonymous"), None, None, context=unkeyed)
+    assert (await provider.get_response("anonymous"))["id"] == "anonymous"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("reader_key", ["user_A", "user_B", None])
+@pytest.mark.parametrize("prefetched", [False, True])
+async def test_partitions__response_context_resolves_only_owned_references(
+    reader_key: str | None, prefetched: bool
+) -> None:
+    provider = InMemoryResponseProvider()
+    owner = PlatformContext(user_id_key="user_A")
+    item = _input_item("owned_item", "private")
+    await provider.create_response(_response("owned", conversation_id="conversation"), [item], None, context=owner)
+    reader = PlatformContext(user_id_key=reader_key, call_id="next-request")
+    ctx = ResponseContext(
+        response_id="next",
+        mode_flags=ResponseModeFlags(stream=False, store=True, background=False),
+        provider=provider,
+        input_items=[{"type": "item_reference", "id": "owned_item"}],
+        previous_response_id="owned",
+        conversation_id="conversation",
+        platform_context=reader,
+        prefetched_history_ids=["owned_item"] if prefetched else None,
+    )
+    inputs = await ctx.get_input_items()
+    history = await ctx.get_history()
+    if reader_key == "user_A":
+        assert len(inputs) == 1
+        assert inputs[0]["content"] == item["content"]
+        assert history and all(entry == item for entry in history)
+    else:
+        assert inputs == ()
+        assert history == ()
+    # Foreign history pointers supplied by a caller never resolve foreign payloads.
+    await provider.create_response(_response("next"), None, ["owned_item"], context=reader)
+    assert await provider.get_input_items("next", context=reader) == ([item] if reader_key == "user_A" else [])
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("other_key", ["user_B", None])
+async def test_partitions__legacy_helpers_do_not_bypass_identity(other_key: str | None) -> None:
+    provider = InMemoryResponseProvider()
+    owner = PlatformContext(user_id_key="user_A")
+    other = PlatformContext(user_id_key=other_key)
+    execution = ResponseExecution(
+        response_id="execution",
+        mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
+    )
+    await provider.create_execution(execution, context=owner)
+    event = StreamEventRecord(sequence_number=0, event_type="response.created", payload={"owner": "A"})
+    assert await provider.get_execution("execution", context=other) is None
+    assert await provider.get_replay_events("execution", context=other) is None
+    assert not await provider.set_response_snapshot("execution", _response("execution"), context=other)
+    assert not await provider.transition_execution_status("execution", "in_progress", context=other)
+    assert not await provider.set_cancel_requested("execution", context=other)
+    assert not await provider.append_stream_event("execution", event, context=other)
+    assert not await provider.delete("execution", context=other)
+    assert await provider.append_stream_event("execution", event, context=owner)
+    assert (await provider.get_replay_events("execution", context=owner))[0].payload == {"owner": "A"}
+    assert (await provider.get_execution("execution", context=owner)).status == execution.status
+
+
+@pytest.mark.asyncio
+async def test_partitions__legacy_execution_replay_expiry_and_cleanup_collisions() -> None:
+    provider = InMemoryResponseProvider()
+    contexts = [PlatformContext(user_id_key="user_A"), PlatformContext(user_id_key="user_B"), None]
+    execution = ResponseExecution(
+        response_id="same",
+        mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
+    )
+    for index, context in enumerate(contexts):
+        await provider.create_execution(execution, context=context)
+        with pytest.raises(ValueError, match="already exists"):
+            await provider.create_execution(execution, context=context)
+        assert await provider.set_response_snapshot("same", _response("same", status="in_progress"), context=context)
+        assert await provider.transition_execution_status("same", "in_progress", context=context)
+        old_event = StreamEventRecord(
+            sequence_number=0,
+            event_type="response.created",
+            payload={"owner": index},
+            emitted_at=datetime.now(timezone.utc) - timedelta(seconds=601),
+        )
+        live_event = StreamEventRecord(
+            sequence_number=1,
+            event_type="response.in_progress",
+            payload={"owner": index},
+        )
+        assert await provider.append_stream_event("same", old_event, context=context)
+        assert await provider.append_stream_event("same", live_event, context=context)
+        assert (await provider.get_execution("same", context=context)).status == "in_progress"
+        replay = await provider.get_replay_events("same", context=context)
+        assert len(replay) == 1
+        assert replay[0].payload == {"owner": index}
+        replay[0].payload["owner"] = "mutated"
+        assert (await provider.get_replay_events("same", context=context))[0].payload == {"owner": index}
+
+    # Legacy event bookkeeping shares the same composite keys as response entries.
+    provider._stream_events[("user_A", "same")] = []
+    provider._stream_events[("user_B", "same")] = []
+    provider._stream_events[(None, "same")] = []
+    provider._stream_events[("user_A", "orphan")] = []
+    assert await provider.set_cancel_requested("same", ttl_seconds=10, context=contexts[0])
+    assert (await provider.get_execution("same", context=contexts[0])).cancel_requested
+    assert not (await provider.get_execution("same", context=contexts[1])).cancel_requested
+    assert await provider.purge_expired(now=datetime.now(timezone.utc) + timedelta(seconds=11)) == 1
+    assert await provider.get_execution("same", context=contexts[0]) is None
+    assert ("user_A", "same") not in provider._stream_events
+    assert ("user_A", "orphan") not in provider._stream_events
+    for context in contexts[1:]:
+        assert (await provider.get_execution("same", context=context)).status == "in_progress"
+        assert len(await provider.get_replay_events("same", context=context)) == 1
+    assert await provider.delete("same", context=contexts[1])
+    assert ("user_B", "same") not in provider._stream_events
+    assert (None, "same") in provider._stream_events
+    assert await provider.get_execution("same") is not None
+    # Exercise automatic purge on normal lookups, not only the explicit maintenance method.
+    provider._entries[(None, "same")].expires_at = datetime.now(timezone.utc) - timedelta(seconds=1)
+    assert await provider.get_execution("same") is None
+    assert provider._stream_events == {}
+
+
+@pytest.mark.asyncio
+async def test_partitions__expired_response_leaves_other_users_history_intact() -> None:
+    provider = InMemoryResponseProvider()
+    contexts = [PlatformContext(user_id_key="user_A"), PlatformContext(user_id_key="user_B"), None]
+    for context in contexts:
+        await provider.create_response(
+            _response("same", conversation_id="conversation"), [_input_item("input", "text")], None, context=context
+        )
+    assert await provider.set_response_snapshot("same", _response("same"), ttl_seconds=10, context=contexts[0])
+    assert await provider.purge_expired(now=datetime.now(timezone.utc) + timedelta(seconds=11)) == 1
+    with pytest.raises(KeyError):
+        await provider.get_response("same", context=contexts[0])
+    assert await provider.get_history_item_ids(None, "conversation", 100, context=contexts[0]) == []
+    for context in contexts[1:]:
+        assert await provider.get_history_item_ids(None, "conversation", 100, context=context) == ["input"]
+        assert await provider.get_input_items("same", context=context) == [_input_item("input", "text")]
 
 
 # ===========================================================================

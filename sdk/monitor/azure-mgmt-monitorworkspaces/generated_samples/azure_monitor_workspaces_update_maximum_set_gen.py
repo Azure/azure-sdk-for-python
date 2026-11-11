@@ -33,15 +33,11 @@ def main():
     response = client.azure_monitor_workspaces.update(
         resource_group_name="rgazuremonitorworkspace",
         azure_monitor_workspace_name="myAzureMonitorWorkspace",
-        properties={
-            "identity": {"type": "SystemAssigned"},
-            "properties": {"metrics": {"enableAccessUsingResourcePermissions": True}, "publicNetworkAccess": "Enabled"},
-            "tags": {},
-        },
+        properties={"identity": {"type": "SystemAssigned"}, "tags": {}},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-10-03/AzureMonitorWorkspaces_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-03-preview/AzureMonitorWorkspaces_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

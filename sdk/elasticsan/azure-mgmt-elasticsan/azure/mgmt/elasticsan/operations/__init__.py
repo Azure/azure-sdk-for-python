@@ -20,6 +20,7 @@ from ._operations import VolumeGroupsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import VolumeSnapshotsOperations  # type: ignore
 from ._operations import SkusOperations  # type: ignore
+from ._operations import _ElasticSanMgmtClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *

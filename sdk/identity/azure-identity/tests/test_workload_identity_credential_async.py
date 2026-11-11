@@ -10,10 +10,11 @@ import asyncio
 from time import sleep as real_sleep
 from unittest.mock import mock_open, patch, MagicMock
 
+from aiohttp import ClientSession
 import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-from azure.identity.aio import WorkloadIdentityCredential
+from azure.identity.aio import DefaultAzureCredential, WorkloadIdentityCredential
 from azure.identity.aio._credentials.workload_identity import _get_transport
 from azure.identity.aio._internal.token_binding_transport_aiohttp import CustomAioHttpTransport
 from azure.identity.aio._internal.token_binding_transport_asyncio import CustomAsyncioRequestsTransport
@@ -71,6 +72,24 @@ async def test_workload_identity_credential_get_token(get_token_method):
 
 class TestWorkloadIdentityCredentialTokenProxyAsync:
     """Async test cases for WorkloadIdentityCredential with enable_azure_proxy=True."""
+
+    @pytest.mark.asyncio
+    async def test_default_credential_ignores_proxy_configuration(self):
+        env = {
+            "AZURE_TENANT_ID": "tenant-id",
+            "AZURE_CLIENT_ID": "client-id",
+            "AZURE_FEDERATED_TOKEN_FILE": "token-file",
+            "AZURE_TOKEN_CREDENTIALS": "WorkloadIdentityCredential",
+            "AZURE_KUBERNETES_TOKEN_PROXY": "https://proxy.example/binding",
+        }
+        with patch.dict(os.environ, env, clear=True):
+            with patch("azure.identity.aio._credentials.workload_identity._get_transport") as get_transport:
+                async with DefaultAzureCredential(enable_azure_proxy=True) as credential:
+                    assert len(credential.credentials) == 1
+                    assert isinstance(credential.credentials[0], WorkloadIdentityCredential)
+                    get_transport.assert_not_called()
+                async with WorkloadIdentityCredential(enable_azure_proxy=True):
+                    get_transport.assert_called_once()
 
     def test_enable_azure_proxy_creates_custom_aiohttp_transport(self):
         """Test that enable_azure_proxy=True creates a custom aiohttp transport with correct parameters."""
@@ -684,6 +703,45 @@ class TestCustomAioHttpTransportWithLocalServer:
 
 class TestCustomAsyncioRequestsTransportFallback:
     """Test cases for the custom AsyncioRequestsTransport used by WorkloadIdentityCredential."""
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("supports_sni", [False, True])
+    @pytest.mark.parametrize("sni", [None, "test.sni.com"])
+    async def test_transport_selection_checks_server_hostname_support(self, supports_sni, sni, ca_data):
+        async def request_without_sni(self, method, url):
+            raise AssertionError("Transport selection must not send requests")
+
+        async def request_with_sni(self, method, url, *, server_hostname=None):
+            raise AssertionError("Transport selection must not send requests")
+
+        request_method = request_with_sni if supports_sni else request_without_sni
+        with patch.object(ClientSession, "_request", request_method):
+            transport = _get_transport(
+                sni=sni,
+                token_proxy_endpoint="https://proxy.example.com/binding",
+                ca_file=None,
+                ca_data=ca_data,
+            )
+
+        async with transport:
+            expected_type = CustomAioHttpTransport if supports_sni else CustomAsyncioRequestsTransport
+            assert type(transport) is expected_type
+            assert transport._sni == sni
+            assert transport._proxy_endpoint == "https://proxy.example.com/binding"
+            assert transport._ca_data == ca_data
+
+    @pytest.mark.asyncio
+    async def test_transport_selection_without_aiohttp(self):
+        with patch.dict("sys.modules", {"aiohttp": None}):
+            transport = _get_transport(
+                sni=None,
+                token_proxy_endpoint="https://proxy.example.com/binding",
+                ca_file=None,
+                ca_data=None,
+            )
+
+        async with transport:
+            assert type(transport) is CustomAsyncioRequestsTransport
 
     def test_get_transport_creates_workload_identity_asyncio_requests_transport(self, ca_data):
         """Test that _get_transport creates WorkloadIdentityAsyncioRequestsTransport with correct parameters."""

@@ -1,5 +1,101 @@
 # Release History
 
+## 2.10.0 (2026-10-30)
+
+### Features Added
+
+* Added optional `VoiceAgentDefinition.soundscape` for built-in background ambience and event cues in telephony calls, with `VoiceAgentSoundscapeConfig`, `VoiceAgentSoundscapeSourceConfig`, `VoiceAgentSoundscapeTrackConfig`, `VoiceAgentSoundscapeWorkingTrackConfig`, and `VoiceAgentSoundscapeSound`.
+* Added optional `VoiceAgentInputTranscription.profanity_filter` and `VoiceAgentProfanityFilterMode` for configuring Azure Speech input-transcript filtering before a session starts.
+* Added `VoiceAgentInputTranscriptionModel.AZURE_SPEECH_STREAMING` for Azure Speech streaming transcription in cascaded text-model conversations. This model requires a nonempty `VoiceAgentInputTranscription.language` and is not supported with realtime speech-to-speech models.
+* Added `VoiceAgentNoiseReductionType.AZURE_DEEP_NOISE_SUPPRESSION_HEADSET` and `VoiceAgentNoiseReductionType.AZURE_PERSONAL_NOISE_SUPPRESSION` for local voice activity detection without changing recognition audio.
+* Added `AgentEndpointProtocol.VOICE_CONVERSATION_ENGINE` for hosted text agents used as Voice Agent conversation engines. Hosted agents must declare this protocol with version `1.0.0`; `invocations_ws` does not substitute for it.
+* Added optional `HostedAgentDefinition.enable_memory_snapshot` to start hosted-agent sessions from a snapshot of the initialized process instead of starting the process from its image.
+* Added known `ImageGenTool.model` values `gpt-image-2.5-sunburst`, `gpt-image-2.5-sunburst-2026-09-08`, `gpt-image-2.5-flare`, and `gpt-image-2.5-flare-2026-09-08`, with `xhigh` and `max` quality options for these models.
+
+### Bugs Fixed
+
+* Fixed tracing to record `temperature=0` and `top_p=0` instead of omitting these valid values.
+* Fixed `SimulationSeedDataGenerationJobConfiguration` to expose the service-required `max_samples` property and constructor argument. Updated the simulation-seed evaluation sample to pass this argument directly instead of using the mapping workaround.
+
+## 2.9.0 (2026-10-16)
+
+### Features Added
+
+* Added experimental Voice Agents REST and realtime tracing through `AIProjectInstrumentor`, including correlated session, connection and response spans, tool/lifecycle events, aggregate audio sizes and existing GenAI response metrics. Existing tracing and content-recording settings apply; message content is not captured by default.
+* Added an optional `transport` keyword on synchronous and asynchronous realtime `connect()` using `VoiceAgentTransport.WEBSOCKET` or `VoiceAgentTransport.WEBRTC`. The SDK constructs the transport wire query internally.
+* Added preview Microsoft Copilot managed harness and toolset support for prompt agents.
+
+### Breaking Changes
+
+All breaking changes affect preview APIs.
+
+Breaking changes in preview classes:
+
+* Renamed `CreateTeamsPhoneExtensionTelephonyBindingRequest`, `TeamsPhoneExtensionTelephonyBinding`, and `TeamsPhoneExtensionTelephonyBindingListItem` to `CreateTeamsPhoneExtensibilityTelephonyBindingRequest`, `TeamsPhoneExtensibilityTelephonyBinding`, and `TeamsPhoneExtensibilityTelephonyBindingListItem`, respectively.
+* Renamed `TelephonyProvider.TEAMS_PHONE_EXTENSION` and `TelephonyCallLifecycleEventSource.TEAMS_PHONE_EXTENSION` to `TEAMS_PHONE_EXTENSIBILITY`; their wire value changed from `teams_phone_extension` to `teams_phone_extensibility`.
+* Removed `VoiceAgentRealtimeResponseBase` and `VoiceResponseBase`; their properties now live directly on `VoiceAgentRealtimeResponse` and `VoiceResponse`. Several persisted `VoiceResponse` fields are now optional, and `metadata` now uses the `Metadata` model.
+
+### Bugs Fixed
+
+* Fixed synchronous and asynchronous Azure AI Projects long-running operations to treat both `cancelled` and `canceled` as terminal cancellation statuses without changing Azure Core polling behavior for other SDKs.
+
+### Sample updates
+
+* Added `sample_log_from_voice_agent.py` in `samples/logs`, demonstrating Voice Agent realtime diagnostics through the `azure.ai.projects.realtime` logger without OpenTelemetry setup.
+* Fixed the realtime audio conversation sample to enable input transcription, count only successfully sent audio payloads, and finish pending capture sends before printing transfer totals.
+* Fixed the conversation deletion snippet to handle the API's no-content response.
+* Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in `sample_voice_agent_with_tools.py`.
+* Renamed Voice Agent realtime samples from `sample_voice_agent_live_*` to `sample_voice_agent_realtime_*`, updating usage instructions and cross-references.
+* Updated `sample_multiturn_trace_evaluation_agent_filter.py` to use the supported agent-name/version filter, remove unsupported command-line filtering options, and configure trace lookback and maximum trace count through `TRACE_LOOKBACK_HOURS` and `TRACE_MAX_TRACES`.
+* Updated `sample_agent_browser_automation.py` to handle the GA `remote_function_call` browser action items, print complete agent messages instead of per-token deltas, and demonstrate reading the title and description of example.com.
+* Updated Agent Optimization job creation, polling, and cancellation samples to use inline target-completion test cases instead of requiring a registered dataset; `JOB_ID` is now optional in `sample_optimization_job_list_get_delete.py`.
+
+## 2.8.0 (2026-10-02)
+
+### Features Added
+
+* Agent Optimization APIs are now GA, including job management, cost estimation, candidate retrieval, and candidate promotion.
+* Added typed Agent Optimization models for agent and prompt optimization, configuration, evaluation, candidate search and mutations, cost estimates, latency, token usage, and termination details.
+* Data generation job APIs are now GA.
+* Added scenario-specific data generation models for evaluation, supervised fine-tuning, reinforcement fine-tuning, and user-conversation simulation.
+* Evaluator lifecycle and generation job APIs are now GA.
+* Added GA Agent tools `BrowserAutomationTool` and `BrowserAutomationToolboxTool`, with `ToolboxToolType.BROWSER_AUTOMATION`.
+* Added `ChatCompletionTool`, `FunctionObject`, and `FunctionParameters` for describing function tools used by chat completions.
+* Added optional `async_property` to `CustomToolParam`, `FunctionTool`, and `FunctionToolParam`.
+* Added `ConnectionType.OPEN_API` and `ConnectionType.REMOTE_A2A`.
+* Added optional `ApiError.misalignment` with `MisalignmentErrorDetailsResource`, `MisalignmentErrorType`, and `MisalignmentSteer`.
+* Added `gpt-image-2` and `gpt-image-2-2026-04-21` as known `ImageGenTool.model` values.
+
+### Breaking Changes
+
+All breaking changes affect preview APIs.
+
+Breaking changes in preview methods:
+
+* `list_optimization_jobs` now returns `ItemPaged[AgentOptimizationJob]` instead of `ItemPaged[AgentOptimizationJobListItem]`.
+* `.datasets.begin_create_generation_job` now accepts `DataGenerationJobInputs` instead of `DataGenerationJob`.
+* `.evaluators.begin_create_generation_job` now accepts `EvaluatorGenerationInputs` directly instead of an `EvaluatorGenerationJob` wrapping the inputs under an `inputs` property.
+
+Breaking changes in preview classes:
+
+* Restructured `AgentOptimizationCandidate`, `AgentOptimizationJob`, and `AgentOptimizationJobResult` around typed configuration, candidate output, evaluation, usage, latency, and termination models.
+* `DataGenerationJob` now requires `name`, `sources`, `generation_configuration`, and `scenario` instead of `inputs`.
+* `DataGenerationJobInputs` now uses `generation_configuration` and the scenario-specific input models for output configuration.
+* Renamed `DataGenerationJobOptions` to `DataGenerationJobConfiguration`, along with its derived classes: `SimpleQnADataGenerationJobOptions` to `SimpleQnADataGenerationJobConfiguration`, `SimulationSeedDataGenerationJobOptions` to `SimulationSeedDataGenerationJobConfiguration`, `ToolUseFineTuningDataGenerationJobOptions` to `ToolUseFineTuningDataGenerationJobConfiguration`, and `TracesDataGenerationJobOptions` to `TracesDataGenerationJobConfiguration`.
+* Replaced `DataGenerationJobOutputOptions` with scenario-specific `EvaluationDataGenerationJobOutputConfiguration`, `SupervisedFineTuningDataGenerationJobOutputConfiguration`, and `ReinforcementFineTuningDataGenerationJobOutputConfiguration` models.
+* Renamed the supervised and reinforcement fine-tuning `DataGenerationJobScenario` values with a `_PREVIEW` suffix. Their wire values now also end in `_preview`.
+* `EvaluatorGenerationJob` now exposes `sources`, `model`, `evaluator_name`, `evaluator_display_name`, and `evaluator_description` as top-level properties and no longer has an `inputs` property.
+
+### Sample updates
+
+* Added `sample_dataset_generation_job_management.py` demonstrating `begin_create_generation_job` without SDK polling, `list_generation_jobs`, `get_generation_job` and `cancel_generation_job` on `.datasets`.
+* Added `sample_dataset_generation_job_traces_for_evaluation_merge.py` demonstrating growing a traces-based evaluation dataset with `DataGenerationJobOutputWriteMode.MERGE`, which creates the next dataset version with merged, de-duplicated rows.
+* Added `sample_dataset_generation_job_simulation_seed_for_evaluation.py` demonstrating `SimulationSeedDataGenerationJobConfiguration` to generate multi-turn evaluation seeds from a prompt source.
+* Replaced `sample_quality_grader.py` with `sample_output_quality.py` for the `builtin.output_quality` composite evaluator, and added `sample_tool_use_quality.py` for the `builtin.tool_use_quality` composite evaluator.
+* Updated `sample_multiturn_conversation_simulation.py` to use the GA `azure_ai_user_conversation_simulation` data source.
+* Updated `sample_synthetic_multiturn_evaluation.py` to use the GA `azure_ai_synthetic_data_generation_with_simulation` data source, generating scenarios and simulating conversations in a single eval run.
+* Updated the trace-based evaluation samples (`sample_multiturn_trace_evaluation_by_id.py`, `sample_multiturn_trace_evaluation_agent_filter.py`, `sample_agent_trace_evaluation_smart_filter.py`, `sample_scheduled_agent_traces_evaluation_smart_filter.py`) to use the GA `azure_ai_trace_data_source` type.
+
 ## 2.7.0 (2026-09-18)
 
 ### Features Added

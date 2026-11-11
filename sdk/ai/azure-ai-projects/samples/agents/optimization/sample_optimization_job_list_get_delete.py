@@ -14,13 +14,13 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.3.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry portal.
     2) FOUNDRY_AGENT_NAME              - Required. Filter the list to jobs for this agent.
-    3) JOB_ID                  - Required. If set, fetches and deletes this specific job.
+    3) JOB_ID                  - Optional. If set, fetches and deletes this specific job.
 """
 
 import os
@@ -35,7 +35,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ["FOUNDRY_AGENT_NAME"]
-job_id = os.environ["JOB_ID"]
+job_id = os.environ.get("JOB_ID")
 
 with (
     DefaultAzureCredential() as credential,
@@ -47,8 +47,8 @@ with (
     # ------------------------------------------------------------------
     print("Listing optimization jobs (limit=10):")
     count = 0
-    for job_list_item in project_client.beta.agents.list_optimization_jobs(limit=10):
-        agent_str = job_list_item.agent.agent_name if job_list_item.agent else "?"
+    for job_list_item in project_client.agents.list_optimization_jobs(limit=10):
+        agent_str = getattr(job_list_item.target_configuration, "name", "?")
         print(f"  {job_list_item.id} | status={job_list_item.status} | agent={agent_str}")
         count += 1
     print(f"  ({count} jobs listed)\n")
@@ -59,7 +59,7 @@ with (
     if agent_name:
         print(f"Listing jobs for agent '{agent_name}' (limit=10):")
         count = 0
-        for job_list_item in project_client.beta.agents.list_optimization_jobs(agent_name=agent_name, limit=10):
+        for job_list_item in project_client.agents.list_optimization_jobs(agent_name=agent_name, limit=10):
             print(f"  {job_list_item.id} | status={job_list_item.status}")
             count += 1
         print(f"  ({count} jobs)\n")
@@ -69,7 +69,7 @@ with (
     # ------------------------------------------------------------------
     print(f"Listing succeeded jobs (limit=5):")
     count = 0
-    for job_list_item in project_client.beta.agents.list_optimization_jobs(status=JobStatus.SUCCEEDED, limit=5):
+    for job_list_item in project_client.agents.list_optimization_jobs(status=JobStatus.SUCCEEDED, limit=5):
         print(f"  {job_list_item.id}")
         count += 1
     print(f"  ({count} succeeded jobs)\n")
@@ -79,13 +79,13 @@ with (
     # ------------------------------------------------------------------
     if job_id:
         print(f"Getting job {job_id}...")
-        job = project_client.beta.agents.get_optimization_job(job_id=job_id)
+        job = project_client.agents.get_optimization_job(job_id=job_id)
         print(f"  status={job.status}")
-        if job.inputs:
-            print(f"  agent={job.inputs.agent.agent_name if job.inputs.agent else '?'}")
-        if job.result:
-            print(f"  baseline={job.result.baseline}, best={job.result.best}")
-            print(f"  candidates: {len(job.result.candidates or [])}")
+        print(f"  agent={getattr(job.target_configuration, 'name', '?')}")
+        if job.result and job.result.candidate_summary:
+            summary = job.result.candidate_summary
+            print(f"  baseline={summary.baseline_id}, best={summary.best_id}")
+            print(f"  completed candidates: {summary.completed_candidate_count}")
         if job.warnings:
             for w in job.warnings:
                 print(f"  [WARNING] {w}")
@@ -94,5 +94,5 @@ with (
         # 5. Delete the job.
         # ------------------------------------------------------------------
         print(f"\nDeleting job {job_id}...")
-        project_client.beta.agents.delete_optimization_job(job_id=job_id)
+        project_client.agents.delete_optimization_job(job_id=job_id)
         print("  Deleted.")

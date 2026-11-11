@@ -37,6 +37,8 @@ def main():
         parameters={
             "properties": {
                 "backupManagementType": "AzureIaasVM",
+                "instantAccessDurationMinutes": 120,
+                "instantAccessSnapshotEnabled": True,
                 "instantRpRetentionRangeInDays": 30,
                 "policyType": "V2",
                 "retentionPolicy": {
@@ -79,6 +81,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-01/AzureIaasVm/V2Policy/IaaS_v2_daily.json
+# x-ms-original-file: 2026-10-01/AzureIaasVm/V2Policy/IaaS_v2_daily.json
 if __name__ == "__main__":
     main()

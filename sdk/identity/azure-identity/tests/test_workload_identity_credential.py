@@ -11,7 +11,7 @@ from unittest.mock import mock_open, MagicMock, patch
 import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-from azure.identity import WorkloadIdentityCredential
+from azure.identity import DefaultAzureCredential, WorkloadIdentityCredential
 from azure.identity._credentials.workload_identity import _get_transport
 
 from helpers import mock_response, build_aad_response, GET_TOKEN_METHODS
@@ -66,6 +66,23 @@ def test_workload_identity_credential_get_token(get_token_method):
 
 class TestWorkloadIdentityCredentialTokenProxy:
     """Test cases for WorkloadIdentityCredential with enable_azure_proxy=True."""
+
+    def test_default_credential_ignores_proxy_configuration(self):
+        env = {
+            "AZURE_TENANT_ID": "tenant-id",
+            "AZURE_CLIENT_ID": "client-id",
+            "AZURE_FEDERATED_TOKEN_FILE": "token-file",
+            "AZURE_TOKEN_CREDENTIALS": "WorkloadIdentityCredential",
+            "AZURE_KUBERNETES_TOKEN_PROXY": "https://proxy.example/binding",
+        }
+        with patch.dict(os.environ, env, clear=True):
+            with patch("azure.identity._credentials.workload_identity._get_transport") as get_transport:
+                with DefaultAzureCredential(enable_azure_proxy=True) as credential:
+                    assert len(credential.credentials) == 1
+                    assert isinstance(credential.credentials[0], WorkloadIdentityCredential)
+                    get_transport.assert_not_called()
+                with WorkloadIdentityCredential(enable_azure_proxy=True):
+                    get_transport.assert_called_once()
 
     def test_enable_azure_proxy_creates_custom_transport(self):
         """Test that enable_azure_proxy=True creates a custom transport with correct parameters."""

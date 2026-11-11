@@ -32,7 +32,7 @@ class TokenBindingTransportMixin:
         if self._ca_file:
             self._load_ca_file_to_data()
 
-        super().__init__()
+        super().__init__(**kwargs)
 
     def _validate_url(self, url: str) -> None:
         """Validate that a URL meets security requirements for HTTPS connections.
@@ -59,6 +59,7 @@ class TokenBindingTransportMixin:
         try:
             with open(self._ca_file, "r", encoding="utf-8") as f:
                 content = f.read()
+                mtime = os.fstat(f.fileno()).st_mtime
 
             # Check if the file is empty
             if not content:
@@ -70,7 +71,7 @@ class TokenBindingTransportMixin:
 
             # File has content, update ca_data and tracking
             self._ca_data = content
-            self._ca_file_mtime = os.path.getmtime(self._ca_file)
+            self._ca_file_mtime = mtime
         except (OSError, IOError) as e:
             # If no prior ca_data exists (first read), fail
             if self._ca_data is None:
@@ -109,7 +110,23 @@ class TokenBindingTransportMixin:
         if self._proxy_endpoint:
             parsed_request_url = urllib.parse.urlparse(request.url)
             parsed_proxy_url = urllib.parse.urlparse(self._proxy_endpoint)
-            combined_path = parsed_proxy_url.path.rstrip("/") + "/" + parsed_request_url.path.lstrip("/")
+            proxy_path = parsed_proxy_url.path.rstrip("/")
+            request_origin = (
+                parsed_request_url.scheme,
+                parsed_request_url.hostname,
+                parsed_request_url.port if parsed_request_url.port is not None else 443,
+            )
+            proxy_origin = (
+                parsed_proxy_url.scheme,
+                parsed_proxy_url.hostname,
+                parsed_proxy_url.port if parsed_proxy_url.port is not None else 443,
+            )
+            # Retries reuse the request, whose URL may already point to the proxy.
+            if request_origin == proxy_origin and (
+                parsed_request_url.path == proxy_path or parsed_request_url.path.startswith(proxy_path + "/")
+            ):
+                return
+            combined_path = proxy_path + "/" + parsed_request_url.path.lstrip("/")
             new_url = urllib.parse.urlunparse(
                 (
                     parsed_proxy_url.scheme,

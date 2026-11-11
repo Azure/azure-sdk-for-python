@@ -1,5 +1,5 @@
 directory: specification/keyvault/data-plane/Secrets
-commit: 942c8b2fd38b3be3f322e219c97c5c3a75f2e97b
+commit: 569464e8c8b02ebd1b4d939f899508467528c696
 repo: Azure/azure-rest-api-specs
-additionalDirectories:
+additionalDirectories: 
 - specification/keyvault/data-plane/Secrets/common

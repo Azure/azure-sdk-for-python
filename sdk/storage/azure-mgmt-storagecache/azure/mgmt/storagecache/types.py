@@ -41,6 +41,7 @@ if TYPE_CHECKING:
         OperationalStateType,
         PrimingJobState,
         ProvisioningStateType,
+        RebalanceJobAdminStatus,
         StorageTargetType,
         UsernameDownloadedType,
         UsernameSource,
@@ -58,9 +59,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -86,9 +87,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -114,9 +115,9 @@ class AmlFilesystem(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -144,9 +145,9 @@ class AmlFilesystem(TrackedResource):
 class AmlFilesystemArchive(TypedDict, total=False):
     """Information about the AML file system archive.
 
-    :ivar filesystem_path: Lustre file system path to archive relative to the file system root.
+    :ivar filesystemPath: Lustre file system path to archive relative to the file system root.
      Specify '/' to archive all modified data.
-    :vartype filesystem_path: str
+    :vartype filesystemPath: str
     :ivar status: The status of the archive.
     :vartype status: "AmlFilesystemArchiveStatus"
     """
@@ -161,9 +162,9 @@ class AmlFilesystemArchive(TypedDict, total=False):
 class AmlFilesystemArchiveInfo(TypedDict, total=False):
     """Information required to execute the archive operation.
 
-    :ivar filesystem_path: Lustre file system path to archive relative to the file system root.
+    :ivar filesystemPath: Lustre file system path to archive relative to the file system root.
      Specify '/' to archive all modified data.
-    :vartype filesystem_path: str
+    :vartype filesystemPath: str
     """
 
     filesystemPath: str
@@ -177,16 +178,16 @@ class AmlFilesystemArchiveStatus(TypedDict, total=False):
     :ivar state: The state of the archive operation. Known values are: "NotConfigured", "Idle",
      "InProgress", "Canceled", "Completed", "Failed", "Cancelling", and "FSScanInProgress".
     :vartype state: Union[str, "ArchiveStatusType"]
-    :ivar last_completion_time: The time of the last completed archive operation.
-    :vartype last_completion_time: str
-    :ivar last_started_time: The time the latest archive operation started.
-    :vartype last_started_time: str
-    :ivar percent_complete: The completion percentage of the archive operation.
-    :vartype percent_complete: int
-    :ivar error_code: Server-defined error code for the archive operation.
-    :vartype error_code: str
-    :ivar error_message: Server-defined error message for the archive operation.
-    :vartype error_message: str
+    :ivar lastCompletionTime: The time of the last completed archive operation.
+    :vartype lastCompletionTime: str
+    :ivar lastStartedTime: The time the latest archive operation started.
+    :vartype lastStartedTime: str
+    :ivar percentComplete: The completion percentage of the archive operation.
+    :vartype percentComplete: int
+    :ivar errorCode: Server-defined error code for the archive operation.
+    :vartype errorCode: str
+    :ivar errorMessage: Server-defined error message for the archive operation.
+    :vartype errorMessage: str
     """
 
     state: Union[str, "ArchiveStatusType"]
@@ -208,16 +209,16 @@ class AmlFilesystemArchiveStatus(TypedDict, total=False):
 class AmlFilesystemClientInfo(TypedDict, total=False):
     """AML file system client information.
 
-    :ivar mgs_address: The IPv4 address used by clients to mount the AML file system's Lustre
+    :ivar mgsAddress: The IPv4 address used by clients to mount the AML file system's Lustre
      Management Service (MGS).
-    :vartype mgs_address: str
-    :ivar mount_command: Recommended command to mount the AML file system.
-    :vartype mount_command: str
-    :ivar lustre_version: The version of Lustre running in the AML file system.
-    :vartype lustre_version: str
-    :ivar container_storage_interface: Container Storage Interface information for the AML file
+    :vartype mgsAddress: str
+    :ivar mountCommand: Recommended command to mount the AML file system.
+    :vartype mountCommand: str
+    :ivar lustreVersion: The version of Lustre running in the AML file system.
+    :vartype lustreVersion: str
+    :ivar containerStorageInterface: Container Storage Interface information for the AML file
      system.
-    :vartype container_storage_interface: "AmlFilesystemContainerStorageInterface"
+    :vartype containerStorageInterface: "AmlFilesystemContainerStorageInterface"
     """
 
     mgsAddress: str
@@ -234,14 +235,14 @@ class AmlFilesystemClientInfo(TypedDict, total=False):
 class AmlFilesystemContainerStorageInterface(TypedDict, total=False):
     """AML file system container storage interface information.
 
-    :ivar persistent_volume_claim: Recommended AKS Persistent Volume Claim for the CSI driver, in
+    :ivar persistentVolumeClaim: Recommended AKS Persistent Volume Claim for the CSI driver, in
      Base64 encoded YAML.
-    :vartype persistent_volume_claim: str
-    :ivar persistent_volume: Recommended AKS Persistent Volume for the CSI driver, in Base64
-     encoded YAML.
-    :vartype persistent_volume: str
-    :ivar storage_class: Recommended AKS Storage Class for the CSI driver, in Base64 encoded YAML.
-    :vartype storage_class: str
+    :vartype persistentVolumeClaim: str
+    :ivar persistentVolume: Recommended AKS Persistent Volume for the CSI driver, in Base64 encoded
+     YAML.
+    :vartype persistentVolume: str
+    :ivar storageClass: Recommended AKS Storage Class for the CSI driver, in Base64 encoded YAML.
+    :vartype storageClass: str
     """
 
     persistentVolumeClaim: str
@@ -255,8 +256,8 @@ class AmlFilesystemContainerStorageInterface(TypedDict, total=False):
 class AmlFilesystemEncryptionSettings(TypedDict, total=False):
     """AML file system encryption settings.
 
-    :ivar key_encryption_key: Specifies the location of the encryption key in Key Vault.
-    :vartype key_encryption_key: "KeyVaultKeyReference"
+    :ivar keyEncryptionKey: Specifies the location of the encryption key in Key Vault.
+    :vartype keyEncryptionKey: "KeyVaultKeyReference"
     """
 
     keyEncryptionKey: "KeyVaultKeyReference"
@@ -270,10 +271,10 @@ class AmlFilesystemHealth(TypedDict, total=False):
     :ivar state: List of AML file system health states. Known values are: "Unavailable",
      "Available", "Degraded", "Transitioning", "Maintenance", and "Expanding".
     :vartype state: Union[str, "AmlFilesystemHealthStateType"]
-    :ivar status_code: Server-defined error code for the AML file system health.
-    :vartype status_code: str
-    :ivar status_description: Describes the health state.
-    :vartype status_description: str
+    :ivar statusCode: Server-defined error code for the AML file system health.
+    :vartype statusCode: str
+    :ivar statusDescription: Describes the health state.
+    :vartype statusDescription: str
     """
 
     state: Union[str, "AmlFilesystemHealthStateType"]
@@ -292,20 +293,20 @@ class AmlFilesystemHsmSettings(TypedDict, total=False):
      archiving from the namespace. The resource provider must have permission to create SAS tokens
      on the storage account. Required.
     :vartype container: str
-    :ivar logging_container: Resource ID of storage container used for logging events and errors.
+    :ivar loggingContainer: Resource ID of storage container used for logging events and errors.
      Must be a separate container in the same storage account as the hydration and archive
      container. The resource provider must have permission to create SAS tokens on the storage
      account. Required.
-    :vartype logging_container: str
-    :ivar import_prefix: Only blobs in the non-logging container that start with this path/prefix
+    :vartype loggingContainer: str
+    :ivar importPrefix: Only blobs in the non-logging container that start with this path/prefix
      get imported into the cluster namespace. This is only used during initial creation of the AML
      file system. It automatically creates an import job resource that can be deleted.
-    :vartype import_prefix: str
-    :ivar import_prefixes_initial: Only blobs in the non-logging container that start with one of
-     the paths/prefixes in this array get imported into the cluster namespace. This is only used
-     during initial creation of the AML file system and has '/' as the default value. It
-     automatically creates an import job resource that can be deleted.
-    :vartype import_prefixes_initial: list[str]
+    :vartype importPrefix: str
+    :ivar importPrefixesInitial: Only blobs in the non-logging container that start with one of the
+     paths/prefixes in this array get imported into the cluster namespace. This is only used during
+     initial creation of the AML file system and has '/' as the default value. It automatically
+     creates an import job resource that can be deleted.
+    :vartype importPrefixesInitial: list[str]
     """
 
     container: Required[str]
@@ -330,16 +331,16 @@ class AmlFilesystemHsmSettings(TypedDict, total=False):
 class AmlFilesystemIdentity(TypedDict, total=False):
     """Managed Identity properties.
 
-    :ivar principal_id: The principal ID for the user-assigned identity of the resource.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID associated with the resource.
-    :vartype tenant_id: str
+    :ivar principalId: The principal ID for the user-assigned identity of the resource.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID associated with the resource.
+    :vartype tenantId: str
     :ivar type: The type of identity used for the resource. Known values are: "UserAssigned" and
      "None".
     :vartype type: Union[str, "AmlFilesystemIdentityType"]
-    :ivar user_assigned_identities: A dictionary where each key is a user assigned identity
-     resource ID, and each key's value is an empty dictionary.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentitiesValue"]
+    :ivar userAssignedIdentities: A dictionary where each key is a user assigned identity resource
+     ID, and each key's value is an empty dictionary.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentitiesValue"]
     """
 
     principalId: str
@@ -356,36 +357,36 @@ class AmlFilesystemIdentity(TypedDict, total=False):
 class AmlFilesystemProperties(TypedDict, total=False):
     """Properties of the AML file system.
 
-    :ivar storage_capacity_ti_b: The size of the AML file system, in TiB. This might be rounded up.
+    :ivar storageCapacityTiB: The size of the AML file system, in TiB. This might be rounded up.
      Required.
-    :vartype storage_capacity_ti_b: float
-    :ivar current_storage_capacity_ti_b: The current storage capacity of the AML file system, in
-     TiB. This reflects the actual capacity including any expansions.
-    :vartype current_storage_capacity_ti_b: float
-    :ivar cluster_uuid: The unique identifier of the AML file system cluster.
-    :vartype cluster_uuid: str
+    :vartype storageCapacityTiB: float
+    :ivar currentStorageCapacityTiB: The current storage capacity of the AML file system, in TiB.
+     This reflects the actual capacity including any expansions.
+    :vartype currentStorageCapacityTiB: float
+    :ivar clusterUuid: The unique identifier of the AML file system cluster.
+    :vartype clusterUuid: str
     :ivar health: Health of the AML file system.
     :vartype health: "AmlFilesystemHealth"
-    :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
+    :ivar provisioningState: ARM provisioning state. Known values are: "Succeeded", "Failed",
      "Creating", "Deleting", "Updating", and "Canceled".
-    :vartype provisioning_state: Union[str, "AmlFilesystemProvisioningStateType"]
-    :ivar filesystem_subnet: Subnet used for managing the AML file system and for client-facing
+    :vartype provisioningState: Union[str, "AmlFilesystemProvisioningStateType"]
+    :ivar filesystemSubnet: Subnet used for managing the AML file system and for client-facing
      operations. This subnet should have at least a /24 subnet mask within the VNET's address space.
      Required.
-    :vartype filesystem_subnet: str
-    :ivar client_info: Client information for the AML file system.
-    :vartype client_info: "AmlFilesystemClientInfo"
-    :ivar throughput_provisioned_m_bps: Throughput provisioned in MB per sec, calculated as
+    :vartype filesystemSubnet: str
+    :ivar clientInfo: Client information for the AML file system.
+    :vartype clientInfo: "AmlFilesystemClientInfo"
+    :ivar throughputProvisionedMBps: Throughput provisioned in MB per sec, calculated as
      storageCapacityTiB * per-unit storage throughput.
-    :vartype throughput_provisioned_m_bps: int
-    :ivar encryption_settings: Specifies encryption settings of the AML file system.
-    :vartype encryption_settings: "AmlFilesystemEncryptionSettings"
-    :ivar maintenance_window: Start time of a 30-minute weekly maintenance window. Required.
-    :vartype maintenance_window: "AmlFilesystemPropertiesMaintenanceWindow"
+    :vartype throughputProvisionedMBps: int
+    :ivar encryptionSettings: Specifies encryption settings of the AML file system.
+    :vartype encryptionSettings: "AmlFilesystemEncryptionSettings"
+    :ivar maintenanceWindow: Start time of a 30-minute weekly maintenance window. Required.
+    :vartype maintenanceWindow: "AmlFilesystemPropertiesMaintenanceWindow"
     :ivar hsm: Hydration and archive settings and status.
     :vartype hsm: "AmlFilesystemPropertiesHsm"
-    :ivar root_squash_settings: Specifies root squash settings of the AML file system.
-    :vartype root_squash_settings: "AmlFilesystemRootSquashSettings"
+    :ivar rootSquashSettings: Specifies root squash settings of the AML file system.
+    :vartype rootSquashSettings: "AmlFilesystemRootSquashSettings"
     """
 
     storageCapacityTiB: Required[float]
@@ -423,8 +424,8 @@ class AmlFilesystemPropertiesHsm(TypedDict, total=False):
 
     :ivar settings: Specifies HSM settings of the AML file system.
     :vartype settings: "AmlFilesystemHsmSettings"
-    :ivar archive_status: Archive status.
-    :vartype archive_status: list["AmlFilesystemArchive"]
+    :ivar archiveStatus: Archive status.
+    :vartype archiveStatus: list["AmlFilesystemArchive"]
     """
 
     settings: "AmlFilesystemHsmSettings"
@@ -436,11 +437,11 @@ class AmlFilesystemPropertiesHsm(TypedDict, total=False):
 class AmlFilesystemPropertiesMaintenanceWindow(TypedDict, total=False):
     """Start time of a 30-minute weekly maintenance window.
 
-    :ivar day_of_week: Day of the week on which the maintenance window will occur. Known values
-     are: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", and "Sunday".
-    :vartype day_of_week: Union[str, "MaintenanceDayOfWeekType"]
-    :ivar time_of_day_utc: The time of day (in UTC) to start the maintenance window.
-    :vartype time_of_day_utc: str
+    :ivar dayOfWeek: Day of the week on which the maintenance window will occur. Known values are:
+     "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", and "Sunday".
+    :vartype dayOfWeek: Union[str, "MaintenanceDayOfWeekType"]
+    :ivar timeOfDayUTC: The time of day (in UTC) to start the maintenance window.
+    :vartype timeOfDayUTC: str
     """
 
     dayOfWeek: Union[str, "MaintenanceDayOfWeekType"]
@@ -459,13 +460,13 @@ class AmlFilesystemRootSquashSettings(TypedDict, total=False):
      systems. 'None': No squashing of User and Group IDs is performed for any users on any systems.
      Known values are: "None", "RootOnly", and "All".
     :vartype mode: Union[str, "AmlFilesystemSquashMode"]
-    :ivar no_squash_nid_lists: Semicolon separated NID IP Address list(s) to be added to the
+    :ivar noSquashNidLists: Semicolon separated NID IP Address list(s) to be added to the
      TrustedSystems.
-    :vartype no_squash_nid_lists: str
-    :ivar squash_uid: User ID to squash to.
-    :vartype squash_uid: int
-    :ivar squash_gid: Group ID to squash to.
-    :vartype squash_gid: int
+    :vartype noSquashNidLists: str
+    :ivar squashUID: User ID to squash to.
+    :vartype squashUID: int
+    :ivar squashGID: Group ID to squash to.
+    :vartype squashGID: int
     :ivar status: AML file system squash status.
     :vartype status: str
     """
@@ -489,11 +490,11 @@ class AmlFilesystemRootSquashSettings(TypedDict, total=False):
 class AmlFilesystemSubnetInfo(TypedDict, total=False):
     """Information required to validate the subnet that will be used in AML file system create.
 
-    :ivar filesystem_subnet: Subnet used for managing the AML file system and for client-facing
+    :ivar filesystemSubnet: Subnet used for managing the AML file system and for client-facing
      operations. This subnet should have at least a /24 subnet mask within the VNET's address space.
-    :vartype filesystem_subnet: str
-    :ivar storage_capacity_ti_b: The size of the AML file system, in TiB.
-    :vartype storage_capacity_ti_b: float
+    :vartype filesystemSubnet: str
+    :ivar storageCapacityTiB: The size of the AML file system, in TiB.
+    :vartype storageCapacityTiB: float
     :ivar sku: SKU for the resource.
     :vartype sku: "SkuName"
     :ivar location: Region that the AML file system will be created in.
@@ -529,12 +530,12 @@ class AmlFilesystemUpdate(TypedDict, total=False):
 class AmlFilesystemUpdateProperties(TypedDict, total=False):
     """Properties of the AML file system.
 
-    :ivar encryption_settings: Specifies encryption settings of the AML file system.
-    :vartype encryption_settings: "AmlFilesystemEncryptionSettings"
-    :ivar maintenance_window: Start time of a 30-minute weekly maintenance window.
-    :vartype maintenance_window: "AmlFilesystemUpdatePropertiesMaintenanceWindow"
-    :ivar root_squash_settings: Specifies root squash settings of the AML file system.
-    :vartype root_squash_settings: "AmlFilesystemRootSquashSettings"
+    :ivar encryptionSettings: Specifies encryption settings of the AML file system.
+    :vartype encryptionSettings: "AmlFilesystemEncryptionSettings"
+    :ivar maintenanceWindow: Start time of a 30-minute weekly maintenance window.
+    :vartype maintenanceWindow: "AmlFilesystemUpdatePropertiesMaintenanceWindow"
+    :ivar rootSquashSettings: Specifies root squash settings of the AML file system.
+    :vartype rootSquashSettings: "AmlFilesystemRootSquashSettings"
     """
 
     encryptionSettings: "AmlFilesystemEncryptionSettings"
@@ -548,11 +549,11 @@ class AmlFilesystemUpdateProperties(TypedDict, total=False):
 class AmlFilesystemUpdatePropertiesMaintenanceWindow(TypedDict, total=False):  # pylint: disable=name-too-long
     """Start time of a 30-minute weekly maintenance window.
 
-    :ivar day_of_week: Day of the week on which the maintenance window will occur. Known values
-     are: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", and "Sunday".
-    :vartype day_of_week: Union[str, "MaintenanceDayOfWeekType"]
-    :ivar time_of_day_utc: The time of day (in UTC) to start the maintenance window.
-    :vartype time_of_day_utc: str
+    :ivar dayOfWeek: Day of the week on which the maintenance window will occur. Known values are:
+     "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", and "Sunday".
+    :vartype dayOfWeek: Union[str, "MaintenanceDayOfWeekType"]
+    :ivar timeOfDayUTC: The time of day (in UTC) to start the maintenance window.
+    :vartype timeOfDayUTC: str
     """
 
     dayOfWeek: Union[str, "MaintenanceDayOfWeekType"]
@@ -575,9 +576,9 @@ class AutoExportJob(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -593,17 +594,16 @@ class AutoExportJob(TrackedResource):
 class AutoExportJobProperties(TypedDict, total=False):
     """Properties of the auto export job.
 
-    :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
+    :ivar provisioningState: ARM provisioning state. Known values are: "Succeeded", "Failed",
      "Creating", "Deleting", "Updating", and "Canceled".
-    :vartype provisioning_state: Union[str, "AutoExportJobProvisioningStateType"]
-    :ivar admin_status: The administrative status of the auto export job. Possible values:
-     'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
-     export job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
-    :vartype admin_status: Union[str, "AutoExportJobAdminStatus"]
-    :ivar auto_export_prefixes: An array of blob paths/prefixes that get auto exported to the
-     cluster namespace. It has '/' as the default value. Number of maximum allowed paths for now is
-     1.
-    :vartype auto_export_prefixes: list[str]
+    :vartype provisioningState: Union[str, "AutoExportJobProvisioningStateType"]
+    :ivar adminStatus: The administrative status of the auto export job. Possible values: 'Enable',
+     'Disable'. Passing in a value of 'Disable' will disable the current active auto export job. By
+     default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+    :vartype adminStatus: Union[str, "AutoExportJobAdminStatus"]
+    :ivar autoExportPrefixes: An array of blob paths/prefixes that get auto exported to the cluster
+     namespace. It has '/' as the default value. Number of maximum allowed paths for now is 1.
+    :vartype autoExportPrefixes: list[str]
     :ivar status: The status of the auto export.
     :vartype status: "AutoExportJobPropertiesStatus"
     """
@@ -631,41 +631,40 @@ class AutoExportJobPropertiesStatus(TypedDict, total=False):
      disabling has failed.  Failed means the export was unable to continue, due to a fatal error.
      Known values are: "InProgress", "Disabling", "Disabled", "DisableFailed", and "Failed".
     :vartype state: Union[str, "AutoExportStatusType"]
-    :ivar status_code: Server-defined status code for auto export job.
-    :vartype status_code: str
-    :ivar status_message: Server-defined status message for auto export job.
-    :vartype status_message: str
-    :ivar total_files_exported: Total files exported since the start of the export. This is
+    :ivar statusCode: Server-defined status code for auto export job.
+    :vartype statusCode: str
+    :ivar statusMessage: Server-defined status message for auto export job.
+    :vartype statusMessage: str
+    :ivar totalFilesExported: Total files exported since the start of the export. This is
      accumulative, some files may be counted repeatedly.
-    :vartype total_files_exported: int
-    :ivar total_mi_b_exported: Total data (in MiB) exported since the start of the export. This is
+    :vartype totalFilesExported: int
+    :ivar totalMiBExported: Total data (in MiB) exported since the start of the export. This is
      accumulative, some files may be counted repeatedly.
-    :vartype total_mi_b_exported: int
-    :ivar total_files_failed: Total files failed to be export since the last successfully completed
+    :vartype totalMiBExported: int
+    :ivar totalFilesFailed: Total files failed to be export since the last successfully completed
      iteration. This is accumulative, some files may be counted repeatedly.
-    :vartype total_files_failed: int
-    :ivar export_iteration_count: Number of iterations completed since the start of the export.
-    :vartype export_iteration_count: int
-    :ivar last_successful_iteration_completion_time_utc: Time (in UTC) of the last successfully
+    :vartype totalFilesFailed: int
+    :ivar exportIterationCount: Number of iterations completed since the start of the export.
+    :vartype exportIterationCount: int
+    :ivar lastSuccessfulIterationCompletionTimeUTC: Time (in UTC) of the last successfully
      completed export iteration. Look at logging container for details.
-    :vartype last_successful_iteration_completion_time_utc: str
-    :ivar current_iteration_files_discovered: Files discovered for export in current iteration. It
-     may increase while more export items are found.
-    :vartype current_iteration_files_discovered: int
-    :ivar current_iteration_mi_b_discovered: Data (in MiB) discovered for export in current
-     iteration. It may increase while more export items are found.
-    :vartype current_iteration_mi_b_discovered: int
-    :ivar current_iteration_files_exported: Files that have been exported in current iteration.
-    :vartype current_iteration_files_exported: int
-    :ivar current_iteration_mi_b_exported: Data (in MiB) that have been exported in current
-     iteration.
-    :vartype current_iteration_mi_b_exported: int
-    :ivar current_iteration_files_failed: Files failed to export in current iteration.
-    :vartype current_iteration_files_failed: int
-    :ivar last_started_time_utc: The time (in UTC) the latest auto export job started.
-    :vartype last_started_time_utc: str
-    :ivar last_completion_time_utc: The time (in UTC) of the last completed auto export job.
-    :vartype last_completion_time_utc: str
+    :vartype lastSuccessfulIterationCompletionTimeUTC: str
+    :ivar currentIterationFilesDiscovered: Files discovered for export in current iteration. It may
+     increase while more export items are found.
+    :vartype currentIterationFilesDiscovered: int
+    :ivar currentIterationMiBDiscovered: Data (in MiB) discovered for export in current iteration.
+     It may increase while more export items are found.
+    :vartype currentIterationMiBDiscovered: int
+    :ivar currentIterationFilesExported: Files that have been exported in current iteration.
+    :vartype currentIterationFilesExported: int
+    :ivar currentIterationMiBExported: Data (in MiB) that have been exported in current iteration.
+    :vartype currentIterationMiBExported: int
+    :ivar currentIterationFilesFailed: Files failed to export in current iteration.
+    :vartype currentIterationFilesFailed: int
+    :ivar lastStartedTimeUTC: The time (in UTC) the latest auto export job started.
+    :vartype lastStartedTimeUTC: str
+    :ivar lastCompletionTimeUTC: The time (in UTC) of the last completed auto export job.
+    :vartype lastCompletionTimeUTC: str
     """
 
     state: Union[str, "AutoExportStatusType"]
@@ -725,12 +724,12 @@ class AutoExportJobUpdate(TypedDict, total=False):
 
 
 class AutoExportJobUpdateProperties(TypedDict, total=False):
-    """AutoExportJobUpdateProperties.
+    """Properties for updating an auto export job.
 
-    :ivar admin_status: The administrative status of the auto export job. Possible values:
-     'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
-     export job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
-    :vartype admin_status: Union[str, "AutoExportJobAdminStatus"]
+    :ivar adminStatus: The administrative status of the auto export job. Possible values: 'Enable',
+     'Disable'. Passing in a value of 'Disable' will disable the current active auto export job. By
+     default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+    :vartype adminStatus: Union[str, "AutoExportJobAdminStatus"]
     """
 
     adminStatus: Union[str, "AutoExportJobAdminStatus"]
@@ -752,9 +751,9 @@ class AutoImportJob(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -770,17 +769,17 @@ class AutoImportJob(TrackedResource):
 class AutoImportJobProperties(TypedDict, total=False):
     """Properties of the auto import job.
 
-    :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
+    :ivar provisioningState: ARM provisioning state. Known values are: "Succeeded", "Failed",
      "Creating", "Deleting", "Updating", and "Canceled".
-    :vartype provisioning_state: Union[str, "AutoImportJobPropertiesProvisioningState"]
-    :ivar admin_status: The administrative status of the auto import job. Possible values:
-     'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
-     import job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
-    :vartype admin_status: Union[str, "AutoImportJobPropertiesAdminStatus"]
-    :ivar auto_import_prefixes: An array of blob paths/prefixes that get auto imported to the
-     cluster namespace. It has '/' as the default value. Number of maximum allowed paths is 100.
-    :vartype auto_import_prefixes: list[str]
-    :ivar conflict_resolution_mode: How the auto import job will handle conflicts. For example, if
+    :vartype provisioningState: Union[str, "AutoImportJobPropertiesProvisioningState"]
+    :ivar adminStatus: The administrative status of the auto import job. Possible values: 'Enable',
+     'Disable'. Passing in a value of 'Disable' will disable the current active auto import job. By
+     default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+    :vartype adminStatus: Union[str, "AutoImportJobPropertiesAdminStatus"]
+    :ivar autoImportPrefixes: An array of blob paths/prefixes that get auto imported to the cluster
+     namespace. It has '/' as the default value. Number of maximum allowed paths is 100.
+    :vartype autoImportPrefixes: list[str]
+    :ivar conflictResolutionMode: How the auto import job will handle conflicts. For example, if
      the auto import job is trying to bring in a directory, but a file is at that path, how it
      handles it. Fail indicates that the auto import job should stop immediately and not do anything
      with the conflict. Skip indicates that it should pass over the conflict. OverwriteIfDirty
@@ -791,13 +790,13 @@ class AutoImportJobProperties(TypedDict, total=False):
      <https://learn.microsoft.com/en-us/azure/azure-managed-lustre/blob-integration#conflict-resolution-mode>`_
      for a thorough explanation of these resolution modes. Known values are: "Fail", "Skip",
      "OverwriteIfDirty", and "OverwriteAlways".
-    :vartype conflict_resolution_mode: Union[str, "ConflictResolutionMode"]
-    :ivar enable_deletions: Whether or not to enable deletions during auto import. This only
-     affects overwrite-dirty.
-    :vartype enable_deletions: bool
-    :ivar maximum_errors: Total non-conflict-oriented errors (e.g., OS errors) Import will tolerate
+    :vartype conflictResolutionMode: Union[str, "ConflictResolutionMode"]
+    :ivar enableDeletions: Whether or not to enable deletions during auto import. This only affects
+     overwrite-dirty.
+    :vartype enableDeletions: bool
+    :ivar maximumErrors: Total non-conflict-oriented errors (e.g., OS errors) Import will tolerate
      before exiting with failure. -1 means infinite. 0 means exit immediately on any error.
-    :vartype maximum_errors: int
+    :vartype maximumErrors: int
     :ivar status: The status of the auto import job.
     :vartype status: "AutoImportJobPropertiesStatus"
     """
@@ -839,44 +838,44 @@ class AutoImportJobPropertiesStatus(TypedDict, total=False):
     :ivar state: The state of the auto import operation. Known values are: "InProgress", "Failed",
      "Disabling", and "Disabled".
     :vartype state: Union[str, "AutoImportJobState"]
-    :ivar status_code: Server-defined status code for auto import job.
-    :vartype status_code: str
-    :ivar status_message: Server-defined status message for auto import job.
-    :vartype status_message: str
-    :ivar scan_start_time: Date and time of when the currently running full scan began.
-    :vartype scan_start_time: str
-    :ivar scan_end_time: Date and time of when the full scan ended.
-    :vartype scan_end_time: str
-    :ivar total_blobs_walked: Total number of blobs walked during full scan.
-    :vartype total_blobs_walked: int
-    :ivar rate_of_blob_walk: Rate of blobs walked during full scan.
-    :vartype rate_of_blob_walk: int
-    :ivar total_blobs_imported: Total number of blobs imported during full scan.
-    :vartype total_blobs_imported: int
-    :ivar rate_of_blob_import: Rate of blob import during full scan.
-    :vartype rate_of_blob_import: int
-    :ivar imported_files: Number of files imported during full scan.
-    :vartype imported_files: int
-    :ivar imported_directories: Number of directories imported during full scan.
-    :vartype imported_directories: int
-    :ivar imported_symlinks: Number of symlinks imported during full scan.
-    :vartype imported_symlinks: int
-    :ivar preexisting_files: Number of preexisting files during full scan.
-    :vartype preexisting_files: int
-    :ivar preexisting_directories: Number of preexisting directories during full scan.
-    :vartype preexisting_directories: int
-    :ivar preexisting_symlinks: Number of preexisting symlinks during full scan.
-    :vartype preexisting_symlinks: int
-    :ivar total_errors: Total errors encountered during full scan.
-    :vartype total_errors: int
-    :ivar total_conflicts: Total conflicts encountered during full scan.
-    :vartype total_conflicts: int
-    :ivar blob_sync_events: The storage account blob change feed status of the auto import job.
-    :vartype blob_sync_events: "AutoImportJobPropertiesStatusBlobSyncEvents"
-    :ivar last_started_time_utc: The time (in UTC) the latest auto import job started.
-    :vartype last_started_time_utc: str
-    :ivar last_completion_time_utc: The time (in UTC) of the last completed auto import job.
-    :vartype last_completion_time_utc: str
+    :ivar statusCode: Server-defined status code for auto import job.
+    :vartype statusCode: str
+    :ivar statusMessage: Server-defined status message for auto import job.
+    :vartype statusMessage: str
+    :ivar scanStartTime: Date and time of when the currently running full scan began.
+    :vartype scanStartTime: str
+    :ivar scanEndTime: Date and time of when the full scan ended.
+    :vartype scanEndTime: str
+    :ivar totalBlobsWalked: Total number of blobs walked during full scan.
+    :vartype totalBlobsWalked: int
+    :ivar rateOfBlobWalk: Rate of blobs walked during full scan.
+    :vartype rateOfBlobWalk: int
+    :ivar totalBlobsImported: Total number of blobs imported during full scan.
+    :vartype totalBlobsImported: int
+    :ivar rateOfBlobImport: Rate of blob import during full scan.
+    :vartype rateOfBlobImport: int
+    :ivar importedFiles: Number of files imported during full scan.
+    :vartype importedFiles: int
+    :ivar importedDirectories: Number of directories imported during full scan.
+    :vartype importedDirectories: int
+    :ivar importedSymlinks: Number of symlinks imported during full scan.
+    :vartype importedSymlinks: int
+    :ivar preexistingFiles: Number of preexisting files during full scan.
+    :vartype preexistingFiles: int
+    :ivar preexistingDirectories: Number of preexisting directories during full scan.
+    :vartype preexistingDirectories: int
+    :ivar preexistingSymlinks: Number of preexisting symlinks during full scan.
+    :vartype preexistingSymlinks: int
+    :ivar totalErrors: Total errors encountered during full scan.
+    :vartype totalErrors: int
+    :ivar totalConflicts: Total conflicts encountered during full scan.
+    :vartype totalConflicts: int
+    :ivar blobSyncEvents: The storage account blob change feed status of the auto import job.
+    :vartype blobSyncEvents: "AutoImportJobPropertiesStatusBlobSyncEvents"
+    :ivar lastStartedTimeUTC: The time (in UTC) the latest auto import job started.
+    :vartype lastStartedTimeUTC: str
+    :ivar lastCompletionTimeUTC: The time (in UTC) of the last completed auto import job.
+    :vartype lastCompletionTimeUTC: str
     """
 
     state: Union[str, "AutoImportJobState"]
@@ -925,33 +924,32 @@ class AutoImportJobPropertiesStatus(TypedDict, total=False):
 class AutoImportJobPropertiesStatusBlobSyncEvents(TypedDict, total=False):  # pylint: disable=name-too-long
     """The storage account blob change feed status of the auto import job.
 
-    :ivar imported_files: Number of files imported during auto import.
-    :vartype imported_files: int
-    :ivar imported_directories: Number of directories imported during auto import.
-    :vartype imported_directories: int
-    :ivar imported_symlinks: Number of symlinks imported during auto import.
-    :vartype imported_symlinks: int
-    :ivar preexisting_files: Number of preexisting files during auto import.
-    :vartype preexisting_files: int
-    :ivar preexisting_directories: Number of preexisting directories during auto import.
-    :vartype preexisting_directories: int
-    :ivar preexisting_symlinks: Number of preexisting symlinks during auto import.
-    :vartype preexisting_symlinks: int
-    :ivar total_blobs_imported: Total number of blobs imported during auto import.
-    :vartype total_blobs_imported: int
-    :ivar rate_of_blob_import: Rate of blob import per second during auto import.
-    :vartype rate_of_blob_import: int
-    :ivar total_errors: Total errors encountered during auto import.
-    :vartype total_errors: int
-    :ivar total_conflicts: Total conflicts encountered during auto import.
-    :vartype total_conflicts: int
+    :ivar importedFiles: Number of files imported during auto import.
+    :vartype importedFiles: int
+    :ivar importedDirectories: Number of directories imported during auto import.
+    :vartype importedDirectories: int
+    :ivar importedSymlinks: Number of symlinks imported during auto import.
+    :vartype importedSymlinks: int
+    :ivar preexistingFiles: Number of preexisting files during auto import.
+    :vartype preexistingFiles: int
+    :ivar preexistingDirectories: Number of preexisting directories during auto import.
+    :vartype preexistingDirectories: int
+    :ivar preexistingSymlinks: Number of preexisting symlinks during auto import.
+    :vartype preexistingSymlinks: int
+    :ivar totalBlobsImported: Total number of blobs imported during auto import.
+    :vartype totalBlobsImported: int
+    :ivar rateOfBlobImport: Rate of blob import per second during auto import.
+    :vartype rateOfBlobImport: int
+    :ivar totalErrors: Total errors encountered during auto import.
+    :vartype totalErrors: int
+    :ivar totalConflicts: Total conflicts encountered during auto import.
+    :vartype totalConflicts: int
     :ivar deletions: Number of deletions during auto import.
     :vartype deletions: int
-    :ivar last_change_feed_event_consumed_time: Date and time of the last Change Feed event
-     consumed.
-    :vartype last_change_feed_event_consumed_time: str
-    :ivar last_time_fully_synchronized: Date and time when last fully synchronized.
-    :vartype last_time_fully_synchronized: str
+    :ivar lastChangeFeedEventConsumedTime: Date and time of the last Change Feed event consumed.
+    :vartype lastChangeFeedEventConsumedTime: str
+    :ivar lastTimeFullySynchronized: Date and time when last fully synchronized.
+    :vartype lastTimeFullySynchronized: str
     """
 
     importedFiles: int
@@ -997,12 +995,12 @@ class AutoImportJobUpdate(TypedDict, total=False):
 
 
 class AutoImportJobUpdateProperties(TypedDict, total=False):
-    """AutoImportJobUpdateProperties.
+    """Properties for updating an auto import job.
 
-    :ivar admin_status: The administrative status of the auto import job. Possible values:
-     'Enable', 'Disable'. Passing in a value of 'Disable' will disable the current active auto
-     import job. By default it is set to 'Enable'. Known values are: "Enable" and "Disable".
-    :vartype admin_status: Union[str, "AutoImportJobUpdatePropertiesAdminStatus"]
+    :ivar adminStatus: The administrative status of the auto import job. Possible values: 'Enable',
+     'Disable'. Passing in a value of 'Disable' will disable the current active auto import job. By
+     default it is set to 'Enable'. Known values are: "Enable" and "Disable".
+    :vartype adminStatus: Union[str, "AutoImportJobUpdatePropertiesAdminStatus"]
     """
 
     adminStatus: Union[str, "AutoImportJobUpdatePropertiesAdminStatus"]
@@ -1016,14 +1014,14 @@ class BlobNfsTarget(TypedDict, total=False):
 
     :ivar target: Resource ID of the storage container.
     :vartype target: str
-    :ivar usage_model: Identifies the StorageCache usage model to be used for this storage target.
-    :vartype usage_model: str
-    :ivar verification_timer: Amount of time (in seconds) the cache waits before it checks the
+    :ivar usageModel: Identifies the StorageCache usage model to be used for this storage target.
+    :vartype usageModel: str
+    :ivar verificationTimer: Amount of time (in seconds) the cache waits before it checks the
      back-end storage for file updates.
-    :vartype verification_timer: int
-    :ivar write_back_timer: Amount of time (in seconds) the cache waits after the last file change
+    :vartype verificationTimer: int
+    :ivar writeBackTimer: Amount of time (in seconds) the cache waits after the last file change
      before it copies the changed file to back-end storage.
-    :vartype write_back_timer: int
+    :vartype writeBackTimer: int
     """
 
     target: str
@@ -1049,9 +1047,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -1068,9 +1066,9 @@ class Cache(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the cache.
     :vartype properties: "CacheProperties"
     :ivar tags: Resource tags.
@@ -1098,24 +1096,24 @@ class Cache(ProxyResource):
 class CacheActiveDirectorySettings(TypedDict, total=False):
     """Active Directory settings used to join a cache to a domain.
 
-    :ivar primary_dns_ip_address: Primary DNS IP address used to resolve the Active Directory
-     domain controller's fully qualified domain name. Required.
-    :vartype primary_dns_ip_address: str
-    :ivar secondary_dns_ip_address: Secondary DNS IP address used to resolve the Active Directory
+    :ivar primaryDnsIpAddress: Primary DNS IP address used to resolve the Active Directory domain
+     controller's fully qualified domain name. Required.
+    :vartype primaryDnsIpAddress: str
+    :ivar secondaryDnsIpAddress: Secondary DNS IP address used to resolve the Active Directory
      domain controller's fully qualified domain name.
-    :vartype secondary_dns_ip_address: str
-    :ivar domain_name: The fully qualified domain name of the Active Directory domain controller.
+    :vartype secondaryDnsIpAddress: str
+    :ivar domainName: The fully qualified domain name of the Active Directory domain controller.
      Required.
-    :vartype domain_name: str
-    :ivar domain_net_bios_name: The Active Directory domain's NetBIOS name. Required.
-    :vartype domain_net_bios_name: str
-    :ivar cache_net_bios_name: The NetBIOS name to assign to the HPC Cache when it joins the Active
+    :vartype domainName: str
+    :ivar domainNetBiosName: The Active Directory domain's NetBIOS name. Required.
+    :vartype domainNetBiosName: str
+    :ivar cacheNetBiosName: The NetBIOS name to assign to the HPC Cache when it joins the Active
      Directory domain as a server. Length must 1-15 characters from the class [-0-9a-zA-Z].
      Required.
-    :vartype cache_net_bios_name: str
-    :ivar domain_joined: True if the HPC Cache is joined to the Active Directory domain. Known
+    :vartype cacheNetBiosName: str
+    :ivar domainJoined: True if the HPC Cache is joined to the Active Directory domain. Known
      values are: "Yes", "No", and "Error".
-    :vartype domain_joined: Union[str, "DomainJoinedType"]
+    :vartype domainJoined: Union[str, "DomainJoinedType"]
     :ivar credentials: Active Directory admin credentials used to join the HPC Cache to a domain.
     :vartype credentials: "CacheActiveDirectorySettingsCredentials"
     """
@@ -1162,12 +1160,12 @@ class CacheActiveDirectorySettingsCredentials(TypedDict, total=False):
 class CacheDirectorySettings(TypedDict, total=False):
     """Cache Directory Services settings.
 
-    :ivar active_directory: Specifies settings for joining the HPC Cache to an Active Directory
+    :ivar activeDirectory: Specifies settings for joining the HPC Cache to an Active Directory
      domain.
-    :vartype active_directory: "CacheActiveDirectorySettings"
-    :ivar username_download: Specifies settings for Extended Groups. Extended Groups allows users
-     to be members of more than 16 groups.
-    :vartype username_download: "CacheUsernameDownloadSettings"
+    :vartype activeDirectory: "CacheActiveDirectorySettings"
+    :ivar usernameDownload: Specifies settings for Extended Groups. Extended Groups allows users to
+     be members of more than 16 groups.
+    :vartype usernameDownload: "CacheUsernameDownloadSettings"
     """
 
     activeDirectory: "CacheActiveDirectorySettings"
@@ -1180,11 +1178,11 @@ class CacheDirectorySettings(TypedDict, total=False):
 class CacheEncryptionSettings(TypedDict, total=False):
     """Cache encryption settings.
 
-    :ivar key_encryption_key: Specifies the location of the key encryption key in key vault.
-    :vartype key_encryption_key: "KeyVaultKeyReference"
-    :ivar rotation_to_latest_key_version_enabled: Specifies whether the service will automatically
+    :ivar keyEncryptionKey: Specifies the location of the key encryption key in key vault.
+    :vartype keyEncryptionKey: "KeyVaultKeyReference"
+    :ivar rotationToLatestKeyVersionEnabled: Specifies whether the service will automatically
      rotate to the newest version of the key in the key vault.
-    :vartype rotation_to_latest_key_version_enabled: bool
+    :vartype rotationToLatestKeyVersionEnabled: bool
     """
 
     keyEncryptionKey: "KeyVaultKeyReference"
@@ -1206,8 +1204,8 @@ class CacheHealth(TypedDict, total=False):
      "Degraded", "Down", "Transitioning", "Stopping", "Stopped", "Upgrading", "Flushing",
      "WaitingForKey", "StartFailed", and "UpgradeFailed".
     :vartype state: Union[str, "HealthStateType"]
-    :ivar status_description: Describes explanation of state.
-    :vartype status_description: str
+    :ivar statusDescription: Describes explanation of state.
+    :vartype statusDescription: str
     :ivar conditions: Outstanding conditions that need to be investigated and resolved.
     :vartype conditions: list["Condition"]
     """
@@ -1229,16 +1227,16 @@ class CacheHealth(TypedDict, total=False):
 class CacheIdentity(TypedDict, total=False):
     """Cache identity properties.
 
-    :ivar principal_id: The principal ID for the system-assigned identity of the cache.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID associated with the cache.
-    :vartype tenant_id: str
+    :ivar principalId: The principal ID for the system-assigned identity of the cache.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID associated with the cache.
+    :vartype tenantId: str
     :ivar type: The type of identity used for the cache. Known values are: "SystemAssigned",
      "UserAssigned", "SystemAssigned, UserAssigned", and "None".
     :vartype type: Union[str, "CacheIdentityType"]
-    :ivar user_assigned_identities: A dictionary where each key is a user assigned identity
-     resource ID, and each key's value is an empty dictionary.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentitiesValue"]
+    :ivar userAssignedIdentities: A dictionary where each key is a user assigned identity resource
+     ID, and each key's value is an empty dictionary.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentitiesValue"]
     """
 
     principalId: str
@@ -1258,16 +1256,16 @@ class CacheNetworkSettings(TypedDict, total=False):
 
     :ivar mtu: The IPv4 maximum transmission unit configured for the subnet.
     :vartype mtu: int
-    :ivar utility_addresses: Array of additional IP addresses used by this cache.
-    :vartype utility_addresses: list[str]
-    :ivar dns_servers: DNS servers for the cache to use.  It will be set from the network
+    :ivar utilityAddresses: Array of additional IP addresses used by this cache.
+    :vartype utilityAddresses: list[str]
+    :ivar dnsServers: DNS servers for the cache to use.  It will be set from the network
      configuration if no value is provided.
-    :vartype dns_servers: list[str]
-    :ivar dns_search_domain: DNS search domain.
-    :vartype dns_search_domain: str
-    :ivar ntp_server: NTP server IP Address or FQDN for the cache to use. The default is
+    :vartype dnsServers: list[str]
+    :ivar dnsSearchDomain: DNS search domain.
+    :vartype dnsSearchDomain: str
+    :ivar ntpServer: NTP server IP Address or FQDN for the cache to use. The default is
      time.windows.com.
-    :vartype ntp_server: str
+    :vartype ntpServer: str
     """
 
     mtu: int
@@ -1286,39 +1284,39 @@ class CacheNetworkSettings(TypedDict, total=False):
 class CacheProperties(TypedDict, total=False):
     """Properties of the cache.
 
-    :ivar cache_size_gb: The size of this Cache, in GB.
-    :vartype cache_size_gb: int
+    :ivar cacheSizeGB: The size of this Cache, in GB.
+    :vartype cacheSizeGB: int
     :ivar health: Health of the cache.
     :vartype health: "CacheHealth"
-    :ivar mount_addresses: Array of IPv4 addresses that can be used by clients mounting this cache.
-    :vartype mount_addresses: list[str]
-    :ivar provisioning_state: ARM provisioning state, see
+    :ivar mountAddresses: Array of IPv4 addresses that can be used by clients mounting this cache.
+    :vartype mountAddresses: list[str]
+    :ivar provisioningState: ARM provisioning state, see
      `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property
      <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property>`_.
      Known values are: "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningStateType"]
+    :vartype provisioningState: Union[str, "ProvisioningStateType"]
     :ivar subnet: Subnet used for the cache.
     :vartype subnet: str
-    :ivar upgrade_status: Upgrade status of the cache.
-    :vartype upgrade_status: "CacheUpgradeStatus"
-    :ivar upgrade_settings: Upgrade settings of the cache.
-    :vartype upgrade_settings: "CacheUpgradeSettings"
-    :ivar network_settings: Specifies network settings of the cache.
-    :vartype network_settings: "CacheNetworkSettings"
-    :ivar encryption_settings: Specifies encryption settings of the cache.
-    :vartype encryption_settings: "CacheEncryptionSettings"
-    :ivar security_settings: Specifies security settings of the cache.
-    :vartype security_settings: "CacheSecuritySettings"
-    :ivar directory_services_settings: Specifies Directory Services settings of the cache.
-    :vartype directory_services_settings: "CacheDirectorySettings"
+    :ivar upgradeStatus: Upgrade status of the cache.
+    :vartype upgradeStatus: "CacheUpgradeStatus"
+    :ivar upgradeSettings: Upgrade settings of the cache.
+    :vartype upgradeSettings: "CacheUpgradeSettings"
+    :ivar networkSettings: Specifies network settings of the cache.
+    :vartype networkSettings: "CacheNetworkSettings"
+    :ivar encryptionSettings: Specifies encryption settings of the cache.
+    :vartype encryptionSettings: "CacheEncryptionSettings"
+    :ivar securitySettings: Specifies security settings of the cache.
+    :vartype securitySettings: "CacheSecuritySettings"
+    :ivar directoryServicesSettings: Specifies Directory Services settings of the cache.
+    :vartype directoryServicesSettings: "CacheDirectorySettings"
     :ivar zones: Availability zones for resources. This field should only contain a single element
      in the array.
     :vartype zones: list[str]
-    :ivar priming_jobs: Specifies the priming jobs defined in the cache.
-    :vartype priming_jobs: list["PrimingJob"]
-    :ivar space_allocation: Specifies the space allocation percentage for each storage target in
-     the cache.
-    :vartype space_allocation: list["StorageTargetSpaceAllocation"]
+    :ivar primingJobs: Specifies the priming jobs defined in the cache.
+    :vartype primingJobs: list["PrimingJob"]
+    :ivar spaceAllocation: Specifies the space allocation percentage for each storage target in the
+     cache.
+    :vartype spaceAllocation: list["StorageTargetSpaceAllocation"]
     """
 
     cacheSizeGB: int
@@ -1358,8 +1356,8 @@ class CacheProperties(TypedDict, total=False):
 class CacheSecuritySettings(TypedDict, total=False):
     """Cache security settings.
 
-    :ivar access_policies: NFS access policies defined for this cache.
-    :vartype access_policies: list["NfsAccessPolicy"]
+    :ivar accessPolicies: NFS access policies defined for this cache.
+    :vartype accessPolicies: list["NfsAccessPolicy"]
     """
 
     accessPolicies: list["NfsAccessPolicy"]
@@ -1380,14 +1378,14 @@ class CacheSku(TypedDict, total=False):
 class CacheUpgradeSettings(TypedDict, total=False):
     """Cache Upgrade Settings.
 
-    :ivar upgrade_schedule_enabled: True if the user chooses to select an installation time between
+    :ivar upgradeScheduleEnabled: True if the user chooses to select an installation time between
      now and firmwareUpdateDeadline. Else the firmware will automatically be installed after
      firmwareUpdateDeadline if not triggered earlier via the upgrade operation.
-    :vartype upgrade_schedule_enabled: bool
-    :ivar scheduled_time: When upgradeScheduleEnabled is true, this field holds the user-chosen
+    :vartype upgradeScheduleEnabled: bool
+    :ivar scheduledTime: When upgradeScheduleEnabled is true, this field holds the user-chosen
      upgrade time. At the user-chosen time, the firmware update will automatically be installed on
      the cache.
-    :vartype scheduled_time: str
+    :vartype scheduledTime: str
     """
 
     upgradeScheduleEnabled: bool
@@ -1402,21 +1400,20 @@ class CacheUpgradeSettings(TypedDict, total=False):
 class CacheUpgradeStatus(TypedDict, total=False):
     """Properties describing the software upgrade state of the cache.
 
-    :ivar current_firmware_version: Version string of the firmware currently installed on this
-     cache.
-    :vartype current_firmware_version: str
-    :ivar firmware_update_status: True if there is a firmware update ready to install on this
-     cache. The firmware will automatically be installed after firmwareUpdateDeadline if not
-     triggered earlier via the upgrade operation. Known values are: "available" and "unavailable".
-    :vartype firmware_update_status: Union[str, "FirmwareStatusType"]
-    :ivar firmware_update_deadline: Time at which the pending firmware update will automatically be
+    :ivar currentFirmwareVersion: Version string of the firmware currently installed on this cache.
+    :vartype currentFirmwareVersion: str
+    :ivar firmwareUpdateStatus: True if there is a firmware update ready to install on this cache.
+     The firmware will automatically be installed after firmwareUpdateDeadline if not triggered
+     earlier via the upgrade operation. Known values are: "available" and "unavailable".
+    :vartype firmwareUpdateStatus: Union[str, "FirmwareStatusType"]
+    :ivar firmwareUpdateDeadline: Time at which the pending firmware update will automatically be
      installed on the cache.
-    :vartype firmware_update_deadline: str
-    :ivar last_firmware_update: Time of the last successful firmware update.
-    :vartype last_firmware_update: str
-    :ivar pending_firmware_version: When firmwareUpdateAvailable is true, this field holds the
+    :vartype firmwareUpdateDeadline: str
+    :ivar lastFirmwareUpdate: Time of the last successful firmware update.
+    :vartype lastFirmwareUpdate: str
+    :ivar pendingFirmwareVersion: When firmwareUpdateAvailable is true, this field holds the
      version string for the update.
-    :vartype pending_firmware_version: str
+    :vartype pendingFirmwareVersion: str
     """
 
     currentFirmwareVersion: str
@@ -1436,35 +1433,35 @@ class CacheUpgradeStatus(TypedDict, total=False):
 class CacheUsernameDownloadSettings(TypedDict, total=False):
     """Settings for Extended Groups username and group download.
 
-    :ivar extended_groups: Whether or not Extended Groups is enabled.
-    :vartype extended_groups: bool
-    :ivar username_source: This setting determines how the cache gets username and group names for
+    :ivar extendedGroups: Whether or not Extended Groups is enabled.
+    :vartype extendedGroups: bool
+    :ivar usernameSource: This setting determines how the cache gets username and group names for
      clients. Known values are: "AD", "LDAP", "File", and "None".
-    :vartype username_source: Union[str, "UsernameSource"]
-    :ivar group_file_uri: The URI of the file containing group information (in /etc/group file
+    :vartype usernameSource: Union[str, "UsernameSource"]
+    :ivar groupFileURI: The URI of the file containing group information (in /etc/group file
      format). This field must be populated when 'usernameSource' is set to 'File'.
-    :vartype group_file_uri: str
-    :ivar user_file_uri: The URI of the file containing user information (in /etc/passwd file
+    :vartype groupFileURI: str
+    :ivar userFileURI: The URI of the file containing user information (in /etc/passwd file
      format). This field must be populated when 'usernameSource' is set to 'File'.
-    :vartype user_file_uri: str
-    :ivar ldap_server: The fully qualified domain name or IP address of the LDAP server to use.
-    :vartype ldap_server: str
-    :ivar ldap_base_dn: The base distinguished name for the LDAP domain.
-    :vartype ldap_base_dn: str
-    :ivar encrypt_ldap_connection: Whether or not the LDAP connection should be encrypted.
-    :vartype encrypt_ldap_connection: bool
-    :ivar require_valid_certificate: Determines if the certificates must be validated by a
+    :vartype userFileURI: str
+    :ivar ldapServer: The fully qualified domain name or IP address of the LDAP server to use.
+    :vartype ldapServer: str
+    :ivar ldapBaseDN: The base distinguished name for the LDAP domain.
+    :vartype ldapBaseDN: str
+    :ivar encryptLdapConnection: Whether or not the LDAP connection should be encrypted.
+    :vartype encryptLdapConnection: bool
+    :ivar requireValidCertificate: Determines if the certificates must be validated by a
      certificate authority. When true, caCertificateURI must be provided.
-    :vartype require_valid_certificate: bool
-    :ivar auto_download_certificate: Determines if the certificate should be automatically
+    :vartype requireValidCertificate: bool
+    :ivar autoDownloadCertificate: Determines if the certificate should be automatically
      downloaded. This applies to 'caCertificateURI' only if 'requireValidCertificate' is true.
-    :vartype auto_download_certificate: bool
-    :ivar ca_certificate_uri: The URI of the CA certificate to validate the LDAP secure connection.
+    :vartype autoDownloadCertificate: bool
+    :ivar caCertificateURI: The URI of the CA certificate to validate the LDAP secure connection.
      This field must be populated when 'requireValidCertificate' is set to true.
-    :vartype ca_certificate_uri: str
-    :ivar username_downloaded: Indicates whether or not the HPC Cache has performed the username
+    :vartype caCertificateURI: str
+    :ivar usernameDownloaded: Indicates whether or not the HPC Cache has performed the username
      download successfully. Known values are: "Yes", "No", and "Error".
-    :vartype username_downloaded: Union[str, "UsernameDownloadedType"]
+    :vartype usernameDownloaded: Union[str, "UsernameDownloadedType"]
     :ivar credentials: When present, these are the credentials for the secure LDAP connection.
     :vartype credentials: "CacheUsernameDownloadSettingsCredentials"
     """
@@ -1505,12 +1502,12 @@ class CacheUsernameDownloadSettings(TypedDict, total=False):
 class CacheUsernameDownloadSettingsCredentials(TypedDict, total=False):
     """When present, these are the credentials for the secure LDAP connection.
 
-    :ivar bind_dn: The Bind Distinguished Name identity to be used in the secure LDAP connection.
+    :ivar bindDn: The Bind Distinguished Name identity to be used in the secure LDAP connection.
      This value is stored encrypted and not returned on response.
-    :vartype bind_dn: str
-    :ivar bind_password: The Bind password to be used in the secure LDAP connection. This value is
+    :vartype bindDn: str
+    :ivar bindPassword: The Bind password to be used in the secure LDAP connection. This value is
      stored encrypted and not returned on response.
-    :vartype bind_password: str
+    :vartype bindPassword: str
     """
 
     bindDn: str
@@ -1560,9 +1557,9 @@ class ExpansionJob(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1578,17 +1575,23 @@ class ExpansionJob(TrackedResource):
 class ExpansionJobProperties(TypedDict, total=False):
     """Properties of the expansion job.
 
-    :ivar provisioning_state: ARM provisioning state, see
+    :ivar provisioningState: ARM provisioning state, see
      `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property
      <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property>`_.
      Known values are: "Succeeded", "Failed", "Creating", "Deleting", "Updating", and "Canceled".
-    :vartype provisioning_state: Union[str, "ExpansionJobPropertiesProvisioningState"]
-    :ivar new_storage_capacity_ti_b: The new storage capacity in TiB for the AML file system after
+    :vartype provisioningState: Union[str, "ExpansionJobPropertiesProvisioningState"]
+    :ivar newStorageCapacityTiB: The new storage capacity in TiB for the AML file system after
      expansion. This must be a multiple of the Sku step size, and greater than the current storage
      capacity of the AML file system.
-    :vartype new_storage_capacity_ti_b: float
+    :vartype newStorageCapacityTiB: float
     :ivar status: The status of the expansion job.
     :vartype status: "ExpansionJobPropertiesStatus"
+    :ivar runRebalanceJob: When true, expansion creates a RebalanceJob after completing. Optional,
+     defaults to true.
+    :vartype runRebalanceJob: bool
+    :ivar rebalanceJobId: Fully qualified ARM resource ID of the child rebalance job created by
+     this expansion. Populated after RebalanceJob is created.
+    :vartype rebalanceJobId: str
     """
 
     provisioningState: Union[str, "ExpansionJobPropertiesProvisioningState"]
@@ -1603,6 +1606,11 @@ class ExpansionJobProperties(TypedDict, total=False):
      system."""
     status: "ExpansionJobPropertiesStatus"
     """The status of the expansion job."""
+    runRebalanceJob: bool
+    """When true, expansion creates a RebalanceJob after completing. Optional, defaults to true."""
+    rebalanceJobId: str
+    """Fully qualified ARM resource ID of the child rebalance job created by this expansion. Populated
+     after RebalanceJob is created."""
 
 
 class ExpansionJobPropertiesStatus(TypedDict, total=False):
@@ -1613,17 +1621,17 @@ class ExpansionJobPropertiesStatus(TypedDict, total=False):
      was unable to complete due to a fatal error. Deleting indicates the expansion is being rolled
      back. Known values are: "InProgress", "Completed", "Failed", "Deleting", and "RollingBack".
     :vartype state: Union[str, "ExpansionJobStatusType"]
-    :ivar status_code: Server-defined status code for expansion job.
-    :vartype status_code: str
-    :ivar status_message: Server-defined status message for expansion job.
-    :vartype status_message: str
-    :ivar percent_complete: The percentage of expansion job completion.
-    :vartype percent_complete: float
-    :ivar start_time_utc: The time (in UTC) the expansion job started.
-    :vartype start_time_utc: str
-    :ivar completion_time_utc: The time (in UTC) when the expansion job completed. Only populated
+    :ivar statusCode: Server-defined status code for expansion job.
+    :vartype statusCode: str
+    :ivar statusMessage: Server-defined status message for expansion job.
+    :vartype statusMessage: str
+    :ivar percentComplete: The percentage of expansion job completion.
+    :vartype percentComplete: float
+    :ivar startTimeUTC: The time (in UTC) the expansion job started.
+    :vartype startTimeUTC: str
+    :ivar completionTimeUTC: The time (in UTC) when the expansion job completed. Only populated
      when job reaches a terminal state.
-    :vartype completion_time_utc: str
+    :vartype completionTimeUTC: str
     """
 
     state: Union[str, "ExpansionJobStatusType"]
@@ -1668,9 +1676,9 @@ class ImportJob(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1686,17 +1694,17 @@ class ImportJob(TrackedResource):
 class ImportJobProperties(TypedDict, total=False):
     """Properties of the import job.
 
-    :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
+    :ivar provisioningState: ARM provisioning state. Known values are: "Succeeded", "Failed",
      "Creating", "Deleting", "Updating", and "Canceled".
-    :vartype provisioning_state: Union[str, "ImportJobProvisioningStateType"]
-    :ivar admin_status: The administrative status of the import job. Possible values: 'Active',
+    :vartype provisioningState: Union[str, "ImportJobProvisioningStateType"]
+    :ivar adminStatus: The administrative status of the import job. Possible values: 'Active',
      'Cancel'. Passing in a value of 'Cancel' will cancel the current active import job. By default
      it is set to 'Active'. Known values are: "Active" and "Cancel".
-    :vartype admin_status: Union[str, "ImportJobAdminStatus"]
-    :ivar import_prefixes: An array of blob paths/prefixes that get imported into the cluster
+    :vartype adminStatus: Union[str, "ImportJobAdminStatus"]
+    :ivar importPrefixes: An array of blob paths/prefixes that get imported into the cluster
      namespace. It has '/' as the default value.
-    :vartype import_prefixes: list[str]
-    :ivar conflict_resolution_mode: How the import job will handle conflicts. For example, if the
+    :vartype importPrefixes: list[str]
+    :ivar conflictResolutionMode: How the import job will handle conflicts. For example, if the
      import job is trying to bring in a directory, but a file is at that path, how it handles it.
      Fail indicates that the import job should stop immediately and not do anything with the
      conflict. Skip indicates that it should pass over the conflict. OverwriteIfDirty causes the
@@ -1707,10 +1715,10 @@ class ImportJobProperties(TypedDict, total=False):
      <https://learn.microsoft.com/en-us/azure/azure-managed-lustre/>`_ for a thorough explanation of
      these resolution modes. Known values are: "Fail", "Skip", "OverwriteIfDirty", and
      "OverwriteAlways".
-    :vartype conflict_resolution_mode: Union[str, "ConflictResolutionMode"]
-    :ivar maximum_errors: Total non-conflict oriented errors the import job will tolerate before
+    :vartype conflictResolutionMode: Union[str, "ConflictResolutionMode"]
+    :ivar maximumErrors: Total non-conflict oriented errors the import job will tolerate before
      exiting with failure. -1 means infinite. 0 means exit immediately and is the default.
-    :vartype maximum_errors: int
+    :vartype maximumErrors: int
     :ivar status: The status of the import.
     :vartype status: "ImportJobPropertiesStatus"
     """
@@ -1754,40 +1762,40 @@ class ImportJobPropertiesStatus(TypedDict, total=False):
      was unable to complete due to a fatal error. Known values are: "InProgress", "Cancelling",
      "Canceled", "Completed", "CompletedPartial", and "Failed".
     :vartype state: Union[str, "ImportStatusType"]
-    :ivar status_message: The status message of the import job.
-    :vartype status_message: str
-    :ivar total_blobs_walked: The total blob objects walked.
-    :vartype total_blobs_walked: int
-    :ivar blobs_walked_per_second: A recent and frequently updated rate of blobs walked per second.
-    :vartype blobs_walked_per_second: int
-    :ivar total_blobs_imported: The total blobs that have been imported since import began.
-    :vartype total_blobs_imported: int
-    :ivar imported_files: New or modified files that have been imported into the filesystem.
-    :vartype imported_files: int
-    :ivar imported_directories: New or modified directories that have been imported into the
+    :ivar statusMessage: The status message of the import job.
+    :vartype statusMessage: str
+    :ivar totalBlobsWalked: The total blob objects walked.
+    :vartype totalBlobsWalked: int
+    :ivar blobsWalkedPerSecond: A recent and frequently updated rate of blobs walked per second.
+    :vartype blobsWalkedPerSecond: int
+    :ivar totalBlobsImported: The total blobs that have been imported since import began.
+    :vartype totalBlobsImported: int
+    :ivar importedFiles: New or modified files that have been imported into the filesystem.
+    :vartype importedFiles: int
+    :ivar importedDirectories: New or modified directories that have been imported into the
      filesystem.
-    :vartype imported_directories: int
-    :ivar imported_symlinks: Newly added symbolic links into the filesystem.
-    :vartype imported_symlinks: int
-    :ivar preexisting_files: Files that already exist in the filesystem and have not been modified.
-    :vartype preexisting_files: int
-    :ivar preexisting_directories: Directories that already exist in the filesystem and have not
+    :vartype importedDirectories: int
+    :ivar importedSymlinks: Newly added symbolic links into the filesystem.
+    :vartype importedSymlinks: int
+    :ivar preexistingFiles: Files that already exist in the filesystem and have not been modified.
+    :vartype preexistingFiles: int
+    :ivar preexistingDirectories: Directories that already exist in the filesystem and have not
      been modified.
-    :vartype preexisting_directories: int
-    :ivar preexisting_symlinks: Symbolic links that already exist in the filesystem and have not
+    :vartype preexistingDirectories: int
+    :ivar preexistingSymlinks: Symbolic links that already exist in the filesystem and have not
      been modified.
-    :vartype preexisting_symlinks: int
-    :ivar blobs_imported_per_second: A recent and frequently updated rate of total files,
-     directories, and symlinks imported per second.
-    :vartype blobs_imported_per_second: int
-    :ivar last_completion_time: The time (in UTC) of the last completed import job.
-    :vartype last_completion_time: str
-    :ivar last_started_time: The time (in UTC) the latest import job started.
-    :vartype last_started_time: str
-    :ivar total_errors: Number of errors in the import job.
-    :vartype total_errors: int
-    :ivar total_conflicts: Number of conflicts in the import job.
-    :vartype total_conflicts: int
+    :vartype preexistingSymlinks: int
+    :ivar blobsImportedPerSecond: A recent and frequently updated rate of total files, directories,
+     and symlinks imported per second.
+    :vartype blobsImportedPerSecond: int
+    :ivar lastCompletionTime: The time (in UTC) of the last completed import job.
+    :vartype lastCompletionTime: str
+    :ivar lastStartedTime: The time (in UTC) the latest import job started.
+    :vartype lastStartedTime: str
+    :ivar totalErrors: Number of errors in the import job.
+    :vartype totalErrors: int
+    :ivar totalConflicts: Number of conflicts in the import job.
+    :vartype totalConflicts: int
     """
 
     state: Union[str, "ImportStatusType"]
@@ -1846,12 +1854,12 @@ class ImportJobUpdate(TypedDict, total=False):
 
 
 class ImportJobUpdateProperties(TypedDict, total=False):
-    """ImportJobUpdateProperties.
+    """Properties for updating an import job.
 
-    :ivar admin_status: The administrative status of the import job. Possible values: 'Active',
+    :ivar adminStatus: The administrative status of the import job. Possible values: 'Active',
      'Cancel'. Passing in a value of 'Cancel' will cancel the current active import job. Known
      values are: "Active" and "Cancel".
-    :vartype admin_status: Union[str, "ImportJobAdminStatus"]
+    :vartype adminStatus: Union[str, "ImportJobAdminStatus"]
     """
 
     adminStatus: Union[str, "ImportJobAdminStatus"]
@@ -1863,10 +1871,10 @@ class ImportJobUpdateProperties(TypedDict, total=False):
 class KeyVaultKeyReference(TypedDict, total=False):
     """Describes a reference to key vault key.
 
-    :ivar key_url: The URL referencing a key encryption key in key vault. Required.
-    :vartype key_url: str
-    :ivar source_vault: Describes a resource Id to source key vault. Required.
-    :vartype source_vault: "KeyVaultKeyReferenceSourceVault"
+    :ivar keyUrl: The URL referencing a key encryption key in key vault. Required.
+    :vartype keyUrl: str
+    :ivar sourceVault: Describes a resource Id to source key vault. Required.
+    :vartype sourceVault: "KeyVaultKeyReferenceSourceVault"
     """
 
     keyUrl: Required[str]
@@ -1889,14 +1897,14 @@ class KeyVaultKeyReferenceSourceVault(TypedDict, total=False):
 class NamespaceJunction(TypedDict, total=False):
     """A namespace junction.
 
-    :ivar namespace_path: Namespace path on a cache for a Storage Target.
-    :vartype namespace_path: str
-    :ivar target_path: Path in Storage Target to which namespacePath points.
-    :vartype target_path: str
-    :ivar nfs_export: NFS export where targetPath exists.
-    :vartype nfs_export: str
-    :ivar nfs_access_policy: Name of the access policy applied to this junction.
-    :vartype nfs_access_policy: str
+    :ivar namespacePath: Namespace path on a cache for a Storage Target.
+    :vartype namespacePath: str
+    :ivar targetPath: Path in Storage Target to which namespacePath points.
+    :vartype targetPath: str
+    :ivar nfsExport: NFS export where targetPath exists.
+    :vartype nfsExport: str
+    :ivar nfsAccessPolicy: Name of the access policy applied to this junction.
+    :vartype nfsAccessPolicy: str
     """
 
     namespacePath: str
@@ -1914,14 +1922,14 @@ class Nfs3Target(TypedDict, total=False):
 
     :ivar target: IP address or host name of an NFSv3 host (e.g., 10.0.44.44).
     :vartype target: str
-    :ivar usage_model: Identifies the StorageCache usage model to be used for this storage target.
-    :vartype usage_model: str
-    :ivar verification_timer: Amount of time (in seconds) the cache waits before it checks the
+    :ivar usageModel: Identifies the StorageCache usage model to be used for this storage target.
+    :vartype usageModel: str
+    :ivar verificationTimer: Amount of time (in seconds) the cache waits before it checks the
      back-end storage for file updates.
-    :vartype verification_timer: int
-    :ivar write_back_timer: Amount of time (in seconds) the cache waits after the last file change
+    :vartype verificationTimer: int
+    :ivar writeBackTimer: Amount of time (in seconds) the cache waits after the last file change
      before it copies the changed file to back-end storage.
-    :vartype write_back_timer: int
+    :vartype writeBackTimer: int
     """
 
     target: str
@@ -1941,9 +1949,9 @@ class NfsAccessPolicy(TypedDict, total=False):
 
     :ivar name: Name identifying this policy. Access Policy names are not case sensitive. Required.
     :vartype name: str
-    :ivar access_rules: The set of rules describing client accesses allowed under this policy.
+    :ivar accessRules: The set of rules describing client accesses allowed under this policy.
      Required.
-    :vartype access_rules: list["NfsAccessRule"]
+    :vartype accessRules: list["NfsAccessRule"]
     """
 
     name: Required[str]
@@ -1968,18 +1976,18 @@ class NfsAccessRule(TypedDict, total=False):
     :vartype access: Union[str, "NfsAccessRuleAccess"]
     :ivar suid: Allow SUID semantics.
     :vartype suid: bool
-    :ivar submount_access: For the default policy, allow access to subdirectories under the root
+    :ivar submountAccess: For the default policy, allow access to subdirectories under the root
      export. If this is set to no, clients can only mount the path '/'. If set to yes, clients can
      mount a deeper path, like '/a/b'.
-    :vartype submount_access: bool
-    :ivar root_squash: Map root accesses to anonymousUID and anonymousGID.
-    :vartype root_squash: bool
-    :ivar anonymous_uid: UID value that replaces 0 when rootSquash is true. 65534 will be used if
+    :vartype submountAccess: bool
+    :ivar rootSquash: Map root accesses to anonymousUID and anonymousGID.
+    :vartype rootSquash: bool
+    :ivar anonymousUID: UID value that replaces 0 when rootSquash is true. 65534 will be used if
      not provided.
-    :vartype anonymous_uid: str
-    :ivar anonymous_gid: GID value that replaces 0 when rootSquash is true. This will use the value
+    :vartype anonymousUID: str
+    :ivar anonymousGID: GID value that replaces 0 when rootSquash is true. This will use the value
      of anonymousUID if not provided.
-    :vartype anonymous_gid: str
+    :vartype anonymousGID: str
     """
 
     scope: Required[Union[str, "NfsAccessRuleScope"]]
@@ -2011,23 +2019,23 @@ class NfsAccessRule(TypedDict, total=False):
 class PrimingJob(TypedDict, total=False):
     """A priming job instance.
 
-    :ivar priming_job_name: The priming job name. Required.
-    :vartype priming_job_name: str
-    :ivar priming_manifest_url: The URL for the priming manifest file to download. This file must
-     be readable from the HPC Cache. When the file is in Azure blob storage the URL should include a
+    :ivar primingJobName: The priming job name. Required.
+    :vartype primingJobName: str
+    :ivar primingManifestUrl: The URL for the priming manifest file to download. This file must be
+     readable from the HPC Cache. When the file is in Azure blob storage the URL should include a
      Shared Access Signature (SAS) granting read permissions on the blob. Required.
-    :vartype priming_manifest_url: str
-    :ivar priming_job_id: The unique identifier of the priming job.
-    :vartype priming_job_id: str
-    :ivar priming_job_state: The state of the priming operation. Known values are: "Queued",
+    :vartype primingManifestUrl: str
+    :ivar primingJobId: The unique identifier of the priming job.
+    :vartype primingJobId: str
+    :ivar primingJobState: The state of the priming operation. Known values are: "Queued",
      "Running", "Paused", and "Complete".
-    :vartype priming_job_state: Union[str, "PrimingJobState"]
-    :ivar priming_job_status: The status code of the priming job.
-    :vartype priming_job_status: str
-    :ivar priming_job_details: The job details or error information if any.
-    :vartype priming_job_details: str
-    :ivar priming_job_percent_complete: The current progress of the priming job, as a percentage.
-    :vartype priming_job_percent_complete: float
+    :vartype primingJobState: Union[str, "PrimingJobState"]
+    :ivar primingJobStatus: The status code of the priming job.
+    :vartype primingJobStatus: str
+    :ivar primingJobDetails: The job details or error information if any.
+    :vartype primingJobDetails: str
+    :ivar primingJobPercentComplete: The current progress of the priming job, as a percentage.
+    :vartype primingJobPercentComplete: float
     """
 
     primingJobName: Required[str]
@@ -2052,20 +2060,44 @@ class PrimingJob(TypedDict, total=False):
 class PrimingJobIdParameter(TypedDict, total=False):
     """Object containing the priming job ID.
 
-    :ivar priming_job_id: The unique identifier of the priming job. Required.
-    :vartype priming_job_id: str
+    :ivar primingJobId: The unique identifier of the priming job. Required.
+    :vartype primingJobId: str
     """
 
     primingJobId: Required[str]
     """The unique identifier of the priming job. Required."""
 
 
+class RebalanceJobUpdate(TypedDict, total=False):
+    """A rebalance job update instance.
+
+    :ivar properties: Properties for the rebalance job update.
+    :vartype properties: "RebalanceJobUpdateProperties"
+    """
+
+    properties: "RebalanceJobUpdateProperties"
+    """Properties for the rebalance job update."""
+
+
+class RebalanceJobUpdateProperties(TypedDict, total=False):
+    """Properties for updating a rebalance job.
+
+    :ivar adminStatus: The administrative status of the rebalance job. Passing in a value of
+     'Cancel' will cancel the current active rebalance job. Known values are: "Active" and "Cancel".
+    :vartype adminStatus: Union[str, "RebalanceJobAdminStatus"]
+    """
+
+    adminStatus: Union[str, "RebalanceJobAdminStatus"]
+    """The administrative status of the rebalance job. Passing in a value of 'Cancel' will cancel the
+     current active rebalance job. Known values are: \"Active\" and \"Cancel\"."""
+
+
 class RequiredAmlFilesystemSubnetsSizeInfo(TypedDict, total=False):
     """Information required to get the number of available IP addresses a subnet should have that will
     be used in AML file system create.
 
-    :ivar storage_capacity_ti_b: The size of the AML file system, in TiB.
-    :vartype storage_capacity_ti_b: float
+    :ivar storageCapacityTiB: The size of the AML file system, in TiB.
+    :vartype storageCapacityTiB: float
     :ivar sku: SKU for the resource.
     :vartype sku: "SkuName"
     """
@@ -2098,9 +2130,9 @@ class StorageTarget(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: StorageTarget properties.
     :vartype properties: "StorageTargetProperties"
     :ivar location: Region name string.
@@ -2118,14 +2150,14 @@ class StorageTargetProperties(TypedDict, total=False):
 
     :ivar junctions: List of cache namespace junctions to target for namespace associations.
     :vartype junctions: list["NamespaceJunction"]
-    :ivar target_type: Type of the Storage Target. Required. Known values are: "nfs3", "clfs",
+    :ivar targetType: Type of the Storage Target. Required. Known values are: "nfs3", "clfs",
      "unknown", and "blobNfs".
-    :vartype target_type: Union[str, "StorageTargetType"]
-    :ivar provisioning_state: ARM provisioning state, see
+    :vartype targetType: Union[str, "StorageTargetType"]
+    :ivar provisioningState: ARM provisioning state, see
      `https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property
      <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property>`_.
      Known values are: "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningStateType"]
+    :vartype provisioningState: Union[str, "ProvisioningStateType"]
     :ivar state: Storage target operational state. Known values are: "Ready", "Busy", "Suspended",
      and "Flushing".
     :vartype state: Union[str, "OperationalStateType"]
@@ -2135,10 +2167,10 @@ class StorageTargetProperties(TypedDict, total=False):
     :vartype clfs: "ClfsTarget"
     :ivar unknown: Properties when targetType is unknown.
     :vartype unknown: "UnknownTarget"
-    :ivar blob_nfs: Properties when targetType is blobNfs.
-    :vartype blob_nfs: "BlobNfsTarget"
-    :ivar allocation_percentage: The percentage of cache space allocated for this storage target.
-    :vartype allocation_percentage: int
+    :ivar blobNfs: Properties when targetType is blobNfs.
+    :vartype blobNfs: "BlobNfsTarget"
+    :ivar allocationPercentage: The percentage of cache space allocated for this storage target.
+    :vartype allocationPercentage: int
     """
 
     junctions: list["NamespaceJunction"]
@@ -2172,8 +2204,8 @@ class StorageTargetSpaceAllocation(TypedDict, total=False):
 
     :ivar name: Name of the storage target.
     :vartype name: str
-    :ivar allocation_percentage: The percentage of cache space allocated for this storage target.
-    :vartype allocation_percentage: int
+    :ivar allocationPercentage: The percentage of cache space allocated for this storage target.
+    :vartype allocationPercentage: int
     """
 
     name: str
@@ -2185,20 +2217,20 @@ class StorageTargetSpaceAllocation(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -2230,12 +2262,12 @@ class UnknownTarget(TypedDict, total=False):
 
 
 class UserAssignedIdentitiesValue(TypedDict, total=False):
-    """UserAssignedIdentitiesValue.
+    """User-assigned identity properties.
 
-    :ivar principal_id: The principal ID of the user-assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the user-assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the user-assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the user-assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str

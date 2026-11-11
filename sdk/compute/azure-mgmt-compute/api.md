@@ -392,6 +392,14 @@ namespace azure.mgmt.compute.aio.operations
                 **kwargs
             ) -> None: ...
 
+        @distributed_trace_async
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                capacity_reservation_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
         @overload
         async def create_or_update(
                 self, 
@@ -424,14 +432,6 @@ namespace azure.mgmt.compute.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> CapacityReservationGroup: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                resource_group_name: str, 
-                capacity_reservation_group_name: str, 
-                **kwargs: Any
-            ) -> None: ...
 
         @distributed_trace_async
         async def get(
@@ -8716,6 +8716,20 @@ namespace azure.mgmt.compute.models
         VHDX = "VHDX"
 
 
+    class azure.mgmt.compute.models.FlexProfile(_Model):
+        preferred_vm_size: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                preferred_vm_size: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.compute.models.Gallery(TrackedResource):
         id: str
         identity: Optional[GalleryIdentity]
@@ -15364,6 +15378,7 @@ namespace azure.mgmt.compute.models
         application_security_groups: Optional[list[SubResource]]
         load_balancer_backend_address_pools: Optional[list[SubResource]]
         primary: Optional[bool]
+        private_ip_address_prefix_length: Optional[int]
         private_ip_address_version: Optional[Union[str, IPVersions]]
         public_ip_address_configuration: Optional[VirtualMachinePublicIPAddressConfiguration]
         subnet: Optional[SubResource]
@@ -15376,6 +15391,7 @@ namespace azure.mgmt.compute.models
                 application_security_groups: Optional[list[SubResource]] = ..., 
                 load_balancer_backend_address_pools: Optional[list[SubResource]] = ..., 
                 primary: Optional[bool] = ..., 
+                private_ip_address_prefix_length: Optional[int] = ..., 
                 private_ip_address_version: Optional[Union[str, IPVersions]] = ..., 
                 public_ip_address_configuration: Optional[VirtualMachinePublicIPAddressConfiguration] = ..., 
                 subnet: Optional[SubResource] = ...
@@ -15418,6 +15434,7 @@ namespace azure.mgmt.compute.models
         diagnostics_profile: Optional[DiagnosticsProfile]
         eviction_policy: Optional[Union[str, VirtualMachineEvictionPolicyTypes]]
         extensions_time_budget: Optional[str]
+        flex_profile: Optional[FlexProfile]
         hardware_profile: Optional[HardwareProfile]
         host: Optional[SubResource]
         host_group: Optional[SubResource]
@@ -15452,6 +15469,7 @@ namespace azure.mgmt.compute.models
                 diagnostics_profile: Optional[DiagnosticsProfile] = ..., 
                 eviction_policy: Optional[Union[str, VirtualMachineEvictionPolicyTypes]] = ..., 
                 extensions_time_budget: Optional[str] = ..., 
+                flex_profile: Optional[FlexProfile] = ..., 
                 hardware_profile: Optional[HardwareProfile] = ..., 
                 host: Optional[SubResource] = ..., 
                 host_group: Optional[SubResource] = ..., 
@@ -15932,6 +15950,7 @@ namespace azure.mgmt.compute.models
         load_balancer_backend_address_pools: Optional[list[SubResource]]
         load_balancer_inbound_nat_pools: Optional[list[SubResource]]
         primary: Optional[bool]
+        private_ip_address_prefix_length: Optional[int]
         private_ip_address_version: Optional[Union[str, IPVersion]]
         public_ip_address_configuration: Optional[VirtualMachineScaleSetPublicIPAddressConfiguration]
         subnet: Optional[ApiEntityReference]
@@ -15945,6 +15964,7 @@ namespace azure.mgmt.compute.models
                 load_balancer_backend_address_pools: Optional[list[SubResource]] = ..., 
                 load_balancer_inbound_nat_pools: Optional[list[SubResource]] = ..., 
                 primary: Optional[bool] = ..., 
+                private_ip_address_prefix_length: Optional[int] = ..., 
                 private_ip_address_version: Optional[Union[str, IPVersion]] = ..., 
                 public_ip_address_configuration: Optional[VirtualMachineScaleSetPublicIPAddressConfiguration] = ..., 
                 subnet: Optional[ApiEntityReference] = ...
@@ -16457,6 +16477,7 @@ namespace azure.mgmt.compute.models
         load_balancer_backend_address_pools: Optional[list[SubResource]]
         load_balancer_inbound_nat_pools: Optional[list[SubResource]]
         primary: Optional[bool]
+        private_ip_address_prefix_length: Optional[int]
         private_ip_address_version: Optional[Union[str, IPVersion]]
         public_ip_address_configuration: Optional[VirtualMachineScaleSetUpdatePublicIPAddressConfiguration]
         subnet: Optional[ApiEntityReference]
@@ -16470,6 +16491,7 @@ namespace azure.mgmt.compute.models
                 load_balancer_backend_address_pools: Optional[list[SubResource]] = ..., 
                 load_balancer_inbound_nat_pools: Optional[list[SubResource]] = ..., 
                 primary: Optional[bool] = ..., 
+                private_ip_address_prefix_length: Optional[int] = ..., 
                 private_ip_address_version: Optional[Union[str, IPVersion]] = ..., 
                 public_ip_address_configuration: Optional[VirtualMachineScaleSetUpdatePublicIPAddressConfiguration] = ..., 
                 subnet: Optional[ApiEntityReference] = ...
@@ -17738,6 +17760,14 @@ namespace azure.mgmt.compute.operations
                 **kwargs
             ) -> None: ...
 
+        @distributed_trace
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                capacity_reservation_group_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
         @overload
         def create_or_update(
                 self, 
@@ -17770,14 +17800,6 @@ namespace azure.mgmt.compute.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> CapacityReservationGroup: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                resource_group_name: str, 
-                capacity_reservation_group_name: str, 
-                **kwargs: Any
-            ) -> None: ...
 
         @distributed_trace
         def get(
@@ -24480,6 +24502,11 @@ namespace azure.mgmt.compute.types
         gracePeriod: str
 
 
+    class azure.mgmt.compute.types.FlexProfile(TypedDict, total=False):
+        key "preferredVMSize": Required[str]
+        preferredVMSize: str
+
+
     class azure.mgmt.compute.types.Gallery(TrackedResource):
         key "id": str
         key "identity": ForwardRef('GalleryIdentity', module='types')
@@ -27200,6 +27227,7 @@ namespace azure.mgmt.compute.types
 
     class azure.mgmt.compute.types.VirtualMachineNetworkInterfaceIPConfigurationProperties(TypedDict, total=False):
         key "primary": bool
+        key "privateIPAddressPrefixLength": int
         key "privateIPAddressVersion": Union[str, IPVersions]
         key "publicIPAddressConfiguration": ForwardRef('VirtualMachinePublicIPAddressConfiguration', module='types')
         key "subnet": ForwardRef('SubResource', module='types')
@@ -27207,6 +27235,7 @@ namespace azure.mgmt.compute.types
         applicationSecurityGroups: list[SubResource]
         loadBalancerBackendAddressPools: list[SubResource]
         primary: bool
+        privateIPAddressPrefixLength: int
         privateIPAddressVersion: Union[str, IPVersions]
         publicIPAddressConfiguration: VirtualMachinePublicIPAddressConfiguration
         subnet: SubResource
@@ -27229,6 +27258,7 @@ namespace azure.mgmt.compute.types
         key "diagnosticsProfile": ForwardRef('DiagnosticsProfile', module='types')
         key "evictionPolicy": Union[str, VirtualMachineEvictionPolicyTypes]
         key "extensionsTimeBudget": str
+        key "flexProfile": ForwardRef('FlexProfile', module='types')
         key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
         key "host": ForwardRef('SubResource', module='types')
         key "hostGroup": ForwardRef('SubResource', module='types')
@@ -27258,6 +27288,7 @@ namespace azure.mgmt.compute.types
         diagnosticsProfile: DiagnosticsProfile
         evictionPolicy: Union[str, VirtualMachineEvictionPolicyTypes]
         extensionsTimeBudget: str
+        flexProfile: FlexProfile
         hardwareProfile: HardwareProfile
         host: SubResource
         hostGroup: SubResource
@@ -27531,6 +27562,7 @@ namespace azure.mgmt.compute.types
 
     class azure.mgmt.compute.types.VirtualMachineScaleSetIPConfigurationProperties(TypedDict, total=False):
         key "primary": bool
+        key "privateIPAddressPrefixLength": int
         key "privateIPAddressVersion": Union[str, IPVersion]
         key "publicIPAddressConfiguration": ForwardRef('VirtualMachineScaleSetPublicIPAddressConfiguration', module='types')
         key "subnet": ForwardRef('ApiEntityReference', module='types')
@@ -27539,6 +27571,7 @@ namespace azure.mgmt.compute.types
         loadBalancerBackendAddressPools: list[SubResource]
         loadBalancerInboundNatPools: list[SubResource]
         primary: bool
+        privateIPAddressPrefixLength: int
         privateIPAddressVersion: Union[str, IPVersion]
         publicIPAddressConfiguration: VirtualMachineScaleSetPublicIPAddressConfiguration
         subnet: ApiEntityReference
@@ -27808,6 +27841,7 @@ namespace azure.mgmt.compute.types
 
     class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateIPConfigurationProperties(TypedDict, total=False):
         key "primary": bool
+        key "privateIPAddressPrefixLength": Optional[int]
         key "privateIPAddressVersion": Union[str, IPVersion]
         key "publicIPAddressConfiguration": ForwardRef('VirtualMachineScaleSetUpdatePublicIPAddressConfiguration', module='types')
         key "subnet": ForwardRef('ApiEntityReference', module='types')
@@ -27816,6 +27850,7 @@ namespace azure.mgmt.compute.types
         loadBalancerBackendAddressPools: list[SubResource]
         loadBalancerInboundNatPools: list[SubResource]
         primary: bool
+        privateIPAddressPrefixLength: int
         privateIPAddressVersion: Union[str, IPVersion]
         publicIPAddressConfiguration: VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
         subnet: ApiEntityReference

@@ -27,7 +27,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
             cloud_service_name="str",
             role_instance_name="str",
             network_interface_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             cloud_service_name="str",
             role_instance_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.get(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7544,7 +7544,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7557,7 +7557,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             network_interface_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7569,7 +7569,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.begin_delete(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7580,7 +7580,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
     def test_network_interfaces_list(self, resource_group):
         response = self.client.network_interfaces.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7590,7 +7590,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_network_interfaces_list_all(self, resource_group):
         response = self.client.network_interfaces.list_all(
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7602,7 +7602,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.begin_get_effective_route_table(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7614,7 +7614,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.begin_list_effective_network_security_groups(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7655,7 +7655,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.list_cloud_service_network_interfaces(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

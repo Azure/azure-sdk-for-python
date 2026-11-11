@@ -16,6 +16,9 @@ from azure.ai.agentserver.responses.hosting._request_parsing import (
     _resolve_session_id,
     derive_session_id,
 )
+from azure.ai.agentserver.responses.streaming._helpers import (
+    _extract_response_snapshot_from_events,
+)
 from azure.ai.agentserver.responses.streaming._internals import (
     apply_common_defaults,
 )
@@ -262,6 +265,100 @@ class TestSessionIdStamping:
             assert (
                 events[0]["response"]["agent_session_id"] == "all-types-session"
             ), f"Missing agent_session_id on {event_type}"
+
+
+# ===================================================================
+# Canonical agent reference stamping
+# ===================================================================
+
+
+class TestAgentReferenceStamping:
+    """Tests for preserving complete response agent identity."""
+
+    _CANONICAL_REFERENCE = {
+        "type": "agent_reference",
+        "name": "canonical-agent",
+        "version": "42",
+    }
+
+    @pytest.mark.parametrize(
+        "partial_reference",
+        [
+            {"type": "agent_reference"},
+            {"type": "agent_reference", "name": "handler-agent"},
+            {"type": "agent_reference", "version": "7"},
+            {"type": "agent_reference", "name": " ", "version": "7"},
+            {"type": "agent_reference", "name": "handler-agent", "version": " "},
+        ],
+    )
+    def test_partial_lifecycle_reference_is_replaced(self, partial_reference):
+        """Incomplete handler references cannot replace canonical request identity."""
+        events = [
+            {
+                "type": "response.completed",
+                "response": {
+                    "id": "resp_1",
+                    "status": "completed",
+                    "agent_reference": partial_reference,
+                },
+            },
+        ]
+
+        apply_common_defaults(
+            events,
+            response_id="resp_1",
+            agent_reference=self._CANONICAL_REFERENCE,
+            model=None,
+        )
+
+        assert events[0]["response"]["agent_reference"] == self._CANONICAL_REFERENCE
+
+    def test_complete_lifecycle_reference_is_preserved(self):
+        """A complete handler reference remains authoritative."""
+        handler_reference = {
+            "type": "agent_reference",
+            "name": "handler-agent",
+            "version": "7",
+        }
+        events = [
+            {
+                "type": "response.completed",
+                "response": {
+                    "id": "resp_1",
+                    "status": "completed",
+                    "agent_reference": handler_reference,
+                },
+            },
+        ]
+
+        apply_common_defaults(
+            events,
+            response_id="resp_1",
+            agent_reference=self._CANONICAL_REFERENCE,
+            model=None,
+        )
+
+        assert events[0]["response"]["agent_reference"] == handler_reference
+
+    def test_partial_latest_snapshot_is_replaced(self):
+        """Persistence extracts the canonical reference from a partial terminal snapshot."""
+        snapshot = _extract_response_snapshot_from_events(
+            [
+                {
+                    "type": "response.completed",
+                    "response": {
+                        "id": "resp_1",
+                        "status": "completed",
+                        "agent_reference": {"type": "agent_reference"},
+                    },
+                },
+            ],
+            response_id="resp_1",
+            agent_reference=self._CANONICAL_REFERENCE,
+            model="test-model",
+        )
+
+        assert snapshot["agent_reference"] == self._CANONICAL_REFERENCE
 
 
 # ===================================================================

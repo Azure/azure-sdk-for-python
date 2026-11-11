@@ -6,15 +6,17 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Browser Automation capabilities
-    using the BrowserAutomationPreviewTool and synchronous Azure AI Projects client. The agent can
+    using the BrowserAutomationTool and synchronous Azure AI Projects client. The agent can
     perform automated web browsing tasks and provide responses based on web interactions.
+    The agent shares a live-view URL at the start of the run, so you can watch the browser
+    session. Treat that URL as sensitive and do not share it.
 
 USAGE:
     python sample_agent_browser_automation.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -34,7 +36,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BrowserAutomationPreviewTool,
+    BrowserAutomationTool,
     BrowserAutomationToolParameters,
     BrowserAutomationToolConnectionParameters,
 )
@@ -45,8 +47,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 
-tool = BrowserAutomationPreviewTool(
-    browser_automation_preview=BrowserAutomationToolParameters(
+tool = BrowserAutomationTool(
+    browser_automation=BrowserAutomationToolParameters(
         connection=BrowserAutomationToolConnectionParameters(
             project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
         )
@@ -71,34 +73,24 @@ with (
 ):
     stream_response = openai_client.responses.create(
         stream=True,
-        tool_choice="required",
         input="""
-        Your goal is to report the percent of Microsoft year-to-date stock price change.
-        To do that, go to the website finance.yahoo.com.
-        At the top of the page, you will find a search bar.
-        Enter the value 'MSFT', to get information about the Microsoft stock price.
-        At the top of the resulting page you will see a default chart of Microsoft stock price.
-        Click on 'YTD' at the top of that chart, and report the percent value that shows up just below it.""",
+        Use the Browser Automation tool to visit https://example.com.
+        Read the page and report its title and the visible description paragraph.
+        Base your answer on the browser results, not on prior knowledge.""",
     )
 
     for event in stream_response:
         if event.type == "response.created":
-            print(f"Follow-up response created with ID: {event.response.id}")
-        elif event.type == "response.output_text.delta":
-            print(f"Delta: {event.delta}")
-        elif event.type == "response.text.done":
-            print("\nFollow-up response done!")
+            print(f"Response created with ID: {event.response.id}")
         elif event.type == "response.output_item.done":
             item = event.item
-            if item.type == "browser_automation_preview_call":  # TODO: support browser_automation_preview_call schema
-                arguments_str = getattr(item, "arguments", "{}")
-
-                # Parse the arguments string into a dictionary
-                arguments = json.loads(arguments_str)
-                query = arguments.get("query")
-
-                print(f"Call ID: {getattr(item, 'call_id')}")
-                print(f"Query arguments: {query}")
+            # Each browser action (navigate, click, type, ...) is surfaced as a "remote_function_call" item.
+            if item.type == "remote_function_call":
+                arguments = json.loads(getattr(item, "arguments", None) or "{}")
+                arguments.pop("browserSessionId", None)
+                print(f"Browser action: {item.name} (call ID: {item.call_id}), arguments: {arguments}")
+        elif event.type == "response.output_text.done":
+            # Includes the live view URL message as well as the final answer.
+            print(f"\nAgent message: {event.text}")
         elif event.type == "response.completed":
-            print("\nFollow-up completed!")
-            print(f"Full response: {event.response.output_text}")
+            print("\nResponse completed!")

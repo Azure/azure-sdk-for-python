@@ -2318,7 +2318,7 @@ class BackupInstancesOperations:  # pylint: disable=docstring-missing-param,too-
                 "backup_instance_name",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-07-01"],
     )
     async def _resume_protection_initial(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
@@ -2396,7 +2396,7 @@ class BackupInstancesOperations:  # pylint: disable=docstring-missing-param,too-
                 "backup_instance_name",
             ]
         },
-        api_versions_list=["2026-06-01"],
+        api_versions_list=["2026-06-01", "2026-07-01"],
     )
     async def begin_resume_protection(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
@@ -4107,7 +4107,7 @@ class DeletedBackupVaultsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2025-09-01",
         params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "accept"]},
-        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01", "2026-07-01"],
     )
     async def get(self, location: str, deleted_vault_name: str, **kwargs: Any) -> _models.DeletedBackupVaultResource:
         """Gets a deleted backup vault.
@@ -4182,7 +4182,7 @@ class DeletedBackupVaultsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2025-09-01",
         params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01", "2026-07-01"],
     )
     def list_by_location(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.DeletedBackupVaultResource"]:
         """Lists deleted backup vaults by location.
@@ -6137,7 +6137,7 @@ class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
 
     @api_version_validation(
         params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
-        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
+        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01", "2026-07-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -6330,7 +6330,7 @@ class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
-        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
+        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01", "2026-07-01"],
     )
     async def begin_create_or_update(
         self,

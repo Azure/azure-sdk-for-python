@@ -28,6 +28,7 @@ class CustomAsyncioRequestsTransport(TokenBindingTransportMixin, AsyncioRequests
         """Update the session's adapter with the current SNI and CA data."""
         if not self.session:
             self.session = Session()
+        self.session.trust_env = self._use_env_settings
 
         adapter = SNIAdapter(self._sni, self._ca_data)
         self.session.mount("https://", adapter)
@@ -41,5 +42,16 @@ class CustomAsyncioRequestsTransport(TokenBindingTransportMixin, AsyncioRequests
             # If ca_data was updated, recreate SSL context with the new data
             if self._ca_data:
                 self._update_adaptor()
+
+        connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
+        if isinstance(connection_timeout, tuple):
+            if "read_timeout" in kwargs:
+                raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
+            kwargs["connection_timeout"] = connection_timeout
+        else:
+            kwargs["connection_timeout"] = (
+                connection_timeout,
+                kwargs.pop("read_timeout", self.connection_config.read_timeout),
+            )
 
         return await super().send(request, **kwargs)

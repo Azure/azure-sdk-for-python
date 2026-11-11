@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -117,11 +117,10 @@ from .._configuration import PostgreSQLManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -234,7 +233,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MigrationsOperations:
+class MigrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -364,7 +363,7 @@ class MigrationsOperations:
         resource_group_name: str,
         server_name: str,
         migration_name: str,
-        parameters: JSON,
+        parameters: _types.Migration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -379,7 +378,7 @@ class MigrationsOperations:
         :param migration_name: Name of migration. Required.
         :type migration_name: str
         :param parameters: Parameters required for creating a migration. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.Migration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -424,7 +423,7 @@ class MigrationsOperations:
         resource_group_name: str,
         server_name: str,
         migration_name: str,
-        parameters: Union[_models.Migration, JSON, IO[bytes]],
+        parameters: Union[_models.Migration, _types.Migration, IO[bytes]],
         **kwargs: Any
     ) -> _models.Migration:
         """Creates a new migration.
@@ -436,9 +435,10 @@ class MigrationsOperations:
         :type server_name: str
         :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: Parameters required for creating a migration. Is one of the following types:
-         Migration, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Migration or JSON or IO[bytes]
+        :param parameters: Parameters required for creating a migration. Is either a Migration type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Migration or
+         ~azure.mgmt.postgresqlflexibleservers.types.Migration or IO[bytes]
         :return: Migration. The Migration is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -549,7 +549,7 @@ class MigrationsOperations:
         resource_group_name: str,
         server_name: str,
         migration_name: str,
-        parameters: JSON,
+        parameters: _types.MigrationResourceForPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -566,7 +566,7 @@ class MigrationsOperations:
         :param migration_name: Name of migration. Required.
         :type migration_name: str
         :param parameters: Parameters required to update an existing migration. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.MigrationResourceForPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -613,7 +613,7 @@ class MigrationsOperations:
         resource_group_name: str,
         server_name: str,
         migration_name: str,
-        parameters: Union[_models.MigrationResourceForPatch, JSON, IO[bytes]],
+        parameters: Union[_models.MigrationResourceForPatch, _types.MigrationResourceForPatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.Migration:
         """Updates an existing migration. The request body can contain one to many of the mutable
@@ -627,10 +627,10 @@ class MigrationsOperations:
         :type server_name: str
         :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: Parameters required to update an existing migration. Is one of the following
-         types: MigrationResourceForPatch, JSON, IO[bytes] Required.
+        :param parameters: Parameters required to update an existing migration. Is either a
+         MigrationResourceForPatch type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResourceForPatch or
-         JSON or IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.types.MigrationResourceForPatch or IO[bytes]
         :return: Migration. The Migration is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -930,7 +930,7 @@ class MigrationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.MigrationNameAvailability,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -946,7 +946,7 @@ class MigrationsOperations:
         :type server_name: str
         :param parameters: Parameters required to check if a migration name is valid and available.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.MigrationNameAvailability
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -992,7 +992,7 @@ class MigrationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.MigrationNameAvailability, JSON, IO[bytes]],
+        parameters: Union[_models.MigrationNameAvailability, _types.MigrationNameAvailability, IO[bytes]],
         **kwargs: Any
     ) -> _models.MigrationNameAvailability:
         """Check the validity and availability of the given name, to assign it to a new migration.
@@ -1005,9 +1005,9 @@ class MigrationsOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Parameters required to check if a migration name is valid and available. Is
-         one of the following types: MigrationNameAvailability, JSON, IO[bytes] Required.
+         either a MigrationNameAvailability type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailability or
-         JSON or IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.types.MigrationNameAvailability or IO[bytes]
         :return: MigrationNameAvailability. The MigrationNameAvailability is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailability
@@ -1081,7 +1081,7 @@ class MigrationsOperations:
         return deserialized  # type: ignore
 
 
-class ServersOperations:
+class ServersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1174,7 +1174,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.Server, JSON, IO[bytes]],
+        parameters: Union[_models.Server, _types.Server, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1281,7 +1281,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.Server,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1295,7 +1295,7 @@ class ServersOperations:
         :type server_name: str
         :param parameters: Parameters required to create a new server or to update an existing server.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.Server
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1339,7 +1339,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.Server, JSON, IO[bytes]],
+        parameters: Union[_models.Server, _types.Server, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Server]:
         """Creates a new server.
@@ -1350,8 +1350,9 @@ class ServersOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Parameters required to create a new server or to update an existing server.
-         Is one of the following types: Server, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Server or JSON or IO[bytes]
+         Is either a Server type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Server or
+         ~azure.mgmt.postgresqlflexibleservers.types.Server or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Server. The Server is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.Server]
@@ -1420,7 +1421,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerForPatch, JSON, IO[bytes]],
+        parameters: Union[_models.ServerForPatch, _types.ServerForPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1527,7 +1528,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.ServerForPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1541,7 +1542,7 @@ class ServersOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Parameters required to update a server. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.ServerForPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1585,7 +1586,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerForPatch, JSON, IO[bytes]],
+        parameters: Union[_models.ServerForPatch, _types.ServerForPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Server]:
         """Updates an existing server. The request body can contain one or multiple of the properties
@@ -1596,10 +1597,10 @@ class ServersOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Parameters required to update a server. Is one of the following types:
-         ServerForPatch, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ServerForPatch or JSON or
-         IO[bytes]
+        :param parameters: Parameters required to update a server. Is either a ServerForPatch type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ServerForPatch or
+         ~azure.mgmt.postgresqlflexibleservers.types.ServerForPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Server. The Server is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.Server]
@@ -1979,7 +1980,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Optional[Union[_models.RestartParameter, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.RestartParameter, _types.RestartParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2088,7 +2089,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.RestartParameter] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2101,7 +2102,7 @@ class ServersOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Parameters to restart a server. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.RestartParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2142,7 +2143,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Optional[Union[_models.RestartParameter, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.RestartParameter, _types.RestartParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restarts PostgreSQL database engine in a server.
@@ -2152,10 +2153,10 @@ class ServersOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Parameters to restart a server. Is one of the following types:
-         RestartParameter, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.RestartParameter or JSON or
-         IO[bytes]
+        :param parameters: Parameters to restart a server. Is either a RestartParameter type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.RestartParameter or
+         ~azure.mgmt.postgresqlflexibleservers.types.RestartParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2449,7 +2450,7 @@ class ServersOperations:
         params_added_on={
             "2026-01-01-preview": ["api_version", "subscription_id", "resource_group_name", "server_name", "accept"]
         },
-        api_versions_list=["2026-01-01-preview", "2026-04-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def _migrate_network_mode_initial(
         self, resource_group_name: str, server_name: str, **kwargs: Any
@@ -2525,7 +2526,7 @@ class ServersOperations:
         params_added_on={
             "2026-01-01-preview": ["api_version", "subscription_id", "resource_group_name", "server_name", "accept"]
         },
-        api_versions_list=["2026-01-01-preview", "2026-04-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def begin_migrate_network_mode(
         self, resource_group_name: str, server_name: str, **kwargs: Any
@@ -2608,13 +2609,15 @@ class ServersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def _start_major_version_upgrade_precheck_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         server_name: str,
-        body: Union[_models.StartMajorVersionUpgradePrecheckRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.StartMajorVersionUpgradePrecheckRequest, _types.StartMajorVersionUpgradePrecheckRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2726,7 +2729,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        body: JSON,
+        body: _types.StartMajorVersionUpgradePrecheckRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2739,7 +2742,7 @@ class ServersOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.postgresqlflexibleservers.types.StartMajorVersionUpgradePrecheckRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2792,13 +2795,15 @@ class ServersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def begin_start_major_version_upgrade_precheck(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         server_name: str,
-        body: Union[_models.StartMajorVersionUpgradePrecheckRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.StartMajorVersionUpgradePrecheckRequest, _types.StartMajorVersionUpgradePrecheckRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StartMajorVersionUpgradePrecheckResponse]:
         """Start Major Version Upgrade Prechecks.
@@ -2808,10 +2813,11 @@ class ServersOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param body: The content of the action request. Is one of the following types:
-         StartMajorVersionUpgradePrecheckRequest, JSON, IO[bytes] Required.
+        :param body: The content of the action request. Is either a
+         StartMajorVersionUpgradePrecheckRequest type or a IO[bytes] type. Required.
         :type body:
-         ~azure.mgmt.postgresqlflexibleservers.models.StartMajorVersionUpgradePrecheckRequest or JSON or
+         ~azure.mgmt.postgresqlflexibleservers.models.StartMajorVersionUpgradePrecheckRequest or
+         ~azure.mgmt.postgresqlflexibleservers.types.StartMajorVersionUpgradePrecheckRequest or
          IO[bytes]
         :return: An instance of AsyncLROPoller that returns StartMajorVersionUpgradePrecheckResponse.
          The StartMajorVersionUpgradePrecheckResponse is compatible with MutableMapping
@@ -2875,7 +2881,7 @@ class ServersOperations:
         )
 
 
-class ConfigurationsOperations:
+class ConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2975,7 +2981,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: Union[_models.ConfigurationForUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ConfigurationForUpdate, _types.ConfigurationForUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3090,7 +3096,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: JSON,
+        parameters: _types.ConfigurationForUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3108,7 +3114,7 @@ class ConfigurationsOperations:
         :type configuration_name: str
         :param parameters: Parameters required to update the value of a specific modifiable
          configuration (also known as server parameter). Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.ConfigurationForUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3160,7 +3166,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: Union[_models.ConfigurationForUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ConfigurationForUpdate, _types.ConfigurationForUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Configuration]:
         """Updates, using Put verb, the value assigned to a specific modifiable configuration (also known
@@ -3175,10 +3181,10 @@ class ConfigurationsOperations:
          Required.
         :type configuration_name: str
         :param parameters: Parameters required to update the value of a specific modifiable
-         configuration (also known as server parameter). Is one of the following types:
-         ConfigurationForUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationForUpdate or JSON
-         or IO[bytes]
+         configuration (also known as server parameter). Is either a ConfigurationForUpdate type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationForUpdate or
+         ~azure.mgmt.postgresqlflexibleservers.types.ConfigurationForUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Configuration. The Configuration is
          compatible with MutableMapping
         :rtype:
@@ -3250,7 +3256,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: Union[_models.ConfigurationForUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ConfigurationForUpdate, _types.ConfigurationForUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3365,7 +3371,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: JSON,
+        parameters: _types.ConfigurationForUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3383,7 +3389,7 @@ class ConfigurationsOperations:
         :type configuration_name: str
         :param parameters: Parameters required to update the value of a specific modifiable
          configuration (also known as server parameter). Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.ConfigurationForUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3435,7 +3441,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         server_name: str,
         configuration_name: str,
-        parameters: Union[_models.ConfigurationForUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ConfigurationForUpdate, _types.ConfigurationForUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Configuration]:
         """Updates the value assigned to a specific modifiable configuration (also known as server
@@ -3450,10 +3456,10 @@ class ConfigurationsOperations:
          Required.
         :type configuration_name: str
         :param parameters: Parameters required to update the value of a specific modifiable
-         configuration (also known as server parameter). Is one of the following types:
-         ConfigurationForUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationForUpdate or JSON
-         or IO[bytes]
+         configuration (also known as server parameter). Is either a ConfigurationForUpdate type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationForUpdate or
+         ~azure.mgmt.postgresqlflexibleservers.types.ConfigurationForUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Configuration. The Configuration is
          compatible with MutableMapping
         :rtype:
@@ -3624,7 +3630,7 @@ class ConfigurationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabasesOperations:
+class DatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3724,7 +3730,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.Database, JSON, IO[bytes]],
+        parameters: Union[_models.Database, _types.Database, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3837,7 +3843,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.Database,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3853,7 +3859,7 @@ class DatabasesOperations:
          retrieved by getting the list of all existing databases in a server. Required.
         :type database_name: str
         :param parameters: Parameters required to create a new database. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.Database
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3903,7 +3909,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.Database, JSON, IO[bytes]],
+        parameters: Union[_models.Database, _types.Database, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Database]:
         """Creates a new database.
@@ -3916,9 +3922,10 @@ class DatabasesOperations:
         :param database_name: Name of the database (case-sensitive). Exact database names can be
          retrieved by getting the list of all existing databases in a server. Required.
         :type database_name: str
-        :param parameters: Parameters required to create a new database. Is one of the following types:
-         Database, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Database or JSON or IO[bytes]
+        :param parameters: Parameters required to create a new database. Is either a Database type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Database or
+         ~azure.mgmt.postgresqlflexibleservers.types.Database or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Database. The Database is compatible with
          MutableMapping
         :rtype:
@@ -4217,7 +4224,7 @@ class DatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FirewallRulesOperations:
+class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4316,7 +4323,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: Union[_models.FirewallRule, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4428,7 +4435,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: JSON,
+        parameters: _types.FirewallRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4443,7 +4450,7 @@ class FirewallRulesOperations:
         :param firewall_rule_name: Name of the firewall rule. Required.
         :type firewall_rule_name: str
         :param parameters: Parameters required for creating or updating a firewall rule. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.FirewallRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4492,7 +4499,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: Union[_models.FirewallRule, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FirewallRule]:
         """Creates a new firewall rule or updates an existing firewall rule.
@@ -4504,10 +4511,10 @@ class FirewallRulesOperations:
         :type server_name: str
         :param firewall_rule_name: Name of the firewall rule. Required.
         :type firewall_rule_name: str
-        :param parameters: Parameters required for creating or updating a firewall rule. Is one of the
-         following types: FirewallRule, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.FirewallRule or JSON or
-         IO[bytes]
+        :param parameters: Parameters required for creating or updating a firewall rule. Is either a
+         FirewallRule type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.FirewallRule or
+         ~azure.mgmt.postgresqlflexibleservers.types.FirewallRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FirewallRule. The FirewallRule is
          compatible with MutableMapping
         :rtype:
@@ -4805,7 +4812,7 @@ class FirewallRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4906,7 +4913,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5019,7 +5026,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5035,7 +5042,7 @@ class PrivateEndpointConnectionsOperations:
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Parameters required to update a private endpoint connection. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5085,7 +5092,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Approves or rejects a private endpoint connection.
@@ -5098,10 +5105,10 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Parameters required to update a private endpoint connection. Is one of the
-         following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
+        :param parameters: Parameters required to update a private endpoint connection. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.PrivateEndpointConnection or
-         JSON or IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -5400,7 +5407,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5598,7 +5605,7 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualEndpointsOperations:
+class VirtualEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5697,7 +5704,7 @@ class VirtualEndpointsOperations:
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpoint, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualEndpoint, _types.VirtualEndpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5810,7 +5817,7 @@ class VirtualEndpointsOperations:
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualEndpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5826,7 +5833,7 @@ class VirtualEndpointsOperations:
         :type virtual_endpoint_name: str
         :param parameters: Parameters required to create or update a pair of virtual endpoints.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.VirtualEndpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5876,7 +5883,7 @@ class VirtualEndpointsOperations:
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpoint, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualEndpoint, _types.VirtualEndpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualEndpoint]:
         """Creates a pair of virtual endpoints for a server.
@@ -5888,10 +5895,10 @@ class VirtualEndpointsOperations:
         :type server_name: str
         :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: Parameters required to create or update a pair of virtual endpoints. Is one
-         of the following types: VirtualEndpoint, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint or JSON or
-         IO[bytes]
+        :param parameters: Parameters required to create or update a pair of virtual endpoints. Is
+         either a VirtualEndpoint type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint or
+         ~azure.mgmt.postgresqlflexibleservers.types.VirtualEndpoint or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualEndpoint. The VirtualEndpoint is
          compatible with MutableMapping
         :rtype:
@@ -5963,7 +5970,7 @@ class VirtualEndpointsOperations:
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpointResourceForPatch, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualEndpointResourceForPatch, _types.VirtualEndpointResourceForPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6075,7 +6082,7 @@ class VirtualEndpointsOperations:
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualEndpointResourceForPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6090,7 +6097,7 @@ class VirtualEndpointsOperations:
         :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
         :param parameters: Parameters required to update a pair of virtual endpoints. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.VirtualEndpointResourceForPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6139,7 +6146,7 @@ class VirtualEndpointsOperations:
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpointResourceForPatch, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualEndpointResourceForPatch, _types.VirtualEndpointResourceForPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualEndpoint]:
         """Updates a pair of virtual endpoints for a server.
@@ -6151,10 +6158,10 @@ class VirtualEndpointsOperations:
         :type server_name: str
         :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: Parameters required to update a pair of virtual endpoints. Is one of the
-         following types: VirtualEndpointResourceForPatch, JSON, IO[bytes] Required.
+        :param parameters: Parameters required to update a pair of virtual endpoints. Is either a
+         VirtualEndpointResourceForPatch type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResourceForPatch
-         or JSON or IO[bytes]
+         or ~azure.mgmt.postgresqlflexibleservers.types.VirtualEndpointResourceForPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualEndpoint. The VirtualEndpoint is
          compatible with MutableMapping
         :rtype:
@@ -6452,7 +6459,7 @@ class VirtualEndpointsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MaintenanceEventsOperations:
+class MaintenanceEventsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6484,7 +6491,7 @@ class MaintenanceEventsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def get(
         self, resource_group_name: str, server_name: str, maintenance_event_id: str, **kwargs: Any
@@ -6574,7 +6581,7 @@ class MaintenanceEventsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     def list(
         self,
@@ -6701,14 +6708,14 @@ class MaintenanceEventsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def _reschedule_initial(
         self,
         resource_group_name: str,
         server_name: str,
         maintenance_event_id: str,
-        body: Union[_models.MaintenanceEventRescheduleRequest, JSON, IO[bytes]],
+        body: Union[_models.MaintenanceEventRescheduleRequest, _types.MaintenanceEventRescheduleRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6821,7 +6828,7 @@ class MaintenanceEventsOperations:
         resource_group_name: str,
         server_name: str,
         maintenance_event_id: str,
-        body: JSON,
+        body: _types.MaintenanceEventRescheduleRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6836,7 +6843,7 @@ class MaintenanceEventsOperations:
         :param maintenance_event_id: The name of the MaintenanceEventResource. Required.
         :type maintenance_event_id: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.postgresqlflexibleservers.types.MaintenanceEventRescheduleRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6893,14 +6900,14 @@ class MaintenanceEventsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def begin_reschedule(
         self,
         resource_group_name: str,
         server_name: str,
         maintenance_event_id: str,
-        body: Union[_models.MaintenanceEventRescheduleRequest, JSON, IO[bytes]],
+        body: Union[_models.MaintenanceEventRescheduleRequest, _types.MaintenanceEventRescheduleRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MaintenanceEventActionResponse]:
         """Reschedules a maintenance event to a new date and time.
@@ -6912,10 +6919,10 @@ class MaintenanceEventsOperations:
         :type server_name: str
         :param maintenance_event_id: The name of the MaintenanceEventResource. Required.
         :type maintenance_event_id: str
-        :param body: The content of the action request. Is one of the following types:
-         MaintenanceEventRescheduleRequest, JSON, IO[bytes] Required.
+        :param body: The content of the action request. Is either a MaintenanceEventRescheduleRequest
+         type or a IO[bytes] type. Required.
         :type body: ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceEventRescheduleRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.types.MaintenanceEventRescheduleRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MaintenanceEventActionResponse. The
          MaintenanceEventActionResponse is compatible with MutableMapping
         :rtype:
@@ -6987,7 +6994,7 @@ class MaintenanceEventsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def _apply_now_initial(
         self, resource_group_name: str, server_name: str, maintenance_event_id: str, **kwargs: Any
@@ -7067,7 +7074,7 @@ class MaintenanceEventsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def begin_apply_now(
         self, resource_group_name: str, server_name: str, maintenance_event_id: str, **kwargs: Any
@@ -7138,7 +7145,7 @@ class MaintenanceEventsOperations:
         )
 
 
-class MajorVersionUpgradePrecheckOperations:
+class MajorVersionUpgradePrecheckOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7170,7 +7177,7 @@ class MajorVersionUpgradePrecheckOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     async def get(
         self, resource_group_name: str, server_name: str, precheck_validation_id: str, **kwargs: Any
@@ -7253,7 +7260,7 @@ class MajorVersionUpgradePrecheckOperations:
         params_added_on={
             "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "server_name", "accept"]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-07-01-preview", "2026-10-01"],
     )
     def list(
         self, resource_group_name: str, server_name: str, **kwargs: Any
@@ -7358,7 +7365,7 @@ class MajorVersionUpgradePrecheckOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AdministratorsMicrosoftEntraOperations:
+class AdministratorsMicrosoftEntraOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7458,7 +7465,7 @@ class AdministratorsMicrosoftEntraOperations:
         resource_group_name: str,
         server_name: str,
         object_id: str,
-        parameters: Union[_models.AdministratorMicrosoftEntraAdd, JSON, IO[bytes]],
+        parameters: Union[_models.AdministratorMicrosoftEntraAdd, _types.AdministratorMicrosoftEntraAdd, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7571,7 +7578,7 @@ class AdministratorsMicrosoftEntraOperations:
         resource_group_name: str,
         server_name: str,
         object_id: str,
-        parameters: JSON,
+        parameters: _types.AdministratorMicrosoftEntraAdd,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7587,7 +7594,7 @@ class AdministratorsMicrosoftEntraOperations:
         :type object_id: str
         :param parameters: Required parameters for adding a server administrator associated to a
          Microsoft Entra principal. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.AdministratorMicrosoftEntraAdd
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7637,7 +7644,7 @@ class AdministratorsMicrosoftEntraOperations:
         resource_group_name: str,
         server_name: str,
         object_id: str,
-        parameters: Union[_models.AdministratorMicrosoftEntraAdd, JSON, IO[bytes]],
+        parameters: Union[_models.AdministratorMicrosoftEntraAdd, _types.AdministratorMicrosoftEntraAdd, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AdministratorMicrosoftEntra]:
         """Creates a new server administrator associated to a Microsoft Entra principal.
@@ -7650,10 +7657,10 @@ class AdministratorsMicrosoftEntraOperations:
         :param object_id: Object identifier of the Microsoft Entra principal. Required.
         :type object_id: str
         :param parameters: Required parameters for adding a server administrator associated to a
-         Microsoft Entra principal. Is one of the following types: AdministratorMicrosoftEntraAdd, JSON,
-         IO[bytes] Required.
+         Microsoft Entra principal. Is either a AdministratorMicrosoftEntraAdd type or a IO[bytes] type.
+         Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.AdministratorMicrosoftEntraAdd
-         or JSON or IO[bytes]
+         or ~azure.mgmt.postgresqlflexibleservers.types.AdministratorMicrosoftEntraAdd or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AdministratorMicrosoftEntra. The
          AdministratorMicrosoftEntra is compatible with MutableMapping
         :rtype:
@@ -7951,7 +7958,7 @@ class AdministratorsMicrosoftEntraOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CapabilitiesByServerOperations:
+class CapabilitiesByServerOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8072,7 +8079,7 @@ class CapabilitiesByServerOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CapturedLogsOperations:
+class CapturedLogsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8195,7 +8202,7 @@ class CapturedLogsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupsLongTermRetentionOperations:
+class BackupsLongTermRetentionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8246,7 +8253,7 @@ class BackupsLongTermRetentionOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.LtrPreBackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8259,7 +8266,7 @@ class BackupsLongTermRetentionOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.LtrPreBackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8300,7 +8307,7 @@ class BackupsLongTermRetentionOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.LtrPreBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.LtrPreBackupRequest, _types.LtrPreBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.LtrPreBackupResponse:
         """Performs all checks required for a long term retention backup operation to succeed.
@@ -8310,10 +8317,10 @@ class BackupsLongTermRetentionOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         LtrPreBackupRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.LtrPreBackupRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a LtrPreBackupRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.LtrPreBackupRequest or
+         ~azure.mgmt.postgresqlflexibleservers.types.LtrPreBackupRequest or IO[bytes]
         :return: LtrPreBackupResponse. The LtrPreBackupResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.LtrPreBackupResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8392,7 +8399,7 @@ class BackupsLongTermRetentionOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.BackupsLongTermRetentionRequest, JSON, IO[bytes]],
+        parameters: Union[_models.BackupsLongTermRetentionRequest, _types.BackupsLongTermRetentionRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8504,7 +8511,7 @@ class BackupsLongTermRetentionOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.BackupsLongTermRetentionRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8517,7 +8524,7 @@ class BackupsLongTermRetentionOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.BackupsLongTermRetentionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8562,7 +8569,7 @@ class BackupsLongTermRetentionOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.BackupsLongTermRetentionRequest, JSON, IO[bytes]],
+        parameters: Union[_models.BackupsLongTermRetentionRequest, _types.BackupsLongTermRetentionRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupsLongTermRetentionResponse]:
         """Initiates a long term retention backup.
@@ -8572,10 +8579,10 @@ class BackupsLongTermRetentionOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         BackupsLongTermRetentionRequest, JSON, IO[bytes] Required.
+        :param parameters: Request body for operation. Is either a BackupsLongTermRetentionRequest type
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.BackupsLongTermRetentionRequest
-         or JSON or IO[bytes]
+         or ~azure.mgmt.postgresqlflexibleservers.types.BackupsLongTermRetentionRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackupsLongTermRetentionResponse. The
          BackupsLongTermRetentionResponse is compatible with MutableMapping
         :rtype:
@@ -8817,7 +8824,7 @@ class BackupsLongTermRetentionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ReplicasOperations:
+class ReplicasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8940,7 +8947,7 @@ class ReplicasOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-long
+class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9145,7 +9152,7 @@ class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-lo
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerThreatProtectionSettingsOperations:
+class ServerThreatProtectionSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9169,7 +9176,9 @@ class ServerThreatProtectionSettingsOperations:
         resource_group_name: str,
         server_name: str,
         threat_protection_name: Union[str, _models.ThreatProtectionName],
-        parameters: Union[_models.AdvancedThreatProtectionSettingsModel, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AdvancedThreatProtectionSettingsModel, _types.AdvancedThreatProtectionSettingsModel, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9284,7 +9293,7 @@ class ServerThreatProtectionSettingsOperations:
         resource_group_name: str,
         server_name: str,
         threat_protection_name: Union[str, _models.ThreatProtectionName],
-        parameters: JSON,
+        parameters: _types.AdvancedThreatProtectionSettingsModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9301,7 +9310,8 @@ class ServerThreatProtectionSettingsOperations:
         :type threat_protection_name: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionName
         :param parameters: The Advanced Threat Protection state for the server. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.postgresqlflexibleservers.types.AdvancedThreatProtectionSettingsModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9352,7 +9362,9 @@ class ServerThreatProtectionSettingsOperations:
         resource_group_name: str,
         server_name: str,
         threat_protection_name: Union[str, _models.ThreatProtectionName],
-        parameters: Union[_models.AdvancedThreatProtectionSettingsModel, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AdvancedThreatProtectionSettingsModel, _types.AdvancedThreatProtectionSettingsModel, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AdvancedThreatProtectionSettingsModel]:
         """Creates or updates a server's Advanced Threat Protection settings.
@@ -9366,11 +9378,11 @@ class ServerThreatProtectionSettingsOperations:
          Required.
         :type threat_protection_name: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionName
-        :param parameters: The Advanced Threat Protection state for the server. Is one of the following
-         types: AdvancedThreatProtectionSettingsModel, JSON, IO[bytes] Required.
+        :param parameters: The Advanced Threat Protection state for the server. Is either a
+         AdvancedThreatProtectionSettingsModel type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.postgresqlflexibleservers.models.AdvancedThreatProtectionSettingsModel or JSON or
-         IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.models.AdvancedThreatProtectionSettingsModel or
+         ~azure.mgmt.postgresqlflexibleservers.types.AdvancedThreatProtectionSettingsModel or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AdvancedThreatProtectionSettingsModel. The
          AdvancedThreatProtectionSettingsModel is compatible with MutableMapping
         :rtype:
@@ -9438,7 +9450,7 @@ class ServerThreatProtectionSettingsOperations:
         )
 
 
-class BackupsAutomaticAndOnDemandOperations:
+class BackupsAutomaticAndOnDemandOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9904,7 +9916,7 @@ class BackupsAutomaticAndOnDemandOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TuningOptionsOperations:
+class TuningOptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10228,7 +10240,7 @@ class TuningOptionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CapabilitiesByLocationOperations:
+class CapabilitiesByLocationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10345,7 +10357,7 @@ class CapabilitiesByLocationOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NameAvailabilityOperations:
+class NameAvailabilityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10383,13 +10395,13 @@ class NameAvailabilityOperations:
 
     @overload
     async def check_globally(
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: _types.CheckNameAvailabilityRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NameAvailabilityModel:
         """Checks the validity and availability of the given name, to assign it to a new server or to use
         it as the base name of a new pair of virtual endpoints.
 
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10417,15 +10429,17 @@ class NameAvailabilityOperations:
 
     @distributed_trace_async
     async def check_globally(
-        self, parameters: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        parameters: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.NameAvailabilityModel:
         """Checks the validity and availability of the given name, to assign it to a new server or to use
         it as the base name of a new pair of virtual endpoints.
 
-        :param parameters: The request body. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
+        :param parameters: The request body. Is either a CheckNameAvailabilityRequest type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.CheckNameAvailabilityRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: NameAvailabilityModel. The NameAvailabilityModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.NameAvailabilityModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10520,14 +10534,19 @@ class NameAvailabilityOperations:
 
     @overload
     async def check_with_location(
-        self, location_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location_name: str,
+        parameters: _types.CheckNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.NameAvailabilityModel:
         """Check the availability of name for resource.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10558,17 +10577,17 @@ class NameAvailabilityOperations:
     async def check_with_location(
         self,
         location_name: str,
-        parameters: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        parameters: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.NameAvailabilityModel:
         """Check the availability of name for resource.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
-        :param parameters: The request body. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
+        :param parameters: The request body. Is either a CheckNameAvailabilityRequest type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.CheckNameAvailabilityRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: NameAvailabilityModel. The NameAvailabilityModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.NameAvailabilityModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10640,7 +10659,7 @@ class NameAvailabilityOperations:
         return deserialized  # type: ignore
 
 
-class PrivateDnsZoneSuffixOperations:
+class PrivateDnsZoneSuffixOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10722,7 +10741,7 @@ class PrivateDnsZoneSuffixOperations:
         return deserialized  # type: ignore
 
 
-class QuotaUsagesOperations:
+class QuotaUsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10839,7 +10858,7 @@ class QuotaUsagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualNetworkSubnetUsageOperations:
+class VirtualNetworkSubnetUsageOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10885,14 +10904,20 @@ class VirtualNetworkSubnetUsageOperations:
 
     @overload
     async def list(
-        self, location_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location_name: str,
+        parameters: _types.VirtualNetworkSubnetUsageParameter,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.VirtualNetworkSubnetUsageModel:
         """Lists the virtual network subnet usage for a given virtual network.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.postgresqlflexibleservers.types.VirtualNetworkSubnetUsageParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10925,18 +10950,20 @@ class VirtualNetworkSubnetUsageOperations:
     async def list(
         self,
         location_name: str,
-        parameters: Union[_models.VirtualNetworkSubnetUsageParameter, JSON, IO[bytes]],
+        parameters: Union[
+            _models.VirtualNetworkSubnetUsageParameter, _types.VirtualNetworkSubnetUsageParameter, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.VirtualNetworkSubnetUsageModel:
         """Lists the virtual network subnet usage for a given virtual network.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
-        :param parameters: The request body. Is one of the following types:
-         VirtualNetworkSubnetUsageParameter, JSON, IO[bytes] Required.
+        :param parameters: The request body. Is either a VirtualNetworkSubnetUsageParameter type or a
+         IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageParameter or JSON or
-         IO[bytes]
+         ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageParameter or
+         ~azure.mgmt.postgresqlflexibleservers.types.VirtualNetworkSubnetUsageParameter or IO[bytes]
         :return: VirtualNetworkSubnetUsageModel. The VirtualNetworkSubnetUsageModel is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageModel
