@@ -1318,8 +1318,7 @@ class AgentEvaluatorGenerationJobSource(
 
 
 class TraceSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Base class for polymorphic trace sources nested within an
-    AzureAITraceDataSourceEvalRunDataSource.
+    """Base class for polymorphic trace sources nested within a TraceSourceEvalRunDataSource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AgentFilterTraceSource, ConversationIdTraceSource, TraceIdTraceSource
@@ -6752,123 +6751,6 @@ class AzureAISearchToolResource(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class EvalRunDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Base class for run data sources with discriminator support.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TargetCompletionEvalRunDataSource, AzureAITraceDataSourceEvalRunDataSource,
-    AzureAITraceDataSourcePreviewEvalRunDataSource, TracesEvalRunDataSource,
-    TracesPreviewEvalRunDataSource, UserConversationSimulationEvalRunDataSource,
-    UserConversationSimulationPreviewEvalRunDataSource, EvalCsvRunDataSource
-
-    :ivar type: The data source type discriminator. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The data source type discriminator. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AzureAITraceDataSourceEvalRunDataSource(
-    EvalRunDataSource, discriminator="azure_ai_trace_data_source"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A data source that selects traces for evaluation.
-
-    See `create an evaluation dataset from traces
-    <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/traces-to-dataset?tabs=python>`_.
-
-    :ivar type: The type of data source, always ``azure_ai_trace_data_source``. Required. Default
-     value is "azure_ai_trace_data_source".
-    :vartype type: str
-    :ivar trace_source: The trace source that defines how traces are selected for evaluation.
-    :vartype trace_source: ~azure.ai.projects.models.TraceSource
-    """
-
-    type: Literal["azure_ai_trace_data_source"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of data source, always ``azure_ai_trace_data_source``. Required. Default value is
-     \"azure_ai_trace_data_source\"."""
-    trace_source: Optional["_models.TraceSource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The trace source that defines how traces are selected for evaluation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        trace_source: Optional["_models.TraceSource"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = "azure_ai_trace_data_source"  # type: ignore
-
-
-class AzureAITraceDataSourcePreviewEvalRunDataSource(
-    EvalRunDataSource, discriminator="azure_ai_trace_data_source_preview"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Preview form of ``azure_ai_trace_data_source``. Returned only for rules backed by existing
-    preview schedules; rejected on create and update.
-
-    :ivar type: The type of data source, always ``azure_ai_trace_data_source_preview``. Required.
-     Default value is "azure_ai_trace_data_source_preview".
-    :vartype type: str
-    :ivar trace_source: The trace source that defines how traces are selected for evaluation.
-    :vartype trace_source: ~azure.ai.projects.models.TraceSource
-    """
-
-    type: Literal["azure_ai_trace_data_source_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of data source, always ``azure_ai_trace_data_source_preview``. Required. Default value
-     is \"azure_ai_trace_data_source_preview\"."""
-    trace_source: Optional["_models.TraceSource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The trace source that defines how traces are selected for evaluation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        trace_source: Optional["_models.TraceSource"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = "azure_ai_trace_data_source_preview"  # type: ignore
-
-
 class AzureFunctionBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The structure for keeping storage queue name and URI.
 
@@ -9845,6 +9727,79 @@ class CronTrigger(Trigger, discriminator="Cron"):  # pylint: disable=docstring-k
         self.type = TriggerType.CRON  # type: ignore
 
 
+class EvalRunDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Base class for run data sources with discriminator support.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TargetCompletionEvalRunDataSource, TraceSourceEvalRunDataSource,
+    TraceSourcePreviewEvalRunDataSource, TracesEvalRunDataSource, TracesPreviewEvalRunDataSource,
+    UserConversationSimulationEvalRunDataSource,
+    UserConversationSimulationPreviewEvalRunDataSource, CsvEvalRunDataSource
+
+    :ivar type: The data source type discriminator. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The data source type discriminator. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CsvEvalRunDataSource(
+    EvalRunDataSource, discriminator="csv"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A CSV data source for evaluation runs.
+
+    See `evaluation datasets
+    <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluation-datasets>`_.
+
+    :ivar type: The type of data source, always ``csv``. Required. Default value is "csv".
+    :vartype type: str
+    :ivar source: The source of the CSV data, either inline content or a file reference. Required.
+    :vartype source: ~azure.ai.projects.models.EvalCsvFileIdSource
+    """
+
+    type: Literal["csv"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of data source, always ``csv``. Required. Default value is \"csv\"."""
+    source: "_models.EvalCsvFileIdSource" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source of the CSV data, either inline content or a file reference. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: "_models.EvalCsvFileIdSource",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "csv"  # type: ignore
+
+
 class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
     """Custom credential definition.
 
@@ -10603,11 +10558,11 @@ class DatasetEvaluationRuleAction(
     :vartype eval_id: str
     :ivar source: Dataset inputs for each scheduled occurrence. Preview source types may appear in
      responses for existing schedules but are rejected on create and update. Required. Is one of the
-     following types: CreateEvalJsonlRunDataSource, EvalCsvRunDataSource,
+     following types: CreateEvalJsonlRunDataSource, CsvEvalRunDataSource,
      CreateEvalCompletionsRunDataSource, TargetCompletionEvalRunDataSource,
      UserConversationSimulationEvalRunDataSource, UserConversationSimulationPreviewEvalRunDataSource
     :vartype source: ~azure.ai.projects.models.CreateEvalJsonlRunDataSource or
-     ~azure.ai.projects.models.EvalCsvRunDataSource or
+     ~azure.ai.projects.models.CsvEvalRunDataSource or
      ~azure.ai.projects.models.CreateEvalCompletionsRunDataSource or
      ~azure.ai.projects.models.TargetCompletionEvalRunDataSource or
      ~azure.ai.projects.models.UserConversationSimulationEvalRunDataSource or
@@ -10624,7 +10579,7 @@ class DatasetEvaluationRuleAction(
     source: "_unions.DatasetEvaluationSource" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Dataset inputs for each scheduled occurrence. Preview source types may appear in responses for
      existing schedules but are rejected on create and update. Required. Is one of the following
-     types: CreateEvalJsonlRunDataSource, EvalCsvRunDataSource, CreateEvalCompletionsRunDataSource,
+     types: CreateEvalJsonlRunDataSource, CsvEvalRunDataSource, CreateEvalCompletionsRunDataSource,
      TargetCompletionEvalRunDataSource, UserConversationSimulationEvalRunDataSource,
      UserConversationSimulationPreviewEvalRunDataSource"""
     evaluation_level: Optional[Union[str, "_models.EvaluationLevel"]] = rest_field(
@@ -11872,44 +11827,6 @@ class EvalCsvFileIdSource(_Model):  # pylint: disable=docstring-keyword-should-m
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type: Literal["file_id"] = "file_id"
-
-
-class EvalCsvRunDataSource(
-    EvalRunDataSource, discriminator="csv"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A CSV data source for evaluation runs.
-
-    See `evaluation datasets
-    <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluation-datasets>`_.
-
-    :ivar type: The type of data source, always ``csv``. Required. Default value is "csv".
-    :vartype type: str
-    :ivar source: The source of the CSV data, either inline content or a file reference. Required.
-    :vartype source: ~azure.ai.projects.models.EvalCsvFileIdSource
-    """
-
-    type: Literal["csv"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of data source, always ``csv``. Required. Default value is \"csv\"."""
-    source: "_models.EvalCsvFileIdSource" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The source of the CSV data, either inline content or a file reference. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source: "_models.EvalCsvFileIdSource",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = "csv"  # type: ignore
 
 
 class EvalItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -38591,12 +38508,12 @@ class TraceEvaluationRuleAction(
      For ``azure_ai_trace_data_source``, set ``trace_source``.
      Preview source types may appear in responses for existing schedules but are rejected on create
      and update. Required. Is one of the following types: TracesEvalRunDataSource,
-     AzureAITraceDataSourceEvalRunDataSource, TracesPreviewEvalRunDataSource,
-     AzureAITraceDataSourcePreviewEvalRunDataSource
+     TraceSourceEvalRunDataSource, TracesPreviewEvalRunDataSource,
+     TraceSourcePreviewEvalRunDataSource
     :vartype source: ~azure.ai.projects.models.TracesEvalRunDataSource or
-     ~azure.ai.projects.models.AzureAITraceDataSourceEvalRunDataSource or
+     ~azure.ai.projects.models.TraceSourceEvalRunDataSource or
      ~azure.ai.projects.models.TracesPreviewEvalRunDataSource or
-     ~azure.ai.projects.models.AzureAITraceDataSourcePreviewEvalRunDataSource
+     ~azure.ai.projects.models.TraceSourcePreviewEvalRunDataSource
     :ivar evaluation_level: Level at which each scheduled run evaluates. Required when the
      evaluation uses the messages item schema. Known values are: "turn" and "conversation".
     :vartype evaluation_level: str or ~azure.ai.projects.models.EvaluationLevel
@@ -38615,8 +38532,8 @@ class TraceEvaluationRuleAction(
      For ``azure_ai_trace_data_source``, set ``trace_source``.
      Preview source types may appear in responses for existing schedules but are rejected on create
      and update. Required. Is one of the following types: TracesEvalRunDataSource,
-     AzureAITraceDataSourceEvalRunDataSource, TracesPreviewEvalRunDataSource,
-     AzureAITraceDataSourcePreviewEvalRunDataSource"""
+     TraceSourceEvalRunDataSource, TracesPreviewEvalRunDataSource,
+     TraceSourcePreviewEvalRunDataSource"""
     evaluation_level: Optional[Union[str, "_models.EvaluationLevel"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -38985,6 +38902,88 @@ class TracesEvaluatorGenerationJobSource(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = EvaluatorGenerationJobSourceType.TRACES  # type: ignore
+
+
+class TraceSourceEvalRunDataSource(
+    EvalRunDataSource, discriminator="azure_ai_trace_data_source"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A data source that selects traces for evaluation.
+
+    See `create an evaluation dataset from traces
+    <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/traces-to-dataset?tabs=python>`_.
+
+    :ivar type: The type of data source, always ``azure_ai_trace_data_source``. Required. Default
+     value is "azure_ai_trace_data_source".
+    :vartype type: str
+    :ivar trace_source: The trace source that defines how traces are selected for evaluation.
+    :vartype trace_source: ~azure.ai.projects.models.TraceSource
+    """
+
+    type: Literal["azure_ai_trace_data_source"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of data source, always ``azure_ai_trace_data_source``. Required. Default value is
+     \"azure_ai_trace_data_source\"."""
+    trace_source: Optional["_models.TraceSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The trace source that defines how traces are selected for evaluation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        trace_source: Optional["_models.TraceSource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "azure_ai_trace_data_source"  # type: ignore
+
+
+class TraceSourcePreviewEvalRunDataSource(
+    EvalRunDataSource, discriminator="azure_ai_trace_data_source_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Preview form of ``azure_ai_trace_data_source``. Returned only for rules backed by existing
+    preview schedules; rejected on create and update.
+
+    :ivar type: The type of data source, always ``azure_ai_trace_data_source_preview``. Required.
+     Default value is "azure_ai_trace_data_source_preview".
+    :vartype type: str
+    :ivar trace_source: The trace source that defines how traces are selected for evaluation.
+    :vartype trace_source: ~azure.ai.projects.models.TraceSource
+    """
+
+    type: Literal["azure_ai_trace_data_source_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of data source, always ``azure_ai_trace_data_source_preview``. Required. Default value
+     is \"azure_ai_trace_data_source_preview\"."""
+    trace_source: Optional["_models.TraceSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The trace source that defines how traces are selected for evaluation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        trace_source: Optional["_models.TraceSource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "azure_ai_trace_data_source_preview"  # type: ignore
 
 
 class TracesPreviewEvalRunDataSource(

@@ -231,28 +231,33 @@ async def test_context_ack_wait_sends_paced_silence_despite_receive_timeouts(mon
     connection = sample_environment.async_connection
     sent = []
     connection.session.input_audio.append.side_effect = lambda *, audio: sent.append((clock.now, audio))
-    calls = []
+    send_timeouts = []
+    receive_timeouts = []
 
     async def wait_for(awaitable, *, timeout):
-        calls.append(timeout)
-        clock.now += timeout
+        if connection.session.input_audio.append.call_count > len(send_timeouts):
+            send_timeouts.append(timeout)
+        else:
+            receive_timeouts.append(timeout)
+            clock.now += timeout
         return await awaitable
 
     def receive():
-        if len(calls) == 1:
+        if len(receive_timeouts) == 1:
             raise TimeoutError
-        if len(calls) == 2:
+        if len(receive_timeouts) == 2:
             return {"type": "future.event"}
         return {"type": "session.instructions.appended"}
 
     connection.recv.side_effect = receive
     monkeypatch.setattr(helper.asyncio, "wait_for", wait_for)
-    event = await helper.wait_for_event_with_audio_clock_async(connection, "session.instructions.appended")
+    event = await helper.wait_for_event_with_audio_clock_async(connection, "session.instructions.appended", timeout=1.0)
 
     assert event["type"] == "session.instructions.appended"
     assert [when for when, _ in sent] == pytest.approx([0.0, 0.05, 0.1])
     assert all(audio == bytes(2400) for _, audio in sent)
-    assert calls == pytest.approx([0.05, 0.05, 0.05])
+    assert send_timeouts == pytest.approx([1.0, 0.95, 0.9])
+    assert receive_timeouts == pytest.approx([0.05, 0.05, 0.05])
 
 
 @pytest.mark.asyncio
@@ -277,9 +282,15 @@ async def test_context_ack_wait_keeps_one_overall_deadline(monkeypatch, sample_e
     clock = SimpleNamespace(now=0.0)
     monkeypatch.setattr(helper, "time", SimpleNamespace(monotonic=lambda: clock.now))
     connection = sample_environment.async_connection
+    send_timeouts = []
+    receive_timeouts = []
 
     async def wait_for(awaitable, *, timeout):
-        clock.now += timeout
+        if connection.session.input_audio.append.call_count > len(send_timeouts):
+            send_timeouts.append(timeout)
+        else:
+            receive_timeouts.append(timeout)
+            clock.now += timeout
         return await awaitable
 
     connection.recv.side_effect = TimeoutError
@@ -289,6 +300,36 @@ async def test_context_ack_wait_keeps_one_overall_deadline(monkeypatch, sample_e
 
     assert connection.session.input_audio.append.call_count == 2
     assert connection.recv.call_count == 2
+    assert send_timeouts == pytest.approx([0.1, 0.05])
+    assert receive_timeouts == pytest.approx([0.05, 0.05])
+
+
+@pytest.mark.asyncio
+async def test_context_ack_wait_cancels_stalled_audio_send(sample_environment):
+    connection = sample_environment.async_connection
+    started = asyncio.Event()
+    cancelled = asyncio.Event()
+
+    async def stalled_send(*, audio):
+        assert audio == bytes(2400)
+        started.set()
+        try:
+            await asyncio.Event().wait()
+        finally:
+            cancelled.set()
+
+    connection.session.input_audio.append.side_effect = stalled_send
+    with pytest.raises(TimeoutError, match=r"Timed out waiting for session\.instructions\.appended"):
+        await asyncio.wait_for(
+            sample_environment.helper.wait_for_event_with_audio_clock_async(
+                connection, "session.instructions.appended", timeout=0.05
+            ),
+            timeout=1.0,
+        )
+
+    assert started.is_set()
+    assert cancelled.is_set()
+    connection.recv.assert_not_called()
 
 
 @pytest.mark.asyncio

@@ -150,9 +150,12 @@ async def wait_for_event_with_audio_clock_async(
     next_frame = time.monotonic()
     silence = bytes(2400)  # 50 ms of PCM16, mono, 24 kHz audio.
     while True:
-        remaining_time(deadline, event_type)
+        remaining = remaining_time(deadline, event_type)
         if time.monotonic() >= next_frame:
-            await connection.session.input_audio.append(audio=silence)
+            try:
+                await asyncio.wait_for(connection.session.input_audio.append(audio=silence), timeout=remaining)
+            except (asyncio.TimeoutError, TimeoutError) as exc:
+                raise TimeoutError(f"Timed out waiting for {event_type}.") from exc
             next_frame = time.monotonic() + 0.05
         receive_timeout = min(remaining_time(deadline, event_type), next_frame - time.monotonic())
         if receive_timeout <= 0:
