@@ -2,6 +2,34 @@
 
 The `azure-ai-agentserver-core` package provides the foundation host framework for building Azure AI Hosted Agent containers. It handles the protocol-agnostic infrastructure — health probes, graceful shutdown, OpenTelemetry tracing, and ASGI serving — so that protocol packages can focus on their endpoint logic.
 
+## Memory snapshot task initialization
+
+The draft integration separates task definitions from session-bound TaskManager
+initialization. Resilient tasks must still be explicitly enabled.
+
+`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers enabled tasks in the temporary
+capture sandbox until the platform after-restore hook. After session hydration,
+the manager is prepared before the application callback, and automatic recovery
+follows that callback. An absent value or `false` activates requested tasks during
+ordinary cold/local startup. For standalone Core and Invocations,
+`set_resilient_tasks_enabled(False)` keeps task execution disabled on both paths.
+Responses independently requests its runtime through `resilient_background` or
+`steerable_conversations`; the Invocations switch does not disable those options.
+Present values must be literal `true` or `false` (case-insensitive). The variable
+does not gate running tasks or lease renewal after activation.
+
+Task startup checkpoints completed phases by restore ID and owns the manager
+through shutdown, including managers created after lifespan startup. Existing
+best-effort recovery dispatches reclaimed work immediately during the hook.
+FHA admits new requests after successful restore.
+
+Submit startup tasks from the existing `after_restore_handler` after rebuilding
+dependencies. Capture-time submissions are not queued or replayed; no additional
+session-start callback or launch-intent registry is included. Local tests are
+not proof of hosted golden restoration. See the [design specification](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/memory-snapshot-task-integration.md)
+for lifecycle ordering, launcher compatibility requirements, validation, and
+the selected startup-submission flow.
+
 ## Getting started
 
 ### Install the package
@@ -267,6 +295,30 @@ Lifecycle calls are serialized and idempotent. A repeated `after-restore`
 request with the same `restore_id` does not invoke the handler again, while a
 new `restore_id` for the same session starts a new restore cycle. The server
 rejects attempts to reuse a restored process for a different session.
+
+When the host's protocols request task execution, the SDK prepares a session-bound
+TaskManager before the application `after_restore_handler`. Invocations uses
+`set_resilient_tasks_enabled(True)`; Responses independently uses
+`resilient_background=True` or `steerable_conversations=True`. Rebuild dependencies first,
+then submit `@task`/`@multi_turn_task` work using the normal task APIs:
+
+```python
+@app.after_restore_handler
+async def after_restore(context: AgentSessionContext):
+    await database.connect()
+    await startup_work.start(input={"session_id": context.session_id})
+```
+
+Here `startup_work` is an application's decorated task method. Automatic initial
+recovery and the periodic scanner start after the handler returns; HTTP 200 waits
+for that initialization, not for background work to finish. `.run()` is also
+available for bounded work, but awaiting long-running completion can exceed the
+restore timeout. A failed hook can be retried: reconcile unfinished task IDs and
+persist completion state if startup must run only once per logical session.
+Request routes retain their own protocol's opt-out even on a mixed host. The
+restore handler uses the owning host's runtime if any protocol requests one.
+The Invocations switch does not disable an enabled Responses option, and
+ordinary cold startup does not invoke the restore handler.
 
 Protocol-specific hosts can override the protected `_before_snapshot` and
 `_after_restore` methods to extend the lifecycle before application callbacks
