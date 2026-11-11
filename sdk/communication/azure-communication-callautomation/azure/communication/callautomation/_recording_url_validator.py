@@ -5,11 +5,18 @@
 # --------------------------------------------------------------------------
 
 import re
-from typing import Tuple
+from collections.abc import Iterable
+from typing import Any, Dict, Tuple
 from urllib.parse import urlparse
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.policies import (
+    AsyncRedirectPolicy,
+    AsyncRetryPolicy,
+    RedirectPolicy,
+    RetryPolicy,
+    SansIOHTTPPolicy,
+)
 
 # Allowed recording endpoint host suffixes.
 # These are the only domains permitted for recording URLs to prevent credential exfiltration.
@@ -85,6 +92,24 @@ def validate_recording_url(recording_url: str, parameter_name: str) -> str:
 
     authority = host_lower if port is None else f"{host_lower}:{port}"
     return parsed_url._replace(scheme="https", netloc=authority).geturl()
+
+
+def configure_recording_url_validation(kwargs: Dict[str, Any]) -> None:
+    """Install validation before authentication and inside redirect/retry loops."""
+    policies = kwargs.get("policies")
+    if policies is not None:
+        policies = list(policies)
+        validation_index = 0
+        for index, policy in enumerate(policies):
+            if isinstance(policy, (RedirectPolicy, AsyncRedirectPolicy, RetryPolicy, AsyncRetryPolicy)):
+                validation_index = index + 1
+        policies.insert(validation_index, RecordingURLValidationPolicy())
+        kwargs["policies"] = policies
+    else:
+        per_retry_policies = kwargs.pop("per_retry_policies", None) or []
+        if not isinstance(per_retry_policies, Iterable):
+            per_retry_policies = [per_retry_policies]
+        kwargs["per_retry_policies"] = [*per_retry_policies, RecordingURLValidationPolicy()]
 
 
 class RecordingURLValidationPolicy(SansIOHTTPPolicy):

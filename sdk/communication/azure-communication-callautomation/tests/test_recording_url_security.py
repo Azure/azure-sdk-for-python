@@ -11,6 +11,15 @@ from urllib.parse import urlparse
 import pytest
 import requests
 from azure.core.credentials import AccessToken
+from azure.core.pipeline.policies import (
+    AsyncBearerTokenCredentialPolicy,
+    AsyncRedirectPolicy,
+    AsyncRetryPolicy,
+    BearerTokenCredentialPolicy,
+    RedirectPolicy,
+    RetryPolicy,
+    SansIOHTTPPolicy,
+)
 from azure.core.pipeline.transport import AioHttpTransport, RequestsTransport
 from azure.communication.callautomation import CallAutomationClient
 from azure.communication.callautomation.aio import CallAutomationClient as AsyncCallAutomationClient
@@ -54,6 +63,144 @@ def credential(async_client=False):
         spec=["get_token"],
         get_token=get_token(return_value=AccessToken("ACS-CALLAUTOMATION-CANARY-TOKEN", int(time.time()) + 3600)),
     )
+
+
+CUSTOM_POLICY_LISTS = [
+    (),
+    ("authentication",),
+    ("redirect", "authentication"),
+    ("retry", "authentication"),
+    ("redirect", "retry", "authentication"),
+]
+
+
+def custom_policies(names, token, async_client=False):
+    factories = {
+        "authentication": lambda: (AsyncBearerTokenCredentialPolicy if async_client else BearerTokenCredentialPolicy)(
+            token, "https://communication.azure.com/.default"
+        ),
+        "redirect": AsyncRedirectPolicy if async_client else RedirectPolicy,
+        "retry": AsyncRetryPolicy if async_client else RetryPolicy,
+    }
+    return [factories[name]() for name in names]
+
+
+@pytest.mark.parametrize("names", CUSTOM_POLICY_LISTS)
+@pytest.mark.parametrize("operation", OPERATIONS)
+def test_custom_policy_list_supports_recording_operations(names, operation):
+    token = credential()
+    policies = custom_policies(names, token)
+    original_policies = list(policies)
+    transport = MagicMock(send=Mock(return_value=mock_response()))
+    with CallAutomationClient(ENDPOINT, token, policies=policies, transport=transport) as client:
+        getattr(client, operation)(VALID_URL)
+    assert policies == original_policies
+    assert transport.send.call_count == 1
+    assert transport.send.call_args.args[0].url == VALID_URL
+    assert token.get_token.call_count == int("authentication" in names)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("names", CUSTOM_POLICY_LISTS)
+@pytest.mark.parametrize("operation", OPERATIONS)
+async def test_async_custom_policy_list_supports_recording_operations(names, operation):
+    token = credential(async_client=True)
+    policies = custom_policies(names, token, async_client=True)
+    original_policies = list(policies)
+    transport = MagicMock(send=AsyncMock(return_value=mock_response()))
+    async with AsyncCallAutomationClient(ENDPOINT, token, policies=policies, transport=transport) as client:
+        await getattr(client, operation)(VALID_URL)
+    assert policies == original_policies
+    assert transport.send.call_count == 1
+    assert transport.send.call_args.args[0].url == VALID_URL
+    assert token.get_token.call_count == int("authentication" in names)
+
+
+class RewriteURLPolicy(SansIOHTTPPolicy):
+    def on_request(self, request):
+        request.http_request.url = BYPASS_URL
+
+
+@pytest.mark.parametrize("names", CUSTOM_POLICY_LISTS)
+@pytest.mark.parametrize("operation", OPERATIONS)
+def test_custom_policy_list_validates_before_authentication(names, operation):
+    token = credential()
+    transport = MagicMock(send=Mock())
+    with CallAutomationClient(
+        ENDPOINT,
+        token,
+        policies=custom_policies(names, token),
+        per_call_policies=RewriteURLPolicy(),
+        transport=transport,
+    ) as client:
+        with pytest.raises(ValueError):
+            getattr(client, operation)(VALID_URL)
+    token.get_token.assert_not_called()
+    transport.send.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("names", CUSTOM_POLICY_LISTS)
+@pytest.mark.parametrize("operation", OPERATIONS)
+async def test_async_custom_policy_list_validates_before_authentication(names, operation):
+    token = credential(async_client=True)
+    transport = MagicMock(send=AsyncMock())
+    async with AsyncCallAutomationClient(
+        ENDPOINT,
+        token,
+        policies=custom_policies(names, token, async_client=True),
+        per_call_policies=RewriteURLPolicy(),
+        transport=transport,
+    ) as client:
+        with pytest.raises(ValueError):
+            await getattr(client, operation)(VALID_URL)
+    token.get_token.assert_not_called()
+    transport.send.assert_not_called()
+
+
+@pytest.mark.parametrize("loop", ["redirect", "retry"])
+@pytest.mark.parametrize("operation", OPERATIONS)
+def test_custom_policy_list_revalidates_each_attempt(loop, operation):
+    token = credential()
+    policies = custom_policies((loop, "authentication"), token)
+    authentication = policies[-1]
+    authentication.on_request = Mock(wraps=authentication.on_request)
+
+    def send(request, **kwargs):
+        if loop == "redirect":
+            return mock_response(307, {"location": "https://attacker.example/recording"})
+        request.url = "https://attacker.example/recording"
+        return mock_response(503)
+
+    transport = MagicMock(send=Mock(side_effect=send))
+    with CallAutomationClient(ENDPOINT, token, policies=policies, transport=transport) as client:
+        with pytest.raises(ValueError):
+            getattr(client, operation)(VALID_URL)
+    assert transport.send.call_count == 1
+    assert authentication.on_request.call_count == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("loop", ["redirect", "retry"])
+@pytest.mark.parametrize("operation", OPERATIONS)
+async def test_async_custom_policy_list_revalidates_each_attempt(loop, operation):
+    token = credential(async_client=True)
+    policies = custom_policies((loop, "authentication"), token, async_client=True)
+    authentication = policies[-1]
+    authentication.on_request = AsyncMock(wraps=authentication.on_request)
+
+    async def send(request, **kwargs):
+        if loop == "redirect":
+            return mock_response(307, {"location": "https://attacker.example/recording"})
+        request.url = "https://attacker.example/recording"
+        return mock_response(503)
+
+    transport = MagicMock(send=AsyncMock(side_effect=send))
+    async with AsyncCallAutomationClient(ENDPOINT, token, policies=policies, transport=transport) as client:
+        with pytest.raises(ValueError):
+            await getattr(client, operation)(VALID_URL)
+    assert transport.send.call_count == 1
+    assert authentication.on_request.call_count == 1
 
 
 @pytest.mark.parametrize("operation", OPERATIONS)

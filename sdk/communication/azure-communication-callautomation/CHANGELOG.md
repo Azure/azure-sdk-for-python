@@ -8,6 +8,10 @@
 - Added support for retrieving Teams phone call details, including the ability to specify a custom calling context for enhanced integration scenarios.
 - Added `operation_callback_url` keyword argument to `start_continuous_dtmf_recognition`, allowing the default callback URL set by `create_call`/`answer_call` to be overridden for this operation.
 
+### Bugs Fixed
+
+- Fixed synchronous and asynchronous client construction with custom policy lists that omit a retry policy, while preserving recording URL validation before authentication.
+
 ## 1.6.1 (2026-10-29)
 
 ### Bugs Fixed
