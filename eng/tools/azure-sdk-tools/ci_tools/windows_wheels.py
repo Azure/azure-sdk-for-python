@@ -9,6 +9,7 @@
 from contextlib import contextmanager
 from importlib import import_module
 from importlib.util import find_spec
+import json
 import os
 from pathlib import Path
 import platform
@@ -25,28 +26,24 @@ else:
     import tomli as tomllib
 
 
-def _write_pyo3_config(directory, configuration, libraries):
-    """Write target Python metadata so Maturin does not inspect the host Python."""
+def _write_build_details(configuration, libraries):
+    """Describe the cached interpreter without overriding the package's PyO3 ABI mode."""
+    path = libraries / "build-details.json"
+    if path.exists():
+        return
     major, minor = configuration.version.split(".")[:2]
     free_threaded = "t-" in configuration.identifier
     abi_flags = "t" if free_threaded else ""
-    build_flags = "Py_GIL_DISABLED" if free_threaded else ""
-    config = [
-        "implementation=CPython",
-        f"version={major}.{minor}",
-        "shared=true",
-        f"build_flags={build_flags}",
-        "suppress_build_script_link_lines=false",
-        "pointer_width=64",
-        f"lib_dir={libraries.as_posix()}",
-        f"ext_suffix=.cp{major}{minor}{abi_flags}-win_arm64.pyd",
-    ]
-    # Maturin 1.15 derives the free-threaded wheel ABI tag from this field.
-    if free_threaded:
-        config.append("abiflags=t")
-    path = directory / f"pyo3-{configuration.identifier}.txt"
-    path.write_text("\n".join(config) + "\n", encoding="utf-8")
-    return path
+    details = {
+        "schema_version": "1.0",
+        "language": {"version": f"{major}.{minor}"},
+        "implementation": {"name": "cpython"},
+        "abi": {
+            "flags": ["t"] if free_threaded else [],
+            "extension_suffix": f".cp{major}{minor}{abi_flags}-win_arm64.pyd",
+        },
+    }
+    path.write_text(json.dumps(details) + "\n", encoding="utf-8")
 
 
 @contextmanager
@@ -131,7 +128,7 @@ def windows_wheel_config(package_dir):
     # import-library path only to ARM64 targets.
     overrides = config.setdefault("tool", {}).setdefault("cibuildwheel", {}).setdefault("overrides", [])
     # Keep the generated config alive while cibuildwheel runs. TemporaryDirectory
-    # removes it and the PyO3 target configs after success or failure.
+    # removes it after success or failure.
     with TemporaryDirectory(prefix="azsdk-cibw-") as directory:
         directory = Path(directory)
         for configuration in configurations:
@@ -139,12 +136,16 @@ def windows_wheel_config(package_dir):
                 environment = options.reader.get("environment", option_format=EnvironmentFormat())
             if configuration.identifier in arm64_libraries:
                 libraries = arm64_libraries[configuration.identifier]
-                pyo3_config = _write_pyo3_config(directory, configuration, libraries)
-                # PYTHON_ARM64_LIB_DIR supports other Rust build tooling. Maturin
-                # reads the explicit target metadata instead of inspecting AMD64 Python.
+                _write_build_details(configuration, libraries)
+                version = ".".join(configuration.version.split(".")[:2])
+                if "t-" in configuration.identifier:
+                    version += "t"
+                # Let Maturin generate its ABI-aware PyO3 config from Cargo features.
+                # An explicit PYO3_CONFIG_FILE bypasses that feature resolution.
                 environment += (
                     f" PYTHON_ARM64_LIB_DIR={shlex.quote(libraries.as_posix())}"
-                    f" PYO3_CONFIG_FILE={shlex.quote(pyo3_config.as_posix())}"
+                    f" PYO3_CROSS_LIB_DIR={shlex.quote(libraries.as_posix())}"
+                    f" PYO3_CROSS_PYTHON_VERSION={version}"
                 )
             overrides.append({"select": configuration.identifier, "environment": environment})
 
