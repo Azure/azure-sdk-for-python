@@ -22,7 +22,7 @@ DESCRIPTION:
     This sample uses the older endpoint contract schema version 0.0.1, for endpoints that
     already implement it. It is also what the service uses when `schema_version` is omitted.
     For new evaluators, use schema version 0.0.2 instead, as shown in
-    sample_endpoint_evaluator_with_api_key.py and sample_endpoint_evaluator_with_entra_id.py.
+    sample_endpoint_evaluator.py.
 
     Your endpoint must accept POST requests with a JSON body like:
         {

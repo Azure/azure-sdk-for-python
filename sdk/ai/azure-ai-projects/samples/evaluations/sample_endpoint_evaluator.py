@@ -7,8 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates the end-to-end workflow for
-    running an evaluation using an endpoint-based evaluator with Entra ID (managed identity)
-    authentication:
+    running an evaluation using an endpoint-based evaluator:
 
     1. Register an endpoint evaluator backed by an existing project connection
     2. Create an evaluation with the endpoint evaluator as testing criteria
@@ -16,17 +15,16 @@ DESCRIPTION:
     4. Poll for results and display output
 
     Endpoint evaluators allow you to bring your own HTTP endpoint for evaluation. The service
-    POSTs each evaluation row to your endpoint and expects a JSON response with score/reason
-    fields. Authentication is resolved server-side using a managed identity token acquired
-    via the project connection.
+    POSTs each evaluation row to your endpoint and expects a JSON response with a score and
+    optional reasoning fields. Authentication is resolved server-side from a project
+    connection, so the same code works with API key or Microsoft Entra ID authentication.
 
     This sample uses endpoint contract schema version 0.0.2, which is recommended for new
     evaluators. With 0.0.2, the evaluator must define exactly one metric, of type "ordinal" or
     "continuous". For endpoints that still implement schema 0.0.1, see
     sample_endpoint_evaluator_schema_0_0_1.py.
 
-    Your endpoint must:
-    - Accept POST requests with a JSON body like:
+    Your endpoint must accept POST requests with a JSON body like:
         {
           "schema_version": "0.0.2",
           "evaluator_name": "...",
@@ -40,9 +38,10 @@ DESCRIPTION:
           "agent_definition": {"tool_definitions": []},
           "metadata": {"run_type": "dataset"}
         }
-      The messages from response_start_index onward are the response to score. For
-      conversation-level evaluators, evaluation_target is {"type": "conversation"}.
-    - Return a JSON response like:
+    The messages from response_start_index onward are the response to score. For
+    conversation-level evaluators, evaluation_target is {"type": "conversation"}.
+
+    And return a JSON response like:
         {
           "status": "completed",  // Valid values: "completed", "error", "skipped"
           "score": 4,             // Required when completed; within the metric's range
@@ -50,11 +49,10 @@ DESCRIPTION:
           "reason": "Response is accurate and concise.",
           "properties": {"model_used": "gpt-4o"}
         }
-      Omit "score" and "passed" when status is "error" or "skipped". Unknown fields are rejected.
-    - Validate incoming Bearer tokens (e.g., via Azure App Service Easy Auth or custom middleware)
+    Omit "score" and "passed" when status is "error" or "skipped". Unknown fields are rejected.
 
 USAGE:
-    python sample_endpoint_evaluator_with_entra_id.py
+    python sample_endpoint_evaluator.py
 
     Before running the sample:
 
@@ -66,12 +64,16 @@ USAGE:
     2) ENDPOINT_CONNECTION_NAME - Required. The name of the project connection to your scoring endpoint.
 
 PREREQUISITES:
-    - A project connection to your scoring endpoint that uses Microsoft Entra ID authentication.
-      Its target is the endpoint URL, and its ``Audience`` metadata is ``api://<app-id>``, where
-      <app-id> is the Application (client) ID of the App Registration protecting the endpoint.
-    - An Azure App Registration for your scoring endpoint, with Easy Auth or token validation enabled.
-    - The evaluation service's managed identity must be allowed to call the endpoint
-      (e.g., added to the App Registration's allowedClientApplications in Easy Auth config).
+    - A scoring endpoint that implements the contract above.
+    - A project connection to your scoring endpoint. Its target is the endpoint URL. Use one of:
+        * API key authentication: the connection stores the endpoint's API key, and the service
+          sends it in the ``api-key`` header.
+        * Microsoft Entra ID authentication: the connection's ``Audience`` metadata is
+          ``api://<app-id>``, where <app-id> is the Application (client) ID of the App
+          Registration protecting the endpoint. The service sends a managed identity token as a
+          Bearer token. Your endpoint must validate it (e.g., with Azure App Service Easy Auth),
+          and the evaluation service's managed identity must be allowed to call the endpoint
+          (e.g., added to allowedClientApplications in the Easy Auth config).
 """
 
 import os
@@ -83,9 +85,9 @@ from azure.ai.projects.models import (
     EndpointBasedEvaluatorDefinition,
     EndpointEvaluatorSchemaVersion,
     EvaluatorCategory,
-    EvaluatorMetric,
     EvaluatorType,
     EvaluatorVersion,
+    EvaluatorMetric,
 )
 
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
@@ -110,13 +112,12 @@ with (
 ):
 
     # ── Step 1: Register an endpoint-based evaluator ────────────────────
-    # The evaluator references your project connection. At evaluation
-    # time, the service acquires a managed identity token and passes it as a Bearer
-    # token to your endpoint.
-    print("[1/4] Registering endpoint-based evaluator with Entra ID auth...")
+    # The evaluator references your project connection. The service
+    # resolves the endpoint URL and credentials at evaluation time.
+    print("[1/4] Registering endpoint-based evaluator...")
 
     evaluator = project_client.evaluators.create_version(
-        name="my-endpoint-evaluator-entra",
+        name="my-endpoint-evaluator",
         evaluator_version=EvaluatorVersion(
             categories=[EvaluatorCategory.QUALITY],
             evaluator_type=EvaluatorType.CUSTOM,
@@ -131,8 +132,8 @@ with (
                     )
                 },
             ),
-            display_name="Endpoint Evaluator (Entra ID)",
-            description="Custom scoring endpoint authenticated with Entra ID managed identity",
+            display_name="Endpoint Evaluator",
+            description="Custom scoring endpoint",
         ),
         # Endpoint evaluators are still in preview, so the service requires this opt-in header.
         headers={"Foundry-Features": "Evaluations=V1Preview"},
@@ -162,8 +163,8 @@ with (
     testing_criteria = [
         {
             "type": "azure_ai_evaluator",
-            "name": "endpoint_eval_entra",
-            "evaluator_name": "my-endpoint-evaluator-entra",
+            "name": "endpoint_eval",
+            "evaluator_name": "my-endpoint-evaluator",
             "data_mapping": {
                 "query": "{{item.query}}",
                 "response": "{{item.response}}",
@@ -173,7 +174,7 @@ with (
     ]
 
     eval_object = client.evals.create(
-        name="endpoint-evaluator-entra-test",
+        name="endpoint-evaluator-test",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,  # type: ignore
     )
@@ -185,7 +186,7 @@ with (
 
     eval_run = client.evals.runs.create(
         eval_id=eval_object.id,
-        name="endpoint-entra-run",
+        name="endpoint-evaluator-run",
         data_source=CreateEvalJSONLRunDataSourceParam(
             type="jsonl",
             source=SourceFileContent(
@@ -243,7 +244,7 @@ with (
     # ── Cleanup ────────────────────────────────────────────────────────
     # The evaluator and evaluation are left in place so you can
     # inspect results in the Foundry portal. Uncomment the following to delete them:
-    # project_client.evaluators.delete(name="my-endpoint-evaluator-entra")
-    # print("  Evaluator deleted: my-endpoint-evaluator-entra")
+    # project_client.evaluators.delete(name="my-endpoint-evaluator")
+    # print("  Evaluator deleted: my-endpoint-evaluator")
     # client.evals.delete(eval_id=eval_object.id)
     # print(f"  Evaluation deleted: {eval_object.id}")

@@ -178,8 +178,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_rubric_evaluator_generation_iterate.py",  # PR #47057: recording not yet available
                 "sample_agent_trace_evaluation_smart_filter.py",  # PR #47217: recording not yet available
                 "sample_scheduled_agent_traces_evaluation_smart_filter.py",  # PR #47217: recording not yet available
-                "sample_endpoint_evaluator_with_api_key.py",  # Requires external scoring endpoint and project connection
-                "sample_endpoint_evaluator_with_entra_id.py",  # Requires external scoring endpoint with Easy Auth and project connection
+                "sample_endpoint_evaluator.py",  # Requires external scoring endpoint and project connection
                 "sample_endpoint_evaluator_schema_0_0_1.py",  # Requires external scoring endpoint and project connection
             ],
         ),
