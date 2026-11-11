@@ -6,11 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
-    from .models import SemanticRerankingDocumentType
+    from .models import (
+        EmbeddingDelivery,
+        EmbeddingEncodingFormat,
+        EmbeddingOutputDataKind,
+        EmbeddingVectorKind,
+        SemanticRerankingDocumentType,
+    )
 
 
 class SemanticRerankingInferenceContent(TypedDict, total=False):
@@ -63,3 +69,77 @@ class SemanticRerankingInferenceContent(TypedDict, total=False):
     """The name of the model used for the semantic reranking operation."""
     returnSentenceScore: bool
     """Whether to return sentence-level scores in the response."""
+
+
+class EmbedRequest(TypedDict, total=False):
+    """EmbedRequest.
+
+    :ivar inputs: The items to embed, in order: 1 to 32 items. Currently a request can have at most
+     one ``text`` or ``query`` item and at most 8 images. Images can be up to 20 MiB and 50
+     megapixels each (JPEG, PNG, GIF or WebP), with at most 20 MiB of images per request. The
+     request body can be up to 30,000,000 bytes. Required.
+    :vartype inputs: list[dict[str, Any]]
+    :ivar model: The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft Embedding
+     1-large).
+    :vartype model: str
+    :ivar modelVersion: The model version. Defaults to the latest; the response always names the
+     version used.
+    :vartype modelVersion: str
+    :ivar vectorKind: The kind of vectors to return. Defaults to ``dense``. Known values are:
+     "dense", "multi", and "dense_multi".
+    :vartype vectorKind: Union[str, "EmbeddingVectorKind"]
+    :ivar dimensions: The number of dimensions per vector; with ``dense_multi``, of the dense
+     vector. Must be a value the model supports for the requested vector kind; the model's native
+     width is the default.
+    :vartype dimensions: int
+    :ivar multiDimensions: For ``dense_multi`` only: the number of dimensions per multi-vector.
+     Must be a value the model supports for multi-vectors; the model's native multi-vector width is
+     the default.
+    :vartype multiDimensions: int
+    :ivar maxVectorCount: For ``multi`` and ``dense_multi`` only: the most multi-vectors to return
+     per item.
+    :vartype maxVectorCount: int
+    :ivar outputDataKind: The numeric type of the returned values, for every vector in the
+     response. Defaults to ``float32`` for ``dense`` and ``float16`` for ``multi`` and
+     ``dense_multi``. Known values are: "float32" and "float16".
+    :vartype outputDataKind: Union[str, "EmbeddingOutputDataKind"]
+    :ivar encodingFormat: How vectors are encoded in the response. Defaults to ``float``. Known
+     values are: "float" and "base64".
+    :vartype encodingFormat: Union[str, "EmbeddingEncodingFormat"]
+    :ivar delivery: How to return the results. An explicit value wins. Without it, a request with
+     images gets ``link`` where the endpoint has a result store, and every other request gets
+     ``inline``. Known values are: "inline" and "link".
+    :vartype delivery: Union[str, "EmbeddingDelivery"]
+    """
+
+    inputs: Required[list[dict[str, Any]]]
+    """The items to embed, in order: 1 to 32 items. Currently a request can have at most one ``text``
+     or ``query`` item and at most 8 images. Images can be up to 20 MiB and 50 megapixels each
+     (JPEG, PNG, GIF or WebP), with at most 20 MiB of images per request. The request body can be up
+     to 30,000,000 bytes. Required."""
+    model: str
+    """The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft Embedding 1-large)."""
+    modelVersion: str
+    """The model version. Defaults to the latest; the response always names the version used."""
+    vectorKind: Union[str, "EmbeddingVectorKind"]
+    """The kind of vectors to return. Defaults to ``dense``. Known values are: \"dense\", \"multi\",
+     and \"dense_multi\"."""
+    dimensions: int
+    """The number of dimensions per vector; with ``dense_multi``, of the dense vector. Must be a value
+     the model supports for the requested vector kind; the model's native width is the default."""
+    multiDimensions: int
+    """For ``dense_multi`` only: the number of dimensions per multi-vector. Must be a value the model
+     supports for multi-vectors; the model's native multi-vector width is the default."""
+    maxVectorCount: int
+    """For ``multi`` and ``dense_multi`` only: the most multi-vectors to return per item."""
+    outputDataKind: Union[str, "EmbeddingOutputDataKind"]
+    """The numeric type of the returned values, for every vector in the response. Defaults to
+     ``float32`` for ``dense`` and ``float16`` for ``multi`` and ``dense_multi``. Known values are:
+     \"float32\" and \"float16\"."""
+    encodingFormat: Union[str, "EmbeddingEncodingFormat"]
+    """How vectors are encoded in the response. Defaults to ``float``. Known values are: \"float\" and
+     \"base64\"."""
+    delivery: Union[str, "EmbeddingDelivery"]
+    """How to return the results. An explicit value wins. Without it, a request with images gets
+     ``link`` where the endpoint has a result store, and every other request gets ``inline``. Known
+     values are: \"inline\" and \"link\"."""
