@@ -24,7 +24,7 @@ def test_instance_discovery():
     assert app._instance_discovery
 
 
-def test_unknown_authority():
+def test_unknown_authority(monkeypatch):
     credential = MsalCredential(
         client_id="CLIENT_ID",
         authority="unknown.authority",
@@ -38,6 +38,12 @@ def test_unknown_authority():
         authority="unknown.authority",
         disable_instance_discovery=True,
     )
+
+    # Avoid depending on DNS failures or a proxy's response to an unknown hostname.
+    def send_error(request, **kwargs):
+        raise ServiceRequestError("Simulated connection failure")
+
+    monkeypatch.setattr(credential._client._pipeline._transport, "send", send_error)
 
     with pytest.raises(ServiceRequestError):
         # Instance discovery is disabled, so the credential should not attempt to validate the authority, and instead
