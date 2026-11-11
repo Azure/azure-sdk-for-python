@@ -16,7 +16,7 @@
 * Added preview `.beta.evaluators.list_diagnostics()` for retrieving evaluator publication lineage, with time, version, dimension, and diagnostic-type filters. Added `EvaluatorDiagnostic`, actor and change models, and evaluator health metric models.
 * Added optional `EndpointBasedEvaluatorDefinition.schema_version` and `EndpointEvaluatorSchemaVersion` for selecting the endpoint evaluator contract version.
 * Added scheduled dataset and trace evaluations through `DatasetEvaluationRuleAction` and `TraceEvaluationRuleAction`. `EvaluationRule` now exposes optional `schedule`, `provisioning_status`, and `error` properties, and `EvaluationRuleEventType` includes `TIMER_TRIGGER`.
-* Added typed evaluation input sources for JSONL, CSV, stored completions, target completions, conversation simulation, and agent traces, including `CreateEvalJsonlRunDataSource`, `EvalCsvRunDataSource`, `TargetCompletionEvalRunDataSource`, `UserConversationSimulationEvalRunDataSource`, and `AzureAITraceDataSourceEvalRunDataSource`.
+* Added typed evaluation input sources for JSONL, CSV, stored completions, target completions, conversation simulation, and agent traces, including `CreateEvalJsonlRunDataSource`, `CsvEvalRunDataSource`, `TargetCompletionEvalRunDataSource`, `UserConversationSimulationEvalRunDataSource`, and `TraceSourceEvalRunDataSource`.
 * Added `DataGenerationJobType.CONVERSATIONS`, `UserConversationSimulationDefaultConfiguration`, and optional `TracesDataGenerationJobConfiguration.generate_test_case_rubric`. `DataGenerationJobResult.warnings` now exposes `DataGenerationWarning` and `DataGenerationWarningCode`.
 * `DailyRecurrenceSchedule.hours` is now optional. When omitted, the service uses the current UTC hour at schedule creation time.
 * Added optional `MCPToolboxTool.request_header_bindings`, with `MCPToolboxRequestHeaderBinding` and `MCPToolboxRequestHeaderBindingSource`, for configuring client-supplied headers forwarded to an MCP server.
@@ -47,6 +47,7 @@ Breaking changes in GA methods and classes:
 Breaking changes in shared model types:
 
 * Renamed `ActivityProtocolAccessBoundary.READ1_ON1_*` and `WRITE1_ON1_*` members to `READ_1_ON1_*` and `WRITE_1_ON1_*`, respectively, for the `MANAGER`, `DEVELOPERS`, `ALLOWLISTED`, and `TENANT` boundaries. Wire values are unchanged.
+* Renamed `EvalCsvRunDataSource` to `CsvEvalRunDataSource`, `AzureAITraceDataSourceEvalRunDataSource` to `TraceSourceEvalRunDataSource`, and `AzureAITraceDataSourcePreviewEvalRunDataSource` to `TraceSourcePreviewEvalRunDataSource`. Updated evaluation-rule model annotations and the `DatasetEvaluationSource` and `TraceEvaluationSource` unions to use the new names. Model fields and wire discriminator values are unchanged.
 
 Breaking changes in beta methods:
 

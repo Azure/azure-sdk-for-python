@@ -6187,36 +6187,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.AzureAITraceDataSourceEvalRunDataSource(EvalRunDataSource, discriminator='azure_ai_trace_data_source'):
-        trace_source: Optional[TraceSource]
-        type: Literal["azure_ai_trace_data_source"]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                trace_source: Optional[TraceSource] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.AzureAITraceDataSourcePreviewEvalRunDataSource(EvalRunDataSource, discriminator='azure_ai_trace_data_source_preview'):
-        trace_source: Optional[TraceSource]
-        type: Literal["azure_ai_trace_data_source_preview"]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                trace_source: Optional[TraceSource] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.AzureFunctionBinding(_Model):
         storage_queue: AzureFunctionStorageQueue
         type: Literal["storage_queue"]
@@ -7327,6 +7297,21 @@ namespace azure.ai.projects.models
                 expression: str, 
                 start_time: Optional[datetime] = ..., 
                 time_zone: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CsvEvalRunDataSource(EvalRunDataSource, discriminator='csv'):
+        source: EvalCsvFileIdSource
+        type: Literal["csv"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                source: EvalCsvFileIdSource
             ) -> None: ...
 
         @overload
@@ -19862,6 +19847,36 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TraceSourceEvalRunDataSource(EvalRunDataSource, discriminator='azure_ai_trace_data_source'):
+        trace_source: Optional[TraceSource]
+        type: Literal["azure_ai_trace_data_source"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                trace_source: Optional[TraceSource] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TraceSourcePreviewEvalRunDataSource(EvalRunDataSource, discriminator='azure_ai_trace_data_source_preview'):
+        trace_source: Optional[TraceSource]
+        type: Literal["azure_ai_trace_data_source_preview"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                trace_source: Optional[TraceSource] = ...
             ) -> None: ...
 
         @overload

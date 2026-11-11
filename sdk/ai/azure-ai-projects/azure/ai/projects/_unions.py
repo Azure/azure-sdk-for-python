@@ -26,7 +26,7 @@ EvalItemContentItem: TypeAlias = Union[str, "_models.EvalItemContentItemObject"]
 EvalItemContent: TypeAlias = Union[EvalItemContentItem, list[EvalItemContentItem]]
 DatasetEvaluationSource: TypeAlias = Union[
     "_models.CreateEvalJsonlRunDataSource",
-    "_models.EvalCsvRunDataSource",
+    "_models.CsvEvalRunDataSource",
     "_models.CreateEvalCompletionsRunDataSource",
     "_models.TargetCompletionEvalRunDataSource",
     "_models.UserConversationSimulationEvalRunDataSource",
@@ -34,9 +34,9 @@ DatasetEvaluationSource: TypeAlias = Union[
 ]
 TraceEvaluationSource: TypeAlias = Union[
     "_models.TracesEvalRunDataSource",
-    "_models.AzureAITraceDataSourceEvalRunDataSource",
+    "_models.TraceSourceEvalRunDataSource",
     "_models.TracesPreviewEvalRunDataSource",
-    "_models.AzureAITraceDataSourcePreviewEvalRunDataSource",
+    "_models.TraceSourcePreviewEvalRunDataSource",
 ]
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
 RealtimeResponseInputItem: TypeAlias = Union[
