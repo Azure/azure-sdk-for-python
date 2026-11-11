@@ -7,9 +7,12 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
-from typing import Awaitable, Callable, Optional
+from typing import TYPE_CHECKING, Awaitable, Callable, Optional
 
 from ._experimental import experimental
+
+if TYPE_CHECKING:
+    from .tasks._manager import TaskManager
 
 
 @experimental
@@ -46,6 +49,14 @@ class AgentSessionContext:
 
 
 @dataclass
+class _LifecycleRollback:
+    environment: dict[str, object] = field(repr=False)
+    config: dict[str, object] = field(repr=False)
+    task_manager: Optional["TaskManager"]
+    provider_configuration: tuple[str, str | None] = field(repr=False)
+
+
+@dataclass
 class _LifecycleState:
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
     before_snapshot_fn: Optional[Callable[[], Awaitable[None]]] = None
@@ -56,3 +67,4 @@ class _LifecycleState:
     completed_restore_ids: set[str] = field(default_factory=set)
     captured_environment_values: dict[str, Optional[str]] = field(default_factory=dict)
     applied_environment_variables: set[str] = field(default_factory=set)
+    pending_rollback: Optional[_LifecycleRollback] = None

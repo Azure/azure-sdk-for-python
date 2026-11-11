@@ -333,5 +333,5 @@
         "azure.mgmt.horizondb.operations.LogFilesOperations.list_download_urls": "Microsoft.HorizonDb.LogFiles.listDownloadUrls",
         "azure.mgmt.horizondb.aio.operations.LogFilesOperations.list_download_urls": "Microsoft.HorizonDb.LogFiles.listDownloadUrls"
     },
-    "CrossLanguageVersion": "e3143f0fdae1"
+    "CrossLanguageVersion": "2b358acbc0c8"
 }

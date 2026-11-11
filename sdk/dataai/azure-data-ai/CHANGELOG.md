@@ -6,6 +6,13 @@
 
 - General availability of the Azure Data AI semantic reranking client.
 
+### Breaking Changes
+
+- Renamed `ProblemDetails.detail` to `ProblemDetails.explanation` so it isn't confused with
+  `ProblemDetails.details`. The JSON property name is still `detail`.
+- `SemanticRerankingInferenceContent.target_paths` is now a `list[str]` of up to 100 paths
+  instead of a comma-separated `str`.
+
 ## 1.0.0b1 (2026-09-29)
 
 ### Features Added
