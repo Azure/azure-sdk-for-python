@@ -2896,7 +2896,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
-        status: Optional[Union[str, _models.AgentOptimizationJobStatus]] = None,
+        status: Optional[Union[str, _models.JobStatus]] = None,
         agent_name: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.AgentOptimizationJob"]:
@@ -2919,8 +2919,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          Default value is None.
         :paramtype before: str
         :keyword status: Filter to jobs in this lifecycle state. Known values are: "queued",
-         "in_progress", "succeeded", "failed", "cancelled", and "skipped". Default value is None.
-        :paramtype status: str or ~azure.ai.projects.models.AgentOptimizationJobStatus
+         "in_progress", "succeeded", "failed", and "cancelled". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.JobStatus
         :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
         :paramtype agent_name: str
         :return: An iterator like instance of AgentOptimizationJob

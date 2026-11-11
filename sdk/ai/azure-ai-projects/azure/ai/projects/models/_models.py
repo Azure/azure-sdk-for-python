@@ -3824,8 +3824,8 @@ class AgentOptimizationJob(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar result: Result produced on success.
     :vartype result: ~azure.ai.projects.models.AgentOptimizationJobResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
-     "succeeded", "failed", "cancelled", and "skipped".
-    :vartype status: str or ~azure.ai.projects.models.AgentOptimizationJobStatus
+     "succeeded", "failed", and "cancelled".
+    :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Failure or skip reason; status distinguishes the outcomes. Omitted otherwise.
     :vartype error: ~azure.ai.projects.models.ApiError
     :ivar display_name: Human-readable label. Omitted when no label is needed; it has no
@@ -3859,9 +3859,9 @@ class AgentOptimizationJob(_Model):  # pylint: disable=docstring-keyword-should-
     """Server-assigned unique identifier. Required."""
     result: Optional["_models.AgentOptimizationJobResult"] = rest_field(visibility=["read"])
     """Result produced on success."""
-    status: Union[str, "_models.AgentOptimizationJobStatus"] = rest_field(visibility=["read"])
+    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
     """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
-     \"succeeded\", \"failed\", \"cancelled\", and \"skipped\"."""
+     \"succeeded\", \"failed\", and \"cancelled\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Failure or skip reason; status distinguishes the outcomes. Omitted otherwise."""
     display_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -8564,13 +8564,13 @@ class CompoundFilter(_Model):  # pylint: disable=docstring-keyword-should-match-
     :ivar filters: Array of filters to combine. Items can be ``ComparisonFilter`` or
      ``CompoundFilter``. Required.
     :vartype filters: list[~azure.ai.projects.models.ComparisonFilter or
-     ~azure.ai.projects.models.CompoundFilter]
+     ~azure.ai.projects.models.CompoundFilter or any]
     """
 
     type: Literal["and", "or"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type of operation: ``and`` or ``or``. Required. Is either a Literal[\"and\"] type or a
      Literal[\"or\"] type."""
-    filters: list[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(
+    filters: list[Union["_models.ComparisonFilter", "_models.CompoundFilter", Any]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of filters to combine. Items can be ``ComparisonFilter`` or ``CompoundFilter``. Required."""
@@ -8580,7 +8580,7 @@ class CompoundFilter(_Model):  # pylint: disable=docstring-keyword-should-match-
         self,
         *,
         type: Literal["and", "or"],
-        filters: list[Union["_models.ComparisonFilter", "_models.CompoundFilter"]],
+        filters: list[Union["_models.ComparisonFilter", "_models.CompoundFilter", Any]],
     ) -> None: ...
 
     @overload

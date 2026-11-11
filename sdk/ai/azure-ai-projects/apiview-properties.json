@@ -1145,7 +1145,6 @@
         "azure.ai.projects.models.SessionLogEventType": "Azure.AI.Projects.SessionLogEventType",
         "azure.ai.projects.models.AgentOptimizationStage": "Azure.AI.Projects.AgentOptimizationStage",
         "azure.ai.projects.models.AgentOptimizationTerminationReason": "Azure.AI.Projects.AgentOptimizationTerminationReason",
-        "azure.ai.projects.models.AgentOptimizationJobStatus": "Azure.AI.Projects.AgentOptimizationJobStatus",
         "azure.ai.projects.models.AgentOptimizationTargetConfigurationType": "Azure.AI.Projects.AgentOptimizationTargetConfigurationType",
         "azure.ai.projects.models.AgentOptimizationConfigurationType": "Azure.AI.Projects.AgentOptimizationConfigurationType",
         "azure.ai.projects.models.AgentOptimizationGoal": "Azure.AI.Projects.AgentOptimizationGoal",
@@ -1429,5 +1428,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "91fa11475dfd"
+    "CrossLanguageVersion": "ce747df19182"
 }
