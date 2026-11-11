@@ -1,8 +1,29 @@
 import pytest
 import copy
+import httpx
+import pandas as pd
 from unittest.mock import MagicMock, patch
-from azure.ai.evaluation._evaluate._evaluate_aoai import _combine_item_schemas, _get_single_run_results
+from openai import BadRequestError
+from azure.ai.evaluation._evaluate._evaluate_aoai import (
+    _begin_eval_run,
+    _combine_item_schemas,
+    _get_single_run_results,
+)
 from azure.ai.evaluation._exceptions import ErrorBlame, EvaluationException
+
+
+@pytest.mark.unittest
+def test_begin_eval_run_surfaces_aoai_input_rejection_as_user_error():
+    response = httpx.Response(400, request=httpx.Request("POST", "https://example.invalid/evals/runs"))
+    client = MagicMock()
+    client.evals.runs.create.side_effect = BadRequestError("score must be a number", response=response, body=None)
+
+    with pytest.raises(EvaluationException) as error:
+        _begin_eval_run(client, "eval", "run", pd.DataFrame([{"score": 1}]), {"score": "${data.score}"})
+
+    assert error.value.blame == ErrorBlame.USER_ERROR
+    assert "score must be a number" in error.value.message
+    assert isinstance(error.value.__cause__, BadRequestError)
 
 
 @pytest.fixture
