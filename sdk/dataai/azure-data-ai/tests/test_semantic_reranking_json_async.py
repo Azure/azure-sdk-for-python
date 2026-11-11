@@ -124,3 +124,21 @@ async def test_invalid_json_document_errors_are_service_errors(
     assert caught.value.response.headers["x-ms-error-code"] == "InvalidRequestBody"
     assert json.loads(async_transport.send.call_args.args[0].content) == payload
     async_transport.send.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_target_paths_list_is_sent_as_comma_separated_string(async_respond, async_transport, json_credential):
+    request = SemanticRerankingInferenceContent(
+        query="text",
+        documents=[json.dumps({"title": "Azure Cosmos DB", "description": "Globally distributed data."})],
+        document_type="json",
+        target_paths=["title", "description"],
+    )
+    async_respond((200, {"scores": []}, {}))
+    async with AsyncInferenceClient(
+        "https://example.inference.azure.com", json_credential, transport=async_transport, retry_total=0
+    ) as client:
+        await client.semantic_rerank(request)
+    assert json.loads(async_transport.send.call_args.args[0].content)["targetPaths"] == "title,description"
+    assert request.target_paths == ["title", "description"]
+    assert SemanticRerankingInferenceContent({"targetPaths": "meta.content,id"}).target_paths == ["meta.content", "id"]
