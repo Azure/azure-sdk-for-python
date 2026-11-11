@@ -15,7 +15,6 @@ MEMBERS = {
     "SCHEDULES_V1_PREVIEW": "Schedules=V1Preview",
     "RED_TEAMS_V1_PREVIEW": "RedTeams=V1Preview",
     "INSIGHTS_V1_PREVIEW": "Insights=V1Preview",
-    "AGENT_INSIGHTS_V1_PREVIEW": "AgentInsights=V1Preview",
     "MEMORY_STORES_V1_PREVIEW": "MemoryStores=V1Preview",
     "ROUTINES_V2_PREVIEW": "Routines=V2Preview",
     "SKILLS_V1_PREVIEW": "Skills=V1Preview",
@@ -28,7 +27,7 @@ MEMBERS = {
 
 def test_canonical_members_preserve_names_values_and_order():
     assert models.__all__.count("FoundryFeaturesOptInKeys") == 1
-    assert len(FoundryFeaturesOptInKeys.__members__) == 12
+    assert len(FoundryFeaturesOptInKeys.__members__) == 11
     assert [(name, member.value) for name, member in FoundryFeaturesOptInKeys.__members__.items()] == list(
         MEMBERS.items()
     )
@@ -58,6 +57,6 @@ def test_canonical_members_remain_string_backed_and_case_insensitive(name, value
 def test_request_builder_preserves_explicit_header_without_enum_coercion(value):
     request = generated.build_sessions_get_request(session_id="session_test", foundry_features=value, api_version="v1")
     assert request.method == "GET"
-    assert request.url == "/fine_tuning/sessions/session_test?api-version=v1"
+    assert request.url == "/fine_tuning_sessions/session_test?api-version=v1"
     assert request.headers["Foundry-Features"] == value
     assert request.headers["Accept"] == "application/json"

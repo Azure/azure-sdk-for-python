@@ -106,6 +106,16 @@ parameters:
   - name: PersistOidcToken
     type: boolean
     default: false
+  # Opt in when test requirements build a Rust extension from source.
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -159,6 +169,9 @@ extends:
                           CheckEnv: ${{ parameters.CheckEnv }}
                           UseFederatedAuth: ${{ and(parameters.UseFederatedAuth, ne(matrixType, 'fixed')) }}
                           PersistOidcToken: ${{ parameters.PersistOidcToken }}
+                          InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+                          MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+                          MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
                         MatrixConfigs:
                           - ${{ if eq(matrixType, 'fixed') }}:
                             - ${{ parameters.FixedAccountMatrixConfigs }}

@@ -187,7 +187,7 @@ class AuthenticationProperties(_Model):
      "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.horizondb.models.AuthenticationState
     :ivar provisioning_state: The provisioning state of the authentication configuration. Known
-     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     """
 
@@ -198,14 +198,18 @@ class AuthenticationProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the authentication configuration. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
 
 class BackupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup configuration properties for a HorizonDB cluster.
 
-    :ivar geo_redundancy: The geo-redundancy state. Geo-redundant backup is not supported when
-     dataEncryption.type is AzureKeyVault. Required. Known values are: "Enabled" and "Disabled".
+    :ivar geo_redundancy: The geo-redundancy state. When creationMode is PointInTimeRestore, the
+     service ignores the requested value during cluster creation and configures the new cluster with
+     the same geo-redundancy setting as the source cluster, for both same-location and
+     cross-location restores. The response reports the inherited setting. Geo-redundant backup is
+     not supported when dataEncryption.type is AzureKeyVault. Required. Known values are: "Enabled"
+     and "Disabled".
     :vartype geo_redundancy: str or ~azure.mgmt.horizondb.models.GeoRedundancyState
     :ivar retention_days: The number of days that automatic backups are retained. The service
      defaults to 7 days when this property is omitted.
@@ -218,8 +222,12 @@ class BackupProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     geo_redundancy: Union[str, "_models.GeoRedundancyState"] = rest_field(
         name="geoRedundancy", visibility=["read", "create"]
     )
-    """The geo-redundancy state. Geo-redundant backup is not supported when dataEncryption.type is
-     AzureKeyVault. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    """The geo-redundancy state. When creationMode is PointInTimeRestore, the service ignores the
+     requested value during cluster creation and configures the new cluster with the same
+     geo-redundancy setting as the source cluster, for both same-location and cross-location
+     restores. The response reports the inherited setting. Geo-redundant backup is not supported
+     when dataEncryption.type is AzureKeyVault. Required. Known values are: \"Enabled\" and
+     \"Disabled\"."""
     retention_days: Optional[int] = rest_field(name="retentionDays", visibility=["read", "create", "update"])
     """The number of days that automatic backups are retained. The service defaults to 7 days when
      this property is omitted."""
@@ -320,7 +328,7 @@ class CapabilityProperties(_Model):
     """Properties of the HorizonDB capabilities available to a subscription in a location.
 
     :ivar provisioning_state: The provisioning state of the capability catalog entry. Known values
-     are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     :ivar cluster_capabilities: The Cluster capabilities available in the region. Required.
     :vartype cluster_capabilities: ~azure.mgmt.horizondb.models.ClusterCapability
@@ -333,7 +341,7 @@ class CapabilityProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the capability catalog entry. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     cluster_capabilities: "_models.ClusterCapability" = rest_field(name="clusterCapabilities", visibility=["read"])
     """The Cluster capabilities available in the region. Required."""
     pool_capabilities: "_models.PoolCapability" = rest_field(name="poolCapabilities", visibility=["read"])
@@ -435,7 +443,7 @@ class ChangeDataCaptureCapabilityProperties(_Model):  # pylint: disable=docstrin
      "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
     :vartype effective_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureEffectiveState
     :ivar provisioning_state: The provisioning state of the latest capability mutation. Known
-     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     :ivar auto_upgrade_extension: Whether HorizonDB may automatically upgrade the service-owned
      change data capture extension within the supported compatibility policy.
@@ -473,7 +481,7 @@ class ChangeDataCaptureCapabilityProperties(_Model):  # pylint: disable=docstrin
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the latest capability mutation. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     auto_upgrade_extension: Optional[bool] = rest_field(
         name="autoUpgradeExtension", visibility=["read", "create", "update"]
     )
@@ -663,7 +671,7 @@ class ChangeDataCaptureConfigurationProperties(_Model):  # pylint: disable=docst
      "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
     :vartype effective_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureEffectiveState
     :ivar provisioning_state: The provisioning state of the latest configuration mutation. Known
-     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     :ivar extension: The change data capture extension state for the enrolled database. Required.
     :vartype extension: ~azure.mgmt.horizondb.models.ChangeDataCaptureExtensionStatus
@@ -703,7 +711,7 @@ class ChangeDataCaptureConfigurationProperties(_Model):  # pylint: disable=docst
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the latest configuration mutation. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     extension: "_models.ChangeDataCaptureExtensionStatus" = rest_field(visibility=["read"])
     """The change data capture extension state for the enrolled database. Required."""
     replication: "_models.ChangeDataCaptureReplicationStatus" = rest_field(visibility=["read"])
@@ -903,7 +911,7 @@ class ChangeDataCaptureDestinationProperties(_Model):  # pylint: disable=docstri
     :vartype effective_state: str or
      ~azure.mgmt.horizondb.models.ChangeDataCaptureDestinationEffectiveState
     :ivar provisioning_state: The provisioning state of the latest destination mutation. Known
-     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     :ivar active_identity_assignment_resource_id: The resource ID of the currently active identity
      assignment, if one is active.
@@ -931,7 +939,7 @@ class ChangeDataCaptureDestinationProperties(_Model):  # pylint: disable=docstri
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the latest destination mutation. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     active_identity_assignment_resource_id: Optional[str] = rest_field(
         name="activeIdentityAssignmentResourceId", visibility=["read"]
     )
@@ -1042,7 +1050,8 @@ class ChangeDataCaptureIdentityAssignmentProperties(
      identity, represented as an RFC 4122 GUID. Required.
     :vartype tenant_id: str
     :ivar provisioning_state: The provisioning state of the latest identity-assignment mutation.
-     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and
+     "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     :ivar validation: The latest validation result for this identity assignment. Required.
     :vartype validation: ~azure.mgmt.horizondb.models.IdentityValidationStatus
@@ -1077,7 +1086,7 @@ class ChangeDataCaptureIdentityAssignmentProperties(
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the latest identity-assignment mutation. Known values are:
-     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     validation: "_models.IdentityValidationStatus" = rest_field(visibility=["read"])
     """The latest validation result for this identity assignment. Required."""
     status: "_models.ChangeDataCaptureStatus" = rest_field(visibility=["read"])
@@ -1413,9 +1422,11 @@ class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
      from an available backup; pointInTimeUtc and creationSourceClusterResourceId are then required,
      postgreSqlVersion must be omitted because it is obtained from the backup metadata, and
      creationSourceClusterLocation is required when the source and target cluster locations differ.
-     This property is immutable and is returned as creation provenance. On replacement, omission
-     preserves the recorded value, resubmitting the same value is accepted, and changing it is
-     rejected. Known values are: "Create" and "PointInTimeRestore".
+     During PointInTimeRestore creation, the service ignores the requested backup.geoRedundancy
+     value and configures the new cluster with the same geo-redundancy setting as the source
+     cluster. This property is immutable and is returned as creation provenance. On replacement,
+     omission preserves the recorded value, resubmitting the same value is accepted, and changing it
+     is rejected. Known values are: "Create" and "PointInTimeRestore".
     :vartype creation_mode: str or ~azure.mgmt.horizondb.models.ClusterCreateMode
     :ivar point_in_time_utc: The requested point in time, in UTC. This property is required in
      every PointInTimeRestore request. For a same-location restore, the service restores the latest
@@ -1456,7 +1467,7 @@ class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
      "Deleting", "Inaccessible", and "Updating".
     :vartype state: str or ~azure.mgmt.horizondb.models.ClusterState
     :ivar provisioning_state: The provisioning state of the cluster. Required. Known values are:
-     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     :ivar read_write_pool: The pool currently designated to host the cluster's read-write node.
      Required.
@@ -1480,9 +1491,11 @@ class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
      backup; pointInTimeUtc and creationSourceClusterResourceId are then required, postgreSqlVersion
      must be omitted because it is obtained from the backup metadata, and
      creationSourceClusterLocation is required when the source and target cluster locations differ.
-     This property is immutable and is returned as creation provenance. On replacement, omission
-     preserves the recorded value, resubmitting the same value is accepted, and changing it is
-     rejected. Known values are: \"Create\" and \"PointInTimeRestore\"."""
+     During PointInTimeRestore creation, the service ignores the requested backup.geoRedundancy
+     value and configures the new cluster with the same geo-redundancy setting as the source
+     cluster. This property is immutable and is returned as creation provenance. On replacement,
+     omission preserves the recorded value, resubmitting the same value is accepted, and changing it
+     is rejected. Known values are: \"Create\" and \"PointInTimeRestore\"."""
     point_in_time_utc: Optional[datetime.datetime] = rest_field(
         name="pointInTimeUtc", visibility=["read", "create"], format="rfc3339"
     )
@@ -1535,7 +1548,7 @@ class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the cluster. Required. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     read_write_pool: "_models.ReadWritePoolProperties" = rest_field(name="readWritePool", visibility=["read"])
     """The pool currently designated to host the cluster's read-write node. Required."""
 
@@ -1762,7 +1775,7 @@ class DefaultParameterGroupProperties(_Model):  # pylint: disable=docstring-keyw
     """Properties of a default parameter group.
 
     :ivar provisioning_state: The provisioning state of the default parameter group. Known values
-     are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     :ivar parameters: Engine-defined parameters in the default parameter group. Service and other
      non-engine entries are excluded. Required.
@@ -1778,7 +1791,7 @@ class DefaultParameterGroupProperties(_Model):  # pylint: disable=docstring-keyw
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the default parameter group. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     parameters: list["_models.ParameterProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2075,7 +2088,7 @@ class FirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-shoul
      characters.
     :vartype description: str
     :ivar provisioning_state: The provisioning state of the firewall rule. Known values are:
-     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     """
 
@@ -2090,7 +2103,7 @@ class FirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the firewall rule. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
     @overload
     def __init__(
@@ -2492,7 +2505,7 @@ class LogCaptureConfigurationProperties(_Model):  # pylint: disable=docstring-ke
     :ivar retention_days: The number of days captured log files are retained. Required.
     :vartype retention_days: int
     :ivar provisioning_state: The provisioning state of the log capture configuration. Known values
-     are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     """
 
@@ -2506,7 +2519,7 @@ class LogCaptureConfigurationProperties(_Model):  # pylint: disable=docstring-ke
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the log capture configuration. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
     @overload
     def __init__(
@@ -3019,8 +3032,8 @@ class MicrosoftEntraAdministratorProperties(_Model):  # pylint: disable=docstrin
      subscription.
     :vartype tenant_id: str
     :ivar provisioning_state: The provisioning state of the PostgreSQL role and Microsoft Entra
-     principal mapping. Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and
-     "Provisioning".
+     principal mapping. Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
+     "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     """
 
@@ -3044,7 +3057,8 @@ class MicrosoftEntraAdministratorProperties(_Model):  # pylint: disable=docstrin
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the PostgreSQL role and Microsoft Entra principal mapping. Known
-     values are: \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     values are: \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and
+     \"Updating\"."""
 
     @overload
     def __init__(
@@ -3201,7 +3215,8 @@ class MicrosoftEntraAuthenticationProperties(_Model):  # pylint: disable=docstri
      and "Disabled".
     :vartype state: str or ~azure.mgmt.horizondb.models.AuthenticationState
     :ivar provisioning_state: The provisioning state of the Microsoft Entra authentication method.
-     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and
+     "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     """
 
@@ -3212,7 +3227,7 @@ class MicrosoftEntraAuthenticationProperties(_Model):  # pylint: disable=docstri
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the Microsoft Entra authentication method. Known values are:
-     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
     @overload
     def __init__(
@@ -3585,7 +3600,7 @@ class ParameterGroupProperties(_Model):  # pylint: disable=docstring-keyword-sho
      "18".
     :vartype postgre_sql_version: str or ~azure.mgmt.horizondb.models.PostgreSqlVersion
     :ivar provisioning_state: The provisioning state of the parameter group. Known values are:
-     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     """
 
@@ -3605,7 +3620,7 @@ class ParameterGroupProperties(_Model):  # pylint: disable=docstring-keyword-sho
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the parameter group. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
     @overload
     def __init__(
@@ -3817,26 +3832,26 @@ class PasswordAuthenticationProperties(_Model):  # pylint: disable=docstring-key
     :ivar state: The state of PostgreSQL username-and-password authentication. Required. Known
      values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.horizondb.models.AuthenticationState
-    :ivar administrator_login: The PostgreSQL administrator login name. This value is not returned
-     in responses. After it is set, renaming is not supported. Setting the login requires password
-     authentication state to be Enabled in the same request.
+    :ivar administrator_login: The PostgreSQL administrator login name. This value is returned in
+     responses after it is set. After it is set, renaming is not supported. Setting the login
+     requires password authentication state to be Enabled in the same request.
     :vartype administrator_login: str
     :ivar administrator_login_password: The PostgreSQL administrator password. Setting the password
      requires password authentication state to be Enabled in the same request.
     :vartype administrator_login_password: str
     :ivar provisioning_state: The provisioning state of the PostgreSQL username-and-password
-     authentication method. Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and
-     "Provisioning".
+     authentication method. Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
+     "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     """
 
     state: Union[str, "_models.AuthenticationState"] = rest_field(visibility=["read", "create", "update"])
     """The state of PostgreSQL username-and-password authentication. Required. Known values are:
      \"Enabled\" and \"Disabled\"."""
-    administrator_login: Optional[str] = rest_field(name="administratorLogin", visibility=["create"])
-    """The PostgreSQL administrator login name. This value is not returned in responses. After it is
-     set, renaming is not supported. Setting the login requires password authentication state to be
-     Enabled in the same request."""
+    administrator_login: Optional[str] = rest_field(name="administratorLogin", visibility=["read", "create"])
+    """The PostgreSQL administrator login name. This value is returned in responses after it is set.
+     After it is set, renaming is not supported. Setting the login requires password authentication
+     state to be Enabled in the same request."""
     administrator_login_password: Optional[str] = rest_field(
         name="administratorLoginPassword", visibility=["create", "update"]
     )
@@ -3846,7 +3861,8 @@ class PasswordAuthenticationProperties(_Model):  # pylint: disable=docstring-key
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the PostgreSQL username-and-password authentication method. Known
-     values are: \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     values are: \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and
+     \"Updating\"."""
 
     @overload
     def __init__(
@@ -3935,23 +3951,18 @@ class Pool(ProxyResource):  # pylint: disable=docstring-keyword-should-match-key
     :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.horizondb.models.PoolProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     """
 
     properties: Optional["_models.PoolProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
         properties: Optional["_models.PoolProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -4119,14 +4130,10 @@ class PoolFeatureCapability(_Model):
 class PoolForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HorizonDB pool for update operations.
 
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar properties: The properties that can be updated for a HorizonDB pool.
     :vartype properties: ~azure.mgmt.horizondb.models.PoolPropertiesForPatchUpdate
     """
 
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     properties: Optional["_models.PoolPropertiesForPatchUpdate"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4136,7 +4143,6 @@ class PoolForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-ma
     def __init__(
         self,
         *,
-        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.PoolPropertiesForPatchUpdate"] = None,
     ) -> None: ...
 
@@ -4222,9 +4228,9 @@ class PoolParameterGroupReference(_Model):  # pylint: disable=docstring-keyword-
     updates to an existing pool can associate either group type.
 
     :ivar parameter_group_resource_id: The Azure resource ID of the associated parameter group.
-     Initial pool creation in this API version requires the corresponding
-     Microsoft.HorizonDb/locations/parameterGroups resource. For an existing pool, PUT can specify
-     either the corresponding default group or a customer-created
+     When the parameter group is supplied during initial pool creation in this API version, the ID
+     must identify the corresponding Microsoft.HorizonDb/locations/parameterGroups resource. For an
+     existing pool, PUT can specify either the corresponding default group or a customer-created
      Microsoft.HorizonDb/parameterGroups resource. Required.
     :vartype parameter_group_resource_id: str
     :ivar apply_method: Determines when dynamic parameter changes from the associated parameter
@@ -4242,9 +4248,10 @@ class PoolParameterGroupReference(_Model):  # pylint: disable=docstring-keyword-
     parameter_group_resource_id: str = rest_field(
         name="parameterGroupResourceId", visibility=["read", "create", "update"]
     )
-    """The Azure resource ID of the associated parameter group. Initial pool creation in this API
-     version requires the corresponding Microsoft.HorizonDb/locations/parameterGroups resource. For
-     an existing pool, PUT can specify either the corresponding default group or a customer-created
+    """The Azure resource ID of the associated parameter group. When the parameter group is supplied
+     during initial pool creation in this API version, the ID must identify the corresponding
+     Microsoft.HorizonDb/locations/parameterGroups resource. For an existing pool, PUT can specify
+     either the corresponding default group or a customer-created
      Microsoft.HorizonDb/parameterGroups resource. Required."""
     apply_method: Union[str, "_models.ParameterApplyMethod"] = rest_field(
         name="applyMethod", visibility=["read", "create", "update"]
@@ -4343,19 +4350,20 @@ class PoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-
      be Disabled when nodeCount is 1, and must be AnyZone or ZoneRedundant when nodeCount is 2
      through 16. Required.
     :vartype high_availability: ~azure.mgmt.horizondb.models.PoolHighAvailability
-    :ivar parameter_group: The required parameter group associated with the pool. When creating a
-     new pool in this API version, the caller must supply the corresponding default parameter group;
-     customer-created parameter groups are not accepted during creation. For an existing pool, PUT
-     or PATCH can associate either the corresponding default parameter group or a customer-created
-     parameter group. The create-visible shape intentionally supports both resource ID forms so a
-     future API version can allow customer-created parameter groups during creation without a
-     breaking schema change. Required.
+    :ivar parameter_group: The parameter group associated with the pool. When omitted during
+     creation, the service applies the default parameter group compatible with the parent cluster's
+     PostgreSQL version. When supplied during creation in this API version, it must reference the
+     corresponding default parameter group; customer-created parameter groups are not accepted
+     during creation. For an existing pool, PUT or PATCH can associate either the corresponding
+     default parameter group or a customer-created parameter group. The create-visible shape
+     intentionally supports both resource ID forms so a future API version can allow
+     customer-created parameter groups during creation without a breaking schema change.
     :vartype parameter_group: ~azure.mgmt.horizondb.models.PoolParameterGroupReference
     :ivar scheduled_maintenance: The scheduled maintenance configuration for the pool. The
      properties available depend on the selected maintenance management type.
     :vartype scheduled_maintenance: ~azure.mgmt.horizondb.models.ScheduledMaintenanceProperties
     :ivar provisioning_state: The provisioning state of the pool. Known values are: "Succeeded",
-     "Failed", "Canceled", "InProgress", and "Provisioning".
+     "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     """
 
@@ -4373,16 +4381,17 @@ class PoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-
     )
     """The required high-availability configuration for the pool. mode must be Disabled when nodeCount
      is 1, and must be AnyZone or ZoneRedundant when nodeCount is 2 through 16. Required."""
-    parameter_group: "_models.PoolParameterGroupReference" = rest_field(
+    parameter_group: Optional["_models.PoolParameterGroupReference"] = rest_field(
         name="parameterGroup", visibility=["read", "create", "update"]
     )
-    """The required parameter group associated with the pool. When creating a new pool in this API
-     version, the caller must supply the corresponding default parameter group; customer-created
-     parameter groups are not accepted during creation. For an existing pool, PUT or PATCH can
-     associate either the corresponding default parameter group or a customer-created parameter
-     group. The create-visible shape intentionally supports both resource ID forms so a future API
-     version can allow customer-created parameter groups during creation without a breaking schema
-     change. Required."""
+    """The parameter group associated with the pool. When omitted during creation, the service applies
+     the default parameter group compatible with the parent cluster's PostgreSQL version. When
+     supplied during creation in this API version, it must reference the corresponding default
+     parameter group; customer-created parameter groups are not accepted during creation. For an
+     existing pool, PUT or PATCH can associate either the corresponding default parameter group or a
+     customer-created parameter group. The create-visible shape intentionally supports both resource
+     ID forms so a future API version can allow customer-created parameter groups during creation
+     without a breaking schema change."""
     scheduled_maintenance: Optional["_models.ScheduledMaintenanceProperties"] = rest_field(
         name="scheduledMaintenance", visibility=["read", "create", "update"]
     )
@@ -4392,7 +4401,7 @@ class PoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-
         name="provisioningState", visibility=["read"]
     )
     """The provisioning state of the pool. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"InProgress\", and \"Provisioning\"."""
+     \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
     @overload
     def __init__(
@@ -4401,7 +4410,7 @@ class PoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-
         compute_model: "_models.PoolComputeModel",
         node_count: int,
         high_availability: "_models.PoolHighAvailability",
-        parameter_group: "_models.PoolParameterGroupReference",
+        parameter_group: Optional["_models.PoolParameterGroupReference"] = None,
         scheduled_maintenance: Optional["_models.ScheduledMaintenanceProperties"] = None,
     ) -> None: ...
 
