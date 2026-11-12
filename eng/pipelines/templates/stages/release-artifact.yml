@@ -272,15 +272,21 @@ stages:
               EnablePipAuth: true
               EnableUvAuth: false
 
-          # Shows whether the auto-release SDK PR reached this job. It is empty for manual releases.
+          # Shows whether this is an auto-release or a manual release, and the auto-release SDK PR if it reached this job.
           - pwsh: |
+              if ($env:BUILD_REASON -eq 'IndividualCI') {
+                Write-Host 'Release type: auto-release (started by CI after a merge)'
+              } else {
+                Write-Host 'Release type: manual release'
+              }
               if ($env:AUTO_RELEASE_SDK_PR) {
                 Write-Host "Auto-release SDK PR: $env:AUTO_RELEASE_SDK_PR"
               } else {
-                Write-Host 'No auto-release SDK PR: this is not an auto-release, or the prepare stage found none.'
+                Write-Host 'Auto-release SDK PR: none'
               }
-            displayName: Show auto-release SDK PR
+            displayName: Show release type and auto-release SDK PR
             env:
+              BUILD_REASON: $(Build.Reason)
               AUTO_RELEASE_SDK_PR: $(AutoReleaseSdkPullRequestUrl)
 
           - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
