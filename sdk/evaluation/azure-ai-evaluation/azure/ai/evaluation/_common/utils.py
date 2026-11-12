@@ -804,13 +804,16 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False, includ
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
         if "role" in msg and msg.get("role") == "assistant" and "content" in msg:
-            text = _extract_text_from_content(msg["content"]) if include_text else []
+            contents = msg["content"]
+            if isinstance(contents, str):  # plain-text assistant message
+                contents = [{"type": "text", "text": contents}]
+            text = _extract_text_from_content(contents) if include_text else []
             if text:
                 agent_response_text.extend(text)
             if include_tool_messages:
-                for content in msg.get("content", []):
+                for content in contents:
                     # Todo: Verify if this is the correct way to handle tool calls
-                    if content.get("type") == "tool_call":
+                    if isinstance(content, dict) and content.get("type") == "tool_call":
                         if "tool_call" in content and "function" in content.get("tool_call", {}):
                             tc = content.get("tool_call", {})
                             func_name = tc.get("function", {}).get("name", "")

@@ -735,6 +735,13 @@ class TestUtils(unittest.TestCase):
             '[TOOL_CALL] get_weather(city="Paris")\n[TOOL_RESULT] {"temp": 18}'
         )
 
+        # an assistant message whose content is a plain string (valid input) is text, not a list of items
+        mixed = response[:2] + [{"role": "assistant", "content": "It is 18C in Paris."}]
+        assert reformat_agent_response(mixed, include_tool_messages=True, include_text=False) == (
+            '[TOOL_CALL] get_weather(city="Paris")\n[TOOL_RESULT] {"temp": 18}'
+        )
+        assert reformat_agent_response(mixed, include_tool_messages=True).endswith("\nIt is 18C in Paris.")
+
     def test_edge_cases_and_error_handling(self):
         """Test edge cases and error handling"""
         # Test _extract_text_from_content with malformed content
