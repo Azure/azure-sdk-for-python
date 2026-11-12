@@ -17,7 +17,7 @@ from ..._credentials.github_actions import (
     validate_env_vars,
 )
 from ..._internal import get_default_authority, normalize_authority, validate_tenant_id
-from ..._internal.pipeline import build_pipeline
+from ..._internal.pipeline import build_async_pipeline
 
 
 class GitHubActionsCredential(AsyncContextManager):
@@ -76,7 +76,7 @@ class GitHubActionsCredential(AsyncContextManager):
             authority=resolved_authority,
             **kwargs,
         )
-        self._pipeline = build_pipeline(**kwargs)
+        self._pipeline = build_async_pipeline(**kwargs)
 
     async def get_token(
         self,
@@ -120,17 +120,17 @@ class GitHubActionsCredential(AsyncContextManager):
         validate_env_vars()
         return await self._client_assertion_credential.get_token_info(*scopes, options=options)
 
-    def _get_oidc_token(self) -> str:
+    async def _get_oidc_token(self) -> str:
         request = build_oidc_request(self._audience)
-        response = self._pipeline.run(request)
+        response = await self._pipeline.run(request)
         return _handle_oidc_response(response.http_response)
 
     async def __aenter__(self) -> "GitHubActionsCredential":
         await self._client_assertion_credential.__aenter__()
-        self._pipeline.__enter__()
+        await self._pipeline.__aenter__()
         return self
 
     async def close(self) -> None:
         """Close the credential's transport sessions."""
         await self._client_assertion_credential.close()
-        self._pipeline.__exit__()
+        await self._pipeline.__aexit__()

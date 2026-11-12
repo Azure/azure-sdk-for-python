@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Union
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
 
 from .client_assertion import ClientAssertionCredential
 from .._constants import AzureAuthorityHosts, EnvironmentVariables
@@ -64,7 +64,7 @@ def derive_audience(authority: str) -> str:
     return _AUDIENCE_BY_AUTHORITY_HOST[hostname]
 
 
-def _handle_oidc_response(response: HttpResponse) -> str:
+def _handle_oidc_response(response: Union[HttpResponse, AsyncHttpResponse]) -> str:
     if response.status_code != 200:
         raise ClientAuthenticationError("Unexpected response from OIDC token endpoint.", response=response)
     assertion = response.json().get("value")
