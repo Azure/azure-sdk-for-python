@@ -1421,7 +1421,6 @@ async def test_hosted_lifecycle_routes_accept_configured_token(
         "ld_preload",
         "DYLD_INSERT_LIBRARIES",
         "PATH",
-        "HOME",
         "PYTHONPATH",
         "PYTHONSTARTUP",
         "BASH_ENV",
@@ -1447,12 +1446,12 @@ async def test_hosted_lifecycle_routes_accept_configured_token(
         "OTEL_EXPORTER_OTLP_ENDPOINT",
         "APPLICATIONINSIGHTS_CONNECTION_STRING",
         "FOUNDRY_HOSTING_ENVIRONMENT",
-        "FOUNDRY_PROJECT_ENDPOINT",
+        "FOUNDRY_PROJECT_ARM_ID",
         "AZURE_AI_PROJECT_ENDPOINT",
         "FOUNDRY_LIFECYCLE_TOKEN",
         "FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED",
         "FOUNDRY_SESSION_ENV_ALLOWED_KEYS",
-        "FOUNDRY_AGENT_NAME",
+        "FOUNDRY_AGENT_ID",
         "FOUNDRY_AGENT_INSTANCE_CLIENT_ID",
         "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID",
         "FOUNDRY_AGENT_TENANT_ID",
@@ -1473,7 +1472,7 @@ async def test_hosted_lifecycle_routes_accept_configured_token(
         "MSI_ENDPOINT",
         "IDENTITY_HEADER",
         "IMDS_ENDPOINT",
-        "AGENTSERVER_STATE_ROOT",
+        "AGENTSERVER_SHUTDOWN_GRACE_SECONDS",
         "COPILOT_CLI_PATH",
         "TOOL_ACL_PATH",
     ],
@@ -1536,6 +1535,39 @@ async def test_after_restore_rejects_reserved_key_present_at_startup(
     assert f"{denied_key!r} is reserved" in response.json()["error"]["message"]
     assert os.environ[denied_key] == "captured"
     assert agent._lifecycle.assigned_session_id is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "mutable_key",
+    ["HOME", "AGENTSERVER_TASKS_BACKEND", "AGENTSERVER_STATE_ROOT", "FOUNDRY_PROJECT_ENDPOINT"],
+)
+async def test_after_restore_provider_configuration_keys_are_not_reserved(
+    monkeypatch: pytest.MonkeyPatch,
+    mutable_key: str,
+) -> None:
+    # Provider configuration changes are governed by the restore flow itself,
+    # so these names must not trip the reserved-name rule. Absent from the
+    # startup environment and undeclared, they still fail the allow-list.
+    monkeypatch.delenv(mutable_key, raising=False)
+    monkeypatch.delenv(_SESSION_ENV_ALLOWED_KEYS_ENV, raising=False)
+    agent = AgentServerHost()
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+        headers=_LIFECYCLE_HEADERS,
+    ) as lifecycle_client:
+        response = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(overrides={mutable_key: "injected"}),
+        )
+
+    assert response.status_code == 400
+    message = response.json()["error"]["message"]
+    assert "is reserved" not in message
+    assert f"{mutable_key!r} is not allowed" in message
+    assert mutable_key not in os.environ
 
 
 @pytest.mark.asyncio

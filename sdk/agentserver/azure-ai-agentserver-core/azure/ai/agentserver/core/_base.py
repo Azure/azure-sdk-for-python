@@ -81,7 +81,6 @@ _ENV_KEY_PATTERN = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 _DENIED_ENV_KEYS = frozenset(
     {
         "PATH",
-        "HOME",
         "BASH_ENV",
         "ENV",
         "PROMPT_COMMAND",
@@ -113,7 +112,9 @@ _DENIED_ENV_KEYS = frozenset(
         "AZURE_PASSWORD",
         "AZURE_TOKEN_CREDENTIALS",
         "AZURE_AI_PROJECT_ENDPOINT",
-        "FOUNDRY_AGENT_NAME",
+        # FOUNDRY_AGENT_NAME is intentionally not reserved: a host-driven agent
+        # identity change on restore is modelled explicitly below and rejected
+        # with 409 while task workers are live.
         "FOUNDRY_AGENT_ID",
         "FOUNDRY_AGENT_INSTANCE_CLIENT_ID",
         "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID",
@@ -167,6 +168,17 @@ _DENIED_CREDENTIAL_KEY_FRAGMENTS = (
     "CREDENTIAL",
     "CONNECTION_STRING",
 )
+# Task-provider configuration the host may legitimately change on restore. A
+# change is modelled explicitly by the after-restore flow (provider rebuild,
+# rollback, and 409 while task workers are live), so these names bypass the
+# reserved-name rules above but still have to pass the allowed-key check.
+_RESTORE_MUTABLE_ENV_KEYS = frozenset(
+    {
+        "AGENTSERVER_TASKS_BACKEND",
+        "AGENTSERVER_STATE_ROOT",
+        "FOUNDRY_PROJECT_ENDPOINT",
+    }
+)
 
 
 def _is_denied_env_key(key: str) -> bool:
@@ -178,6 +190,8 @@ def _is_denied_env_key(key: str) -> bool:
     :rtype: bool
     """
     upper = key.upper()
+    if upper in _RESTORE_MUTABLE_ENV_KEYS:
+        return False
     return (
         upper in _DENIED_ENV_KEYS
         or upper.startswith(_DENIED_ENV_KEY_PREFIXES)
@@ -537,7 +551,13 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             | frozenset(platform_allowed_keys)
             | frozenset({_SESSION_ID_ENV, _SESSION_GUID_ENV, "OTEL_RESOURCE_ATTRIBUTES"})
         )
-        self._lifecycle_routes_enabled: bool = self._lifecycle_is_hosted or self._lifecycle_token is not None
+        # Outside hosted mode the routes stay unregistered unless a token is
+        # configured or unauthenticated access is explicitly opted into.
+        self._lifecycle_routes_enabled: bool = (
+            self._lifecycle_is_hosted
+            or self._lifecycle_token is not None
+            or self._lifecycle_allow_unauthenticated
+        )
 
         # Observability (logging + tracing) --------------------------------
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string

@@ -103,9 +103,10 @@
 ### Breaking Changes
 
 - Snapshot lifecycle endpoints are no longer registered when the process is not
-  running in a Foundry-hosted environment and `FOUNDRY_LIFECYCLE_TOKEN` is not
-  set. Local or self-hosted deployments that rely on the endpoints must set
-  the token.
+  running in a Foundry-hosted environment and neither `FOUNDRY_LIFECYCLE_TOKEN`
+  nor `FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED=true` is set. Local or
+  self-hosted deployments that rely on the endpoints must set the token or
+  explicitly opt in to unauthenticated access.
 - Before upgrading a hosted deployment to the `2.3.1b1` beta, provision
   `FOUNDRY_LIFECYCLE_TOKEN` and send the matching lifecycle header, or explicitly
   set `FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED=true` for temporary compatibility.
@@ -115,7 +116,10 @@
   capped at 256 KiB, at most 256 entries are accepted, and request bodies are
   capped at 1 MiB. Names that control loaders, interpreters, process startup,
   proxies, TLS trust, telemetry export, or platform identity are rejected.
-  Proxy names ending in `_PROXY` are denied case-insensitively, as are
+  Task-provider configuration that the restore flow itself governs
+  (`FOUNDRY_AGENT_NAME`, `FOUNDRY_PROJECT_ENDPOINT`, `AGENTSERVER_TASKS_BACKEND`,
+  `AGENTSERVER_STATE_ROOT`, `HOME`) is exempt from that rule but remains subject
+  to the allowed-key check below. Proxy names ending in `_PROXY` are denied case-insensitively, as are
   credential-bearing names containing `KEY`, `SECRET`, `TOKEN`, `PASSWORD`,
   `CREDENTIAL`, or `CONNECTION_STRING`. Other names must be a session ID or
   GUID, resource attributes, have existed in the startup environment, or be
