@@ -1,4 +1,71 @@
 # cspell: disable
+def get_multi_type_vector_search_data():
+  """Four DiskANN components with distinct rankings and a tie-free fused top five."""
+  fields = (
+    ("vectorFloat32", "float32"),
+    ("vectorFloat16", "float16"),
+    ("vectorInt8", "int8"),
+    ("vectorUint8", "uint8"),
+  )
+  query_vector = [1] + [0] * 15
+  # Columns are the Euclidean ranks for each field. Removing any column changes the top five.
+  ranks = (
+    (6, 4, 6, 6),
+    (3, 1, 3, 2),
+    (1, 3, 4, 4),
+    (7, 8, 2, 3),
+    (5, 6, 7, 8),
+    (8, 7, 1, 7),
+    (2, 5, 5, 5),
+    (4, 2, 8, 1),
+  )
+  items = [
+    {
+      "id": f"rrf-{index}",
+      "pk": "vectors",
+      **{field: [1 + 4 * rank] + [0] * 15 for (field, _), rank in zip(fields, item_ranks)},
+    }
+    for index, item_ranks in enumerate(ranks)
+  ]
+  # Keep more than 1,000 vectors in the same partition so DiskANN can build its indexes.
+  for index in range(1024):
+    vector = [65 + index % 63, 65 + index // 63] + [1] * 14
+    items.append({
+      "id": f"background-{index}",
+      "pk": "vectors",
+      **{field: list(vector) for field, _ in fields},
+    })
+  return {
+    "vector_embedding_policy": {
+      "vectorEmbeddings": [
+        {
+          "path": f"/{field}",
+          "dataType": data_type,
+          "dimensions": len(query_vector),
+          "distanceFunction": "euclidean",
+        }
+        for field, data_type in fields
+      ],
+    },
+    "indexing_policy": {
+      "indexingMode": "consistent",
+      "includedPaths": [{"path": "/*"}],
+      "excludedPaths": [{"path": f"/{field}/*"} for field, _ in fields],
+      "vectorIndexes": [{"path": f"/{field}", "type": "diskANN"} for field, _ in fields],
+    },
+    "items": items,
+    "query": (
+      "SELECT TOP 5 VALUE c.id FROM c ORDER BY RANK RRF("
+      "VectorDistance(c.vectorFloat32, @queryVector), "
+      "VectorDistance(c.vectorFloat16, @queryVector), "
+      "VectorDistance(c.vectorInt8, @queryVector), "
+      "VectorDistance(c.vectorUint8, @queryVector))"
+    ),
+    "parameters": [{"name": "@queryVector", "value": query_vector}],
+    "expected_ids": ["rrf-1", "rrf-2", "rrf-7", "rrf-6", "rrf-3"],
+  }
+
+
 def get_hybrid_search_items():
   """Keep the original vectors and titles, with controlled text frequencies for RRF tests."""
   data = get_full_text_items()

@@ -6,6 +6,7 @@ import os
 import time
 import unittest
 import uuid
+from urllib.parse import urlsplit
 
 import pytest
 
@@ -13,8 +14,26 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 import hybrid_search_data
-from azure.cosmos import http_constants, DatabaseProxy
+from azure.cosmos import documents, http_constants, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
+
+
+def verify_gateway_vector_query_responses(responses, container_link):
+    query_responses = [
+        response for response in responses
+        if response.http_request.headers.get(http_constants.HttpHeaders.IsQuery) == "true"
+        and response.http_request.headers.get(http_constants.HttpHeaders.IsQueryPlanRequest) != "true"
+    ]
+    assert query_responses, "No Gateway document-query requests were observed."
+    for response in query_responses:
+        request = response.http_request
+        url = urlsplit(request.url)
+        assert request.method == "POST"
+        assert url.scheme == "https"
+        assert url.path.rstrip("/") == f"/{container_link}/docs"
+    assert any(response.http_response.status_code == 200 for response in query_responses), \
+        "No successful Gateway document-query response was observed."
+
 
 @pytest.mark.cosmosAADQuery
 @pytest.mark.cosmosSearchQuery
@@ -70,6 +89,32 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             cls.key_client.delete_database(cls.test_db.id)
         except exceptions.CosmosHttpResponseError:
             pass
+
+    def test_multi_type_vector_rrf_gateway(self):
+        """Query all four DiskANN embedding types together on a vector-enabled live account."""
+        assert self.client.client_connection.connection_policy.ConnectionMode == documents.ConnectionMode.Gateway
+        data = hybrid_search_data.get_multi_type_vector_search_data()
+        container = self.test_db.create_container(
+            id="vector-rrf-" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400,
+            indexing_policy=data["indexing_policy"],
+            vector_embedding_policy=data["vector_embedding_policy"],
+        )
+        self.addCleanup(self.test_db.delete_container, container.id)
+        data_container = self.client.get_database_client(self.test_db.id).get_container_client(container.id)
+        for item in data["items"]:
+            data_container.create_item(item)
+
+        responses = []
+        results = list(data_container.query_items(
+            query=data["query"],
+            parameters=data["parameters"],
+            enable_cross_partition_query=True,
+            raw_response_hook=responses.append,
+        ))
+        verify_gateway_vector_query_responses(responses, data_container.container_link)
+        assert results == data["expected_ids"]
 
     def test_wrong_hybrid_search_queries(self):
         try:
