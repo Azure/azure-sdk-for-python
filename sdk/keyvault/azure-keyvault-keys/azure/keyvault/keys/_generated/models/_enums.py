@@ -235,9 +235,9 @@ class KeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CKM_RSA_AES_KEY_WRAP = "CKM_RSA_AES_KEY_WRAP"
     """The CKM_RSA_AES_KEY_WRAP key wrap mechanism."""
-    RSA_AES_KEY_WRAP256 = "RSA_AES_KEY_WRAP_256"
+    RSA_AES_KEY_WRAP_256 = "RSA_AES_KEY_WRAP_256"
     """The RSA_AES_KEY_WRAP_256 key wrap mechanism."""
-    RSA_AES_KEY_WRAP384 = "RSA_AES_KEY_WRAP_384"
+    RSA_AES_KEY_WRAP_384 = "RSA_AES_KEY_WRAP_384"
     """The RSA_AES_KEY_WRAP_384 key wrap mechanism."""
 
 

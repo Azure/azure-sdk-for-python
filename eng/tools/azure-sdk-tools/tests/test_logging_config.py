@@ -82,3 +82,27 @@ def test_run_logged_failure_preserved(stream, tmp_path, caplog):
     assert "Command failed:" in caplog.text
     if not stream:
         assert "build failed" in caplog.text
+
+
+@pytest.mark.parametrize("returncode", [0, 7])
+def test_run_logged_decodes_native_build_output(returncode, tmp_path, caplog, monkeypatch):
+    monkeypatch.setattr("locale.getencoding", lambda: "cp1252", raising=False)
+    command = [
+        sys.executable,
+        "-c",
+        "import sys; sys.stdout.buffer.write(b'build \\xe2\\x9c\\x8d\\n'); "
+        "sys.stderr.buffer.write(b'diagnostic \\xff\\n'); "
+        f"raise SystemExit({returncode})",
+    ]
+    if returncode:
+        with pytest.raises(subprocess.CalledProcessError) as error:
+            run_logged(command, cwd=str(tmp_path), check=True, should_stream_to_console=False)
+        assert error.value.returncode == returncode
+        output = error.value.stdout
+        assert output.strip() in caplog.text
+    else:
+        result = run_logged(command, cwd=str(tmp_path), check=True, should_stream_to_console=False)
+        assert result.returncode == 0
+        output = result.stdout
+    assert "build \u270d\n" in output
+    assert "diagnostic \\xff\n" in output

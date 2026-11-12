@@ -107,6 +107,35 @@ def _poll_coro(get_responses, *, error_budget_sec=_BUDGET):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("retry_flag", [None, False, True])
+async def test_engine_dead_stops_async_polling_with_cft_guidance(clock, retry_flag):
+    from azure.ai.finetuningsessions import TrainingEngineError
+
+    client = _FakeAsyncClient(
+        [
+            _FakeResponse(
+                200,
+                {
+                    "status": "failed",
+                    "error": "Engine died, LoRA weights are lost.",
+                    "error_code": "engine_dead",
+                    "should_retry": retry_flag,
+                    "debug_ref": "support-ref",
+                },
+            ),
+        ]
+    )
+    with pytest.raises(TrainingEngineError) as caught:
+        await _poll(client, _SESSION_ID, _REQUEST_ID, _OP_TYPE, error_budget_sec=_BUDGET)
+
+    assert caught.value.session_id == _SESSION_ID
+    assert caught.value.debug_ref == "support-ref"
+    assert "continual fine-tuning (CFT)" in str(caught.value)
+    assert "weights are lost" not in str(caught.value).lower()
+    assert clock.now == 1000.0
+
+
+@pytest.mark.asyncio
 async def test_long_queue_wait_then_complete_does_not_time_out(clock):
     # 20 healthy pending polls (clock advances well past the 5s budget via
     # backoff sleeps) followed by completion — must NOT raise.

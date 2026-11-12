@@ -76,6 +76,27 @@ def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_agents_create_from_prompt_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents:generate"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_agents_delete_request(agent_name: str, *, force: Optional[bool] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -634,6 +655,35 @@ def build_agents_get_optimization_job_request(  # pylint: disable=name-too-long
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_download_optimization_job_file_request(  # pylint: disable=name-too-long
+    job_id: str, *, path: str, candidate_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/octet-stream")
+
+    # Construct URL
+    _url = "/agent_optimization_jobs/{jobId}/files"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if candidate_id is not None:
+        _params["candidate_id"] = _SERIALIZER.query("candidate_id", candidate_id, "str")
+    _params["path"] = _SERIALIZER.query("path", path, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -1443,6 +1493,400 @@ def build_datasets_delete_generation_job_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
+def build_agent_insight_monitors_list_request(  # pylint: disable=name-too-long
+    *,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    agent_name: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors"
+
+    # Construct parameters
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if agent_name is not None:
+        _params["agent_name"] = _SERIALIZER.query("agent_name", agent_name, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_create_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_get_request(monitor_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_delete_request(  # pylint: disable=name-too-long
+    monitor_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_agent_insight_monitors_update_request(  # pylint: disable=name-too-long
+    monitor_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_reset_request(  # pylint: disable=name-too-long
+    monitor_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}:reset"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
+def build_agent_insight_monitors_create_run_request(  # pylint: disable=name-too-long
+    monitor_id: str, *, operation_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/runs"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_list_runs_request(  # pylint: disable=name-too-long
+    monitor_id: str,
+    *,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    status: Optional[Union[str, _models.JobStatus]] = None,
+    trigger: Optional[Union[str, _models.AgentInsightRunTrigger]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/runs"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if status is not None:
+        _params["status"] = _SERIALIZER.query("status", status, "str")
+    if trigger is not None:
+        _params["trigger"] = _SERIALIZER.query("trigger", trigger, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_get_run_request(  # pylint: disable=name-too-long
+    monitor_id: str, run_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/runs/{run_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+        "run_id": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_cancel_run_request(  # pylint: disable=name-too-long
+    monitor_id: str, run_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/runs/{run_id}:cancel"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+        "run_id": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_list_insights_request(  # pylint: disable=name-too-long
+    monitor_id: str,
+    *,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    categories: Optional[List[str]] = None,
+    severities: Optional[List[Union[str, _models.AgentInsightSeverity]]] = None,
+    statuses: Optional[List[Union[str, _models.AgentInsightStatus]]] = None,
+    include_details: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/insights"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if categories is not None:
+        _params["categories"] = _SERIALIZER.query("categories", categories, "[str]", div=",")
+    if severities is not None:
+        _params["severities"] = _SERIALIZER.query("severities", severities, "[str]", div=",")
+    if statuses is not None:
+        _params["statuses"] = _SERIALIZER.query("statuses", statuses, "[str]", div=",")
+    if include_details is not None:
+        _params["include_details"] = _SERIALIZER.query("include_details", include_details, "bool")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_get_insight_request(  # pylint: disable=name-too-long
+    monitor_id: str, insight_id: str, *, include_details: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/insights/{insight_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+        "insight_id": _SERIALIZER.url("insight_id", insight_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if include_details is not None:
+        _params["include_details"] = _SERIALIZER.query("include_details", include_details, "bool")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_insight_monitors_update_insight_request(  # pylint: disable=name-too-long
+    monitor_id: str, insight_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/insights/{insight_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+        "insight_id": _SERIALIZER.url("insight_id", insight_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_connections_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2226,423 +2670,6 @@ def build_toolboxes_delete_version_request(name: str, version: str, **kwargs: An
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_agents_create_from_prompt_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents:generate"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_list_request(  # pylint: disable=name-too-long
-    *,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    agent_name: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors"
-
-    # Construct parameters
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if agent_name is not None:
-        _params["agent_name"] = _SERIALIZER.query("agent_name", agent_name, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_create_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_get_request(  # pylint: disable=name-too-long
-    monitor_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_delete_request(  # pylint: disable=name-too-long
-    monitor_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_beta_agent_insight_monitors_update_request(  # pylint: disable=name-too-long
-    monitor_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_reset_request(  # pylint: disable=name-too-long
-    monitor_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}:reset"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
-
-
-def build_beta_agent_insight_monitors_create_run_request(  # pylint: disable=name-too-long
-    monitor_id: str, *, operation_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}/runs"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if operation_id is not None:
-        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_list_runs_request(  # pylint: disable=name-too-long
-    monitor_id: str,
-    *,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    status: Optional[Union[str, _models.JobStatus]] = None,
-    trigger: Optional[Union[str, _models.AgentInsightRunTrigger]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}/runs"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if status is not None:
-        _params["status"] = _SERIALIZER.query("status", status, "str")
-    if trigger is not None:
-        _params["trigger"] = _SERIALIZER.query("trigger", trigger, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_get_run_request(  # pylint: disable=name-too-long
-    monitor_id: str, run_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}/runs/{run_id}"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-        "run_id": _SERIALIZER.url("run_id", run_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_cancel_run_request(  # pylint: disable=name-too-long
-    monitor_id: str, run_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}/runs/{run_id}:cancel"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-        "run_id": _SERIALIZER.url("run_id", run_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_list_insights_request(  # pylint: disable=name-too-long
-    monitor_id: str,
-    *,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    category: Optional[str] = None,
-    severity: Optional[Union[str, _models.AgentInsightSeverity]] = None,
-    status: Optional[Union[str, _models.AgentInsightStatus]] = None,
-    include_details: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}/insights"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if category is not None:
-        _params["category"] = _SERIALIZER.query("category", category, "str")
-    if severity is not None:
-        _params["severity"] = _SERIALIZER.query("severity", severity, "str")
-    if status is not None:
-        _params["status"] = _SERIALIZER.query("status", status, "str")
-    if include_details is not None:
-        _params["include_details"] = _SERIALIZER.query("include_details", include_details, "bool")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_get_insight_request(  # pylint: disable=name-too-long
-    monitor_id: str, insight_id: str, *, include_details: Optional[bool] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}/insights/{insight_id}"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-        "insight_id": _SERIALIZER.url("insight_id", insight_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if include_details is not None:
-        _params["include_details"] = _SERIALIZER.query("include_details", include_details, "bool")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_insight_monitors_update_insight_request(  # pylint: disable=name-too-long
-    monitor_id: str, insight_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_insight_monitors/{monitor_id}/insights/{insight_id}"
-    path_format_arguments = {
-        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
-        "insight_id": _SERIALIZER.url("insight_id", insight_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_beta_evaluation_taxonomies_get_request(  # pylint: disable=name-too-long
     name: str, **kwargs: Any
 ) -> HttpRequest:
@@ -2770,6 +2797,61 @@ def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_evaluators_list_diagnostics_request(  # pylint: disable=name-too-long
+    name: str,
+    *,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    start_time: Optional[datetime.datetime] = None,
+    end_time: Optional[datetime.datetime] = None,
+    evaluator_version: Optional[str] = None,
+    dimension_id: Optional[str] = None,
+    type: Optional[List[Union[str, _models.EvaluatorDiagnosticType]]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluators/{name}/diagnostics"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if start_time is not None:
+        _params["start_time"] = _SERIALIZER.query("start_time", start_time, "unix-time")
+    if end_time is not None:
+        _params["end_time"] = _SERIALIZER.query("end_time", end_time, "unix-time")
+    if evaluator_version is not None:
+        _params["evaluator_version"] = _SERIALIZER.query("evaluator_version", evaluator_version, "str")
+    if dimension_id is not None:
+        _params["dimension_id"] = _SERIALIZER.query("dimension_id", dimension_id, "str")
+    if type is not None:
+        _params["type"] = [_SERIALIZER.query("type", q, "str") if q is not None else "" for q in type]
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_evaluators_pending_upload_request(  # pylint: disable=name-too-long
@@ -4245,7 +4327,7 @@ def build_beta_skills_delete_version_request(name: str, version: str, **kwargs: 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_list_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_list_request(  # pylint: disable=name-too-long
     agent_name: str,
     *,
     limit: Optional[int] = None,
@@ -4285,7 +4367,7 @@ def build_beta_voice_agents_conversations_list_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_get_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_get_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4312,7 +4394,7 @@ def build_beta_voice_agents_conversations_get_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_delete_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_delete_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -4333,7 +4415,7 @@ def build_beta_voice_agents_conversations_delete_request(  # pylint: disable=nam
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_voice_agents_conversations_list_responses_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_list_responses_request(  # pylint: disable=name-too-long
     agent_name: str,
     conversation_id: str,
     *,
@@ -4375,7 +4457,7 @@ def build_beta_voice_agents_conversations_list_responses_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_get_response_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_get_response_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, response_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4403,7 +4485,7 @@ def build_beta_voice_agents_conversations_get_response_request(  # pylint: disab
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_list_response_items_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_list_response_items_request(  # pylint: disable=name-too-long
     agent_name: str,
     conversation_id: str,
     response_id: str,
@@ -4447,7 +4529,7 @@ def build_beta_voice_agents_conversations_list_response_items_request(  # pylint
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_list_items_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_list_items_request(  # pylint: disable=name-too-long
     agent_name: str,
     conversation_id: str,
     *,
@@ -4489,7 +4571,7 @@ def build_beta_voice_agents_conversations_list_items_request(  # pylint: disable
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_get_item_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_get_item_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4517,7 +4599,7 @@ def build_beta_voice_agents_conversations_get_item_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_get_audio_item_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_get_audio_item_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4545,7 +4627,7 @@ def build_beta_voice_agents_conversations_get_audio_item_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_download_audio_item_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_download_audio_item_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4573,7 +4655,7 @@ def build_beta_voice_agents_conversations_download_audio_item_request(  # pylint
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_get_generated_audio_item_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_get_generated_audio_item_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4603,7 +4685,7 @@ def build_beta_voice_agents_conversations_get_generated_audio_item_request(  # p
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_download_generated_audio_item_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_download_generated_audio_item_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4631,7 +4713,7 @@ def build_beta_voice_agents_conversations_download_generated_audio_item_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_get_audio_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_get_audio_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4658,7 +4740,7 @@ def build_beta_voice_agents_conversations_get_audio_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_conversations_download_audio_request(  # pylint: disable=name-too-long
+def build_voice_agents_conversations_download_audio_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4685,7 +4767,7 @@ def build_beta_voice_agents_conversations_download_audio_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_create_binding_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_create_binding_request(  # pylint: disable=name-too-long
     agent_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4720,11 +4802,10 @@ def build_beta_voice_agents_telephony_create_binding_request(  # pylint: disable
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_list_bindings_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_list_bindings_request(  # pylint: disable=name-too-long
     agent_name: str,
     *,
     provider: Optional[Union[str, _models.TelephonyProvider]] = None,
-    status: Optional[Union[str, _models.TelephonyBindingStatus]] = None,
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.PageOrder]] = None,
     after: Optional[str] = None,
@@ -4748,8 +4829,6 @@ def build_beta_voice_agents_telephony_list_bindings_request(  # pylint: disable=
     # Construct parameters
     if provider is not None:
         _params["provider"] = _SERIALIZER.query("provider", provider, "str")
-    if status is not None:
-        _params["status"] = _SERIALIZER.query("status", status, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
@@ -4766,7 +4845,7 @@ def build_beta_voice_agents_telephony_list_bindings_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_get_binding_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_get_binding_request(  # pylint: disable=name-too-long
     agent_name: str, binding_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4793,7 +4872,7 @@ def build_beta_voice_agents_telephony_get_binding_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_update_binding_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_update_binding_request(  # pylint: disable=name-too-long
     agent_name: str, binding_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4829,7 +4908,7 @@ def build_beta_voice_agents_telephony_update_binding_request(  # pylint: disable
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_delete_binding_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_delete_binding_request(  # pylint: disable=name-too-long
     agent_name: str, binding_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4859,7 +4938,7 @@ def build_beta_voice_agents_telephony_delete_binding_request(  # pylint: disable
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_list_calls_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_list_calls_request(  # pylint: disable=name-too-long
     agent_name: str,
     *,
     provider: Optional[Union[str, _models.TelephonyProvider]] = None,
@@ -4911,7 +4990,7 @@ def build_beta_voice_agents_telephony_list_calls_request(  # pylint: disable=nam
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_get_call_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_get_call_request(  # pylint: disable=name-too-long
     agent_name: str, call_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4938,7 +5017,7 @@ def build_beta_voice_agents_telephony_get_call_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_transfer_call_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_transfer_call_request(  # pylint: disable=name-too-long
     agent_name: str, call_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4968,7 +5047,7 @@ def build_beta_voice_agents_telephony_transfer_call_request(  # pylint: disable=
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_end_call_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_end_call_request(  # pylint: disable=name-too-long
     agent_name: str, call_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4995,7 +5074,7 @@ def build_beta_voice_agents_telephony_end_call_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_get_transfer_targets_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_get_transfer_targets_request(  # pylint: disable=name-too-long
     agent_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5021,7 +5100,7 @@ def build_beta_voice_agents_telephony_get_transfer_targets_request(  # pylint: d
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_replace_transfer_targets_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_replace_transfer_targets_request(  # pylint: disable=name-too-long
     agent_name: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5056,7 +5135,7 @@ def build_beta_voice_agents_telephony_replace_transfer_targets_request(  # pylin
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_create_call_job_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_create_call_job_request(  # pylint: disable=name-too-long
     agent_name: str, *, idempotency_key: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5067,7 +5146,7 @@ def build_beta_voice_agents_telephony_create_call_job_request(  # pylint: disabl
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony/call_jobs"
+    _url = "/agents/{agent_name}/telephony_call_jobs"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
     }
@@ -5086,7 +5165,74 @@ def build_beta_voice_agents_telephony_create_call_job_request(  # pylint: disabl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_get_call_job_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_list_call_jobs_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    status: Optional[Union[str, _models.TelephonyCallJobStatus]] = None,
+    campaign_name: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_call_jobs"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if status is not None:
+        _params["status"] = _SERIALIZER.query("status", status, "str")
+    if campaign_name is not None:
+        _params["campaign_name"] = _SERIALIZER.query("campaign_name", campaign_name, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_voice_agents_telephony_delete_call_job_request(  # pylint: disable=name-too-long
+    agent_name: str, call_job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_call_jobs/{call_job_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "call_job_id": _SERIALIZER.url("call_job_id", call_job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_voice_agents_telephony_get_call_job_request(  # pylint: disable=name-too-long
     agent_name: str, call_job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5096,7 +5242,7 @@ def build_beta_voice_agents_telephony_get_call_job_request(  # pylint: disable=n
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony/call_jobs/{call_job_id}"
+    _url = "/agents/{agent_name}/telephony_call_jobs/{call_job_id}"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
         "call_job_id": _SERIALIZER.url("call_job_id", call_job_id, "str"),
@@ -5113,7 +5259,7 @@ def build_beta_voice_agents_telephony_get_call_job_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_voice_agents_telephony_cancel_call_job_request(  # pylint: disable=name-too-long
+def build_voice_agents_telephony_cancel_call_job_request(  # pylint: disable=name-too-long
     agent_name: str, call_job_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5123,7 +5269,7 @@ def build_beta_voice_agents_telephony_cancel_call_job_request(  # pylint: disabl
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony/call_jobs/{call_job_id}:cancel"
+    _url = "/agents/{agent_name}/telephony_call_jobs/{call_job_id}:cancel"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
         "call_job_id": _SERIALIZER.url("call_job_id", call_job_id, "str"),
@@ -5146,6 +5292,539 @@ def build_beta_voice_agents_telephony_cancel_call_job_request(  # pylint: disabl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_beta_voice_agents_live_conversations_list_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/live/conversations"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_live_conversations_get_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/live/conversations/{conversation_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_live_conversations_delete_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/live/conversations/{conversation_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_beta_voice_agents_live_conversations_list_items_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    conversation_id: str,
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/live/conversations/{conversation_id}/items"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_live_conversations_get_item_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/live/conversations/{conversation_id}/items/{item_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_live_conversations_get_audio_item_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/live/conversations/{conversation_id}/items/{item_id}/audio"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_live_conversations_download_audio_item_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "audio/wav")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/live/conversations/{conversation_id}/items/{item_id}/audio/content"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_live_conversations_get_audio_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/live/conversations/{conversation_id}/audio"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_live_conversations_download_audio_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "audio/wav")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/live/conversations/{conversation_id}/audio/content"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_telephony_create_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    campaign_name: str,
+    *,
+    operation_id: Optional[str] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_campaigns/{campaign_name}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "campaign_name": _SERIALIZER.url("campaign_name", campaign_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_telephony_get_request(  # pylint: disable=name-too-long
+    agent_name: str, campaign_name: str, *, operation_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_campaigns/{campaign_name}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "campaign_name": _SERIALIZER.url("campaign_name", campaign_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if operation_id is not None:
+        _params["operation_id"] = _SERIALIZER.query("operation_id", operation_id, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_telephony_list_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    status: Optional[Union[str, _models.TelephonyCampaignStatus]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_campaigns"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if status is not None:
+        _params["status"] = _SERIALIZER.query("status", status, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_telephony_cancel_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    campaign_name: str,
+    *,
+    etag: str,
+    match_condition: MatchConditions,
+    operation_id: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_campaigns/{campaign_name}:cancel"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "campaign_name": _SERIALIZER.url("campaign_name", campaign_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_telephony_delete_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    campaign_name: str,
+    *,
+    etag: str,
+    match_condition: MatchConditions,
+    operation_id: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_campaigns/{campaign_name}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "campaign_name": _SERIALIZER.url("campaign_name", campaign_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_telephony_list_validation_errors_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    campaign_name: str,
+    *,
+    limit: Optional[int] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_campaigns/{campaign_name}/validation_errors"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "campaign_name": _SERIALIZER.url("campaign_name", campaign_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_voice_agents_telephony_get_operation_request(  # pylint: disable=name-too-long
+    agent_name: str, campaign_name: str, operation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_campaigns/{campaign_name}/operations/{operation_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "campaign_name": _SERIALIZER.url("campaign_name", campaign_name, "str"),
+        "operation_id": _SERIALIZER.url("operation_id", operation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instance-attributes
     """
     .. warning::
@@ -5164,10 +5843,6 @@ class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instan
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
         self.voice_agents = BetaVoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.evaluation_taxonomies = BetaEvaluationTaxonomiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -5179,6 +5854,29 @@ class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instan
         self.routines = BetaRoutinesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.skills = BetaSkillsOperations(self._client, self._config, self._serialize, self._deserialize)
+
+
+class VoiceAgentsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`voice_agents` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+        self.conversations = VoiceAgentsConversationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.telephony = VoiceAgentsTelephonyOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
 class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
@@ -5226,6 +5924,79 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         _request = build_agents_get_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def create_from_prompt(self, body: "_unions.GenerateAgentRequest", **kwargs: Any) -> _models.AgentDetails:
+        """Generate an agent.
+
+        Generates and creates an agent from kind-specific high-level inputs. The generated definition
+        remains fully editable through the standard agent versioning operations.
+
+        :param body: The kind-specific inputs for generating and creating an agent. Is one of the
+         following types: GenerateVoiceAgentRequest Required.
+        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
+
+        _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_create_from_prompt_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -7075,7 +7846,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+          is not contractual and may include additional keys or change format
+          over time — clients should treat it as an opaque string)
 
         Example SSE frames:
 
@@ -7610,6 +8383,80 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace
+    def download_optimization_job_file(
+        self, job_id: str, *, path: str, candidate_id: Optional[str] = None, **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Download an agent optimization job file.
+
+        Downloads a declared file as a binary stream. The path must match a file descriptor returned by
+        the service. When candidate_id is omitted, the request is scoped to the job.
+
+        :param job_id: The ID of the parent optimization job. Required.
+        :type job_id: str
+        :keyword path: The file path returned in the file descriptor. Required.
+        :paramtype path: str
+        :keyword candidate_id: The candidate that owns the file. Omit to request a job-level file.
+         Default value is None.
+        :paramtype candidate_id: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agents_download_optimization_job_file_request(
+            job_id=job_id,
+            path=path,
+            candidate_id=candidate_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
     def list_optimization_jobs(
         self,
         *,
@@ -7639,7 +8486,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          Default value is None.
         :paramtype before: str
         :keyword status: Filter to jobs in this lifecycle state. Known values are: "queued",
-         "in_progress", "succeeded", "failed", and "cancelled". Default value is None.
+         "in_progress", "succeeded", "failed", "cancelled", and "skipped". Default value is None.
         :paramtype status: str or ~azure.ai.projects.models.JobStatus
         :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
         :paramtype agent_name: str
@@ -7847,10 +8694,13 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
     ) -> ItemPaged["_models.AgentOptimizationCandidate"]:
         """List candidates for an agent optimization job.
 
-        Lists candidates for the given optimization job with cursor pagination, including the original
-        baseline and generated candidates. Each ``output.mutations`` item identifies a changed
-        attribute by ``type``; mutation ``value`` fields are omitted unless the client passes
-        ``expand=mutations``.
+        Lists candidates for the given optimization job with cursor pagination. Agent optimization can
+        include the original baseline and multiple generated candidates; prompt and skill optimization
+        generate a single candidate. Evaluated skill jobs also expose the original baseline for
+        reporting through the existing evaluation field; the baseline is not a generated alternative. A
+        generated skill candidate contains zero or more skill outcomes, not one candidate per skill.
+        Each ``output.mutations`` item identifies a changed attribute by ``type``; mutation ``value``
+        fields are omitted unless the client passes ``expand=mutations``.
 
         :param job_id: The ID of the parent optimization job. Required.
         :type job_id: str
@@ -7941,7 +8791,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
     ) -> _models.AgentOptimizationCandidate:
         """Get a candidate for an agent optimization job.
 
-        Retrieves a single candidate. Mutation values are always included.
+        Retrieves a single candidate. Mutation values are always included. Skill optimization detail
+        includes independent skill results, resolved context, and the persisted execution snapshot when
+        available; these detail fields are omitted from candidate lists.
 
         :param job_id: The ID of the parent optimization job. Required.
         :type job_id: str
@@ -8014,10 +8866,13 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
     ) -> _models.AgentOptimizationCandidate:
         """Promote a candidate for an agent optimization job.
 
-        Promotes a candidate to the Foundry agent stored in the parent job's target configuration.
-        Promotion is unavailable when the job omitted target_configuration. Prompt-agent promotion
-        creates a new agent version. Hosted-agent promotion currently records promotion metadata
-        without deploying a new hosted-agent version.
+        Promotes a supported completed candidate to the Foundry agent stored in the parent job's target
+        configuration. A skill-optimization candidate must be the evaluated learned candidate for a
+        supported Prompt or Managed target; baseline, unevaluated, agentless, and unsupported-runtime
+        skill candidates cannot be promoted. Skill promotion releases the exact evaluated candidate
+        configuration without regenerating skills. Prompt-agent promotion creates a new agent version.
+        Hosted-agent promotion currently records promotion metadata without deploying a new
+        hosted-agent version.
 
         :param job_id: The ID of the parent optimization job. Required.
         :type job_id: str
@@ -9543,11 +10398,12 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
     ) -> ItemPaged["_models.EvaluationRule"]:
         """List evaluation rules.
 
-        Returns the evaluation rules configured for the project, optionally filtered by action type,
-        agent name, or enabled state.
+        Returns the evaluation rules configured for the project, including scheduled trace and dataset
+        evaluations, optionally filtered by action type, agent name, or enabled state.
 
-        :keyword action_type: Filter by the type of evaluation rule. Known values are:
-         "continuousEvaluation" and "humanEvaluationPreview". Default value is None.
+        :keyword action_type: Filter by action type. When omitted, rules of all action types are
+         returned. Known values are: "continuousEvaluation", "humanEvaluationPreview",
+         "traceEvaluation", and "datasetEvaluation". Default value is None.
         :paramtype action_type: str or ~azure.ai.projects.models.EvaluationRuleActionType
         :keyword agent_name: Filter by the agent name. Default value is None.
         :paramtype agent_name: str
@@ -10367,7 +11223,9 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
     def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
         """Get a data generation job.
 
-        Retrieves the specified data generation job and its current status.
+        Retrieves the specified data generation job and its current status. Returns effective
+        generation settings and preserves ``type: conversations`` for conversation jobs. Reading an
+        existing job does not require preview opt-in.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
@@ -10444,7 +11302,9 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
     ) -> ItemPaged["_models.DataGenerationJob"]:
         """List data generation jobs.
 
-        Returns a list of data generation jobs.
+        Returns a list of data generation jobs. Each trace job includes its effective settings.
+        Conversation jobs preserve ``type: conversations``. Listing existing jobs does not require
+        preview opt-in.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -10608,7 +11468,18 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
     ) -> LROPoller[_models.DataGenerationJobResult]:
         """Create a data generation job.
 
-        Submits a new data generation job for asynchronous execution.
+        Submits a new data generation job for asynchronous execution. Requests with ``type`` set to
+        ``conversations``, or ``traces`` with ``generate_test_case_rubric`` set to true, require
+        ``Foundry-Features: DataGenerationJobs=V1Preview``; the service rejects these requests without
+        this opt-in. Ordinary turn-level trace requests without rubric generation do not require the
+        header. Conversation samples require ``scenario`` to be ``evaluation``. Jobs with ``type:
+        conversations`` reconstruct existing traced conversations, use sources of type ``traces``, and
+        do not support ``sample_level``. The ``generate_test_case_rubric`` flag is supported for both
+        trace and conversation jobs and requires a nonempty ``model_options.model`` when true. The
+        conversation-only ``generate_test_case_description`` flag also requires a nonempty
+        ``model_options.model`` when true. For conversation jobs, model options must be omitted when
+        neither flag is enabled. Create, get, and list responses preserve ``type: conversations``. The
+        response includes the effective generation settings.
 
         :param job: The data generation job inputs to create. Required.
         :type job: ~azure.ai.projects.models.DataGenerationJobInputs
@@ -10630,7 +11501,18 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
     ) -> LROPoller[_models.DataGenerationJobResult]:
         """Create a data generation job.
 
-        Submits a new data generation job for asynchronous execution.
+        Submits a new data generation job for asynchronous execution. Requests with ``type`` set to
+        ``conversations``, or ``traces`` with ``generate_test_case_rubric`` set to true, require
+        ``Foundry-Features: DataGenerationJobs=V1Preview``; the service rejects these requests without
+        this opt-in. Ordinary turn-level trace requests without rubric generation do not require the
+        header. Conversation samples require ``scenario`` to be ``evaluation``. Jobs with ``type:
+        conversations`` reconstruct existing traced conversations, use sources of type ``traces``, and
+        do not support ``sample_level``. The ``generate_test_case_rubric`` flag is supported for both
+        trace and conversation jobs and requires a nonempty ``model_options.model`` when true. The
+        conversation-only ``generate_test_case_description`` flag also requires a nonempty
+        ``model_options.model`` when true. For conversation jobs, model options must be omitted when
+        neither flag is enabled. Create, get, and list responses preserve ``type: conversations``. The
+        response includes the effective generation settings.
 
         :param job: The data generation job inputs to create. Required.
         :type job: JSON
@@ -10657,7 +11539,18 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
     ) -> LROPoller[_models.DataGenerationJobResult]:
         """Create a data generation job.
 
-        Submits a new data generation job for asynchronous execution.
+        Submits a new data generation job for asynchronous execution. Requests with ``type`` set to
+        ``conversations``, or ``traces`` with ``generate_test_case_rubric`` set to true, require
+        ``Foundry-Features: DataGenerationJobs=V1Preview``; the service rejects these requests without
+        this opt-in. Ordinary turn-level trace requests without rubric generation do not require the
+        header. Conversation samples require ``scenario`` to be ``evaluation``. Jobs with ``type:
+        conversations`` reconstruct existing traced conversations, use sources of type ``traces``, and
+        do not support ``sample_level``. The ``generate_test_case_rubric`` flag is supported for both
+        trace and conversation jobs and requires a nonempty ``model_options.model`` when true. The
+        conversation-only ``generate_test_case_description`` flag also requires a nonempty
+        ``model_options.model`` when true. For conversation jobs, model options must be omitted when
+        neither flag is enabled. Create, get, and list responses preserve ``type: conversations``. The
+        response includes the effective generation settings.
 
         :param job: The data generation job inputs to create. Required.
         :type job: IO[bytes]
@@ -10683,7 +11576,18 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
     ) -> LROPoller[_models.DataGenerationJobResult]:
         """Create a data generation job.
 
-        Submits a new data generation job for asynchronous execution.
+        Submits a new data generation job for asynchronous execution. Requests with ``type`` set to
+        ``conversations``, or ``traces`` with ``generate_test_case_rubric`` set to true, require
+        ``Foundry-Features: DataGenerationJobs=V1Preview``; the service rejects these requests without
+        this opt-in. Ordinary turn-level trace requests without rubric generation do not require the
+        header. Conversation samples require ``scenario`` to be ``evaluation``. Jobs with ``type:
+        conversations`` reconstruct existing traced conversations, use sources of type ``traces``, and
+        do not support ``sample_level``. The ``generate_test_case_rubric`` flag is supported for both
+        trace and conversation jobs and requires a nonempty ``model_options.model`` when true. The
+        conversation-only ``generate_test_case_description`` flag also requires a nonempty
+        ``model_options.model`` when true. For conversation jobs, model options must be omitted when
+        neither flag is enabled. Create, get, and list responses preserve ``type: conversations``. The
+        response includes the effective generation settings.
 
         :param job: The data generation job inputs to create. Is one of the following types:
          DataGenerationJobInputs, JSON, IO[bytes] Required.
@@ -10875,6 +11779,1481 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+
+class AgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`agent_insight_monitors` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        agent_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.AgentInsightMonitorListItem"]:
+        """List Agent Insights monitors, optionally filtered by agent name.
+
+        :keyword before: A cursor that identifies the first item in the next page. Default value is
+         None.
+        :paramtype before: str
+        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword agent_name: Filter monitors by agent name. Default value is None.
+        :paramtype agent_name: str
+        :return: An iterator like instance of AgentInsightMonitorListItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentInsightMonitorListItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentInsightMonitorListItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_insight_monitors_list_request(
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                agent_name=agent_name,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentInsightMonitorListItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def create(
+        self,
+        *,
+        agent_name: str,
+        model_deployment_name: str,
+        content_type: str = "application/json",
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+        priorities: Optional[_models.AgentInsightPriorities] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :keyword agent_name: The agent this monitor should analyze. Required.
+        :paramtype agent_name: str
+        :keyword model_deployment_name: The model deployment to use for analyzing traces. Accepts
+         either the deployment name alone or with the connection name as
+         '{connectionName}/modelDeploymentName'. Required.
+        :paramtype model_deployment_name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword enabled: Whether scheduled insight generation should be armed. Defaults to false.
+         Default value is None.
+        :paramtype enabled: bool
+        :keyword run_interval_hours: Interval between scheduled insight runs, in hours. Defaults to 6.
+         Default value is None.
+        :paramtype run_interval_hours: float
+        :keyword priorities: Analysis priorities for the monitor. Default value is None.
+        :paramtype priorities: ~azure.ai.projects.models.AgentInsightPriorities
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        agent_name: str = _Unset,
+        model_deployment_name: str = _Unset,
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+        priorities: Optional[_models.AgentInsightPriorities] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword agent_name: The agent this monitor should analyze. Required.
+        :paramtype agent_name: str
+        :keyword model_deployment_name: The model deployment to use for analyzing traces. Accepts
+         either the deployment name alone or with the connection name as
+         '{connectionName}/modelDeploymentName'. Required.
+        :paramtype model_deployment_name: str
+        :keyword enabled: Whether scheduled insight generation should be armed. Defaults to false.
+         Default value is None.
+        :paramtype enabled: bool
+        :keyword run_interval_hours: Interval between scheduled insight runs, in hours. Defaults to 6.
+         Default value is None.
+        :paramtype run_interval_hours: float
+        :keyword priorities: Analysis priorities for the monitor. Default value is None.
+        :paramtype priorities: ~azure.ai.projects.models.AgentInsightPriorities
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if agent_name is _Unset:
+                raise TypeError("missing required argument: agent_name")
+            if model_deployment_name is _Unset:
+                raise TypeError("missing required argument: model_deployment_name")
+            body = {
+                "agent_name": agent_name,
+                "enabled": enabled,
+                "model_deployment_name": model_deployment_name,
+                "priorities": priorities,
+                "run_interval_hours": run_interval_hours,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_insight_monitors_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get(self, monitor_id: str, **kwargs: Any) -> _models.AgentInsightMonitor:
+        """Get an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_get_request(
+            monitor_id=monitor_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete(self, monitor_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete an Agent Insights monitor and all of its runs, insights, and state.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_delete_request(
+            monitor_id=monitor_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    def update(
+        self,
+        monitor_id: str,
+        *,
+        content_type: str = "application/merge-patch+json",
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+        model_deployment_name: Optional[str] = None,
+        priorities: Optional[_models.AgentInsightPriorities] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword enabled: Whether scheduled insight generation is armed for the monitor. Default value
+         is None.
+        :paramtype enabled: bool
+        :keyword run_interval_hours: Interval between scheduled insight runs, in hours. Default value
+         is None.
+        :paramtype run_interval_hours: float
+        :keyword model_deployment_name: The model deployment to use for analyzing traces. Accepts
+         either the deployment name alone or with the connection name as
+         '{connectionName}/modelDeploymentName'. Default value is None.
+        :paramtype model_deployment_name: str
+        :keyword priorities: Replaces all priorities. Omit to preserve them; null clears them. Default
+         value is None.
+        :paramtype priorities: ~azure.ai.projects.models.AgentInsightPriorities
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, monitor_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, monitor_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(
+        self,
+        monitor_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+        model_deployment_name: Optional[str] = None,
+        priorities: Optional[_models.AgentInsightPriorities] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword enabled: Whether scheduled insight generation is armed for the monitor. Default value
+         is None.
+        :paramtype enabled: bool
+        :keyword run_interval_hours: Interval between scheduled insight runs, in hours. Default value
+         is None.
+        :paramtype run_interval_hours: float
+        :keyword model_deployment_name: The model deployment to use for analyzing traces. Accepts
+         either the deployment name alone or with the connection name as
+         '{connectionName}/modelDeploymentName'. Default value is None.
+        :paramtype model_deployment_name: str
+        :keyword priorities: Replaces all priorities. Omit to preserve them; null clears them. Default
+         value is None.
+        :paramtype priorities: ~azure.ai.projects.models.AgentInsightPriorities
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {
+                "enabled": enabled,
+                "model_deployment_name": model_deployment_name,
+                "priorities": priorities,
+                "run_interval_hours": run_interval_hours,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_insight_monitors_update_request(
+            monitor_id=monitor_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def reset(self, monitor_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Reset an Agent Insights monitor's generated summary, checkpoint, and active insight state.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_reset_request(
+            monitor_id=monitor_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    def _create_run_initial(
+        self,
+        monitor_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        operation_id: Optional[str] = None,
+        lookback_hours: Optional[float] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"lookback_hours": lookback_hours}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_insight_monitors_create_run_request(
+            monitor_id=monitor_id,
+            operation_id=operation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_run(
+        self,
+        monitor_id: str,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        lookback_hours: Optional[float] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword lookback_hours: Optional finite positive number of hours of trace history to analyze,
+         up to 2,160. Defaults to 168. Default value is None.
+        :paramtype lookback_hours: float
+        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_run(
+        self,
+        monitor_id: str,
+        body: JSON,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_run(
+        self,
+        monitor_id: str,
+        body: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create_run(
+        self,
+        monitor_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        operation_id: Optional[str] = None,
+        lookback_hours: Optional[float] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword lookback_hours: Optional finite positive number of hours of trace history to analyze,
+         up to 2,160. Defaults to 168. Default value is None.
+        :paramtype lookback_hours: float
+        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsightRunResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_run_initial(
+                monitor_id=monitor_id,
+                body=body,
+                operation_id=operation_id,
+                lookback_hours=lookback_hours,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.AgentInsightRunResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.AgentInsightRunResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.AgentInsightRunResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def list_runs(
+        self,
+        monitor_id: str,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        status: Optional[Union[str, _models.JobStatus]] = None,
+        trigger: Optional[Union[str, _models.AgentInsightRunTrigger]] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.AgentInsightRun"]:
+        """List Agent Insights runs for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword before: A cursor that identifies the first item in the next page. Default value is
+         None.
+        :paramtype before: str
+        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword status: Filter runs by status. Known values are: "queued", "in_progress", "succeeded",
+         "failed", "cancelled", and "skipped". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.JobStatus
+        :keyword trigger: Filter runs by trigger. Known values are: "on_demand" and "scheduled".
+         Default value is None.
+        :paramtype trigger: str or ~azure.ai.projects.models.AgentInsightRunTrigger
+        :return: An iterator like instance of AgentInsightRun
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentInsightRun]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentInsightRun]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_insight_monitors_list_runs_request(
+                monitor_id=monitor_id,
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                status=status,
+                trigger=trigger,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentInsightRun],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
+        """Get an Agent Insights run.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run_id: The identifier of the run. Required.
+        :type run_id: str
+        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_get_run_request(
+            monitor_id=monitor_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def cancel_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
+        """Cancel an Agent Insights run.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run_id: The identifier of the run. Required.
+        :type run_id: str
+        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_cancel_run_request(
+            monitor_id=monitor_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_insights(
+        self,
+        monitor_id: str,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        categories: Optional[List[str]] = None,
+        severities: Optional[List[Union[str, _models.AgentInsightSeverity]]] = None,
+        statuses: Optional[List[Union[str, _models.AgentInsightStatus]]] = None,
+        include_details: Optional[bool] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.AgentInsight"]:
+        """List current insights for a monitor. Filter types combine with AND; values within each list
+        combine with OR.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword before: A cursor that identifies the first item in the next page. Default value is
+         None.
+        :paramtype before: str
+        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword categories: Match any listed category. Commas separate identifiers; identifiers
+         containing commas cannot be filtered individually. Default value is None.
+        :paramtype categories: list[str]
+        :keyword severities: Match any listed severity. Default value is None.
+        :paramtype severities: list[str or ~azure.ai.projects.models.AgentInsightSeverity]
+        :keyword statuses: Match any listed status. Default value is None.
+        :paramtype statuses: list[str or ~azure.ai.projects.models.AgentInsightStatus]
+        :keyword include_details: Whether to include expanded insight details such as evidence and run
+         links in the response. Defaults to false. Default value is None.
+        :paramtype include_details: bool
+        :return: An iterator like instance of AgentInsight
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentInsight]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentInsight]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_insight_monitors_list_insights_request(
+                monitor_id=monitor_id,
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                categories=categories,
+                severities=severities,
+                statuses=statuses,
+                include_details=include_details,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentInsight],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_insight(
+        self, monitor_id: str, insight_id: str, *, include_details: Optional[bool] = None, **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Get a full insight for an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :keyword include_details: Whether to include expanded insight details such as evidence and run
+         links in the response. Defaults to false. Default value is None.
+        :paramtype include_details: bool
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
+
+        _request = build_agent_insight_monitors_get_insight_request(
+            monitor_id=monitor_id,
+            insight_id=insight_id,
+            include_details=include_details,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        *,
+        content_type: str = "application/merge-patch+json",
+        status: Optional[Union[str, _models.AgentInsightStatus]] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword status: The lifecycle status to apply to the insight. Known values are: "active",
+         "resolved", and "ignored". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.AgentInsightStatus
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        status: Optional[Union[str, _models.AgentInsightStatus]] = None,
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword status: The lifecycle status to apply to the insight. Known values are: "active",
+         "resolved", and "ignored". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.AgentInsightStatus
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"status": status}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_insight_monitors_update_insight_request(
+            monitor_id=monitor_id,
+            insight_id=insight_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class ConnectionsOperations:  # pylint: disable=docstring-missing-param
@@ -13892,1468 +16271,12 @@ class BetaVoiceAgentsOperations:  # pylint: disable=docstring-missing-param
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-        self.conversations = BetaVoiceAgentsConversationsOperations(
+        self.live_conversations = BetaVoiceAgentsLiveConversationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.telephony = BetaVoiceAgentsTelephonyOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-
-
-class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`agents` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def create_from_prompt(self, body: "_unions.GenerateAgentRequest", **kwargs: Any) -> _models.AgentDetails:
-        """Generate an agent.
-
-        Generates and creates an agent from kind-specific high-level inputs. The generated definition
-        remains fully editable through the standard agent versioning operations.
-
-        :param body: The kind-specific inputs for generating and creating an agent. Is one of the
-         following types: GenerateVoiceAgentRequest Required.
-        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
-
-        _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agents_create_from_prompt_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`agent_insight_monitors` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        before: Optional[str] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        agent_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.AgentInsightMonitorListItem"]:
-        """List Agent Insights monitors, optionally filtered by agent name.
-
-        :keyword before: A cursor that identifies the first item in the next page. Default value is
-         None.
-        :paramtype before: str
-        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
-         and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword agent_name: Filter monitors by agent name. Default value is None.
-        :paramtype agent_name: str
-        :return: An iterator like instance of AgentInsightMonitorListItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentInsightMonitorListItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentInsightMonitorListItem]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_insight_monitors_list_request(
-                after=_continuation_token,
-                before=before,
-                limit=limit,
-                order=order,
-                agent_name=agent_name,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentInsightMonitorListItem],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @overload
-    def create(
-        self, monitor: _models.AgentInsightMonitorCreate, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Create an Agent Insights monitor for an agent.
-
-        :param monitor: The monitor to create. Required.
-        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorCreate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, monitor: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Create an Agent Insights monitor for an agent.
-
-        :param monitor: The monitor to create. Required.
-        :type monitor: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, monitor: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Create an Agent Insights monitor for an agent.
-
-        :param monitor: The monitor to create. Required.
-        :type monitor: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create(
-        self, monitor: Union[_models.AgentInsightMonitorCreate, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Create an Agent Insights monitor for an agent.
-
-        :param monitor: The monitor to create. Is one of the following types:
-         AgentInsightMonitorCreate, JSON, IO[bytes] Required.
-        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorCreate or JSON or IO[bytes]
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(monitor, (IOBase, bytes)):
-            _content = monitor
-        else:
-            _content = json.dumps(monitor, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agent_insight_monitors_create_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get(self, monitor_id: str, **kwargs: Any) -> _models.AgentInsightMonitor:
-        """Get an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_get_request(
-            monitor_id=monitor_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete(self, monitor_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Delete an Agent Insights monitor and all of its runs, insights, and state.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_delete_request(
-            monitor_id=monitor_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    def update(
-        self,
-        monitor_id: str,
-        monitor: _models.AgentInsightMonitorUpdate,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Update an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param monitor: The monitor fields to update. Required.
-        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, monitor_id: str, monitor: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Update an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param monitor: The monitor fields to update. Required.
-        :type monitor: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, monitor_id: str, monitor: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Update an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param monitor: The monitor fields to update. Required.
-        :type monitor: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update(
-        self, monitor_id: str, monitor: Union[_models.AgentInsightMonitorUpdate, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.AgentInsightMonitor:
-        """Update an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param monitor: The monitor fields to update. Is one of the following types:
-         AgentInsightMonitorUpdate, JSON, IO[bytes] Required.
-        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorUpdate or JSON or IO[bytes]
-        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(monitor, (IOBase, bytes)):
-            _content = monitor
-        else:
-            _content = json.dumps(monitor, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agent_insight_monitors_update_request(
-            monitor_id=monitor_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def reset(self, monitor_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Reset an Agent Insights monitor's overview, checkpoint, and active insight state.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_reset_request(
-            monitor_id=monitor_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    def _create_run_initial(
-        self,
-        monitor_id: str,
-        run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(run, (IOBase, bytes)):
-            _content = run
-        else:
-            _content = json.dumps(run, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agent_insight_monitors_create_run_request(
-            monitor_id=monitor_id,
-            operation_id=operation_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_run(
-        self,
-        monitor_id: str,
-        run: _models.AgentInsightRunCreate,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.AgentInsightRunResult]:
-        """Start an Agent Insights run for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
-         Required.
-        :type run: ~azure.ai.projects.models.AgentInsightRunCreate
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_run(
-        self,
-        monitor_id: str,
-        run: JSON,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.AgentInsightRunResult]:
-        """Start an Agent Insights run for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
-         Required.
-        :type run: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_run(
-        self,
-        monitor_id: str,
-        run: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.AgentInsightRunResult]:
-        """Start an Agent Insights run for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
-         Required.
-        :type run: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_create_run(
-        self,
-        monitor_id: str,
-        run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> LROPoller[_models.AgentInsightRunResult]:
-        """Start an Agent Insights run for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window. Is
-         one of the following types: AgentInsightRunCreate, JSON, IO[bytes] Required.
-        :type run: ~azure.ai.projects.models.AgentInsightRunCreate or JSON or IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentInsightRunResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_run_initial(
-                monitor_id=monitor_id,
-                run=run,
-                operation_id=operation_id,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = _deserialize(_models.AgentInsightRunResult, response.json().get("result", {}))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.AgentInsightRunResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.AgentInsightRunResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    def list_runs(
-        self,
-        monitor_id: str,
-        *,
-        before: Optional[str] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        status: Optional[Union[str, _models.JobStatus]] = None,
-        trigger: Optional[Union[str, _models.AgentInsightRunTrigger]] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.AgentInsightRun"]:
-        """List Agent Insights runs for a monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :keyword before: A cursor that identifies the first item in the next page. Default value is
-         None.
-        :paramtype before: str
-        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
-         and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword status: Filter runs by status. Known values are: "queued", "in_progress", "succeeded",
-         "failed", and "cancelled". Default value is None.
-        :paramtype status: str or ~azure.ai.projects.models.JobStatus
-        :keyword trigger: Filter runs by trigger. Known values are: "on_demand" and "scheduled".
-         Default value is None.
-        :paramtype trigger: str or ~azure.ai.projects.models.AgentInsightRunTrigger
-        :return: An iterator like instance of AgentInsightRun
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentInsightRun]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentInsightRun]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_insight_monitors_list_runs_request(
-                monitor_id=monitor_id,
-                after=_continuation_token,
-                before=before,
-                limit=limit,
-                order=order,
-                status=status,
-                trigger=trigger,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentInsightRun],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def get_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
-        """Get an Agent Insights run.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run_id: The identifier of the run. Required.
-        :type run_id: str
-        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_get_run_request(
-            monitor_id=monitor_id,
-            run_id=run_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def cancel_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
-        """Cancel an Agent Insights run.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param run_id: The identifier of the run. Required.
-        :type run_id: str
-        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsightRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_cancel_run_request(
-            monitor_id=monitor_id,
-            run_id=run_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsightRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_insights(
-        self,
-        monitor_id: str,
-        *,
-        before: Optional[str] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        category: Optional[str] = None,
-        severity: Optional[Union[str, _models.AgentInsightSeverity]] = None,
-        status: Optional[Union[str, _models.AgentInsightStatus]] = None,
-        include_details: Optional[bool] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.AgentInsight"]:
-        """List current insights for an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :keyword before: A cursor that identifies the first item in the next page. Default value is
-         None.
-        :paramtype before: str
-        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
-         and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword category: Filter insights by category. Default value is None.
-        :paramtype category: str
-        :keyword severity: Filter insights by severity. Known values are: "high", "medium", and "low".
-         Default value is None.
-        :paramtype severity: str or ~azure.ai.projects.models.AgentInsightSeverity
-        :keyword status: Filter insights by lifecycle status. Known values are: "active", "resolved",
-         and "ignored". Default value is None.
-        :paramtype status: str or ~azure.ai.projects.models.AgentInsightStatus
-        :keyword include_details: Whether to include expanded insight details such as evidence and run
-         links in the response. Defaults to false. Default value is None.
-        :paramtype include_details: bool
-        :return: An iterator like instance of AgentInsight
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentInsight]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentInsight]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_insight_monitors_list_insights_request(
-                monitor_id=monitor_id,
-                after=_continuation_token,
-                before=before,
-                limit=limit,
-                order=order,
-                category=category,
-                severity=severity,
-                status=status,
-                include_details=include_details,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentInsight],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def get_insight(
-        self, monitor_id: str, insight_id: str, *, include_details: Optional[bool] = None, **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Get a full insight for an Agent Insights monitor.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :keyword include_details: Whether to include expanded insight details such as evidence and run
-         links in the response. Defaults to false. Default value is None.
-        :paramtype include_details: bool
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_insight_monitors_get_insight_request(
-            monitor_id=monitor_id,
-            insight_id=insight_id,
-            include_details=include_details,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsight, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update_insight(
-        self,
-        monitor_id: str,
-        insight_id: str,
-        update: _models.AgentInsightUpdate,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Update the lifecycle status of an insight.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :param update: The insight fields to update. Required.
-        :type update: ~azure.ai.projects.models.AgentInsightUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_insight(
-        self,
-        monitor_id: str,
-        insight_id: str,
-        update: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Update the lifecycle status of an insight.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :param update: The insight fields to update. Required.
-        :type update: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_insight(
-        self,
-        monitor_id: str,
-        insight_id: str,
-        update: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Update the lifecycle status of an insight.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :param update: The insight fields to update. Required.
-        :type update: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update_insight(
-        self,
-        monitor_id: str,
-        insight_id: str,
-        update: Union[_models.AgentInsightUpdate, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.AgentInsight:
-        """Update the lifecycle status of an insight.
-
-        :param monitor_id: The identifier of the monitor. Required.
-        :type monitor_id: str
-        :param insight_id: The identifier of the insight. Required.
-        :type insight_id: str
-        :param update: The insight fields to update. Is one of the following types: AgentInsightUpdate,
-         JSON, IO[bytes] Required.
-        :type update: ~azure.ai.projects.models.AgentInsightUpdate or JSON or IO[bytes]
-        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentInsight
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(update, (IOBase, bytes)):
-            _content = update
-        else:
-            _content = json.dumps(update, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agent_insight_monitors_update_insight_request(
-            monitor_id=monitor_id,
-            insight_id=insight_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentInsight, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-param
@@ -15878,6 +16801,129 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_diagnostics(
+        self,
+        name: str,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        evaluator_version: Optional[str] = None,
+        dimension_id: Optional[str] = None,
+        type: Optional[List[Union[str, _models.EvaluatorDiagnosticType]]] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.EvaluatorDiagnostic"]:
+        """List evaluator diagnostics.
+
+        Returns immutable publication lineage for the specified evaluator.
+
+        Time, evaluator-version, dimension, and type filters are intersected.
+        Returns recorded changes from completed evaluator version writes.
+        Historical backfill and diagnostic calculation jobs are not included.
+
+        :param name: The evaluator name. Required.
+        :type name: str
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :keyword limit: The maximum number of lineage entries to return, between 1 and 100. The default
+         is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort completed diagnostics by ``occurred_at``, then diagnostic identifier. The
+         default is ``desc``. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword start_time: Inclusive lower bound for the diagnostic occurrence time, expressed as
+         Unix seconds. Default value is None.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: Inclusive upper bound for the diagnostic occurrence time, expressed as Unix
+         seconds. Includes all entries occurring within that second. Default value is None.
+        :paramtype end_time: ~datetime.datetime
+        :keyword evaluator_version: Filter lineage diagnostics by the exact published evaluator
+         version. Default value is None.
+        :paramtype evaluator_version: str
+        :keyword dimension_id: Filter completed diagnostics for one public rubric dimension identifier.
+         Default value is None.
+        :paramtype dimension_id: str
+        :keyword type: Filter by one or more completed diagnostic types by repeating the query
+         parameter. Default value is None.
+        :paramtype type: list[str or ~azure.ai.projects.models.EvaluatorDiagnosticType]
+        :return: An iterator like instance of EvaluatorDiagnostic
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorDiagnostic]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluatorDiagnostic]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_evaluators_list_diagnostics_request(
+                name=name,
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                start_time=start_time,
+                end_time=end_time,
+                evaluator_version=evaluator_version,
+                dimension_id=dimension_id,
+                type=type,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EvaluatorDiagnostic],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def pending_upload(
@@ -22124,7 +23170,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missing-param
+class VoiceAgentsConversationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22192,7 +23238,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_voice_agents_conversations_list_request(
+            _request = build_voice_agents_conversations_list_request(
                 agent_name=agent_name,
                 limit=limit,
                 order=order,
@@ -22267,7 +23313,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[_models.VoiceConversation] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_get_request(
+        _request = build_voice_agents_conversations_get_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             api_version=self._config.api_version,
@@ -22340,7 +23386,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_delete_request(
+        _request = build_voice_agents_conversations_delete_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             api_version=self._config.api_version,
@@ -22425,7 +23471,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_voice_agents_conversations_list_responses_request(
+            _request = build_voice_agents_conversations_list_responses_request(
                 agent_name=agent_name,
                 conversation_id=conversation_id,
                 limit=limit,
@@ -22506,7 +23552,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[_models.VoiceResponse] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_get_response_request(
+        _request = build_voice_agents_conversations_get_response_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             response_id=response_id,
@@ -22608,7 +23654,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_voice_agents_conversations_list_response_items_request(
+            _request = build_voice_agents_conversations_list_response_items_request(
                 agent_name=agent_name,
                 conversation_id=conversation_id,
                 response_id=response_id,
@@ -22711,7 +23757,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_voice_agents_conversations_list_items_request(
+            _request = build_voice_agents_conversations_list_items_request(
                 agent_name=agent_name,
                 conversation_id=conversation_id,
                 limit=limit,
@@ -22795,7 +23841,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[_models.RealtimeConversationItem] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_get_item_request(
+        _request = build_voice_agents_conversations_get_item_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             item_id=item_id,
@@ -22876,7 +23922,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[_models.VoiceAudioItem] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_get_audio_item_request(
+        _request = build_voice_agents_conversations_get_audio_item_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             item_id=item_id,
@@ -22956,7 +24002,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_download_audio_item_request(
+        _request = build_voice_agents_conversations_download_audio_item_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             item_id=item_id,
@@ -23036,7 +24082,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[_models.VoiceGeneratedAudioItem] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_get_generated_audio_item_request(
+        _request = build_voice_agents_conversations_get_generated_audio_item_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             item_id=item_id,
@@ -23117,7 +24163,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_download_generated_audio_item_request(
+        _request = build_voice_agents_conversations_download_generated_audio_item_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             item_id=item_id,
@@ -23200,7 +24246,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[_models.VoiceRecording] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_get_audio_request(
+        _request = build_voice_agents_conversations_get_audio_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             api_version=self._config.api_version,
@@ -23280,7 +24326,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_conversations_download_audio_request(
+        _request = build_voice_agents_conversations_download_audio_request(
             agent_name=agent_name,
             conversation_id=conversation_id,
             api_version=self._config.api_version,
@@ -23324,7 +24370,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         return deserialized  # type: ignore
 
 
-class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-param
+class VoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23345,19 +24391,20 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     def create_binding(
         self,
         agent_name: str,
-        telephony_binding: _models.CreateTelephonyBindingRequest,
+        binding: _models.TelephonyBinding,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
         """Create an agent telephony binding.
 
-        Creates a telephony binding for the voice agent named in the path.
+        Creates a telephony binding for the voice agent named in the path. Creating a SIP binding
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the binding. Required.
         :type agent_name: str
-        :param telephony_binding: The provider-specific binding to create. Required.
-        :type telephony_binding: ~azure.ai.projects.models.CreateTelephonyBindingRequest
+        :param binding: The provider-specific binding to create. Required.
+        :type binding: ~azure.ai.projects.models.TelephonyBinding
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23368,16 +24415,17 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @overload
     def create_binding(
-        self, agent_name: str, telephony_binding: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, agent_name: str, binding: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TelephonyBinding:
         """Create an agent telephony binding.
 
-        Creates a telephony binding for the voice agent named in the path.
+        Creates a telephony binding for the voice agent named in the path. Creating a SIP binding
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the binding. Required.
         :type agent_name: str
-        :param telephony_binding: The provider-specific binding to create. Required.
-        :type telephony_binding: JSON
+        :param binding: The provider-specific binding to create. Required.
+        :type binding: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23388,16 +24436,17 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @overload
     def create_binding(
-        self, agent_name: str, telephony_binding: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, agent_name: str, binding: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TelephonyBinding:
         """Create an agent telephony binding.
 
-        Creates a telephony binding for the voice agent named in the path.
+        Creates a telephony binding for the voice agent named in the path. Creating a SIP binding
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the binding. Required.
         :type agent_name: str
-        :param telephony_binding: The provider-specific binding to create. Required.
-        :type telephony_binding: IO[bytes]
+        :param binding: The provider-specific binding to create. Required.
+        :type binding: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23408,21 +24457,18 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace
     def create_binding(
-        self,
-        agent_name: str,
-        telephony_binding: Union[_models.CreateTelephonyBindingRequest, JSON, IO[bytes]],
-        **kwargs: Any
+        self, agent_name: str, binding: Union[_models.TelephonyBinding, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TelephonyBinding:
         """Create an agent telephony binding.
 
-        Creates a telephony binding for the voice agent named in the path.
+        Creates a telephony binding for the voice agent named in the path. Creating a SIP binding
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the binding. Required.
         :type agent_name: str
-        :param telephony_binding: The provider-specific binding to create. Is one of the following
-         types: CreateTelephonyBindingRequest, JSON, IO[bytes] Required.
-        :type telephony_binding: ~azure.ai.projects.models.CreateTelephonyBindingRequest or JSON or
-         IO[bytes]
+        :param binding: The provider-specific binding to create. Is one of the following types:
+         TelephonyBinding, JSON, IO[bytes] Required.
+        :type binding: ~azure.ai.projects.models.TelephonyBinding or JSON or IO[bytes]
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23443,12 +24489,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(telephony_binding, (IOBase, bytes)):
-            _content = telephony_binding
+        if isinstance(binding, (IOBase, bytes)):
+            _content = binding
         else:
-            _content = json.dumps(telephony_binding, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(binding, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_voice_agents_telephony_create_binding_request(
+        _request = build_voice_agents_telephony_create_binding_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -23501,7 +24547,6 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         agent_name: str,
         *,
         provider: Optional[Union[str, _models.TelephonyProvider]] = None,
-        status: Optional[Union[str, _models.TelephonyBindingStatus]] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
@@ -23513,12 +24558,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose bindings are listed. Required.
         :type agent_name: str
-        :keyword provider: Filters bindings by provider. Known values are: "teams_phone_extensibility"
-         and "twilio". Default value is None.
+        :keyword provider: Filters bindings by provider. Known values are: "teams_phone_extensibility",
+         "twilio", and "sip". Default value is None.
         :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
-        :keyword status: Filters bindings by lifecycle status. Known values are: "active" and
-         "suspended". Default value is None.
-        :paramtype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
          default is 20. Default value is None.
@@ -23552,10 +24594,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_voice_agents_telephony_list_bindings_request(
+            _request = build_voice_agents_telephony_list_bindings_request(
                 agent_name=agent_name,
                 provider=provider,
-                status=status,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -23628,7 +24669,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[_models.TelephonyBinding] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_telephony_get_binding_request(
+        _request = build_voice_agents_telephony_get_binding_request(
             agent_name=agent_name,
             binding_id=binding_id,
             api_version=self._config.api_version,
@@ -23688,7 +24729,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyBinding:
         """Update an agent telephony binding.
 
-        Updates a telephony binding owned by the voice agent named in the path.
+        Updates a telephony binding owned by the voice agent named in the path. Updating a SIP binding
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the binding. Required.
         :type agent_name: str
@@ -23722,7 +24764,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyBinding:
         """Update an agent telephony binding.
 
-        Updates a telephony binding owned by the voice agent named in the path.
+        Updates a telephony binding owned by the voice agent named in the path. Updating a SIP binding
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the binding. Required.
         :type agent_name: str
@@ -23756,7 +24799,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyBinding:
         """Update an agent telephony binding.
 
-        Updates a telephony binding owned by the voice agent named in the path.
+        Updates a telephony binding owned by the voice agent named in the path. Updating a SIP binding
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the binding. Required.
         :type agent_name: str
@@ -23789,7 +24833,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyBinding:
         """Update an agent telephony binding.
 
-        Updates a telephony binding owned by the voice agent named in the path.
+        Updates a telephony binding owned by the voice agent named in the path. Updating a SIP binding
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the binding. Required.
         :type agent_name: str
@@ -23833,7 +24878,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_voice_agents_telephony_update_binding_request(
+        _request = build_voice_agents_telephony_update_binding_request(
             agent_name=agent_name,
             binding_id=binding_id,
             etag=etag,
@@ -23889,7 +24934,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> None:
         """Delete an agent telephony binding.
 
-        Deletes a telephony binding owned by the voice agent named in the path.
+        Deletes a telephony binding owned by the voice agent named in the path. Deleting a SIP binding
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the binding. Required.
         :type agent_name: str
@@ -23922,7 +24968,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_telephony_delete_binding_request(
+        _request = build_voice_agents_telephony_delete_binding_request(
             agent_name=agent_name,
             binding_id=binding_id,
             etag=etag,
@@ -23974,8 +25020,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose calls are listed. Required.
         :type agent_name: str
-        :keyword provider: Filters calls by provider. Known values are: "teams_phone_extensibility" and
-         "twilio". Default value is None.
+        :keyword provider: Filters calls by provider. Known values are: "teams_phone_extensibility",
+         "twilio", and "sip". Default value is None.
         :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
         :keyword status: Filters calls by lifecycle status. Known values are: "in_progress", "success",
          and "failed". Default value is None.
@@ -24019,7 +25065,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_voice_agents_telephony_list_calls_request(
+            _request = build_voice_agents_telephony_list_calls_request(
                 agent_name=agent_name,
                 provider=provider,
                 status=status,
@@ -24097,7 +25143,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[_models.TelephonyCallRecord] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_telephony_get_call_request(
+        _request = build_voice_agents_telephony_get_call_request(
             agent_name=agent_name,
             call_id=call_id,
             api_version=self._config.api_version,
@@ -24147,6 +25193,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         """Transfer an active agent telephony call.
 
         Transfers an active inbound call to a configured target for the voice agent named in the path.
+        Transferring a SIP call requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the active call. Required.
         :type agent_name: str
@@ -24169,6 +25216,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         """Transfer an active agent telephony call.
 
         Transfers an active inbound call to a configured target for the voice agent named in the path.
+        Transferring a SIP call requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the active call. Required.
         :type agent_name: str
@@ -24191,6 +25239,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         """Transfer an active agent telephony call.
 
         Transfers an active inbound call to a configured target for the voice agent named in the path.
+        Transferring a SIP call requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the active call. Required.
         :type agent_name: str
@@ -24219,6 +25268,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         """Transfer an active agent telephony call.
 
         Transfers an active inbound call to a configured target for the voice agent named in the path.
+        Transferring a SIP call requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the active call. Required.
         :type agent_name: str
@@ -24258,7 +25308,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_voice_agents_telephony_transfer_call_request(
+        _request = build_voice_agents_telephony_transfer_call_request(
             agent_name=agent_name,
             call_id=call_id,
             content_type=content_type,
@@ -24307,7 +25357,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     def end_call(self, agent_name: str, call_id: str, **kwargs: Any) -> _models.TelephonyCallRecord:
         """End an active agent telephony call.
 
-        Ends an active inbound call owned by the voice agent named in the path.
+        Ends an active inbound call owned by the voice agent named in the path. Ending a SIP call
+        requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that owns the active call. Required.
         :type agent_name: str
@@ -24330,7 +25381,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[_models.TelephonyCallRecord] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_telephony_end_call_request(
+        _request = build_voice_agents_telephony_end_call_request(
             agent_name=agent_name,
             call_id=call_id,
             api_version=self._config.api_version,
@@ -24399,7 +25450,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[_models.TelephonyTransferTargets] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_telephony_get_transfer_targets_request(
+        _request = build_voice_agents_telephony_get_transfer_targets_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -24457,7 +25508,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyTransferTargets:
         """Replace agent telephony transfer targets.
 
-        Replaces all transfer targets configured for the voice agent named in the path.
+        Replaces all transfer targets configured for the voice agent named in the path. Configuring a
+        SIP destination requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
         :type agent_name: str
@@ -24490,7 +25542,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyTransferTargets:
         """Replace agent telephony transfer targets.
 
-        Replaces all transfer targets configured for the voice agent named in the path.
+        Replaces all transfer targets configured for the voice agent named in the path. Configuring a
+        SIP destination requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
         :type agent_name: str
@@ -24522,7 +25575,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyTransferTargets:
         """Replace agent telephony transfer targets.
 
-        Replaces all transfer targets configured for the voice agent named in the path.
+        Replaces all transfer targets configured for the voice agent named in the path. Configuring a
+        SIP destination requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
         :type agent_name: str
@@ -24554,7 +25608,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyTransferTargets:
         """Replace agent telephony transfer targets.
 
-        Replaces all transfer targets configured for the voice agent named in the path.
+        Replaces all transfer targets configured for the voice agent named in the path. Configuring a
+        SIP destination requires the ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
         :type agent_name: str
@@ -24604,7 +25659,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_voice_agents_telephony_replace_transfer_targets_request(
+        _request = build_voice_agents_telephony_replace_transfer_targets_request(
             agent_name=agent_name,
             etag=etag,
             match_condition=match_condition,
@@ -24657,7 +25712,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     def create_call_job(
         self,
         agent_name: str,
-        body: _models.CreateTelephonyCallJobRequest,
+        job: _models.TelephonyCallJobCreate,
         *,
         idempotency_key: str,
         content_type: str = "application/json",
@@ -24665,15 +25720,41 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyCallJob:
         """Create an outbound telephony call job.
 
-        Creates one durable direct outbound call job. The latest agent definition is resolved when each
-        attempt executes.
+        Creates one durable outbound CallJob. Each attempt pins the Agent endpoint's execution version
+        for validation and its voice session. A call job over a ``SipOutbound`` connection requires the
+        ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that executes the call. Required.
         :type agent_name: str
-        :param body: The direct outbound call to create. Required.
-        :type body: ~azure.ai.projects.models.CreateTelephonyCallJobRequest
-        :keyword idempotency_key: A customer-generated idempotency key. Reusing it with an equivalent
-         request returns the same call job. Required.
+        :param job: The direct outbound call to create. Required.
+        :type job: ~azure.ai.projects.models.TelephonyCallJobCreate
+        :keyword idempotency_key: Customer retry key. Equivalent requests return the same job; retained
+         keys for deleted jobs return 409 call_job_deleted, never redial. Required.
+        :paramtype idempotency_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_call_job(
+        self, agent_name: str, job: JSON, *, idempotency_key: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyCallJob:
+        """Create an outbound telephony call job.
+
+        Creates one durable outbound CallJob. Each attempt pins the Agent endpoint's execution version
+        for validation and its voice session. A call job over a ``SipOutbound`` connection requires the
+        ``VoiceAgents=V1Preview`` opt-in.
+
+        :param agent_name: The name of the voice agent that executes the call. Required.
+        :type agent_name: str
+        :param job: The direct outbound call to create. Required.
+        :type job: JSON
+        :keyword idempotency_key: Customer retry key. Equivalent requests return the same job; retained
+         keys for deleted jobs return 409 call_job_deleted, never redial. Required.
         :paramtype idempotency_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -24687,7 +25768,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     def create_call_job(
         self,
         agent_name: str,
-        body: JSON,
+        job: IO[bytes],
         *,
         idempotency_key: str,
         content_type: str = "application/json",
@@ -24695,45 +25776,16 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyCallJob:
         """Create an outbound telephony call job.
 
-        Creates one durable direct outbound call job. The latest agent definition is resolved when each
-        attempt executes.
+        Creates one durable outbound CallJob. Each attempt pins the Agent endpoint's execution version
+        for validation and its voice session. A call job over a ``SipOutbound`` connection requires the
+        ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that executes the call. Required.
         :type agent_name: str
-        :param body: The direct outbound call to create. Required.
-        :type body: JSON
-        :keyword idempotency_key: A customer-generated idempotency key. Reusing it with an equivalent
-         request returns the same call job. Required.
-        :paramtype idempotency_key: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCallJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_call_job(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        idempotency_key: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.TelephonyCallJob:
-        """Create an outbound telephony call job.
-
-        Creates one durable direct outbound call job. The latest agent definition is resolved when each
-        attempt executes.
-
-        :param agent_name: The name of the voice agent that executes the call. Required.
-        :type agent_name: str
-        :param body: The direct outbound call to create. Required.
-        :type body: IO[bytes]
-        :keyword idempotency_key: A customer-generated idempotency key. Reusing it with an equivalent
-         request returns the same call job. Required.
+        :param job: The direct outbound call to create. Required.
+        :type job: IO[bytes]
+        :keyword idempotency_key: Customer retry key. Equivalent requests return the same job; retained
+         keys for deleted jobs return 409 call_job_deleted, never redial. Required.
         :paramtype idempotency_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -24747,23 +25799,24 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     def create_call_job(
         self,
         agent_name: str,
-        body: Union[_models.CreateTelephonyCallJobRequest, JSON, IO[bytes]],
+        job: Union[_models.TelephonyCallJobCreate, JSON, IO[bytes]],
         *,
         idempotency_key: str,
         **kwargs: Any
     ) -> _models.TelephonyCallJob:
         """Create an outbound telephony call job.
 
-        Creates one durable direct outbound call job. The latest agent definition is resolved when each
-        attempt executes.
+        Creates one durable outbound CallJob. Each attempt pins the Agent endpoint's execution version
+        for validation and its voice session. A call job over a ``SipOutbound`` connection requires the
+        ``VoiceAgents=V1Preview`` opt-in.
 
         :param agent_name: The name of the voice agent that executes the call. Required.
         :type agent_name: str
-        :param body: The direct outbound call to create. Is one of the following types:
-         CreateTelephonyCallJobRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.CreateTelephonyCallJobRequest or JSON or IO[bytes]
-        :keyword idempotency_key: A customer-generated idempotency key. Reusing it with an equivalent
-         request returns the same call job. Required.
+        :param job: The direct outbound call to create. Is one of the following types:
+         TelephonyCallJobCreate, JSON, IO[bytes] Required.
+        :type job: ~azure.ai.projects.models.TelephonyCallJobCreate or JSON or IO[bytes]
+        :keyword idempotency_key: Customer retry key. Equivalent requests return the same job; retained
+         keys for deleted jobs return 409 call_job_deleted, never redial. Required.
         :paramtype idempotency_key: str
         :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallJob
@@ -24785,12 +25838,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(job, (IOBase, bytes)):
+            _content = job
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_voice_agents_telephony_create_call_job_request(
+        _request = build_voice_agents_telephony_create_call_job_request(
             agent_name=agent_name,
             idempotency_key=idempotency_key,
             content_type=content_type,
@@ -24841,14 +25894,186 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         return deserialized  # type: ignore
 
     @distributed_trace
+    def list_call_jobs(
+        self,
+        agent_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        status: Optional[Union[str, _models.TelephonyCallJobStatus]] = None,
+        campaign_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.TelephonyCallJob"]:
+        """List outbound telephony call jobs.
+
+        Lists current direct/Campaign jobs, excluding deleted or superseded rounds. Pages are live.
+        Campaign cursors survive boundary deletion/cancel, not replacement/name reuse (400
+        invalid_cursor).
+
+        :param agent_name: The owning voice agent. Authorization is applied before pagination.
+         Required.
+        :type agent_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :keyword status: Optional lifecycle filter. Known values are: "accepted",
+         "waiting_for_schedule", "queued", "dispatching", "in_progress", "waiting_for_retry",
+         "cancellation_requested", "completed", "blocked", "expired", "failed", and "cancelled". Default
+         value is None.
+        :paramtype status: str or ~azure.ai.projects.models.TelephonyCallJobStatus
+        :keyword campaign_name: Current Campaign round: 404 if absent, empty while deleting. Omit for
+         direct and Campaign jobs. Replacement/name reuse invalidates cursors. Default value is None.
+        :paramtype campaign_name: str
+        :return: An iterator like instance of TelephonyCallJob
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.TelephonyCallJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TelephonyCallJob]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_voice_agents_telephony_list_call_jobs_request(
+                agent_name=agent_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                status=status,
+                campaign_name=campaign_name,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TelephonyCallJob],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def delete_call_job(  # pylint: disable=inconsistent-return-statements
+        self, agent_name: str, call_job_id: str, **kwargs: Any
+    ) -> None:
+        """Delete an outbound telephony call job.
+
+        Deletes a terminal, reconciled job (otherwise 409), without cancelling calls or removing
+        Campaign outcomes/call history. Later GET returns 404; repeated DELETE returns 204. Deleting a
+        SIP call job requires the ``VoiceAgents=V1Preview`` opt-in.
+
+        :param agent_name: The owning voice agent. Required.
+        :type agent_name: str
+        :param call_job_id: The call-job identifier. Required.
+        :type call_job_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_voice_agents_telephony_delete_call_job_request(
+            agent_name=agent_name,
+            call_job_id=call_job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
     def get_call_job(self, agent_name: str, call_job_id: str, **kwargs: Any) -> _models.TelephonyCallJob:
         """Get an outbound telephony call job.
 
         Retrieves a durable direct or campaign-created outbound call job.
 
-        :param agent_name: Required.
+        :param agent_name: The name of the voice agent that owns the call job. Required.
         :type agent_name: str
-        :param call_job_id: Required.
+        :param call_job_id: The service-generated identifier of the call job to retrieve. Required.
         :type call_job_id: str
         :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallJob
@@ -24867,7 +26092,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[_models.TelephonyCallJob] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_telephony_get_call_job_request(
+        _request = build_voice_agents_telephony_get_call_job_request(
             agent_name=agent_name,
             call_job_id=call_job_id,
             api_version=self._config.api_version,
@@ -24919,11 +26144,13 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
     ) -> _models.TelephonyCallJob:
         """Cancel an outbound telephony call job.
 
-        Requests cancellation of a durable outbound call job. A connected call is allowed to finish.
+        Cancels future attempts using If-Match; completion may be asynchronous. New cancellation after
+        connection returns 409 and lets the active call finish. Cancelling a SIP call job requires the
+        ``VoiceAgents=V1Preview`` opt-in.
 
-        :param agent_name: Required.
+        :param agent_name: The name of the voice agent that owns the call job. Required.
         :type agent_name: str
-        :param call_job_id: Required.
+        :param call_job_id: The service-generated identifier of the call job to cancel. Required.
         :type call_job_id: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
@@ -24952,7 +26179,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         cls: ClsType[_models.TelephonyCallJob] = kwargs.pop("cls", None)
 
-        _request = build_beta_voice_agents_telephony_cancel_call_job_request(
+        _request = build_voice_agents_telephony_cancel_call_job_request(
             agent_name=agent_name,
             call_job_id=call_job_id,
             etag=etag,
@@ -25002,6 +26229,1771 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TelephonyCallJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BetaVoiceAgentsLiveConversationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`live_conversations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self,
+        agent_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.VoiceAgentLiveConversation"]:
+        """List Live voice agent conversations.
+
+        Lists stored Live conversations for this agent, including sessions stored via an override.
+
+        :param agent_name: The name of the Live voice agent. Required.
+        :type agent_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceAgentLiveConversation
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.VoiceAgentLiveConversation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceAgentLiveConversation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_voice_agents_live_conversations_list_request(
+                agent_name=agent_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceAgentLiveConversation],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get(self, agent_name: str, conversation_id: str, **kwargs: Any) -> _models.VoiceAgentLiveConversation:
+        """Get a Live voice agent conversation.
+
+        Gets a stored Live conversation; fetch items separately. Returns 404 if absent or not stored.
+
+        :param agent_name: The name of the Live voice agent. Required.
+        :type agent_name: str
+        :param conversation_id: The Foundry conversation ID returned in
+         session.started.conversation_id. Required.
+        :type conversation_id: str
+        :return: VoiceAgentLiveConversation. The VoiceAgentLiveConversation is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceAgentLiveConversation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceAgentLiveConversation] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_live_conversations_get_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceAgentLiveConversation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> None:
+        """Delete a Live voice agent conversation.
+
+        Deletes the stored conversation and its items/audio, without closing the Live session.
+
+        :param agent_name: The name of the Live voice agent. Required.
+        :type agent_name: str
+        :param conversation_id: The Foundry conversation ID returned in
+         session.started.conversation_id. Required.
+        :type conversation_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_live_conversations_delete_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_items(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.VoiceAgentLiveConversationItem"]:
+        """List items in a Live voice agent conversation.
+
+        Lists stored speech and delegation items in order; cursors use item IDs. Returns 404 if the
+        conversation is absent or not stored.
+
+        :param agent_name: The name of the Live voice agent. Required.
+        :type agent_name: str
+        :param conversation_id: The Foundry conversation ID returned in
+         session.started.conversation_id. Required.
+        :type conversation_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceAgentLiveConversationItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.VoiceAgentLiveConversationItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceAgentLiveConversationItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_voice_agents_live_conversations_list_items_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceAgentLiveConversationItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_item(
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.VoiceAgentLiveConversationItem:
+        """Get a Live voice agent conversation item.
+
+        Gets a stored item by ID. Returns 404 if the item or conversation is absent.
+
+        :param agent_name: The name of the Live voice agent. Required.
+        :type agent_name: str
+        :param conversation_id: The Foundry conversation ID returned in
+         session.started.conversation_id. Required.
+        :type conversation_id: str
+        :param item_id: The id returned on the persisted item. Required.
+        :type item_id: str
+        :return: VoiceAgentLiveConversationItem. The VoiceAgentLiveConversationItem is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceAgentLiveConversationItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceAgentLiveConversationItem] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_live_conversations_get_item_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceAgentLiveConversationItem, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_audio_item(
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.VoiceAudioItem:
+        """Get a Live conversation item's audio metadata.
+
+        Gets captured speech-audio metadata. BYOS uses unsigned blob_uri. Returns 404 for missing
+        audio, conversations not stored, or delegation items.
+
+        :param agent_name: The name of the Live voice agent. Required.
+        :type agent_name: str
+        :param conversation_id: The Foundry conversation ID returned in
+         session.started.conversation_id. Required.
+        :type conversation_id: str
+        :param item_id: The id returned on the persisted item. Required.
+        :type item_id: str
+        :return: VoiceAudioItem. The VoiceAudioItem is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceAudioItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceAudioItem] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_live_conversations_get_audio_item_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceAudioItem, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def download_audio_item(
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Stream a Live conversation item's audio.
+
+        Streams captured speech as WAV. BYOS returns 409; use blob_uri. Returns 404 for missing audio,
+        conversations not stored, or delegation items.
+
+        :param agent_name: The name of the Live voice agent. Required.
+        :type agent_name: str
+        :param conversation_id: The Foundry conversation ID returned in
+         session.started.conversation_id. Required.
+        :type conversation_id: str
+        :param item_id: The id returned on the persisted item. Required.
+        :type item_id: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_live_conversations_download_audio_item_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_audio(self, agent_name: str, conversation_id: str, **kwargs: Any) -> _models.VoiceRecording:
+        """Get a Live conversation's merged recording metadata.
+
+        Gets merged stereo recording metadata (user left, assistant right). BYOS uses unsigned
+        blob_uri. Returns 404 for no audio, or 409 recording_not_ready/recording_unavailable for
+        pending/failed finalization; pending responses may include Retry-After.
+
+        :param agent_name: The name of the Live voice agent. Required.
+        :type agent_name: str
+        :param conversation_id: The Foundry conversation ID returned in
+         session.started.conversation_id. Required.
+        :type conversation_id: str
+        :return: VoiceRecording. The VoiceRecording is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceRecording
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceRecording] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_live_conversations_get_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceRecording, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def download_audio(self, agent_name: str, conversation_id: str, **kwargs: Any) -> Iterator[bytes]:
+        """Stream a Live conversation's merged recording.
+
+        Streams the merged stereo WAV. BYOS returns 409; use blob_uri. Returns 404 for no audio, or 409
+        recording_not_ready/recording_unavailable for pending/failed finalization.
+
+        :param agent_name: The name of the Live voice agent. Required.
+        :type agent_name: str
+        :param conversation_id: The Foundry conversation ID returned in
+         session.started.conversation_id. Required.
+        :type conversation_id: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_live_conversations_download_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`telephony` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    def _create_initial(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        campaign: Union[_models.TelephonyCampaign, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(campaign, (IOBase, bytes)):
+            _content = campaign
+        else:
+            _content = json.dumps(campaign, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_voice_agents_telephony_create_request(
+            agent_name=agent_name,
+            campaign_name=campaign_name,
+            operation_id=operation_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        campaign: _models.TelephonyCampaign,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.TelephonyCampaign]:
+        """Create or replace a failed telephony campaign.
+
+        Creates a Campaign or fully replaces failed preparation; no PATCH. All recipients must validate
+        and have CallJobs before dialing. Immediate calls may begin before the preparation poller
+        returns.
+
+        :param agent_name: Owning Agent; never overridden in recipient inputs. Required.
+        :type agent_name: str
+        :param campaign_name: Name chosen by the caller; only a failed Campaign permits full
+         replacement. Required.
+        :type campaign_name: str
+        :param campaign: Complete connection, source, recipients/Dataset, schedule and retry
+         configuration. Omitted optional fields reset to defaults; Agent/name and response-only fields
+         cannot change. Required.
+        :type campaign: ~azure.ai.projects.models.TelephonyCampaign
+        :keyword operation_id: Retry key: matching submitted inputs and original If-Match replay the
+         saved monitor before current-state checks. Conflicting reuse returns 409 operation_id_conflict;
+         retained creation keys after deletion return 409 campaign_deleted. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns TelephonyCampaign. The TelephonyCampaign is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.TelephonyCampaign]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        campaign: JSON,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.TelephonyCampaign]:
+        """Create or replace a failed telephony campaign.
+
+        Creates a Campaign or fully replaces failed preparation; no PATCH. All recipients must validate
+        and have CallJobs before dialing. Immediate calls may begin before the preparation poller
+        returns.
+
+        :param agent_name: Owning Agent; never overridden in recipient inputs. Required.
+        :type agent_name: str
+        :param campaign_name: Name chosen by the caller; only a failed Campaign permits full
+         replacement. Required.
+        :type campaign_name: str
+        :param campaign: Complete connection, source, recipients/Dataset, schedule and retry
+         configuration. Omitted optional fields reset to defaults; Agent/name and response-only fields
+         cannot change. Required.
+        :type campaign: JSON
+        :keyword operation_id: Retry key: matching submitted inputs and original If-Match replay the
+         saved monitor before current-state checks. Conflicting reuse returns 409 operation_id_conflict;
+         retained creation keys after deletion return 409 campaign_deleted. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns TelephonyCampaign. The TelephonyCampaign is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.TelephonyCampaign]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        campaign: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.TelephonyCampaign]:
+        """Create or replace a failed telephony campaign.
+
+        Creates a Campaign or fully replaces failed preparation; no PATCH. All recipients must validate
+        and have CallJobs before dialing. Immediate calls may begin before the preparation poller
+        returns.
+
+        :param agent_name: Owning Agent; never overridden in recipient inputs. Required.
+        :type agent_name: str
+        :param campaign_name: Name chosen by the caller; only a failed Campaign permits full
+         replacement. Required.
+        :type campaign_name: str
+        :param campaign: Complete connection, source, recipients/Dataset, schedule and retry
+         configuration. Omitted optional fields reset to defaults; Agent/name and response-only fields
+         cannot change. Required.
+        :type campaign: IO[bytes]
+        :keyword operation_id: Retry key: matching submitted inputs and original If-Match replay the
+         saved monitor before current-state checks. Conflicting reuse returns 409 operation_id_conflict;
+         retained creation keys after deletion return 409 campaign_deleted. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns TelephonyCampaign. The TelephonyCampaign is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.TelephonyCampaign]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        campaign: Union[_models.TelephonyCampaign, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.TelephonyCampaign]:
+        """Create or replace a failed telephony campaign.
+
+        Creates a Campaign or fully replaces failed preparation; no PATCH. All recipients must validate
+        and have CallJobs before dialing. Immediate calls may begin before the preparation poller
+        returns.
+
+        :param agent_name: Owning Agent; never overridden in recipient inputs. Required.
+        :type agent_name: str
+        :param campaign_name: Name chosen by the caller; only a failed Campaign permits full
+         replacement. Required.
+        :type campaign_name: str
+        :param campaign: Complete connection, source, recipients/Dataset, schedule and retry
+         configuration. Omitted optional fields reset to defaults; Agent/name and response-only fields
+         cannot change. Is one of the following types: TelephonyCampaign, JSON, IO[bytes] Required.
+        :type campaign: ~azure.ai.projects.models.TelephonyCampaign or JSON or IO[bytes]
+        :keyword operation_id: Retry key: matching submitted inputs and original If-Match replay the
+         saved monitor before current-state checks. Conflicting reuse returns 409 operation_id_conflict;
+         retained creation keys after deletion return 409 campaign_deleted. Default value is None.
+        :paramtype operation_id: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns TelephonyCampaign. The TelephonyCampaign is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.TelephonyCampaign]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_initial(
+                agent_name=agent_name,
+                campaign_name=campaign_name,
+                campaign=campaign,
+                operation_id=operation_id,
+                etag=etag,
+                match_condition=match_condition,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TelephonyCampaign].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TelephonyCampaign](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def get(
+        self, agent_name: str, campaign_name: str, *, operation_id: Optional[str] = None, **kwargs: Any
+    ) -> _models.TelephonyCampaign:
+        """Get a telephony campaign.
+
+        Gets Campaign configuration and execution state without inline recipients. Absent or deleted
+        Campaigns return 404.
+
+        :param agent_name: Owning Agent; never overridden in recipient inputs. Required.
+        :type agent_name: str
+        :param campaign_name: Immutable Campaign name. Required.
+        :type campaign_name: str
+        :keyword operation_id: Original response's Operation-Id guards its instance/round and survives
+         same-round actions. Replacement/name reuse: 409 campaign_operation_mismatch;
+         missing/expired/wrong-scope operation: 404. Default value is None.
+        :paramtype operation_id: str
+        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaign
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_telephony_get_request(
+            agent_name=agent_name,
+            campaign_name=campaign_name,
+            operation_id=operation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self,
+        agent_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        status: Optional[Union[str, _models.TelephonyCampaignStatus]] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.TelephonyCampaign"]:
+        """List telephony campaigns.
+
+        Lists the Agent's Campaigns without inline recipients. Filters are live views, not snapshots.
+
+        :param agent_name: Owning Agent; never overridden in recipient inputs. Required.
+        :type agent_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: Opaque first_id for backward paging with unchanged scope/filters/order;
+         exclusive with after. Default value is None.
+        :paramtype before: str
+        :keyword status: Filter by Campaign business state. Known values are: "validating", "running",
+         "cancelling", "completed", "failed", "cancelled", and "deleting". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.TelephonyCampaignStatus
+        :return: An iterator like instance of TelephonyCampaign
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.TelephonyCampaign]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TelephonyCampaign]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_voice_agents_telephony_list_request(
+                agent_name=agent_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                status=status,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TelephonyCampaign],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    def _cancel_initial(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_telephony_cancel_request(
+            agent_name=agent_name,
+            campaign_name=campaign_name,
+            etag=etag,
+            match_condition=match_condition,
+            operation_id=operation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_cancel(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.TelephonyCampaign]:
+        """Cancel a telephony campaign.
+
+        Cancels a validating or running Campaign using If-Match. Stops new calls and retries; connected
+        calls finish naturally. Returns 202 with an operation monitor to track completion.
+
+        :param agent_name: Owning Agent; never overridden in recipient inputs. Required.
+        :type agent_name: str
+        :param campaign_name: Campaign name. Required.
+        :type campaign_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword operation_id: Optional retry key, generated if omitted. Original If-Match/key replays
+         202 even after deletion/name reuse, never touching a replacement; conflicts return 409. Failed
+         cancellation needs a fresh key/current token. Default value is None.
+        :paramtype operation_id: str
+        :return: An instance of LROPoller that returns TelephonyCampaign. The TelephonyCampaign is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.TelephonyCampaign]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._cancel_initial(
+                agent_name=agent_name,
+                campaign_name=campaign_name,
+                etag=etag,
+                match_condition=match_condition,
+                operation_id=operation_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TelephonyCampaign].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TelephonyCampaign](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    def _delete_initial(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_telephony_delete_request(
+            agent_name=agent_name,
+            campaign_name=campaign_name,
+            etag=etag,
+            match_condition=match_condition,
+            operation_id=operation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_delete(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete a telephony campaign.
+
+        Deletes a terminal Campaign and its recipient/task data asynchronously. Returns bodyless 202
+        with a monitor, not a tombstone; completion makes GET return 404 and lists omit it. Dataset,
+        connections, Agent, independent jobs and call history are preserved.
+
+        :param agent_name: Owning Agent; never overridden in recipient inputs. Required.
+        :type agent_name: str
+        :param campaign_name: Immutable Campaign name. Required.
+        :type campaign_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword operation_id: Optional retry key. Original If-Match/key replays 202 even after
+         deletion/name reuse, never touching a new instance; conflicts return 409. Failed cleanup needs
+         a fresh key/current token. Default value is None.
+        :paramtype operation_id: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                agent_name=agent_name,
+                campaign_name=campaign_name,
+                etag=etag,
+                match_condition=match_condition,
+                operation_id=operation_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def list_validation_errors(
+        self,
+        agent_name: str,
+        campaign_name: str,
+        *,
+        limit: Optional[int] = None,
+        before: Optional[str] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.TelephonyCampaignValidationError"]:
+        """List campaign validation errors.
+
+        Lists current-round row validation errors. Results may be partial during preparation; an empty
+        page does not establish success. Execution errors are in CallJobs; non-row failures are in
+        Campaign.error.
+
+        :param agent_name: Owning Agent; never overridden in recipient inputs. Required.
+        :type agent_name: str
+        :param campaign_name: Campaign name. Deleting returns 409 campaign_deleting; absent/deleted
+         returns 404. Required.
+        :type campaign_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword before: Opaque first_id for backward paging with unchanged scope/filters/order;
+         exclusive with after. Default value is None.
+        :paramtype before: str
+        :keyword order: Sort invalid rows by their original row_number. Known values are: "asc" and
+         "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :return: An iterator like instance of TelephonyCampaignValidationError
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.projects.models.TelephonyCampaignValidationError]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TelephonyCampaignValidationError]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_voice_agents_telephony_list_validation_errors_request(
+                agent_name=agent_name,
+                campaign_name=campaign_name,
+                limit=limit,
+                after=_continuation_token,
+                before=before,
+                order=order,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TelephonyCampaignValidationError],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_operation(
+        self, agent_name: str, campaign_name: str, operation_id: str, **kwargs: Any
+    ) -> _models.TelephonyCampaignOperation:
+        """Get a campaign operation.
+
+        Gets the initiating operation's status. PUT/cancel pollers finish with a guarded Campaign GET;
+        deletion completes without a resource result.
+
+        :param agent_name: Owning Agent. Required.
+        :type agent_name: str
+        :param campaign_name: Immutable Campaign name. Required.
+        :type campaign_name: str
+        :param operation_id: Operation-Id from the initiating response. Saved project/Agent
+         authorization still applies after resource deletion. Required.
+        :type operation_id: str
+        :return: TelephonyCampaignOperation. The TelephonyCampaignOperation is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaignOperation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCampaignOperation] = kwargs.pop("cls", None)
+
+        _request = build_beta_voice_agents_telephony_get_operation_request(
+            agent_name=agent_name,
+            campaign_name=campaign_name,
+            operation_id=operation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCampaignOperation, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
