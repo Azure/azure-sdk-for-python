@@ -88,15 +88,30 @@ def _block_list_entries(body):
 
 
 def _mixed_state_block_list():
+    # States are interleaved on purpose: the service builds the blob in element order,
+    # so each block must stay in its original position.
     return [
-        BlobBlock(block_id="a", state=BlockState.COMMITTED),
         BlobBlock(block_id="b", state=BlockState.UNCOMMITTED),
+        BlobBlock(block_id="a", state=BlockState.COMMITTED),
         BlobBlock(block_id="c", state=BlockState.LATEST),
         BlobBlock(block_id="d"),
+        "e",
+        BlobBlock(block_id="f", state=BlockState.COMMITTED),
+        BlobBlock(block_id="g", state=BlockState.COMMITTED),
+        BlobBlock(block_id="h", state=BlockState.UNCOMMITTED),
     ]
 
 
-EXPECTED_MIXED_STATE_ENTRIES = [("Committed", "a"), ("Uncommitted", "b"), ("Latest", "c"), ("Latest", "d")]
+EXPECTED_MIXED_STATE_ENTRIES = [
+    ("Uncommitted", "b"),
+    ("Committed", "a"),
+    ("Latest", "c"),
+    ("Latest", "d"),
+    ("Latest", "e"),
+    ("Committed", "f"),
+    ("Committed", "g"),
+    ("Uncommitted", "h"),
+]
 
 
 class _RecordingBlockBlobService:
@@ -2232,8 +2247,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
 
     def test_commit_block_list_sends_each_block_under_its_state(self):
-        # Each BlobBlock must be sent in the Put Block List element matching its state;
-        # the service treats Committed/Uncommitted/Latest differently.
+        # Each block must be sent in the Put Block List element matching its state
+        # (Committed/Uncommitted/Latest), in the order given.
         blob = BlobClient("https://example.blob.core.windows.net", "container", "blob")
 
         with pytest.raises(_CapturedBlockList) as captured:

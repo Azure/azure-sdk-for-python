@@ -2339,8 +2339,8 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
 
     def test_commit_block_list_sends_each_block_under_its_state(self):
-        # Each BlobBlock must be sent in the Put Block List element matching its state;
-        # the service treats Committed/Uncommitted/Latest differently.
+        # Each block must be sent in the Put Block List element matching its state
+        # (Committed/Uncommitted/Latest), in the order given.
         async def run():
             async with BlobClient("https://example.blob.core.windows.net", "container", "blob") as blob:
                 await blob.commit_block_list(_mixed_state_block_list(), raw_request_hook=_capture_block_list)
