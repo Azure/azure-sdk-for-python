@@ -2,9 +2,9 @@
 
 ## 1.18.13 (Unreleased)
 
-### Bugs Fixed
+### Other Changes
 
-- When a judge model returns output that an evaluator cannot use, the SDK logs a WARNING with the cause and the response's finish reason, output token count and model name, for example `Cause: the model response was not valid JSON, possibly because it was truncated at the output token limit (finish_reason=length, output_tokens=800, model=gpt-4o).`, and appends the same text to the message of the error it already raises, such as `Evaluator returned invalid output.`, `Invalid score value: ...` or `Cannot find '...' in response [...]`. The model's output is never logged or included. Error types, categories, blame, scores and results are unchanged.
+- Added WARNING-level diagnostics when a judge model returns output an evaluator cannot use. The logs and existing error messages include the cause, finish reason, output token count and model name; model output is never logged.
 
 ## 1.18.12 (2026-11-09)
 
