@@ -1,11 +1,12 @@
-import pytest
-
+from types import SimpleNamespace
 from unittest.mock import patch
 from tempfile import TemporaryDirectory
-from ci_tools.functions import resolve_compatible_package, is_package_compatible
-from typing import Optional, List
-from packaging.version import Version
+
+import pytest
 from packaging.requirements import Requirement
+from packaging.version import Version
+
+from ci_tools.functions import handle_incompatible_minimum_dev_reqs, is_package_compatible
 
 
 @pytest.mark.parametrize(
@@ -20,18 +21,82 @@ def test_incompatible_specifier(fake_package_input_requirements, immutable_requi
     assert result == expected_result
 
 
-def test_identity_resolution():
-    result = resolve_compatible_package(
-        "azure-identity",
-        [Requirement("azure-core>=1.28.0"), Requirement("isodate>=0.6.1"), Requirement("typing-extensions>=4.0.1")],
+@pytest.fixture
+def incompatible_local_package():
+    return SimpleNamespace(
+        name="azure-identity",
+        version="1.26.0",
+        requires=["azure-core>=1.31.0"],
     )
-    assert result == "azure-identity==1.16.0"
 
 
-def test_resolution_no_requirement():
-    result = resolve_compatible_package(
-        "azure-identity",
-        [Requirement("azure-core")],
+def test_compatible_relative_requirement_stays_relative():
+    local_package = SimpleNamespace(name="azure-identity", version="1.26.0", requires=["azure-core>=1.30.0"])
+    with patch("ci_tools.functions.ParsedSetup.from_path", return_value=local_package):
+        result = handle_incompatible_minimum_dev_reqs(
+            "/repo/package",
+            ["../identity/azure-identity\n"],
+            [Requirement("azure-core==1.30.0")],
+        )
+
+    assert result == ["../identity/azure-identity"]
+
+
+def test_incompatible_relative_requirement_uses_configured_index(incompatible_local_package):
+    with patch("ci_tools.functions.ParsedSetup.from_path", return_value=incompatible_local_package), patch(
+        "ci_tools.functions.PyPIClient.get_ordered_versions",
+        return_value=[Version("1.17.1")],
+    ) as get_versions:
+        result = handle_incompatible_minimum_dev_reqs(
+            "/repo/package",
+            ["../identity/azure-identity\n"],
+            [Requirement("azure-core==1.30.0")],
+        )
+
+    assert result == ["azure-identity"]
+    get_versions.assert_called_once_with("azure-identity", True)
+
+
+def test_incompatible_unpublished_relative_requirement_stays_relative(incompatible_local_package):
+    with patch("ci_tools.functions.ParsedSetup.from_path", return_value=incompatible_local_package), patch(
+        "ci_tools.functions.PyPIClient.get_ordered_versions",
+        return_value=[],
+    ):
+        result = handle_incompatible_minimum_dev_reqs(
+            "/repo/package",
+            ["../identity/azure-identity\n"],
+            [Requirement("azure-core==1.30.0")],
+        )
+
+    assert result == ["../identity/azure-identity"]
+
+
+def test_incompatible_local_wheel_uses_configured_index(tmp_path):
+    wheel_path = tmp_path / "azure_identity-1.26.0-py3-none-any.whl"
+    wheel_path.touch()
+    metadata = SimpleNamespace(
+        name="azure-identity",
+        version="1.26.0",
+        requires_dist=["azure-core>=1.31.0"],
     )
-    assert result is not None
-    assert result.startswith("azure-identity==1.")
+    with patch("pkginfo.get_metadata", return_value=metadata), patch(
+        "ci_tools.functions.PyPIClient.get_ordered_versions",
+        return_value=[Version("1.17.1")],
+    ):
+        result = handle_incompatible_minimum_dev_reqs(
+            "/repo/package",
+            [str(wheel_path)],
+            [Requirement("azure-core==1.30.0")],
+        )
+
+    assert result == ["azure-identity"]
+
+
+def test_standard_requirement_is_unchanged():
+    result = handle_incompatible_minimum_dev_reqs(
+        "/repo/package",
+        ["pytest>=8\n"],
+        [Requirement("azure-core==1.30.0")],
+    )
+
+    assert result == ["pytest>=8\n"]
