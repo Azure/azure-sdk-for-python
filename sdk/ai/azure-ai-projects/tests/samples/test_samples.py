@@ -256,6 +256,12 @@ class TestSamples(AzureRecordedTestCase):
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     # To run this test: pytest tests/samples/test_samples.py::TestSamples::test_datasets_samples[sample_dataset_generation_job_simpleqna_with_prompt_source] -s
     def test_datasets_samples(self, sample_path: str, **kwargs) -> None:
+        if os.path.basename(sample_path) in {
+            "sample_dataset_generation_job_simulation_seed_for_evaluation.py",
+            "sample_datasets_download.py",
+        }:
+            pytest.skip("Skip temporarily till re-recorded")
+
         # Preserve Location for the final GET; existing URL rules still redact resource identifiers.
         # https://github.com/Azure/azure-sdk-tools/blob/b295229441fc28aec2964891655180b622283ed0/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L124
         remove_batch_sanitizers(["AZSDK2003"], headers={"x-recording-id": get_recording_id()})
