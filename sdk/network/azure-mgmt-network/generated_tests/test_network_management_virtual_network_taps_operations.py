@@ -25,7 +25,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
         response = self.client.virtual_network_taps.get(
             resource_group_name=resource_group.name,
             tap_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5560,7 +5559,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5573,7 +5571,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             tap_name="str",
             tap_parameters={"tags": {"str": "str"}},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5585,7 +5582,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
         response = self.client.virtual_network_taps.begin_delete(
             resource_group_name=resource_group.name,
             tap_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5596,7 +5592,6 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
     def test_virtual_network_taps_list_by_resource_group(self, resource_group):
         response = self.client.virtual_network_taps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5605,9 +5600,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_virtual_network_taps_list_all(self, resource_group):
-        response = self.client.virtual_network_taps.list_all(
-            api_version="2026-03-01",
-        )
+        response = self.client.virtual_network_taps.list_all()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

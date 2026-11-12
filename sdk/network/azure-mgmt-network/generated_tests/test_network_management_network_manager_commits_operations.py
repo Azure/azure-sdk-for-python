@@ -30,7 +30,6 @@ class TestNetworkManagementNetworkManagerCommitsOperations(AzureMgmtRecordedTest
                 "commitId": "str",
                 "configurationIds": ["str"],
             },
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

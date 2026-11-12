@@ -24,7 +24,6 @@ class TestNetworkManagementInterconnectGroupsOperations(AzureMgmtRecordedTestCas
         response = self.client.interconnect_groups.get(
             resource_group_name=resource_group.name,
             interconnect_group_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +62,6 @@ class TestNetworkManagementInterconnectGroupsOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +74,6 @@ class TestNetworkManagementInterconnectGroupsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             interconnect_group_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -88,7 +85,6 @@ class TestNetworkManagementInterconnectGroupsOperations(AzureMgmtRecordedTestCas
         response = self.client.interconnect_groups.delete(
             resource_group_name=resource_group.name,
             interconnect_group_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +95,6 @@ class TestNetworkManagementInterconnectGroupsOperations(AzureMgmtRecordedTestCas
     def test_interconnect_groups_list(self, resource_group):
         response = self.client.interconnect_groups.list(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -108,9 +103,7 @@ class TestNetworkManagementInterconnectGroupsOperations(AzureMgmtRecordedTestCas
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_interconnect_groups_list_all(self, resource_group):
-        response = self.client.interconnect_groups.list_all(
-            api_version="2026-03-01",
-        )
+        response = self.client.interconnect_groups.list_all()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
@@ -121,7 +114,6 @@ class TestNetworkManagementInterconnectGroupsOperations(AzureMgmtRecordedTestCas
         response = self.client.interconnect_groups.begin_get_node_availability(
             resource_group_name=resource_group.name,
             interconnect_group_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -23,7 +23,6 @@ class TestNetworkManagementWebCategoriesOperations(AzureMgmtRecordedTestCase):
     def test_web_categories_get(self, resource_group):
         response = self.client.web_categories.get(
             name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -32,9 +31,7 @@ class TestNetworkManagementWebCategoriesOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_web_categories_list_by_subscription(self, resource_group):
-        response = self.client.web_categories.list_by_subscription(
-            api_version="2026-03-01",
-        )
+        response = self.client.web_categories.list_by_subscription()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

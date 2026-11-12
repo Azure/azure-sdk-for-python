@@ -26,7 +26,6 @@ class TestNetworkManagementReachabilityAnalysisRunsOperations(AzureMgmtRecordedT
             network_manager_name="str",
             workspace_name="str",
             reachability_analysis_run_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +71,6 @@ class TestNetworkManagementReachabilityAnalysisRunsOperations(AzureMgmtRecordedT
                 },
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +84,6 @@ class TestNetworkManagementReachabilityAnalysisRunsOperations(AzureMgmtRecordedT
             network_manager_name="str",
             workspace_name="str",
             reachability_analysis_run_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -99,7 +96,6 @@ class TestNetworkManagementReachabilityAnalysisRunsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             network_manager_name="str",
             workspace_name="str",
-            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

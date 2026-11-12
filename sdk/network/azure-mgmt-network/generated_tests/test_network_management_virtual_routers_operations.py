@@ -24,7 +24,6 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_routers.get(
             resource_group_name=resource_group.name,
             virtual_router_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +51,6 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -64,7 +62,6 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_routers.begin_delete(
             resource_group_name=resource_group.name,
             virtual_router_name="str",
-            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -75,7 +72,6 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
     def test_virtual_routers_list_by_resource_group(self, resource_group):
         response = self.client.virtual_routers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -84,9 +80,7 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_virtual_routers_list(self, resource_group):
-        response = self.client.virtual_routers.list(
-            api_version="2026-03-01",
-        )
+        response = self.client.virtual_routers.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
