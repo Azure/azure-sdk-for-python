@@ -61,6 +61,7 @@ class TestValidationConstants:
         assert ContentType.TOOL_RESULT == "tool_result"
         assert ContentType.FUNCTION_CALL == "function_call"
         assert ContentType.MCP_APPROVAL_REQUEST == "mcp_approval_request"
+        assert ContentType.REASONING == "reasoning"
 
 
 @pytest.mark.unittest
@@ -149,6 +150,22 @@ class TestConversationValidator:
         validator = ConversationValidator(error_target=TARGET)
         assistant = {"role": "assistant", "content": [_tool_call_content_item()]}
         eval_input = {"query": [_user_message()], "response": [assistant]}
+        assert validator.validate_eval_input(eval_input) is True
+
+    def test_assistant_message_with_reasoning_items(self):
+        # Reasoning models add a reasoning item before text and tool calls (GitHub issue #49957).
+        validator = ConversationValidator(error_target=TARGET)
+        reasoning = {"type": "reasoning", "content": ""}
+        response = [
+            {"role": "assistant", "content": [reasoning, _tool_call_content_item()]},
+            {"role": "assistant", "content": [reasoning, {"type": "output_text", "text": "Done."}]},
+        ]
+        assert validator.validate_eval_input({"query": [_user_message()], "response": response}) is True
+
+    def test_tool_calls_validator_accepts_response_with_reasoning_items(self):
+        validator = ToolCallsValidator(error_target=TARGET)
+        assistant = {"role": "assistant", "content": [{"type": "reasoning", "content": ""}, _tool_call_content_item()]}
+        eval_input = {"query": [_user_message()], "response": [assistant], "tool_definitions": [_tool_definition()]}
         assert validator.validate_eval_input(eval_input) is True
 
     def test_assistant_tool_call_missing_name_raises(self):

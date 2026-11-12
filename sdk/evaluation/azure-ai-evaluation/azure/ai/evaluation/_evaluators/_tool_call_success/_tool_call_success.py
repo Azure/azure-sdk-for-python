@@ -44,6 +44,8 @@ _TOOL_STEP_LABEL = re.compile(
     re.IGNORECASE | re.MULTILINE,
 )
 _APPROVAL_TYPES = frozenset({"mcp_approval_request", "mcp_approval_response"})
+# Content items that hold no text and no tool activity for the judge, so the text-only check skips them.
+_SKIPPED_TYPES = _APPROVAL_TYPES | {"reasoning"}
 
 
 @experimental
@@ -349,7 +351,8 @@ def _is_one_of(value: Any, names: frozenset) -> bool:
 
 
 def _texts_of_text_messages(messages) -> Optional[List[Tuple[str, str]]]:
-    """Return the role and text of each text in a list of text messages and MCP approvals, or None for any other value.
+    """Return the role and text of each text in a list of text messages, MCP approvals and reasoning items, or None
+    for any other value.
 
     A tool_calls, function_call or tool_call_id field that holds nothing, such as the None that OpenAI's model_dump()
     writes, counts as absent. A list in any other format may hold tool activity this evaluator does not parse, so the
@@ -368,11 +371,11 @@ def _texts_of_text_messages(messages) -> Optional[List[Tuple[str, str]]]:
             items = [
                 item
                 for item in content
-                if not (isinstance(item, dict) and _is_one_of(item.get("type"), _APPROVAL_TYPES))
+                if not (isinstance(item, dict) and _is_one_of(item.get("type"), _SKIPPED_TYPES))
             ]
             if content and not items:
-                # Only MCP approval requests or responses, which are not tool calls; a response names its request
-                # in tool_call_id.
+                # Only MCP approval requests or responses, which are not tool calls (a response names its request
+                # in tool_call_id), or reasoning items.
                 continue
         role = message.get("role")
         if not _is_one_of(role, _CONVERSATION_ROLES) or not _holds_nothing(message.get("tool_call_id")):
@@ -393,7 +396,8 @@ def _texts_of_text_messages(messages) -> Optional[List[Tuple[str, str]]]:
 
 
 def _has_no_tool_calls(messages) -> bool:
-    """Return True only for a list of text messages and MCP approvals that holds no tool calls, results or traces.
+    """Return True only for a list of text messages, MCP approvals and reasoning items with no tool calls, results
+    or traces.
 
     Text that looks like a tool transcript, such as ReAct steps or <tool_call> tags, counts as tool activity.
     """

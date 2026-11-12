@@ -32,3 +32,4 @@ class ContentType(str, Enum):
     MCP_APPROVAL_RESPONSE = "mcp_approval_response"
     OPENAPI_CALL = "openapi_call"
     OPENAPI_CALL_OUTPUT = "openapi_call_output"
+    REASONING = "reasoning"

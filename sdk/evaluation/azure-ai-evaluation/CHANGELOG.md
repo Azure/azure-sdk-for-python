@@ -1,5 +1,11 @@
 # Release History
 
+## 1.18.13 (Unreleased)
+
+### Bugs Fixed
+
+- The agent evaluators (`ToolCallAccuracyEvaluator`, `IntentResolutionEvaluator`, `TaskAdherenceEvaluator`, `_ToolSelectionEvaluator`, `_ToolInputAccuracyEvaluator` and `_ToolCallSuccessEvaluator`) accept assistant messages that contain `reasoning` content items, which agents on reasoning models produce. Input validation rejected them with `Invalid content type 'reasoning' for message with role 'assistant'`, so those rows got no score. The items are ignored, as they hold no text or tool calls for the judge model. `_ToolCallSuccessEvaluator` also reports a response whose only other items are text as not applicable, as it does without reasoning items. Fixes [#49957](https://github.com/Azure/azure-sdk-for-python/issues/49957).
+
 ## 1.18.12 (2026-11-09)
 
 ### Bugs Fixed
