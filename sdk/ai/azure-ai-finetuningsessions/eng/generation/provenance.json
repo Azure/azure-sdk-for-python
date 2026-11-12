@@ -7,8 +7,8 @@
   "typespec": {
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
-    "base_commit": "d657de65909de4994f4e793417ff8e22810c7015",
-    "commit": "bde72325c4501c3a4391d1dff575c7c1006ef729",
+    "base_commit": "bde72325c4501c3a4391d1dff575c7c1006ef729",
+    "commit": "4da3917bc28806e89c2c5fcda6d8fe48aeefa1d7",
     "requires_uncommitted_working_tree": false,
     "source_fingerprint_sha256": "72bbcbe3cca6a545f97e6eaab97e7b6768ab60dbb414199a81113176da2a4e27",
     "client_sha256": "fbc21c429e6449399d54809cfe6d8d4788bdae945082044501a00cac2a72764f",
@@ -82,6 +82,7 @@
     "source_archive_excludes_private_audit_material": true,
     "strict_typespec_compilation_passed": true,
     "typespec_format_check_passed": true,
+    "shared_entrypoint_format_semantic_tokens_unchanged": 3650,
     "typespec_validation_mcp_passed": true,
     "rest_wire_contracts_unchanged": true,
     "live_service_tested": false,
