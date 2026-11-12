@@ -51,7 +51,7 @@ from azure.ai.projects.models import (
     AgentOptimizationTargetCompletionInlineDataSource,
     AgentOptimizationTargetCompletionTestCase,
     EvaluationModelConfiguration,
-    AgentOptimizationJobStatus,
+    JobStatus,
 )
 
 load_dotenv()
@@ -64,10 +64,10 @@ eval_model = os.environ["EVAL_MODEL"]
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
 TERMINAL_STATUSES = {
-    AgentOptimizationJobStatus.SUCCEEDED,
-    AgentOptimizationJobStatus.FAILED,
-    AgentOptimizationJobStatus.CANCELLED,
-    AgentOptimizationJobStatus.SKIPPED,
+    JobStatus.SUCCEEDED,
+    JobStatus.FAILED,
+    JobStatus.CANCELLED,
+    JobStatus.SKIPPED,
 }
 
 with (
@@ -136,12 +136,12 @@ with (
         for warning in job.warnings:
             print(f"[WARNING] {warning}")
 
-    if job.status == AgentOptimizationJobStatus.FAILED:
+    if job.status == JobStatus.FAILED:
         message = job.error.message if job.error else "<no error message>"
         raise RuntimeError(f"Optimization job `{job.id}` failed: {message}")
-    if job.status == AgentOptimizationJobStatus.CANCELLED:
+    if job.status == JobStatus.CANCELLED:
         raise RuntimeError(f"Optimization job `{job.id}` was cancelled.")
-    if job.status == AgentOptimizationJobStatus.SKIPPED:
+    if job.status == JobStatus.SKIPPED:
         raise RuntimeError(f"Optimization job `{job.id}` was skipped; no optimization result is available.")
 
     # ------------------------------------------------------------------
