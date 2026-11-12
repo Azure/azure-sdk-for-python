@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+import json
+
 import pytest
 from azure.ai.agentserver.core._platform_headers import (
     ERROR_DETAIL,
@@ -243,6 +245,34 @@ class TestFoundryErrorTagging:
             raise_for_storage_error(_FakeResponse())  # type: ignore[arg-type]
 
         assert is_platform_error(exc_info.value) is True
+
+    @pytest.mark.parametrize("status", [401, 403])
+    @pytest.mark.parametrize("body", ['{"error": {"message": "Access denied."}}', "", "<html>Access denied</html>"])
+    def test_foundry_access_error_is_returned_as_user_error(self, status: int, body: str) -> None:
+        from azure.ai.agentserver.responses.store._foundry_errors import (
+            FoundryApiError,
+            raise_for_storage_error,
+        )
+
+        class _FakeResponse:
+            status_code = status
+
+            def text(self) -> str:
+                return body
+
+        with pytest.raises(FoundryApiError) as exc_info:
+            raise_for_storage_error(_FakeResponse())  # type: ignore[arg-type]
+
+        assert is_platform_error(exc_info.value) is False
+        response = error_response(exc_info.value, {"x-agent-session-id": "session1"})
+        assert response.status_code == status
+        assert response.headers[ERROR_SOURCE] == "user"
+        assert response.headers["x-agent-session-id"] == "session1"
+        assert ERROR_DETAIL not in response.headers
+        expected_message = (
+            "Access denied." if body.startswith("{") else f"Foundry storage request failed with HTTP {status}."
+        )
+        assert json.loads(response.body)["error"]["message"] == expected_message
 
     def test_foundry_not_found_error_not_tagged(self) -> None:
         from azure.ai.agentserver.responses.store._foundry_errors import (

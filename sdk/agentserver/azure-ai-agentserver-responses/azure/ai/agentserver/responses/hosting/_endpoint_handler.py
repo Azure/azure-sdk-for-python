@@ -66,7 +66,12 @@ from ..models.runtime import (
     _resolve_failed_response,
 )
 from ..store._base import ResponseProviderProtocol, ResponseStoreCorruptionError
-from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
+from ..store._foundry_errors import (
+    FoundryApiError,
+    FoundryBadRequestError,
+    FoundryResourceNotFoundError,
+    _FoundryAccessError,
+)
 from ..streaming._sse import encode_sse_any_event, with_keep_alive
 from ..streaming._state_machine import _normalize_lifecycle_events
 from ._execution_context import _ExecutionContext
@@ -735,6 +740,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _invalid_request(str(exc), _hdrs)
         except FoundryApiError as exc:
             span.end(exc)
+            if isinstance(exc, _FoundryAccessError):
+                return _error_response(exc, _hdrs)
             if exc.response_body is not None:
                 return JSONResponse(
                     exc.response_body,
@@ -798,25 +805,30 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     def _execution_error_response(
         self,
         ctx: _ExecutionContext,
-        error: _HandlerError | _ServerShuttingDown | TaskConflictError,
+        error: _HandlerError | _ServerShuttingDown | TaskConflictError | _FoundryAccessError,
         agent_session_id: str | None,
     ) -> JSONResponse:
         """Map rejected admission or handler failure to its HTTP response.
 
         :param ctx: The create request's execution context.
         :type ctx: _ExecutionContext
-        :param error: A shutdown rejection, conversation lock conflict, or developer-handler failure.
-        :type error: _HandlerError | _ServerShuttingDown | TaskConflictError
+        :param error: An admission rejection, storage access rejection, or developer-handler failure.
+        :type error: _HandlerError | _ServerShuttingDown | TaskConflictError | _FoundryAccessError
         :param agent_session_id: The response's session identifier.
         :type agent_session_id: str | None
         :return: The existing shutdown, conflict, or handler-error response.
         :rtype: JSONResponse
         """
         headers = self._session_headers(agent_session_id)
+        if isinstance(error, _FoundryAccessError):
+            ctx.span.end(error)
+            return _error_response(error, headers)
         if isinstance(error, _ServerShuttingDown):
             ctx.span.end(None)
             return _service_unavailable("Server is shutting down.", headers)
         if isinstance(error, _HandlerError):
+            if isinstance(error.original, _FoundryAccessError):
+                return _error_response(error.original, headers)
             logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=error.original)
             return JSONResponse(
                 {
@@ -1032,9 +1044,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             call_id=ctx.call_id or None,
             user_id=ctx.user_id or None,
             session_id=agent_session_id,
-            original_subject=(
-                ctx.context.platform_context.original_subject if ctx.context is not None else None
-            ),
+            original_subject=(ctx.context.platform_context.original_subject if ctx.context is not None else None),
         )
         platform_ctx_token = set_request_context(platform_context)
 
@@ -1178,7 +1188,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 }
             }
             return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
-        except (_HandlerError, _ServerShuttingDown, TaskConflictError) as exc:
+        except (_HandlerError, _ServerShuttingDown, TaskConflictError, _FoundryAccessError) as exc:
             return self._execution_error_response(ctx, exc, agent_session_id)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if is_platform_error(exc):
@@ -1917,6 +1927,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         try:
             if record.response is not None:
                 await self._provider.update_response(record.response, context=_extract_platform_context(request))
+        except _FoundryAccessError as exc:
+            await self._runtime_state.try_evict(record.response_id, record.user_id_key)
+            return _error_response(exc, _hdrs)
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Best-effort cancel persist failed for response_id=%s", record.response_id, exc_info=True)
 

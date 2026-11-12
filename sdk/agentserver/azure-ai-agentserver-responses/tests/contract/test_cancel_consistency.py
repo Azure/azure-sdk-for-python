@@ -16,12 +16,15 @@ from __future__ import annotations
 import asyncio
 import json as _json
 from typing import Any
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses.store._foundry_errors import raise_for_storage_error
+from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
 # ════════════════════════════════════════════════════════════
 # Async ASGI client
@@ -161,6 +164,35 @@ def _make_cancellable_bg_handler():
     handler.started = started
     handler.release = release
     return handler
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", [401, 403])
+async def test_cancel_preserves_storage_access_rejection(status: int) -> None:
+    body = {"error": {"code": "AccessDenied", "message": "Public network access is disabled."}}
+    storage_response = MagicMock()
+    storage_response.status_code = status
+    storage_response.text.return_value = _json.dumps(body)
+
+    async def reject_update(*args: Any, **kwargs: Any) -> None:
+        raise_for_storage_error(storage_response)
+
+    provider = InMemoryResponseProvider()
+    handler = _make_cancellable_bg_handler()
+    app = ResponsesAgentServerHost(store=provider)
+    app.response_handler(handler)
+    client = _AsyncAsgiClient(app)
+    try:
+        created = await client.post("/responses", json_body={"model": "test", "input": "hello", "background": True})
+        assert created.status_code == 200
+        provider.update_response = AsyncMock(side_effect=reject_update)
+        response = await client.post(f"/responses/{created.json()['id']}/cancel")
+        assert response.status_code == status
+        assert response.json() == body
+        assert dict(response.headers)[b"x-platform-error-source"] == b"user"
+        assert b"x-platform-error-detail" not in dict(response.headers)
+    finally:
+        handler.release.set()
 
 
 # ════════════════════════════════════════════════════════════
