@@ -2259,9 +2259,9 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2271,7 +2271,7 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def get(
         self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
@@ -2351,9 +2351,9 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2364,7 +2364,7 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _create_initial(
         self,
@@ -2551,9 +2551,9 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2564,7 +2564,7 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_create(
         self,
@@ -2750,9 +2750,9 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2763,7 +2763,7 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def update(
         self,
@@ -2863,9 +2863,9 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2874,7 +2874,7 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
                 "archive_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
@@ -2941,9 +2941,9 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2952,7 +2952,7 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
                 "archive_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
@@ -3020,9 +3020,9 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3031,7 +3031,7 @@ class ArchivesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, package_type: str, **kwargs: Any
@@ -3159,9 +3159,9 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3172,7 +3172,7 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def get(
         self,
@@ -3261,9 +3261,9 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3274,7 +3274,7 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _create_initial(
         self,
@@ -3350,9 +3350,9 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3363,7 +3363,7 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_create(
         self,
@@ -3445,9 +3445,9 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
         )
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3457,7 +3457,7 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
                 "archive_version_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _delete_initial(
         self,
@@ -3531,9 +3531,9 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3543,7 +3543,7 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
                 "archive_version_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_delete(
         self,
@@ -3620,9 +3620,9 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3632,7 +3632,7 @@ class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
@@ -6394,9 +6394,9 @@ class ConnectedRegistriesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -6405,7 +6405,7 @@ class ConnectedRegistriesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def resync(
         self, resource_group_name: str, registry_name: str, connected_registry_name: str, **kwargs: Any
@@ -9579,9 +9579,9 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9590,7 +9590,7 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def get(
         self, resource_group_name: str, registry_name: str, export_pipeline_name: str, **kwargs: Any
@@ -9667,9 +9667,9 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9679,7 +9679,7 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _create_initial(
         self,
@@ -9858,9 +9858,9 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9870,7 +9870,7 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_create(
         self,
@@ -9952,9 +9952,9 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
         )
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9962,7 +9962,7 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "export_pipeline_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, registry_name: str, export_pipeline_name: str, **kwargs: Any
@@ -10028,9 +10028,9 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10038,7 +10038,7 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "export_pipeline_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, registry_name: str, export_pipeline_name: str, **kwargs: Any
@@ -10103,11 +10103,11 @@ class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
+            "2026-10-15-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, **kwargs: Any
@@ -10233,9 +10233,9 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10244,7 +10244,7 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def get(
         self, resource_group_name: str, registry_name: str, import_pipeline_name: str, **kwargs: Any
@@ -10321,9 +10321,9 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10333,7 +10333,7 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _create_initial(
         self,
@@ -10512,9 +10512,9 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10524,7 +10524,7 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_create(
         self,
@@ -10606,9 +10606,9 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
         )
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10616,7 +10616,7 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "import_pipeline_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, registry_name: str, import_pipeline_name: str, **kwargs: Any
@@ -10682,9 +10682,9 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10692,7 +10692,7 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
                 "import_pipeline_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, registry_name: str, import_pipeline_name: str, **kwargs: Any
@@ -10757,11 +10757,11 @@ class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
+            "2026-10-15-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, **kwargs: Any
@@ -10887,9 +10887,9 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10898,7 +10898,7 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def get(
         self, resource_group_name: str, registry_name: str, pipeline_run_name: str, **kwargs: Any
@@ -10975,9 +10975,9 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10987,7 +10987,7 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _create_initial(
         self,
@@ -11163,9 +11163,9 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11175,7 +11175,7 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_create(
         self,
@@ -11257,9 +11257,9 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
         )
 
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11267,7 +11267,7 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
                 "pipeline_run_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, registry_name: str, pipeline_run_name: str, **kwargs: Any
@@ -11333,9 +11333,9 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": [
+            "2026-10-15-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11343,7 +11343,7 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
                 "pipeline_run_name",
             ]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, registry_name: str, pipeline_run_name: str, **kwargs: Any
@@ -11408,11 +11408,11 @@ class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-09-01-preview",
+        method_added_on="2026-10-15-preview",
         params_added_on={
-            "2026-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
+            "2026-10-15-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
         },
-        api_versions_list=["2026-09-01-preview"],
+        api_versions_list=["2026-10-15-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, **kwargs: Any

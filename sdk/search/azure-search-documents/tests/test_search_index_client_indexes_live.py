@@ -24,7 +24,8 @@ from azure.search.documents.indexes.models import (
 )
 from devtools_testutils import AzureRecordedTestCase
 
-from _search_helpers import live_test, make_index_client, safe_delete
+from _capabilities import require_capability
+from _search_helpers import live_test, make_index_client, poll_until, safe_delete
 
 INDEX_DESCRIPTION = "Hotel index"
 REPLACEMENT_INDEX_DESCRIPTION = "Replacement hotel index"
@@ -58,6 +59,45 @@ def _build_scoring_profile(profile_name: str) -> ScoringProfile:
 
 
 class TestSearchIndexClient(AzureRecordedTestCase):
+    @live_test()
+    def test_list_index_stats_summary_returns_filtered_pages(self, endpoint):
+        require_capability("azure.search.documents.indexes.SearchIndexClient.list_index_stats_summary")
+        prefix = self.get_resource_name("index-stats-summary")
+        names = [f"{prefix}-first", f"{prefix}-second"]
+        with make_index_client(endpoint) as client:
+            try:
+                for name in names:
+                    client.create_index(_build_hotel_index(name))
+                snapshots = poll_until(
+                    lambda: list(client.list_index_stats_summary(search=prefix, page_size=1, search_type="prefix")),
+                    predicate=lambda summaries: {summary.name for summary in summaries} == set(names),
+                    interval=5.0 if self.is_live else 0,
+                )
+                summaries = snapshots[-1]
+                assert len(summaries) == len(names)
+                for summary in summaries:
+                    assert summary.document_count >= 0
+                    assert summary.storage_size >= 0
+                    assert summary.vector_index_size >= 0
+            finally:
+                for name in names:
+                    safe_delete(client.delete_index, name)
+
+    @live_test()
+    def test_delete_index_by_name_preserves_etag_condition(self, endpoint):
+        name = self.get_resource_name("index-delete-name-match")
+        with make_index_client(endpoint) as client:
+            try:
+                original = client.create_index(_build_hotel_index(name))
+                client.create_or_update_index(_build_hotel_index(name, description=REPLACEMENT_INDEX_DESCRIPTION))
+                with pytest.raises(HttpResponseError) as failure:
+                    client.delete_index(name, etag=original.e_tag, match_condition=MatchConditions.IfNotModified)
+                assert failure.value.status_code == 412
+                current = client.get_index(name)
+                client.delete_index(name, etag=current.e_tag, match_condition=MatchConditions.IfNotModified)
+            finally:
+                safe_delete(client.delete_index, name)
+
     @live_test()
     def test_get_service_statistics_returns_counters_and_limits(self, endpoint):
         client = make_index_client(endpoint)

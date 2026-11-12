@@ -1,5 +1,15 @@
 # Release History
 
+## 1.8.13 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.8.12 (2026-11-05)
 
 ### Other Changes

@@ -44,6 +44,32 @@ def test_run_logged_inherits_environment(stream, tmp_path, monkeypatch, capfd):
 
 
 @pytest.mark.parametrize("stream", [False, True])
+def test_run_logged_uses_explicit_environment(stream, tmp_path, monkeypatch, capfd):
+    monkeypatch.setenv("CI_TOOLS_LOGGED_ENV_TEST", "parent")
+    monkeypatch.setenv("CI_TOOLS_LOGGED_REMOVED_TEST", "parent-only")
+    before = os.environ.copy()
+    environment = {**before, "CI_TOOLS_LOGGED_ENV_TEST": "child"}
+    environment.pop("CI_TOOLS_LOGGED_REMOVED_TEST")
+    result = run_logged(
+        [
+            sys.executable,
+            "-c",
+            "import os; print(os.environ['CI_TOOLS_LOGGED_ENV_TEST']); "
+            "assert 'CI_TOOLS_LOGGED_REMOVED_TEST' not in os.environ",
+        ],
+        cwd=str(tmp_path),
+        check=True,
+        should_stream_to_console=stream,
+        env=environment,
+    )
+    output = capfd.readouterr().out if stream else result.stdout
+    assert output.strip() == "child"
+    assert os.environ == before
+    assert environment["CI_TOOLS_LOGGED_ENV_TEST"] == "child"
+    assert "CI_TOOLS_LOGGED_REMOVED_TEST" not in environment
+
+
+@pytest.mark.parametrize("stream", [False, True])
 def test_run_logged_failure_preserved(stream, tmp_path, caplog):
     with pytest.raises(subprocess.CalledProcessError) as error:
         run_logged(
@@ -56,3 +82,27 @@ def test_run_logged_failure_preserved(stream, tmp_path, caplog):
     assert "Command failed:" in caplog.text
     if not stream:
         assert "build failed" in caplog.text
+
+
+@pytest.mark.parametrize("returncode", [0, 7])
+def test_run_logged_decodes_native_build_output(returncode, tmp_path, caplog, monkeypatch):
+    monkeypatch.setattr("locale.getencoding", lambda: "cp1252", raising=False)
+    command = [
+        sys.executable,
+        "-c",
+        "import sys; sys.stdout.buffer.write(b'build \\xe2\\x9c\\x8d\\n'); "
+        "sys.stderr.buffer.write(b'diagnostic \\xff\\n'); "
+        f"raise SystemExit({returncode})",
+    ]
+    if returncode:
+        with pytest.raises(subprocess.CalledProcessError) as error:
+            run_logged(command, cwd=str(tmp_path), check=True, should_stream_to_console=False)
+        assert error.value.returncode == returncode
+        output = error.value.stdout
+        assert output.strip() in caplog.text
+    else:
+        result = run_logged(command, cwd=str(tmp_path), check=True, should_stream_to_console=False)
+        assert result.returncode == 0
+        output = result.stdout
+    assert "build \u270d\n" in output
+    assert "diagnostic \\xff\n" in output

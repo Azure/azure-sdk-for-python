@@ -76,7 +76,8 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _supports_decision_models = True
     _binary_decision = True
 
-    _DEFAULT_TASK_ADHERENCE_SCORE = 0
+    # A binary result passes only at a score of 1, so Decision results report 1 unless a threshold is requested.
+    _DEFAULT_TASK_ADHERENCE_SCORE = 1
 
     _validator: ValidatorInterface
 
