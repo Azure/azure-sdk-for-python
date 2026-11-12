@@ -77,8 +77,8 @@ def _publish_posix_directory(source_fd: int, source_name: str, target_fd: int, t
     rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
     rename.restype = ctypes.c_int
     if rename(source_fd, os.fsencode(source_name), target_fd, os.fsencode(target_name), flag) != 0:
-        error = ctypes.get_errno()
-        raise OSError(error, os.strerror(error), target_name)
+        error_code = ctypes.get_errno()
+        raise OSError(error_code, os.strerror(error_code), target_name)
 
 
 def _close_windows_handle(handle: int) -> None:
