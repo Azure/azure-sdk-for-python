@@ -233,8 +233,8 @@ class JsonWebKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     :vartype kid: str
     :ivar kty: JsonWebKey Key Type (kty), as defined in
      `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
-     <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are: "EC",
-     "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+     <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are:
+     "AKP", "AKP-HSM", "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
     :vartype kty: str or ~azure.keyvault.keys._generated.models.JsonWebKeyType
     :ivar key_ops: Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation.
@@ -266,6 +266,11 @@ class JsonWebKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     :vartype x: bytes
     :ivar y: Y component of an EC public key.
     :vartype y: bytes
+    :ivar alg: The algorithm identifier. This parameter is required when kty is AKP. Known values
+     are: "ML-DSA-44", "ML-DSA-65", and "ML-DSA-87".
+    :vartype alg: str or ~azure.keyvault.keys._generated.models.AKPAlgorithm
+    :ivar pub: The public key for Algorithm Key Pair (AKP) keys.
+    :vartype pub: bytes
     """
 
     kid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -276,7 +281,7 @@ class JsonWebKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     """JsonWebKey Key Type (kty), as defined in
      `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
      <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are:
-     \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
+     \"AKP\", \"AKP-HSM\", \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
     key_ops: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation."""
@@ -311,6 +316,13 @@ class JsonWebKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     """X component of an EC public key."""
     y: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
     """Y component of an EC public key."""
+    alg: Optional[Union[str, "_models.AKPAlgorithm"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The algorithm identifier. This parameter is required when kty is AKP. Known values are:
+     \"ML-DSA-44\", \"ML-DSA-65\", and \"ML-DSA-87\"."""
+    pub: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
+    """The public key for Algorithm Key Pair (AKP) keys."""
 
     @overload
     def __init__(
@@ -332,6 +344,8 @@ class JsonWebKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         crv: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         x: Optional[bytes] = None,
         y: Optional[bytes] = None,
+        alg: Optional[Union[str, "_models.AKPAlgorithm"]] = None,
+        pub: Optional[bytes] = None,
     ) -> None: ...
 
     @overload
@@ -555,7 +569,7 @@ class KeyCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-m
     """The key create parameters.
 
     :ivar kty: The type of key to create. For valid values, see JsonWebKeyType. Required. Known
-     values are: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+     values are: "AKP", "AKP-HSM", "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
     :vartype kty: str or ~azure.keyvault.keys._generated.models.JsonWebKeyType
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
@@ -573,11 +587,14 @@ class KeyCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-m
     :vartype curve: str or ~azure.keyvault.keys._generated.models.JsonWebKeyCurveName
     :ivar release_policy: The policy rules under which the key can be exported.
     :vartype release_policy: ~azure.keyvault.keys._generated.models.KeyReleasePolicy
+    :ivar alg: The algorithm for Algorithm Key Pair (AKP) keys. For valid values, see AKPAlgorithm.
+     Known values are: "ML-DSA-44", "ML-DSA-65", and "ML-DSA-87".
+    :vartype alg: str or ~azure.keyvault.keys._generated.models.AKPAlgorithm
     """
 
     kty: Union[str, "_models.JsonWebKeyType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of key to create. For valid values, see JsonWebKeyType. Required. Known values are:
-     \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
+     \"AKP\", \"AKP-HSM\", \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
     key_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key size in bits. For example: 2048, 3072, or 4096 for RSA."""
     public_exponent: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -602,6 +619,11 @@ class KeyCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-m
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The policy rules under which the key can be exported."""
+    alg: Optional[Union[str, "_models.AKPAlgorithm"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The algorithm for Algorithm Key Pair (AKP) keys. For valid values, see AKPAlgorithm. Known
+     values are: \"ML-DSA-44\", \"ML-DSA-65\", and \"ML-DSA-87\"."""
 
     @overload
     def __init__(
@@ -615,6 +637,7 @@ class KeyCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-m
         tags: Optional[dict[str, str]] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
+        alg: Optional[Union[str, "_models.AKPAlgorithm"]] = None,
     ) -> None: ...
 
     @overload
@@ -1039,30 +1062,51 @@ class KeySignParameters(_Model):  # pylint: disable=docstring-keyword-should-mat
     """The key operations parameters.
 
     :ivar algorithm: The signing/verification algorithm identifier. For more information on
-     possible algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are:
-     "PS256", "PS384", "PS512", "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL",
-     "ES256", "ES384", "ES512", and "ES256K".
+     possible algorithm types, see JsonWebKeySignatureAlgorithm. Known values are: "PS256", "PS384",
+     "PS512", "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384",
+     "ES512", and "ES256K".
     :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeySignatureAlgorithm
-    :ivar value: The value to operate on. Required.
+    :ivar value: The value to operate on.
     :vartype value: bytes
+    :ivar external_mu: The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section
+     6.2). Must be exactly 64 bytes. When specified, the algorithm and value fields must not be set.
+     Only supported for ML-DSA (AKP) keys.
+    :vartype external_mu: bytes
+    :ivar context: The application context string for ML-DSA signing (FIPS 204 Section 5.2). Must
+     be 0-255 bytes. Must not be set when external_mu is specified. Only supported for ML-DSA (AKP)
+     keys.
+    :vartype context: bytes
     """
 
-    algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"] = rest_field(
+    algorithm: Optional[Union[str, "_models.JsonWebKeySignatureAlgorithm"]] = rest_field(
         name="alg", visibility=["read", "create", "update", "delete", "query"]
     )
     """The signing/verification algorithm identifier. For more information on possible algorithm
-     types, see JsonWebKeySignatureAlgorithm. Required. Known values are: \"PS256\", \"PS384\",
-     \"PS512\", \"RS256\", \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\",
-     \"ES256\", \"ES384\", \"ES512\", and \"ES256K\"."""
-    value: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
-    """The value to operate on. Required."""
+     types, see JsonWebKeySignatureAlgorithm. Known values are: \"PS256\", \"PS384\", \"PS512\",
+     \"RS256\", \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\", \"ES256\",
+     \"ES384\", \"ES512\", and \"ES256K\"."""
+    value: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
+    """The value to operate on."""
+    external_mu: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64url"
+    )
+    """The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section 6.2). Must be exactly
+     64 bytes. When specified, the algorithm and value fields must not be set. Only supported for
+     ML-DSA (AKP) keys."""
+    context: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64url"
+    )
+    """The application context string for ML-DSA signing (FIPS 204 Section 5.2). Must be 0-255 bytes.
+     Must not be set when external_mu is specified. Only supported for ML-DSA (AKP) keys."""
 
     @overload
     def __init__(
         self,
         *,
-        algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"],
-        value: bytes,
+        algorithm: Optional[Union[str, "_models.JsonWebKeySignatureAlgorithm"]] = None,
+        value: Optional[bytes] = None,
+        external_mu: Optional[bytes] = None,
+        context: Optional[bytes] = None,
     ) -> None: ...
 
     @overload
@@ -1161,37 +1205,57 @@ class KeyVerifyParameters(_Model):  # pylint: disable=docstring-keyword-should-m
     """The key verify parameters.
 
     :ivar algorithm: The signing/verification algorithm. For more information on possible algorithm
-     types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256", "PS384", "PS512",
-     "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384", "ES512", and
-     "ES256K".
+     types, see JsonWebKeySignatureAlgorithm. Known values are: "PS256", "PS384", "PS512", "RS256",
+     "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384", "ES512", and "ES256K".
     :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeySignatureAlgorithm
-    :ivar digest: The digest used for signing. Required.
+    :ivar digest: The digest used for signing.
     :vartype digest: bytes
     :ivar signature: The signature to be verified. Required.
     :vartype signature: bytes
+    :ivar external_mu: The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section
+     6.2). Must be exactly 64 bytes. When specified, the algorithm and digest fields must not be
+     set. Only supported for ML-DSA (AKP) keys.
+    :vartype external_mu: bytes
+    :ivar context: The application context string for ML-DSA verification (FIPS 204 Section 5.2).
+     Must be 0-255 bytes. Must not be set when external_mu is specified. Only supported for ML-DSA
+     (AKP) keys.
+    :vartype context: bytes
     """
 
-    algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"] = rest_field(
+    algorithm: Optional[Union[str, "_models.JsonWebKeySignatureAlgorithm"]] = rest_field(
         name="alg", visibility=["read", "create", "update", "delete", "query"]
     )
     """The signing/verification algorithm. For more information on possible algorithm types, see
-     JsonWebKeySignatureAlgorithm. Required. Known values are: \"PS256\", \"PS384\", \"PS512\",
-     \"RS256\", \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\", \"ES256\",
-     \"ES384\", \"ES512\", and \"ES256K\"."""
-    digest: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
-    """The digest used for signing. Required."""
+     JsonWebKeySignatureAlgorithm. Known values are: \"PS256\", \"PS384\", \"PS512\", \"RS256\",
+     \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\", \"ES256\", \"ES384\",
+     \"ES512\", and \"ES256K\"."""
+    digest: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
+    """The digest used for signing."""
     signature: bytes = rest_field(
         name="value", visibility=["read", "create", "update", "delete", "query"], format="base64url"
     )
     """The signature to be verified. Required."""
+    external_mu: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64url"
+    )
+    """The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section 6.2). Must be exactly
+     64 bytes. When specified, the algorithm and digest fields must not be set. Only supported for
+     ML-DSA (AKP) keys."""
+    context: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64url"
+    )
+    """The application context string for ML-DSA verification (FIPS 204 Section 5.2). Must be 0-255
+     bytes. Must not be set when external_mu is specified. Only supported for ML-DSA (AKP) keys."""
 
     @overload
     def __init__(
         self,
         *,
-        algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"],
-        digest: bytes,
         signature: bytes,
+        algorithm: Optional[Union[str, "_models.JsonWebKeySignatureAlgorithm"]] = None,
+        digest: Optional[bytes] = None,
+        external_mu: Optional[bytes] = None,
+        context: Optional[bytes] = None,
     ) -> None: ...
 
     @overload

@@ -2392,7 +2392,13 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["key_name", "key_version", "content_type", "accept", "api_version"]},
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=[
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     async def secure_wrap_key(
         self,
@@ -2602,7 +2608,13 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["key_name", "key_version", "content_type", "accept", "api_version"]},
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=[
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     async def secure_unwrap_key(
         self,
@@ -3762,6 +3774,8 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
             "2026-01-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
         ],
     )
     async def get_key_attestation(self, key_name: str, key_version: str, **kwargs: Any) -> _models.KeyBundle:

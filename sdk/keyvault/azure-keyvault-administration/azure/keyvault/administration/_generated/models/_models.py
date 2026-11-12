@@ -32,6 +32,11 @@ class EkmConnection(_Model):  # pylint: disable=docstring-keyword-should-match-k
     :ivar server_subject_common_name: The subject common name of the server certificate of EKM
      Proxy.
     :vartype server_subject_common_name: str
+    :ivar connectivity_mode: The connectivity mode used to reach the EKM proxy. Defaults to
+     "Public". In "PrivateEndpoint" mode, the host field holds the name of a private endpoint
+     (peName) instead of a DNS name or IP address. Known values are: "Public" and "PrivateEndpoint".
+    :vartype connectivity_mode: str or
+     ~azure.keyvault.administration._generated.models.EkmConnectivityMode
     """
 
     host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -46,6 +51,12 @@ class EkmConnection(_Model):  # pylint: disable=docstring-keyword-should-match-k
      certificates in the certificate chain, each in DER format and base64 encoded. Required."""
     server_subject_common_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The subject common name of the server certificate of EKM Proxy."""
+    connectivity_mode: Optional[Union[str, "_models.EkmConnectivityMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connectivity mode used to reach the EKM proxy. Defaults to \"Public\". In
+     \"PrivateEndpoint\" mode, the host field holds the name of a private endpoint (peName) instead
+     of a DNS name or IP address. Known values are: \"Public\" and \"PrivateEndpoint\"."""
 
     @overload
     def __init__(
@@ -55,6 +66,7 @@ class EkmConnection(_Model):  # pylint: disable=docstring-keyword-should-match-k
         server_ca_certificates: list[bytes],
         path_prefix: Optional[str] = None,
         server_subject_common_name: Optional[str] = None,
+        connectivity_mode: Optional[Union[str, "_models.EkmConnectivityMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -66,6 +78,216 @@ class EkmConnection(_Model):  # pylint: disable=docstring-keyword-should-match-k
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class EkmPrivateEndpoint(_Model):
+    """An EKM proxy private endpoint.
+
+    :ivar name: The name of the private endpoint (peName).
+    :vartype name: str
+    :ivar location: The Azure region where the private endpoint is provisioned.
+    :vartype location: str
+    :ivar provisioning_state: The provisioning state of the private endpoint. Known values are:
+     "Succeeded", "Failed", "Updating", and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointProvisioningState
+    :ivar properties: The properties of the private endpoint.
+    :vartype properties:
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointProperties
+    :ivar private_link_service_connection_state: The state of the connection between the private
+     endpoint and the Private Link Service.
+    :vartype private_link_service_connection_state:
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointConnectionState
+    """
+
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the private endpoint (peName)."""
+    location: Optional[str] = rest_field(visibility=["read"])
+    """The Azure region where the private endpoint is provisioned."""
+    provisioning_state: Optional[Union[str, "_models.EkmPrivateEndpointProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the private endpoint. Known values are: \"Succeeded\", \"Failed\",
+     \"Updating\", and \"Deleting\"."""
+    properties: Optional["_models.EkmPrivateEndpointProperties"] = rest_field(visibility=["read"])
+    """The properties of the private endpoint."""
+    private_link_service_connection_state: Optional["_models.EkmPrivateEndpointConnectionState"] = rest_field(
+        name="privateLinkServiceConnectionState", visibility=["read"]
+    )
+    """The state of the connection between the private endpoint and the Private Link Service."""
+
+
+class EkmPrivateEndpointConnectionState(_Model):
+    """The state of the connection between the private endpoint and the Private Link Service.
+
+    :ivar status: The status of the private link service connection. Known values are: "Pending",
+     "Approved", "Rejected", and "Disconnected".
+    :vartype status: str or
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointConnectionStatus
+    :ivar description: A description of the current connection state.
+    :vartype description: str
+    :ivar actions_required: Any actions required from the customer to maintain the connection.
+    :vartype actions_required: str
+    """
+
+    status: Optional[Union[str, "_models.EkmPrivateEndpointConnectionStatus"]] = rest_field(visibility=["read"])
+    """The status of the private link service connection. Known values are: \"Pending\", \"Approved\",
+     \"Rejected\", and \"Disconnected\"."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """A description of the current connection state."""
+    actions_required: Optional[str] = rest_field(name="actionsRequired", visibility=["read"])
+    """Any actions required from the customer to maintain the connection."""
+
+
+class EkmPrivateEndpointCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters to create an EKM proxy private endpoint.
+
+    :ivar private_link_service_id: Alias of the Private Link Service that the private endpoint
+     connects to. Required.
+    :vartype private_link_service_id: str
+    :ivar request_message: An optional message shown to the Private Link Service owner when
+     approving the private endpoint connection.
+    :vartype request_message: str
+    """
+
+    private_link_service_id: str = rest_field(
+        name="privateLinkServiceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Alias of the Private Link Service that the private endpoint connects to. Required."""
+    request_message: Optional[str] = rest_field(
+        name="requestMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional message shown to the Private Link Service owner when approving the private endpoint
+     connection."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_link_service_id: str,
+        request_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EkmPrivateEndpointListResult(_Model):
+    """The result of a request to list EKM proxy private endpoints.
+
+    :ivar value: The list of EKM proxy private endpoints.
+    :vartype value: list[~azure.keyvault.administration._generated.models.EkmPrivateEndpoint]
+    """
+
+    value: Optional[list["_models.EkmPrivateEndpoint"]] = rest_field(visibility=["read"])
+    """The list of EKM proxy private endpoints."""
+
+
+class EkmPrivateEndpointOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A long-running operation on an EKM proxy private endpoint.
+
+    :ivar job_id: Identifier for the private endpoint operation.
+    :vartype job_id: str
+    :ivar private_endpoint_name: The name of the private endpoint (peName) the operation applies
+     to.
+    :vartype private_endpoint_name: str
+    :ivar operation_type: The type of the operation. Known values are: "Create" and "Delete".
+    :vartype operation_type: str or
+     ~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperationType
+    :ivar status: The status of the operation. Known values are: "NotStarted", "Running",
+     "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.keyvault.administration._generated.models.OperationState
+    :ivar status_details: The status details of the operation.
+    :vartype status_details: str
+    :ivar start_time: The start time of the operation in UTC.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation in UTC.
+    :vartype end_time: ~datetime.datetime
+    :ivar error: Error encountered, if any, during the operation.
+    :vartype error: ~azure.keyvault.administration._generated.models.FullBackupOperationError
+    """
+
+    job_id: Optional[str] = rest_field(name="jobId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier for the private endpoint operation."""
+    private_endpoint_name: Optional[str] = rest_field(
+        name="privateEndpointName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the private endpoint (peName) the operation applies to."""
+    operation_type: Optional[Union[str, "_models.EkmPrivateEndpointOperationType"]] = rest_field(
+        name="operationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the operation. Known values are: \"Create\" and \"Delete\"."""
+    status: Optional[Union[str, "_models.OperationState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the operation. Known values are: \"NotStarted\", \"Running\", \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    status_details: Optional[str] = rest_field(
+        name="statusDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status details of the operation."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The start time of the operation in UTC."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The end time of the operation in UTC."""
+    error: Optional["_models.FullBackupOperationError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Error encountered, if any, during the operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_id: Optional[str] = None,
+        private_endpoint_name: Optional[str] = None,
+        operation_type: Optional[Union[str, "_models.EkmPrivateEndpointOperationType"]] = None,
+        status: Optional[Union[str, "_models.OperationState"]] = None,
+        status_details: Optional[str] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        error: Optional["_models.FullBackupOperationError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EkmPrivateEndpointProperties(_Model):
+    """The properties of an EKM proxy private endpoint.
+
+    :ivar private_link_service_id: Alias of the Private Link Service that the private endpoint
+     connects to.
+    :vartype private_link_service_id: str
+    :ivar private_link_service_connection_name: The name of the private link service connection,
+     generated by the service.
+    :vartype private_link_service_connection_name: str
+    """
+
+    private_link_service_id: Optional[str] = rest_field(name="privateLinkServiceId", visibility=["read"])
+    """Alias of the Private Link Service that the private endpoint connects to."""
+    private_link_service_connection_name: Optional[str] = rest_field(
+        name="privateLinkServiceConnectionName", visibility=["read"]
+    )
+    """The name of the private link service connection, generated by the service."""
 
 
 class EkmProxyClientCertificateInfo(_Model):
