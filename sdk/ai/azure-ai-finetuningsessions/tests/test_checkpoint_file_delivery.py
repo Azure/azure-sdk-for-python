@@ -332,6 +332,85 @@ async def test_racing_entries_are_never_overwritten_or_adopted(asynchronous, tmp
             assert (target(tmp_path) / "nested" / "keep.bin").read_bytes() == b"keep"
 
 
+@pytest.mark.skipif(os.name == "nt", reason="POSIX directory creation/open handoff")
+async def test_directory_created_during_handoff_is_not_adopted(asynchronous, tmp_path, monkeypatch):
+    mkdir = os.mkdir
+    replacement = target(tmp_path) / "nested"
+    displaced = tmp_path / "displaced-sdk-directory"
+    replacement_identity = None
+
+    async with delivery(asynchronous, file_reply(b"abc")) as (client, script):
+
+        def race(name, *args, **kwargs):
+            nonlocal replacement_identity
+            result = mkdir(name, *args, **kwargs)
+            if replacement_identity is None and script.requests and script.requests[-1]["method"] == "GET":
+                if name == "nested":
+                    os.rename(name, displaced, src_dir_fd=kwargs["dir_fd"])
+                mkdir(replacement)
+                replacement_identity = replacement.stat().st_ino
+            return result
+
+        monkeypatch.setattr(os, "mkdir", race)
+        with pytest.raises((FileExistsError, ValueError)):
+            await download(client, asynchronous, tmp_path)
+        assert replacement_identity is not None
+        assert replacement.stat().st_ino == replacement_identity
+        assert list(replacement.iterdir()) == []
+        if displaced.exists():
+            assert list(displaced.iterdir()) == []
+        assert len(script.requests) == 2
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX pinned directory publication")
+async def test_directory_replaced_after_publication_is_not_adopted(asynchronous, tmp_path, monkeypatch):
+    publish = _checkpoint_files._publish_posix_directory
+    replacement = target(tmp_path) / "nested"
+    displaced = tmp_path / "displaced-published-directory"
+    replacement_identity = None
+
+    def race(source_fd, source_name, target_fd, target_name):
+        nonlocal replacement_identity
+        publish(source_fd, source_name, target_fd, target_name)
+        if target_name == "nested":
+            os.rename(target_name, displaced, src_dir_fd=target_fd)
+            replacement.mkdir()
+            replacement_identity = replacement.stat().st_ino
+
+    monkeypatch.setattr(_checkpoint_files, "_publish_posix_directory", race)
+    async with delivery(asynchronous, file_reply(b"abc")) as (client, script):
+        with pytest.raises(ValueError, match="directory changed"):
+            await download(client, asynchronous, tmp_path)
+        assert replacement_identity is not None
+        assert replacement.stat().st_ino == replacement_identity
+        assert list(replacement.iterdir()) == []
+        assert list(displaced.iterdir()) == []
+        assert len(script.requests) == 2
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX protected staging")
+async def test_extended_acl_staging_is_rejected_without_writes(asynchronous, tmp_path, monkeypatch):
+    monkeypatch.setattr(_checkpoint_files, "_has_extended_acl", lambda _: True)
+    async with delivery(asynchronous) as (client, script):
+        with pytest.raises(PermissionError, match="owner-controlled same-filesystem staging"):
+            await download(client, asynchronous, tmp_path)
+        assert list(tmp_path.iterdir()) == []
+        assert len(script.requests) == 1
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX no-replace publication")
+async def test_unavailable_directory_publication_does_not_fall_back(asynchronous, tmp_path, monkeypatch):
+    def unavailable(*_):
+        raise NotImplementedError("No-replace publication unavailable")
+
+    monkeypatch.setattr(_checkpoint_files, "_publish_posix_directory", unavailable)
+    async with delivery(asynchronous) as (client, script):
+        with pytest.raises(NotImplementedError, match="No-replace publication unavailable"):
+            await download(client, asynchronous, tmp_path)
+        assert not target(tmp_path).exists()
+        assert len(script.requests) == 1
+
+
 async def test_final_inventory_does_not_silently_accept_external_files(asynchronous, tmp_path, monkeypatch):
     complete = _checkpoint_files._CheckpointOutput.complete
 

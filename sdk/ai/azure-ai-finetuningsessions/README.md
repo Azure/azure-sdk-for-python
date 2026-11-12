@@ -226,6 +226,13 @@ The checkpoint directory must be empty or absent; parent directories may contain
 unrelated files. Session/checkpoint identifiers must be portable directory names.
 Paths are checked before preparation and rechecked before writing. File creation
 rejects existing entries and symlinks/reparse points below the resolved output root.
+On Linux and macOS, new directories are opened in protected same-filesystem
+staging and published atomically without replacing an existing entry. This
+requires a writable ancestor owned by the current account, without group/other
+write access or extended ACLs. Unsupported staging or no-replace publication
+fails explicitly; the SDK does not fall back to unsafe directory creation.
+Private staging is not a security boundary against malicious processes running
+with the same operating-system credentials.
 Each file is requested through the service API with its advertised strong ETag,
 then checked against the exact advertised byte count. File reads do not follow
 redirects, retry, or resume automatically.
@@ -233,6 +240,8 @@ redirects, retry, or resume automatically.
 Failures or async cancellation retain any partial directories and files. Inspect
 the output and choose a new empty destination, or explicitly remove the partial
 checkpoint before retrying. The SDK never deletes or overwrites existing entries.
+An unsuccessful directory publication can also retain an empty
+`.finetuning-checkpoint-*` staging directory under the protected ancestor.
 
 Downloading requires service support, an eligible model and authorized checkpoint
 access. It does not grant access to base-model weights or enable download

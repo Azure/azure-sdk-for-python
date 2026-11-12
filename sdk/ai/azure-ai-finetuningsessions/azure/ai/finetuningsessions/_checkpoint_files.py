@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-# cspell:ignore ntdll RDONLY osfhandle NOINHERIT
+# cspell:ignore ntdll RDONLY osfhandle NOINHERIT renameat geteuid ENOENT listxattr NOREPLACE
 """Exclusive checkpoint output, anchored against directory replacement.
 
 Failure retains partial files and directories. Deliberately never unlink paths:
@@ -10,7 +10,9 @@ even an identity check followed by unlink can delete a concurrent replacement.
 import os
 import sys
 from contextlib import ExitStack
+from errno import ENOENT
 from pathlib import Path
+from secrets import token_hex
 from stat import S_ISDIR, S_ISREG
 from typing import BinaryIO, Optional
 
@@ -23,6 +25,60 @@ def _is_directory(info: os.stat_result) -> bool:
 
 def _same_entry(left: os.stat_result, right: os.stat_result) -> bool:
     return (left.st_dev, left.st_ino) == (right.st_dev, right.st_ino)
+
+
+def _has_extended_acl(fd: int) -> bool:
+    if sys.platform == "linux":
+        return any(name.startswith("system.posix_acl_") for name in os.listxattr(fd))  # pylint: disable=no-member
+    if sys.platform != "darwin":
+        raise NotImplementedError("Protected checkpoint staging requires Linux or macOS")
+    import ctypes
+
+    native = ctypes.CDLL(None, use_errno=True)
+    get_acl = native.acl_get_fd
+    get_acl.argtypes = [ctypes.c_int]
+    get_acl.restype = ctypes.c_void_p
+    free_acl = native.acl_free
+    free_acl.argtypes = [ctypes.c_void_p]
+    free_acl.restype = ctypes.c_int
+    ctypes.set_errno(0)
+    acl = get_acl(fd)
+    if acl is None:
+        error = ctypes.get_errno()
+        if error == ENOENT:
+            return False
+        raise OSError(error, "Unable to verify checkpoint staging directory ACL")
+    if free_acl(acl) != 0:
+        raise OSError(ctypes.get_errno(), "Unable to release checkpoint staging directory ACL")
+    return True
+
+
+def _publish_posix_directory(source_fd: int, source_name: str, target_fd: int, target_name: str) -> None:
+    """Atomically publish a pinned directory without replacing any destination entry.
+
+    :param int source_fd: Protected staging-parent descriptor.
+    :param str source_name: Exclusively created staging entry.
+    :param int target_fd: Pinned destination-parent descriptor.
+    :param str target_name: Destination directory component.
+    """
+    import ctypes
+
+    if sys.platform == "linux":
+        function_name, flag = "renameat2", 1  # RENAME_NOREPLACE.
+    elif sys.platform == "darwin":
+        function_name, flag = "renameatx_np", 0x4  # RENAME_EXCL.
+    else:
+        raise NotImplementedError("Checkpoint directory publication requires Linux or macOS")
+    native = ctypes.CDLL(None, use_errno=True)
+    try:
+        rename = getattr(native, function_name)
+    except AttributeError as error:
+        raise NotImplementedError("Atomic no-replace checkpoint directory publication is unavailable") from error
+    rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+    rename.restype = ctypes.c_int
+    if rename(source_fd, os.fsencode(source_name), target_fd, os.fsencode(target_name), flag) != 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error), target_name)
 
 
 def _close_windows_handle(handle: int) -> None:
@@ -176,17 +232,58 @@ class _Directory:
         self.verify()
         if self.handle is not None:
             return _Directory(self.path / name, resources, self, exclusive=exclusive)
+        if self.fd is None:
+            raise RuntimeError("Checkpoint directory has no pinned descriptor")
+        if not exclusive:
+            try:
+                return _Directory(self.path / name, resources, self)
+            except FileNotFoundError:
+                pass
+        parent = self._staging_parent()
+        stage_fd = parent.fd
+        if stage_fd is None:
+            raise RuntimeError("Checkpoint staging parent has no pinned descriptor")
+        stage_name = ".finetuning-checkpoint-" + token_hex(16)
+        os.mkdir(stage_name, mode=0o700, dir_fd=stage_fd)
+        staged = _Directory(parent.path / stage_name, resources, parent)
         try:
-            os.mkdir(name, mode=0o700, dir_fd=self.fd)
+            _publish_posix_directory(stage_fd, stage_name, self.fd, name)
         except FileExistsError:
             if exclusive:
                 raise
-        return _Directory(self.path / name, resources, self)
+            return _Directory(self.path / name, resources, self)
+        # Ownership comes from the protected staging descriptor, never a reopened public name.
+        staged.path = self.path / name
+        staged.parent = self
+        staged.verify()
+        return staged
+
+    def _staging_parent(self) -> "_Directory":
+        ancestors = []
+        current: Optional[_Directory] = self
+        while current is not None:
+            ancestors.append(current)
+            current = current.parent
+        owner = os.geteuid()  # pylint: disable=no-member
+        for directory in reversed(ancestors):
+            if directory.fd is None:
+                continue
+            info = os.fstat(directory.fd)
+            if (
+                info.st_dev == self.info.st_dev
+                and info.st_uid == owner
+                and info.st_mode & 0o300 == 0o300
+                and not info.st_mode & 0o022
+                and not _has_extended_acl(directory.fd)
+            ):
+                directory.verify()
+                return directory
+        raise PermissionError("Checkpoint output requires an owner-controlled same-filesystem staging ancestor")
 
     def open_file(self, name: str) -> BinaryIO:
         self.verify()
         if sys.platform == "win32":
-            import msvcrt
+            import msvcrt  # pylint: disable=import-error
 
             handle = _open_windows_entry(self.path / name, self.handle, directory=False, exclusive=True)
             try:

@@ -20,6 +20,7 @@
 - Retry sampling responses missing `request_id` within a bounded fault budget, then raise `MalformedResponseError`.
 - Improve polling budgets, sampling limits, heartbeat shutdown, and scalar serialization while preserving protected-training replay safeguards.
 - Use canonical `/fine_tuning_sessions` routes in generated operations while retaining existing Python convenience APIs.
+- Preserve POSIX ownership across checkpoint directory creation and opening using protected staging and atomic no-replace publication. Reject unsupported staging explicitly and retain partial output without adopting or overwriting concurrent directories.
 
 ### Other Changes
 
