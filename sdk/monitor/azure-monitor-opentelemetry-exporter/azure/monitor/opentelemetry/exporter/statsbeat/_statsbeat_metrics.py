@@ -90,8 +90,9 @@ class _StatsbeatFeature:
     LIVE_METRICS = 16
     CUSTOMER_SDKSTATS = 32
     BROWSER_SDK_LOADER = 64
-    GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE = 128
-    MULTI_ENDPOINT_ROUTING = 256
+    # Bits 7-10 are reserved for A365, OTLP, console, and Spectra exports.
+    GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE = 2048
+    MULTI_ENDPOINT_ROUTING = 4096
 
 
 class _AttachTypes:
