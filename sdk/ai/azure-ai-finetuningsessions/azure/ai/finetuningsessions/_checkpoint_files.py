@@ -186,7 +186,7 @@ class _Directory:
     def open_file(self, name: str) -> BinaryIO:
         self.verify()
         if sys.platform == "win32":
-            import msvcrt
+            import msvcrt  # pylint: disable=import-error
 
             handle = _open_windows_entry(self.path / name, self.handle, directory=False, exclusive=True)
             try:
