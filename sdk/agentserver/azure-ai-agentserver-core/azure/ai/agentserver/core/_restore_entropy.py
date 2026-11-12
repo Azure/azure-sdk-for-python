@@ -10,10 +10,9 @@ NumPy's legacy global generator, and OpenSSL's generators would otherwise
 return the same sequence in every restored sandbox.
 
 These helpers draw fresh bytes from the operating system. They never import a
-library that the application has not already loaded, and never raise.
+library or module that the application has not already loaded, and never raise.
 """
 
-import importlib
 import logging
 import os
 import random
@@ -24,7 +23,6 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 _ENTROPY_BYTES = 32
 _CRYPTOGRAPHY_RUST_MODULE = "cryptography.hazmat.bindings._rust"
-_CRYPTOGRAPHY_BINDING_MODULE = "cryptography.hazmat.bindings.openssl.binding"
 _NUMPY_RANDOM_MODULE = "numpy.random"
 
 
@@ -33,8 +31,9 @@ def add_openssl_entropy() -> list[str]:
 
     Covers the OpenSSL instance used by the ``ssl`` module and, when the
     ``cryptography`` native module is already loaded, the separate OpenSSL
-    instance that ``cryptography`` wheels bundle. Adding entropy is always
-    safe, so this can run on every after-restore call.
+    instance that ``cryptography`` wheels bundle, reached through that loaded
+    module. Adding entropy is always safe, so this can run on every
+    after-restore call.
 
     :return: Names of the generators that received entropy.
     :rtype: list[str]
@@ -48,13 +47,14 @@ def add_openssl_entropy() -> list[str]:
     except Exception as exc:  # pylint: disable=broad-exception-caught
         logger.warning("Could not add entropy to the ssl module's OpenSSL generator: %s", type(exc).__name__)
 
-    if _CRYPTOGRAPHY_RUST_MODULE in sys.modules:
+    rust_module = sys.modules.get(_CRYPTOGRAPHY_RUST_MODULE)
+    if rust_module is not None:
         try:
-            binding_module = sys.modules.get(_CRYPTOGRAPHY_BINDING_MODULE) or importlib.import_module(
-                _CRYPTOGRAPHY_BINDING_MODULE
-            )
-            rand_add = getattr(binding_module.Binding().lib, "RAND_add", None)
-            if rand_add is not None:
+            openssl_lib = getattr(getattr(rust_module, "_openssl", None), "lib", None)
+            rand_add = getattr(openssl_lib, "RAND_add", None)
+            if rand_add is None:
+                logger.warning("Could not add entropy to the cryptography OpenSSL generator: RAND_add is unavailable")
+            else:
                 rand_add(os.urandom(_ENTROPY_BYTES), _ENTROPY_BYTES, float(_ENTROPY_BYTES))
                 refreshed.append("cryptography")
         except Exception as exc:  # pylint: disable=broad-exception-caught

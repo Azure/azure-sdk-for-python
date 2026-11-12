@@ -36,9 +36,11 @@ real spans.  Azure Monitor export is optional (auto-configured by the distro).
 import asyncio  # pylint: disable=do-not-import-asyncio
 from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
 from contextlib import contextmanager, nullcontext
+import contextvars
 import logging
 import os
 import threading
+import time
 from typing import Any, Optional
 
 from anyio import CancelScope
@@ -758,35 +760,85 @@ def _force_flush_provider(provider: Any, timeout_millis: int) -> str:
 def _flush_providers_for_snapshot(timeout_millis: int) -> None:
     """Flush traces and metrics, log a summary, then flush logs last.
 
-    The summary is logged before the final log flush so it is not left in the
-    buffer that the snapshot captures.
+    All providers share one ``timeout_millis`` budget; each ``force_flush`` call
+    receives the time remaining, but at least 1 ms. The summary is logged before
+    the final log flush so it is not left in the buffer that the snapshot captures.
 
-    :param timeout_millis: Timeout passed to each ``force_flush`` call.
+    :param timeout_millis: Total time budget for all ``force_flush`` calls.
     :type timeout_millis: int
     """
+    deadline = time.monotonic() + timeout_millis / 1000
+
+    def _remaining_millis() -> int:
+        return max(1, int((deadline - time.monotonic()) * 1000))
+
     providers, logger_provider = _get_snapshot_flush_providers()
-    outcomes = {name: _force_flush_provider(provider, timeout_millis) for name, provider in providers}
+    outcomes = {name: _force_flush_provider(provider, _remaining_millis()) for name, provider in providers}
+    flush_logs = callable(getattr(logger_provider, "force_flush", None))
     if logger_provider is not None:
-        outcomes["logs"] = "pending"
+        outcomes["logs"] = "pending" if flush_logs else "unsupported"
     summary = ", ".join(f"{name}={outcome}" for name, outcome in outcomes.items())
     if any(outcome not in ("returned", "unsupported", "pending") for outcome in outcomes.values()):
         logger.warning("Telemetry flush before memory snapshot: %s", summary)
     else:
         logger.info("Telemetry flush before memory snapshot: %s", summary)
-    if logger_provider is not None:
-        logs_outcome = _force_flush_provider(logger_provider, timeout_millis)
-        if logs_outcome not in ("returned", "unsupported"):
+    if flush_logs:
+        logs_outcome = _force_flush_provider(logger_provider, _remaining_millis())
+        if logs_outcome != "returned":
             logger.warning("Log flush before memory snapshot: %s", logs_outcome)
+
+
+def _start_snapshot_flush_thread(loop: asyncio.AbstractEventLoop, timeout_millis: int) -> "asyncio.Future[None]":
+    """Run the snapshot flush on a dedicated thread and return a future for its completion.
+
+    A dedicated thread starts immediately even when the default executor is
+    busy, and copying the context keeps the summary log correlated with the
+    before-snapshot request.
+
+    :param loop: Event loop that owns the returned future.
+    :type loop: asyncio.AbstractEventLoop
+    :param timeout_millis: Total time budget for the flush.
+    :type timeout_millis: int
+    :return: A future that completes when the flush finishes.
+    :rtype: asyncio.Future[None]
+    """
+    future: "asyncio.Future[None]" = loop.create_future()
+    # Retrieve a late failure so a flush that outlives the wait never logs
+    # "exception was never retrieved".
+    future.add_done_callback(lambda done: None if done.cancelled() else done.exception())
+    context = contextvars.copy_context()
+
+    def _complete(error: Optional[Exception]) -> None:
+        if future.done():
+            return
+        if error is None:
+            future.set_result(None)
+        else:
+            future.set_exception(error)
+
+    def _run() -> None:
+        error: Optional[Exception] = None
+        try:
+            context.run(_flush_providers_for_snapshot, timeout_millis)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            error = exc
+        try:
+            loop.call_soon_threadsafe(_complete, error)
+        except RuntimeError:
+            pass  # The event loop closed while the flush was running.
+
+    threading.Thread(target=_run, name="agentserver-snapshot-flush", daemon=True).start()
+    return future
 
 
 async def flush_providers_before_snapshot(timeout_seconds: Optional[float] = None) -> None:
     """Export buffered telemetry before the platform captures a memory snapshot.
 
     Records still buffered at capture time would otherwise be exported again by
-    every sandbox restored from the snapshot. The flush runs in a worker thread
-    and is shielded from cancellation. It never raises for flush failures: if
-    the wait exceeds ``timeout_seconds``, a warning is logged and the export may
-    still be in flight when the snapshot is captured.
+    every sandbox restored from the snapshot. The flush runs on a dedicated
+    thread and is shielded from cancellation. It never raises for flush
+    failures: if the wait exceeds ``timeout_seconds``, a warning is logged and
+    the export may still be in flight when the snapshot is captured.
 
     :param timeout_seconds: Maximum time to wait for the flush. Defaults to 10 seconds.
     :type timeout_seconds: float or None
@@ -794,8 +846,11 @@ async def flush_providers_before_snapshot(timeout_seconds: Optional[float] = Non
     if timeout_seconds is None:
         timeout_seconds = _SNAPSHOT_FLUSH_TIMEOUT_SECONDS
     loop = asyncio.get_running_loop()
-    timeout_millis = int(timeout_seconds * 1000)
-    future = loop.run_in_executor(None, _flush_providers_for_snapshot, timeout_millis)
+    try:
+        future = _start_snapshot_flush_thread(loop, int(timeout_seconds * 1000))
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.warning("Could not start the telemetry flush before memory snapshot: %s", type(exc).__name__)
+        return
     deadline = loop.time() + timeout_seconds
     cancellation: Optional[asyncio.CancelledError] = None
     with CancelScope(shield=True):
@@ -803,7 +858,7 @@ async def flush_providers_before_snapshot(timeout_seconds: Optional[float] = Non
             remaining = deadline - loop.time()
             if remaining <= 0:
                 logger.warning(
-                    "Telemetry flush before memory snapshot did not finish within %.0f s; "
+                    "Telemetry flush before memory snapshot did not finish within %g s; "
                     "an export may still be in flight when the snapshot is captured",
                     timeout_seconds,
                 )
@@ -814,9 +869,10 @@ async def flush_providers_before_snapshot(timeout_seconds: Optional[float] = Non
                 continue
             except asyncio.CancelledError as exc:
                 cancellation = exc
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                logger.warning("Telemetry flush before memory snapshot failed: %s", type(exc).__name__)
-                break
+            except Exception:  # pylint: disable=broad-exception-caught
+                break  # Reported below.
+    if future.done() and not future.cancelled() and future.exception() is not None:
+        logger.warning("Telemetry flush before memory snapshot failed: %s", type(future.exception()).__name__)
     if cancellation is not None:
         raise cancellation
 
