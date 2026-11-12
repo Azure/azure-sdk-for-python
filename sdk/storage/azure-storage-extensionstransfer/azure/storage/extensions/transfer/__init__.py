@@ -13,11 +13,10 @@ install it via the `ext-transfer` extra on `azure-storage-blob`:
     pip install azure-storage-blob[ext-transfer]
 """
 
+from importlib.metadata import version
 from typing import Callable, Iterator
 
-from ._version import VERSION
-
-__version__ = VERSION
+__version__ = version("azure-storage-extensionstransfer")
 
 try:
     from ._native import (

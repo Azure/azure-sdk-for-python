@@ -41,7 +41,7 @@ from azure.storage.blob._transfer_native import (
     _build_token_provider,
     _is_native_available,
     NativeStorageStreamDownloader,
-    try_native_download_eager,
+    try_native_download,
     try_native_upload,
 )
 
@@ -159,7 +159,7 @@ class _NativeTransferTestCase(unittest.TestCase):
         validate_content=None,
         **kwargs,
     ):
-        return try_native_download_eager(
+        return try_native_download(
             self.client,
             offset,
             length,

@@ -64,7 +64,7 @@ from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin,
 from ._shared.response_handlers import process_storage_error, return_response_headers
 from ._shared.validation import is_crc64_validation, parse_validation_option
 from ._serialize import get_lease_id, get_api_version, get_modify_conditions, get_version_id
-from ._transfer_native import try_native_upload
+from ._transfer_native import try_native_download, try_native_upload
 from ._upload_helpers import upload_append_blob, upload_block_blob, upload_page_blob
 
 if TYPE_CHECKING:
@@ -821,10 +821,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             "key": self.key_encryption_key,
             "resolver": self.key_resolver_function,
         }
-        from ._transfer_native import (  # pylint: disable=import-outside-toplevel
-            try_native_download_eager,
-        )
-        native_result = try_native_download_eager(
+        native_result = try_native_download(
             blob_client=self,
             offset=offset,
             length=length,
@@ -834,7 +831,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs,
         )
         if native_result is not None:
-            return native_result
+            return native_result  # type: ignore
 
         options = _download_blob_options(
             blob_name=self.blob_name,

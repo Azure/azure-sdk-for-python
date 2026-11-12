@@ -524,7 +524,7 @@ class NativeStorageStreamDownloader:
         yield from self._iter
 
 
-def try_native_download_eager(
+def try_native_download(
     blob_client: Any,
     offset: Optional[int],
     length: Optional[int],
