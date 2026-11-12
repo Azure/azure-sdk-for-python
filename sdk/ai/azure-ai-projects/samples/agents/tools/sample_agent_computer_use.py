@@ -25,8 +25,8 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) (Optional) COMPUTER_USE_MODEL_DEPLOYMENT_NAME - The deployment name of the computer-use-preview model, as found under the "Name" column in
-       the "Models + endpoints" tab in your Microsoft Foundry project.
+    2) FOUNDRY_MODEL_NAME - The deployment name of a computer-use supported AI model (such as "gpt-5.4"), as found under
+       the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
     3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
@@ -43,7 +43,7 @@ from computer_use_util import (  # pylint: disable=import-error
 )
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
+from azure.ai.projects.models import PromptAgentDefinition, ComputerTool
 
 load_dotenv()
 
@@ -61,7 +61,7 @@ except FileNotFoundError:
     print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
     exit(1)  # pylint: disable=consider-using-sys-exit
 
-tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
+tool = ComputerTool()
 
 with (
     DefaultAzureCredential() as credential,
@@ -70,7 +70,7 @@ with (
         project_client=project_client,
         agent_name=agent_name,
         definition=PromptAgentDefinition(
-            model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "computer-use-preview"),
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="""
         You are a computer automation assistant.
 
@@ -127,13 +127,15 @@ with (
 
         # Process the first computer call
         computer_call = computer_calls[0]
-        action = computer_call.action
+        actions = computer_call.actions or ([computer_call.action] if getattr(computer_call, "action", None) else [])
         call_id = computer_call.call_id
 
         print(f"Processing computer call (ID: {call_id})")
 
-        # Handle the action and get the screenshot info
-        screenshot_info, current_state = handle_computer_action_and_take_screenshot(action, current_state, screenshots)
+        # Handle the actions and get the screenshot info
+        screenshot_info, current_state = handle_computer_action_and_take_screenshot(
+            actions, current_state, screenshots
+        )
 
         print(f"Sending action result back to agent (using {screenshot_info['filename']})...")
 
