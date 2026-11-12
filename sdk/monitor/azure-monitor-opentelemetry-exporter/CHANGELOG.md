@@ -3,8 +3,10 @@
 ## 1.0.0b60 (Unreleased)
 
 ### Features Added
+- Align experimental feature bits with shared bitmap
+  ([49967](https://github.com/Azure/azure-sdk-for-python/pull/49967))
 - Track accepted experimental feature opt-ins through existing Statsbeat feature metrics.
-
+  ([49964](https://github.com/Azure/azure-sdk-for-python/pull/49964))
 - Add actionable multi-endpoint routing diagnostics
   for invalid routing attributes, export/storage failures, retention evictions,
   and capacity limits, without including sensitive routing or telemetry values.
