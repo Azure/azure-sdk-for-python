@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-- Added WARNING-level diagnostics for missing or unusable judge output, including JSON parsing failures from the optional Promptflow integration. Diagnostics use SDK-controlled response metadata when available and otherwise report it as unknown; the new warnings do not log model response content. Existing score fallbacks and exception types are unchanged.
+- Added WARNING-level diagnostics for missing or unusable judge output, including a cause and SDK-controlled response metadata when available. Diagnostics do not log model response content. Invalid-output and score-validation exception messages now include the cause and metadata; existing score fallbacks and exception types are unchanged.
 
 ## 1.18.12 (2026-11-09)
 

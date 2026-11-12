@@ -5,9 +5,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy, judge_output_diagnostic
+from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._legacy.prompty._utils import _DIAGNOSTIC_METADATA_KEY, _LLMOutputDiagnosticMetadata
+from azure.ai.evaluation._legacy.prompty._utils import _LLMOutput, _LLMOutputDiagnosticMetadata
 
 
 def strategy(**kwargs):
@@ -17,10 +17,9 @@ def strategy(**kwargs):
 
 
 def _sdk_output(answer, *, finish_reason="stop", output_tokens=0, model="judge-model"):
-    return {
-        "llm_output": answer,
-        _DIAGNOSTIC_METADATA_KEY: _LLMOutputDiagnosticMetadata(finish_reason, output_tokens, model),
-    }
+    output = _LLMOutput({"llm_output": answer})
+    output.diagnostic_metadata = _LLMOutputDiagnosticMetadata(finish_reason, output_tokens, model)
+    return output
 
 
 @pytest.mark.parametrize(

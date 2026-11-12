@@ -601,7 +601,6 @@ def prepare_open_ai_request_params(
 
 
 _KNOWN_FINISH_REASONS = ("stop", "length", "content_filter", "tool_calls", "function_call")
-_DIAGNOSTIC_METADATA_KEY = "_azure_ai_evaluation_diagnostic_metadata"
 
 
 @dataclass(frozen=True)
@@ -609,6 +608,14 @@ class _LLMOutputDiagnosticMetadata:
     finish_reason: Any
     output_tokens: Any
     model: Any
+
+
+class _LLMOutput(dict):
+    diagnostic_metadata: Optional[_LLMOutputDiagnosticMetadata]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.diagnostic_metadata = None
 
 
 def llm_output_diagnostic(cause: str, finish_reason: Any = None, output_tokens: Any = None, model: Any = None) -> str:
@@ -652,6 +659,15 @@ def log_invalid_llm_output(diagnostic: str) -> None:
             sys.stderr.write(f"Model returned invalid output. {diagnostic}\n")
         except (OSError, ValueError):
             pass
+
+
+def _append_diagnostic_to_exception(exc: Exception, diagnostic: str) -> None:
+    if isinstance(exc, json.JSONDecodeError):
+        exc.msg = f"{exc.msg}. {diagnostic}"
+        exc.doc = ""
+        exc.args = (exc.msg, exc.doc, exc.pos)
+    else:
+        exc.args = (f"{exc}. {diagnostic}",)
 
 
 async def format_llm_response(
@@ -706,9 +722,7 @@ async def format_llm_response(
             cause = "the model returned an empty response" if empty else "the model response was not valid JSON"
             diagnostic = llm_output_diagnostic(cause, finish_reason, output_tokens, model)
             log_invalid_llm_output(diagnostic)
-            if isinstance(exc, json.JSONDecodeError):
-                exc.msg = f"{exc.msg}. {diagnostic}"
-                exc.args = (f"{exc}. {diagnostic}",)
+            _append_diagnostic_to_exception(exc, diagnostic)
             raise
         if not outputs:
             return result_dict
@@ -739,17 +753,18 @@ async def format_llm_response(
                     return
                 yield chunk.choices[0].delta.content
 
-    to_ret = {
-        "llm_output": None,
-        "input_token_count": 0,
-        "output_token_count": 0,
-        "total_token_count": 0,
-        "finish_reason": "",
-        "model_id": "",
-        "sample_input": "",
-        "sample_output": "",
-        _DIAGNOSTIC_METADATA_KEY: _LLMOutputDiagnosticMetadata(None, None, None),
-    }
+    to_ret = _LLMOutput(
+        {
+            "llm_output": None,
+            "input_token_count": 0,
+            "output_token_count": 0,
+            "total_token_count": 0,
+            "finish_reason": "",
+            "model_id": "",
+            "sample_input": "",
+            "sample_output": "",
+        }
+    )
 
     if not is_first_choice:
         to_ret["llm_output"] = response
@@ -775,7 +790,7 @@ async def format_llm_response(
         model_id = response.model if response.model else ""
         # Unlike output_token_count, missing usage stays None so the diagnostic reports it as unknown.
         reported_output_tokens = response.usage.completion_tokens if response.usage else None
-        to_ret[_DIAGNOSTIC_METADATA_KEY] = _LLMOutputDiagnosticMetadata(finish_reason, reported_output_tokens, model_id)
+        to_ret.diagnostic_metadata = _LLMOutputDiagnosticMetadata(finish_reason, reported_output_tokens, model_id)
         if not response.choices:
             log_invalid_llm_output(
                 llm_output_diagnostic(

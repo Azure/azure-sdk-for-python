@@ -7,7 +7,6 @@ from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._common.utils import check_score_is_valid, parse_quality_evaluator_reason_score
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._legacy.prompty._utils import (
-    _DIAGNOSTIC_METADATA_KEY,
     _LLMOutputDiagnosticMetadata,
     llm_output_diagnostic,
     log_invalid_llm_output,
@@ -19,7 +18,7 @@ NO_VALID_SCORE = "the model response had no valid score"
 
 
 def judge_output_diagnostic(output: Any, cause: Optional[str] = None) -> str:
-    """Log and return why a judge output was unusable, using only the prompty envelope's metadata.
+    """Build a diagnostic for unusable judge output from SDK-controlled envelope metadata.
 
     :param output: The prompty output, either the envelope that holds ``llm_output`` or the answer itself.
     :type output: Any
@@ -29,7 +28,7 @@ def judge_output_diagnostic(output: Any, cause: Optional[str] = None) -> str:
     :rtype: str
     """
     envelope = output if isinstance(output, dict) else {}
-    metadata = envelope.get(_DIAGNOSTIC_METADATA_KEY)
+    metadata = getattr(output, "diagnostic_metadata", None)
     if not isinstance(metadata, _LLMOutputDiagnosticMetadata):
         metadata = _LLMOutputDiagnosticMetadata(None, None, None)
     if cause is None:
@@ -44,9 +43,24 @@ def judge_output_diagnostic(output: Any, cause: Optional[str] = None) -> str:
             cause = "the model response was not a JSON object"
         else:
             cause = f"the model response had unexpected type {type(answer).__name__}"
-    diagnostic = llm_output_diagnostic(cause, metadata.finish_reason, metadata.output_tokens, metadata.model)
+    return llm_output_diagnostic(cause, metadata.finish_reason, metadata.output_tokens, metadata.model)
+
+
+def log_judge_output_diagnostic(diagnostic: str) -> None:
+    """Log a previously built diagnostic without including model output."""
     log_invalid_llm_output(diagnostic)
-    return diagnostic
+
+
+def parse_judge_score(raw_score: Any, output: Any, *, missing: bool = False) -> float:
+    """Convert a Prompty judge score and log a diagnostic if it is missing or unusable."""
+    try:
+        score = float(raw_score)
+    except (TypeError, ValueError, OverflowError):
+        log_judge_output_diagnostic(judge_output_diagnostic(output, NO_VALID_SCORE))
+        raise
+    if missing or math.isnan(score):
+        log_judge_output_diagnostic(judge_output_diagnostic(output, NO_VALID_SCORE))
+    return score
 
 
 class PromptyEvaluationStrategy:
@@ -154,6 +168,7 @@ class PromptyEvaluationStrategy:
                 score_for_error = "<numeric overflow>"
             if not valid_score:
                 diagnostic = judge_output_diagnostic(output, NO_VALID_SCORE)
+                log_judge_output_diagnostic(diagnostic)
                 raise EvaluationException(
                     message=(
                         f"Invalid score value: {score_for_error}. Expected a number in range [{minimum}, {maximum}]. "
@@ -164,13 +179,9 @@ class PromptyEvaluationStrategy:
                     target=self.score_error_target,
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
-        try:
-            score = float(score) if self.strict or score is not None else math.nan
-        except (TypeError, ValueError, OverflowError):
-            judge_output_diagnostic(output, NO_VALID_SCORE)
-            raise
-        if not has_score or math.isnan(score):
-            judge_output_diagnostic(output, NO_VALID_SCORE)
+        score = parse_judge_score(
+            score if self.strict or score is not None else math.nan, output, missing=not has_score
+        )
         cutoff = self.threshold if self.binary_cutoff is None else self.binary_cutoff
         if math.isnan(score) and self.binary_cutoff is None:
             verdict = "unknown"
@@ -207,8 +218,10 @@ class PromptyEvaluationStrategy:
         return result
 
     def _invalid_output(self, output: Any = None) -> None:
+        diagnostic = judge_output_diagnostic(output)
+        log_judge_output_diagnostic(diagnostic)
         raise EvaluationException(
-            message=f"Evaluator returned invalid output. {judge_output_diagnostic(output)}",
+            message=f"Evaluator returned invalid output. {diagnostic}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=self.error_target,

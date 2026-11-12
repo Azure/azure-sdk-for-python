@@ -1,25 +1,26 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import logging
 import math
 import os
-import logging
 import re
 import reprlib
-from typing import Any, Dict, Union, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 from typing_extensions import overload, override
-from azure.ai.evaluation._exceptions import (
-    EvaluationException,
-    ErrorBlame,
-    ErrorCategory,
-    ErrorTarget,
-)
-from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
+
+from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._common.utils import _drop_mcp_approval_messages, _log_safe_summary, _stringify_tool_result
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    NO_VALID_SCORE,
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
+)
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
-from azure.ai.evaluation._common.utils import _drop_mcp_approval_messages, _log_safe_summary, _stringify_tool_result
-from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 logger = logging.getLogger(__name__)
 
@@ -293,8 +294,10 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             raw_score = _top_level_or_nested(llm_output, llm_properties, "score")
             score = _binary_score(raw_score)
             if score is None:
+                diagnostic = judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
+                log_judge_output_diagnostic(diagnostic)
                 raise EvaluationException(
-                    message=f"Invalid score value: {reprlib.repr(raw_score)}. Expected 0 or 1. {judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)}",
+                    message=f"Invalid score value: {reprlib.repr(raw_score)}. Expected 0 or 1. {diagnostic}",
                     internal_message="Invalid score value.",
                     blame=ErrorBlame.SYSTEM_ERROR,
                     category=ErrorCategory.FAILED_EXECUTION,
@@ -312,8 +315,10 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_properties": llm_properties,
             }
+        diagnostic = judge_output_diagnostic(prompty_output_dict)
+        log_judge_output_diagnostic(diagnostic)
         raise EvaluationException(
-            message=f"Evaluator returned invalid output. {judge_output_diagnostic(prompty_output_dict)}",
+            message=f"Evaluator returned invalid output. {diagnostic}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,

@@ -21,7 +21,6 @@ from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import urlsplit
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._legacy.prompty._utils import llm_output_diagnostic, log_invalid_llm_output
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, CustomHookPolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
@@ -333,15 +332,7 @@ class PromptyModelRunner:
         )
 
     async def __call__(self, *, timeout: float, **eval_input: Any) -> Dict[str, Any]:
-        try:
-            return await self.flow(timeout=timeout, **eval_input)
-        except json.JSONDecodeError as exc:
-            if _USE_PF_PROMPTY:
-                diagnostic = llm_output_diagnostic("the model response was not valid JSON")
-                log_invalid_llm_output(diagnostic)
-                exc.msg = f"{exc.msg}. {diagnostic}"
-                exc.args = (f"{exc}. {diagnostic}",)
-            raise
+        return await self.flow(timeout=timeout, **eval_input)
 
 
 def _invalid_config(message: str) -> EvaluationException:

@@ -1,23 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
 import logging
 import math
-from typing import Dict, List, Union, TypeVar, Optional
+import os
+from typing import Dict, List, Optional, TypeVar, Union
+
 from typing_extensions import overload, override
+
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
-from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
-from azure.ai.evaluation._exceptions import (
-    ErrorBlame,
-    ErrorCategory,
-    ErrorTarget,
-    EvaluationException,
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    NO_VALID_SCORE,
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
 )
-from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
+from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+
 from ..._common.utils import check_score_is_valid, reformat_conversation_history
-from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
 
@@ -255,8 +257,10 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
             score = llm_output.get("score", None)
             if score not in [0, 1]:
+                diagnostic = judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
+                log_judge_output_diagnostic(diagnostic)
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected 0 or 1. {judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)}",
+                    message=f"Invalid score value: {score}. Expected 0 or 1. {diagnostic}",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.SYSTEM_ERROR,
@@ -288,8 +292,10 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return response_dict
 
         else:
+            diagnostic = judge_output_diagnostic(prompty_output_dict)
+            log_judge_output_diagnostic(diagnostic)
             raise EvaluationException(
-                message=f"Evaluator returned invalid output. {judge_output_diagnostic(prompty_output_dict)}",
+                message=f"Evaluator returned invalid output. {diagnostic}",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
                 target=ErrorTarget.EVALUATE,

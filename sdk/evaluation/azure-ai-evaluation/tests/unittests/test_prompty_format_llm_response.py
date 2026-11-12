@@ -3,16 +3,18 @@
 # ---------------------------------------------------------
 
 import asyncio
+import copy
 import json
 import logging
+import pickle
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
 
-from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._legacy.prompty import _utils
 from azure.ai.evaluation._legacy.prompty._exceptions import InvalidInputError
 from azure.ai.evaluation._legacy.prompty._utils import format_llm_response
 
@@ -96,6 +98,55 @@ def test_format_llm_response_logs_metadata_and_reraises_invalid_json(caplog):
 
 
 @pytest.mark.unittest
+def test_format_llm_response_invalid_json_exception_is_copyable_and_picklable(caplog):
+    with pytest.raises(json.JSONDecodeError) as exc_info:
+        _format_json(_json_response('{"score": 4, "reason": "secret'))
+
+    for copied in (copy.copy(exc_info.value), pickle.loads(pickle.dumps(exc_info.value))):
+        assert isinstance(copied, json.JSONDecodeError)
+        assert "not valid JSON" in str(copied)
+    assert "secret" not in caplog.text
+
+
+@pytest.mark.unittest
+def test_format_llm_response_serializes_and_preserves_diagnostic_metadata(caplog):
+    response = _json_response('{"score": 4}', finish_reason="length", completion_tokens=800)
+    result = _format_json(response)
+
+    serialized = json.dumps(result)
+    assert "_azure_ai_evaluation_diagnostic_metadata" not in serialized
+    for copied in (copy.copy(result), pickle.loads(pickle.dumps(result))):
+        assert isinstance(copied, dict)
+        assert "_azure_ai_evaluation_diagnostic_metadata" not in json.dumps(copied)
+        copied["llm_output"] = {"reason": "unused"}
+        strategy = PromptyEvaluationStrategy(AsyncMock(), result_key="metric", threshold=3, timeout=1)
+        strategy.parse(copied)
+        assert "finish_reason=length, output_tokens=800, model=test-model" in caplog.text
+
+
+@pytest.mark.unittest
+def test_format_llm_response_logs_diagnostic_for_type_error(caplog):
+    with pytest.raises(TypeError) as exc_info:
+        _format_json(_json_response(None, finish_reason="content_filter", completion_tokens=800))
+
+    assert "output_tokens=800" in str(exc_info.value)
+    assert "output_tokens=800" in caplog.text
+
+
+@pytest.mark.unittest
+def test_format_llm_response_logs_diagnostic_for_recursion_error(monkeypatch, caplog):
+    def raise_recursion_error(_content):
+        raise RecursionError("maximum recursion depth exceeded")
+
+    monkeypatch.setattr(_utils.json, "loads", raise_recursion_error)
+    with pytest.raises(RecursionError) as exc_info:
+        _format_json(_json_response("{}", finish_reason="length", completion_tokens=800))
+
+    assert "output_tokens=800" in str(exc_info.value)
+    assert "output_tokens=800" in caplog.text
+
+
+@pytest.mark.unittest
 def test_format_llm_response_missing_output_keeps_key_list_and_adds_metadata(caplog):
     with pytest.raises(InvalidInputError) as exc_info:
         _format_json(_json_response('{"reason": "secret"}'), outputs={"score": {}})
@@ -125,20 +176,6 @@ def test_missing_usage_is_unknown_in_later_diagnostics():
         strategy.parse(result)
 
     assert "finish_reason=stop, output_tokens=unknown, model=test-model" in exc_info.value.message
-
-
-@pytest.mark.unittest
-def test_promptflow_json_decode_error_logs_diagnostic_and_reraises(monkeypatch, caplog):
-    runner = _model_runners.PromptyModelRunner.__new__(_model_runners.PromptyModelRunner)
-    runner.flow = AsyncMock(side_effect=json.JSONDecodeError("invalid", "{", 0))
-    monkeypatch.setattr(_model_runners, "_USE_PF_PROMPTY", True)
-
-    with pytest.raises(json.JSONDecodeError) as exc_info:
-        asyncio.run(runner(timeout=1))
-
-    assert "the model response was not valid JSON" in caplog.text
-    assert "finish_reason=unknown, output_tokens=unknown, model=unknown" in caplog.text
-    assert "finish_reason=unknown, output_tokens=unknown, model=unknown" in str(exc_info.value)
 
 
 @pytest.mark.unittest

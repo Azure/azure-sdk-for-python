@@ -12,7 +12,11 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
 from azure.ai.evaluation._evaluators._common._model_runners import is_decision_model_config
-from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
+    parse_judge_score,
+)
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import Message
@@ -278,13 +282,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 return self._return_not_applicable_result(reason, self._threshold)
 
             reasoning = llm_output.get("reason", "")
-            try:
-                score = float(llm_output.get("score", 0.0))
-            except (TypeError, ValueError, OverflowError):
-                judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
-                raise
-            if "score" not in llm_output or math.isnan(score):
-                judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
+            score = parse_judge_score(
+                llm_output.get("score", 0.0), prompty_output_dict, missing="score" not in llm_output
+            )
             score_result = "pass" if score >= 1.0 else "fail"
             llm_properties = llm_output.get("properties", {}) or {}
             llm_properties.update(self._get_token_metadata(prompty_output_dict))
@@ -300,8 +300,10 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_properties": llm_properties,
             }
 
+        diagnostic = judge_output_diagnostic(prompty_output_dict)
+        log_judge_output_diagnostic(diagnostic)
         raise EvaluationException(
-            message=f"Evaluator returned invalid output. {judge_output_diagnostic(prompty_output_dict)}",
+            message=f"Evaluator returned invalid output. {diagnostic}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,

@@ -7,7 +7,7 @@ import pytest
 
 from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
-from azure.ai.evaluation._legacy.prompty._utils import _DIAGNOSTIC_METADATA_KEY, _LLMOutputDiagnosticMetadata
+from azure.ai.evaluation._legacy.prompty._utils import _LLMOutput, _LLMOutputDiagnosticMetadata
 
 
 # Mock flow side effect that mimics the output of the prompty (the _flow call)
@@ -254,13 +254,16 @@ class TestTaskCompletionEvaluator:
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
 
         async def invalid_output_flow(timeout, **kwargs):
-            return {
-                "llm_output": "This is a string, not a dictionary",
-                "finish_reason": "length",
-                "output_token_count": 800,
-                "model_id": "judge-model",
-                _DIAGNOSTIC_METADATA_KEY: _LLMOutputDiagnosticMetadata("length", 800, "judge-model"),
-            }
+            output = _LLMOutput(
+                {
+                    "llm_output": "This is a string, not a dictionary",
+                    "finish_reason": "length",
+                    "output_token_count": 800,
+                    "model_id": "judge-model",
+                }
+            )
+            output.diagnostic_metadata = _LLMOutputDiagnosticMetadata("length", 800, "judge-model")
+            return output
 
         evaluator._flow = MagicMock(side_effect=invalid_output_flow)
 
