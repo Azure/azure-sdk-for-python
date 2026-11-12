@@ -12,6 +12,7 @@ from azure.ai.evaluation._common.utils import (
     _resolve_evaluation_level,
     _is_intermediate_response,
     _drop_mcp_approval_messages,
+    _drop_reasoning_items,
     _normalize_function_call_types,
     _preprocess_messages,
 )
@@ -723,6 +724,46 @@ class TestDropMcpApprovalMessages:
 
 
 @pytest.mark.unittest
+class TestDropReasoningItems:
+    def test_drops_reasoning_items_and_keeps_text_and_tool_calls(self):
+        tool_call = {"type": "tool_call", "name": "search", "arguments": {}, "tool_call_id": "c1"}
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+            {"role": "assistant", "content": [{"type": "reasoning", "content": "thinking"}, tool_call]},
+            {"role": "assistant", "content": [{"type": "reasoning", "content": ""}, {"type": "text", "text": "Done"}]},
+        ]
+        result = _drop_reasoning_items(messages)
+        assert result == [
+            messages[0],
+            {"role": "assistant", "content": [tool_call]},
+            {"role": "assistant", "content": [{"type": "text", "text": "Done"}]},
+        ]
+
+    def test_drops_a_message_with_only_reasoning_items(self):
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+            {"role": "assistant", "content": [{"type": "reasoning", "content": ""}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "Done"}]},
+        ]
+        assert _drop_reasoning_items(messages) == [messages[0], messages[2]]
+
+    def test_does_not_modify_the_input(self):
+        messages = [{"role": "assistant", "content": [{"type": "reasoning"}, {"type": "text", "text": "Hi"}]}]
+        _drop_reasoning_items(messages)
+        assert messages == [{"role": "assistant", "content": [{"type": "reasoning"}, {"type": "text", "text": "Hi"}]}]
+
+    def test_passes_through_other_messages(self):
+        messages = [
+            {"role": "user", "content": "Hello"},
+            {"role": "assistant", "content": [{"type": "text", "text": "Hi"}]},
+        ]
+        result = _drop_reasoning_items(messages)
+        assert result == messages
+        assert result[0] is messages[0] and result[1] is messages[1]
+        assert _drop_reasoning_items("not a list") == "not a list"
+
+
+@pytest.mark.unittest
 class TestNormalizeFunctionCallTypes:
     def test_function_call_to_tool_call(self):
         messages = [
@@ -832,6 +873,22 @@ class TestPreprocessMessages:
         assert result[1]["content"][0]["type"] == "tool_call"
         # function_call_output should be normalized to tool_result
         assert result[2]["content"][0]["type"] == "tool_result"
+
+    def test_drops_reasoning_items(self):
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "reasoning", "content": ""},
+                    {"type": "function_call", "name": "search", "arguments": {}, "tool_call_id": "c1"},
+                ],
+            },
+            {"role": "assistant", "content": [{"type": "reasoning", "content": ""}]},
+        ]
+        result = _preprocess_messages(messages)
+        assert len(result) == 2
+        assert [item["type"] for item in result[1]["content"]] == ["tool_call"]
 
     def test_normalizes_openapi_types(self):
         messages = [

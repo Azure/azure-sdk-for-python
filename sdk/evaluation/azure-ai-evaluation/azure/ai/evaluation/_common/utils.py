@@ -1607,6 +1607,33 @@ def _drop_mcp_approval_messages(messages):
     ]
 
 
+def _drop_reasoning_items(messages):
+    """Drop reasoning content items, which reasoning models add to assistant messages.
+
+    They hold no text or tool calls for the judge. A message that holds only reasoning items is dropped.
+    Messages that change are copied, so the caller's messages are not modified.
+
+    :param messages: The conversation messages.
+    :type messages: List[dict]
+    :return: The messages without reasoning content items.
+    :rtype: List[dict]
+    """
+    if not isinstance(messages, list):
+        return messages
+    result = []
+    for msg in messages:
+        content = msg.get("content") if isinstance(msg, dict) else None
+        if not isinstance(content, list):
+            result.append(msg)
+            continue
+        kept = [c for c in content if not (isinstance(c, dict) and c.get("type") == "reasoning")]
+        if len(kept) == len(content):
+            result.append(msg)
+        elif kept:
+            result.append({**msg, "content": kept})
+    return result
+
+
 def _normalize_function_call_types(messages):
     """Normalize function_call/function_call_output/openapi_call/openapi_call_output types to tool_call/tool_result.
 
@@ -1645,7 +1672,8 @@ def _normalize_function_call_types(messages):
 
 
 def _preprocess_messages(messages):
-    """Preprocess conversation messages by dropping MCP approval messages and normalizing function call types.
+    """Preprocess conversation messages by dropping MCP approval messages and reasoning items, and normalizing
+    function call types.
 
     This should be called before passing messages to serialization or evaluation functions.
 
@@ -1655,6 +1683,7 @@ def _preprocess_messages(messages):
     :rtype: List[dict]
     """
     messages = _drop_mcp_approval_messages(messages)
+    messages = _drop_reasoning_items(messages)
     messages = _normalize_function_call_types(messages)
     return messages
 
