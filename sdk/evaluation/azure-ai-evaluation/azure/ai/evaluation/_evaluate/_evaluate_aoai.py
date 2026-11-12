@@ -216,7 +216,15 @@ def _begin_single_aoai_evaluation(
     LOGGER.info(f"AOAI: Eval group created with id {eval_group_info.id}. Creating eval run next...")
     # Use eval group info to map grader IDs back to user-assigned names.
     grader_name_map = {}
-    num_criteria = len(eval_group_info.testing_criteria)
+    testing_criteria = getattr(eval_group_info, "testing_criteria", None)
+    if testing_criteria is None:
+        raise EvaluationException(
+            message="The AOAI evaluation group response did not contain testing criteria.",
+            blame=ErrorBlame.UNKNOWN,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.AOAI_GRADER,
+        )
+    num_criteria = len(testing_criteria)
     if num_criteria != len(grader_name_list):
         raise EvaluationException(
             message=f"Number of testing criteria ({num_criteria})"
@@ -225,8 +233,9 @@ def _begin_single_aoai_evaluation(
             category=ErrorCategory.INVALID_VALUE,
             target=ErrorTarget.AOAI_GRADER,
         )
-    for name, criteria in zip(grader_name_list, eval_group_info.testing_criteria):
-        grader_name_map[criteria.id] = name
+    for name, criteria in zip(grader_name_list, testing_criteria):
+        # Native OpenAI grader models may omit id; their results are keyed by name.
+        grader_name_map[getattr(criteria, "id", None) or criteria.name] = name
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")

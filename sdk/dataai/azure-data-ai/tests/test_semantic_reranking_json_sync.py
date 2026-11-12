@@ -5,6 +5,8 @@
 
 from copy import deepcopy
 import json
+from typing import Callable
+from unittest.mock import Mock
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
@@ -12,6 +14,7 @@ from azure.core.exceptions import HttpResponseError
 
 from azure.data.ai.models import SemanticRerankingInferenceContent, SemanticRerankingInferenceResult
 from azure.data.ai import InferenceClient
+from azure.data.ai.types import SemanticRerankingInferenceContent as SemanticRerankingRequest
 
 
 @pytest.fixture
@@ -120,6 +123,30 @@ def test_invalid_json_document_errors_are_service_errors(respond, transport, jso
     assert caught.value.response.headers["x-ms-error-code"] == "InvalidRequestBody"
     assert json.loads(transport.send.call_args.args[0].content) == payload
     transport.send.assert_called_once()
+
+
+@pytest.mark.parametrize("target_paths", [[], ["description"], ["title", "description"], ["meta.content", "id"]])
+def test_target_paths_typed_dictionary_is_sent_as_string(
+    respond: Callable[..., None], transport: Mock, target_paths: list[str]
+) -> None:
+    request: SemanticRerankingRequest = {
+        "query": "text",
+        "documents": [json.dumps({"title": "Azure Cosmos DB", "description": "Globally distributed data."})],
+        "documentType": "json",
+        "targetPaths": target_paths,
+    }
+    original = deepcopy(request)
+    respond((200, {"scores": []}, {}))
+    with InferenceClient(
+        "https://example.inference.azure.com", AzureKeyCredential("json-test-key"), transport=transport, retry_total=0
+    ) as client:
+        client.semantic_rerank(request)
+    assert json.loads(transport.send.call_args.args[0].content) == {
+        **original,
+        "targetPaths": ",".join(target_paths),
+    }
+    assert request == original
+    assert request["targetPaths"] is target_paths
 
 
 def test_target_paths_list_is_sent_as_comma_separated_string(respond, transport, json_credential):

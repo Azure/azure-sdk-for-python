@@ -122,6 +122,8 @@ class TestBaseExporter(unittest.TestCase):
                 "SHUTDOWN": False,
                 "CUSTOM_EVENTS_FEATURE_SET": False,
                 "LIVE_METRICS_FEATURE_SET": False,
+                "GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET": False,
+                "MULTI_ENDPOINT_ROUTING_FEATURE_SET": False,
             }
         )
 
@@ -374,6 +376,7 @@ class TestBaseExporter(unittest.TestCase):
             self.addCleanup(exporter.client.close)
         statsbeat.assert_not_called()
         customer_stats.assert_not_called()
+        self.assertTrue(_STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"])
         mock_config_manager.return_value.register_callback.assert_called_once_with(
             exporter._local_storage_configuration_callback
         )
@@ -2158,6 +2161,13 @@ class TestBaseExporterExperimentalFeatures(unittest.TestCase):
     def setUp(self):
         patches = [
             mock.patch.dict("os.environ"),
+            mock.patch.dict(
+                _STATSBEAT_STATE,
+                {
+                    "GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET": False,
+                    "MULTI_ENDPOINT_ROUTING_FEATURE_SET": False,
+                },
+            ),
             mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None),
             mock.patch(
                 "azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager", return_value=None
@@ -2183,6 +2193,43 @@ class TestBaseExporterExperimentalFeatures(unittest.TestCase):
         )
         self.addCleanup(exporter.client.close)
         return exporter
+
+    def test_experimental_feature_opt_ins_are_tracked(self):
+        cases = (
+            (None, False, False),
+            ("", False, False),
+            (" , , ", False, False),
+            ("unknown_feature", False, False),
+            ("*", False, False),
+            ("gen_ai_input_output_limit_increase", True, False),
+            (" GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE , gen_ai_input_output_limit_increase ", True, False),
+            ("multi_endpoint_routing", False, True),
+            (" MULTI_ENDPOINT_ROUTING , multi_endpoint_routing ", False, True),
+            ("gen_ai_input_output_limit_increase,multi_endpoint_routing,unknown_feature", True, True),
+        )
+        for value, gen_ai_enabled, routing_enabled in cases:
+            with self.subTest(value=value), mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+            ), mock.patch.dict(
+                _STATSBEAT_STATE,
+                {
+                    "GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET": False,
+                    "MULTI_ENDPOINT_ROUTING_FEATURE_SET": False,
+                },
+            ):
+                if value is not None:
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = value
+                self._create_exporter()
+                self.assertEqual(_STATSBEAT_STATE["GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET"], gen_ai_enabled)
+                self.assertEqual(_STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"], routing_enabled)
+
+    def test_experimental_feature_tracking_uses_frozen_selection(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "gen_ai_input_output_limit_increase"
+        self._create_exporter()
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "multi_endpoint_routing"
+        self._create_exporter()
+        self.assertTrue(_STATSBEAT_STATE["GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET"])
+        self.assertFalse(_STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"])
 
     def test_experimental_feature_disabled_by_default(self):
         for value in (None, "", "   ", ", ,,,"):

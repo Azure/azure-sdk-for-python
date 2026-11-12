@@ -7,11 +7,11 @@
   "typespec": {
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
-    "base_commit": "95eb2ab3df858b8089aadc9cb1a1b4c805130c14",
-    "commit": "43e382342ac9e9154f70bcbae4ca345b35094fdc",
+    "base_commit": "43e382342ac9e9154f70bcbae4ca345b35094fdc",
+    "commit": "d657de65909de4994f4e793417ff8e22810c7015",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "18247e6bdf455c3f7a13fcfde3c14fb1430002ab94ff8d46285b8e0e9b660132",
-    "client_sha256": "01321e6b7a04a13c2ee38aed36ad0f2ab75c3979fece11b64dd9da3b6bcc4ca8",
+    "source_fingerprint_sha256": "6a16eb01e779285caf6bdeacf26b1edf34501bf59b369845d8cfd5f3ebfe3f0f",
+    "client_sha256": "0cad67b0c5a0d01cc2b3b00d48560faef73278ba5fced98a6b0c1941ad82b1b3",
     "models_path": "specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp",
     "models_sha256": "25b2c919990ae9df2aa7fda068ad7e342349ff3b9ebed0b52738372e80a7efb4",
     "config_sha256": "5de8e07a030e194a0cc0e132b9c0cbe3ff03db376e7b431bff61ba693bd3df69"
@@ -32,7 +32,7 @@
   },
   "assembly": {
     "generated_inventory_entries": 21,
-    "generated_inventory_fingerprint_sha256": "b5a58018d19e1e9c4c08d6f0f51e311435f132102b23a82119cf68530f51226d",
+    "generated_inventory_fingerprint_sha256": "82eb7d854b596c6957a739b6aec3999ffb7f7e199f25262a6c2b4c05020b0b67",
     "runtime_files": 32,
     "runtime_python_modules": 31,
     "runtime_fingerprint_sha256": "e32b0ef238acd2b53ec898ee17e02d53ffebb9540187b0239e5f510364260e69",
@@ -54,13 +54,16 @@
     "method": "Seed maintained modules before independent official emissions; compare the complete generated and customized runtime without generated-source rewriting."
   },
   "validation": {
-    "scope": "Approved SDK-only namespace flattening, public documentation cleanup, exact generation, public API compatibility, and distribution-content validation.",
+    "scope": "TypeSpec base-merge source-pin and generated identity-metadata synchronization; Python runtime, public API keys, and fine-tuning wire contracts are unchanged.",
     "python_310_tests_passed": 2541,
     "python_310_tests_skipped": 73,
     "python_313_tests_passed": 2544,
     "python_313_tests_skipped": 72,
     "executable_and_signature_asts_unchanged": 31,
     "namespace_flattening_runtime_files_unchanged": 32,
+    "base_merge_runtime_files_unchanged": 32,
+    "base_merge_finetuning_operations_unchanged_per_projection": 17,
+    "base_merge_reachable_definitions_unchanged_per_projection": 59,
     "independent_emissions": 2,
     "public_documentation_regression_cases": 9,
     "final_source_pin_and_documentation_tests_passed": 26,
