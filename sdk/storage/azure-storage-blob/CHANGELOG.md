@@ -1,5 +1,15 @@
 # Release History
 
+## 12.32.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.32.0 (2026-11-11)
 
 ### Features Added
