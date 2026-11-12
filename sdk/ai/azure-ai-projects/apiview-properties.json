@@ -1211,15 +1211,15 @@
         "azure.ai.projects.models.ToolboxToolType": "Azure.AI.Projects.ToolboxToolType",
         "azure.ai.projects.models.MCPToolboxRequestHeaderBindingSource": "Azure.AI.Projects.MCPToolboxRequestHeaderBindingSource",
         "azure.ai.projects.models.MemoryStoreUpdateStatus": "Azure.AI.Projects.MemoryStoreUpdateStatus",
-        "azure.ai.projects.models.VoiceAgentAnimationOutputType": "Azure.AI.Projects.VoiceAgentAnimationOutputType",
-        "azure.ai.projects.models.RealtimeReasoningEffort": "OpenAI.RealtimeReasoningEffort",
-        "azure.ai.projects.models.VoiceAgentHandoffPipelineFamily": "Azure.AI.Projects.VoiceAgentHandoffPipelineFamily",
         "azure.ai.projects.models.RealtimeServerEventType": "OpenAI.RealtimeServerEventType",
         "azure.ai.projects.models.CreateTranscriptionResponseJsonUsageType": "OpenAI.CreateTranscriptionResponseJsonUsageType",
         "azure.ai.projects.models.VoiceAgentServerEventTypeExtension": "Azure.AI.ProjectsInternal.VoiceAgentServerEventTypeExtension",
         "azure.ai.projects.models.VoiceAgentInputCollectionChannel": "Azure.AI.Projects.VoiceAgentInputCollectionChannel",
         "azure.ai.projects.models.VoiceAgentInputCollectionStatus": "Azure.AI.Projects.VoiceAgentInputCollectionStatus",
         "azure.ai.projects.models.VoiceAgentRtcCallErrorType": "Azure.AI.Projects.VoiceAgentRtcCallErrorType",
+        "azure.ai.projects.models.VoiceAgentAnimationOutputType": "Azure.AI.Projects.VoiceAgentAnimationOutputType",
+        "azure.ai.projects.models.RealtimeReasoningEffort": "OpenAI.RealtimeReasoningEffort",
+        "azure.ai.projects.models.VoiceAgentHandoffPipelineFamily": "Azure.AI.Projects.VoiceAgentHandoffPipelineFamily",
         "azure.ai.projects.models.VoiceAgentHandoffAbortReason": "Azure.AI.Projects.VoiceAgentHandoffAbortReason",
         "azure.ai.projects.models.VoiceAgentSubagentAbortReason": "Azure.AI.Projects.VoiceAgentSubagentAbortReason",
         "azure.ai.projects.models.RealtimeClientEventType": "OpenAI.RealtimeClientEventType",
@@ -1428,5 +1428,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "2858eb35a6fb"
+    "CrossLanguageVersion": "8ce385f49141"
 }
