@@ -476,6 +476,39 @@ namespace azure.identity
             ) -> AccessTokenInfo: ...
 
 
+    class azure.identity.GitHubActionsCredential: implements ContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                additionally_allowed_tenants: Optional[List[str]] = ..., 
+                authority: Optional[str] = ..., 
+                cache_persistence_options: TokenCachePersistenceOptions = ..., 
+                client_id: Optional[str] = ..., 
+                tenant_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        def close(self) -> None: ...
+
+        def get_token(
+                self, 
+                *scopes: str, 
+                *, 
+                claims: Optional[str] = ..., 
+                enable_cae: bool = False, 
+                tenant_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AccessToken: ...
+
+        def get_token_info(
+                self, 
+                *scopes: str, 
+                *, 
+                options: Optional[TokenRequestOptions] = ..., 
+            ) -> AccessTokenInfo: ...
+
+
     class azure.identity.InteractiveBrowserCredential(InteractiveCredential): implements ContextManager 
 
         def __getstate__(self) -> Dict[str, Any]: ...
@@ -653,7 +686,7 @@ namespace azure.identity
                 self, 
                 *, 
                 allow_unencrypted_storage: bool = False, 
-                name: str = "msal.cache", 
+                name: str = _DEFAULT_CACHE_NAME, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -745,6 +778,7 @@ namespace azure.identity
                 self, 
                 *, 
                 client_id: Optional[str] = ..., 
+                enable_azure_proxy: Optional[bool] = ..., 
                 tenant_id: Optional[str] = ..., 
                 token_file_path: Optional[str] = ..., 
                 **kwargs: Any
@@ -1134,6 +1168,39 @@ namespace azure.identity.aio
             ) -> AccessTokenInfo: ...
 
 
+    class azure.identity.aio.GitHubActionsCredential(AsyncContextManager): implements AsyncContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                additionally_allowed_tenants: Optional[List[str]] = ..., 
+                authority: Optional[str] = ..., 
+                cache_persistence_options: TokenCachePersistenceOptions = ..., 
+                client_id: Optional[str] = ..., 
+                tenant_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        async def close(self) -> None: ...
+
+        async def get_token(
+                self, 
+                *scopes: str, 
+                *, 
+                claims: Optional[str] = ..., 
+                enable_cae: bool = False, 
+                tenant_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AccessToken: ...
+
+        async def get_token_info(
+                self, 
+                *scopes: str, 
+                *, 
+                options: Optional[TokenRequestOptions] = ..., 
+            ) -> AccessTokenInfo: ...
+
+
     class azure.identity.aio.ManagedIdentityCredential(AsyncContextManager): implements AsyncContextManager 
 
         def __init__(
@@ -1279,6 +1346,7 @@ namespace azure.identity.aio
                 self, 
                 *, 
                 client_id: Optional[str] = ..., 
+                enable_azure_proxy: Optional[bool] = ..., 
                 tenant_id: Optional[str] = ..., 
                 token_file_path: Optional[str] = ..., 
                 **kwargs: Any

@@ -377,3 +377,23 @@ async def create_azure_pipelines_credential_async():
         service_connection_id="<service_connection_id>",
     )
     # [END create_azure_pipelines_credential_async]
+
+
+def create_github_actions_credential():
+    # [START create_github_actions_credential]
+    from azure.identity import GitHubActionsCredential
+
+    # The workflow sets AZURE_TENANT_ID and AZURE_CLIENT_ID and grants id-token: write permission.
+    with GitHubActionsCredential() as credential:
+        token = credential.get_token("https://management.azure.com/.default")
+    # [END create_github_actions_credential]
+
+
+async def create_github_actions_credential_async():
+    # [START create_github_actions_credential_async]
+    from azure.identity.aio import GitHubActionsCredential
+
+    # The workflow sets AZURE_TENANT_ID and AZURE_CLIENT_ID and grants id-token: write permission.
+    async with GitHubActionsCredential() as credential:
+        token = await credential.get_token("https://management.azure.com/.default")
+    # [END create_github_actions_credential_async]

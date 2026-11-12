@@ -24,6 +24,7 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Troubleshoot AzurePowerShellCredential authentication issues](#troubleshoot-azurepowershellcredential-authentication-issues)
 - [Troubleshoot WorkloadIdentityCredential authentication issues](#troubleshoot-workloadidentitycredential-authentication-issues)
 - [Troubleshoot AzurePipelinesCredential authentication issues](#troubleshoot-azurepipelinescredential-authentication-issues)
+- [Troubleshoot GitHubActionsCredential authentication issues](#troubleshoot-githubactionscredential-authentication-issues)
 - [Troubleshoot multi-tenant authentication issues](#troubleshoot-multi-tenant-authentication-issues)
 - [Troubleshoot Web Account Manager (WAM) brokered authentication issues](#troubleshoot-web-account-manager-wam-brokered-authentication-issues)
 - [Get additional help](#get-additional-help)
@@ -317,6 +318,38 @@ Token caching uses the original Microsoft Entra endpoint, not the proxy URL. A p
 A service connection ID is a GUID representing an Azure Pipelines service connection. This ID corresponds to the `resourceId` query string parameter of the service connection's configuration page in Azure Pipelines. More information about service connections can be found [here](https://learn.microsoft.com/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml).
 
 ![resourceID found in service connection URL](./images/exampleServiceConnectionUrl.png)
+
+## Troubleshoot `GitHubActionsCredential` authentication issues
+
+This credential is for GitHub Actions jobs configured to authenticate to Azure through workload identity federation.
+The workflow must grant `id-token: write` permission. GitHub supplies `ACTIONS_ID_TOKEN_REQUEST_URL` and
+`ACTIONS_ID_TOKEN_REQUEST_TOKEN` to the job; do not copy these values into source code or logs.
+
+Configure a federated identity credential on the application's registration or user-assigned managed identity.
+Its issuer, subject, and audience must match the GitHub workflow's token. See the
+[GitHub Actions federation setup guide](https://learn.microsoft.com/azure/developer/github/connect-from-azure-openid-connect).
+Azure resource permissions must also be granted to the identity.
+
+| Error | Mitigation |
+| --- | --- |
+| `ValueError`: Missing required argument `tenant_id` or `client_id` | Set `AZURE_TENANT_ID` and `AZURE_CLIENT_ID`, or pass the corresponding constructor arguments. Explicit nonempty arguments take precedence over environment values. |
+| `CredentialUnavailableError`: Missing GitHub environment variable | Run in a GitHub Actions job with `id-token: write` permission. Both GitHub request variables must be present in the Python process. |
+| `ValueError`: Unsupported authority | Use Azure Public, China, or US Government. Set `authority` or `AZURE_AUTHORITY_HOST`; the GitHub audience is selected automatically. Custom authorities are not supported. |
+| `ClientAuthenticationError`: Unexpected response from OIDC token endpoint | Check the HTTP status and the job's OIDC permission. Use the runner-provided request token, not an Azure access token or a personal access token. |
+| `ClientAuthenticationError`: OIDC token not found in response | The GitHub endpoint must return a JSON response with a string `value` field. Verify that the runner-provided URL has not been replaced by another endpoint. |
+| Entra rejects the assertion | Verify the tenant, client ID, and federated identity credential. The issuer, workflow subject, and cloud-specific audience must match. |
+
+Supported authority/audience pairs:
+
+| Authority host | Audience |
+| --- | --- |
+| `login.microsoftonline.com` | `api://AzureADTokenExchange` |
+| `login.chinacloudapi.cn` | `api://AzureADTokenExchangeChina` |
+| `login.microsoftonline.us` | `api://AzureADTokenExchangeUSGov` |
+
+The asynchronous credential is available from `azure.identity.aio`. Like `AzurePipelinesCredential`, it uses a synchronous
+callback to obtain the provider assertion and an asynchronous client for the Entra token exchange.
+`GitHubActionsCredential` is not part of `DefaultAzureCredential`.
 
 ## Troubleshoot multi-tenant authentication issues
 
