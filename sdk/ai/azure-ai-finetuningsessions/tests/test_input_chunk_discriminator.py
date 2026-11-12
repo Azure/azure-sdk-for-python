@@ -578,7 +578,8 @@ def _assert_request(request: dict, operation: str, expected: dict, *, raw: bool 
     if operation == "sample":
         query = "checkpoint_id=base&api-version=v1" if raw else "api-version=v1&checkpoint_id=base"
     assert request["method"] == "POST"
-    assert request["url"] == f"{_ENDPOINT}/fine_tuning/sessions/{_SESSION}/{operation}?{query}"
+    session_route = "/fine_tuning_sessions" if raw and operation == "forward_backward" else "/fine_tuning/sessions"
+    assert request["url"] == f"{_ENDPOINT}{session_route}/{_SESSION}/{operation}?{query}"
     assert request["body"] == expected
     expected_headers = {
         "content-type": "application/json",

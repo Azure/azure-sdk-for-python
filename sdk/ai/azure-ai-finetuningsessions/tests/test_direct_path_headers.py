@@ -1,9 +1,4 @@
-"""Tests for the direct-path header contract and the insecure-HTTP guard.
-
-Istio authenticates the direct caller. ``loom_api`` derives the customer context
-from headers that APIM injects on the project route and the command job supplies
-on the direct route. See ``docs/command-job-direct-loom-api-design.md``.
-"""
+"""Tests for session context-header scoping and loopback-only HTTP opt-in."""
 
 import pytest
 
@@ -53,7 +48,7 @@ class _FakeAsyncCredential:
 
 
 def test_no_identity_headers_when_env_is_empty():
-    """APIM path: nothing injected client-side, so only the constants are sent."""
+    """Without configured identity headers, only the constants are sent."""
     headers = p._base_headers()
 
     assert headers["Accept"] == "application/json"
@@ -155,7 +150,7 @@ def test_is_local_endpoint_accepts_loopback(endpoint):
 @pytest.mark.parametrize(
     "endpoint",
     [
-        "https://loom-api-eastus2.internal.example.com",
+        "https://api.example.com",
         "https://acct.services.ai.azure.com/api/projects/p",
         "http://169.254.169.254",
         "http://localhost.evil.example.com",
@@ -169,7 +164,7 @@ def test_insecure_http_rejected_against_remote_plaintext_endpoint():
     """Downgrading TLS on the direct path would leak identity headers + token."""
     with pytest.raises(ValueError, match="only supported for local endpoints"):
         FineTuningSessionClientConfiguration(
-            endpoint="http://loom-api-eastus2.internal.example.com",
+            endpoint="http://api.example.com",
             credential=_FakeCredential(),
             allow_insecure_http=True,
         )
@@ -177,7 +172,7 @@ def test_insecure_http_rejected_against_remote_plaintext_endpoint():
 
 def test_insecure_http_flag_remains_compatible_with_https_endpoint():
     config = FineTuningSessionClientConfiguration(
-        endpoint="https://loom-api-eastus2.internal.example.com",
+        endpoint="https://api.example.com",
         credential=_FakeCredential(),
         allow_insecure_http=True,
     )
@@ -209,7 +204,7 @@ def test_insecure_http_allowed_against_localhost():
 def test_async_insecure_http_rejected_against_remote_plaintext_endpoint():
     with pytest.raises(ValueError, match="only supported for local endpoints"):
         AsyncFineTuningSessionClientConfiguration(
-            endpoint="http://loom-api-eastus2.internal.example.com",
+            endpoint="http://api.example.com",
             credential=_FakeAsyncCredential(),
             allow_insecure_http=True,
         )
@@ -217,7 +212,7 @@ def test_async_insecure_http_rejected_against_remote_plaintext_endpoint():
 
 def test_async_insecure_http_flag_remains_compatible_with_https_endpoint():
     config = AsyncFineTuningSessionClientConfiguration(
-        endpoint="https://loom-api-eastus2.internal.example.com",
+        endpoint="https://api.example.com",
         credential=_FakeAsyncCredential(),
         allow_insecure_http=True,
     )

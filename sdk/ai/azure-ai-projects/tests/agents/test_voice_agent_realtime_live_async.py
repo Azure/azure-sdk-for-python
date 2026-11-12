@@ -6,7 +6,7 @@
 # cSpell:disable
 
 """
-Live-only tests for the hand-written async ``async_client.beta.voice_agents.realtime`` WebSocket streaming client.
+Live-only tests for the hand-written async ``async_client.voice_agents.realtime`` WebSocket streaming client.
 
 Async counterpart of ``test_voice_agent_realtime_live.py``. See that module's docstring for the
 overall rationale (modeled on the ``azure-ai-voicelive`` package's live realtime test pattern:
@@ -67,7 +67,7 @@ def _get_weather(city: str) -> str:
 )
 class TestVoiceAgentRealtimeLiveAsync(TestBase):
     """
-    Live tests covering ``async_client.beta.voice_agents.realtime.connect()`` (the hand-written async WebSocket
+    Live tests covering ``async_client.voice_agents.realtime.connect()`` (the hand-written async WebSocket
     streaming client) against a real voice agent and a real service connection.
     """
 
@@ -105,7 +105,7 @@ class TestVoiceAgentRealtimeLiveAsync(TestBase):
         try:
             await self._create_basic_agent(project_client, agent_name, model)
 
-            async with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+            async with project_client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 event = await asyncio.wait_for(conn.recv(), timeout=_EVENT_TIMEOUT)
                 assert isinstance(event, RealtimeServerEventSessionCreated)
                 assert event.type == "session.created"
@@ -137,7 +137,7 @@ class TestVoiceAgentRealtimeLiveAsync(TestBase):
         try:
             await self._create_basic_agent(project_client, agent_name, model)
 
-            async with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+            async with project_client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 session_created = await asyncio.wait_for(conn.recv(), timeout=_EVENT_TIMEOUT)
                 assert isinstance(session_created, RealtimeServerEventSessionCreated)
 
@@ -191,7 +191,7 @@ class TestVoiceAgentRealtimeLiveAsync(TestBase):
         Configures the agent with a ``get_weather`` function tool, sends a prompt that should
         trigger it, executes the tool call locally when the service asks for it, and sends the
         result back so the agent can finish its reply -- the async counterpart of
-        ``sample_voice_agent_live_function_tool.py``'s pattern, adapted into an automated
+        ``sample_voice_agent_realtime_function_tool_async.py``'s pattern, adapted into an automated
         assertion-based test.
         """
         print("\n")
@@ -228,7 +228,7 @@ class TestVoiceAgentRealtimeLiveAsync(TestBase):
                 ),
             )
 
-            async with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+            async with project_client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 session_created = await asyncio.wait_for(conn.recv(), timeout=_EVENT_TIMEOUT)
                 assert isinstance(session_created, RealtimeServerEventSessionCreated)
 

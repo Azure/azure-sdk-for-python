@@ -981,10 +981,10 @@ class _VoiceAgentsInstrumentor:
             operations = importlib.import_module(module)
             targets = [
                 ("AgentsOperations", "create_version", "create_agent", True),
-                ("BetaAgentsOperations", "create_from_prompt", "create_agent", False),
-                ("BetaVoiceAgentsConversationsOperations", "delete", "voice_agents.conversations.delete", False),
+                ("AgentsOperations", "create_from_prompt", "create_agent", False),
+                ("VoiceAgentsConversationsOperations", "delete", "voice_agents.conversations.delete", False),
             ] + [
-                ("BetaVoiceAgentsTelephonyOperations", method, "voice_agents.telephony." + method, False)
+                ("VoiceAgentsTelephonyOperations", method, "voice_agents.telephony." + method, False)
                 for method in mutations
             ]
             for class_name, method, operation, voice_only in targets:
@@ -994,11 +994,11 @@ class _VoiceAgentsInstrumentor:
                 setattr(cls, method, self._rest(original, operation, voice_only))
         for module, prefix in (("azure.ai.projects._realtime", ""), ("azure.ai.projects.aio._realtime", "Async")):
             realtime = importlib.import_module(module)
-            manager = getattr(realtime, prefix + "BetaRealtimeConnectionManager")
+            manager = getattr(realtime, prefix + "RealtimeConnectionManager")
             original = manager.enter
             _ORIGINALS[(manager, "enter")] = original
             manager.enter = self._enter(original)
-            connection = getattr(realtime, prefix + "BetaRealtimeConnection")
+            connection = getattr(realtime, prefix + "RealtimeConnection")
             exit_method = "__aexit__" if prefix else "__exit__"
             for cls in (manager, connection):
                 original = getattr(cls, exit_method)
