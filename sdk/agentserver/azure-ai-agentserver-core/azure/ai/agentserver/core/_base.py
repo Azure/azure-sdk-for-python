@@ -1240,7 +1240,8 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 status_code=500,
             )
 
-    async def _run_after_restore(self, request: Request) -> Response:  # pylint: disable=too-many-statements
+    # pylint: disable-next=too-many-statements,too-many-locals,too-many-branches,too-many-return-statements
+    async def _run_after_restore(self, request: Request) -> Response:
         from .tasks._manager import TaskManager  # pylint: disable=import-outside-toplevel
 
         try:
