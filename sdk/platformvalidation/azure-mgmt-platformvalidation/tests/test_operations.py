@@ -6,7 +6,7 @@
 from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 from azure.mgmt.platformvalidation.aio import PlatformValidationMgmtClient as AsyncPlatformValidationMgmtClient
 from azure.mgmt.platformvalidation.models import Operation
-from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from devtools_testutils.aio import recorded_by_proxy_async
 
 
@@ -25,12 +25,13 @@ def assert_operations(operations: list[Operation]) -> None:
 
 
 class TestOperations(AzureMgmtRecordedTestCase):
+    @EnvironmentVariableLoader("platformvalidation")
     @recorded_by_proxy
     def test_list_management_operations(self) -> None:
         with self.create_mgmt_client(PlatformValidationMgmtClient) as client:
             assert_operations(list(client.operations.list()))
 
-    @AzureMgmtRecordedTestCase.await_prepared_test
+    @EnvironmentVariableLoader("platformvalidation")
     @recorded_by_proxy_async
     async def test_list_management_operations_async(self) -> None:
         credential = self.get_credential(AsyncPlatformValidationMgmtClient, is_async=True)
