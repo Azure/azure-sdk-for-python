@@ -390,25 +390,16 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             vector_embedding_policy=vector_embedding_policy
         )
         try:
-            # Type changes are supported on newer accounts; older accounts reject them without changing the policy.
-            try:
-                await self.test_db.replace_container(
-                    created_container,
-                    PartitionKey(path="/id"),
-                    vector_embedding_policy=vector_embedding_policy,
-                    indexing_policy=new_indexing_policy)
-            except exceptions.CosmosHttpResponseError as e:
-                assert e.status_code == 400
-                assert ("Paths in existing vector indexing policy cannot be modified in Collection Replace"
-                        in e.http_error_message)
-                expected_indexing_policy = indexing_policy
-            else:
-                expected_indexing_policy = new_indexing_policy
+            await self.test_db.replace_container(
+                created_container,
+                PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy,
+                indexing_policy=new_indexing_policy)
 
             properties = await created_container.read()
             assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
             actual_indexes = properties["indexingPolicy"]["vectorIndexes"]
-            expected_indexes = expected_indexing_policy["vectorIndexes"]
+            expected_indexes = new_indexing_policy["vectorIndexes"]
             assert len(actual_indexes) == len(expected_indexes)
             for actual_index, expected_index in zip(actual_indexes, expected_indexes):
                 for key, value in expected_index.items():
