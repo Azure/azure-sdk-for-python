@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.9b1
+python install_rle_sdk.py --version 2.7.10b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -274,31 +274,30 @@ earlier versions and entries. This is an RLE preview distribution, not a
 PyPI publication. Backend deployment, live gateway/training qualification
 and consumer image rebuilds are separate work.
 
-## Opt-in grader-error preview 2.7.10b1
+## Version 2.7.10b1
 
-This separately versioned preview packages the merged grader-error propagation
-changes from [source PR #15](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/15)
-on top of the cumulative 2.7.9b1 source. Queued failures expose a bounded
-caller-facing `RLERolloutError.service_message` and structured `cause`, together
-with rollout/attempt/sequence correlation, including original-ID attachment
-recovery. Raw grader tracebacks and stderr are not added to durable events.
-Loom and final-job reporting still require the matching consumer changes.
+This preview increases shared rollout client admission from 32 to **64 concurrent
+calls per client** and the default post-admission timeout from 1860 to **5400
+seconds (90 minutes)**. Explicit per-call timeout overrides remain supported.
+Waiting for admission does not consume the timeout; connection establishment,
+execution, recovery and result retrieval retain the original deadline.
+Reconnecting does not reset that deadline, and execution is not replayed.
+Response-size limits and authentication are unchanged.
 
-Built from merged SDK source
-`f62cbbddcfb21671f6f46e9258db3f674d77a71b`, with only the staged package
-version overridden to `2.7.10b1`. All 63 packaged Python files are identical
-to the published 2.7.9b1 wheel except for `_version.py`; this is a dedicated
-grader preview, not a claim that grader support was absent from 2.7.9b1.
-Sampling defaults, model/renderer preflight, phase/retry hints, isolated queued
-validation, V4 defaults and no-execution-replay behavior are retained.
+The wheel is built from merged source commit
+[`b72356f901a9f9436db4678152f00355c2e009ab`](https://github.com/sujit-kamireddy/azure-sdk-for-python/commit/b72356f901a9f9436db4678152f00355c2e009ab)
+in [source PR #20](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/20),
+with only the staged package version overridden to `2.7.10b1`.
+It is 613669 bytes with SHA-256
+`bb6e9fba3b3ff50858e1f09df2e66a963aa5b8611cadb5a38cb18f00a83bf38b`.
 
-The wheel is 613565 bytes with SHA-256
-`6c1fc2953835ac5399e4ed3c14ed27a7ae024fc123717f7f8e0a9772d7786067`.
-An isolated installation passed 804 offline rollout/model tests, including
-grader-cause attachment recovery; 92 release-tool tests also passed.
-Wheel integrity, every RECORD hash, packaged source and unchanged dependencies
-were verified.
-Dependency requirements are unchanged. All ten published registry entries
-and their wheels are preserved, and `latest` remains `2.7.9b1`.
-Select `--version 2.7.10b1` explicitly after this artifact PR is merged.
-This is not a PyPI publication, backend deployment or consumer image rebuild.
+An isolated installation passed 432 offline rollout tests, and all 92 release-tool
+tests passed. All 63 packaged Python files match the merged source except for the
+release version, dependencies are unchanged, and all 11 registry wheels pass
+integrity and checksum validation. The 10 previous registry entries are preserved.
+
+Merging this artifact change into `rle-releases` selects `2.7.10b1` as `latest`.
+This is an RLE preview distribution, not a PyPI publication, backend deployment
+or live training qualification. Existing Python environments and consumer images
+must install the new wheel to receive these defaults; explicit timeout overrides
+in callers continue to take precedence.

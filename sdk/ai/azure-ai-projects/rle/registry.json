@@ -2,7 +2,7 @@
   "schema_version": 1,
   "package": "azure-ai-projects",
   "channel": "rle",
-  "latest": "2.7.9b1",
+  "latest": "2.7.10b1",
   "versions": {
     "2.7.0b1": {
       "filename": "azure_ai_projects-2.7.0b1-py3-none-any.whl",
@@ -57,7 +57,7 @@
     "2.7.10b1": {
       "filename": "azure_ai_projects-2.7.10b1-py3-none-any.whl",
       "url": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/rle-releases/sdk/ai/azure-ai-projects/rle/wheels/2.7.10b1/azure_ai_projects-2.7.10b1-py3-none-any.whl",
-      "sha256": "6c1fc2953835ac5399e4ed3c14ed27a7ae024fc123717f7f8e0a9772d7786067"
+      "sha256": "bb6e9fba3b3ff50858e1f09df2e66a963aa5b8611cadb5a38cb18f00a83bf38b"
     }
   }
 }
