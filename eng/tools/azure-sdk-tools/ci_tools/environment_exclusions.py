@@ -46,10 +46,11 @@ def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool
     Single-use function to evaluate whether or not a given check should run against a package.
 
     In order:
-     - Checks <CHECK>_OPT_OUT for package name.
-     - Honors override variable if one is present: <PACKAGE_NAME>_<CHECK>. (Note the _ in the package name, `-` is not a valid env variable character.)
      - Checks for `ci_enabled` flag in pyproject.toml and skips all checks if set to false.
-     - Finally falls back to the pyproject.toml at package root (if one exists) for a tools setting enabling/disabling <check>.
+       Public and weekly analyze builds ignore this flag.
+     - Honors override variable if one is present: <PACKAGE_NAME>_<CHECK>. (Replace `-` with `_` in the package name.)
+     - Falls back to the pyproject.toml at package root (if one exists) for a tools setting enabling/disabling <check>.
+     - Rejects a disabled apistub check instead of allowing a package-level opt-out.
     """
     if package_path.endswith("setup.py"):
         package_path = os.path.dirname(package_path)
@@ -62,7 +63,14 @@ def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool
         return False
 
     # now pull the new pyproject.toml configuration
-    config = get_config_setting(package_path, check.strip().lower(), default)
+    check = check.strip().lower()
+    config = get_config_setting(package_path, check, default)
+    if check == "apistub" and not config:
+        raise ValueError(
+            f"apistub is required for {package_path} and cannot be disabled. "
+            "Remove 'apistub = false' from [tool.azure-sdk-build] in pyproject.toml "
+            "and any disabling <PACKAGE_NAME>_APISTUB environment override."
+        )
 
     return config
 

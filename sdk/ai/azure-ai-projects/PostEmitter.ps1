@@ -131,15 +131,48 @@ foreach ($f in $files) {
 }
 
 # Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + async).
-# The emitter wraps bullet/code-block lines with insufficient indentation.
+# The pinned TypeSpec docs have correct indentation; the producing emitter version is unverified.
+# Follow up by reporting the wrapping to microsoft/typespec with the tsp-location.yaml inputs.
+# Remove this workaround when the emitter preserves bullet continuations and SSE data lines.
+function Repair-SessionLogDocstring {
+    param([string]$Content)
+
+    $pattern = '(?ms)^    (?:async )?def get_session_log_stream\(.*?^        """.*?^        """'
+    [regex]::Replace($Content, $pattern, {
+        param($docstring)
+
+        $newLine = if ($docstring.Value.Contains("`r`n")) { "`r`n" } else { "`n" }
+        $out = [System.Collections.Generic.List[string]]::new()
+        $bulletIndent = $null
+        $dataIndent = $null
+        foreach ($line in [regex]::Split($docstring.Value, '\r?\n')) {
+            $trimmed = $line.TrimStart()
+            $indent = $line.Length - $trimmed.Length
+            if (-not $trimmed -or $trimmed -match '^(?:\*\s|\.\.\s|:\w|"""|event:|data:)') {
+                $bulletIndent = $null
+                $dataIndent = $null
+            }
+            if ($null -ne $dataIndent -and $indent -lt $dataIndent) {
+                $out[$out.Count - 1] += ' ' + $trimmed
+                continue
+            }
+            $dataIndent = if ($trimmed.StartsWith('data: ')) { $indent } else { $null }
+            if ($trimmed -match '^\*\s') {
+                $bulletIndent = $indent
+            }
+            elseif ($null -ne $bulletIndent -and $indent -lt $bulletIndent + 2) {
+                $line = (' ' * ($bulletIndent + 2)) + $trimmed
+            }
+            $out.Add($line)
+        }
+        $out -join $newLine
+    })
+}
+
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
     $c = Get-Content $f -Raw
-    $c = $c -replace 'schema\r?\n\s+is not contractual and may include additional keys or change format\r?\n\s+over time [^\r\n]*clients should treat it as an opaque string\)', 'schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)'
-    $c = $c -replace '(message\":\"Starting)\r?\n\s+(FoundryCBAgent server on port 8088\"})', '$1 $2'
-    $c = $c -replace '(message\":\"INFO: Application)\r?\n\s+(startup complete\.\"})', '$1 $2'
-    $c = $c -replace '(message\":\"Successfully)\r?\n\s+(connected to container\"})', '$1 $2'
-    $c = $c -replace '(message\":\"No logs since)\r?\n\s+(last 60 seconds\"})', '$1 $2'
+    $c = Repair-SessionLogDocstring -Content $c
     Set-Content $f $c -NoNewline
 }
 
@@ -191,6 +224,21 @@ foreach ($f in $files) {
     }
     Set-Content $f $out
 }
+
+# Repair same-module references to the preceding EvalItemContentItem alias.
+# The OpenAI schema permits one item or a list; no schema change is needed.
+# The producing emitter version is unverified. Report with tsp-location.yaml inputs to
+# microsoft/typespec and remove this workaround once unpatched output passes the regression test.
+function Repair-EvalItemContentAlias {
+    param([string]$Content)
+
+    $Content -replace '(["''])_unions\.EvalItemContentItem\1', 'EvalItemContentItem'
+}
+
+$f = 'azure\ai\projects\_unions.py'
+$c = Get-Content $f -Raw -ErrorAction Stop
+$c = Repair-EvalItemContentAlias -Content $c
+Set-Content $f $c -NoNewline -ErrorAction Stop
 
 # Regenerate API review artifacts and the public method inventory.
 $pythonExecutable = (Get-Command python -ErrorAction Stop).Source

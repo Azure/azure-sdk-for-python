@@ -247,7 +247,7 @@ class TestFoundryFeaturesHeaderOnBetaOperationsAsync(FoundryFeaturesHeaderTestBa
             label, self._make_fake_call(method, extra_kwargs=extra_kwargs), expected_header_value
         )
 
-    @pytest.mark.parametrize("subclient_name", ["conversations", "telephony"])
+    @pytest.mark.parametrize("subclient_name", ["live_conversations", "telephony"])
     @pytest.mark.asyncio
     async def test_foundry_features_header_on_voice_agent_subclients_async(
         self, async_client: AsyncAIProjectClient, subclient_name: str
@@ -264,6 +264,20 @@ class TestFoundryFeaturesHeaderOnBetaOperationsAsync(FoundryFeaturesHeaderTestBa
                 await self._assert_header_async(
                     label, self._make_fake_call(method), EXPECTED_FOUNDRY_FEATURES["voice_agents"]
                 )
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    async def test_skills_preview_header_is_always_sent_async(self, allow_preview: bool) -> None:
+        async with AsyncAIProjectClient(
+            endpoint=FAKE_ENDPOINT,
+            credential=AsyncFakeCredential(),
+            allow_preview=allow_preview,
+            transport=CapturingAsyncTransport(),
+        ) as client:
+            assert not hasattr(client, "skills")
+            await self._assert_header_async(
+                ".beta.skills.get()", lambda: client.beta.skills.get("skill-test"), EXPECTED_FOUNDRY_FEATURES["skills"]
+            )
 
 
 # ---------------------------------------------------------------------------

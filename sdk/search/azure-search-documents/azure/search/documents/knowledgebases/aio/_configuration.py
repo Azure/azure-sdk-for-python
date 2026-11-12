@@ -32,10 +32,9 @@ class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-ins
      ~azure.core.credentials_async.AsyncTokenCredential
     :param knowledge_base_name: The name of the knowledge base. Required.
     :type knowledge_base_name: str
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-08-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-10-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -46,7 +45,7 @@ class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-ins
         knowledge_base_name: str,
         **kwargs: Any,
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2026-08-01-preview")
+        api_version: str = kwargs.pop("api_version", "2026-10-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

@@ -7,11 +7,11 @@
 """
 DESCRIPTION:
     This sample uses the synchronous AIProjectClient to configure an Agent
-    Insights monitor with a six-hour run interval and read the next scheduled
-    run time. It does not wait for scheduled analysis.
+    Insights monitor with analysis priorities and a six-hour run interval, then
+    read the next scheduled run time. It does not wait for scheduled analysis.
 
-    Agent Insights is a preview feature. In the Python SDK, you access these
-    operations through `project_client.beta.agent_insight_monitors`.
+    Agent Insights operations are generally available through
+    `project_client.agent_insight_monitors`.
 
     This sample registers a temporary external agent and emits fictional traces;
     it does not execute tools or call a model to produce those traces. It waits
@@ -20,7 +20,8 @@ DESCRIPTION:
 
     Use an existing project, connected Application Insights resource, and suitable
     analysis-model deployment. Your identity needs agent/monitor management and
-    telemetry query access. The project identity needs model and trace-content access.
+    telemetry query access. The project identity needs model deployment read,
+    model invocation, and trace-content access.
     Protected trace content also requires Privileged Monitoring Data Reader on
     the connected Application Insights resource for the project identity.
 
@@ -29,12 +30,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.6.1" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv azure-monitor-opentelemetry azure-monitor-query opentelemetry-sdk
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint.
     2) APP_INSIGHTS_RESOURCE_ID - The connected Application Insights resource ID.
-    3) FOUNDRY_MODEL_NAME - The model deployment name for trace analysis.
+    3) FOUNDRY_MODEL_NAME - A GPT-5 or later deployment for trace analysis.
     4) FOUNDRY_AGENT_NAME - Optional agent name prefix. Defaults to
        "agent-insights-sample" when unset or empty. A unique suffix is added
        on each run so existing agents and retained traces are not reused.
@@ -50,7 +51,7 @@ from agent_insights_util import cleanup, create_agent, seed_traces, wait_for_ing
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentInsightMonitorCreate, AgentInsightMonitorUpdate
+from azure.ai.projects.models import AgentInsightPriorities
 
 ANALYSIS_INTERVAL_HOURS = 6
 
@@ -65,10 +66,10 @@ def main() -> None:
 
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         LogsQueryClient(credential) as logs_client,
     ):
-        monitor_operations = project_client.beta.agent_insight_monitors
+        monitor_operations = project_client.agent_insight_monitors
 
         agent = None
         monitor = None
@@ -79,20 +80,20 @@ def main() -> None:
             wait_for_ingestion(logs_client, app_insights_resource_id, agent.name, expected_counts)
 
             monitor = monitor_operations.create(
-                AgentInsightMonitorCreate(
-                    agent_name=agent.name,
-                    model_deployment_name=model_deployment_name,
-                    enabled=False,
-                )
+                agent_name=agent.name,
+                model_deployment_name=model_deployment_name,
+                enabled=False,
             )
             print(f"Created disabled monitor `{monitor.id}` for agent `{monitor.agent_name}`.")
 
-            # Set the analysis frequency and enable recurring runs in one update.
+            # Priorities replace the complete value, including categories and instructions.
             scheduled_monitor = monitor_operations.update(
                 monitor.id,
-                AgentInsightMonitorUpdate(
-                    enabled=True,
-                    run_interval_hours=ANALYSIS_INTERVAL_HOURS,
+                enabled=True,
+                run_interval_hours=ANALYSIS_INTERVAL_HOURS,
+                priorities=AgentInsightPriorities(
+                    categories=[],
+                    instructions="Focus on tool calls made without the user's approval.",
                 ),
             )
 

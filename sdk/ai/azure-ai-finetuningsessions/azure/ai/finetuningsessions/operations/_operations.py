@@ -57,7 +57,7 @@ def build_sessions_create_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions"
+    _url = "/fine_tuning_sessions"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -85,7 +85,7 @@ def build_sessions_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions"
+    _url = "/fine_tuning_sessions"
 
     # Construct parameters
     if limit is not None:
@@ -114,7 +114,7 @@ def build_sessions_get_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}"
+    _url = "/fine_tuning_sessions/{sessionId}"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -144,7 +144,7 @@ def build_sessions_unload_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/complete"
+    _url = "/fine_tuning_sessions/{sessionId}/complete"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -174,7 +174,7 @@ def build_sessions_heartbeat_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/heartbeat"
+    _url = "/fine_tuning_sessions/{sessionId}/heartbeat"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -205,7 +205,7 @@ def build_training_forward_backward_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/forward_backward"
+    _url = "/fine_tuning_sessions/{sessionId}/forward_backward"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -238,7 +238,7 @@ def build_training_optim_step_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/optim_step"
+    _url = "/fine_tuning_sessions/{sessionId}/optim_step"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -271,7 +271,7 @@ def build_checkpoints_save_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/checkpoint"
+    _url = "/fine_tuning_sessions/{sessionId}/checkpoint"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -304,7 +304,7 @@ def build_checkpoints_save_sampler_weights_request(  # pylint: disable=name-too-
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/checkpoint_sample"
+    _url = "/fine_tuning_sessions/{sessionId}/checkpoint_sample"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -336,7 +336,7 @@ def build_checkpoints_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/checkpoints"
+    _url = "/fine_tuning_sessions/{sessionId}/checkpoints"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -367,7 +367,7 @@ def build_checkpoints_get_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/checkpoints/{checkpointId}"
+    _url = "/fine_tuning_sessions/{sessionId}/checkpoints/{checkpointId}"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
         "checkpointId": _SERIALIZER.url("checkpoint_id", checkpoint_id, "str"),
@@ -400,7 +400,7 @@ def build_sampling_sample_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/sample"
+    _url = "/fine_tuning_sessions/{sessionId}/sample"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
     }
@@ -434,7 +434,7 @@ def build_operations_get_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/request/{requestId}"
+    _url = "/fine_tuning_sessions/{sessionId}/request/{requestId}"
     path_format_arguments = {
         "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
         "requestId": _SERIALIZER.url("request_id_parameter", request_id_parameter, "str"),
@@ -560,7 +560,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -593,7 +593,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -626,7 +626,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -659,7 +659,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: An instance of LROPoller that returns OperationResult. The OperationResult is
@@ -737,7 +737,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword limit: Maximum number of sessions to return in this page. If omitted, the service
@@ -827,7 +827,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: Session. The Session is compatible with MutableMapping
@@ -972,7 +972,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: An instance of LROPoller that returns OperationResult. The OperationResult is
@@ -1049,7 +1049,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: HeartbeatResponse. The HeartbeatResponse is compatible with MutableMapping
@@ -1227,7 +1227,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1263,7 +1263,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1299,7 +1299,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1335,7 +1335,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: An instance of LROPoller that returns OperationResult. The OperationResult is
@@ -1493,7 +1493,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1530,7 +1530,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1567,7 +1567,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1604,7 +1604,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: An instance of LROPoller that returns OperationResult. The OperationResult is
@@ -1779,7 +1779,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1815,7 +1815,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1851,7 +1851,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1888,7 +1888,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: An instance of LROPoller that returns OperationResult. The OperationResult is
@@ -2047,7 +2047,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2085,7 +2085,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2123,7 +2123,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -2161,7 +2161,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: An instance of LROPoller that returns OperationResult. The OperationResult is
@@ -2242,7 +2242,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: CheckpointList. The CheckpointList is compatible with MutableMapping
@@ -2328,7 +2328,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: CheckpointInfo. The CheckpointInfo is compatible with MutableMapping
@@ -2512,7 +2512,7 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
          Required.
         :paramtype checkpoint_id: str
@@ -2554,7 +2554,7 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
          Required.
         :paramtype checkpoint_id: str
@@ -2596,7 +2596,7 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
          Required.
         :paramtype checkpoint_id: str
@@ -2638,7 +2638,7 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
          Required.
         :paramtype checkpoint_id: str
@@ -2745,7 +2745,7 @@ class Operations:  # pylint: disable=docstring-missing-param
          modifying persisted preview resources. Opts in to the V1 preview of session-based model
          fine-tuning. Required.
         :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+         ~azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys
         :keyword api_version: The API version to use for this operation. Required.
         :paramtype api_version: str
         :return: OperationResult. The OperationResult is compatible with MutableMapping
