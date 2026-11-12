@@ -494,10 +494,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
             Rust-based extension that could increase performance for synchronous block blob uploads.
             The extension is experimental, is not intended for production use, and may have breaking
-            changes in minor releases. Return types, request counts, and error handling may differ
-            from transfers without the extension. Unsupported options raise errors rather than
-            falling back to Python. Set ``AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1`` to disable
-            native transfers even when the extension is installed.
+            changes in minor releases. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
 
         :param data: The blob data to upload.
         :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
@@ -709,10 +708,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
             Rust-based extension that could increase performance for synchronous block blob downloads.
             The extension is experimental, is not intended for production use, and may have breaking
-            changes in minor releases. Return types, request counts, and error handling may differ
-            from transfers without the extension. Unsupported options raise errors rather than
-            falling back to Python. Set ``AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1`` to disable
-            native transfers even when the extension is installed.
+            changes in minor releases. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.

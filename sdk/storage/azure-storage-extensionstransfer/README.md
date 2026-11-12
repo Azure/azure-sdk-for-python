@@ -40,19 +40,6 @@ When installed, this package transparently accelerates:
 - **TokenCredential** (Azure Identity / Entra ID) — OAuth access tokens
 - **SAS URLs** — Pre-signed URLs with embedded SAS tokens
 
-## Limitations
-
-When the extension is installed, unsupported options raise errors rather than automatically
-falling back to the built-in Python implementation. Unsupported options include:
-- Client-side encryption is enabled
-- The blob type is not a block blob
-- Text-mode download encoding is requested
-- Content decompression is needed
-- Content validation (checksums) is enabled
-- Non-TokenCredential authentication is used (e.g., account keys without SAS)
-
-Asynchronous APIs do not use this extension.
-
 ## Disabling native transfers
 
 To use the built-in Python implementation without uninstalling the extension, set the

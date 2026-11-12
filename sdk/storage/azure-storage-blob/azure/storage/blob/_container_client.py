@@ -1114,10 +1114,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
             Rust-based extension that could increase performance for synchronous block blob uploads.
             The extension is experimental, is not intended for production use, and may have breaking
-            changes in minor releases. Native transfer return types, request counts, and error handling
-            may differ from transfers without the extension. Unsupported options raise errors rather
-            than falling back to Python. Set ``AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1`` to disable
-            native transfers even when the extension is installed.
+            changes in minor releases. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
 
         :param str name: The blob with which to interact.
         :param data: The blob data to upload.
@@ -1352,10 +1351,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
             Rust-based extension that could increase performance for synchronous block blob downloads.
             The extension is experimental, is not intended for production use, and may have breaking
-            changes in minor releases. Return types, request counts, and error handling may differ
-            from transfers without the extension. Unsupported options raise errors rather than
-            falling back to Python. Set ``AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1`` to disable
-            native transfers even when the extension is installed.
+            changes in minor releases. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
 
         :param str blob: The blob with which to interact.
         :param int offset:

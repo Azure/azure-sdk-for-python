@@ -46,7 +46,28 @@ may differ from transfers without the extension; unsupported options raise error
 automatically falling back to Python. Set `AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` to use
 Python transfers even when the extension is installed. Asynchronous APIs do not use the extension.
 See the [transfer extension README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensionstransfer#readme)
-for supported options and prerequisites.
+for prerequisites and implementation details.
+
+##### Limitations
+
+Native transfers do not support:
+- **Shared key authentication** — Storage account keys cannot be used directly for native
+  transfers. Use a token credential or SAS token instead.
+- **Page blob and append blob uploads** — Native uploads support block blobs only.
+- **Streaming upload sources** — Upload data must be immutable `bytes` or `str` already fully
+  in memory. File objects, iterators, `bytearray`, and other input types are not supported.
+- **Client-side encryption** — Uploading or downloading client-side encrypted content is not
+  supported.
+- **Text-mode downloads** — Download encoding is not supported; downloads return bytes.
+- **Download decompression** — Automatic content decompression is not supported.
+- **Transactional content validation** — Checksum validation with `validate_content=True` is
+  not supported for uploads or downloads.
+- **Progress callbacks** — The `progress_hook` option is not supported for uploads or downloads.
+- **Asynchronous transfers** — Asynchronous APIs do not use the extension.
+
+When the extension is installed and native transfers are enabled, unsupported inputs and options
+raise errors rather than automatically falling back to Python transfers. To use these features,
+set `AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` before starting a transfer.
 
 ### Create a storage account
 If you wish to create a new storage account, you can use the
