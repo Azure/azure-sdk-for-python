@@ -9,6 +9,7 @@ from typing import Dict, Union, List, Optional
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
 from azure.ai.evaluation._evaluators._common._model_runners import is_decision_model_config
@@ -279,7 +280,11 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 return self._return_not_applicable_result(reason, self._threshold)
 
             reasoning = llm_output.get("reason", "")
-            score = float(llm_output.get("score", 0.0))
+            try:
+                score = float(llm_output.get("score", 0.0))
+            except (TypeError, ValueError, OverflowError):
+                judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
+                raise
             score_result = "pass" if score >= 1.0 else "fail"
             llm_properties = llm_output.get("properties", {}) or {}
             llm_properties.update(self._get_token_metadata(prompty_output_dict))
@@ -296,7 +301,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             }
 
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {judge_output_diagnostic(prompty_output_dict)}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,

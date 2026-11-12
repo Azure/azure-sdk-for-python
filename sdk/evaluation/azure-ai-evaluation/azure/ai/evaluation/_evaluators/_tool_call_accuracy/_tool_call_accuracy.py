@@ -16,6 +16,7 @@ from azure.ai.evaluation._exceptions import (
     ErrorTarget,
     EvaluationException,
 )
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from ..._common.utils import check_score_is_valid
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -287,7 +288,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE,
             ):
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
+                    message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}]. {judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)}",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
@@ -326,7 +327,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         else:
             raise EvaluationException(
-                message="Evaluator returned invalid output.",
+                message=f"Evaluator returned invalid output. {judge_output_diagnostic(prompty_output_dict)}",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
                 target=ErrorTarget.EVALUATE,
@@ -349,7 +350,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # If there is an error message, return not applicable result
             return self._return_not_applicable_result(eval_input.get("error_message"), self._threshold)
         # Do the evaluation
-        result = await self._do_eval_reporting_evaluator_errors(eval_input)
+        result = await self._do_eval(eval_input)
         # Return the result
         return result
 

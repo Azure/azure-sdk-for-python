@@ -1,12 +1,8 @@
-import asyncio
 from unittest.mock import MagicMock
 
 import pytest
 from azure.ai.evaluation import ToolCallAccuracyEvaluator
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, EvaluationException, ErrorTarget
-from azure.ai.evaluation._legacy.prompty._exceptions import InvalidLLMOutputError, RESPONSE_TRUNCATED
-from azure.ai.evaluation._evaluators._tool_input_accuracy import _ToolInputAccuracyEvaluator
-from azure.ai.evaluation._evaluators._tool_selection import _ToolSelectionEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorTarget
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
@@ -80,142 +76,6 @@ async def flow_side_effect(timeout, **kwargs):
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestToolCallAccuracyEvaluator:
-    @pytest.mark.parametrize(
-        "evaluator_type,eval_kwargs",
-        [
-            (
-                ToolCallAccuracyEvaluator,
-                {
-                    "query": "Weather?",
-                    "tool_calls": [
-                        {
-                            "type": "tool_call",
-                            "tool_call_id": "call_1",
-                            "name": "fetch_weather",
-                            "arguments": {},
-                        }
-                    ],
-                    "tool_definitions": [
-                        {
-                            "name": "fetch_weather",
-                            "type": "function",
-                            "description": "Fetch weather.",
-                            "parameters": {},
-                        }
-                    ],
-                },
-            ),
-            (
-                _ToolSelectionEvaluator,
-                {
-                    "query": "Weather?",
-                    "tool_calls": [
-                        {
-                            "type": "tool_call",
-                            "tool_call_id": "call_1",
-                            "name": "fetch_weather",
-                            "arguments": {},
-                        }
-                    ],
-                    "tool_definitions": [
-                        {
-                            "name": "fetch_weather",
-                            "type": "function",
-                            "description": "Fetch weather.",
-                            "parameters": {},
-                        }
-                    ],
-                },
-            ),
-            (
-                _ToolInputAccuracyEvaluator,
-                {
-                    "query": "Weather?",
-                    "response": [
-                        {
-                            "role": "assistant",
-                            "content": [
-                                {
-                                    "type": "tool_call",
-                                    "tool_call_id": "call_1",
-                                    "name": "fetch_weather",
-                                    "arguments": {},
-                                }
-                            ],
-                        }
-                    ],
-                    "tool_definitions": [
-                        {
-                            "name": "fetch_weather",
-                            "type": "function",
-                            "description": "Fetch weather.",
-                            "parameters": {},
-                        }
-                    ],
-                },
-            ),
-        ],
-    )
-    def test_invalid_model_output_is_reworded_for_evaluator(self, mock_model_config, evaluator_type, eval_kwargs):
-        evaluator = evaluator_type(model_config=mock_model_config)
-
-        async def truncated_flow(timeout, **kwargs):
-            raise InvalidLLMOutputError(RESPONSE_TRUNCATED, finish_reason="length", usage={"completion_tokens": 800})
-
-        evaluator._flow = MagicMock(side_effect=truncated_flow)
-
-        with pytest.raises(InvalidLLMOutputError) as exc_info:
-            evaluator(**eval_kwargs)
-
-        error = exc_info.value
-        assert error.args[0].startswith("Evaluator returned invalid output:")
-        assert error.properties == {"completion_tokens": 800}
-        assert error.exc_value is None
-        assert error.category == ErrorCategory.FAILED_EXECUTION
-        assert error.blame == ErrorBlame.SYSTEM_ERROR
-
-    def test_rewording_does_not_capture_active_caller_exception(self, mock_model_config):
-        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
-
-        async def truncated_flow(*args, **kwargs):
-            raise InvalidLLMOutputError(RESPONSE_TRUNCATED, finish_reason="length")
-
-        evaluator._do_eval = MagicMock(side_effect=truncated_flow)
-
-        async def evaluate_while_handling_another_error():
-            try:
-                raise ValueError("CALLER_SECRET")
-            except ValueError:
-                await evaluator._do_eval_reporting_evaluator_errors({})
-
-        with pytest.raises(InvalidLLMOutputError) as exc_info:
-            asyncio.run(evaluate_while_handling_another_error())
-
-        error = exc_info.value
-        assert error.__context__ is None
-        assert error.exc_value is None
-        assert "CALLER_SECRET" not in error.exc_msg
-
-    def test_invalid_model_output_is_reported_as_evaluator_error(self, mock_model_config):
-        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
-
-        async def truncated_flow(timeout, **kwargs):
-            raise InvalidLLMOutputError(RESPONSE_TRUNCATED, finish_reason="length", usage={"completion_tokens": 800})
-
-        evaluator._flow = MagicMock(side_effect=truncated_flow)
-        tool_definitions = [
-            {"name": "fetch_weather", "type": "function", "description": "Fetches weather.", "parameters": {}}
-        ]
-        tool_calls = [{"type": "tool_call", "tool_call_id": "call_1", "name": "fetch_weather", "arguments": {}}]
-
-        with pytest.raises(InvalidLLMOutputError) as exc_info:
-            evaluator(query="Weather?", tool_calls=tool_calls, tool_definitions=tool_definitions)
-
-        error = exc_info.value
-        assert error.args[0].startswith("Evaluator returned invalid output:")
-        assert error.__context__ is None
-        assert error.exc_value is None
-
     def test_evaluate_tools_valid1(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)

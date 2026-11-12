@@ -14,6 +14,7 @@ from azure.ai.evaluation._exceptions import (
     ErrorCategory,
     ErrorTarget,
 )
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
@@ -293,7 +294,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             score = _binary_score(raw_score)
             if score is None:
                 raise EvaluationException(
-                    message=f"Invalid score value: {reprlib.repr(raw_score)}. Expected 0 or 1.",
+                    message=f"Invalid score value: {reprlib.repr(raw_score)}. Expected 0 or 1. {judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)}",
                     internal_message="Invalid score value.",
                     blame=ErrorBlame.SYSTEM_ERROR,
                     category=ErrorCategory.FAILED_EXECUTION,
@@ -312,7 +313,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_properties": llm_properties,
             }
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {judge_output_diagnostic(prompty_output_dict)}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,

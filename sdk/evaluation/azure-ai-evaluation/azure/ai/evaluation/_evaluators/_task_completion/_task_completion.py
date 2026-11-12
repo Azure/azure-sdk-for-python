@@ -12,8 +12,7 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
 from azure.ai.evaluation._evaluators._common._model_runners import is_decision_model_config
-from azure.ai.evaluation._evaluators._common._prompty_strategy import _to_number, invalid_output_error
-from azure.ai.evaluation._legacy.prompty._exceptions import RESPONSE_NO_VALID_SCORE
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
 from azure.ai.evaluation._model_configurations import Message
@@ -226,10 +225,11 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 reason = llm_output.get("reason", "")
                 return self._return_not_applicable_result(reason, self._threshold)
 
-            raw_score = llm_output.get("score")
-            score, _ = (None, False) if isinstance(raw_score, bool) else _to_number(raw_score)
-            if score is None or not math.isfinite(score):
-                raise invalid_output_error(prompty_output_dict, RESPONSE_NO_VALID_SCORE)
+            try:
+                score = float(llm_output.get("score", 0))
+            except (TypeError, ValueError, OverflowError):
+                judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
+                raise
             success_result = "pass" if score >= 1.0 else "fail"
             reason = llm_output.get("reason", "")
             llm_properties = llm_output.get("properties", {}) or {}
@@ -244,4 +244,9 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_properties": llm_properties,
             }
-        raise invalid_output_error(prompty_output_dict)
+        raise EvaluationException(
+            message=f"Evaluator returned invalid output. {judge_output_diagnostic(prompty_output_dict)}",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )

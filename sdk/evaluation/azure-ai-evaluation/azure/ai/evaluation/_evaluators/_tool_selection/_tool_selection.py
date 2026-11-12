@@ -15,6 +15,7 @@ from azure.ai.evaluation._exceptions import (
     ErrorTarget,
     EvaluationException,
 )
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from ..._common.utils import check_score_is_valid, reformat_conversation_history
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -255,7 +256,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             score = llm_output.get("score", None)
             if score not in [0, 1]:
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected 0 or 1.",
+                    message=f"Invalid score value: {score}. Expected 0 or 1. {judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)}",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.SYSTEM_ERROR,
@@ -288,7 +289,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         else:
             raise EvaluationException(
-                message="Evaluator returned invalid output.",
+                message=f"Evaluator returned invalid output. {judge_output_diagnostic(prompty_output_dict)}",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
                 target=ErrorTarget.EVALUATE,
@@ -310,7 +311,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             return self._return_not_applicable_result(eval_input.get("error_message"), self._threshold)
 
-        result = await self._do_eval_reporting_evaluator_errors(eval_input)
+        result = await self._do_eval(eval_input)
 
         return result
 

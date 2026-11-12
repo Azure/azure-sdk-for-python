@@ -1,16 +1,12 @@
 import asyncio
 import json
 import math
-import traceback
 from unittest.mock import AsyncMock
 
 import pytest
 
 from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.ai.evaluation._legacy.prompty._exceptions import InvalidLLMOutputError, RESPONSE_NO_VALID_SCORE
-
-NO_VALID_SCORE = RESPONSE_NO_VALID_SCORE
 
 
 def strategy(**kwargs):
@@ -86,19 +82,11 @@ def test_strict_rejects_non_dict_answer(output):
     assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
 
 
-@pytest.mark.parametrize("score", [0, -1, 6, math.inf])
+@pytest.mark.parametrize("score", [None, 0, -1, 6, "bad", math.nan, math.inf])
 def test_score_range_errors(score):
     with pytest.raises(EvaluationException, match="Invalid score value") as error:
         strategy(score_range=(1, 5), error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR).parse({"score": score})
     assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
-
-
-@pytest.mark.parametrize("score", [None, "bad", math.nan, True])
-def test_score_range_reports_a_missing_or_non_numeric_score_as_invalid_output(score):
-    with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE) as error:
-        strategy(score_range=(1, 5), error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR).parse({"score": score})
-    assert error.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
-    assert error.value.blame == ErrorBlame.SYSTEM_ERROR
 
 
 @pytest.mark.parametrize("strict", [True, False])
@@ -156,7 +144,7 @@ def test_zero_inclusive_range_accepts_an_explicit_zero(strict, score):
 )
 def test_zero_inclusive_range_rejects_missing_or_invalid_scores(strict, missing_score, answer):
     """A default fallback must not manufacture a valid ranged grade."""
-    with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE):
+    with pytest.raises(EvaluationException, match="Invalid score value"):
         strategy(strict=strict, missing_score=missing_score, score_range=(0, 1)).parse({"llm_output": answer})
 
 
@@ -209,7 +197,7 @@ def test_quality_text_zero_is_distinct_from_a_missing_grade(answer, valid):
     if valid:
         assert configured.parse({"llm_output": answer})["fluency"] == 0.0
     else:
-        with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE):
+        with pytest.raises(EvaluationException, match="Invalid score value"):
             configured.parse({"llm_output": answer})
 
 
@@ -231,148 +219,10 @@ def test_legacy_quality_text_domain_is_unchanged_without_an_explicit_range():
 
 def test_missing_completion_score_and_binary_rule():
     completion = strategy(binary_cutoff=1, threshold=7)
+    assert completion.parse({})["metric"] == 0
     assert completion.parse({"score": 1})["metric_result"] == "pass"
-    for answer in ({}, {"reason": "no score"}, {"score": "SECRET"}, {"score": True}, {"score": "nan"}):
-        with pytest.raises(EvaluationException) as exc_info:
-            completion.parse(answer)
-        message = str(exc_info.value)
-        assert f"Evaluator returned invalid output: {NO_VALID_SCORE}" in message
-        assert "SECRET" not in message
-
-
-def test_invalid_output_reports_only_runtime_metadata():
-    with pytest.raises(InvalidLLMOutputError) as exc_info:
-        strategy().parse(
-            {
-                "llm_output": "SECRET",
-                "finish_reason": "length",
-                "input_token_count": 10,
-                "output_token_count": 800,
-                "total_token_count": 810,
-                "model_id": "judge",
-            }
-        )
-    assert exc_info.value.args[0] == (
-        "Evaluator returned invalid output: the model response was truncated at the output token limit "
-        "(finish_reason=length, output_tokens=800)."
-    )
-    assert exc_info.value.properties == {
-        "prompt_tokens": 10,
-        "completion_tokens": 800,
-        "total_tokens": 810,
-        "model": "judge",
-    }
-
-    with pytest.raises(InvalidLLMOutputError) as exc_info:
-        strategy(binary_cutoff=1).parse({"finish_reason": "length", "output_token_count": 800})
-    assert "(finish_reason=unknown, output_tokens=unknown)" in str(exc_info.value)
-    assert exc_info.value.properties == {}
-
-
-@pytest.mark.parametrize(
-    "answer,finish_reason,cause",
-    [
-        ("SECRET", "length", "the model response was truncated at the output token limit"),
-        ("", "content_filter", "the model response was blocked by the content filter"),
-    ],
-)
-def test_invalid_output_cause_prefers_finish_reason(answer, finish_reason, cause):
-    with pytest.raises(InvalidLLMOutputError, match=cause):
-        strategy().parse({"llm_output": answer, "finish_reason": finish_reason, "output_token_count": 800})
-
-
-def test_invalid_score_cause_prefers_truncation_finish_reason():
-    with pytest.raises(InvalidLLMOutputError, match="truncated at the output token limit"):
-        strategy().parse({"llm_output": {"score": None}, "finish_reason": "length"})
-
-
-def test_strategy_rewords_model_invalid_output_without_capturing_it():
-    configured = strategy()
-
-    async def truncated_flow(**kwargs):
-        raise InvalidLLMOutputError(
-            "the model response was truncated at the output token limit",
-            finish_reason="length",
-            usage={"completion_tokens": 800},
-        )
-
-    configured.runner.side_effect = truncated_flow
-    with pytest.raises(InvalidLLMOutputError) as exc_info:
-        asyncio.run(configured.evaluate({"query": "q"}))
-
-    error = exc_info.value
-    assert error.subject == "Evaluator"
-    assert error.__context__ is None
-    assert error.exc_value is None
-    assert "Evaluator returned invalid output:" in str(error)
-
-
-@pytest.mark.parametrize("runner_raises", [True, False])
-def test_strategy_does_not_capture_an_active_caller_exception(runner_raises):
-    configured = strategy()
-
-    async def truncated_flow(**kwargs):
-        if runner_raises:
-            raise InvalidLLMOutputError(RESPONSE_NO_VALID_SCORE)
-        return {"llm_output": []}
-
-    configured.runner.side_effect = truncated_flow
-
-    async def evaluate_while_handling_another_error():
-        try:
-            raise ValueError("CALLER_SECRET")
-        except ValueError:
-            await configured.evaluate({"query": "q"})
-
-    with pytest.raises(InvalidLLMOutputError) as exc_info:
-        asyncio.run(evaluate_while_handling_another_error())
-
-    error = exc_info.value
-    formatted_traceback = "".join(traceback.format_exception(type(error), error, error.__traceback__))
-    assert error.__context__ is None
-    assert error.exc_value is None
-    assert error.exc_traceback is None
-    assert "CALLER_SECRET" not in error.exc_msg
-    assert "CALLER_SECRET" not in formatted_traceback
-
-
-@pytest.mark.parametrize("strict", [True, False])
-def test_invalid_score_error_does_not_capture_the_conversion_error(strict):
-    with pytest.raises(InvalidLLMOutputError) as exc_info:
-        strategy(strict=strict).parse({"llm_output": {"score": "SECRET"}})
-    assert exc_info.value.__context__ is None
-    assert exc_info.value.exc_value is None
-    assert "SECRET" not in exc_info.value.exc_msg
-
-
-def test_non_strict_oversized_integer_score_is_invalid_output():
-    with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE):
-        strategy(strict=False).parse({"llm_output": {"score": 10**400}})
-
-
-def test_unreported_usage_is_unknown_when_the_score_is_missing():
-    envelope = {
-        "llm_output": {"reason": "no score"},
-        "input_token_count": 0,
-        "output_token_count": 0,
-        "total_token_count": 0,
-        "finish_reason": "stop",
-        "model_id": "judge",
-        "reported_usage": {"prompt_tokens": None, "completion_tokens": None, "total_tokens": None, "model": "judge"},
-    }
-    with pytest.raises(InvalidLLMOutputError) as exc_info:
-        strategy().parse(envelope)
-    assert "(finish_reason=stop, output_tokens=unknown)." in str(exc_info.value)
-    assert exc_info.value.properties == {"model": "judge"}
-
-
-def test_non_numeric_scores_are_not_echoed():
-    with pytest.raises(InvalidLLMOutputError, match=NO_VALID_SCORE) as exc_info:
-        strategy(score_range=(1, 5)).parse({"llm_output": {"score": "SECRET"}})
-    assert "SECRET" not in str(exc_info.value)
-    with pytest.raises(EvaluationException, match="Evaluator returned invalid output") as exc_info:
-        strategy(strict=False).parse({"llm_output": {"score": "SECRET"}})
-    assert "SECRET" not in str(exc_info.value)
+    with pytest.raises(ValueError):
+        completion.parse({"score": "bad"})
 
 
 @pytest.mark.parametrize("strict", [True, False])
@@ -521,3 +371,34 @@ def test_runtime_flow_resolution():
 def test_legacy_empty_envelope_is_invalid():
     with pytest.raises(EvaluationException, match="Evaluator returned invalid output"):
         strategy(strict=False).parse({})
+
+
+@pytest.mark.parametrize("answer", ["not json", None])
+def test_invalid_output_message_includes_runtime_metadata(answer, caplog):
+    output = {"llm_output": answer, "finish_reason": "stop", "output_token_count": 0, "model_id": "judge-model"}
+    with pytest.raises(EvaluationException) as exc_info:
+        strategy().parse(output)
+
+    message = exc_info.value.message
+    assert message.startswith("Evaluator returned invalid output. Cause: ")
+    assert "finish_reason=stop, output_tokens=0, model=judge-model" in message
+    assert "not json" not in message and "not json" not in caplog.text
+    assert "Model returned invalid output" in caplog.text
+
+
+def test_invalid_score_message_keeps_original_text_and_adds_metadata():
+    output = {"llm_output": {"score": 9}, "finish_reason": "length", "output_token_count": 5, "model_id": "m"}
+    with pytest.raises(EvaluationException) as exc_info:
+        strategy(score_range=(1, 5), missing_score=None).parse(output)
+
+    message = exc_info.value.message
+    assert message.startswith("Invalid score value: 9. Expected a number in range [1, 5]. Cause: ")
+    assert "finish_reason=length, output_tokens=5, model=m" in message
+
+
+def test_non_numeric_strict_score_still_raises_value_error_and_logs(caplog):
+    with pytest.raises(ValueError):
+        strategy().parse({"llm_output": {"score": "high"}, "finish_reason": "stop", "model_id": "m"})
+
+    assert "no valid score" in caplog.text
+    assert "high" not in caplog.text

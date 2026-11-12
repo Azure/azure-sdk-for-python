@@ -22,7 +22,6 @@ from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExec
 from ..._evaluate._utils import _has_aggregator
 from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
 from ..._exceptions import EvaluationException
-from ..._legacy.prompty._exceptions import InvalidLLMOutputError
 from ..._evaluators._common._model_runners import DECISION_ERROR_KINDS, _is_finite_number, validated_execution
 
 from .._utils import get_int_env_var as get_int
@@ -32,10 +31,7 @@ MISSING_VALUE: Final[int] = sys.maxsize
 
 
 def _decision_error_metadata(exception: EvaluationException) -> Dict[str, Any]:
-    """Keep known usage and validated provenance, preserving the producer's distinct usage scopes.
-
-    Used for Decision errors and for invalid judge output, whose properties hold only usage and the model name.
-    """
+    """Keep known usage and validated provenance, preserving the producer's distinct usage scopes."""
     properties: Dict[str, Any] = {}
     semantic_properties = exception.properties or {}
     for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
@@ -206,11 +202,12 @@ class RunSubmitterClient:
                 if detail.error and detail.error.exception:
                     per_line_errors[detail.index] = str(detail.error.exception)
                     exception = detail.error.exception
-                    if isinstance(exception, EvaluationException) and isinstance(exception.properties, dict):
-                        if isinstance(exception, InvalidLLMOutputError) or isinstance(
-                            exception.properties.get("decision_model"), dict
-                        ):
-                            per_line_error_metadata[detail.index] = _decision_error_metadata(exception)
+                    if (
+                        isinstance(exception, EvaluationException)
+                        and isinstance(exception.properties, dict)
+                        and isinstance(exception.properties.get("decision_model"), dict)
+                    ):
+                        per_line_error_metadata[detail.index] = _decision_error_metadata(exception)
 
         summary = {
             "status": run.status.value,

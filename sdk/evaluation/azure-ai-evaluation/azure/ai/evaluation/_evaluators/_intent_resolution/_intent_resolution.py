@@ -9,6 +9,7 @@ from typing import Dict, Union, List, Optional
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
@@ -220,7 +221,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE,
             ):
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected a number in range [{IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE}, {IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE}].",
+                    message=f"Invalid score value: {score}. Expected a number in range [{IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE}, {IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE}]. {judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)}",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.SYSTEM_ERROR,
@@ -244,7 +245,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return response_dict
         # If llm_output is not a dictionary, raise exception
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {judge_output_diagnostic(prompty_output_dict)}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,

@@ -9,6 +9,7 @@ from typing import Dict, Union, List
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from ..._common.utils import reformat_conversation_history, reformat_agent_response
 
 from azure.ai.evaluation._model_configurations import Conversation
@@ -251,7 +252,11 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 reason = llm_output.get("reason", "")
                 return self._return_not_applicable_result(reason, self._threshold)
 
-            score = float(llm_output.get("score", math.nan))
+            try:
+                score = float(llm_output.get("score", math.nan))
+            except (TypeError, ValueError, OverflowError):
+                judge_output_diagnostic(result, NO_VALID_SCORE)
+                raise
             reason = llm_output.get("reason", "")
             llm_properties = llm_output.get("properties", {}) or {}
             score_result = self._get_binary_result(score)
@@ -268,7 +273,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             }
 
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {judge_output_diagnostic(result)}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,

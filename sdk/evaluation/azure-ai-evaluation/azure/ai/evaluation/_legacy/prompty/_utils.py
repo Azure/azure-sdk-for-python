@@ -43,15 +43,8 @@ from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIEr
 from azure.ai.evaluation._constants import DefaultOpenEncoding
 from azure.ai.evaluation._legacy.prompty._exceptions import (
     InvalidInputError,
-    InvalidLLMOutputError,
     JinjaTemplateError,
     PromptyException,
-    RESPONSE_CONTENT_FILTERED,
-    RESPONSE_EMPTY,
-    RESPONSE_NOT_JSON,
-    RESPONSE_NOT_JSON_OBJECT,
-    RESPONSE_TRUNCATED,
-    RESPONSE_UNEXPECTED_TYPE,
 )
 
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml
@@ -612,6 +605,45 @@ def prepare_open_ai_request_params(
     return params
 
 
+_KNOWN_FINISH_REASONS = ("stop", "length", "content_filter", "tool_calls", "function_call")
+
+
+def llm_output_diagnostic(cause: str, finish_reason: Any = None, output_tokens: Any = None, model: Any = None) -> str:
+    """Describe why a model response was unusable from its metadata only, never from its content.
+
+    :param cause: A fixed description of the problem. Must not contain model output.
+    :type cause: str
+    :param finish_reason: The completion finish reason. A truncated or filtered response adds a likely reason.
+    :type finish_reason: Any
+    :param output_tokens: The completion token count.
+    :type output_tokens: Any
+    :param model: The model name.
+    :type model: Any
+    :return: The diagnostic text.
+    :rtype: str
+    """
+    if finish_reason == "length":
+        cause += ", possibly because it was truncated at the output token limit"
+    elif finish_reason == "content_filter":
+        cause += ", possibly because it was blocked by the content filter"
+    if finish_reason not in _KNOWN_FINISH_REASONS:
+        finish_reason = "unknown"
+    if not isinstance(output_tokens, int) or isinstance(output_tokens, bool) or output_tokens < 0:
+        output_tokens = "unknown"
+    if not isinstance(model, str) or not model.strip():
+        model = "unknown"
+    return f"Cause: {cause} (finish_reason={finish_reason}, output_tokens={output_tokens}, model={model})."
+
+
+def log_invalid_llm_output(diagnostic: str) -> None:
+    """Log an unusable model response, without its content or the triggering exception.
+
+    :param diagnostic: Text built by ``llm_output_diagnostic``.
+    :type diagnostic: str
+    """
+    logger.warning("Model returned invalid output. %s", diagnostic)
+
+
 async def format_llm_response(
     response: OpenAIChatResponseType,
     is_first_choice: bool,
@@ -649,43 +681,38 @@ async def format_llm_response(
     :rtype: Union[str, dict, Response]
     """
 
-    def parse_choice(content: Any, finish_reason: str = "", usage: Optional[Mapping[str, Any]] = None) -> Any:
+    def format_choice(
+        item: str, finish_reason: str = "", output_tokens: Optional[int] = None, model: str = ""
+    ) -> Union[str, Mapping[str, Any]]:
         # response_format is one of text or json_object.
         # https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format
         if not is_json_format:
-            return content
-        # The cause is decided inside the except block but raised after it, so that the new error does not
-        # capture the decoding error, whose document and message can hold the model output.
-        cause = None
-        try:
-            parsed = json.loads(content)
-        except (ValueError, TypeError, RecursionError) as error:
-            if finish_reason == "length":
-                cause = RESPONSE_TRUNCATED
-            elif finish_reason == "content_filter":
-                cause = RESPONSE_CONTENT_FILTERED
-            elif content is None or (isinstance(content, str) and not content.strip()):
-                cause = RESPONSE_EMPTY
-            elif isinstance(error, json.JSONDecodeError):
-                # The decoder's msg and pos describe the failure without echoing the response content.
-                cause = f"{RESPONSE_NOT_JSON} ({error.msg}, position {error.pos})"
-            elif isinstance(error, TypeError):
-                cause = RESPONSE_UNEXPECTED_TYPE.format(type(content).__name__)
-            else:
-                cause = RESPONSE_NOT_JSON
-        if cause is None and outputs and not isinstance(parsed, dict):
-            cause = RESPONSE_NOT_JSON_OBJECT
-        if cause is not None:
-            raise InvalidLLMOutputError(cause, finish_reason=finish_reason or None, usage=usage)
-        if not outputs:
-            return parsed
+            return item
 
+        try:
+            result_dict = json.loads(item)
+        except (ValueError, TypeError, RecursionError):
+            empty = item is None or (isinstance(item, str) and not item.strip())
+            cause = "the model returned an empty response" if empty else "the model response was not valid JSON"
+            log_invalid_llm_output(llm_output_diagnostic(cause, finish_reason, output_tokens, model))
+            raise
+        if not outputs:
+            return result_dict
+
+        if not isinstance(result_dict, dict):
+            log_invalid_llm_output(
+                llm_output_diagnostic("the model response was not a JSON object", finish_reason, output_tokens, model)
+            )
         # return the keys in outputs
         output_results = {}
         for key in outputs:
-            if key not in parsed:
-                raise InvalidInputError(f"Cannot find '{key}' in response {list(parsed.keys())}")
-            output_results[key] = parsed[key]
+            if key not in result_dict:
+                diagnostic = llm_output_diagnostic(
+                    "the model response was missing a requested output field", finish_reason, output_tokens, model
+                )
+                log_invalid_llm_output(diagnostic)
+                raise InvalidInputError(f"Cannot find '{key}' in response {list(result_dict.keys())}. {diagnostic}")
+            output_results[key] = result_dict[key]
         return output_results
 
     async def format_stream(llm_response: AsyncStream[ChatCompletionChunk]) -> AsyncGenerator[str, None]:
@@ -719,7 +746,7 @@ async def format_llm_response(
             to_ret["llm_output"] = format_stream(llm_response=response)
             return to_ret
         content = "".join([item async for item in format_stream(llm_response=response)])
-        to_ret["llm_output"] = parse_choice(content)
+        to_ret["llm_output"] = format_choice(content)
         return to_ret  # we don't actually use this code path since streaming is not used, so set token counts to 0
     else:
         input_token_count = response.usage.prompt_tokens if response.usage and response.usage.prompt_tokens else 0
@@ -731,6 +758,14 @@ async def format_llm_response(
             response.choices[0].finish_reason if response.choices and response.choices[0].finish_reason else ""
         )
         model_id = response.model if response.model else ""
+        # Unlike output_token_count, missing usage stays None so the diagnostic reports it as unknown.
+        reported_output_tokens = response.usage.completion_tokens if response.usage else None
+        if not response.choices:
+            log_invalid_llm_output(
+                llm_output_diagnostic(
+                    "the model response contained no choices", finish_reason, reported_output_tokens, model_id
+                )
+            )
         sample_output_list = (
             [{"role": response.choices[0].message.role, "content": response.choices[0].message.content}]
             if (response.choices and response.choices[0].message.content and response.choices[0].message.role)
@@ -755,19 +790,11 @@ async def format_llm_response(
         response_content = response.model_dump()["choices"][0]["message"]
     else:
         response_content = getattr(response.choices[0].message, "content", "")
-    # Missing usage stays None, so an invalid-output error reports it as unknown rather than 0.
-    reported_usage = {
-        "prompt_tokens": response.usage.prompt_tokens if response.usage else None,
-        "completion_tokens": response.usage.completion_tokens if response.usage else None,
-        "total_tokens": response.usage.total_tokens if response.usage else None,
-        "model": model_id,
-    }
-    result = parse_choice(response_content, finish_reason, reported_usage)
+    result = format_choice(response_content, finish_reason, reported_output_tokens, model_id)
     to_ret["llm_output"] = result
     to_ret["input_token_count"] = input_token_count
     to_ret["output_token_count"] = output_token_count
     to_ret["total_token_count"] = total_token_count
-    to_ret["reported_usage"] = reported_usage
     to_ret["finish_reason"] = finish_reason
     to_ret["model_id"] = model_id
     to_ret["sample_input"] = sample_input

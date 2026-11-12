@@ -10,6 +10,7 @@ from typing import Dict, List, Union, Optional
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
 from azure.ai.evaluation._evaluators._common._decision_rubric import decode_message_list, rubric_strategy
 from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
@@ -217,7 +218,11 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 reason = llm_output.get("reason", "")
                 return self._return_not_applicable_result(reason, self._threshold)
 
-            score = float(llm_output.get("score", math.nan))
+            try:
+                score = float(llm_output.get("score", math.nan))
+            except (TypeError, ValueError, OverflowError):
+                judge_output_diagnostic(result, NO_VALID_SCORE)
+                raise
             reason = llm_output.get("reason", "")
             llm_properties = llm_output.get("properties", {}) or {}
             score_result = self._get_binary_result(score)
@@ -236,7 +241,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             }
 
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {judge_output_diagnostic(result)}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,
