@@ -1,5 +1,25 @@
 # Release History
 
+## 2.0.0 (2026-09-29)
+
+### Features Added
+
+  - Client `ComputeFleetMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Model `FleetProperties` added property `capacity_type`
+  - Model `FleetProperties` added property `mode`
+  - Model `FleetProperties` added property `vm_name_prefix`
+  - Enum `ManagedServiceIdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
+  - Model `VirtualMachineScaleSet` added property `name`
+  - Added enum `CapacityType`
+  - Added enum `FleetMode`
+  - Added enum `VMOperationStatus`
+  - Added model `VirtualMachine`
+  - Operation group `FleetsOperations` added method `list_virtual_machines`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `ManagedServiceIdentityType.SYSTEM_AND_USER_ASSIGNED`
+
 ## 2.0.0b3 (2026-07-22)
 
 ### Features Added

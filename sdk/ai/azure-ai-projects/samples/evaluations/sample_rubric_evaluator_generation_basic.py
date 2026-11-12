@@ -13,6 +13,11 @@ DESCRIPTION:
       1. Creates an `EvaluatorGenerationJob` whose only source is an inline
          natural-language description of the application's purpose, capabilities,
          and tools. The service synthesizes a rubric tailored to that application.
+         The job requests a quality rubric with Likert scoring: each dimension
+         receives a rating from 1 to 5 rather than a pass/fail result. The
+         overall score is normalized to 0-1 and compared with the configured
+         pass threshold (0.6 here; the default is 0.5). Use
+         `RubricScoringMode.BOOLEAN` for pass/fail dimensions instead.
       2. Calls `begin_create_generation_job` and reports the standard LRO
          poller's status until it returns the generated `EvaluatorVersion`.
       3. Creates an OpenAI evaluation referencing the generated evaluator as a
@@ -30,7 +35,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -61,10 +66,12 @@ from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    EvaluatorGenerationCategory,
     EvaluatorGenerationInputs,
-    EvaluatorGenerationJob,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
+    RubricScoring,
+    RubricScoringMode,
     TestingCriterionAzureAIEvaluator,
 )
 
@@ -88,31 +95,33 @@ with (
 ):
     # 1. Generate an evaluator from a single `Prompt` source.
     print("Begin creating an evaluator generation job.")
-    poller = project_client.beta.evaluators.begin_create_generation_job(
-        job=EvaluatorGenerationJob(
-            inputs=EvaluatorGenerationInputs(
-                model=model_name,
-                evaluator_name=evaluator_name,
-                evaluator_display_name="Reservation Quality (Generated)",
-                evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
-                sources=[
-                    PromptEvaluatorGenerationJobSource(
-                        description="Application overview - purpose, capabilities, and tools.",
-                        prompt=(
-                            "You are evaluating a restaurant reservation assistant. The assistant helps "
-                            "users create, modify, and cancel reservations at participating restaurants. "
-                            "It can:\n"
-                            "  - Search for restaurants by name, cuisine, or neighborhood.\n"
-                            "  - Check table availability for a requested date, time, and party size.\n"
-                            "  - Create, update, and cancel reservations on behalf of the user.\n"
-                            "  - Send SMS or email confirmations through a notifications tool.\n"
-                            "It must always confirm the user's intent before committing changes, "
-                            "ask follow-up questions when details are missing, and maintain a polite "
-                            "restaurant-host tone."
-                        ),
+    poller = project_client.evaluators.begin_create_generation_job(
+        job=EvaluatorGenerationInputs(
+            # Quality generation requires a model.
+            model=model_name,
+            category=EvaluatorGenerationCategory.QUALITY,
+            scoring=RubricScoring(mode=RubricScoringMode.LIKERT),
+            pass_threshold=0.6,
+            evaluator_name=evaluator_name,
+            evaluator_display_name="Reservation Quality (Generated)",
+            evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
+            sources=[
+                PromptEvaluatorGenerationJobSource(
+                    description="Application overview - purpose, capabilities, and tools.",
+                    prompt=(
+                        "You are evaluating a restaurant reservation assistant. The assistant helps "
+                        "users create, modify, and cancel reservations at participating restaurants. "
+                        "It can:\n"
+                        "  - Search for restaurants by name, cuisine, or neighborhood.\n"
+                        "  - Check table availability for a requested date, time, and party size.\n"
+                        "  - Create, update, and cancel reservations on behalf of the user.\n"
+                        "  - Send SMS or email confirmations through a notifications tool.\n"
+                        "It must always confirm the user's intent before committing changes, "
+                        "ask follow-up questions when details are missing, and maintain a polite "
+                        "restaurant-host tone."
                     ),
-                ],
-            ),
+                ),
+            ],
         ),
         # `operation_id` makes the call idempotent - re-submitting the same id attaches to the existing job.
         operation_id=f"rubric-eval-basic-{short}",
@@ -135,11 +144,15 @@ with (
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.
     definition = evaluator.definition
     assert isinstance(definition, RubricBasedEvaluatorDefinition)
+    scoring_mode = definition.scoring.mode if definition.scoring else RubricScoringMode.LIKERT
     print(
         f"Generated evaluator `{evaluator.name}` v{evaluator.version}: "
-        f"{len(definition.dimensions)} dimensions, pass_threshold={definition.pass_threshold}."
+        f"{len(definition.dimensions)} dimensions, scoring={scoring_mode}, "
+        f"pass_threshold={definition.pass_threshold}."
     )
-    print(f"  Dimensions: {', '.join(d.id for d in definition.dimensions)}")
+    for dimension in definition.dimensions:
+        # Generated Likert dimensions carry a service-assigned `generated_weight` (1-10).
+        print(f"  - {dimension.id}: weight={dimension.weight}, generated_weight={dimension.generated_weight}")
 
     # 2. Create an OpenAI evaluation that uses the generated evaluator.
     eval_object = openai_client.evals.create(
@@ -206,4 +219,4 @@ with (
     # 4. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")
     openai_client.evals.delete(eval_id=eval_object.id)
-    project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
+    project_client.evaluators.delete_version(name=evaluator.name, version=evaluator.version)

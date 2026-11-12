@@ -37,6 +37,28 @@ def main():
         resource={
             "location": "westeurope",
             "properties": {
+                "capabilities": {
+                    "azureBlobStorage": {
+                        "capacityDetails": {"status": "Enabled"},
+                        "prefixConfigurations": [
+                            {
+                                "containerName": "samplecontainer",
+                                "prefix": "sampleDir",
+                                "storageAccountName": "firstsa",
+                            },
+                            {
+                                "containerName": "samplecontainer",
+                                "prefix": "sampleDir/sampleSubDir",
+                                "storageAccountName": "secondsa",
+                            },
+                            {
+                                "containerName": "anothersamplecontainer",
+                                "prefix": "anotherSampleDir",
+                                "storageAccountName": "thirdsa",
+                            },
+                        ],
+                    }
+                },
                 "description": "Sample Storage Discovery Workspace",
                 "scopes": [
                     {
@@ -64,6 +86,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/StorageDiscoveryWorkspaces_CreateOrUpdate.json
+# x-ms-original-file: 2026-10-01-preview/StorageDiscoveryWorkspaces_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

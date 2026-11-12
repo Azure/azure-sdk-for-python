@@ -15,8 +15,11 @@ if TYPE_CHECKING:
         AccessRights,
         AuthenticationType,
         Capabilities,
+        ConnectionProfile,
         CreatedByType,
         DefaultAction,
+        DeviceRegistryIdentityType,
+        DeviceRegistryLinkingState,
         EventStreamAuthenticationType,
         GatewayVersion,
         IotHubReplicaRoleType,
@@ -24,6 +27,7 @@ if TYPE_CHECKING:
         IotHubSkuTier,
         IpFilterActionType,
         IpVersion,
+        MessagePayloadFormat,
         NetworkRuleIPAction,
         PrivateLinkServiceConnectionStatus,
         PublicNetworkAccess,
@@ -36,17 +40,17 @@ if TYPE_CHECKING:
 class ArmIdentity(TypedDict, total=False):
     """ArmIdentity.
 
-    :ivar principal_id: Principal Id.
-    :vartype principal_id: str
-    :ivar tenant_id: Tenant Id.
-    :vartype tenant_id: str
+    :ivar principalId: Principal Id.
+    :vartype principalId: str
+    :ivar tenantId: Tenant Id.
+    :vartype tenantId: str
     :ivar type: The type of identity used for the resource. The type 'SystemAssigned,UserAssigned'
      includes both an implicitly created identity and a set of user assigned identities. The type
      'None' will remove any identities from the service. Known values are: "SystemAssigned",
      "UserAssigned", "SystemAssigned, UserAssigned", and "None".
     :vartype type: Union[str, "ResourceIdentityType"]
-    :ivar user_assigned_identities: Dictionary of <ArmUserIdentity>.
-    :vartype user_assigned_identities: dict[str, "ArmUserIdentity"]
+    :ivar userAssignedIdentities: Dictionary of <ArmUserIdentity>.
+    :vartype userAssignedIdentities: dict[str, "ArmUserIdentity"]
     """
 
     principalId: str
@@ -65,10 +69,10 @@ class ArmIdentity(TypedDict, total=False):
 class ArmUserIdentity(TypedDict, total=False):
     """ArmUserIdentity.
 
-    :ivar principal_id:
-    :vartype principal_id: str
-    :ivar client_id:
-    :vartype client_id: str
+    :ivar principalId:
+    :vartype principalId: str
+    :ivar clientId:
+    :vartype clientId: str
     """
 
     principalId: str
@@ -86,9 +90,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -114,9 +118,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -131,9 +135,9 @@ class CertificateDescription(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The description of an X509 CA Certificate.
     :vartype properties: "CertificateProperties"
     :ivar etag: The entity tag.
@@ -155,16 +159,17 @@ class CertificateProperties(TypedDict, total=False):
     :vartype expiry: str
     :ivar thumbprint: The certificate's thumbprint.
     :vartype thumbprint: str
-    :ivar is_verified: Determines whether certificate has been verified.
-    :vartype is_verified: bool
+    :ivar isVerified: Determines whether certificate has been verified.
+    :vartype isVerified: bool
     :ivar created: The certificate's create date and time.
     :vartype created: str
     :ivar updated: The certificate's last update date and time.
     :vartype updated: str
     :ivar certificate: The certificate content.
     :vartype certificate: str
-    :ivar policy_resource_id: The reference to policy stored in Azure Device Registry (ADR).
-    :vartype policy_resource_id: str
+    :ivar certificateAuthorityResourceId: Full certificate authority resource ID for ADR linked
+     standard SKU hubs.
+    :vartype certificateAuthorityResourceId: str
     """
 
     subject: str
@@ -181,8 +186,8 @@ class CertificateProperties(TypedDict, total=False):
     """The certificate's last update date and time."""
     certificate: str
     """The certificate content."""
-    policyResourceId: str
-    """The reference to policy stored in Azure Device Registry (ADR)."""
+    certificateAuthorityResourceId: str
+    """Full certificate authority resource ID for ADR linked standard SKU hubs."""
 
 
 class CertificateVerificationDescription(TypedDict, total=False):
@@ -200,16 +205,16 @@ class CertificateVerificationDescription(TypedDict, total=False):
 class CloudToDeviceProperties(TypedDict, total=False):
     """The IoT hub cloud-to-device messaging properties.
 
-    :ivar max_delivery_count: The max delivery count for cloud-to-device messages in the device
+    :ivar maxDeliveryCount: The max delivery count for cloud-to-device messages in the device
      queue. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages>`_.
-    :vartype max_delivery_count: int
-    :ivar default_ttl_as_iso8601: The default time to live for cloud-to-device messages in the
-     device queue. See:
+    :vartype maxDeliveryCount: int
+    :ivar defaultTtlAsIso8601: The default time to live for cloud-to-device messages in the device
+     queue. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages>`_.
-    :vartype default_ttl_as_iso8601: str
+    :vartype defaultTtlAsIso8601: str
     :ivar feedback: The properties of the feedback queue for cloud-to-device messages.
     :vartype feedback: "FeedbackProperties"
     """
@@ -229,25 +234,71 @@ class CloudToDeviceProperties(TypedDict, total=False):
 class DeviceRegistry(TypedDict, total=False):
     """Represents properties related to the Azure Device Registry (ADR).
 
-    :ivar namespace_resource_id: The identifier of the Azure Device Registry namespace.
-    :vartype namespace_resource_id: str
-    :ivar identity_resource_id: The identity used to manage the ADR namespace from the data plane.
-    :vartype identity_resource_id: str
+    :ivar namespaceResourceId: The identifier of the Azure Device Registry namespace.
+    :vartype namespaceResourceId: str
+    :ivar namespaceUuid: The UUID of the associated Azure Device Registry namespace.
+    :vartype namespaceUuid: str
+    :ivar dataPlaneHostName: The host name for the data plane endpoint of the associated Azure
+     Device Registry.
+    :vartype dataPlaneHostName: str
+    :ivar identity: The identity used to manage the ADR namespace from the data plane.
+    :vartype identity: "DeviceRegistryIdentity"
+    :ivar linkingProperties: The properties related to linking the IoT Hub with the Azure Device
+     Registry.
+    :vartype linkingProperties: "DeviceRegistryLinkingProperties"
     """
 
     namespaceResourceId: str
     """The identifier of the Azure Device Registry namespace."""
-    identityResourceId: str
+    namespaceUuid: str
+    """The UUID of the associated Azure Device Registry namespace."""
+    dataPlaneHostName: str
+    """The host name for the data plane endpoint of the associated Azure Device Registry."""
+    identity: "DeviceRegistryIdentity"
     """The identity used to manage the ADR namespace from the data plane."""
+    linkingProperties: "DeviceRegistryLinkingProperties"
+    """The properties related to linking the IoT Hub with the Azure Device Registry."""
+
+
+class DeviceRegistryIdentity(TypedDict, total=False):
+    """The identity used to manage the ADR namespace from the data plane.
+
+    :ivar type: The type of the identity. Known values are: "SystemAssigned" and "UserAssigned".
+    :vartype type: Union[str, "DeviceRegistryIdentityType"]
+    :ivar userAssignedIdentity: The user assigned identity if the identity type is 'UserAssigned'.
+    :vartype userAssignedIdentity: str
+    """
+
+    type: Union[str, "DeviceRegistryIdentityType"]
+    """The type of the identity. Known values are: \"SystemAssigned\" and \"UserAssigned\"."""
+    userAssignedIdentity: str
+    """The user assigned identity if the identity type is 'UserAssigned'."""
+
+
+class DeviceRegistryLinkingProperties(TypedDict, total=False):
+    """The properties related to linking the IoT Hub with the Azure Device Registry.
+
+    :ivar state: Indicates whether the IoT Hub is linked with an Azure Device Registry. Known
+     values are: "InProgress", "Success", "Orphaned", and "Failed".
+    :vartype state: Union[str, "DeviceRegistryLinkingState"]
+    :ivar error: The last error encountered when linking the IoT Hub with an Azure Device Registry.
+    :vartype error: "ErrorDetails"
+    """
+
+    state: Union[str, "DeviceRegistryLinkingState"]
+    """Indicates whether the IoT Hub is linked with an Azure Device Registry. Known values are:
+     \"InProgress\", \"Success\", \"Orphaned\", and \"Failed\"."""
+    error: "ErrorDetails"
+    """The last error encountered when linking the IoT Hub with an Azure Device Registry."""
 
 
 class EncryptionPropertiesDescription(TypedDict, total=False):
     """The encryption properties for the IoT hub.
 
-    :ivar key_source: The source of the key.
-    :vartype key_source: str
-    :ivar key_vault_properties: The properties of the KeyVault key.
-    :vartype key_vault_properties: list["KeyVaultKeyProperties"]
+    :ivar keySource: The source of the key.
+    :vartype keySource: str
+    :ivar keyVaultProperties: The properties of the KeyVault key.
+    :vartype keyVaultProperties: list["KeyVaultKeyProperties"]
     """
 
     keySource: str
@@ -263,9 +314,9 @@ class EnrichmentProperties(TypedDict, total=False):
     :vartype key: str
     :ivar value: The value for the enrichment property. Required.
     :vartype value: str
-    :ivar endpoint_names: The list of endpoints for which the enrichment is applied to the message.
+    :ivar endpointNames: The list of endpoints for which the enrichment is applied to the message.
      Required.
-    :vartype endpoint_names: list[str]
+    :vartype endpointNames: list[str]
     """
 
     key: Required[str]
@@ -274,6 +325,29 @@ class EnrichmentProperties(TypedDict, total=False):
     """The value for the enrichment property. Required."""
     endpointNames: Required[list[str]]
     """The list of endpoints for which the enrichment is applied to the message. Required."""
+
+
+class ErrorDetails(TypedDict, total=False):
+    """Error details.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar httpStatusCode: The HTTP status code.
+    :vartype httpStatusCode: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar details: The error details.
+    :vartype details: str
+    """
+
+    code: str
+    """The error code."""
+    httpStatusCode: str
+    """The HTTP status code."""
+    message: str
+    """The error message."""
+    details: str
+    """The error details."""
 
 
 class EventHubConsumerGroupBodyDescription(TypedDict, total=False):
@@ -301,17 +375,17 @@ class EventHubConsumerGroupName(TypedDict, total=False):
 class EventHubProperties(TypedDict, total=False):
     """The properties of the provisioned Event Hub-compatible endpoint used by the IoT hub.
 
-    :ivar retention_time_in_days: The retention time for device-to-cloud messages in days. See:
+    :ivar retentionTimeInDays: The retention time for device-to-cloud messages in days. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages>`_.
-    :vartype retention_time_in_days: int
-    :ivar partition_count: The number of partitions for receiving device-to-cloud messages in the
+    :vartype retentionTimeInDays: int
+    :ivar partitionCount: The number of partitions for receiving device-to-cloud messages in the
      Event Hub-compatible endpoint. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages>`_.
-    :vartype partition_count: int
-    :ivar partition_ids: The partition ids in the Event Hub-compatible endpoint.
-    :vartype partition_ids: list[str]
+    :vartype partitionCount: int
+    :ivar partitionIds: The partition ids in the Event Hub-compatible endpoint.
+    :vartype partitionIds: list[str]
     :ivar path: The Event Hub-compatible name.
     :vartype path: str
     :ivar endpoint: The Event Hub-compatible endpoint.
@@ -338,24 +412,24 @@ class EventHubProperties(TypedDict, total=False):
 class ExportDevicesRequest(TypedDict, total=False):
     """Use to provide parameters when requesting an export of all devices in the IoT hub.
 
-    :ivar export_blob_container_uri: The export blob container URI. Required.
-    :vartype export_blob_container_uri: str
-    :ivar exclude_keys: The value indicating whether keys should be excluded during export.
+    :ivar exportBlobContainerUri: The export blob container URI. Required.
+    :vartype exportBlobContainerUri: str
+    :ivar excludeKeys: The value indicating whether keys should be excluded during export.
      Required.
-    :vartype exclude_keys: bool
-    :ivar export_blob_name: The name of the blob that will be created in the provided output blob
+    :vartype excludeKeys: bool
+    :ivar exportBlobName: The name of the blob that will be created in the provided output blob
      container. This blob will contain the exported device registry information for the IoT Hub.
-    :vartype export_blob_name: str
-    :ivar authentication_type: Specifies authentication type being used for connecting to the
+    :vartype exportBlobName: str
+    :ivar authenticationType: Specifies authentication type being used for connecting to the
      storage account. Known values are: "keyBased" and "identityBased".
-    :vartype authentication_type: Union[str, "AuthenticationType"]
+    :vartype authenticationType: Union[str, "AuthenticationType"]
     :ivar identity: Managed identity properties of storage endpoint for export devices.
     :vartype identity: "ManagedIdentity"
-    :ivar include_configurations: The value indicating whether configurations should be exported.
-    :vartype include_configurations: bool
-    :ivar configurations_blob_name: The name of the blob that will be created in the provided
-     output blob container. This blob will contain the exported configurations for the Iot Hub.
-    :vartype configurations_blob_name: str
+    :ivar includeConfigurations: The value indicating whether configurations should be exported.
+    :vartype includeConfigurations: bool
+    :ivar configurationsBlobName: The name of the blob that will be created in the provided output
+     blob container. This blob will contain the exported configurations for the Iot Hub.
+    :vartype configurationsBlobName: str
     """
 
     exportBlobContainerUri: Required[str]
@@ -380,8 +454,8 @@ class ExportDevicesRequest(TypedDict, total=False):
 class FailoverInput(TypedDict, total=False):
     """Use to provide failover region when requesting manual Failover for a hub.
 
-    :ivar failover_region: Region the hub will be failed over to. Required.
-    :vartype failover_region: str
+    :ivar failoverRegion: Region the hub will be failed over to. Required.
+    :vartype failoverRegion: str
     """
 
     failoverRegion: Required[str]
@@ -405,11 +479,11 @@ class FallbackRouteProperties(TypedDict, total=False):
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language>`_.
     :vartype condition: str
-    :ivar endpoint_names: The list of endpoints to which the messages that satisfy the condition
-     are routed to. Currently only 1 endpoint is allowed. Required.
-    :vartype endpoint_names: list[str]
-    :ivar is_enabled: Used to specify whether the fallback route is enabled. Required.
-    :vartype is_enabled: bool
+    :ivar endpointNames: The list of endpoints to which the messages that satisfy the condition are
+     routed to. Currently only 1 endpoint is allowed. Required.
+    :vartype endpointNames: list[str]
+    :ivar isEnabled: Used to specify whether the fallback route is enabled. Required.
+    :vartype isEnabled: bool
     """
 
     name: str
@@ -435,20 +509,20 @@ class FallbackRouteProperties(TypedDict, total=False):
 class FeedbackProperties(TypedDict, total=False):
     """The properties of the feedback queue for cloud-to-device messages.
 
-    :ivar lock_duration_as_iso8601: The lock duration for the feedback queue. See:
+    :ivar lockDurationAsIso8601: The lock duration for the feedback queue. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages>`_.
-    :vartype lock_duration_as_iso8601: str
-    :ivar ttl_as_iso8601: The period of time for which a message is available to consume before it
-     is expired by the IoT hub. See:
+    :vartype lockDurationAsIso8601: str
+    :ivar ttlAsIso8601: The period of time for which a message is available to consume before it is
+     expired by the IoT hub. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages>`_.
-    :vartype ttl_as_iso8601: str
-    :ivar max_delivery_count: The number of times the IoT hub attempts to deliver a message on the
+    :vartype ttlAsIso8601: str
+    :ivar maxDeliveryCount: The number of times the IoT hub attempts to deliver a message on the
      feedback queue. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages>`_.
-    :vartype max_delivery_count: int
+    :vartype maxDeliveryCount: int
     """
 
     lockDurationAsIso8601: str
@@ -469,25 +543,25 @@ class FeedbackProperties(TypedDict, total=False):
 class ImportDevicesRequest(TypedDict, total=False):
     """Use to provide parameters when requesting an import of all devices in the hub.
 
-    :ivar input_blob_container_uri: The input blob container URI. Required.
-    :vartype input_blob_container_uri: str
-    :ivar output_blob_container_uri: The output blob container URI. Required.
-    :vartype output_blob_container_uri: str
-    :ivar input_blob_name: The blob name to be used when importing from the provided input blob
+    :ivar inputBlobContainerUri: The input blob container URI. Required.
+    :vartype inputBlobContainerUri: str
+    :ivar outputBlobContainerUri: The output blob container URI. Required.
+    :vartype outputBlobContainerUri: str
+    :ivar inputBlobName: The blob name to be used when importing from the provided input blob
      container.
-    :vartype input_blob_name: str
-    :ivar output_blob_name: The blob name to use for storing the status of the import job.
-    :vartype output_blob_name: str
-    :ivar authentication_type: Specifies authentication type being used for connecting to the
+    :vartype inputBlobName: str
+    :ivar outputBlobName: The blob name to use for storing the status of the import job.
+    :vartype outputBlobName: str
+    :ivar authenticationType: Specifies authentication type being used for connecting to the
      storage account. Known values are: "keyBased" and "identityBased".
-    :vartype authentication_type: Union[str, "AuthenticationType"]
+    :vartype authenticationType: Union[str, "AuthenticationType"]
     :ivar identity: Managed identity properties of storage endpoint for import devices.
     :vartype identity: "ManagedIdentity"
-    :ivar include_configurations: The value indicating whether configurations should be imported.
-    :vartype include_configurations: bool
-    :ivar configurations_blob_name: The blob name to be used when importing configurations from the
+    :ivar includeConfigurations: The value indicating whether configurations should be imported.
+    :vartype includeConfigurations: bool
+    :ivar configurationsBlobName: The blob name to be used when importing configurations from the
      provided input blob container.
-    :vartype configurations_blob_name: str
+    :vartype configurationsBlobName: str
     """
 
     inputBlobContainerUri: Required[str]
@@ -520,9 +594,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -546,9 +620,9 @@ class IotHubDescription(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -578,8 +652,8 @@ class IotHubDescription(TrackedResource):
 class IotHubDetails(TypedDict, total=False):
     """Set of additional read-only properties for the IoT hub.
 
-    :ivar gateway_version: The IoT hub Gateway version. Known values are: "V1" and "V2".
-    :vartype gateway_version: Union[str, "GatewayVersion"]
+    :ivar gatewayVersion: The IoT hub Gateway version. Known values are: "V1" and "V2".
+    :vartype gatewayVersion: Union[str, "GatewayVersion"]
     """
 
     gatewayVersion: Union[str, "GatewayVersion"]
@@ -610,72 +684,70 @@ class IotHubLocationDescription(TypedDict, total=False):
 class IotHubProperties(TypedDict, total=False):
     """The properties of an IoT hub.
 
-    :ivar authorization_policies: The shared access policies you can use to secure a connection to
+    :ivar authorizationPolicies: The shared access policies you can use to secure a connection to
      the IoT hub.
-    :vartype authorization_policies: list["SharedAccessSignatureAuthorizationRule"]
-    :ivar disable_local_auth: If true, SAS tokens with Iot hub scoped SAS keys cannot be used for
+    :vartype authorizationPolicies: list["SharedAccessSignatureAuthorizationRule"]
+    :ivar disableLocalAuth: If true, SAS tokens with Iot hub scoped SAS keys cannot be used for
      authentication.
-    :vartype disable_local_auth: bool
-    :ivar disable_device_sas: If true, all device(including Edge devices but excluding modules)
+    :vartype disableLocalAuth: bool
+    :ivar disableDeviceSAS: If true, all device(including Edge devices but excluding modules)
      scoped SAS keys cannot be used for authentication.
-    :vartype disable_device_sas: bool
-    :ivar disable_module_sas: If true, all module scoped SAS keys cannot be used for
-     authentication.
-    :vartype disable_module_sas: bool
-    :ivar restrict_outbound_network_access: If true, egress from IotHub will be restricted to only
-     the allowed FQDNs that are configured via allowedFqdnList.
-    :vartype restrict_outbound_network_access: bool
-    :ivar allowed_fqdn_list: List of allowed FQDNs(Fully Qualified Domain Name) for egress from Iot
+    :vartype disableDeviceSAS: bool
+    :ivar disableModuleSAS: If true, all module scoped SAS keys cannot be used for authentication.
+    :vartype disableModuleSAS: bool
+    :ivar restrictOutboundNetworkAccess: If true, egress from IotHub will be restricted to only the
+     allowed FQDNs that are configured via allowedFqdnList.
+    :vartype restrictOutboundNetworkAccess: bool
+    :ivar allowedFqdnList: List of allowed FQDNs(Fully Qualified Domain Name) for egress from Iot
      Hub.
-    :vartype allowed_fqdn_list: list[str]
-    :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar ip_filter_rules: The IP filter rules.
-    :vartype ip_filter_rules: list["IpFilterRule"]
-    :ivar network_rule_sets: Network Rule Set Properties of IotHub.
-    :vartype network_rule_sets: "NetworkRuleSetProperties"
-    :ivar min_tls_version: Specifies the minimum TLS version to support for this hub. Can be set to
+    :vartype allowedFqdnList: list[str]
+    :ivar publicNetworkAccess: Whether requests from Public Network are allowed. Known values are:
+     "Enabled" and "Disabled".
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar ipFilterRules: The IP filter rules.
+    :vartype ipFilterRules: list["IpFilterRule"]
+    :ivar networkRuleSets: Network Rule Set Properties of IotHub.
+    :vartype networkRuleSets: "NetworkRuleSetProperties"
+    :ivar minTlsVersion: Specifies the minimum TLS version to support for this hub. Can be set to
      "1.2" to have clients that use a TLS version below 1.2 to be rejected.
-    :vartype min_tls_version: str
-    :ivar private_endpoint_connections: Private endpoint connections created on this IotHub.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar provisioning_state: The provisioning state.
-    :vartype provisioning_state: str
+    :vartype minTlsVersion: str
+    :ivar privateEndpointConnections: Private endpoint connections created on this IotHub.
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar provisioningState: The provisioning state.
+    :vartype provisioningState: str
     :ivar state: The hub state.
     :vartype state: str
-    :ivar host_name: The name of the host.
-    :vartype host_name: str
-    :ivar device_host_name: The name of the device host. Supports secure connections over TLS 1.3.
-    :vartype device_host_name: str
-    :ivar service_host_name: The name of the service host. Supports secure connections over TLS
-     1.3.
-    :vartype service_host_name: str
-    :ivar event_hub_endpoints: The Event Hub-compatible endpoint properties. The only possible keys
+    :ivar hostName: The name of the host.
+    :vartype hostName: str
+    :ivar deviceHostName: The name of the device host. Supports secure connections over TLS 1.3.
+    :vartype deviceHostName: str
+    :ivar serviceHostName: The name of the service host. Supports secure connections over TLS 1.3.
+    :vartype serviceHostName: str
+    :ivar eventHubEndpoints: The Event Hub-compatible endpoint properties. The only possible keys
      to this dictionary is events. This key has to be present in the dictionary while making create
      or update calls for the IoT hub.
-    :vartype event_hub_endpoints: dict[str, "EventHubProperties"]
+    :vartype eventHubEndpoints: dict[str, "EventHubProperties"]
     :ivar routing: The routing related properties of the IoT hub. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging>`_.
     :vartype routing: "RoutingProperties"
-    :ivar storage_endpoints: The list of Azure Storage endpoints where you can upload files.
+    :ivar storageEndpoints: The list of Azure Storage endpoints where you can upload files.
      Currently you can configure only one Azure Storage account and that MUST have its key as
      $default. Specifying more than one storage account causes an error to be thrown. Not specifying
      a value for this property when the enableFileUploadNotifications property is set to True,
      causes an error to be thrown.
-    :vartype storage_endpoints: dict[str, "StorageEndpointProperties"]
-    :ivar messaging_endpoints: The messaging endpoint properties for the file upload notification
+    :vartype storageEndpoints: dict[str, "StorageEndpointProperties"]
+    :ivar messagingEndpoints: The messaging endpoint properties for the file upload notification
      queue.
-    :vartype messaging_endpoints: dict[str, "MessagingEndpointProperties"]
-    :ivar enable_file_upload_notifications: If True, file upload notifications are enabled.
-    :vartype enable_file_upload_notifications: bool
-    :ivar cloud_to_device: The IoT hub cloud-to-device messaging properties.
-    :vartype cloud_to_device: "CloudToDeviceProperties"
+    :vartype messagingEndpoints: dict[str, "MessagingEndpointProperties"]
+    :ivar enableFileUploadNotifications: If True, file upload notifications are enabled.
+    :vartype enableFileUploadNotifications: bool
+    :ivar cloudToDevice: The IoT hub cloud-to-device messaging properties.
+    :vartype cloudToDevice: "CloudToDeviceProperties"
     :ivar comments: IoT hub comments.
     :vartype comments: str
-    :ivar device_streams: The device streams properties of iothub.
-    :vartype device_streams: "IotHubPropertiesDeviceStreams"
+    :ivar deviceStreams: The device streams properties of iothub.
+    :vartype deviceStreams: "IotHubPropertiesDeviceStreams"
     :ivar features: The capabilities and features enabled for the IoT hub. Known values are: "None"
      and "DeviceManagement".
     :vartype features: Union[str, "Capabilities"]
@@ -683,18 +755,24 @@ class IotHubProperties(TypedDict, total=False):
     :vartype encryption: "EncryptionPropertiesDescription"
     :ivar locations: Primary and secondary location for iot hub.
     :vartype locations: list["IotHubLocationDescription"]
-    :ivar enable_data_residency: This property when set to true, will enable data residency, thus,
+    :ivar enableDataResidency: This property when set to true, will enable data residency, thus,
      disabling disaster recovery.
-    :vartype enable_data_residency: bool
-    :ivar root_certificate: This property store root certificate related information.
-    :vartype root_certificate: "RootCertificateProperties"
-    :ivar ip_version: This property specifies the IP Version the hub is currently utilizing. Known
+    :vartype enableDataResidency: bool
+    :ivar rootCertificate: This property store root certificate related information.
+    :vartype rootCertificate: "RootCertificateProperties"
+    :ivar ipVersion: This property specifies the IP Version the hub is currently utilizing. Known
      values are: "ipv4", "ipv6", and "ipv4ipv6".
-    :vartype ip_version: Union[str, "IpVersion"]
-    :ivar device_registry: Represents properties related to the Azure Device Registry (ADR).
-    :vartype device_registry: "DeviceRegistry"
-    :ivar iot_hub_details: Set of additional read-only properties for the IoT hub.
-    :vartype iot_hub_details: "IotHubDetails"
+    :vartype ipVersion: Union[str, "IpVersion"]
+    :ivar connectionProfile: The connection profile that the IoT hub uses for device connections.
+     Defaults to 'Classic'. Known values are: "Classic" and "MqttV5".
+    :vartype connectionProfile: Union[str, "ConnectionProfile"]
+    :ivar mqttV5Settings: The custom topic configuration for an Event Grid-backed MQTT v5 IoT hub.
+     This property is valid only when connectionProfile is 'MqttV5'.
+    :vartype mqttV5Settings: "MqttV5Settings"
+    :ivar deviceRegistry: Represents properties related to the Azure Device Registry (ADR).
+    :vartype deviceRegistry: "DeviceRegistry"
+    :ivar iotHubDetails: Set of additional read-only properties for the IoT hub.
+    :vartype iotHubDetails: "IotHubDetails"
     """
 
     authorizationPolicies: list["SharedAccessSignatureAuthorizationRule"]
@@ -770,6 +848,12 @@ class IotHubProperties(TypedDict, total=False):
     ipVersion: Union[str, "IpVersion"]
     """This property specifies the IP Version the hub is currently utilizing. Known values are:
      \"ipv4\", \"ipv6\", and \"ipv4ipv6\"."""
+    connectionProfile: Union[str, "ConnectionProfile"]
+    """The connection profile that the IoT hub uses for device connections. Defaults to 'Classic'.
+     Known values are: \"Classic\" and \"MqttV5\"."""
+    mqttV5Settings: "MqttV5Settings"
+    """The custom topic configuration for an Event Grid-backed MQTT v5 IoT hub. This property is valid
+     only when connectionProfile is 'MqttV5'."""
     deviceRegistry: "DeviceRegistry"
     """Represents properties related to the Azure Device Registry (ADR)."""
     iotHubDetails: "IotHubDetails"
@@ -779,8 +863,8 @@ class IotHubProperties(TypedDict, total=False):
 class IotHubPropertiesDeviceStreams(TypedDict, total=False):
     """The device streams properties of iothub.
 
-    :ivar streaming_endpoints: List of Device Streams Endpoints.
-    :vartype streaming_endpoints: list[str]
+    :ivar streamingEndpoints: List of Device Streams Endpoints.
+    :vartype streamingEndpoints: list[str]
     """
 
     streamingEndpoints: list[str]
@@ -816,14 +900,14 @@ class IotHubSkuInfo(TypedDict, total=False):
 class IpFilterRule(TypedDict, total=False):
     """The IP filter rules for the IoT hub.
 
-    :ivar filter_name: The name of the IP filter rule. Required.
-    :vartype filter_name: str
+    :ivar filterName: The name of the IP filter rule. Required.
+    :vartype filterName: str
     :ivar action: The desired action for requests captured by this rule. Required. Known values
      are: "Accept" and "Reject".
     :vartype action: Union[str, "IpFilterActionType"]
-    :ivar ip_mask: A string that contains the IP address range in CIDR notation for the rule.
+    :ivar ipMask: A string that contains the IP address range in CIDR notation for the rule.
      Required.
-    :vartype ip_mask: str
+    :vartype ipMask: str
     """
 
     filterName: Required[str]
@@ -838,8 +922,8 @@ class IpFilterRule(TypedDict, total=False):
 class KeyVaultKeyProperties(TypedDict, total=False):
     """The properties of the KeyVault key.
 
-    :ivar key_identifier: The identifier of the key.
-    :vartype key_identifier: str
+    :ivar keyIdentifier: The identifier of the key.
+    :vartype keyIdentifier: str
     :ivar identity: Managed identity properties of KeyVault Key.
     :vartype identity: "ManagedIdentity"
     """
@@ -853,8 +937,8 @@ class KeyVaultKeyProperties(TypedDict, total=False):
 class ManagedIdentity(TypedDict, total=False):
     """The properties of the Managed identity.
 
-    :ivar user_assigned_identity: The user assigned identity.
-    :vartype user_assigned_identity: str
+    :ivar userAssignedIdentity: The user assigned identity.
+    :vartype userAssignedIdentity: str
     """
 
     userAssignedIdentity: str
@@ -864,19 +948,19 @@ class ManagedIdentity(TypedDict, total=False):
 class MessagingEndpointProperties(TypedDict, total=False):
     """The properties of the messaging endpoints used by this IoT hub.
 
-    :ivar lock_duration_as_iso8601: The lock duration. See:
+    :ivar lockDurationAsIso8601: The lock duration. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload>`_.
-    :vartype lock_duration_as_iso8601: str
-    :ivar ttl_as_iso8601: The period of time for which a message is available to consume before it
-     is expired by the IoT hub. See:
+    :vartype lockDurationAsIso8601: str
+    :ivar ttlAsIso8601: The period of time for which a message is available to consume before it is
+     expired by the IoT hub. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload>`_.
-    :vartype ttl_as_iso8601: str
-    :ivar max_delivery_count: The number of times the IoT hub attempts to deliver a message. See:
+    :vartype ttlAsIso8601: str
+    :ivar maxDeliveryCount: The number of times the IoT hub attempts to deliver a message. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload>`_.
-    :vartype max_delivery_count: int
+    :vartype maxDeliveryCount: int
     """
 
     lockDurationAsIso8601: str
@@ -892,16 +976,27 @@ class MessagingEndpointProperties(TypedDict, total=False):
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload>`_."""
 
 
+class MqttV5Settings(TypedDict, total=False):
+    """Settings for an Event Grid-backed MQTT v5 IoT hub.
+
+    :ivar topicGroups: The customer-defined groups of topic templates that devices publish to.
+    :vartype topicGroups: list["TopicGroup"]
+    """
+
+    topicGroups: list["TopicGroup"]
+    """The customer-defined groups of topic templates that devices publish to."""
+
+
 class NetworkRuleSetIpRule(TypedDict, total=False):
     """IP Rule to be applied as part of Network Rule Set.
 
-    :ivar filter_name: Name of the IP filter rule. Required.
-    :vartype filter_name: str
+    :ivar filterName: Name of the IP filter rule. Required.
+    :vartype filterName: str
     :ivar action: IP Filter Action. "Allow"
     :vartype action: Union[str, "NetworkRuleIPAction"]
-    :ivar ip_mask: A string that contains the IP address range in CIDR notation for the rule.
+    :ivar ipMask: A string that contains the IP address range in CIDR notation for the rule.
      Required.
-    :vartype ip_mask: str
+    :vartype ipMask: str
     """
 
     filterName: Required[str]
@@ -915,14 +1010,13 @@ class NetworkRuleSetIpRule(TypedDict, total=False):
 class NetworkRuleSetProperties(TypedDict, total=False):
     """Network Rule Set Properties of IotHub.
 
-    :ivar default_action: Default Action for Network Rule Set. Known values are: "Deny" and
-     "Allow".
-    :vartype default_action: Union[str, "DefaultAction"]
-    :ivar apply_to_built_in_event_hub_endpoint: If True, then Network Rule Set is also applied to
-     BuiltIn EventHub EndPoint of IotHub. Required.
-    :vartype apply_to_built_in_event_hub_endpoint: bool
-    :ivar ip_rules: List of IP Rules. Required.
-    :vartype ip_rules: list["NetworkRuleSetIpRule"]
+    :ivar defaultAction: Default Action for Network Rule Set. Known values are: "Deny" and "Allow".
+    :vartype defaultAction: Union[str, "DefaultAction"]
+    :ivar applyToBuiltInEventHubEndpoint: If True, then Network Rule Set is also applied to BuiltIn
+     EventHub EndPoint of IotHub. Required.
+    :vartype applyToBuiltInEventHubEndpoint: bool
+    :ivar ipRules: List of IP Rules. Required.
+    :vartype ipRules: list["NetworkRuleSetIpRule"]
     """
 
     defaultAction: Union[str, "DefaultAction"]
@@ -967,9 +1061,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of a private endpoint connection. Required.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -981,11 +1075,11 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """The properties of a private endpoint connection.
 
-    :ivar private_endpoint: The private endpoint property of a private endpoint connection.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar private_link_service_connection_state: The current state of a private endpoint
-     connection. Required.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionState"
+    :ivar privateEndpoint: The private endpoint property of a private endpoint connection.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: The current state of a private endpoint connection.
+     Required.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
     """
 
     privateEndpoint: "PrivateEndpoint"
@@ -1003,8 +1097,8 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     :ivar description: The description for the current state of a private endpoint connection.
      Required.
     :vartype description: str
-    :ivar actions_required: Actions required for a private endpoint connection.
-    :vartype actions_required: str
+    :ivar actionsRequired: Actions required for a private endpoint connection.
+    :vartype actionsRequired: str
     """
 
     status: Required[Union[str, "PrivateLinkServiceConnectionStatus"]]
@@ -1019,11 +1113,11 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
 class RootCertificateProperties(TypedDict, total=False):
     """This property store root certificate related information.
 
-    :ivar enable_root_certificate_v2: This property when set to true, hub will use G2 cert; while
-     it's set to false, hub uses Baltimore Cert.
-    :vartype enable_root_certificate_v2: bool
-    :ivar last_updated_time_utc: the last update time to root certificate flag.
-    :vartype last_updated_time_utc: str
+    :ivar enableRootCertificateV2: This property when set to true, hub will use G2 cert; while it's
+     set to false, hub uses Baltimore Cert.
+    :vartype enableRootCertificateV2: bool
+    :ivar lastUpdatedTimeUtc: the last update time to root certificate flag.
+    :vartype lastUpdatedTimeUtc: str
     """
 
     enableRootCertificateV2: bool
@@ -1049,11 +1143,13 @@ class RouteProperties(TypedDict, total=False):
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language>`_.
     :vartype condition: str
-    :ivar endpoint_names: The list of endpoints to which messages that satisfy the condition are
+    :ivar dataSchema: The data schema reference that is used to interpret the message body.
+    :vartype dataSchema: str
+    :ivar endpointNames: The list of endpoints to which messages that satisfy the condition are
      routed. Currently only one endpoint is allowed. Required.
-    :vartype endpoint_names: list[str]
-    :ivar is_enabled: Used to specify whether a route is enabled. Required.
-    :vartype is_enabled: bool
+    :vartype endpointNames: list[str]
+    :ivar isEnabled: Used to specify whether a route is enabled. Required.
+    :vartype isEnabled: bool
     """
 
     name: Required[str]
@@ -1069,6 +1165,8 @@ class RouteProperties(TypedDict, total=False):
      evaluates to true by default. For grammar, see:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language>`_."""
+    dataSchema: str
+    """The data schema reference that is used to interpret the message body."""
     endpointNames: Required[list[str]]
     """The list of endpoints to which messages that satisfy the condition are routed. Currently only
      one endpoint is allowed. Required."""
@@ -1086,36 +1184,39 @@ class RoutingCosmosDBSqlApiProperties(TypedDict, total=False):
     :vartype name: str
     :ivar id: Id of the cosmos DB sql container endpoint.
     :vartype id: str
-    :ivar subscription_id: The subscription identifier of the cosmos DB account.
-    :vartype subscription_id: str
-    :ivar resource_group: The name of the resource group of the cosmos DB account.
-    :vartype resource_group: str
-    :ivar endpoint_uri: The url of the cosmos DB account. It must include the protocol https://.
+    :ivar subscriptionId: The subscription identifier of the cosmos DB account.
+    :vartype subscriptionId: str
+    :ivar resourceGroup: The name of the resource group of the cosmos DB account.
+    :vartype resourceGroup: str
+    :ivar endpointUri: The url of the cosmos DB account. It must include the protocol https://.
      Required.
-    :vartype endpoint_uri: str
-    :ivar authentication_type: Method used to authenticate against the cosmos DB sql container
+    :vartype endpointUri: str
+    :ivar authenticationType: Method used to authenticate against the cosmos DB sql container
      endpoint. Known values are: "keyBased" and "identityBased".
-    :vartype authentication_type: Union[str, "AuthenticationType"]
+    :vartype authenticationType: Union[str, "AuthenticationType"]
     :ivar identity: Managed identity properties of routing cosmos DB container endpoint.
     :vartype identity: "ManagedIdentity"
-    :ivar primary_key: The primary key of the cosmos DB account.
-    :vartype primary_key: str
-    :ivar secondary_key: The secondary key of the cosmos DB account.
-    :vartype secondary_key: str
-    :ivar database_name: The name of the cosmos DB database in the cosmos DB account. Required.
-    :vartype database_name: str
-    :ivar container_name: The name of the cosmos DB sql container in the cosmos DB database.
+    :ivar primaryKey: The primary key of the cosmos DB account.
+    :vartype primaryKey: str
+    :ivar secondaryKey: The secondary key of the cosmos DB account.
+    :vartype secondaryKey: str
+    :ivar databaseName: The name of the cosmos DB database in the cosmos DB account. Required.
+    :vartype databaseName: str
+    :ivar containerName: The name of the cosmos DB sql container in the cosmos DB database.
      Required.
-    :vartype container_name: str
-    :ivar partition_key_name: The name of the partition key associated with this cosmos DB sql
+    :vartype containerName: str
+    :ivar partitionKeyName: The name of the partition key associated with this cosmos DB sql
      container if one exists. This is an optional parameter.
-    :vartype partition_key_name: str
-    :ivar partition_key_template: The template for generating a synthetic partition key value for
-     use with this cosmos DB sql container. The template must include at least one of the following
+    :vartype partitionKeyName: str
+    :ivar partitionKeyTemplate: The template for generating a synthetic partition key value for use
+     with this cosmos DB sql container. The template must include at least one of the following
      placeholders: {iothub}, {deviceid}, {DD}, {MM}, and {YYYY}. Any one placeholder may be
      specified at most once, but order and non-placeholder components are arbitrary. This parameter
      is only required if PartitionKeyName is specified.
-    :vartype partition_key_template: str
+    :vartype partitionKeyTemplate: str
+    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
+     values are: "DOObservationV1" and "None".
+    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     name: Required[str]
@@ -1153,6 +1254,9 @@ class RoutingCosmosDBSqlApiProperties(TypedDict, total=False):
      {deviceid}, {DD}, {MM}, and {YYYY}. Any one placeholder may be specified at most once, but
      order and non-placeholder components are arbitrary. This parameter is only required if
      PartitionKeyName is specified."""
+    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
+    """The format of the message payload delivered to this endpoint. Known values are:
+     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingEndpoints(TypedDict, total=False):
@@ -1160,24 +1264,24 @@ class RoutingEndpoints(TypedDict, total=False):
     the routing rules. A maximum of 10 custom endpoints are allowed across all endpoint types for
     paid hubs and only 1 custom endpoint is allowed across all endpoint types for free hubs.
 
-    :ivar service_bus_queues: The list of Service Bus queue endpoints that IoT hub routes the
+    :ivar serviceBusQueues: The list of Service Bus queue endpoints that IoT hub routes the
      messages to, based on the routing rules.
-    :vartype service_bus_queues: list["RoutingServiceBusQueueEndpointProperties"]
-    :ivar service_bus_topics: The list of Service Bus topic endpoints that the IoT hub routes the
+    :vartype serviceBusQueues: list["RoutingServiceBusQueueEndpointProperties"]
+    :ivar serviceBusTopics: The list of Service Bus topic endpoints that the IoT hub routes the
      messages to, based on the routing rules.
-    :vartype service_bus_topics: list["RoutingServiceBusTopicEndpointProperties"]
-    :ivar event_hubs: The list of Event Hubs endpoints that IoT hub routes messages to, based on
-     the routing rules. This list does not include the built-in Event Hubs endpoint.
-    :vartype event_hubs: list["RoutingEventHubProperties"]
-    :ivar storage_containers: The list of storage container endpoints that IoT hub routes messages
+    :vartype serviceBusTopics: list["RoutingServiceBusTopicEndpointProperties"]
+    :ivar eventHubs: The list of Event Hubs endpoints that IoT hub routes messages to, based on the
+     routing rules. This list does not include the built-in Event Hubs endpoint.
+    :vartype eventHubs: list["RoutingEventHubProperties"]
+    :ivar storageContainers: The list of storage container endpoints that IoT hub routes messages
      to, based on the routing rules.
-    :vartype storage_containers: list["RoutingStorageContainerProperties"]
-    :ivar cosmos_db_sql_containers: The list of Cosmos DB container endpoints that IoT hub routes
+    :vartype storageContainers: list["RoutingStorageContainerProperties"]
+    :ivar cosmosDBSqlContainers: The list of Cosmos DB container endpoints that IoT hub routes
      messages to, based on the routing rules.
-    :vartype cosmos_db_sql_containers: list["RoutingCosmosDBSqlApiProperties"]
-    :ivar event_streams: The list of event stream endpoints that IoT hub routes messages to, based
+    :vartype cosmosDBSqlContainers: list["RoutingCosmosDBSqlApiProperties"]
+    :ivar eventStreams: The list of event stream endpoints that IoT hub routes messages to, based
      on the routing rules.
-    :vartype event_streams: list["RoutingEventStreamProperties"]
+    :vartype eventStreams: list["RoutingEventStreamProperties"]
     """
 
     serviceBusQueues: list["RoutingServiceBusQueueEndpointProperties"]
@@ -1204,15 +1308,15 @@ class RoutingEventHubProperties(TypedDict, total=False):
 
     :ivar id: Id of the event hub endpoint.
     :vartype id: str
-    :ivar connection_string: The connection string of the event hub endpoint.
-    :vartype connection_string: str
-    :ivar endpoint_uri: The url of the event hub endpoint. It must include the protocol sb://.
-    :vartype endpoint_uri: str
-    :ivar entity_path: Event hub name on the event hub namespace.
-    :vartype entity_path: str
-    :ivar authentication_type: Method used to authenticate against the event hub endpoint. Known
+    :ivar connectionString: The connection string of the event hub endpoint.
+    :vartype connectionString: str
+    :ivar endpointUri: The url of the event hub endpoint. It must include the protocol sb://.
+    :vartype endpointUri: str
+    :ivar entityPath: Event hub name on the event hub namespace.
+    :vartype entityPath: str
+    :ivar authenticationType: Method used to authenticate against the event hub endpoint. Known
      values are: "keyBased" and "identityBased".
-    :vartype authentication_type: Union[str, "AuthenticationType"]
+    :vartype authenticationType: Union[str, "AuthenticationType"]
     :ivar identity: Managed identity properties of routing event hub endpoint.
     :vartype identity: "ManagedIdentity"
     :ivar name: The name that identifies this endpoint. The name can only include alphanumeric
@@ -1220,10 +1324,13 @@ class RoutingEventHubProperties(TypedDict, total=False):
      following names are reserved:  events, fileNotifications, $default. Endpoint names must be
      unique across endpoint types. Required.
     :vartype name: str
-    :ivar subscription_id: The subscription identifier of the event hub endpoint.
-    :vartype subscription_id: str
-    :ivar resource_group: The name of the resource group of the event hub endpoint.
-    :vartype resource_group: str
+    :ivar subscriptionId: The subscription identifier of the event hub endpoint.
+    :vartype subscriptionId: str
+    :ivar resourceGroup: The name of the resource group of the event hub endpoint.
+    :vartype resourceGroup: str
+    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
+     values are: "DOObservationV1" and "None".
+    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     id: str
@@ -1248,6 +1355,9 @@ class RoutingEventHubProperties(TypedDict, total=False):
     """The subscription identifier of the event hub endpoint."""
     resourceGroup: str
     """The name of the resource group of the event hub endpoint."""
+    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
+    """The format of the message payload delivered to this endpoint. Known values are:
+     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingEventStreamProperties(TypedDict, total=False):
@@ -1260,23 +1370,26 @@ class RoutingEventStreamProperties(TypedDict, total=False):
     :vartype name: str
     :ivar id: Id of the event stream endpoint.
     :vartype id: str
-    :ivar endpoint_uri: The url of the underlying event hub namespace of the event stream endpoint.
+    :ivar endpointUri: The url of the underlying event hub namespace of the event stream endpoint.
      It must include the protocol sb://. Required.
-    :vartype endpoint_uri: str
-    :ivar entity_path: Event hub name on the event hub namespace. Required.
-    :vartype entity_path: str
-    :ivar authentication_type: Method used to authenticate against the event stream endpoint.
+    :vartype endpointUri: str
+    :ivar entityPath: Event hub name on the event hub namespace. Required.
+    :vartype entityPath: str
+    :ivar authenticationType: Method used to authenticate against the event stream endpoint.
      "identityBased"
-    :vartype authentication_type: Union[str, "EventStreamAuthenticationType"]
+    :vartype authenticationType: Union[str, "EventStreamAuthenticationType"]
     :ivar identity: Managed identity properties of routing event stream endpoint.
     :vartype identity: "ManagedIdentity"
-    :ivar workspace_id: The unique GUID of the target Microsoft Fabric workspace for the event
+    :ivar workspaceId: The unique GUID of the target Microsoft Fabric workspace for the event
      stream endpoint.
-    :vartype workspace_id: str
-    :ivar event_stream_id: The unique GUID of the target event stream under the workspace.
-    :vartype event_stream_id: str
-    :ivar source_id: The unique GUID of the custom source for the event stream.
-    :vartype source_id: str
+    :vartype workspaceId: str
+    :ivar eventStreamId: The unique GUID of the target event stream under the workspace.
+    :vartype eventStreamId: str
+    :ivar sourceId: The unique GUID of the custom source for the event stream.
+    :vartype sourceId: str
+    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
+     values are: "DOObservationV1" and "None".
+    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     name: Required[str]
@@ -1301,6 +1414,9 @@ class RoutingEventStreamProperties(TypedDict, total=False):
     """The unique GUID of the target event stream under the workspace."""
     sourceId: str
     """The unique GUID of the custom source for the event stream."""
+    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
+    """The format of the message payload delivered to this endpoint. Known values are:
+     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingMessage(TypedDict, total=False):
@@ -1308,10 +1424,10 @@ class RoutingMessage(TypedDict, total=False):
 
     :ivar body: Body of routing message.
     :vartype body: str
-    :ivar app_properties: App properties.
-    :vartype app_properties: dict[str, str]
-    :ivar system_properties: System properties.
-    :vartype system_properties: dict[str, str]
+    :ivar appProperties: App properties.
+    :vartype appProperties: dict[str, str]
+    :ivar systemProperties: System properties.
+    :vartype systemProperties: dict[str, str]
     """
 
     body: str
@@ -1336,11 +1452,11 @@ class RoutingProperties(TypedDict, total=False):
      to built-in and custom endpoints. A maximum of 100 routing rules are allowed for paid hubs and
      a maximum of 5 routing rules are allowed for free hubs.
     :vartype routes: list["RouteProperties"]
-    :ivar fallback_route: The properties of the route that is used as a fall-back route when none
-     of the conditions specified in the 'routes' section are met. This is an optional parameter.
-     When this property is not set, the messages which do not meet any of the conditions specified
-     in the 'routes' section get routed to the built-in eventhub endpoint.
-    :vartype fallback_route: "FallbackRouteProperties"
+    :ivar fallbackRoute: The properties of the route that is used as a fall-back route when none of
+     the conditions specified in the 'routes' section are met. This is an optional parameter. When
+     this property is not set, the messages which do not meet any of the conditions specified in the
+     'routes' section get routed to the built-in eventhub endpoint.
+    :vartype fallbackRoute: "FallbackRouteProperties"
     :ivar enrichments: The list of user-provided enrichments that the IoT hub applies to messages
      to be delivered to built-in and custom endpoints. See: `https://aka.ms/telemetryoneventgrid
      <https://aka.ms/telemetryoneventgrid>`_.
@@ -1371,16 +1487,16 @@ class RoutingServiceBusQueueEndpointProperties(TypedDict, total=False):
 
     :ivar id: Id of the service bus queue endpoint.
     :vartype id: str
-    :ivar connection_string: The connection string of the service bus queue endpoint.
-    :vartype connection_string: str
-    :ivar endpoint_uri: The url of the service bus queue endpoint. It must include the protocol
+    :ivar connectionString: The connection string of the service bus queue endpoint.
+    :vartype connectionString: str
+    :ivar endpointUri: The url of the service bus queue endpoint. It must include the protocol
      sb://.
-    :vartype endpoint_uri: str
-    :ivar entity_path: Queue name on the service bus namespace.
-    :vartype entity_path: str
-    :ivar authentication_type: Method used to authenticate against the service bus queue endpoint.
+    :vartype endpointUri: str
+    :ivar entityPath: Queue name on the service bus namespace.
+    :vartype entityPath: str
+    :ivar authenticationType: Method used to authenticate against the service bus queue endpoint.
      Known values are: "keyBased" and "identityBased".
-    :vartype authentication_type: Union[str, "AuthenticationType"]
+    :vartype authenticationType: Union[str, "AuthenticationType"]
     :ivar identity: Managed identity properties of routing service bus queue endpoint.
     :vartype identity: "ManagedIdentity"
     :ivar name: The name that identifies this endpoint. The name can only include alphanumeric
@@ -1388,10 +1504,13 @@ class RoutingServiceBusQueueEndpointProperties(TypedDict, total=False):
      following names are reserved:  events, fileNotifications, $default. Endpoint names must be
      unique across endpoint types. The name need not be the same as the actual queue name. Required.
     :vartype name: str
-    :ivar subscription_id: The subscription identifier of the service bus queue endpoint.
-    :vartype subscription_id: str
-    :ivar resource_group: The name of the resource group of the service bus queue endpoint.
-    :vartype resource_group: str
+    :ivar subscriptionId: The subscription identifier of the service bus queue endpoint.
+    :vartype subscriptionId: str
+    :ivar resourceGroup: The name of the resource group of the service bus queue endpoint.
+    :vartype resourceGroup: str
+    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
+     values are: "DOObservationV1" and "None".
+    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     id: str
@@ -1416,6 +1535,9 @@ class RoutingServiceBusQueueEndpointProperties(TypedDict, total=False):
     """The subscription identifier of the service bus queue endpoint."""
     resourceGroup: str
     """The name of the resource group of the service bus queue endpoint."""
+    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
+    """The format of the message payload delivered to this endpoint. Known values are:
+     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingServiceBusTopicEndpointProperties(TypedDict, total=False):
@@ -1423,16 +1545,16 @@ class RoutingServiceBusTopicEndpointProperties(TypedDict, total=False):
 
     :ivar id: Id of the service bus topic endpoint.
     :vartype id: str
-    :ivar connection_string: The connection string of the service bus topic endpoint.
-    :vartype connection_string: str
-    :ivar endpoint_uri: The url of the service bus topic endpoint. It must include the protocol
+    :ivar connectionString: The connection string of the service bus topic endpoint.
+    :vartype connectionString: str
+    :ivar endpointUri: The url of the service bus topic endpoint. It must include the protocol
      sb://.
-    :vartype endpoint_uri: str
-    :ivar entity_path: Queue name on the service bus topic.
-    :vartype entity_path: str
-    :ivar authentication_type: Method used to authenticate against the service bus topic endpoint.
+    :vartype endpointUri: str
+    :ivar entityPath: Queue name on the service bus topic.
+    :vartype entityPath: str
+    :ivar authenticationType: Method used to authenticate against the service bus topic endpoint.
      Known values are: "keyBased" and "identityBased".
-    :vartype authentication_type: Union[str, "AuthenticationType"]
+    :vartype authenticationType: Union[str, "AuthenticationType"]
     :ivar identity: Managed identity properties of routing service bus topic endpoint.
     :vartype identity: "ManagedIdentity"
     :ivar name: The name that identifies this endpoint. The name can only include alphanumeric
@@ -1441,10 +1563,13 @@ class RoutingServiceBusTopicEndpointProperties(TypedDict, total=False):
      unique across endpoint types.  The name need not be the same as the actual topic name.
      Required.
     :vartype name: str
-    :ivar subscription_id: The subscription identifier of the service bus topic endpoint.
-    :vartype subscription_id: str
-    :ivar resource_group: The name of the resource group of the service bus topic endpoint.
-    :vartype resource_group: str
+    :ivar subscriptionId: The subscription identifier of the service bus topic endpoint.
+    :vartype subscriptionId: str
+    :ivar resourceGroup: The name of the resource group of the service bus topic endpoint.
+    :vartype resourceGroup: str
+    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
+     values are: "DOObservationV1" and "None".
+    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     id: str
@@ -1469,6 +1594,9 @@ class RoutingServiceBusTopicEndpointProperties(TypedDict, total=False):
     """The subscription identifier of the service bus topic endpoint."""
     resourceGroup: str
     """The name of the resource group of the service bus topic endpoint."""
+    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
+    """The format of the message payload delivered to this endpoint. Known values are:
+     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingStorageContainerProperties(TypedDict, total=False):
@@ -1476,13 +1604,13 @@ class RoutingStorageContainerProperties(TypedDict, total=False):
 
     :ivar id: Id of the storage container endpoint.
     :vartype id: str
-    :ivar connection_string: The connection string of the storage account.
-    :vartype connection_string: str
-    :ivar endpoint_uri: The url of the storage endpoint. It must include the protocol https://.
-    :vartype endpoint_uri: str
-    :ivar authentication_type: Method used to authenticate against the storage endpoint. Known
+    :ivar connectionString: The connection string of the storage account.
+    :vartype connectionString: str
+    :ivar endpointUri: The url of the storage endpoint. It must include the protocol https://.
+    :vartype endpointUri: str
+    :ivar authenticationType: Method used to authenticate against the storage endpoint. Known
      values are: "keyBased" and "identityBased".
-    :vartype authentication_type: Union[str, "AuthenticationType"]
+    :vartype authenticationType: Union[str, "AuthenticationType"]
     :ivar identity: Managed identity properties of routing storage endpoint.
     :vartype identity: "ManagedIdentity"
     :ivar name: The name that identifies this endpoint. The name can only include alphanumeric
@@ -1490,26 +1618,29 @@ class RoutingStorageContainerProperties(TypedDict, total=False):
      following names are reserved:  events, fileNotifications, $default. Endpoint names must be
      unique across endpoint types. Required.
     :vartype name: str
-    :ivar subscription_id: The subscription identifier of the storage account.
-    :vartype subscription_id: str
-    :ivar resource_group: The name of the resource group of the storage account.
-    :vartype resource_group: str
-    :ivar container_name: The name of storage container in the storage account. Required.
-    :vartype container_name: str
-    :ivar file_name_format: File name format for the blob. Default format is
+    :ivar subscriptionId: The subscription identifier of the storage account.
+    :vartype subscriptionId: str
+    :ivar resourceGroup: The name of the resource group of the storage account.
+    :vartype resourceGroup: str
+    :ivar containerName: The name of storage container in the storage account. Required.
+    :vartype containerName: str
+    :ivar fileNameFormat: File name format for the blob. Default format is
      {iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}. All parameters are mandatory but can be
      reordered.
-    :vartype file_name_format: str
-    :ivar batch_frequency_in_seconds: Time interval at which blobs are written to storage. Value
+    :vartype fileNameFormat: str
+    :ivar batchFrequencyInSeconds: Time interval at which blobs are written to storage. Value
      should be between 60 and 720 seconds. Default value is 300 seconds.
-    :vartype batch_frequency_in_seconds: int
-    :ivar max_chunk_size_in_bytes: Maximum number of bytes for each blob written to storage. Value
+    :vartype batchFrequencyInSeconds: int
+    :ivar maxChunkSizeInBytes: Maximum number of bytes for each blob written to storage. Value
      should be between 10485760(10MB) and 524288000(500MB). Default value is 314572800(300MB).
-    :vartype max_chunk_size_in_bytes: int
+    :vartype maxChunkSizeInBytes: int
     :ivar encoding: Encoding that is used to serialize messages to blobs. Supported values are
      'avro', 'avrodeflate', and 'JSON'. Default value is 'avro'. Known values are: "Avro",
      "AvroDeflate", and "JSON".
     :vartype encoding: Union[str, "RoutingStorageContainerPropertiesEncoding"]
+    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
+     values are: "DOObservationV1" and "None".
+    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     id: str
@@ -1548,6 +1679,9 @@ class RoutingStorageContainerProperties(TypedDict, total=False):
     """Encoding that is used to serialize messages to blobs. Supported values are 'avro',
      'avrodeflate', and 'JSON'. Default value is 'avro'. Known values are: \"Avro\",
      \"AvroDeflate\", and \"JSON\"."""
+    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
+    """The format of the message payload delivered to this endpoint. Known values are:
+     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingTwin(TypedDict, total=False):
@@ -1582,12 +1716,12 @@ class RoutingTwinProperties(TypedDict, total=False):
 class SharedAccessSignatureAuthorizationRule(TypedDict, total=False):
     """The properties of an IoT hub shared access policy.
 
-    :ivar key_name: The name of the shared access policy. Required.
-    :vartype key_name: str
-    :ivar primary_key: The primary key.
-    :vartype primary_key: str
-    :ivar secondary_key: The secondary key.
-    :vartype secondary_key: str
+    :ivar keyName: The name of the shared access policy. Required.
+    :vartype keyName: str
+    :ivar primaryKey: The primary key.
+    :vartype primaryKey: str
+    :ivar secondaryKey: The secondary key.
+    :vartype secondaryKey: str
     :ivar rights: The permissions assigned to the shared access policy. Required. Known values are:
      "RegistryRead", "RegistryWrite", "ServiceConnect", "DeviceConnect", "RegistryRead,
      RegistryWrite", "RegistryRead, ServiceConnect", "RegistryRead, DeviceConnect", "RegistryWrite,
@@ -1618,20 +1752,20 @@ class SharedAccessSignatureAuthorizationRule(TypedDict, total=False):
 class StorageEndpointProperties(TypedDict, total=False):
     """The properties of the Azure Storage endpoint for file upload.
 
-    :ivar sas_ttl_as_iso8601: The period of time for which the SAS URI generated by IoT Hub for
-     file upload is valid. See:
+    :ivar sasTtlAsIso8601: The period of time for which the SAS URI generated by IoT Hub for file
+     upload is valid. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload#file-upload-notification-configuration-options
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload#file-upload-notification-configuration-options>`_.
-    :vartype sas_ttl_as_iso8601: str
-    :ivar connection_string: The connection string for the Azure Storage account to which files are
+    :vartype sasTtlAsIso8601: str
+    :ivar connectionString: The connection string for the Azure Storage account to which files are
      uploaded. Required.
-    :vartype connection_string: str
-    :ivar container_name: The name of the root container where you upload files. The container need
+    :vartype connectionString: str
+    :ivar containerName: The name of the root container where you upload files. The container need
      not exist but should be creatable using the connectionString specified. Required.
-    :vartype container_name: str
-    :ivar authentication_type: Specifies authentication type being used for connecting to the
+    :vartype containerName: str
+    :ivar authenticationType: Specifies authentication type being used for connecting to the
      storage account. Known values are: "keyBased" and "identityBased".
-    :vartype authentication_type: Union[str, "AuthenticationType"]
+    :vartype authenticationType: Union[str, "AuthenticationType"]
     :ivar identity: Managed identity properties of storage endpoint for file upload.
     :vartype identity: "ManagedIdentity"
     """
@@ -1655,20 +1789,20 @@ class StorageEndpointProperties(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1702,10 +1836,10 @@ class TagsResource(TypedDict, total=False):
 class TestAllRoutesInput(TypedDict, total=False):
     """Input for testing all routes.
 
-    :ivar routing_source: Routing source. Known values are: "Invalid", "DeviceMessages",
+    :ivar routingSource: Routing source. Known values are: "Invalid", "DeviceMessages",
      "TwinChangeEvents", "DeviceLifecycleEvents", "DeviceJobLifecycleEvents",
      "DigitalTwinChangeEvents", "DeviceConnectionStateEvents", and "MqttBrokerMessages".
-    :vartype routing_source: Union[str, "RoutingSource"]
+    :vartype routingSource: Union[str, "RoutingSource"]
     :ivar message: Routing message.
     :vartype message: "RoutingMessage"
     :ivar twin: Routing Twin Reference.
@@ -1739,3 +1873,19 @@ class TestRouteInput(TypedDict, total=False):
     """Route properties. Required."""
     twin: "RoutingTwin"
     """Routing Twin Reference."""
+
+
+class TopicGroup(TypedDict, total=False):
+    """A named set of topic templates for an Event Grid-backed MQTT v5 IoT hub.
+
+    :ivar topicGroupId: The customer-supplied identifier used to reconcile the topic group during
+     updates.
+    :vartype topicGroupId: str
+    :ivar topicTemplates: The topic templates in this group.
+    :vartype topicTemplates: list[str]
+    """
+
+    topicGroupId: str
+    """The customer-supplied identifier used to reconcile the topic group during updates."""
+    topicTemplates: list[str]
+    """The topic templates in this group."""

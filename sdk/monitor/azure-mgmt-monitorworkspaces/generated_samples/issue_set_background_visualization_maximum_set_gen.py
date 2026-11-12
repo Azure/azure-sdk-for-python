@@ -41,6 +41,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-10-03/Issue_SetBackgroundVisualization_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-03-preview/Issue_SetBackgroundVisualization_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

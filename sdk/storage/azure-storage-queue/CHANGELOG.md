@@ -1,8 +1,31 @@
 # Release History
 
-## 12.19.0b1 (Unreleased)
+## 12.20.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.19.0b1 (2026-11-05)
+
+### Features Added
+- Added support for service versions 2026-12-06 and 2027-03-07.
+
+## 12.18.1 (2026-10-29)
+
+### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_queue_sas`,
+  and `QueueServiceClient.get_user_delegation_key` (sync and async).
+  Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
+
+## 12.18.0 (2026-09-30)
+
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
+### Breaking Changes
+- Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
+
+### Features Added
+- Stable release of features from 12.18.0b1
 
 ## 12.18.0b1 (2026-08-10)
 

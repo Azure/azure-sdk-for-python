@@ -49,7 +49,9 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "name": "str",
                     "properties": {
+                        "deleteRetentionPolicy": {"policyState": "str", "retentionPeriodDays": 0},
                         "encryption": "str",
+                        "encryptionInTransit": bool,
                         "encryptionProperties": {
                             "identity": {"userAssignedIdentity": "str"},
                             "keyVaultProperties": {
@@ -90,6 +92,9 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                         ],
                         "protocolType": "str",
                         "provisioningState": "str",
+                        "qualityOfService": "str",
+                        "reservedIops": 0,
+                        "reservedMBps": 0,
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -123,6 +128,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                     "properties": {
+                        "deleteRetentionPolicy": {"policyState": "str", "retentionPeriodDays": 0},
                         "encryption": "str",
                         "encryptionProperties": {
                             "identity": {"userAssignedIdentity": "str"},
@@ -138,6 +144,8 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                         "enforceDataIntegrityCheckForIscsi": bool,
                         "networkAcls": {"virtualNetworkRules": [{"id": "str", "action": "str"}]},
                         "protocolType": "str",
+                        "reservedIops": 0,
+                        "reservedMBps": 0,
                     },
                 },
             )

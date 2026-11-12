@@ -6,6 +6,7 @@
 import functools
 import os
 import re
+from unittest.mock import patch
 import pytest
 from devtools_testutils import (
     add_remove_header_sanitizer,
@@ -19,7 +20,13 @@ from sample_executor import (
     get_sample_paths,
     SamplePathPasser,
 )
-from test_samples_helpers import get_sample_env_vars
+from test_samples_helpers import (
+    get_sample_env_vars,
+    audioEvaluationsPreparer,
+    voiceSimulationPreparer,
+    sanitize_audio_evaluation_dataset,
+    assert_audio_evaluation_results,
+)
 
 # Preparer with only the variables needed for evaluation samples
 evaluationsPreparer = functools.partial(
@@ -98,12 +105,12 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_evaluations_ai_assisted.py (AI-assisted evaluators: Similarity, ROUGE, METEOR, GLEU, F1, BLEU)
     - sample_evaluation_cluster_insight.py (cluster insights generation)
 
-    Agentic evaluator samples (15):
+    Agentic evaluator samples (17):
     - sample_coherence.py
     - sample_fluency.py
     - sample_groundedness.py
     - sample_intent_resolution.py
-    - sample_quality_grader.py
+    - sample_output_quality.py
     - sample_relevance.py
     - sample_response_completeness.py
     - sample_task_adherence.py
@@ -114,6 +121,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_tool_input_accuracy.py
     - sample_tool_output_utilization.py
     - sample_tool_selection.py
+    - sample_tool_use_quality.py
     - sample_generic_agentic_evaluator.py
 
     Excluded samples and reasons:
@@ -140,6 +148,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     Complex prerequisites (require manual portal setup):
     - sample_continuous_evaluation_rule.py: Requires manual RBAC assignment in Azure
       Portal to enable continuous evaluation.
+    - sample_trace_evaluation_rule.py, sample_dataset_evaluation_rule.py: Require the
+      same RBAC assignment for scheduled evaluation rules.
     """
 
     # To run this test with a specific sample, use:
@@ -150,6 +160,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         get_sample_paths(
             "evaluations",
             samples_to_skip=[
+                "sample_audio_conversation_evaluation.py",  # Covered by test_audio_conversation_sample below
+                "sample_voice_agent_simulation_evaluation.py",  # Covered by test_voice_agent_simulation_sample below
                 "sample_evaluations_ai_assisted.py",  # Similarity evaluator returns FAILED_EXECUTION ('query' is missing)
                 "sample_evaluations_builtin_with_inline_data_oai.py",  # 401 AuthenticationError (invalid subscription key or API endpoint)
                 "sample_evaluations_builtin_with_traces.py",  # Missing required env var APPINSIGHTS_RESOURCE_ID (KeyError)
@@ -160,6 +172,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_scheduled_evaluations.py",  # Missing dependency azure.mgmt.resource (ModuleNotFoundError)
                 "sample_evaluations_builtin_with_dataset_id.py",  # Requires dataset upload / Blob Storage prerequisite
                 "sample_continuous_evaluation_rule.py",  # Requires manual RBAC assignment in Azure Portal
+                "sample_trace_evaluation_rule.py",  # Requires manual RBAC assignment and an existing agent with traces
+                "sample_dataset_evaluation_rule.py",  # Requires manual RBAC assignment in Azure Portal
                 "sample_evaluations_builtin_with_csv.py",  # Requires CSV file upload prerequisite
                 "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
@@ -177,8 +191,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_rubric_evaluator_generation_iterate.py",  # PR #47057: recording not yet available
                 "sample_agent_trace_evaluation_smart_filter.py",  # PR #47217: recording not yet available
                 "sample_scheduled_agent_traces_evaluation_smart_filter.py",  # PR #47217: recording not yet available
-                "sample_endpoint_evaluator_with_api_key.py",  # Requires external scoring endpoint and azure-mgmt-cognitiveservices
-                "sample_endpoint_evaluator_with_entra_id.py",  # Requires external scoring endpoint with Easy Auth and azure-mgmt-cognitiveservices
+                "sample_endpoint_evaluator.py",  # Requires external scoring endpoint and project connection
+                "sample_endpoint_evaluator_schema_0_0_1.py",  # Requires external scoring endpoint and project connection
             ],
         ),
     )
@@ -195,6 +209,39 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         )
         executor.execute()
         executor.validate_print_calls_by_llm()
+
+    @audioEvaluationsPreparer()
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths("evaluations", samples_to_test=["sample_audio_conversation_evaluation.py"]),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    def test_audio_conversation_sample(self, sample_path: str, **kwargs) -> None:
+        sanitize_audio_evaluation_dataset()
+        executor = SyncSampleExecutor(self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs)
+        with patch("pprint.pprint") as output:
+            executor.execute()
+        assert_audio_evaluation_results(
+            output.call_args_list,
+            ("task_completion", "groundedness", "customer_satisfaction", "coherence"),
+        )
+
+    @voiceSimulationPreparer()
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "evaluations",
+            samples_to_test=["sample_voice_agent_simulation_evaluation.py"],
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    def test_voice_agent_simulation_sample(self, sample_path: str, **kwargs) -> None:
+        executor = SyncSampleExecutor(self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs)
+        with patch("pprint.pprint") as output:
+            executor.execute()
+        assert_audio_evaluation_results(output.call_args_list, ("task_completion",))
 
     @evaluationsPreparer()
     @pytest.mark.parametrize(
@@ -233,8 +280,10 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             samples_to_skip=[
                 "sample_intent_resolution.py",  # Evaluator FAILED_EXECUTION: tool_definitions must be a list of dictionaries
                 "sample_quality_grader.py",
+                "sample_output_quality.py",  # New composite evaluator sample; recording not yet available
                 "sample_task_navigation_efficiency.py",  # Evaluator FAILED_EXECUTION: required 'actions' parameter is missing
                 "sample_tool_call_success.py",  # Sample data evaluates to failure (tool result has DB_CONNECTION_FAILED)
+                "sample_tool_use_quality.py",  # New composite evaluator sample; recording not yet available
             ],
         ),
     )

@@ -5,6 +5,8 @@
 
 from copy import deepcopy
 import json
+from typing import Callable
+from unittest.mock import Mock
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
@@ -12,6 +14,7 @@ from azure.core.exceptions import HttpResponseError
 
 from azure.data.ai.models import SemanticRerankingInferenceContent, SemanticRerankingInferenceResult
 from azure.data.ai.aio import InferenceClient as AsyncInferenceClient
+from azure.data.ai.types import SemanticRerankingInferenceContent as SemanticRerankingRequest
 
 
 @pytest.fixture
@@ -124,3 +127,49 @@ async def test_invalid_json_document_errors_are_service_errors(
     assert caught.value.response.headers["x-ms-error-code"] == "InvalidRequestBody"
     assert json.loads(async_transport.send.call_args.args[0].content) == payload
     async_transport.send.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("target_paths", [[], ["description"], ["title", "description"], ["meta.content", "id"]])
+async def test_target_paths_typed_dictionary_is_sent_as_string(
+    async_respond: Callable[..., None], async_transport: Mock, target_paths: list[str]
+) -> None:
+    request: SemanticRerankingRequest = {
+        "query": "text",
+        "documents": [json.dumps({"title": "Azure Cosmos DB", "description": "Globally distributed data."})],
+        "documentType": "json",
+        "targetPaths": target_paths,
+    }
+    original = deepcopy(request)
+    async_respond((200, {"scores": []}, {}))
+    async with AsyncInferenceClient(
+        "https://example.inference.azure.com",
+        AzureKeyCredential("json-test-key"),
+        transport=async_transport,
+        retry_total=0,
+    ) as client:
+        await client.semantic_rerank(request)
+    assert json.loads(async_transport.send.call_args.args[0].content) == {
+        **original,
+        "targetPaths": ",".join(target_paths),
+    }
+    assert request == original
+    assert request["targetPaths"] is target_paths
+
+
+@pytest.mark.asyncio
+async def test_target_paths_list_is_sent_as_comma_separated_string(async_respond, async_transport, json_credential):
+    request = SemanticRerankingInferenceContent(
+        query="text",
+        documents=[json.dumps({"title": "Azure Cosmos DB", "description": "Globally distributed data."})],
+        document_type="json",
+        target_paths=["title", "description"],
+    )
+    async_respond((200, {"scores": []}, {}))
+    async with AsyncInferenceClient(
+        "https://example.inference.azure.com", json_credential, transport=async_transport, retry_total=0
+    ) as client:
+        await client.semantic_rerank(request)
+    assert json.loads(async_transport.send.call_args.args[0].content)["targetPaths"] == "title,description"
+    assert request.target_paths == ["title", "description"]
+    assert SemanticRerankingInferenceContent({"targetPaths": "meta.content,id"}).target_paths == ["meta.content", "id"]

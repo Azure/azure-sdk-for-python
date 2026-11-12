@@ -318,8 +318,8 @@ class CollectionTests(unittest.TestCase):
                     response = io.BytesIO(json.dumps([{"type": "file", "name": "README.md"}]).encode())
                     response.headers = {}
                     return response
-                if filename == ".github/copilot-instructions.md":
-                    content = "## MGMT SDK Code Review Rules\nReview the package.\n"
+                if filename == MODULE.MANAGEMENT_RULES_PATH:
+                    content = "# Management SDK Review\n\nReview the package.\n"
                 elif filename.endswith("/CHANGELOG.md"):
                     if query["ref"][0] == "c" * 40 and old_status != 200:
                         raise urllib.error.HTTPError(request.full_url, old_status, "baseline unavailable", {}, None)
@@ -365,7 +365,7 @@ class CollectionTests(unittest.TestCase):
     def test_snapshot_matches_event_and_tracks_tooling_separately(self):
         context = self.collect_context(event_head="b" * 40)
         self.assertEqual("9" * 40, context["toolingRevision"])
-        self.assertEqual(".github/copilot-instructions.md@" + "9" * 40, context["rulesSource"])
+        self.assertEqual(MODULE.MANAGEMENT_RULES_PATH + "@" + "9" * 40, context["rulesSource"])
         self.assertEqual("c" * 40, context["mergeBaseRevision"])
         self.assertEqual("a" * 40, context["firstRevision"])
 
@@ -396,7 +396,7 @@ class CollectionTests(unittest.TestCase):
         with self.assertRaisesRegex(MODULE.GitHubApiError, "404"):
             self.collect_context(
                 event_head="b" * 40,
-                file_errors={("9" * 40, ".github/copilot-instructions.md"): 404},
+                file_errors={("9" * 40, MODULE.MANAGEMENT_RULES_PATH): 404},
             )
 
     def collect_initial_release(self, **overrides):

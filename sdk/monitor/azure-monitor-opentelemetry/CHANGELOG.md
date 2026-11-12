@@ -1,12 +1,21 @@
 # Release History
 
-## 1.8.11 (Unreleased)
+## 1.8.13 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.8.12 (2026-11-05)
+
+### Other Changes
+- Bump exporter minimum version to 1.0.0b59
+
+## 1.8.11 (2026-10-07)
 
 ### Other Changes
 - Corrected the package metadata to require Python 3.10 or later, matching the existing support policy

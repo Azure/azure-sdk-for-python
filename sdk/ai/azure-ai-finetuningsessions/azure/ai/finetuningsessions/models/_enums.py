@@ -30,8 +30,6 @@ class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Opts in to the V1 preview of red-team assessments."""
     INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
     """Opts in to the V1 preview of insight generation."""
-    AGENT_INSIGHTS_V1_PREVIEW = "AgentInsights=V1Preview"
-    """Opts in to the V1 preview of agent insights."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
     """Opts in to the V1 preview of persistent memory stores."""
     ROUTINES_V2_PREVIEW = "Routines=V2Preview"

@@ -523,6 +523,18 @@ class ManagedGatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     bundle will be installed for your Kubernetes version."""
 
 
+class ManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Managed GPU experience installs additional components, such as the Data Center GPU Manager
+    (DCGM) metrics for monitoring, on top of the GPU driver for you. For more details of what is
+    installed, check out aka.ms/aks/managed-gpu.
+    """
+
+    UNMANAGED = "Unmanaged"
+    """Managed GPU experience is disabled for NVIDIA GPUs."""
+    MANAGED = "Managed"
+    """Managed GPU experience is enabled for NVIDIA GPUs."""
+
+
 class NamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state of the namespace."""
 

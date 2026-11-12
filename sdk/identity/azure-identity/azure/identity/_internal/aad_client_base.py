@@ -4,6 +4,7 @@
 # ------------------------------------
 import abc
 import base64
+import hashlib
 import json
 import logging
 import time
@@ -20,7 +21,6 @@ from azure.core.exceptions import ClientAuthenticationError
 from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
 from .._persistent_cache import _load_persistent_cache
-
 
 if TYPE_CHECKING:
     from azure.core.pipeline import AsyncPipeline, Pipeline
@@ -48,12 +48,14 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         cae_cache: Optional[TokenCache] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
+        obo_assertion: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
         self._tenant_id = tenant_id
         self._client_id = client_id
+        self._obo_assertion_hash = hashlib.sha256(obo_assertion.encode("utf-8")).hexdigest() if obo_assertion else None
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
@@ -76,6 +78,17 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         # account that exchange established, if Microsoft Entra ID's response included it. Callers use this to
         # constrain later cache lookups to that account specifically.
         self.last_home_account_id: Optional[str] = None
+
+    def _get_cache_client_id(self, **kwargs: Any) -> str:
+        if self._obo_assertion_hash:
+            tenant = resolve_tenant(
+                self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
+            )
+            # MSAL's account-based keys don't distinguish assertions for the same user. Use an OBO-only
+            # client namespace for cache storage, never on the wire, so both access and refresh tokens
+            # remain bound to the exact assertion, authority and requested tenant across instances.
+            return "{}:obo:{}:{}:{}".format(self._client_id, self._obo_assertion_hash, self._authority, tenant)
+        return self._client_id
 
     def _get_cache(self, **kwargs: Any) -> TokenCache:
         cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
@@ -106,7 +119,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
 
-        query: Dict[str, Any] = {"client_id": self._client_id, "realm": tenant}
+        query: Dict[str, Any] = {"client_id": self._get_cache_client_id(**kwargs), "realm": tenant}
         if home_account_id:
             # Constrain the search to the account established by this credential, so a cache shared by multiple
             # accounts (e.g. a persistent cache shared by several `AuthorizationCodeCredential` instances) can't
@@ -142,7 +155,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         self, scopes: Iterable[str], home_account_id: Optional[str] = None, **kwargs
     ) -> List[Dict]:
         cache = self._get_cache(**kwargs)
-        query: Dict[str, Any] = {"client_id": self._client_id}
+        query: Dict[str, Any] = {"client_id": self._get_cache_client_id(**kwargs)}
         if home_account_id:
             # Constrain the search to the account established by this credential, so a cache shared by multiple
             # accounts (e.g. a persistent cache shared by several `AuthorizationCodeCredential` instances) can't
@@ -178,7 +191,9 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
     def _build_pipeline(self, **kwargs):
         pass
 
-    def _process_response(self, response: PipelineResponse, request_time: int, **kwargs) -> AccessTokenInfo:
+    def _process_response(
+        self, response: PipelineResponse, request_time: int, token_endpoint: str, **kwargs
+    ) -> AccessTokenInfo:
         content = response.context.get(
             ContentDecodePolicy.CONTEXT_NAME
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
@@ -190,12 +205,15 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
 
         cache = self._get_cache(**kwargs)
         if response.http_request.body.get("grant_type") == "refresh_token":
+            refresh_token_query = {"secret": response.http_request.body["refresh_token"]}
+            if self._obo_assertion_hash:
+                refresh_token_query["client_id"] = self._get_cache_client_id(**kwargs)
             if content.get("error") == "invalid_grant":
                 # the request's refresh token is invalid -> evict it from the cache
                 cache_entries = list(
                     cache.search(
                         TokenCache.CredentialType.REFRESH_TOKEN,
-                        query={"secret": response.http_request.body["refresh_token"]},
+                        query=refresh_token_query,
                     )
                 )
                 for invalid_token in cache_entries:
@@ -205,7 +223,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
                 cache_entries = list(
                     cache.search(
                         TokenCache.CredentialType.REFRESH_TOKEN,
-                        query={"secret": response.http_request.body["refresh_token"]},
+                        query=refresh_token_query,
                     )
                 )
                 # If the old token is in multiple cache entries, the cache is in a state we don't
@@ -245,10 +263,11 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         # caching is the final step because 'add' mutates 'content'
         cache.add(
             event={
-                "client_id": self._client_id,
+                "client_id": self._get_cache_client_id(**kwargs),
                 "response": content,
                 "scope": response.http_request.body["scope"].split(),
-                "token_endpoint": response.http_request.url,
+                # A proxy may have rewritten the request URL. MSAL derives the cache realm from this endpoint.
+                "token_endpoint": token_endpoint,
             },
             now=request_time,
         )

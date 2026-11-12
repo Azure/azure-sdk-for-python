@@ -4115,13 +4115,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     async def get(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> _models.ScheduledAction:
-        """Gets the specified scheduled action.
+        """Gets the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.bulkaction.models.ScheduledAction
@@ -4285,15 +4285,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScheduledAction]:
-        """Creates or updates a scheduled action.
+        """Creates or updates a recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param resource: The scheduled action to create or update. Required.
+        :param resource: The recurring bulk action to create or update. Required.
         :type resource: ~azure.mgmt.compute.bulkaction.models.ScheduledAction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -4315,15 +4315,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScheduledAction]:
-        """Creates or updates a scheduled action.
+        """Creates or updates a recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param resource: The scheduled action to create or update. Required.
+        :param resource: The recurring bulk action to create or update. Required.
         :type resource: ~azure.mgmt.compute.bulkaction.types.ScheduledAction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -4345,15 +4345,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScheduledAction]:
-        """Creates or updates a scheduled action.
+        """Creates or updates a recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param resource: The scheduled action to create or update. Required.
+        :param resource: The recurring bulk action to create or update. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -4387,16 +4387,16 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         resource: Union[_models.ScheduledAction, _types.ScheduledAction, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScheduledAction]:
-        """Creates or updates a scheduled action.
+        """Creates or updates a recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param resource: The scheduled action to create or update. Is either a ScheduledAction type or
-         a IO[bytes] type. Required.
+        :param resource: The recurring bulk action to create or update. Is either a ScheduledAction
+         type or a IO[bytes] type. Required.
         :type resource: ~azure.mgmt.compute.bulkaction.models.ScheduledAction or
          ~azure.mgmt.compute.bulkaction.types.ScheduledAction or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
@@ -4559,16 +4559,16 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Updates the specified scheduled action.
+        """Updates the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param properties: The scheduled action properties to update. Omitted properties keep their
-         current values. Required.
+        :param properties: The recurring bulk action properties to update. Omitted properties keep
+         their current values. Required.
         :type properties: ~azure.mgmt.compute.bulkaction.models.ScheduledActionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -4588,16 +4588,16 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Updates the specified scheduled action.
+        """Updates the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param properties: The scheduled action properties to update. Omitted properties keep their
-         current values. Required.
+        :param properties: The recurring bulk action properties to update. Omitted properties keep
+         their current values. Required.
         :type properties: ~azure.mgmt.compute.bulkaction.types.ScheduledActionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -4617,16 +4617,16 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Updates the specified scheduled action.
+        """Updates the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param properties: The scheduled action properties to update. Omitted properties keep their
-         current values. Required.
+        :param properties: The recurring bulk action properties to update. Omitted properties keep
+         their current values. Required.
         :type properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -4658,16 +4658,16 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         properties: Union[_models.ScheduledActionUpdate, _types.ScheduledActionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Updates the specified scheduled action.
+        """Updates the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param properties: The scheduled action properties to update. Omitted properties keep their
-         current values. Is either a ScheduledActionUpdate type or a IO[bytes] type. Required.
+        :param properties: The recurring bulk action properties to update. Omitted properties keep
+         their current values. Is either a ScheduledActionUpdate type or a IO[bytes] type. Required.
         :type properties: ~azure.mgmt.compute.bulkaction.models.ScheduledActionUpdate or
          ~azure.mgmt.compute.bulkaction.types.ScheduledActionUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
@@ -4803,13 +4803,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
     async def begin_delete(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes the specified scheduled action.
+        """Deletes the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -4868,7 +4868,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.ScheduledAction"]:
-        """Lists scheduled actions in the specified resource group.
+        """Lists recurring bulk actions in the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -4971,7 +4971,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledAction"]:
-        """Lists scheduled actions in the specified subscription.
+        """Lists recurring bulk actions in the specified subscription.
 
         :return: An iterator like instance of ScheduledAction
         :rtype:
@@ -5080,13 +5080,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
     def list_resources(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.ScheduledActionResource"]:
-        """Lists resources associated with the specified scheduled action.
+        """Lists resources associated with the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :return: An iterator like instance of ScheduledActionResource
         :rtype:
@@ -5282,15 +5282,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Adds resources to the specified scheduled action.
+        """Adds resources to the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param body: The resources to add to the scheduled action. Required.
+        :param body: The resources to add to the recurring bulk action. Required.
         :type body: ~azure.mgmt.compute.bulkaction.models.ResourceAttachRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -5312,15 +5312,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Adds resources to the specified scheduled action.
+        """Adds resources to the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param body: The resources to add to the scheduled action. Required.
+        :param body: The resources to add to the recurring bulk action. Required.
         :type body: ~azure.mgmt.compute.bulkaction.types.ResourceAttachRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -5342,15 +5342,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Adds resources to the specified scheduled action.
+        """Adds resources to the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param body: The resources to add to the scheduled action. Required.
+        :param body: The resources to add to the recurring bulk action. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -5384,16 +5384,16 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         body: Union[_models.ResourceAttachRequest, _types.ResourceAttachRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Adds resources to the specified scheduled action.
+        """Adds resources to the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param body: The resources to add to the scheduled action. Is either a ResourceAttachRequest
-         type or a IO[bytes] type. Required.
+        :param body: The resources to add to the recurring bulk action. Is either a
+         ResourceAttachRequest type or a IO[bytes] type. Required.
         :type body: ~azure.mgmt.compute.bulkaction.models.ResourceAttachRequest or
          ~azure.mgmt.compute.bulkaction.types.ResourceAttachRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
@@ -5556,15 +5556,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Removes resources from the specified scheduled action.
+        """Removes resources from the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param body: The resources to remove from the scheduled action. Required.
+        :param body: The resources to remove from the recurring bulk action. Required.
         :type body: ~azure.mgmt.compute.bulkaction.models.ResourceDetachRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -5586,15 +5586,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Removes resources from the specified scheduled action.
+        """Removes resources from the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param body: The resources to remove from the scheduled action. Required.
+        :param body: The resources to remove from the recurring bulk action. Required.
         :type body: ~azure.mgmt.compute.bulkaction.types.ResourceDetachRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -5616,15 +5616,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Removes resources from the specified scheduled action.
+        """Removes resources from the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param body: The resources to remove from the scheduled action. Required.
+        :param body: The resources to remove from the recurring bulk action. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -5658,15 +5658,15 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         body: Union[_models.ResourceDetachRequest, _types.ResourceDetachRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Removes resources from the specified scheduled action.
+        """Removes resources from the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
-        :param body: The resources to remove from the scheduled action. Is either a
+        :param body: The resources to remove from the recurring bulk action. Is either a
          ResourceDetachRequest type or a IO[bytes] type. Required.
         :type body: ~azure.mgmt.compute.bulkaction.models.ResourceDetachRequest or
          ~azure.mgmt.compute.bulkaction.types.ResourceDetachRequest or IO[bytes]
@@ -5738,13 +5738,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ResourceOperationResponse:
-        """Updates resource-specific settings for the specified scheduled action.
+        """Updates resource-specific settings for the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param body: The resource-specific settings to update. Required.
         :type body: ~azure.mgmt.compute.bulkaction.models.ResourcePatchRequest
@@ -5767,13 +5767,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ResourceOperationResponse:
-        """Updates resource-specific settings for the specified scheduled action.
+        """Updates resource-specific settings for the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param body: The resource-specific settings to update. Required.
         :type body: ~azure.mgmt.compute.bulkaction.types.ResourcePatchRequest
@@ -5796,13 +5796,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ResourceOperationResponse:
-        """Updates resource-specific settings for the specified scheduled action.
+        """Updates resource-specific settings for the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param body: The resource-specific settings to update. Required.
         :type body: IO[bytes]
@@ -5837,13 +5837,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         body: Union[_models.ResourcePatchRequest, _types.ResourcePatchRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceOperationResponse:
-        """Updates resource-specific settings for the specified scheduled action.
+        """Updates resource-specific settings for the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param body: The resource-specific settings to update. Is either a ResourcePatchRequest type or
          a IO[bytes] type. Required.
@@ -6002,13 +6002,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
     async def begin_disable(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Disables the specified scheduled action so future occurrences do not run.
+        """Disables the specified recurring bulk action so future occurrences do not run.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -6139,13 +6139,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
     async def begin_enable(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Enables the specified scheduled action so new occurrences run.
+        """Enables the specified recurring bulk action so new occurrences run.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -6297,13 +6297,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Cancels the next occurrence of the specified scheduled action.
+        """Cancels the next occurrence of the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param body: The resources to cancel in the next occurrence. If no resource IDs are provided,
          the occurrence is canceled for all resources. Required.
@@ -6328,13 +6328,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Cancels the next occurrence of the specified scheduled action.
+        """Cancels the next occurrence of the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param body: The resources to cancel in the next occurrence. If no resource IDs are provided,
          the occurrence is canceled for all resources. Required.
@@ -6359,13 +6359,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Cancels the next occurrence of the specified scheduled action.
+        """Cancels the next occurrence of the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param body: The resources to cancel in the next occurrence. If no resource IDs are provided,
          the occurrence is canceled for all resources. Required.
@@ -6402,13 +6402,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         body: Union[_models.CancelOccurrenceRequest, _types.CancelOccurrenceRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
-        """Cancels the next occurrence of the specified scheduled action.
+        """Cancels the next occurrence of the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param body: The resources to cancel in the next occurrence. If no resource IDs are provided,
          the occurrence is canceled for all resources. Is either a CancelOccurrenceRequest type or a
@@ -6567,13 +6567,13 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
     async def begin_trigger_manual_occurrence(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.Occurrence]:
-        """Runs the specified scheduled action immediately.
+        """Runs the specified recurring bulk action immediately.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :return: An instance of AsyncLROPoller that returns Occurrence. The Occurrence is compatible
          with MutableMapping
@@ -6656,7 +6656,7 @@ class ScheduledActionExtensionOperations:  # pylint: disable=docstring-missing-p
         api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_vms(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledActionResources"]:
-        """Lists scheduled actions associated with the specified VM.
+        """Lists recurring bulk actions associated with the specified VM.
 
         :param resource_uri: The fully qualified Azure resource ID of the compute resource. Required.
         :type resource_uri: str
@@ -6779,7 +6779,7 @@ class ScheduledActionOperationStatusOperations:  # pylint: disable=docstring-mis
         api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationStatusResult:
-        """Gets the status of the specified scheduled action operation.
+        """Gets the status of the specified recurring bulk action operation.
 
         :param location: The Azure region where the operation is running. Required.
         :type location: str
@@ -6889,8 +6889,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -6973,13 +6973,13 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
     def list_by_scheduled_action(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Occurrence"]:
-        """Lists occurrences for the specified scheduled action.
+        """Lists occurrences for the specified recurring bulk action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :return: An iterator like instance of Occurrence
         :rtype:
@@ -7096,8 +7096,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -7305,8 +7305,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -7339,8 +7339,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -7373,8 +7373,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -7420,8 +7420,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -7600,8 +7600,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -7634,8 +7634,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -7668,8 +7668,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -7715,8 +7715,8 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param scheduled_action_name: The name of the scheduled action. It must be 3 to 24 characters
-         and can contain only letters, numbers, and hyphens. Required.
+        :param scheduled_action_name: The name of the recurring bulk action. It must be 3 to 24
+         characters and can contain only letters, numbers, and hyphens. Required.
         :type scheduled_action_name: str
         :param occurrence_id: The occurrence ID in UUID format. Required.
         :type occurrence_id: str
@@ -7813,7 +7813,7 @@ class OccurrenceExtensionOperations:  # pylint: disable=docstring-missing-param
     def list_occurrence_by_vms(
         self, resource_uri: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.OccurrenceExtensionResource"]:
-        """Lists scheduled action occurrences associated with the specified VM.
+        """Lists recurring bulk action occurrences associated with the specified VM.
 
         :param resource_uri: The fully qualified Azure resource ID of the compute resource. Required.
         :type resource_uri: str

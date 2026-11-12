@@ -2616,6 +2616,8 @@ class GPUProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     :ivar driver: Whether to install GPU drivers. When it's not specified, default is Install.
      Known values are: "Install" and "None".
     :vartype driver: str or ~azure.mgmt.containerservice.models.GPUDriver
+    :ivar nvidia: NVIDIA-specific GPU settings.
+    :vartype nvidia: ~azure.mgmt.containerservice.models.NvidiaGPUProfile
     """
 
     driver: Optional[Union[str, "_models.GPUDriver"]] = rest_field(
@@ -2623,12 +2625,17 @@ class GPUProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     )
     """Whether to install GPU drivers. When it's not specified, default is Install. Known values are:
      \"Install\" and \"None\"."""
+    nvidia: Optional["_models.NvidiaGPUProfile"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NVIDIA-specific GPU settings."""
 
     @overload
     def __init__(
         self,
         *,
         driver: Optional[Union[str, "_models.GPUDriver"]] = None,
+        nvidia: Optional["_models.NvidiaGPUProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -9318,6 +9325,41 @@ class NetworkPolicies(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
+class NvidiaGPUProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NVIDIA-specific GPU settings.
+
+    :ivar management_mode: The Managed GPU experience installs additional components, such as the
+     Data Center GPU Manager (DCGM) metrics for monitoring, on top of the GPU driver for you. For
+     more details of what is installed, check out aka.ms/aks/managed-gpu. Known values are:
+     "Unmanaged" and "Managed".
+    :vartype management_mode: str or ~azure.mgmt.containerservice.models.ManagementMode
+    """
+
+    management_mode: Optional[Union[str, "_models.ManagementMode"]] = rest_field(
+        name="managementMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Managed GPU experience installs additional components, such as the Data Center GPU Manager
+     (DCGM) metrics for monitoring, on top of the GPU driver for you. For more details of what is
+     installed, check out aka.ms/aks/managed-gpu. Known values are: \"Unmanaged\" and \"Managed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        management_mode: Optional[Union[str, "_models.ManagementMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class OperationValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Operation value.
 
@@ -9603,18 +9645,24 @@ class PrivateEndpointConnectionListResult(_Model):  # pylint: disable=docstring-
 
     :ivar value: The collection value.
     :vartype value: list[~azure.mgmt.containerservice.models.PrivateEndpointConnection]
+    :ivar next_link: The link to the next page, if any. Omitted when all results are returned in a
+     single response.
+    :vartype next_link: str
     """
 
     value: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection value."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page, if any. Omitted when all results are returned in a single response."""
 
     @overload
     def __init__(
         self,
         *,
         value: Optional[list["_models.PrivateEndpointConnection"]] = None,
+        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -9739,18 +9787,24 @@ class PrivateLinkResourcesListResult(_Model):  # pylint: disable=docstring-keywo
 
     :ivar value: The collection value.
     :vartype value: list[~azure.mgmt.containerservice.models.PrivateLinkResource]
+    :ivar next_link: The link to the next page, if any. Omitted when all results are returned in a
+     single response.
+    :vartype next_link: str
     """
 
     value: Optional[list["_models.PrivateLinkResource"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection value."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page, if any. Omitted when all results are returned in a single response."""
 
     @overload
     def __init__(
         self,
         *,
         value: Optional[list["_models.PrivateLinkResource"]] = None,
+        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload

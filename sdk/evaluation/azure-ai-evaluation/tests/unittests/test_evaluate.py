@@ -782,6 +782,43 @@ class TestEvaluate:
             f"got: {[r.getMessage() for r in caplog.records]}"
         )
 
+    def test_binary_aggregation_counts_only_rows_that_passed_or_failed(self):
+        data = {
+            "outputs.mixed.mixed_result": ["pass", "fail", "not_applicable", None, "pass", np.nan],
+            "outputs.mixed.mixed": [1.0, 0.0, None, np.nan, 1.0, np.nan],
+            "outputs.skipped.skipped_result": ["not_applicable", None, "not_applicable", np.nan, None, np.nan],
+            "outputs.skipped.skipped": [None, np.nan, None, np.nan, None, np.nan],
+            "outputs.passing.passing_result": ["pass"] * 6,
+            "outputs.failing.failing_result": ["fail", None, "fail", "not_applicable", np.nan, "fail"],
+            "outputs.custom.custom_result": [True, False, True, True, False, True],
+        }
+
+        aggregation = _aggregate_metrics(pd.DataFrame(data), {})
+
+        assert aggregation["mixed.binary_aggregate"] == 0.67
+        assert aggregation["mixed.mixed"] == pytest.approx(2 / 3)
+        assert aggregation["passing.binary_aggregate"] == 1.0
+        assert aggregation["failing.binary_aggregate"] == 0.0
+        # Like the mean score, the binary aggregate is left out when no row has a result.
+        assert "skipped.binary_aggregate" not in aggregation
+        assert "skipped.skipped" not in aggregation
+        # Only "pass" and "fail" are results, so a column of other values has no binary aggregate.
+        assert "custom.binary_aggregate" not in aggregation
+
+    def test_binary_aggregation_reports_the_last_result_column_of_an_evaluator(self):
+        data = {
+            "outputs.qa.f1_score_result": ["pass", "pass", "fail"],
+            "outputs.qa.groundedness_result": ["not_applicable", None, "not_applicable"],
+            "outputs.rouge.rouge_precision_result": ["not_applicable", None, "not_applicable"],
+            "outputs.rouge.rouge_recall_result": ["pass", "fail", None],
+        }
+
+        aggregation = _aggregate_metrics(pd.DataFrame(data), {})
+
+        # An earlier column's rate does not stand in for a last column without results.
+        assert "qa.binary_aggregate" not in aggregation
+        assert aggregation["rouge.binary_aggregate"] == 0.5
+
     def test_aggregate_label_defect_metrics_with_nan_in_details(self):
         """Test that NaN/None values in details column are properly ignored during aggregation."""
         data = {
@@ -2172,6 +2209,60 @@ class TestBuildInternalLogAttributesThreshold:
 
 
 @pytest.mark.unittest
+class TestBuildInternalLogAttributesOutcome:
+    """Tests for service-owned evaluation outcome telemetry."""
+
+    @pytest.mark.parametrize(
+        "status,passed,expected",
+        [
+            (
+                "completed",
+                True,
+                {
+                    "gen_ai.evaluation.status": "completed",
+                    "gen_ai.evaluation.passed": "true",
+                },
+            ),
+            (
+                "completed",
+                False,
+                {
+                    "gen_ai.evaluation.status": "completed",
+                    "gen_ai.evaluation.passed": "false",
+                },
+            ),
+            ("error", None, {"gen_ai.evaluation.status": "error"}),
+            ("skipped", None, {"gen_ai.evaluation.status": "skipped"}),
+        ],
+    )
+    def test_status_and_passed_are_included(self, status, passed, expected):
+        """Canonical output-item outcome fields should be queryable."""
+        attrs = _build_internal_log_attributes(
+            {"status": status, "passed": passed},
+            "score",
+            None,
+            {},
+        )
+
+        for key, value in expected.items():
+            assert attrs[key] == value
+        if passed is None:
+            assert "gen_ai.evaluation.passed" not in attrs
+
+    def test_invalid_or_missing_values_are_excluded(self):
+        """Unknown value types should not become misleading telemetry."""
+        attrs = _build_internal_log_attributes(
+            {"status": 42, "passed": "true"},
+            "score",
+            None,
+            {},
+        )
+
+        assert "gen_ai.evaluation.status" not in attrs
+        assert "gen_ai.evaluation.passed" not in attrs
+
+
+@pytest.mark.unittest
 class TestExtractTestingCriteriaMetadataPassThreshold:
     """Tests for pass_threshold propagation in _extract_testing_criteria_metadata."""
 
@@ -2365,6 +2456,32 @@ class TestLogEventsTokenUsage:
         # Should NOT be in standard attributes
         assert "gen_ai.evaluation.usage.input_tokens" not in attrs
         assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+
+    def test_status_and_passed_emitted_in_internal_properties(self):
+        """Evaluation outcome should be present on the exported event."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "status": "completed",
+                "passed": False,
+            }
+        ]
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config={"connection_string": "fake"},
+        )
+
+        assert len(emitted) == 1
+        attributes = emitted[0].attributes
+        internal_properties = json.loads(attributes["internal_properties"])
+        assert internal_properties["gen_ai.evaluation.status"] == "completed"
+        assert internal_properties["gen_ai.evaluation.passed"] == "false"
+        assert "gen_ai.evaluation.status" not in attributes
+        assert "gen_ai.evaluation.passed" not in attributes
 
     def test_token_usage_not_in_standard_attributes(self):
         """Token usage should be in internal_properties, not in standard attributes."""

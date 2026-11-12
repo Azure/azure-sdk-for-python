@@ -55,7 +55,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "enableUltraSSD": bool,
                     "gatewayProfile": {"publicIPPrefixSize": 0},
                     "gpuInstanceProfile": "str",
-                    "gpuProfile": {"driver": "str"},
+                    "gpuProfile": {"driver": "str", "nvidia": {"managementMode": "str"}},
                     "hostGroupID": "str",
                     "kubeletConfig": {
                         "allowedUnsafeSysctls": ["str"],

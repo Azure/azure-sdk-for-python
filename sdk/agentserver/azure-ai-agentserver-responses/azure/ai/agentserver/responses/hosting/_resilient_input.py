@@ -49,6 +49,39 @@ _K_USER_ID_KEY = "user_id_key"
 _K_CALL_ID = "call_id"
 _K_CLIENT_HEADERS = "client_headers"
 _K_QUERY_PARAMETERS = "query_parameters"
+_K_INCARNATION_ID = "response_incarnation_id"
+
+
+def user_id_key_from_params(params: dict[str, Any]) -> str | None:
+    """Validate the persisted partition before constructing any identity keys.
+
+    :param params: The persisted resilient boundary.
+    :type params: dict[str, Any]
+    :return: The string partition, including an empty string, or legacy None.
+    :rtype: str | None
+    :raises ValueError: If a present partition is neither a string nor None.
+    """
+    value = params.get(_K_USER_ID_KEY)
+    if value is not None and not isinstance(value, str):
+        raise ValueError("Invalid durable response user_id_key")
+    return value
+
+
+def incarnation_from_params(params: dict[str, Any]) -> str | None:
+    """Read a private durable incarnation without generating one on recovery.
+
+    :param params: The persisted resilient boundary.
+    :type params: dict[str, Any]
+    :return: The incarnation identifier, or None for a legacy input.
+    :rtype: str | None
+    :raises ValueError: If an incarnation field is malformed.
+    """
+    if _K_INCARNATION_ID not in params:
+        return None
+    value = params[_K_INCARNATION_ID]
+    if not isinstance(value, str) or len(value) != 32 or any(char not in "0123456789abcdef" for char in value):
+        raise ValueError("Invalid durable response incarnation")
+    return value
 
 
 def platform_context_from_params(params: dict[str, Any]) -> PlatformContext:
@@ -76,9 +109,10 @@ def platform_context_from_params(params: dict[str, Any]) -> PlatformContext:
     :type params: dict[str, Any]
     :returns: The platform context.
     :rtype: PlatformContext
+    :raises ValueError: If the persisted user partition is malformed.
     """
     return PlatformContext(
-        user_id_key=params.get(_K_USER_ID_KEY),
+        user_id_key=user_id_key_from_params(params),
         call_id=params.get(_K_CALL_ID),
     )
 
@@ -135,7 +169,7 @@ class RuntimeRefs:
     """Process-local object references for an in-flight resilient response.
 
     These cannot be JSON-serialized for cross-process recovery, so they are kept
-    in a process-local cache keyed by ``response_id`` and are **never** part of
+    in a process-local cache keyed by caller-scoped response incarnation and are **never** part of
     :class:`ResilientResponseInput`. On same-process re-entry the task body reads
     them from the cache; on cross-process recovery the cache entry is absent and
     the body rebuilds state from the persisted :class:`ResilientResponseInput`.
@@ -177,19 +211,43 @@ class ResilientResponseInput:
         call_id: str | None = None,
         client_headers: dict[str, str] | None = None,
         query_parameters: dict[str, str] | None = None,
+        incarnation_id: str | None = None,
     ) -> None:
         self.request = request
-        self.response_id = response_id
+        self._identity = (
+            response_id,
+            None if incarnation_id is None else incarnation_from_params({_K_INCARNATION_ID: incarnation_id}),
+        )
         self.disposition = disposition
         # Normalized to a plain dict at construction so the object is always
         # serialization-safe (no leaked ``AgentReference`` model).
         self.agent_reference: dict[str, Any] = _normalize_agent_reference(agent_reference)
         self.agent_session_id = agent_session_id
         self.agent_session_guid = agent_session_guid
-        self.user_id_key = user_id_key
+        self.user_id_key = user_id_key_from_params({_K_USER_ID_KEY: user_id_key})
         self.call_id = call_id
         self.client_headers: dict[str, str] = dict(client_headers or {})
         self.query_parameters: dict[str, str] = dict(query_parameters or {})
+
+    @property
+    def response_id(self) -> str:
+        """The public response identifier.
+
+        :rtype: str
+        """
+        return self._identity[0]
+
+    @response_id.setter
+    def response_id(self, value: str) -> None:
+        self._identity = (value, self._identity[1])
+
+    @property
+    def incarnation_id(self) -> str | None:
+        """The private durable incarnation, absent on legacy inputs.
+
+        :rtype: str | None
+        """
+        return self._identity[1]
 
     def platform_context(self) -> PlatformContext:
         """Return the platform context — the single derivation site.
@@ -199,10 +257,7 @@ class ResilientResponseInput:
             replayed for every storage operation over the response's lifetime.
         :rtype: PlatformContext
         """
-        return PlatformContext(
-            user_id_key=self.user_id_key,
-            call_id=self.call_id,
-        )
+        return platform_context_from_params({_K_USER_ID_KEY: self.user_id_key, _K_CALL_ID: self.call_id})
 
     def to_task_input(self) -> dict[str, Any]:
         """Serialize to the resilient-task input dict — the single producer.
@@ -213,6 +268,7 @@ class ResilientResponseInput:
         :returns: A JSON-serializable dict suitable for the resilient-task input.
         :rtype: dict[str, Any]
         :raises TypeError: If any field is not JSON-serializable.
+        :raises ValueError: If the user partition is malformed.
         """
         params: dict[str, Any] = {
             _K_RESPONSE_ID: self.response_id,
@@ -221,11 +277,13 @@ class ResilientResponseInput:
             _K_AGENT_REFERENCE: _normalize_agent_reference(self.agent_reference),
             _K_AGENT_SESSION_ID: self.agent_session_id,
             _K_AGENT_SESSION_GUID: self.agent_session_guid,
-            _K_USER_ID_KEY: self.user_id_key,
+            _K_USER_ID_KEY: user_id_key_from_params({_K_USER_ID_KEY: self.user_id_key}),
             _K_CALL_ID: self.call_id,
             _K_CLIENT_HEADERS: dict(self.client_headers),
             _K_QUERY_PARAMETERS: dict(self.query_parameters),
         }
+        if self.incarnation_id is not None:
+            params[_K_INCARNATION_ID] = self.incarnation_id
         # Fail-closed guard: prove the boundary is JSON-serializable and ref-free.
         json.dumps(params)
         return params
@@ -265,8 +323,9 @@ class ResilientResponseInput:
             agent_reference=params.get(_K_AGENT_REFERENCE),
             agent_session_id=params.get(_K_AGENT_SESSION_ID),
             agent_session_guid=params.get(_K_AGENT_SESSION_GUID),
-            user_id_key=params.get(_K_USER_ID_KEY),
+            user_id_key=user_id_key_from_params(params),
             call_id=params.get(_K_CALL_ID),
             client_headers=params.get(_K_CLIENT_HEADERS),
             query_parameters=params.get(_K_QUERY_PARAMETERS),
+            incarnation_id=incarnation_from_params(params),
         )

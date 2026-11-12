@@ -22,12 +22,15 @@ The *handler* half — making the recovered attempt resume *where it left off*
 and not repeat non-idempotent side effects — is optional work you take on when
 you want it; see [Choosing a resume strategy](#choosing-a-resume-strategy).
 
-> **Default**: `resilient_background` defaults to `False`. Without the
-> opt-in, a crash mid-handler leaves the response in the
-> "crash-failed" state: the next-lifetime recovery scanner marks it
-> `failed` (`error.code="server_error"`) instead
-> of re-invoking the handler. Set `resilient_background=True` on
-> `ResponsesServerOptions` to engage the re-invoke recovery path.
+> **Defaults and activation:** both `resilient_background` and
+> `steerable_conversations` default to `False`. Responses requests its
+> protocol-scoped task runtime when either option is `True`; it does not read or
+> mutate Core's process-wide `set_resilient_tasks_enabled` switch. With both
+> options `False`, stored work runs non-durably and there is no next-lifetime
+> mark-failed or handler re-invocation. With steering alone, the interrupted
+> response is marked `failed` (`error.code="server_error"`) without re-running
+> its handler, while persisted queued inputs may be promoted and started as new
+> steered turns after recovery.
 
 ## What the Framework Provides (Zero Code)
 
@@ -36,7 +39,7 @@ you want it; see [Choosing a resume strategy](#choosing-a-resume-strategy).
 | Crash recovery | Handler re-invoked on server restart (requires `resilient_background=True`) |
 | Stream replay | Events persisted incrementally; clients reconnect seamlessly |
 | Conversation lock | Prevents conflicting concurrent writes |
-| Non-bg cleanup | Foreground responses marked `failed` on crash (no ghost re-invocation) |
+| Non-bg cleanup | With the Responses task runtime active, foreground responses are marked `failed` on crash (no ghost re-invocation) |
 | TTL-based cleanup | Stream events auto-expire after 10 minutes (framework-internal) |
 
 ## Decision Tree
@@ -130,35 +133,53 @@ mechanics.
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `resilient_background` | `False` | Opt INTO crash-recoverable background responses |
-| `steerable_conversations` | `False` | Enable multi-turn steering with cooperative cancel |
+| `resilient_background` | `False` | Opt INTO crash-recoverable background responses and request the Responses task runtime |
+| `steerable_conversations` | `False` | Request the Responses task runtime and enable persistent multi-turn queue/cancel steering |
+
+Responses activation is scoped to this protocol. Direct Core task APIs and the
+Invocations protocol continue to use
+`set_resilient_tasks_enabled(True)` before host startup. Conversely, that
+process-wide setter cannot activate Responses when both options above are
+`False`, so one protocol cannot accidentally enable a disabled protocol in a
+mixed host.
 
 ## Configuration Matrix
 
-Recovery semantics depend on three request flags and one server option. The
-table below is a quick orientation. For the **normative** specification — the
-exact behaviour you can rely on per row, per termination path, and per
-stream/poll mode — see
+Recovery semantics depend on three request flags and two server options. The
+table keeps the existing `resilient_background` row axis; the text below it
+states when `steerable_conversations` supplies the manager required for Rows 2
+and 3. For the **normative** specification — the exact behaviour you can rely
+on per row, per termination path, and per stream/poll mode — see
 [`responses-resilience-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-resilience-spec.md). That document
 is the source of truth; this section summarises it for developer ergonomics.
 
 | `store` | `background` | `resilient_background` | Summary |
 |---|---|---|---|
 | `true` | `true` | `True` | **Full recovery.** Handler is re-invoked with `context.is_recovery == True`. Persisted events replay to reconnecting clients. See [Crash Recovery](#crash-recovery). |
-| `true` | `true` | `False` (default) | **Failed marker.** Response is marked `failed` on restart. Handler is NOT re-invoked. Pre-crash persisted events remain replayable until TTL expires. |
-| `true` | `false` (foreground) | any | **Failed marker.** Response is marked `failed` with `code=server_error`. Handler is NOT re-invoked (the client's HTTP connection is already dead). Persisted events remain queryable. |
+| `true` | `true` | `False` (default) | **Manager-dependent.** With `steerable_conversations=True`, the interrupted response is marked `failed` on restart and its handler is NOT re-invoked; persisted queued turns may still start as new steered turns. With both server options `False`, execution is non-durable and no restart action runs. |
+| `true` | `false` (foreground) | any | **Never re-invoked.** When either server option requests the task runtime, the response is marked `failed` with `code=server_error`; with both options `False`, execution is non-durable and no restart action runs. Persisted response data remains queryable. |
 | `false` | any | any | **Best-effort failed marker** during shutdown grace period only. No persistence. Recovery does not apply. |
 
-Each row × termination-path cell — Path A (handler completes within grace),
-Path B (grace exhausted, in-process marker fires), Path C (crash or Path-B
-failure, next-lifetime recovery fires) — is covered by a dedicated
-conformance test in `tests/e2e/resilience_contract/`. If something behaves
+Each manager-backed row × termination-path cell — Path A (handler completes
+within grace), Path B (grace exhausted, in-process marker fires), Path C (crash
+or Path-B failure, next-lifetime recovery fires) — is covered by the
+conformance suite in `tests/e2e/resilience_contract/`. If something behaves
 differently from what the spec says, that's a bug in either the implementation
 or the spec — open an issue.
 
 `steerable_conversations=True` composes orthogonally: it enables multi-turn
-steering on top of any row above. Recovery composes with steering — see the
+steering on top of any row above and requests the normal persistent task
+backend even when `resilient_background=False`. In steering-only mode, live
+queue/cancel works, an interrupted current response is crash-failed without
+handler re-invocation, and persisted queued turns may promote after restart.
+Recovery composes with steering — see the
 [handler guide's Recovery × Cancellation Composition](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#recovery--cancellation-composition).
+
+These server options do not change the request-level mode contract:
+`background=true, store=false` is still rejected with HTTP 400; ordinary
+`store=false` foreground work remains ephemeral; a foreground client
+disconnect cancels foreground work; and accepted background work survives a
+client disconnect.
 
 > **`conversation_id` chains**: when a request supplies
 > `conversation_id`, sequential turns extend the chain even when
@@ -204,12 +225,15 @@ restarts. The framework defaults provide this automatically; the
 sections below describe what they do and how to override them for
 specific scenarios.
 
-- **Resilient task store**: in a hosted environment the framework uses
+- **Task store**: when either server option requests the Responses task runtime,
+  a hosted environment uses
   the Foundry task storage API; in local development it auto-selects
   a file-backed task store under
-  `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/tasks/`. Either way, tasks
-  survive process restarts so a recovered handler re-enters its prior
-  task body. Operators can override the auto-selection by setting
+  `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/tasks/`. With
+  `resilient_background=True`, recovered background handlers re-enter their
+  prior task body. With steering alone, the interrupted handler is not re-run,
+  but persisted queued turns may start as new steered turns. Operators can
+  override the auto-selection by setting
   `AGENTSERVER_TASKS_BACKEND=local` (to force file-backed in hosted)
   or `AGENTSERVER_TASKS_BACKEND=hosted` (to force the hosted API in
   local).
@@ -236,10 +260,11 @@ owns the equivalent migration for its task store).
 
 ## Recovery + steering surface on `ResponseContext`
 
-When `resilient_background=True`, the framework populates flat fields
-on the response context for every handler invocation. The fields
-mirror the underlying task primitive's classifiers and are safe to
-read regardless of `is_recovery`:
+When either `resilient_background=True` or
+`steerable_conversations=True`, the framework populates flat task-classifier
+fields on the response context for every handler invocation. They are safe to
+read regardless of `is_recovery`; recovery-specific values become meaningful
+only on the resilient re-invocation path:
 
 > **Recovered inputs are identical to fresh entry.** On a recovered
 > re-invocation the handler observes the *same* `request`, `client_headers`,
@@ -570,8 +595,12 @@ final response but may render intermediate states incorrectly.
 When `background=false` (foreground streaming):
 
 - Response is tied to the HTTP connection lifetime.
-- If the server crashes: response is marked `failed` with `code=server_error`.
-- The handler is NOT re-invoked (client is already disconnected).
+- The handler is never re-invoked after a crash, regardless of
+  `resilient_background`.
+- When either server option has requested the task runtime, a crash marks the
+  response `failed` with `code=server_error`.
+- When both options are `False`, the response runs non-durably and no
+  next-lifetime mark-failed action occurs.
 - Conversation lock still applies (prevents concurrent modifications).
 
 ## Layered Concerns

@@ -1,18 +1,54 @@
 # Release History
 
-## 4.12.0b4 (Unreleased)
+## 4.12.0 (2026-11-12)
 
 ### Features Added
 
+- Added support for service API version `2026-04-01` [#49751](https://github.com/Azure/azure-sdk-for-python/pull/49751).
+- (From 4.12.0b1) Added `KeyProperties.key_size` read-only property.
+- (From 4.12.0b2) Added the `ExternalKey` model and the new `KeyClient.create_external_key` method
+  for registering a Key Vault key whose material is held in an external HSM [#47200](https://github.com/Azure/azure-sdk-for-python/pull/47200).
+- (From 4.12.0b2) Added the `KeyProperties.external_key` read-only property.
+- (From 4.12.0b3) Added `secure_wrap_key` and `secure_unwrap_key` methods for wrap/unwrap operations on keys [#47591](https://github.com/Azure/azure-sdk-for-python/pull/47591).
+- (From 4.12.0b3) Added the `KeySecureWrapAlgorithm` enum, listing the algorithms supported by the secure wrap/unwrap operations.
+- (From 4.12.0b3) Added the `SecureWrapResult` and `SecureUnwrapResult` model classes wrapping the results of `secure_wrap_key` and `secure_unwrap_key`, respectively.
+
 ### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 4.11.3. Only code written against a beta version such as 4.12.0b3 may be affected.
+
+- Removed `ApiVersion.V2026_01_01_PREVIEW`; use `ApiVersion.V2026_04_01` instead.
 
 ### Bugs Fixed
 
-- Reject request URLs containing backslashes in the authority before authentication.
-
-- Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
+- (From 4.12.0b3) Fixed a replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level [#47742](https://github.com/Azure/azure-sdk-for-python/pull/47742).
 
 ### Other Changes
+
+- Key Vault API version `2026-04-01` is now the default.
+- (From 4.12.0b1) Python 3.9 is no longer supported. Please use Python version 3.10 or later.
+
+## 4.11.3 (2026-10-02)
+
+### Bugs Fixed
+
+- Fixed an issue where cached authentication challenges could bypass challenge resource verification.
+- Preserve newer cached authentication challenges installed by concurrent requests when an older request fails.
+  Failed requests now clear only the cache entry they observed or accepted.
+- Hardened challenge cache reuse as a follow-up to [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
+  Cached challenges are now verified before token use, and stale entries are cleared when challenge parsing or resource verification fails.
+  Request replay and existing CAE scope/tenant precedence are preserved when concurrent requests invalidate the shared cache.
+- Preserved redirect header cleanup and header updates when restoring request bodies during authentication.
+- Reject request URLs containing backslashes in the authority before authentication.
+- Clear the request's cached challenge when a 401 response omits `WWW-Authenticate`, returning that response without an authentication retry.
+  If no newer challenge remains, the next request rediscovers it, which can add an unauthenticated request even when
+  resource verification is disabled.
+
+## 4.11.2 (2026-08-25)
+
+### Bugs Fixed
+
+- Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
 
 ## 4.12.0b3 (2026-07-08)
 

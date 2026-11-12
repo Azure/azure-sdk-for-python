@@ -12,6 +12,7 @@ restore the ``"update"`` default for ``file_range_write`` on
 ``FileOperations.upload_range`` so async public clients don't have to thread
 the kwarg through every common-path call. See the sync patch for details.
 """
+
 from typing import Any, List, Optional, Union
 
 from ._operations import (

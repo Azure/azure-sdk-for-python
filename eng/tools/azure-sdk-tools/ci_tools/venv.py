@@ -9,11 +9,22 @@ legacy ``TOX_PIP_IMPL`` for backward compatibility):
 * anything else (default ``"pip"``) → uses ``python -m venv`` / ``python -m pip``
 """
 
+import json
 import os
-import re
 import subprocess
 import sys
 from typing import List, Optional
+
+
+def _enable_uv_native_tls() -> None:
+    """Ensure uv consults the OS certificate store instead of its bundled webpki-roots.
+
+    Some CI agents route HTTPS through a TLS-inspecting proxy whose root CA is trusted by the
+    OS but not by uv's bundled roots, causing 'invalid peer certificate: UnknownIssuer' errors
+    when uv downloads interpreters (python-build-standalone) or packages. Respects an explicit
+    user override via setdefault.
+    """
+    os.environ.setdefault("UV_SYSTEM_CERTS", "1")
 
 
 def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str] = None) -> List[str]:
@@ -32,6 +43,7 @@ def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str
 
     # soon we will change this to default to uv
     if pip_impl == "uv":
+        _enable_uv_native_tls()
         cmd = ["uv", "venv"]
         if python_version:
             cmd += ["--python", python_version]
@@ -52,6 +64,7 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
 
     # soon we will change this to default to uv
     if pip_impl == "uv":
+        _enable_uv_native_tls()
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
@@ -200,13 +213,12 @@ def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
 
 
 def get_pip_list_output(python_executable: Optional[str] = None):
-    """Uses the invoking python executable to get the output from pip list."""
-    pip_output = run_pip_freeze(python_executable)
+    """List installed versions, including direct-URL and editable installs, in the requested environment."""
+    executable = python_executable or sys.executable
+    pip_cmd = get_pip_command(executable)
+    command = pip_cmd + ["list", "--format=json", "--disable-pip-version-check"]
+    if pip_cmd[0] == "uv":
+        command += ["--python", executable]
 
-    collected_output = {}
-    for line in pip_output:
-        if "==" in line:
-            package, version = re.split("==", line)
-            collected_output[package] = version
-
-    return collected_output
+    output = subprocess.check_output(command, text=True)
+    return {package["name"]: package["version"] for package in json.loads(output)}

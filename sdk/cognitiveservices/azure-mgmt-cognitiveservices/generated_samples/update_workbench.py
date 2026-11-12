@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,25 +30,16 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.workbenches.begin_update(
+    response = client.workbenches.update(
         resource_group_name="rgcognitiveservices",
         account_name="myAccount",
         project_name="myProject",
         workbench_name="myWorkbench",
-        properties={
-            "properties": {
-                "datasetId": "dataset-67890",
-                "idleTimeBeforeShutdown": "PT1H",
-                "imageLink": "mcr.microsoft.com/azureml/curated/pytorch-gpu:v2",
-                "sshSettings": {"adminEnabled": True, "sshPublicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQ..."},
-                "targetClusterId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.CognitiveServices/accounts/myAccount/computes/myCluster",
-            },
-            "tags": {"environment": "production"},
-        },
-    ).result()
+        properties={"properties": {"idleTimeBeforeShutdown": "PT1H"}},
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-07-15-preview/UpdateWorkbench.json
+# x-ms-original-file: 2026-09-15-preview/UpdateWorkbench.json
 if __name__ == "__main__":
     main()

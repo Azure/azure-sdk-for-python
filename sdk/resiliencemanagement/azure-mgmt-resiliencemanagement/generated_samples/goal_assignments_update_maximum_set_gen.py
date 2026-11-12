@@ -32,16 +32,14 @@ def main():
     )
 
     client.goal_assignments.begin_update(
-        service_group_name="sg1",
-        goal_assignment_name="ga1",
+        service_group_name="production-sg",
+        goal_assignment_name="zonal-resiliency-goal",
         properties={
             "properties": {
-                "goalAssignmentType": "Resiliency",
-                "goalTemplateId": "/providers/Microsoft.AzureResilienceManagement/goaltemplates/gt1",
+                "requireZonalResiliency": True,
                 "serviceLevelResources": [
                     {
-                        "serviceLevelIndicatorResourceId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine",
-                        "serviceLevelObjectiveResourceId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine",
+                        "serviceLevelIndicatorResourceId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine"
                     }
                 ],
             }
@@ -49,6 +47,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalAssignments_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-01/GoalAssignments_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -6,9 +6,9 @@ parameters:
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.10'
+    displayName: 'Use Python 3.11'
     inputs:
-     versionSpec: '3.10'
+     versionSpec: '3.11'
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
 
   - template: /eng/pipelines/templates/steps/use-venv.yml

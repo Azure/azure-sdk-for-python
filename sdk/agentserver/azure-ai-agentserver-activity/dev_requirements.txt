@@ -4,7 +4,7 @@
 pytest
 pytest-asyncio
 opentelemetry-sdk>=1.43.0
-microsoft-agents-hosting-core>=1.1.0
+microsoft-agents-hosting-core>=1.4.0
 microsoft-agents-authentication-msal>=1.1.0
 microsoft-agents-activity>=1.1.0
 ../../monitor/azure-monitor-query

@@ -9,25 +9,25 @@ from collections.abc import MutableMapping
 from typing import Any, IO, Optional, Union, cast, overload
 
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated
+from ._operations import EvaluatorsOperations as EvaluatorsOperationsGenerated
 from ... import models as _models
 from ..._utils.model_base import _deserialize
+from ..._utils.polling import AsyncAIProjectsLROBasePolling
 from ...models import AsyncEvaluatorGenerationLROPoller
 
 JSON = MutableMapping[str, Any]
 
 
-class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
-    """Custom async operations for beta evaluator generation jobs."""
+class EvaluatorsOperations(EvaluatorsOperationsGenerated):
+    """Custom async operations for evaluator generation jobs."""
 
     @overload
     async def begin_create_generation_job(
         self,
-        job: _models.EvaluatorGenerationJob,
+        job: _models.EvaluatorGenerationInputs,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -57,15 +57,15 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     @distributed_trace_async
     async def begin_create_generation_job(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.EvaluatorGenerationInputs, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncEvaluatorGenerationLROPoller:
         """Create an evaluator generation job.
 
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :param job: The evaluator generation inputs. Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationInputs or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -115,7 +115,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                AsyncAIProjectsLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())

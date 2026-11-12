@@ -2,6 +2,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: not-specified
+  - name: ReleasePlanId
+    type: string
+    default: '0'
   - name: SkipPrValidation
     type: boolean
     default: false
@@ -32,6 +35,12 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
+  - name: BuildTimeoutInMinutes
+    type: number
+    default: 90
+  - name: SbomGenerationTimeoutInMinutes
+    type: number
+    default: 30
   - name: InjectedPackages
     type: string
     default: ''
@@ -87,6 +96,22 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  # Rust setup applies only to wheel jobs, not source-installing test or documentation jobs.
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  # Package directory containing rust-toolchain.toml.
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  # Required when Rust is enabled; no shared toolchain feed is selected by default.
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
+  # Space-separated Windows target triples; keep aligned with the package's wheel recipe.
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -128,10 +153,16 @@ extends:
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+              BuildTimeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
+              SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
               DevFeedName: ${{ parameters.DevFeedName }}
               EnvVars: ${{ parameters.EnvVars }}
+              InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+              MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+              MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+              MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
               MatrixConfigs:
                 - ${{ each config in parameters.MatrixConfigs }}:
                     - ${{ config }}
@@ -143,9 +174,9 @@ extends:
               TestProxy: ${{ parameters.TestProxy }}
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
-          - ${{ if and(eq(variables['System.TeamProject'], 'internal'), or(in(variables['Build.Reason'], 'Manual', ''), and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))) }}:
-              - job: FilterPackageInfo
-                displayName: Filter PackageInfo files for package approval
+          - ${{ if and(gt(length(parameters.Artifacts), 0), eq(variables['System.TeamProject'], 'internal'), or(in(variables['Build.Reason'], 'Manual', ''), and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))) }}:
+              - job: CheckPackageApproval
+                displayName: Check Package Approval Status
                 dependsOn:
                   - Build_Extended
                   - Analyze
@@ -168,39 +199,6 @@ extends:
                   - checkout: self
                     fetchDepth: 1
                     fetchTags: false
-                    sparseCheckoutDirectories: eng/scripts
-
-                  - download: current
-                    artifact: packages_extended
-
-                  - pwsh: |
-                      & '$(Build.SourcesDirectory)/eng/scripts/Filter-PackageInfoForPackageApproval.ps1' `
-                        -PackageInfoDirectory '$(Pipeline.Workspace)/packages_extended/PackageInfo' `
-                        -ArtifactsJson $env:ARTIFACTS_JSON `
-                        -PackageInfoPathPrefix 'packages_extended/PackageInfo'
-                    name: filterPackageInfo
-                    displayName: Filter management plane packages from package approval
-                    env:
-                      ARTIFACTS_JSON: ${{ convertToJson(parameters.Artifacts) }}
-
-              - job: CheckPackageApproval
-                displayName: Check Package Approval Status
-                dependsOn: FilterPackageInfo
-                condition: >-
-                  and(
-                    in(dependencies.FilterPackageInfo.result, 'Succeeded', 'SucceededWithIssues'),
-                    eq(dependencies.FilterPackageInfo.outputs['filterPackageInfo.HasPackageApprovalPackages'], 'True')
-                  )
-                variables:
-                  PackageApprovalInfoFiles: $[ dependencies.FilterPackageInfo.outputs['filterPackageInfo.PackageApprovalInfoFiles'] ]
-                pool:
-                  name: $(LINUXPOOL)
-                  image: $(LINUXVMIMAGE)
-                  os: linux
-                steps:
-                  - checkout: self
-                    fetchDepth: 1
-                    fetchTags: false
                     sparseCheckoutDirectories: |
                       eng/common
                       eng/scripts
@@ -208,13 +206,56 @@ extends:
                   - download: current
                     artifact: packages_extended
 
-                  - template: /eng/common/pipelines/templates/steps/install-azsdk-cli.yml
+                  - pwsh: |
+                      $artifacts = ConvertFrom-Json -InputObject $env:ARTIFACTS
+                      $packageInfoFiles = @(
+                        foreach ($artifact in $artifacts) {
+                          $path = "packages_extended/PackageInfo/$($artifact.name).json"
+                          if (Test-Path -LiteralPath $path -PathType Leaf) {
+                            $path
+                          }
+                          else {
+                            Write-Host "No package info exists for '$($artifact.name)'; skipping approval for this artifact."
+                          }
+                        }
+                      )
+                      $hasPackages = $packageInfoFiles.Count -gt 0
+                      $paths = $packageInfoFiles -join "','"
+                      Write-Host "##vso[task.setvariable variable=HasPackageApprovalPackages]$hasPackages"
+                      Write-Host "##vso[task.setvariable variable=PackageApprovalInfoFiles]$paths"
+                    displayName: Resolve package approval inputs
+                    workingDirectory: $(Pipeline.Workspace)
+                    env:
+                      ARTIFACTS: ${{ convertToJson(parameters.Artifacts) }}
 
-                  - template: /eng/common/pipelines/templates/steps/get-package-approval-status.yml
+                  - template: /eng/common/pipelines/templates/steps/install-azsdk-cli.yml
                     parameters:
-                      PackageInfoFiles:
-                        - $(PackageApprovalInfoFiles)
-                      RepoOwner: Azure
+                      Condition: and(succeeded(), eq(variables['HasPackageApprovalPackages'], 'true'))
+
+                  # Invoke the shared script directly to allow skipping a runtime-empty selection.
+                  - task: AzureCLI@2
+                    displayName: Check Package Approval Status
+                    condition: >-
+                      and(
+                        succeeded(),
+                        eq(variables['HasPackageApprovalPackages'], 'true'),
+                        not(
+                          and(
+                            eq(variables['Skip.CheckPackageApproval'], 'true'),
+                            eq(variables['IsRequesterAuthorizedToSkipApiReview'], 'true')
+                          )
+                        )
+                      )
+                    inputs:
+                      azureSubscription: "ADO to ARH Service Connection"
+                      scriptType: pscore
+                      scriptLocation: scriptPath
+                      scriptPath: $(Build.SourcesDirectory)/eng/common/scripts/Get-PackageApprovalStatus.ps1
+                      arguments: >
+                        -PackageInfoFiles @('$(PackageApprovalInfoFiles)')
+                        -RepoOwner 'Azure'
+                        -AzSdkExePath '$(AZSDK)'
+                      workingDirectory: $(Pipeline.Workspace)
 
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml
@@ -225,6 +266,7 @@ extends:
         parameters:
           DependsOn: "Build"
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          ReleasePlanId: ${{ parameters.ReleasePlanId }}
           Artifacts: ${{ parameters.Artifacts }}
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true

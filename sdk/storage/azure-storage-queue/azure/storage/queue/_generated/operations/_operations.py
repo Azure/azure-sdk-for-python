@@ -446,7 +446,7 @@ def build_queue_delete_message_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ServiceOperations:
+class ServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -888,7 +888,7 @@ class ServiceOperations:
         return deserialized  # type: ignore
 
 
-class QueueOperations:
+class QueueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

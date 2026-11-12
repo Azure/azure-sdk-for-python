@@ -59,7 +59,7 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctes
 intersphinx_mapping = {
     # Dependencies
     'python': ('https://docs.python.org/3.11', None),
-    'requests': ('https://requests.kennethreitz.org/en/master/', None),
+    'requests': ('https://requests.readthedocs.io/en/master/', None),
     'aiohttp': ('https://aiohttp.readthedocs.io/en/stable/', None),
     'trio': ('https://trio.readthedocs.io/en/stable/', None),
     'msal': ('https://msal-python.readthedocs.io/en/latest/', None),
