@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.9b1
+python install_rle_sdk.py --version 2.7.10b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -273,3 +273,31 @@ The prepared registry selects `2.7.9b1` as `latest`, preserving all nine
 earlier versions and entries. This is an RLE preview distribution, not a
 PyPI publication. Backend deployment, live gateway/training qualification
 and consumer image rebuilds are separate work.
+
+## Version 2.7.10b1
+
+This preview increases shared rollout client admission from 32 to **64 concurrent
+calls per client** and the default post-admission timeout from 1860 to **5400
+seconds (90 minutes)**. Explicit per-call timeout overrides remain supported.
+Waiting for admission does not consume the timeout; connection establishment,
+execution, recovery and result retrieval retain the original deadline.
+Reconnecting does not reset that deadline, and execution is not replayed.
+Response-size limits and authentication are unchanged.
+
+The wheel is built from merged source commit
+[`b72356f901a9f9436db4678152f00355c2e009ab`](https://github.com/sujit-kamireddy/azure-sdk-for-python/commit/b72356f901a9f9436db4678152f00355c2e009ab)
+in [source PR #20](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/20),
+with only the staged package version overridden to `2.7.10b1`.
+It is 613669 bytes with SHA-256
+`bb6e9fba3b3ff50858e1f09df2e66a963aa5b8611cadb5a38cb18f00a83bf38b`.
+
+An isolated installation passed 432 offline rollout tests, and all 92 release-tool
+tests passed. All 63 packaged Python files match the merged source except for the
+release version, dependencies are unchanged, and all 11 registry wheels pass
+integrity and checksum validation. The 10 previous registry entries are preserved.
+
+Merging this artifact change into `rle-releases` selects `2.7.10b1` as `latest`.
+This is an RLE preview distribution, not a PyPI publication, backend deployment
+or live training qualification. Existing Python environments and consumer images
+must install the new wheel to receive these defaults; explicit timeout overrides
+in callers continue to take precedence.
