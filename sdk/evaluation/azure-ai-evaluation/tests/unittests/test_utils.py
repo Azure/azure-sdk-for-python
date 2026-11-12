@@ -715,6 +715,26 @@ class TestUtils(unittest.TestCase):
         result = reformat_agent_response(invalid_response)
         assert result == invalid_response
 
+    def test_reformat_agent_response_without_text(self):
+        """include_text=False keeps only the tool calls and their results"""
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Let me check."},
+                    {"type": "tool_call", "tool_call_id": "c1", "name": "get_weather", "arguments": {"city": "Paris"}},
+                ],
+            },
+            {"role": "tool", "tool_call_id": "c1", "content": [{"type": "tool_result", "tool_result": {"temp": 18}}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "It is 18C in Paris."}]},
+        ]
+        assert reformat_agent_response(response, include_tool_messages=True) == (
+            'Let me check.\n[TOOL_CALL] get_weather(city="Paris")\n[TOOL_RESULT] {"temp": 18}\nIt is 18C in Paris.'
+        )
+        assert reformat_agent_response(response, include_tool_messages=True, include_text=False) == (
+            '[TOOL_CALL] get_weather(city="Paris")\n[TOOL_RESULT] {"temp": 18}'
+        )
+
     def test_edge_cases_and_error_handling(self):
         """Test edge cases and error handling"""
         # Test _extract_text_from_content with malformed content

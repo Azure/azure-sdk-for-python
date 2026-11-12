@@ -787,8 +787,8 @@ def _format_value(v):
     return v
 
 
-def _get_agent_response(agent_response_msgs, include_tool_messages=False):
-    """Extracts formatted agent response including text, and optionally tool calls/results."""
+def _get_agent_response(agent_response_msgs, include_tool_messages=False, include_text=True):
+    """Extracts formatted agent response: its text (unless ``include_text`` is False), and optionally tool calls/results."""
     agent_response_text = []
     tool_results = {}
 
@@ -804,7 +804,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
         if "role" in msg and msg.get("role") == "assistant" and "content" in msg:
-            text = _extract_text_from_content(msg["content"])
+            text = _extract_text_from_content(msg["content"]) if include_text else []
             if text:
                 agent_response_text.extend(text)
             if include_tool_messages:
@@ -829,11 +829,13 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
     return agent_response_text
 
 
-def reformat_agent_response(response, logger=None, include_tool_messages=False):
+def reformat_agent_response(response, logger=None, include_tool_messages=False, include_text=True):
     try:
         if response is None or response == []:
             return ""
-        agent_response = _get_agent_response(response, include_tool_messages=include_tool_messages)
+        agent_response = _get_agent_response(
+            response, include_tool_messages=include_tool_messages, include_text=include_text
+        )
         if agent_response == []:
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:

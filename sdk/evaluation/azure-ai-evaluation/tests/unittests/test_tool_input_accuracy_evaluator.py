@@ -186,6 +186,35 @@ class TestToolInputAccuracyEvaluator:
         assert f"{key}_properties" in result
         assert result[f"{key}_properties"]["parameter_extraction_accuracy"] == 100.0
 
+    def test_judge_input_holds_tool_calls_and_results_but_not_the_answer(self, mock_model_config):
+        """The final answer and text between calls stay out of "Tool Calls Made" (GitHub issue #49923)."""
+        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Let me load the skill first."},
+                    {"type": "tool_call", "tool_call_id": "c1", "name": "get_weather", "arguments": {"location": "Paris"}},
+                ],
+            },
+            {"role": "tool", "tool_call_id": "c1", "content": [{"type": "tool_result", "tool_result": {"temp": 18}}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "It is 18C in Paris. Enjoy your trip!"}]},
+        ]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information for a location",
+                "parameters": {"type": "object", "properties": {"location": {"type": "string"}}, "required": ["location"]},
+            }
+        ]
+
+        evaluator(query="What is the weather in Paris? all_correct", response=response, tool_definitions=tool_definitions)
+
+        tool_calls = evaluator._flow.call_args.kwargs["tool_calls"]
+        assert tool_calls == '[TOOL_CALL] get_weather(location="Paris")\n[TOOL_RESULT] {"temp": 18}'
+
     def test_evaluate_missing_required_parameters(self, mock_model_config):
         """Test evaluation when required parameters are missing."""
         evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
