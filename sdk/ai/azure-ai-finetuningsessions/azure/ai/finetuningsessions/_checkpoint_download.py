@@ -1,24 +1,27 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # cspell:ignore CONIN
-"""Checkpoint destination/manifest validation and sync/async preparation."""
+"""Checkpoint destination/manifest validation and sync/async file delivery."""
 
 from dataclasses import dataclass
 from os import PathLike, scandir
 from pathlib import Path
 import re
 from stat import S_ISDIR
-from typing import Any, Optional, Union
+from typing import Any, BinaryIO, Optional, Union
 from unicodedata import normalize
 from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit
 
+from azure.core.exceptions import HttpResponseError, map_error
 from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
 
+from ._checkpoint_files import _CheckpointOutput
 from ._exceptions import FineTuningSessionsError, MalformedResponseError
 from ._operation_compat import (
     _NO_BODY,
     _SERIALIZER,
+    _error_map,
     _identifier,
     _polling_endpoint,
     _polling_interval,
@@ -274,10 +277,14 @@ def _prepare_checkpoint_download(operation: Any, session_id: str, checkpoint_id:
         response = operation._client._pipeline.run(
             request, stream=False, permit_redirects=False, retry_total=0
         ).http_response
-        manifest = _checkpoint_download_result(response, arguments["session_id"], preparation_url)
+        try:
+            manifest = _checkpoint_download_result(response, arguments["session_id"], preparation_url)
+            delay = _retry_delay(response, {}, interval) if manifest is None else 0
+        finally:
+            response.close()
         if manifest is not None:
             return manifest
-        operation._client._pipeline._transport.sleep(_retry_delay(response, {}, interval))
+        operation._client._pipeline._transport.sleep(delay)
 
 
 async def _prepare_checkpoint_download_async(
@@ -300,7 +307,128 @@ async def _prepare_checkpoint_download_async(
         response = (
             await operation._client._pipeline.run(request, stream=False, permit_redirects=False, retry_total=0)
         ).http_response
-        manifest = _checkpoint_download_result(response, arguments["session_id"], preparation_url)
+        try:
+            manifest = _checkpoint_download_result(response, arguments["session_id"], preparation_url)
+            delay = _retry_delay(response, {}, interval) if manifest is None else 0
+        finally:
+            await response.close()
         if manifest is not None:
             return manifest
-        await operation._client._pipeline._transport.sleep(_retry_delay(response, {}, interval))
+        await operation._client._pipeline._transport.sleep(delay)
+
+
+def _checkpoint_file_request(file: _CheckpointDownloadFile) -> HttpRequest:
+    return HttpRequest(
+        "GET",
+        file.download_url,
+        headers={
+            "Accept": "application/octet-stream",
+            "Accept-Encoding": "identity",
+            "Foundry-Features": FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW,
+            "If-Match": file.etag,
+        },
+    )
+
+
+def _validate_checkpoint_file_response(response: Any, file: _CheckpointDownloadFile) -> None:
+    """Check the full-file contract before creating any local file.
+
+    :param response: Streaming HTTP response to validate.
+    :type response: ~azure.core.rest.HttpResponse
+    :param file: Validated file descriptor from the preparation inventory.
+    :type file: object
+    """
+    if response.status_code != 200:
+        # Do not buffer an unbounded error body from a streaming request.
+        map_error(status_code=response.status_code, response=response, error_map=_error_map({}))
+        raise HttpResponseError("Checkpoint file download failed.", response=response)
+    length = response.headers.get("Content-Length", "")
+    valid_length = re.fullmatch(r"[0-9]+", length) is not None and length.lstrip("0") == str(file.size_bytes).lstrip(
+        "0"
+    )
+    if (
+        response.request.url != file.download_url
+        or response.headers.get("ETag") != file.etag
+        or not valid_length
+        or response.headers.get("Content-Encoding", "identity").lower() != "identity"
+        or "Content-Range" in response.headers
+    ):
+        raise MalformedResponseError("Invalid checkpoint file response identity or headers.", response=response)
+
+
+def _write_checkpoint_chunk(
+    output: BinaryIO, chunk: bytes, received: int, file: _CheckpointDownloadFile, response: Any
+) -> int:
+    received += len(chunk)
+    if received > file.size_bytes:
+        raise MalformedResponseError("Checkpoint file exceeds its advertised size.", response=response)
+    if output.write(chunk) != len(chunk):
+        raise OSError("Incomplete checkpoint file write")
+    return received
+
+
+def _check_checkpoint_file_size(received: int, file: _CheckpointDownloadFile, response: Any) -> None:
+    if received != file.size_bytes:
+        raise MalformedResponseError("Checkpoint file is shorter than its advertised size.", response=response)
+
+
+def _download_checkpoint_files(
+    operation: Any, manifest: _CheckpointDownloadManifest, destination: _CheckpointOutput
+) -> None:
+    """Stream sequentially; retain exclusive partial output on any failure.
+
+    :param operation: Synchronous checkpoint operation group.
+    :type operation: object
+    :param manifest: Complete validated file inventory.
+    :type manifest: tuple
+    :param destination: Exclusive local output owner.
+    :type destination: object
+    """
+    # pylint: disable=protected-access
+    with destination:
+        for file in manifest:
+            response = operation._client._pipeline.run(
+                _checkpoint_file_request(file), stream=True, permit_redirects=False, retry_total=0
+            ).http_response
+            try:
+                _validate_checkpoint_file_response(response, file)
+                with destination.open_file(file.filename, file.size_bytes) as output:
+                    received = 0
+                    for chunk in response.iter_raw():
+                        received = _write_checkpoint_chunk(output, chunk, received, file, response)
+                    _check_checkpoint_file_size(received, file, response)
+            finally:
+                response.close()
+        destination.complete()
+
+
+async def _download_checkpoint_files_async(
+    operation: Any, manifest: _CheckpointDownloadManifest, destination: _CheckpointOutput
+) -> None:
+    """Stream asynchronously and close responses on failure or cancellation.
+
+    :param operation: Asynchronous checkpoint operation group.
+    :type operation: object
+    :param manifest: Complete validated file inventory.
+    :type manifest: tuple
+    :param destination: Exclusive local output owner.
+    :type destination: object
+    """
+    # pylint: disable=protected-access
+    with destination:
+        for file in manifest:
+            response = (
+                await operation._client._pipeline.run(
+                    _checkpoint_file_request(file), stream=True, permit_redirects=False, retry_total=0
+                )
+            ).http_response
+            try:
+                _validate_checkpoint_file_response(response, file)
+                with destination.open_file(file.filename, file.size_bytes) as output:
+                    received = 0
+                    async for chunk in response.iter_raw():
+                        received = _write_checkpoint_chunk(output, chunk, received, file, response)
+                    _check_checkpoint_file_size(received, file, response)
+            finally:
+                await response.close()
+        destination.complete()

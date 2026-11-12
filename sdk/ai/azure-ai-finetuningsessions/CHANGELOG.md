@@ -7,7 +7,7 @@
 - Add opt-in text-only sampling with public conversation messages and function tools, plus reference-based training using opaque sample references and scalar advantages.
 - Support optional model-specific text-only `reasoning_effort` values `low`, `medium`, and `high`. Omission or `None` preserves the model default.
 - Add async `FineTuningSessionClient.attach_session(session_id)` to start a heartbeat for an existing session without creating or loading it.
-- Add synchronous and asynchronous checkpoint preparation helpers. These validate paths and file inventories but do not transfer weights or write local files.
+- Add synchronous and asynchronous local checkpoint downloads. These prepare the export, validate the complete inventory, and stream files into an empty or absent destination with exact ETag and byte-count checks. Failures retain partial output without automatic resume, deletion, or overwrite; model eligibility and authorization remain enforced by the service.
 
 ### Breaking Changes
 
