@@ -1,11 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
+import os
 import threading
 from typing import Callable, Iterable, List, Optional, Any, Dict, TYPE_CHECKING
 
 from opentelemetry.metrics import CallbackOptions, Observation
-from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics import MeterProvider, MetricsTimeoutError
 from opentelemetry.sdk.metrics.export import (
     MetricExporter,
     MetricExportResult,
@@ -15,6 +16,8 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
+from azure.monitor.opentelemetry.exporter._constants import _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
@@ -85,6 +88,33 @@ class _StatsbeatExporter(MetricExporter):
             replacement.client.close()
             raise
         self._exporter = replacement
+
+
+class _StatsbeatMetricReader(PeriodicExportingMetricReader):
+    """Keep observable collection and export on the same Statsbeat route."""
+
+    def __init__(self, exporter: _StatsbeatExporter, export_interval_millis: float) -> None:
+        self._collection_lock = exporter._lock  # pylint: disable=protected-access
+        super().__init__(exporter, export_interval_millis=export_interval_millis)
+
+    # MetricReader.collect is final, so synchronize its periodic and flush entry points.
+    def _ticker(self) -> None:
+        interval_seconds = self._export_interval_millis / 1000
+        while not self._shutdown_event.wait(interval_seconds):
+            self._collect_and_export(self._export_timeout_millis)
+        self._collect_and_export(self._export_interval_millis)
+
+    def _collect_and_export(self, timeout_millis: float) -> None:
+        try:
+            with self._collection_lock:
+                self.collect(timeout_millis=timeout_millis)
+        except MetricsTimeoutError:
+            logger.warning("Statsbeat metric collection timed out.", exc_info=True)
+
+    def force_flush(self, timeout_millis: float = 10_000) -> bool:
+        with self._collection_lock:
+            flushed: bool = super().force_flush(timeout_millis=timeout_millis)
+            return flushed
 
 
 class StatsbeatConfig:
@@ -168,14 +198,11 @@ class StatsbeatConfig:
         if not base_config.instrumentation_key:
             logger.warning("Base configuration is missing a valid instrumentation key.")
             return None
-        if not base_config.region:
-            logger.warning("Base configuration is missing a valid region.")
-            return None
         if not base_config.endpoint:
             logger.warning("Base configuration is missing a valid endpoint.")
             return None
 
-        connection_string = _get_connection_string_for_region_from_config(base_config.region, config_dict)
+        connection_string = _get_connection_string_for_region_from_config(base_config.region or "", config_dict)
         if connection_string is None:
             # If something went wrong in fetching connection string, fall back to the original
             connection_string = base_config.connection_string
@@ -326,7 +353,7 @@ class StatsbeatManager(metaclass=Singleton):  # pylint: disable=too-many-instanc
             self._exporter = _StatsbeatExporter(statsbeat_exporter)
 
             # Create metric reader
-            reader = PeriodicExportingMetricReader(
+            reader = _StatsbeatMetricReader(
                 self._exporter,
                 export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
@@ -384,19 +411,27 @@ class StatsbeatManager(metaclass=Singleton):  # pylint: disable=too-many-instanc
             if exporter is None:
                 return
 
-            # Export (including synchronous storage replay) must finish before the
+            # Collection and export (including storage replay) must finish before the
             # old destination is retired. Do not hold the manager lock while waiting.
             with exporter._lock:  # pylint: disable=protected-access
                 with self._lock:
                     if not self._initialized or self._exporter is not exporter or not self._config or not self._metrics:
                         return
+                    region = _get_region_from_endpoint(endpoint)
+                    connection_string = os.environ.get(_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME)
+                    config_manager = get_configuration_manager()
+                    if not connection_string and config_manager:
+                        connection_string = _get_connection_string_for_region_from_config(
+                            region or "", config_manager.get_settings()
+                        )
                     config = StatsbeatConfig(
                         endpoint=endpoint,
-                        region=_get_region_from_endpoint(endpoint),
+                        region=region,
                         instrumentation_key=self._config.instrumentation_key,
                         disable_offline_storage=self._config.disable_offline_storage,
                         credential=self._config.credential,
                         distro_version=self._config.distro_version,
+                        connection_string=connection_string,
                     )
                     if config.connection_string != self._config.connection_string:
                         exporter.update_connection_string(config)

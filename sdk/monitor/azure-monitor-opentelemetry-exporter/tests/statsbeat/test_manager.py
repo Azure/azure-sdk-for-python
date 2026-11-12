@@ -6,12 +6,15 @@ import unittest
 from unittest import mock
 from unittest.mock import Mock, patch
 
+from opentelemetry.metrics import Observation
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem, TrackResponse
 from azure.monitor.opentelemetry.exporter.export._base import BaseExporter, ExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatConfig, StatsbeatManager
+from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import get_statsbeat_configuration_callback
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
@@ -19,6 +22,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL,
+    _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED,
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
     _DEFAULT_EU_STATS_CONNECTION_STRING,
     _DEFAULT_NON_EU_STATS_CONNECTION_STRING,
@@ -207,6 +211,26 @@ class TestStatsbeatConfig(unittest.TestCase):
         result = StatsbeatConfig.from_config(base_config, {})
         self.assertIsNone(result)
 
+    def test_from_config_unknown_region_uses_default_or_preserves_destination(self):
+        custom = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://custom.example"
+        with patch.dict(os.environ, {_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: ""}):
+            for region in (None, ""):
+                base_config = StatsbeatConfig(
+                    endpoint="https://dc.services.visualstudio.com",
+                    region=region,
+                    instrumentation_key="test-key",
+                    connection_string=_DEFAULT_EU_STATS_CONNECTION_STRING,
+                )
+                for settings, expected in (
+                    ({"DEFAULT_STATS_CONNECTION_STRING": custom}, custom),
+                    ({}, _DEFAULT_EU_STATS_CONNECTION_STRING),
+                ):
+                    with self.subTest(region=region, settings=settings):
+                        config = StatsbeatConfig.from_config(base_config, settings)
+                        self.assertIsNotNone(config)
+                        self.assertEqual(config.connection_string, expected)
+                        self.assertEqual(config.region, region)
+
     def test_equality(self):
         """Test equality comparison between configs."""
         config1 = StatsbeatConfig(
@@ -382,7 +406,7 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
@@ -438,7 +462,7 @@ class TestStatsbeatManager(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
@@ -473,7 +497,7 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_meter_provider.force_flush.assert_not_called()
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
     def test_initialize_failure_exception(
@@ -600,7 +624,7 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_set_shutdown.assert_not_called()
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     def test_reconfigure_success(
@@ -803,6 +827,29 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertTrue(self.manager._exporter._exporter._disable_offline_storage)
         self.assertIsNone(self.manager._exporter._exporter.storage)
 
+    def test_unknown_region_accepts_settings_and_restarts_after_disable(self):
+        track = self._initialize_routing()
+        custom = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://custom.example"
+        enabled = {
+            "FEATURE_SDK_STATS": '{"default": "enabled"}',
+            "DEFAULT_STATS_CONNECTION_STRING": custom,
+        }
+        with patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager",
+            return_value=self.manager,
+        ):
+            get_statsbeat_configuration_callback(enabled)
+            self.assertEqual(self.manager.get_current_config().connection_string, custom)
+            get_statsbeat_configuration_callback({"FEATURE_SDK_STATS": '{"default": "disabled"}'})
+            self.assertFalse(self.manager.is_initialized())
+            get_statsbeat_configuration_callback(enabled)
+        self.assertTrue(self.manager.is_initialized())
+        self.assertIsNone(self.manager.get_current_config().region)
+        self.assertEqual(self.manager.get_current_config().connection_string, custom)
+        track.reset_mock()
+        self.manager._meter_provider.force_flush()
+        track.assert_called_once()
+
     def test_redirect_preserves_collection_and_routes_all_metrics_to_eu(self):
         track = self._initialize_routing()
         metrics = self.manager._metrics
@@ -860,7 +907,20 @@ class TestStatsbeatManager(unittest.TestCase):
     def test_redirect_respects_stats_connection_string_override(self):
         self._initialize_routing()
         custom = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://custom.example"
-        with patch.dict(os.environ, {_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: custom}):
+        config_manager = Mock()
+        config_manager.get_settings.return_value = {
+            "DEFAULT_STATS_CONNECTION_STRING": _DEFAULT_EU_STATS_CONNECTION_STRING
+        }
+        with patch.dict(
+            os.environ,
+            {
+                _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: custom,
+                _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED: "false",
+            },
+        ), patch(
+            "azure.monitor.opentelemetry.exporter._configuration._state._configuration_manager",
+            config_manager,
+        ):
             self.manager._update_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
             sender = self.manager._exporter._exporter
             self.manager._update_endpoint("https://eastus-1.in.applicationinsights.azure.com")
@@ -868,6 +928,136 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertEqual(self.manager.get_current_config().connection_string, custom)
         self.assertEqual(sender.client._config.host, "https://custom.example")
         self.assertEqual(self.manager._metrics._NETWORK_ATTRIBUTES["host"], "eastus-1")
+
+    def test_redirect_uses_cached_settings_for_same_region_and_boundary_changes(self):
+        self._initialize_routing()
+        self.manager._update_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
+        eu = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://eu.example"
+        row = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://row.example"
+        settings = {
+            "FEATURE_SDK_STATS": '{"default": "enabled"}',
+            "SUPPORTED_DATA_BOUNDARIES": '["EU"]',
+            "EU_REGIONS": '["westeurope", "northeurope"]',
+            "EU_STATS_CONNECTION_STRING": eu,
+            "DEFAULT_STATS_CONNECTION_STRING": row,
+        }
+        config_manager = Mock()
+        config_manager.get_settings.return_value = settings
+        with patch.dict(os.environ, {_APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED: "false"}), patch(
+            "azure.monitor.opentelemetry.exporter._configuration._state._configuration_manager",
+            config_manager,
+        ), patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager",
+            return_value=self.manager,
+        ):
+            get_statsbeat_configuration_callback(settings)
+            sender = self.manager._exporter._exporter
+            for target in ("westeurope-6", "northeurope-2"):
+                with self.subTest(target=target):
+                    self.manager._update_endpoint(f"https://{target}.in.applicationinsights.azure.com")
+                    self.assertIs(self.manager._exporter._exporter, sender)
+                    self.assertEqual(self.manager.get_current_config().connection_string, eu)
+                    self.assertEqual(self.manager._metrics._NETWORK_ATTRIBUTES["host"], target)
+            self.manager._update_endpoint("https://eastus-1.in.applicationinsights.azure.com")
+            self.assertIsNot(self.manager._exporter._exporter, sender)
+            self.assertEqual(self.manager.get_current_config().connection_string, row)
+            config_manager.get_settings.return_value = {}
+            self.manager._update_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
+        self.assertEqual(self.manager.get_current_config().connection_string, _DEFAULT_EU_STATS_CONNECTION_STRING)
+
+    def test_redirect_waits_for_observable_collection_during_flush(self):
+        self._assert_redirect_waits_for_observable_collection(periodic=False)
+
+    def test_redirect_waits_for_observable_collection_during_periodic_export(self):
+        self._assert_redirect_waits_for_observable_collection(periodic=True)
+
+    def _assert_redirect_waits_for_observable_collection(self, periodic):
+        track = self._initialize_routing()
+        self.manager._update_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
+        provider = self.manager._meter_provider
+        metrics = self.manager._metrics
+        reader = provider._metric_readers[0]
+        collecting = threading.Event()
+        finish_collection = threading.Event()
+        update_started = threading.Event()
+        updated = threading.Event()
+        errors = []
+
+        def observe(options):
+            attributes = dict(metrics._NETWORK_ATTRIBUTES)
+            if not collecting.is_set():
+                collecting.set()
+                if not finish_collection.wait(5):
+                    errors.append("Collection was not released")
+            return [Observation(1, attributes)]
+
+        meter = provider.get_meter("routing-test")
+        meter.create_observable_gauge("route_before", callbacks=[observe])
+        meter.create_observable_gauge(
+            "route_after", callbacks=[lambda options: [Observation(1, dict(metrics._NETWORK_ATTRIBUTES))]]
+        )
+
+        def update():
+            update_started.set()
+            try:
+                self.manager._update_endpoint("https://eastus-1.in.applicationinsights.azure.com")
+            except Exception as exc:
+                errors.append(exc)
+            finally:
+                updated.set()
+
+        def collect():
+            try:
+                if periodic:
+                    reader._ticker()
+                else:
+                    provider.force_flush()
+            except Exception as exc:
+                errors.append(exc)
+
+        # Exercise the periodic path without waiting for the real 15-minute interval.
+        with patch.object(reader, "_shutdown_event") as shutdown_event:
+            shutdown_event.wait.side_effect = [False, True]
+            collection_thread = threading.Thread(target=collect, daemon=True)
+            update_thread = threading.Thread(target=update, daemon=True)
+            collection_thread.start()
+            try:
+                self.assertTrue(collecting.wait(5))
+                update_thread.start()
+                self.assertTrue(update_started.wait(5))
+                self.assertFalse(updated.wait(0.1))
+            finally:
+                finish_collection.set()
+                collection_thread.join(10)
+                if update_thread.ident:
+                    update_thread.join(10)
+        self.assertFalse(collection_thread.is_alive())
+        self.assertFalse(update_thread.is_alive())
+        self.assertEqual(errors, [])
+        eu_key = ConnectionStringParser(_DEFAULT_EU_STATS_CONNECTION_STRING).instrumentation_key
+        first_batch = track.call_args_list[0].args[0]
+        self.assertTrue(all(envelope.instrumentation_key == eu_key for envelope in first_batch))
+        self.assertEqual(
+            {
+                envelope.data.base_data.properties["host"]
+                for envelope in first_batch
+                if "host" in envelope.data.base_data.properties
+            },
+            {"westeurope-5"},
+        )
+        track.reset_mock()
+        provider.force_flush()
+        row_key = ConnectionStringParser(_DEFAULT_NON_EU_STATS_CONNECTION_STRING).instrumentation_key
+        next_batch = track.call_args.args[0]
+        self.assertTrue(all(envelope.instrumentation_key == row_key for envelope in next_batch))
+        self.assertEqual(
+            {
+                envelope.data.base_data.properties["host"]
+                for envelope in next_batch
+                if "host" in envelope.data.base_data.properties
+            },
+            {"eastus-1"},
+        )
 
     def test_redirect_does_not_initialize_or_revive_statsbeat(self):
         target = "https://westeurope-5.in.applicationinsights.azure.com"
