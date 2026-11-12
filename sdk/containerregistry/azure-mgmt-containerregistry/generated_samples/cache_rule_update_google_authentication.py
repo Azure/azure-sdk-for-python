@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-cosmosdb
+    pip install azure-mgmt-containerregistry
 # USAGE
-    python cosmos_db_managed_cassandra_command_result.py
+    python cache_rule_update_google_authentication.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,19 +25,27 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def main():
-    client = CosmosDBManagementClient(
+    client = ContainerRegistryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.cassandra_clusters.get_command_async(
-        resource_group_name="cassandra-prod-rg",
-        cluster_name="cassandra-prod",
-        command_id="318653d0-3da5-4814-b8f6-429f2af0b2a4",
-    )
+    response = client.cache_rules.begin_update(
+        resource_group_name="myResourceGroup",
+        registry_name="myRegistry",
+        cache_rule_name="myCacheRule",
+        cache_rule_update_parameters={
+            "properties": {
+                "additionalAuthenticationProperties": {
+                    "authenticationType": "GoogleArtifactRegistry",
+                    "workloadIdentityProvider": "updated-identity-provider",
+                }
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBManagedCassandraCommandResult.json
+# x-ms-original-file: 2026-10-15-preview/CacheRuleUpdateGoogleAuthentication.json
 if __name__ == "__main__":
     main()

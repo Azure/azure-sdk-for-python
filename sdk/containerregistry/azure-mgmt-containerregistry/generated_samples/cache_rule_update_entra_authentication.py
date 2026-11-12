@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-cosmosdb
+    pip install azure-mgmt-containerregistry
 # USAGE
-    python cosmos_db_throughput_pool_delete.py
+    python cache_rule_update_entra_authentication.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,17 +25,27 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def main():
-    client = CosmosDBManagementClient(
+    client = ContainerRegistryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.throughput_pool.begin_delete(
-        resource_group_name="rgName",
-        throughput_pool_name="tp1",
+    response = client.cache_rules.begin_update(
+        resource_group_name="myResourceGroup",
+        registry_name="myRegistry",
+        cache_rule_name="myCacheRule",
+        cache_rule_update_parameters={
+            "properties": {
+                "additionalAuthenticationProperties": {
+                    "authenticationType": "EntraFederatedIdentityCredential",
+                    "federatedApplicationClientId": "fedcba98-7654-3210-abcd-ef1234567890",
+                }
+            }
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/throughputPool/CosmosDBThroughputPoolDelete.json
+# x-ms-original-file: 2026-10-15-preview/CacheRuleUpdateEntraAuthentication.json
 if __name__ == "__main__":
     main()

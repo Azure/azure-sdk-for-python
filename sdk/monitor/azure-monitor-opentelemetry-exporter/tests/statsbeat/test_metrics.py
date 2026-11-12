@@ -543,9 +543,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
     def test_get_feature_metric_experimental_features(self, mock_instrumentations):
         cases = (
             (False, False, 0),
-            (True, False, 128),
-            (False, True, 256),
-            (True, True, 384),
+            (True, False, 2048),
+            (False, True, 4096),
+            (True, True, 6144),
         )
         existing_bits = _StatsbeatFeature.DISK_RETRY | _StatsbeatFeature.AAD | _StatsbeatFeature.DISTRO
         for enabled_before_metrics in (True, False):

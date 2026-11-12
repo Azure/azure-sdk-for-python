@@ -9,14 +9,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-cosmosdb
+    pip install azure-mgmt-containerregistry
 # USAGE
-    python cosmos_db_throughput_pool_account_create.py
+    python cache_rule_update_configure_entra_authentication.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,25 +26,34 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def main():
-    client = CosmosDBManagementClient(
+    client = ContainerRegistryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.throughput_pool_account.begin_create(
-        resource_group_name="rg1",
-        throughput_pool_name="tp1",
-        throughput_pool_account_name="db1",
-        body={
+    response = client.cache_rules.begin_update(
+        resource_group_name="myResourceGroup",
+        registry_name="myRegistry",
+        cache_rule_name="myCacheRule",
+        cache_rule_update_parameters={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myUserAssignedIdentity": {}
+                },
+            },
             "properties": {
-                "accountLocation": "West US",
-                "accountResourceIdentifier": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/providers/Microsoft.DocumentDB/resourceGroup/rg1/databaseAccounts/db1/",
-            }
+                "additionalAuthenticationProperties": {
+                    "authenticationType": "EntraFederatedIdentityCredential",
+                    "federatedApplicationClientId": "abcdef12-3456-7890-abcd-ef1234567890",
+                    "sourceTenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                }
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/throughputPool/CosmosDBThroughputPoolAccountCreate.json
+# x-ms-original-file: 2026-10-15-preview/CacheRuleUpdateConfigureEntraAuthentication.json
 if __name__ == "__main__":
     main()

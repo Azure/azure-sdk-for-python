@@ -9,14 +9,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-cosmosdb
+    pip install azure-mgmt-containerregistry
 # USAGE
-    python cosmos_db_garnet_cluster_create.py
+    python cache_rule_update_configure_google_authentication.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,30 +26,35 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 
 
 def main():
-    client = CosmosDBManagementClient(
+    client = ContainerRegistryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.garnet_clusters.begin_create_update(
-        resource_group_name="garnet-prod-rg",
-        cluster_name="garnet-prod",
-        body={
-            "location": "West US",
-            "properties": {
-                "authenticationMethod": "Entra",
-                "nodeSku": "Standard_DS13_v2",
-                "persistence": True,
-                "replicationFactor": 2,
-                "shardCount": 4,
-                "subnetId": "/subscriptions/536e130b-d7d6-4ac7-98a5-de20d69588d2/resourceGroups/customer-vnet-rg/providers/Microsoft.Network/virtualNetworks/customer-vnet/subnets/management",
+    response = client.cache_rules.begin_update(
+        resource_group_name="myResourceGroup",
+        registry_name="myRegistry",
+        cache_rule_name="myCacheRule",
+        cache_rule_update_parameters={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myUserAssignedIdentity": {}
+                },
             },
-            "tags": {},
+            "properties": {
+                "additionalAuthenticationProperties": {
+                    "authenticationType": "GoogleArtifactRegistry",
+                    "projectNumber": "123456789012",
+                    "workloadIdentityPool": "my-workload-identity-pool",
+                    "workloadIdentityProvider": "my-workload-identity-provider",
+                }
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBGarnetClusterCreate.json
+# x-ms-original-file: 2026-10-15-preview/CacheRuleUpdateConfigureGoogleAuthentication.json
 if __name__ == "__main__":
     main()
