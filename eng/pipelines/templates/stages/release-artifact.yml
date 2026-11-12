@@ -272,18 +272,12 @@ stages:
               EnablePipAuth: true
               EnableUvAuth: false
 
-          # Shows whether this is an auto-release or a manual release, and the auto-release SDK PR if it reached this job.
+          # Log whether this is an auto-release or a manual release, and the auto-release SDK PR.
           - pwsh: |
-              if ($env:BUILD_REASON -eq 'IndividualCI') {
-                Write-Host 'Release type: auto-release (started by CI after a merge)'
-              } else {
-                Write-Host 'Release type: manual release'
-              }
-              if ($env:AUTO_RELEASE_SDK_PR) {
-                Write-Host "Auto-release SDK PR: $env:AUTO_RELEASE_SDK_PR"
-              } else {
-                Write-Host 'Auto-release SDK PR: none'
-              }
+              $type = if ($env:BUILD_REASON -eq 'IndividualCI') { 'auto-release' } else { 'manual release' }
+              $pr = if ($env:AUTO_RELEASE_SDK_PR) { $env:AUTO_RELEASE_SDK_PR } else { 'none' }
+              Write-Host "Release type: $type"
+              Write-Host "Auto-release SDK PR: $pr"
             displayName: Show release type and auto-release SDK PR
             env:
               BUILD_REASON: $(Build.Reason)
