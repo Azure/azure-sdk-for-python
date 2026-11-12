@@ -131,7 +131,7 @@ for score in result.scores or []:
 | `batchSize`           | `int`       | Optional. Number of documents processed per batch, from 1 to 2147483647.                                                                               |
 | `sort`                | `bool`      | Optional. Return scores sorted by relevance.                                                                                                           |
 | `documentType`        | `str`       | Optional document format, such as `text` or `json`. JSON documents are JSON-encoded strings.                                                           |
-| `targetPaths`         | `str`       | Required for JSON documents. Up to 100 comma-separated paths in dot notation, such as `meta.content,id`. The model's `target_paths` takes a list.      |
+| `targetPaths`         | `list[str]` | Required for JSON documents. Up to 100 paths in dot notation, such as `["meta.content", "id"]`. The model's `target_paths` also takes a list.           |
 | `returnSentenceScore` | `bool`      | Optional. Include sentence-level scores.                                                                                                               |
 
 Put these options inside the request dictionary, not in method keyword arguments.
@@ -231,7 +231,7 @@ result = client.semantic_rerank(
         ],
         "model": "semantic-reranker-v1",
         "documentType": "json",
-        "targetPaths": "description",
+        "targetPaths": ["description"],
         "topK": 1,
         "batchSize": 2,
         "sort": True,

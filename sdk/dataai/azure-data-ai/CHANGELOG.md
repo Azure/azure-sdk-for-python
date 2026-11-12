@@ -12,7 +12,7 @@
 - Added support for service API version `2026-11-01-preview`, now the client default. Pass
   `api_version="2026-10-30"` to retain the generally available API version.
 
-## 1.0.0 (2026-11-10)
+## 1.0.0 (2026-11-11)
 
 ### Features Added
 
