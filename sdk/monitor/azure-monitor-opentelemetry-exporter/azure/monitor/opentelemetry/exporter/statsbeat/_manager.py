@@ -205,7 +205,7 @@ class StatsbeatConfig:
         return hash((str(self.connection_string), self.disable_offline_storage))
 
 
-class StatsbeatManager(metaclass=Singleton):
+class StatsbeatManager(metaclass=Singleton):  # pylint: disable=too-many-instance-attributes
     """Thread-safe singleton manager for Statsbeat metrics collection with dynamic reconfiguration support."""
 
     def __init__(self) -> None:
@@ -281,11 +281,7 @@ class StatsbeatManager(metaclass=Singleton):
 
     def _initialize(self, config: StatsbeatConfig) -> bool:
         # Initialize statsbeat collection with thread safety.
-        if not is_statsbeat_enabled():
-            return False
-
-        # Validate config before proceeding
-        if not self._validate_config(config):
+        if not is_statsbeat_enabled() or not self._validate_config(config):
             return False
 
         with self._lock:
@@ -377,7 +373,11 @@ class StatsbeatManager(metaclass=Singleton):
             return False
 
     def _update_endpoint(self, endpoint: str) -> None:
-        """Apply an accepted customer ingestion route without resetting collection."""
+        """Apply an accepted customer ingestion route without resetting collection.
+
+        :param endpoint: Accepted customer ingestion endpoint.
+        :type endpoint: str
+        """
         with self._configuration_lock:
             with self._lock:
                 exporter = self._exporter

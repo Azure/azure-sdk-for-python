@@ -1120,6 +1120,8 @@ class BaseExporter:
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, "_is_customer_sdkstats", False)
 
+    # Keep the redirect safety checks as explicit early returns.
+    # pylint: disable=too-many-return-statements
     def _is_same_registered_domain(self, current_netloc: str, redirect_netloc: str) -> bool:
         """Return True if the redirect target is safe to follow.
 
