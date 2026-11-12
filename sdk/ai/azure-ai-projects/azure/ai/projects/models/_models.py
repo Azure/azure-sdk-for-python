@@ -15538,6 +15538,9 @@ class HostedAgentDefinition(
      that exactly one is set.
     :vartype container_configuration: ~azure.ai.projects.models.ContainerConfiguration
     :ivar protocol_versions: The protocols that the agent supports for ingress communication.
+     (Preview) Declaring the ``a2a`` protocol enables A2A passthrough to the hosted agent and
+     requires ``Foundry-Features: A2AAgents=V1Preview`` when creating or modifying the hosted agent
+     definition.
     :vartype protocol_versions: list[~azure.ai.projects.models.ProtocolVersionRecord]
     :ivar code_configuration: Code-based deployment configuration. Provide this for code-based
      deployments. Mutually exclusive with container_configuration — the service validates that
@@ -15573,7 +15576,9 @@ class HostedAgentDefinition(
     protocol_versions: Optional[list["_models.ProtocolVersionRecord"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The protocols that the agent supports for ingress communication."""
+    """The protocols that the agent supports for ingress communication. (Preview) Declaring the
+     ``a2a`` protocol enables A2A passthrough to the hosted agent and requires ``Foundry-Features:
+     A2AAgents=V1Preview`` when creating or modifying the hosted agent definition."""
     code_configuration: Optional["_models.CodeConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )

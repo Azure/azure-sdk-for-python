@@ -13,6 +13,7 @@ Foundry-Features header and verify both modes:
 
 import inspect
 from typing import Any, ClassVar, Iterator, List, Tuple
+from unittest.mock import patch
 
 import pytest
 from azure.core.pipeline.transport import HttpTransport
@@ -166,6 +167,18 @@ class TestFoundryFeaturesHeaderOnGaOperations(FoundryFeaturesHeaderTestBase):
         assert not hasattr(client.beta, subclient_name)
         subclient = getattr(client, subclient_name)
         self._assert_header_absent(f"{subclient_name}.get", lambda: subclient.get("resource-test"))
+
+    def test_session_log_stream_transport_mode(self, client_preview_disabled: AIProjectClient) -> None:
+        with patch.object(CapturingTransport, "send", autospec=True, side_effect=CapturingTransport.send) as send:
+            request = self._capture(
+                lambda: client_preview_disabled.agents.get_session_log_stream(
+                    agent_name="agent-test",
+                    agent_version="1",
+                    session_id="session-test",
+                )
+            )
+        assert send.call_args.kwargs["stream"] is True
+        assert "Foundry-Features" not in request.headers
 
 
 # ---------------------------------------------------------------------------
