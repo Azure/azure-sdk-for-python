@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Agent-to-Agent (A2A) capabilities
-    using the A2APreviewTool and synchronous Azure AI Projects client. The agent can communicate
+    using the preview A2ATool and synchronous Azure AI Projects client. The agent can communicate
     with other agents and provide responses based on inter-agent interactions using the
     A2A protocol (https://a2a-protocol.org/latest/).
 
@@ -16,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -56,7 +56,7 @@ if os.environ.get("A2A_ENDPOINT"):
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     create_version_with_endpoint(
         project_client=project_client,
         agent_name=agent_name,

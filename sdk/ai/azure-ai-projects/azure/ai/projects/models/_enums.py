@@ -14,6 +14,8 @@ from azure.core import CaseInsensitiveEnumMeta
 class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Feature opt-in keys for agent definition operations supporting conditional preview features."""
 
+    A2_A_AGENTS_V1_PREVIEW = "A2AAgents=V1Preview"
+    """A2_A_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
     EXTERNAL_AGENTS_V1_PREVIEW = "ExternalAgents=V1Preview"
