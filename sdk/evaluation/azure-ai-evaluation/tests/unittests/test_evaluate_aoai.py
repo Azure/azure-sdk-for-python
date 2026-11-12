@@ -32,6 +32,57 @@ def test_begin_eval_run_surfaces_aoai_input_rejection_as_user_error():
 
 
 @pytest.mark.unittest
+class TestBeginSingleAOAIEvaluationCriteriaResponse:
+    """Reject missing criteria explicitly without submitting a native run."""
+
+    @staticmethod
+    def _begin(client: MagicMock) -> dict:
+        grader = SimpleNamespace(
+            _grader_config={"type": "string_check", "name": "native"},
+            get_client=lambda: client,
+        )
+        return _begin_single_aoai_evaluation({"alias": grader}, pd.DataFrame([{"response": "fixture"}]), {}, "test")
+
+    @pytest.mark.parametrize("include_field", [False, True])
+    def test_missing_criteria_raise_typed_response_error(self, include_field: bool) -> None:
+        client = MagicMock()
+        group = SimpleNamespace(id="eval-test")
+        if include_field:
+            group.testing_criteria = None
+        client.evals.create.return_value = group
+
+        with pytest.raises(EvaluationException) as error:
+            self._begin(client)
+
+        assert error.value.blame == ErrorBlame.UNKNOWN
+        assert "testing criteria" in str(error.value)
+        client.evals.runs.create.assert_not_called()
+
+    def test_empty_criteria_preserve_count_mismatch_error(self) -> None:
+        client = MagicMock()
+        client.evals.create.return_value = SimpleNamespace(id="eval-test", testing_criteria=[])
+
+        with pytest.raises(EvaluationException) as error:
+            self._begin(client)
+
+        assert error.value.blame == ErrorBlame.USER_ERROR
+        assert "Number of testing criteria" in str(error.value)
+        client.evals.runs.create.assert_not_called()
+
+    def test_present_criteria_continue_to_run_creation(self) -> None:
+        client = MagicMock()
+        client.evals.create.return_value = SimpleNamespace(
+            id="eval-test", testing_criteria=[SimpleNamespace(id="legacy")]
+        )
+        client.evals.runs.create.return_value = SimpleNamespace(id="run-test")
+
+        result = self._begin(client)
+
+        assert result["grader_name_map"] == {"legacy": "alias"}
+        client.evals.runs.create.assert_called_once()
+
+
+@pytest.mark.unittest
 class TestBeginSingleAOAIEvaluationGraderIdentifiers:
     """Map real native grader responses without requiring service-specific IDs."""
 
