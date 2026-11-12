@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_cluster_snapshots_create.py
+    python managed_clusters_list_cluster_monitoring_user_credentials.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,22 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.managed_cluster_snapshots.create_or_update(
+    response = client.managed_clusters.list_cluster_monitoring_user_credentials(
         resource_group_name="rg1",
-        resource_name="snapshot1",
-        parameters={
-            "location": "westus",
-            "properties": {
-                "creationData": {
-                    "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ContainerService/managedClusters/cluster1"
-                }
-            },
-            "tags": {"key1": "val1", "key2": "val2"},
-        },
+        resource_name="clustername1",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-08-02-preview/ManagedClusterSnapshotsCreate.json
+# x-ms-original-file: 2026-09-01/ManagedClustersListClusterMonitoringUserCredentials.json
 if __name__ == "__main__":
     main()
