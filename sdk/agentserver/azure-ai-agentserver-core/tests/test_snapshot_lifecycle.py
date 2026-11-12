@@ -24,7 +24,8 @@ from azure.ai.agentserver.core import (
     set_request_context,
 )
 from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
-from azure.ai.agentserver.core.tasks._manager import TaskManager, set_task_manager
+from azure.ai.agentserver.core.tasks import resilient_tasks_enabled, set_resilient_tasks_enabled
+from azure.ai.agentserver.core.tasks._manager import TaskManager, get_task_manager, set_task_manager
 
 _LIFECYCLE_TOKEN_ENV = "FOUNDRY_LIFECYCLE_TOKEN"
 _LIFECYCLE_TOKEN_HEADER = "x-foundry-lifecycle-token"
@@ -520,23 +521,31 @@ async def test_after_restore_rehydrates_task_manager_session_state_and_rolls_bac
 ) -> None:
     monkeypatch.setenv("FOUNDRY_AGENT_NAME", "test-agent")
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
+    previous_enabled = resilient_tasks_enabled()
+    set_resilient_tasks_enabled(True)
+    provider = mock.Mock()
+    provider.list = mock.AsyncMock(return_value=[])
+    monkeypatch.setattr(TaskManager, "_create_provider", staticmethod(lambda config: provider))
     agent = AgentServerHost()
-    task_manager = TaskManager(config=agent.config, provider=mock.Mock())
+    task_manager = TaskManager(config=agent.config, provider=provider)
     agent._task_manager = task_manager  # pylint: disable=protected-access
     set_task_manager(task_manager)
     captured_instance_id = task_manager._instance_id  # pylint: disable=protected-access
     restored_instance_ids: list[str] = []
+    restored_managers: list[TaskManager] = []
     callback_count = 0
 
     @agent.after_restore_handler
     async def after_restore(context: AgentSessionContext) -> None:
         nonlocal callback_count
         callback_count += 1
-        assert task_manager._lease_owner == derive_lease_owner(  # pylint: disable=protected-access
+        current_manager = get_task_manager()
+        restored_managers.append(current_manager)
+        assert current_manager._lease_owner == derive_lease_owner(  # pylint: disable=protected-access
             "test-agent",
             context.session_id,
         )
-        restored_instance_ids.append(task_manager._instance_id)  # pylint: disable=protected-access
+        restored_instance_ids.append(current_manager._instance_id)  # pylint: disable=protected-access
         if callback_count == 1:
             raise RuntimeError("restore failed")
 
@@ -556,21 +565,26 @@ async def test_after_restore_rehydrates_task_manager_session_state_and_rolls_bac
                 "test-agent",
                 "captured-session",
             )
+            assert agent._task_manager is None
+            assert restored_managers[0]._shutdown_event.is_set()
 
             retried = await lifecycle_client.post(
                 "/_agent/after-restore",
                 json=_after_restore_payload(session_id="restored-session"),
             )
     finally:
+        await agent._shutdown_task_manager()
         set_task_manager(None)
+        set_resilient_tasks_enabled(previous_enabled)
 
     assert retried.status_code == 200
-    assert task_manager._lease_owner == derive_lease_owner(  # pylint: disable=protected-access
+    assert restored_managers[1]._lease_owner == derive_lease_owner(  # pylint: disable=protected-access
         "test-agent",
         "restored-session",
     )
     assert restored_instance_ids[0] != captured_instance_id
-    assert restored_instance_ids == [restored_instance_ids[0]] * 2
+    assert restored_managers[0] is not restored_managers[1]
+    assert restored_instance_ids[0] != restored_instance_ids[1]
 
 
 @pytest.mark.asyncio
