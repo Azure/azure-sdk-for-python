@@ -6,39 +6,34 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates handling a client-executed `function` tool during
-    a live voice-agent session:
-
-    1) Create a voice agent configured with a `get_weather` function tool.
-    2) Open a realtime session and send a text turn that should trigger the tool.
-    3) Listen for `response.function_call_arguments.done`, execute the function
-       locally, and send the result back with `conversation.item.create` +
-       `response.create` so the agent can finish its reply using the tool output.
+    Create a Realtime voice agent with a local get_weather tool. Send a text
+    request, run the requested function, return its result, and print the final
+    reply. Weather values are sample data, not a live forecast.
+    The sample deletes the agent version it creates.
 
 USAGE:
-    python sample_voice_agent_realtime_function_tool.py
+    python sample_voice_agent_realtime_function_tool_async.py
 
-    Before running the sample:
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
 
-    pip install "azure-ai-projects[voice]>=2.7.0" azure-identity python-dotenv
-
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
-       identifier. Defaults to "gpt-realtime".
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_MODEL (optional) - Managed Realtime model;
+       defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the sample voice agent
        created and deleted by this script. Defaults to
        "sample-voice-agent-function-tool".
 """
 
+import asyncio
 import json
 import os
 import sys
 from typing import Any, Final, List, Tuple, cast
 
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
+from azure.identity.aio import DefaultAzureCredential
+from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeConversationItemFunctionCallOutput,
     RealtimeConversationItemMessageUser,
@@ -61,7 +56,7 @@ _RESPONSE_TIMEOUT: Final = 45
 
 
 def get_weather(city: str) -> str:
-    """A trivial local "tool" implementation the agent can call.
+    """Return sample weather without calling a weather service.
 
     :param city: The city to look up.
     :type city: str
@@ -72,14 +67,7 @@ def get_weather(city: str) -> str:
 
 
 def _safe_print(text: str) -> None:
-    """Print text that may contain characters the current console can't display.
-
-    The agent's reply below is model-generated and can contain characters (curly
-    quotes, em-dashes, etc.) outside some legacy, non-Unicode console encodings
-    (for example when stdout is piped/redirected on Windows). Rather than crashing
-    with UnicodeEncodeError, fall back to replacing just the unsupported characters;
-    a real interactive UTF-8 console prints unaffected.
-    """
+    """Print model text, replacing characters the console cannot display."""
     try:
         print(text)
     except UnicodeEncodeError:
@@ -87,24 +75,24 @@ def _safe_print(text: str) -> None:
         print(text.encode(encoding, errors="replace").decode(encoding))
 
 
-def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt: str) -> None:
+async def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt: str) -> None:
     """Send one turn and resolve any function-call the agent makes before printing its reply.
 
     :param client: The Foundry project client.
     :param agent_name: The voice agent name.
     :param prompt: The user's message for this turn.
-    :type client: ~azure.ai.projects.AIProjectClient
+    :type client: ~azure.ai.projects.aio.AIProjectClient
     :type agent_name: str
     :type prompt: str
     """
-    with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
-        conn.conversation.item.create(
+    async with client.voice_agents.realtime.connect(agent_name=agent_name) as conn:
+        await conn.conversation.item.create(
             item=RealtimeConversationItemMessageUser(
                 type=RealtimeConversationItemType.MESSAGE,
                 content=[RealtimeConversationItemMessageUserContent(type="input_text", text=prompt)],
             )
         )
-        conn.response.create()
+        await conn.response.create()
 
         # Tool outputs collected from the current turn's function-call(s). These are held back
         # and only sent once this turn's own response.done arrives (below) -- calling
@@ -113,11 +101,13 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
         pending_tool_outputs: List[Tuple[str, str]] = []
         while True:
             try:
-                event = conn.recv(timeout=_RESPONSE_TIMEOUT)
+                event = await asyncio.wait_for(conn.recv(), timeout=_RESPONSE_TIMEOUT)
             except TimeoutError:
                 print("Timed out waiting for the agent's reply.")
-                conn.response.cancel()
+                await conn.response.cancel()
                 return
+            if isinstance(event, dict) and event.get("type") in ("response.output_text.done", "response.text.done"):
+                event = RealtimeServerEventResponseTextDone(event)
             if isinstance(event, RealtimeServerEventResponseFunctionCallArgumentsDone):
                 # The service forwards the call to us; execute it locally now, but defer sending
                 # the result until this response's own response.done arrives.
@@ -141,11 +131,11 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
                     # The function-call response has now fully completed, so it's safe to submit
                     # its tool output(s) and ask for a new response.
                     for call_id, result in pending_tool_outputs:
-                        conn.conversation.item.create(
+                        await conn.conversation.item.create(
                             item=RealtimeConversationItemFunctionCallOutput(call_id=call_id, output=result)
                         )
                     pending_tool_outputs = []
-                    conn.response.create()
+                    await conn.response.create()
                 elif not any(
                     (item.get("type") if isinstance(item, dict) else getattr(item, "type", None)) == "function_call"
                     for item in (event.response.output or [])
@@ -156,7 +146,7 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
                 return
 
 
-def main() -> None:
+async def main() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     model = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL") or "gpt-realtime"
     agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-voice-agent-function-tool"
@@ -174,13 +164,13 @@ def main() -> None:
         ),
     )
 
-    with (
+    async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
         created_version = None
         try:
-            created_version = project_client.agents.create_version(
+            created_version = await project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=VoiceAgentDefinition(
                     model_type=VoiceModelType.MANAGED,
@@ -195,12 +185,14 @@ def main() -> None:
             )
             print(f"Created voice agent: {agent_name}")
 
-            _run_turn_with_tool_support(project_client, agent_name, "What's the weather like in Seattle right now?")
+            await _run_turn_with_tool_support(
+                project_client, agent_name, "What's the weather like in Seattle right now?"
+            )
         finally:
             if created_version is not None:
-                project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
+                await project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
                 print(f"Deleted voice agent version: {created_version.version}")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -17,7 +17,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
     AgentsOperations as GeneratedAgentsOperations,
-    BetaAgentsOperations as BetaAgentsOperationsGenerated,
     JSON,
     _Unset,
 )
@@ -465,7 +464,3 @@ class AgentsOperations(GeneratedAgentsOperations):
             )
         assert raw_result is not None
         return AgentOptimizationLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-
-class BetaAgentsOperations(BetaAgentsOperationsGenerated):
-    """Custom operations for beta agents."""
