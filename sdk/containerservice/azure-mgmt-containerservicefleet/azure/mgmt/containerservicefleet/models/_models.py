@@ -3696,15 +3696,6 @@ class UpdateGroup(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar name: Name of the group. It must match a group name of an existing fleet member.
      Required.
     :vartype name: str
-    :ivar max_allowed_failures: Limits the number of member (cluster) upgrade failures tolerated
-     within this group. Failures are evaluated over members within this group only. Accepts either:
-     • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at
-     stage start using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and
-     N is the number of members in this group at scope start. Examples: • "3"   --> up to 3 member
-     upgrade failures are tolerated within this group. The 4th failure causes the group to fail. •
-     "25%" --> up to 25% of the members in this group can fail their upgrade before the group is
-     considered failed.
-    :vartype max_allowed_failures: str
     :ivar max_concurrency: The max number of upgrades that can run concurrently in this specific
      group. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within the
      group you want to tolerate at a time. Actual concurrency may be lower depending on stage-level
@@ -3732,16 +3723,6 @@ class UpdateGroup(_Model):  # pylint: disable=docstring-keyword-should-match-key
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the group. It must match a group name of an existing fleet member. Required."""
-    max_allowed_failures: Optional[str] = rest_field(
-        name="maxAllowedFailures", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Limits the number of member (cluster) upgrade failures tolerated within this group. Failures
-     are evaluated over members within this group only. Accepts either: • A fixed count n, where n
-     >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start using:
-     resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the number of
-     members in this group at scope start. Examples: • \"3\"   --> up to 3 member upgrade failures
-     are tolerated within this group. The 4th failure causes the group to fail. • \"25%\" --> up to
-     25% of the members in this group can fail their upgrade before the group is considered failed."""
     max_concurrency: Optional[str] = rest_field(
         name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3779,7 +3760,6 @@ class UpdateGroup(_Model):  # pylint: disable=docstring-keyword-should-match-key
         self,
         *,
         name: str,
-        max_allowed_failures: Optional[str] = None,
         max_concurrency: Optional[str] = None,
         member_selector: Optional["_models.MemberSelector"] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
@@ -3804,11 +3784,6 @@ class UpdateGroupStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateGroup.
     :vartype name: str
-    :ivar failure_count: The total member upgrade failures within the group.
-    :vartype failure_count: int
-    :ivar max_allowed_failures: The max number of member upgrade failures allowed within this
-     group, resolved from the UpdateStrategy.UpdateGroup.maxAllowedFailures value.
-    :vartype max_allowed_failures: int
     :ivar max_concurrency:   The max number of upgrades that can run concurrently in this group,
      resolved from the UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided,
      this value defaults to "1".
@@ -3825,11 +3800,6 @@ class UpdateGroupStatus(_Model):
     """The status of the UpdateGroup."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateGroup."""
-    failure_count: Optional[int] = rest_field(name="failureCount", visibility=["read"])
-    """The total member upgrade failures within the group."""
-    max_allowed_failures: Optional[int] = rest_field(name="maxAllowedFailures", visibility=["read"])
-    """The max number of member upgrade failures allowed within this group, resolved from the
-     UpdateStrategy.UpdateGroup.maxAllowedFailures value."""
     max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
     """The max number of upgrades that can run concurrently in this group, resolved from the
      UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided, this value defaults
@@ -4093,8 +4063,6 @@ class UpdateRunStatus(_Model):
      update run when ``NodeImageSelection.type`` is ``Consistent``.
     :vartype node_image_selection:
      ~azure.mgmt.containerservicefleet.models.NodeImageSelectionStatus
-    :ivar failure_count: Total member upgrade failures across the entire UpdateRun.
-    :vartype failure_count: int
     """
 
     status: Optional["_models.UpdateStatus"] = rest_field(visibility=["read"])
@@ -4106,8 +4074,6 @@ class UpdateRunStatus(_Model):
     )
     """The node image upgrade specs for the update run. It is only set in update run when
      ``NodeImageSelection.type`` is ``Consistent``."""
-    failure_count: Optional[int] = rest_field(name="failureCount", visibility=["read"])
-    """Total member upgrade failures across the entire UpdateRun."""
 
 
 class UpdateRunStrategy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -4164,15 +4130,6 @@ class UpdateStage(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar after_stage_wait_in_seconds: The time in seconds to wait at the end of this stage before
      starting the next one. Defaults to 0 seconds if unspecified.
     :vartype after_stage_wait_in_seconds: int
-    :ivar max_allowed_failures: Limits the number of member (cluster) upgrade failures tolerated
-     within this stage. Failures are evaluated over all members within all groups within this stage.
-     Accepts either: • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100
-     Percentage resolves at stage start using: resolvedThreshold = ceil(p * N), where p is the
-     percentage as a decimal and N is the number of members in this stage at scope start. Examples:
-     • "3"   --> up to 3 member upgrade failures are tolerated within this stage. The 4th failure
-     would cause the entire stage to fail. • "25%" --> up to 25% of the members in this stage can
-     fail their upgrade before the stage is considered failed.
-    :vartype max_allowed_failures: str
     :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
      in this stage. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within
      the stage you want to tolerate at a time. Actual concurrency may be lower depending on
@@ -4212,17 +4169,6 @@ class UpdateStage(_Model):  # pylint: disable=docstring-keyword-should-match-key
     )
     """The time in seconds to wait at the end of this stage before starting the next one. Defaults to
      0 seconds if unspecified."""
-    max_allowed_failures: Optional[str] = rest_field(
-        name="maxAllowedFailures", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Limits the number of member (cluster) upgrade failures tolerated within this stage. Failures
-     are evaluated over all members within all groups within this stage. Accepts either: • A fixed
-     count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start
-     using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the
-     number of members in this stage at scope start. Examples: • \"3\"   --> up to 3 member upgrade
-     failures are tolerated within this stage. The 4th failure would cause the entire stage to fail.
-     • \"25%\" --> up to 25% of the members in this stage can fail their upgrade before the stage is
-     considered failed."""
     max_concurrency: Optional[str] = rest_field(
         name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4253,7 +4199,6 @@ class UpdateStage(_Model):  # pylint: disable=docstring-keyword-should-match-key
         groups: Optional[list["_models.UpdateGroup"]] = None,
         member_selector: Optional["_models.MemberSelector"] = None,
         after_stage_wait_in_seconds: Optional[int] = None,
-        max_allowed_failures: Optional[str] = None,
         max_concurrency: Optional[str] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
         after_gates: Optional[list["_models.GateConfiguration"]] = None,
@@ -4277,11 +4222,6 @@ class UpdateStageStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateStage.
     :vartype name: str
-    :ivar failure_count: The total member upgrade failures within the stage.
-    :vartype failure_count: int
-    :ivar max_allowed_failures: The max number of member upgrade failures allowed within this
-     stage, resolved from the UpdateStrategy.UpdateStage.maxAllowedFailures value.
-    :vartype max_allowed_failures: int
     :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
      in this stage, resolved from the UpdateStrategy.UpdateStage.maxConcurrency value.
     :vartype max_concurrency: int
@@ -4299,11 +4239,6 @@ class UpdateStageStatus(_Model):
     """The status of the UpdateStage."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateStage."""
-    failure_count: Optional[int] = rest_field(name="failureCount", visibility=["read"])
-    """The total member upgrade failures within the stage."""
-    max_allowed_failures: Optional[int] = rest_field(name="maxAllowedFailures", visibility=["read"])
-    """The max number of member upgrade failures allowed within this stage, resolved from the
-     UpdateStrategy.UpdateStage.maxAllowedFailures value."""
     max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
     """The max number of upgrades that can run concurrently across all groups in this stage, resolved
      from the UpdateStrategy.UpdateStage.maxConcurrency value."""
