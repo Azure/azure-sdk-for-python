@@ -209,7 +209,7 @@ BINARY_CASES = [
         "tool_input_accuracy",
         "tool_input_accuracy.decision.yaml",
         {"query": QUERY, "response": RESPONSE_MESSAGES, "tool_definitions": TOOL_DEFINITIONS},
-        {"query": QUERY, "tool_calls": AGENT_RESPONSE_TEXT, "tool_definitions": TOOL_DEFINITIONS},
+        {"query": QUERY, "tool_calls": TOOL_CALL_RESULTS_TEXT, "tool_definitions": TOOL_DEFINITIONS},
         1,
     ),
     (

@@ -1,5 +1,11 @@
 # Release History
 
+## 1.18.13 (Unreleased)
+
+### Bugs Fixed
+
+- `_ToolInputAccuracyEvaluator` sends the judge model only the tool calls and their results as the "Tool Calls Made" input. It also sent the assistant's text, including the final answer, and the judge model then sometimes reported a row that had tool calls as skipped. `reformat_agent_response` takes `include_text` (default `True`, unchanged for other evaluators). Fixes [#49923](https://github.com/Azure/azure-sdk-for-python/issues/49923).
+
 ## 1.18.12 (2026-11-09)
 
 ### Bugs Fixed

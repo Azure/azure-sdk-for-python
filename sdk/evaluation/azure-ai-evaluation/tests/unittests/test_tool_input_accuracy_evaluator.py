@@ -195,7 +195,12 @@ class TestToolInputAccuracyEvaluator:
                 "role": "assistant",
                 "content": [
                     {"type": "text", "text": "Let me load the skill first."},
-                    {"type": "tool_call", "tool_call_id": "c1", "name": "get_weather", "arguments": {"location": "Paris"}},
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "c1",
+                        "name": "get_weather",
+                        "arguments": {"location": "Paris"},
+                    },
                 ],
             },
             {"role": "tool", "tool_call_id": "c1", "content": [{"type": "tool_result", "tool_result": {"temp": 18}}]},
@@ -206,11 +211,17 @@ class TestToolInputAccuracyEvaluator:
                 "name": "get_weather",
                 "type": "function",
                 "description": "Get weather information for a location",
-                "parameters": {"type": "object", "properties": {"location": {"type": "string"}}, "required": ["location"]},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string"}},
+                    "required": ["location"],
+                },
             }
         ]
 
-        evaluator(query="What is the weather in Paris? all_correct", response=response, tool_definitions=tool_definitions)
+        evaluator(
+            query="What is the weather in Paris? all_correct", response=response, tool_definitions=tool_definitions
+        )
 
         tool_calls = evaluator._flow.call_args.kwargs["tool_calls"]
         assert tool_calls == '[TOOL_CALL] get_weather(location="Paris")\n[TOOL_RESULT] {"temp": 18}'
