@@ -41,7 +41,7 @@
         "azure.ai.finetuningsessions.models.TensorData": "Azure.AI.Projects.SessionFineTuning.TensorData",
         "azure.ai.finetuningsessions.models.OperationType": "Azure.AI.FineTuning.Sessions.OperationType",
         "azure.ai.finetuningsessions.models.OperationStatus": "Azure.AI.FineTuning.Sessions.OperationStatus",
-        "azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
+        "azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys": "Azure.AI.ProjectsInternal.FoundryFeaturesOptInKeys",
         "azure.ai.finetuningsessions.models.SessionType": "Azure.AI.Projects.SessionFineTuning.FineTuningSessionType",
         "azure.ai.finetuningsessions.models.TrainingType": "Azure.AI.Projects.SessionFineTuning.FineTuningTrainingType",
         "azure.ai.finetuningsessions.models.SessionStatus": "Azure.AI.FineTuning.Sessions.SessionStatus",
@@ -75,5 +75,5 @@
         "azure.ai.finetuningsessions.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get",
         "azure.ai.finetuningsessions.aio.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get"
     },
-    "CrossLanguageVersion": "14c4ccbb996f"
+    "CrossLanguageVersion": "bf4910dc600f"
 }
