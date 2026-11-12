@@ -301,3 +301,28 @@ This is an RLE preview distribution, not a PyPI publication, backend deployment
 or live training qualification. Existing Python environments and consumer images
 must install the new wheel to receive these defaults; explicit timeout overrides
 in callers continue to take precedence.
+
+## Opt-in grader-error preview 2.7.11b1
+
+This separately versioned preview packages the merged grader-error propagation
+changes from [source PR #15](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/15)
+on top of the published 2.7.10b1 source. Queued failures expose a bounded
+caller-facing `RLERolloutError.service_message` and structured `cause`, together
+with rollout/attempt/sequence correlation and original-ID attachment recovery.
+Raw grader tracebacks and stderr are not added to durable events. Loom and
+final-job reporting still require the matching consumer changes.
+
+Built from merged SDK source `b72356f901a9f9436db4678152f00355c2e009ab`,
+with only the staged package version overridden to `2.7.11b1`. All packaged
+Python files match the published 2.7.10b1 wheel except `_version.py`; grader
+support was already included in prior previews. The 64-call admission limit,
+90-minute default post-admission timeout, explicit timeout overrides,
+model/renderer preflight, isolated queued validation, V4 defaults and
+no-execution-replay behavior are retained. Dependencies are unchanged.
+
+The wheel is 613669 bytes with SHA-256
+`f1214543c48ff13996e04b31800134410ce97967da585d7cecb660cf673422a9`.
+All eleven published registry entries and wheels are preserved, and `latest`
+remains `2.7.10b1`. Select `--version 2.7.11b1` explicitly after this artifact
+PR is merged. This is not a PyPI publication, backend deployment or consumer
+image rebuild.
