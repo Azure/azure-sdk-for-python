@@ -40,19 +40,14 @@ from ..._validation import api_version_validation
 from ...operations._operations import (
     build_key_vault_check_ekm_connection_request,
     build_key_vault_create_ekm_connection_request,
-    build_key_vault_create_ekm_private_endpoint_request,
     build_key_vault_delete_ekm_connection_request,
-    build_key_vault_delete_ekm_private_endpoint_request,
     build_key_vault_full_backup_request,
     build_key_vault_full_backup_status_request,
     build_key_vault_full_restore_operation_request,
     build_key_vault_get_ekm_certificate_request,
     build_key_vault_get_ekm_connection_request,
-    build_key_vault_get_ekm_private_endpoint_operation_status_request,
-    build_key_vault_get_ekm_private_endpoint_request,
     build_key_vault_get_setting_request,
     build_key_vault_get_settings_request,
-    build_key_vault_list_ekm_private_endpoints_request,
     build_key_vault_pre_full_backup_request,
     build_key_vault_pre_full_restore_operation_request,
     build_key_vault_restore_status_request,
@@ -1257,8 +1252,6 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
             "2026-01-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
         ],
     )
     async def _pre_full_backup_initial(
@@ -1415,8 +1408,6 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
             "2026-01-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
         ],
     )
     async def begin_pre_full_backup(
@@ -1800,8 +1791,6 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
             "2026-01-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
         ],
     )
     async def _pre_full_restore_operation_initial(
@@ -1958,8 +1947,6 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
             "2026-01-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
         ],
     )
     async def begin_pre_full_restore_operation(
@@ -2658,13 +2645,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
-        api_versions_list=[
-            "2026-01-01-preview",
-            "2026-03-01-preview",
-            "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
-        ],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def get_ekm_connection(self, **kwargs: Any) -> _models.EkmConnection:
         """Gets the EKM connection.
@@ -2736,13 +2717,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
-        api_versions_list=[
-            "2026-01-01-preview",
-            "2026-03-01-preview",
-            "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
-        ],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def get_ekm_certificate(self, **kwargs: Any) -> _models.EkmProxyClientCertificateInfo:
         """Gets the EKM proxy client certificate.
@@ -2815,13 +2790,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
-        api_versions_list=[
-            "2026-01-01-preview",
-            "2026-03-01-preview",
-            "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
-        ],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def check_ekm_connection(self, **kwargs: Any) -> _models.EkmProxyInfo:
         """Checks the connectivity and authentication with the EKM proxy.
@@ -2950,13 +2919,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=[
-            "2026-01-01-preview",
-            "2026-03-01-preview",
-            "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
-        ],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def create_ekm_connection(
         self, ekm_connection: Union[_models.EkmConnection, _types.EkmConnection, IO[bytes]], **kwargs: Any
@@ -3101,13 +3064,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=[
-            "2026-01-01-preview",
-            "2026-03-01-preview",
-            "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
-        ],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def update_ekm_connection(
         self, ekm_connection: Union[_models.EkmConnection, _types.EkmConnection, IO[bytes]], **kwargs: Any
@@ -3195,13 +3152,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
-        api_versions_list=[
-            "2026-01-01-preview",
-            "2026-03-01-preview",
-            "2026-04-01",
-            "2026-05-01-preview",
-            "2026-07-01-preview",
-        ],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def delete_ekm_connection(self, **kwargs: Any) -> _models.EkmConnection:
         """Deletes the EKM connection.
@@ -3263,636 +3214,6 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EkmConnection, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={"2026-07-01-preview": ["api_version", "operation_id", "accept"]},
-        api_versions_list=["2026-07-01-preview"],
-    )
-    async def get_ekm_private_endpoint_operation_status(  # pylint: disable=name-too-long
-        self, operation_id: str, **kwargs: Any
-    ) -> _models.EkmPrivateEndpointOperation:
-        """Gets the status of an EKM proxy private endpoint operation.
-
-        The External Key Manager (EKM) private endpoint operation status. Returns the status of a
-        private endpoint create or delete operation. This operation requires ekm/read permission.
-
-        :param operation_id: The identifier of the private endpoint operation. Required.
-        :type operation_id: str
-        :return: EkmPrivateEndpointOperation. The EkmPrivateEndpointOperation is compatible with
-         MutableMapping
-        :rtype: ~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.EkmPrivateEndpointOperation] = kwargs.pop("cls", None)
-
-        _request = build_key_vault_get_ekm_private_endpoint_operation_status_request(
-            operation_id=operation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "vaultBaseUrl": self._serialize.url(
-                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
-            ),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.KeyVaultError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EkmPrivateEndpointOperation, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "content_type", "accept"]},
-        api_versions_list=["2026-07-01-preview"],
-    )
-    async def _create_ekm_private_endpoint_initial(
-        self,
-        pe_name: str,
-        parameters: Union[
-            _models.EkmPrivateEndpointCreateParameters, _types.EkmPrivateEndpointCreateParameters, IO[bytes]
-        ],
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_key_vault_create_ekm_private_endpoint_request(
-            pe_name=pe_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "vaultBaseUrl": self._serialize.url(
-                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
-            ),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.KeyVaultError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Azure-AsyncOperation"] = self._deserialize(
-            "str", response.headers.get("Azure-AsyncOperation")
-        )
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create_ekm_private_endpoint(
-        self,
-        pe_name: str,
-        parameters: _models.EkmPrivateEndpointCreateParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.EkmPrivateEndpointOperation]:
-        """Creates an EKM proxy private endpoint.
-
-        The External Key Manager (EKM) creates a private endpoint to the EKM proxy Private Link
-        Service. A pool may have up to two private endpoints. This operation requires ekm/write
-        permission.
-
-        :param pe_name: The name of the private endpoint. Must be 1-24 characters, start and end with
-         an alphanumeric character, and contain only alphanumeric characters and hyphens. Required.
-        :type pe_name: str
-        :param parameters: The parameters to create the private endpoint. Required.
-        :type parameters:
-         ~azure.keyvault.administration._generated.models.EkmPrivateEndpointCreateParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns EkmPrivateEndpointOperation. The
-         EkmPrivateEndpointOperation is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_ekm_private_endpoint(
-        self,
-        pe_name: str,
-        parameters: _types.EkmPrivateEndpointCreateParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.EkmPrivateEndpointOperation]:
-        """Creates an EKM proxy private endpoint.
-
-        The External Key Manager (EKM) creates a private endpoint to the EKM proxy Private Link
-        Service. A pool may have up to two private endpoints. This operation requires ekm/write
-        permission.
-
-        :param pe_name: The name of the private endpoint. Must be 1-24 characters, start and end with
-         an alphanumeric character, and contain only alphanumeric characters and hyphens. Required.
-        :type pe_name: str
-        :param parameters: The parameters to create the private endpoint. Required.
-        :type parameters:
-         ~azure.keyvault.administration._generated.types.EkmPrivateEndpointCreateParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns EkmPrivateEndpointOperation. The
-         EkmPrivateEndpointOperation is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_ekm_private_endpoint(
-        self, pe_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.EkmPrivateEndpointOperation]:
-        """Creates an EKM proxy private endpoint.
-
-        The External Key Manager (EKM) creates a private endpoint to the EKM proxy Private Link
-        Service. A pool may have up to two private endpoints. This operation requires ekm/write
-        permission.
-
-        :param pe_name: The name of the private endpoint. Must be 1-24 characters, start and end with
-         an alphanumeric character, and contain only alphanumeric characters and hyphens. Required.
-        :type pe_name: str
-        :param parameters: The parameters to create the private endpoint. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns EkmPrivateEndpointOperation. The
-         EkmPrivateEndpointOperation is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "content_type", "accept"]},
-        api_versions_list=["2026-07-01-preview"],
-    )
-    async def begin_create_ekm_private_endpoint(
-        self,
-        pe_name: str,
-        parameters: Union[
-            _models.EkmPrivateEndpointCreateParameters, _types.EkmPrivateEndpointCreateParameters, IO[bytes]
-        ],
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.EkmPrivateEndpointOperation]:
-        """Creates an EKM proxy private endpoint.
-
-        The External Key Manager (EKM) creates a private endpoint to the EKM proxy Private Link
-        Service. A pool may have up to two private endpoints. This operation requires ekm/write
-        permission.
-
-        :param pe_name: The name of the private endpoint. Must be 1-24 characters, start and end with
-         an alphanumeric character, and contain only alphanumeric characters and hyphens. Required.
-        :type pe_name: str
-        :param parameters: The parameters to create the private endpoint. Is either a
-         EkmPrivateEndpointCreateParameters type or a IO[bytes] type. Required.
-        :type parameters:
-         ~azure.keyvault.administration._generated.models.EkmPrivateEndpointCreateParameters or
-         ~azure.keyvault.administration._generated.types.EkmPrivateEndpointCreateParameters or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns EkmPrivateEndpointOperation. The
-         EkmPrivateEndpointOperation is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EkmPrivateEndpointOperation] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_ekm_private_endpoint_initial(
-                pe_name=pe_name,
-                parameters=parameters,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.EkmPrivateEndpointOperation, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "vaultBaseUrl": self._serialize.url(
-                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
-            ),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.EkmPrivateEndpointOperation].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.EkmPrivateEndpointOperation](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "accept"]},
-        api_versions_list=["2026-07-01-preview"],
-    )
-    async def _delete_ekm_private_endpoint_initial(self, pe_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_key_vault_delete_ekm_private_endpoint_request(
-            pe_name=pe_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "vaultBaseUrl": self._serialize.url(
-                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
-            ),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.KeyVaultError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Azure-AsyncOperation"] = self._deserialize(
-            "str", response.headers.get("Azure-AsyncOperation")
-        )
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "accept"]},
-        api_versions_list=["2026-07-01-preview"],
-    )
-    async def begin_delete_ekm_private_endpoint(
-        self, pe_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.EkmPrivateEndpointOperation]:
-        """Deletes an EKM proxy private endpoint.
-
-        The External Key Manager (EKM) deletes an existing EKM proxy private endpoint. The operation is
-        rejected while an EKM connection still references the private endpoint. This operation requires
-        ekm/write permission.
-
-        :param pe_name: The name of the private endpoint to delete. Required.
-        :type pe_name: str
-        :return: An instance of AsyncLROPoller that returns EkmPrivateEndpointOperation. The
-         EkmPrivateEndpointOperation is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.EkmPrivateEndpointOperation] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_ekm_private_endpoint_initial(
-                pe_name=pe_name, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.EkmPrivateEndpointOperation, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "vaultBaseUrl": self._serialize.url(
-                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
-            ),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.EkmPrivateEndpointOperation].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.EkmPrivateEndpointOperation](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={"2026-07-01-preview": ["api_version", "pe_name", "accept"]},
-        api_versions_list=["2026-07-01-preview"],
-    )
-    async def get_ekm_private_endpoint(self, pe_name: str, **kwargs: Any) -> _models.EkmPrivateEndpoint:
-        """Gets an EKM proxy private endpoint.
-
-        The External Key Manager (EKM) gets an existing EKM proxy private endpoint. This operation
-        requires ekm/read permission.
-
-        :param pe_name: The name of the private endpoint to get. Required.
-        :type pe_name: str
-        :return: EkmPrivateEndpoint. The EkmPrivateEndpoint is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration._generated.models.EkmPrivateEndpoint
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.EkmPrivateEndpoint] = kwargs.pop("cls", None)
-
-        _request = build_key_vault_get_ekm_private_endpoint_request(
-            pe_name=pe_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "vaultBaseUrl": self._serialize.url(
-                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
-            ),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.KeyVaultError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EkmPrivateEndpoint, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-07-01-preview",
-        params_added_on={"2026-07-01-preview": ["api_version", "accept"]},
-        api_versions_list=["2026-07-01-preview"],
-    )
-    async def list_ekm_private_endpoints(self, **kwargs: Any) -> _models.EkmPrivateEndpointListResult:
-        """Lists the EKM proxy private endpoints.
-
-        The External Key Manager (EKM) lists all EKM proxy private endpoints on the pool. This
-        operation requires ekm/read permission.
-
-        :return: EkmPrivateEndpointListResult. The EkmPrivateEndpointListResult is compatible with
-         MutableMapping
-        :rtype: ~azure.keyvault.administration._generated.models.EkmPrivateEndpointListResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.EkmPrivateEndpointListResult] = kwargs.pop("cls", None)
-
-        _request = build_key_vault_list_ekm_private_endpoints_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "vaultBaseUrl": self._serialize.url(
-                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
-            ),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.KeyVaultError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EkmPrivateEndpointListResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

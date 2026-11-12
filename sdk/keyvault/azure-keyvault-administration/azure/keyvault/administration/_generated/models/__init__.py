@@ -15,12 +15,6 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     EkmConnection,
-    EkmPrivateEndpoint,
-    EkmPrivateEndpointConnectionState,
-    EkmPrivateEndpointCreateParameters,
-    EkmPrivateEndpointListResult,
-    EkmPrivateEndpointOperation,
-    EkmPrivateEndpointProperties,
     EkmProxyClientCertificateInfo,
     EkmProxyInfo,
     FullBackupOperation,
@@ -48,11 +42,6 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     DataAction,
-    EkmConnectivityMode,
-    EkmPrivateEndpointConnectionStatus,
-    EkmPrivateEndpointOperationType,
-    EkmPrivateEndpointProvisioningState,
-    OperationState,
     OperationStatus,
     RoleDefinitionType,
     RoleScope,
@@ -65,12 +54,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "EkmConnection",
-    "EkmPrivateEndpoint",
-    "EkmPrivateEndpointConnectionState",
-    "EkmPrivateEndpointCreateParameters",
-    "EkmPrivateEndpointListResult",
-    "EkmPrivateEndpointOperation",
-    "EkmPrivateEndpointProperties",
     "EkmProxyClientCertificateInfo",
     "EkmProxyInfo",
     "FullBackupOperation",
@@ -95,11 +78,6 @@ __all__ = [
     "SettingsListResult",
     "UpdateSettingRequest",
     "DataAction",
-    "EkmConnectivityMode",
-    "EkmPrivateEndpointConnectionStatus",
-    "EkmPrivateEndpointOperationType",
-    "EkmPrivateEndpointProvisioningState",
-    "OperationState",
     "OperationStatus",
     "RoleDefinitionType",
     "RoleScope",

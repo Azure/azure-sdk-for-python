@@ -10,17 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AKPAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The algorithm identifier for Algorithm Key Pair (AKP) keys."""
-
-    ML_DSA_44 = "ML-DSA-44"
-    """ML-DSA-44, as defined by FIPS 204 and draft-ietf-cose-dilithium."""
-    ML_DSA_65 = "ML-DSA-65"
-    """ML-DSA-65, as defined by FIPS 204 and draft-ietf-cose-dilithium."""
-    ML_DSA_87 = "ML-DSA-87"
-    """ML-DSA-87, as defined by FIPS 204 and draft-ietf-cose-dilithium."""
-
-
 class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reflects the deletion recovery level currently in effect for certificates in the current vault.
     If it contains 'Purgeable', the certificate can be permanently deleted by a privileged user;
@@ -143,10 +132,6 @@ class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates that the key can be used to wrap another key."""
     UNWRAP_KEY = "unwrapKey"
     """Indicates that the key can be used to unwrap another key."""
-    SECURE_WRAP_KEY = "secureWrapKey"
-    """Indicates that the key can be used to securely wrap another key."""
-    SECURE_UNWRAP_KEY = "secureUnwrapKey"
-    """Indicates that the key can be used to securely unwrap another key."""
     IMPORT = "import"
     """Indicates that the key can be imported during creation."""
     EXPORT = "export"
@@ -207,10 +192,6 @@ class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_.
     """
 
-    AKP = "AKP"
-    """Algorithm Key Pair."""
-    AKP_HSM = "AKP-HSM"
-    """Algorithm Key Pair with private key material stored in HSM."""
     EC = "EC"
     """Elliptic Curve."""
     EC_HSM = "EC-HSM"

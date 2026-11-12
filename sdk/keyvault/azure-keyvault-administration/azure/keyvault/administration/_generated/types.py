@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
-    from .models import DataAction, EkmConnectivityMode, RoleScope, RoleType
+    from .models import DataAction, RoleScope, RoleType
 
 
 class EkmConnection(TypedDict, total=False):
@@ -28,10 +28,6 @@ class EkmConnection(TypedDict, total=False):
     :ivar server_subject_common_name: The subject common name of the server certificate of EKM
      Proxy.
     :vartype server_subject_common_name: str
-    :ivar connectivity_mode: The connectivity mode used to reach the EKM proxy. Defaults to
-     "Public". In "PrivateEndpoint" mode, the host field holds the name of a private endpoint
-     (peName) instead of a DNS name or IP address. Known values are: "Public" and "PrivateEndpoint".
-    :vartype connectivity_mode: Union[str, "EkmConnectivityMode"]
     """
 
     host: Required[str]
@@ -44,28 +40,6 @@ class EkmConnection(TypedDict, total=False):
      certificates in the certificate chain, each in DER format and base64 encoded. Required."""
     server_subject_common_name: str
     """The subject common name of the server certificate of EKM Proxy."""
-    connectivity_mode: Union[str, "EkmConnectivityMode"]
-    """The connectivity mode used to reach the EKM proxy. Defaults to \"Public\". In
-     \"PrivateEndpoint\" mode, the host field holds the name of a private endpoint (peName) instead
-     of a DNS name or IP address. Known values are: \"Public\" and \"PrivateEndpoint\"."""
-
-
-class EkmPrivateEndpointCreateParameters(TypedDict, total=False):
-    """Parameters to create an EKM proxy private endpoint.
-
-    :ivar privateLinkServiceId: Alias of the Private Link Service that the private endpoint
-     connects to. Required.
-    :vartype privateLinkServiceId: str
-    :ivar requestMessage: An optional message shown to the Private Link Service owner when
-     approving the private endpoint connection.
-    :vartype requestMessage: str
-    """
-
-    privateLinkServiceId: Required[str]
-    """Alias of the Private Link Service that the private endpoint connects to. Required."""
-    requestMessage: str
-    """An optional message shown to the Private Link Service owner when approving the private endpoint
-     connection."""
 
 
 class Permission(TypedDict, total=False):

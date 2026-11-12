@@ -11,7 +11,6 @@ from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
     from .models import (
-        AKPAlgorithm,
         DeletionRecoveryLevel,
         JsonWebKeyCurveName,
         JsonWebKeyEncryptionAlgorithm,
@@ -56,8 +55,8 @@ class JsonWebKey(TypedDict, total=False):
     :vartype kid: str
     :ivar kty: JsonWebKey Key Type (kty), as defined in
      `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
-     <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are:
-     "AKP", "AKP-HSM", "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+     <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are: "EC",
+     "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
     :vartype kty: Union[str, "JsonWebKeyType"]
     :ivar key_ops: Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation.
@@ -89,11 +88,6 @@ class JsonWebKey(TypedDict, total=False):
     :vartype x: str
     :ivar y: Y component of an EC public key.
     :vartype y: str
-    :ivar alg: The algorithm identifier. This parameter is required when kty is AKP. Known values
-     are: "ML-DSA-44", "ML-DSA-65", and "ML-DSA-87".
-    :vartype alg: Union[str, "AKPAlgorithm"]
-    :ivar pub: The public key for Algorithm Key Pair (AKP) keys.
-    :vartype pub: str
     """
 
     kid: str
@@ -102,7 +96,7 @@ class JsonWebKey(TypedDict, total=False):
     """JsonWebKey Key Type (kty), as defined in
      `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
      <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are:
-     \"AKP\", \"AKP-HSM\", \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
+     \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
     key_ops: list[str]
     """Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation."""
@@ -133,11 +127,6 @@ class JsonWebKey(TypedDict, total=False):
     """X component of an EC public key."""
     y: str
     """Y component of an EC public key."""
-    alg: Union[str, "AKPAlgorithm"]
-    """The algorithm identifier. This parameter is required when kty is AKP. Known values are:
-     \"ML-DSA-44\", \"ML-DSA-65\", and \"ML-DSA-87\"."""
-    pub: str
-    """The public key for Algorithm Key Pair (AKP) keys."""
 
 
 class KeyAttestation(TypedDict, total=False):
@@ -242,7 +231,7 @@ class KeyCreateParameters(TypedDict, total=False):
     """The key create parameters.
 
     :ivar kty: The type of key to create. For valid values, see JsonWebKeyType. Required. Known
-     values are: "AKP", "AKP-HSM", "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+     values are: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
     :vartype kty: Union[str, "JsonWebKeyType"]
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
@@ -260,14 +249,11 @@ class KeyCreateParameters(TypedDict, total=False):
     :vartype crv: Union[str, "JsonWebKeyCurveName"]
     :ivar release_policy: The policy rules under which the key can be exported.
     :vartype release_policy: "KeyReleasePolicy"
-    :ivar alg: The algorithm for Algorithm Key Pair (AKP) keys. For valid values, see AKPAlgorithm.
-     Known values are: "ML-DSA-44", "ML-DSA-65", and "ML-DSA-87".
-    :vartype alg: Union[str, "AKPAlgorithm"]
     """
 
     kty: Required[Union[str, "JsonWebKeyType"]]
     """The type of key to create. For valid values, see JsonWebKeyType. Required. Known values are:
-     \"AKP\", \"AKP-HSM\", \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
+     \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
     key_size: int
     """The key size in bits. For example: 2048, 3072, or 4096 for RSA."""
     public_exponent: int
@@ -284,9 +270,6 @@ class KeyCreateParameters(TypedDict, total=False):
      \"P-384\", \"P-521\", and \"P-256K\"."""
     release_policy: "KeyReleasePolicy"
     """The policy rules under which the key can be exported."""
-    alg: Union[str, "AKPAlgorithm"]
-    """The algorithm for Algorithm Key Pair (AKP) keys. For valid values, see AKPAlgorithm. Known
-     values are: \"ML-DSA-44\", \"ML-DSA-65\", and \"ML-DSA-87\"."""
 
 
 class KeyImportParameters(TypedDict, total=False):
@@ -457,36 +440,21 @@ class KeySignParameters(TypedDict, total=False):
     """The key operations parameters.
 
     :ivar alg: The signing/verification algorithm identifier. For more information on possible
-     algorithm types, see JsonWebKeySignatureAlgorithm. Known values are: "PS256", "PS384", "PS512",
-     "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384", "ES512", and
-     "ES256K".
+     algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256",
+     "PS384", "PS512", "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256",
+     "ES384", "ES512", and "ES256K".
     :vartype alg: Union[str, "JsonWebKeySignatureAlgorithm"]
-    :ivar value: The value to operate on.
+    :ivar value: The value to operate on. Required.
     :vartype value: str
-    :ivar external_mu: The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section
-     6.2). Must be exactly 64 bytes. When specified, the algorithm and value fields must not be set.
-     Only supported for ML-DSA (AKP) keys.
-    :vartype external_mu: str
-    :ivar context: The application context string for ML-DSA signing (FIPS 204 Section 5.2). Must
-     be 0-255 bytes. Must not be set when external_mu is specified. Only supported for ML-DSA (AKP)
-     keys.
-    :vartype context: str
     """
 
-    alg: Union[str, "JsonWebKeySignatureAlgorithm"]
+    alg: Required[Union[str, "JsonWebKeySignatureAlgorithm"]]
     """The signing/verification algorithm identifier. For more information on possible algorithm
-     types, see JsonWebKeySignatureAlgorithm. Known values are: \"PS256\", \"PS384\", \"PS512\",
-     \"RS256\", \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\", \"ES256\",
-     \"ES384\", \"ES512\", and \"ES256K\"."""
-    value: str
-    """The value to operate on."""
-    external_mu: str
-    """The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section 6.2). Must be exactly
-     64 bytes. When specified, the algorithm and value fields must not be set. Only supported for
-     ML-DSA (AKP) keys."""
-    context: str
-    """The application context string for ML-DSA signing (FIPS 204 Section 5.2). Must be 0-255 bytes.
-     Must not be set when external_mu is specified. Only supported for ML-DSA (AKP) keys."""
+     types, see JsonWebKeySignatureAlgorithm. Required. Known values are: \"PS256\", \"PS384\",
+     \"PS512\", \"RS256\", \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\",
+     \"ES256\", \"ES384\", \"ES512\", and \"ES256K\"."""
+    value: Required[str]
+    """The value to operate on. Required."""
 
 
 class KeyUpdateParameters(TypedDict, total=False):
@@ -518,39 +486,25 @@ class KeyVerifyParameters(TypedDict, total=False):
     """The key verify parameters.
 
     :ivar alg: The signing/verification algorithm. For more information on possible algorithm
-     types, see JsonWebKeySignatureAlgorithm. Known values are: "PS256", "PS384", "PS512", "RS256",
-     "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384", "ES512", and "ES256K".
+     types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256", "PS384", "PS512",
+     "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384", "ES512", and
+     "ES256K".
     :vartype alg: Union[str, "JsonWebKeySignatureAlgorithm"]
-    :ivar digest: The digest used for signing.
+    :ivar digest: The digest used for signing. Required.
     :vartype digest: str
     :ivar value: The signature to be verified. Required.
     :vartype value: str
-    :ivar external_mu: The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section
-     6.2). Must be exactly 64 bytes. When specified, the algorithm and digest fields must not be
-     set. Only supported for ML-DSA (AKP) keys.
-    :vartype external_mu: str
-    :ivar context: The application context string for ML-DSA verification (FIPS 204 Section 5.2).
-     Must be 0-255 bytes. Must not be set when external_mu is specified. Only supported for ML-DSA
-     (AKP) keys.
-    :vartype context: str
     """
 
-    alg: Union[str, "JsonWebKeySignatureAlgorithm"]
+    alg: Required[Union[str, "JsonWebKeySignatureAlgorithm"]]
     """The signing/verification algorithm. For more information on possible algorithm types, see
-     JsonWebKeySignatureAlgorithm. Known values are: \"PS256\", \"PS384\", \"PS512\", \"RS256\",
-     \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\", \"ES256\", \"ES384\",
-     \"ES512\", and \"ES256K\"."""
-    digest: str
-    """The digest used for signing."""
+     JsonWebKeySignatureAlgorithm. Required. Known values are: \"PS256\", \"PS384\", \"PS512\",
+     \"RS256\", \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\", \"ES256\",
+     \"ES384\", \"ES512\", and \"ES256K\"."""
+    digest: Required[str]
+    """The digest used for signing. Required."""
     value: Required[str]
     """The signature to be verified. Required."""
-    external_mu: str
-    """The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section 6.2). Must be exactly
-     64 bytes. When specified, the algorithm and digest fields must not be set. Only supported for
-     ML-DSA (AKP) keys."""
-    context: str
-    """The application context string for ML-DSA verification (FIPS 204 Section 5.2). Must be 0-255
-     bytes. Must not be set when external_mu is specified. Only supported for ML-DSA (AKP) keys."""
 
 
 class LifetimeActions(TypedDict, total=False):

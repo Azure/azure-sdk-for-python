@@ -36,7 +36,6 @@
         "azure.keyvault.keys._generated.models.SecureKeyWrapOperationParameters": "KeyVault.SecureKeyWrapOperationParameters",
         "azure.keyvault.keys._generated.models.JsonWebKeyType": "KeyVault.JsonWebKeyType",
         "azure.keyvault.keys._generated.models.JsonWebKeyCurveName": "KeyVault.JsonWebKeyCurveName",
-        "azure.keyvault.keys._generated.models.AKPAlgorithm": "KeyVault.AKPAlgorithm",
         "azure.keyvault.keys._generated.models.DeletionRecoveryLevel": "KeyVault.DeletionRecoveryLevel",
         "azure.keyvault.keys._generated.models.JsonWebKeyOperation": "KeyVault.JsonWebKeyOperation",
         "azure.keyvault.keys._generated.models.JsonWebKeyEncryptionAlgorithm": "KeyVault.JsonWebKeyEncryptionAlgorithm",
