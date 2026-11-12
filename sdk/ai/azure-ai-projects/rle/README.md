@@ -348,8 +348,8 @@ The wheel is 614313 bytes with SHA-256
 All 63 packaged Python files match the pinned source except for the release
 version. Dependency requirements are unchanged, all 13 registry wheels pass
 integrity and checksum validation, and all 12 previous registry entries are
-preserved. The source passed 449 offline HTTP/WebSocket/queued regression cases,
-and all 92 release-tool tests passed.
+preserved. An isolated Python 3.12 installation passed all 449 offline
+HTTP/WebSocket/queued regression cases, and all 92 release-tool tests passed.
 
 Merging this artifact change into `rle-releases` selects `2.7.12b1` as `latest`.
 The 64-call admission limit, 90-minute default post-admission timeout,
