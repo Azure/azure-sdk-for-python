@@ -95,7 +95,11 @@ def validate_recording_url(recording_url: str, parameter_name: str) -> str:
 
 
 def configure_recording_url_validation(kwargs: Dict[str, Any]) -> None:
-    """Install validation before authentication and inside redirect/retry loops."""
+    """Install validation before authentication and inside redirect/retry loops.
+
+    :param kwargs: The keyword arguments used to construct the client pipeline.
+    :type kwargs: dict
+    """
     policies = kwargs.get("policies")
     if policies is not None:
         policies = list(policies)
