@@ -14,7 +14,7 @@ from typing import (
     Optional,
     Union,
 )
-from azure.storage.blob._shared.session import SessionProvider
+from azure.storage.blob._session import SessionProvider
 from typing_extensions import Self
 
 from azure.core import MatchConditions

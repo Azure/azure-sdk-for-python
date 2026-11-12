@@ -28,7 +28,7 @@ from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
-from azure.storage.blob._shared.session import SessionProvider
+from azure.storage.blob._session import SessionProvider
 from ._blob_client import BlobClient
 from ._blob_service_client import BlobServiceClient
 from ._download import StorageStreamDownloader

@@ -1474,6 +1474,13 @@ class TestFileSystem(StorageRecordedTestCase):
             assert is_session_auth
             assert cache[fs_name] is session
 
+    def test_session_provider_disables_body_logging(self):
+        credential = self.get_credential(DataLakeServiceClient)
+        provider = ContainerSessionProvider(
+            "https://account.blob.core.windows.net", credential, logging_enable=True, logging_body=True
+        )
+        assert provider._client._config.logging_policy.logging_body is False
+
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":

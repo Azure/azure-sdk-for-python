@@ -36,6 +36,7 @@ from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._file_system_client_async import FileSystemClient
 from ._models import FileSystemPropertiesPaged
+from ._session_async import _configure_session
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -133,7 +134,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
-
+        _configure_session(kwargs)
         super(DataLakeServiceClient, self).__init__(
             parsed_url, service="dfs", credential=self._raw_credential, **kwargs
         )

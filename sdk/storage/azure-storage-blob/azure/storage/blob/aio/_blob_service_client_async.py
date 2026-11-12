@@ -19,6 +19,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
+from ._session_async import _configure_session
 from .._blob_service_client_helpers import _parse_url
 from .._deserialize import service_properties_deserialize, service_stats_deserialize
 from .._encryption import StorageEncryptionMixin
@@ -135,6 +136,7 @@ class BlobServiceClient(  # type: ignore [misc]
         parsed_url, sas_token = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
         super(BlobServiceClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)

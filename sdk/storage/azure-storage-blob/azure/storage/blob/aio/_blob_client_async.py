@@ -37,6 +37,7 @@ from ._download_async import StorageStreamDownloader
 from ._lease_async import BlobLeaseClient
 from ._models import PageRangePaged
 from ._quick_query_helper_async import BlobQueryReader
+from ._session_async import _configure_session
 from ._upload_helpers import upload_append_blob, upload_block_blob, upload_page_blob
 from .._blob_client_helpers import (
     _abort_copy_options,
@@ -214,6 +215,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
+        _configure_session(kwargs)
         super(BlobClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
         self._client = AzureBlobStorage(
             self.url,

@@ -32,6 +32,7 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
 )
+from ._session import _configure_session
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -132,6 +133,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         parsed_url, sas_token = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
         super(BlobServiceClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)

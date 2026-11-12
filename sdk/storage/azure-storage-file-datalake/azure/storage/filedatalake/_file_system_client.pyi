@@ -8,7 +8,7 @@
 from datetime import datetime
 from types import TracebackType
 from typing import Any, Dict, Optional, Union
-from azure.storage.filedatalake._shared.session import SessionProvider
+from azure.storage.filedatalake._session import SessionProvider
 from typing_extensions import Self
 
 from azure.core import MatchConditions

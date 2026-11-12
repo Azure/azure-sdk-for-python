@@ -1617,6 +1617,14 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
             assert is_session_auth
             assert cache[fs_name] is session
 
+    @pytest.mark.asyncio
+    async def test_session_provider_disables_body_logging(self):
+        credential = self.get_credential(DataLakeServiceClient, is_async=True)
+        async with ContainerSessionProvider(
+            "https://account.blob.core.windows.net", credential, logging_enable=True, logging_body=True
+        ) as provider:
+            assert provider._client._config.logging_policy.logging_body is False
+
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":

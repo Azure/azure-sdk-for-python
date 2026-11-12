@@ -35,6 +35,7 @@ from ._path_client_helpers import (
     _set_access_control_options,
     _set_access_control_recursive_options,
 )
+from ._session import _configure_session
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._serialize import (
     compare_api_versions,
@@ -135,6 +136,7 @@ class PathClient(StorageAccountHostsMixin):
         self.path_name = path_name
 
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
 
         super(PathClient, self).__init__(
             parsed_url, service="dfs", credential=self._raw_credential, _hosts=datalake_hosts, **kwargs

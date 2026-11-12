@@ -39,7 +39,7 @@ from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
 )
-from azure.storage.blob._shared.session_async import ContainerSessionProvider
+from azure.storage.blob.aio._session_async import ContainerSessionProvider
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "acontainer"
@@ -2855,3 +2855,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             is_session_auth = capture_auth_header["c2_download"].startswith("Session ")
             assert is_session_auth
             assert cache[container_name] is session
+
+    @pytest.mark.asyncio
+    async def test_session_provider_disables_body_logging(self):
+        credential = self.get_credential(BlobServiceClient, is_async=True)
+        async with ContainerSessionProvider(
+            "https://account.blob.core.windows.net", credential, logging_enable=True, logging_body=True
+        ) as provider:
+            assert provider._client._config.logging_policy.logging_body is False

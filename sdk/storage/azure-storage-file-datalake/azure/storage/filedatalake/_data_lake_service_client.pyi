@@ -19,7 +19,7 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.storage.filedatalake._shared.session import SessionProvider
+from azure.storage.filedatalake._session import SessionProvider
 from ._data_lake_lease import DataLakeLeaseClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient

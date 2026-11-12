@@ -35,7 +35,7 @@ from azure.storage.blob import (
     ResourceTypes,
     StandardBlobTier,
 )
-from azure.storage.blob._shared.session import ContainerSessionProvider
+from azure.storage.blob._session import ContainerSessionProvider
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "container"
@@ -2938,3 +2938,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         is_session_auth = capture_auth_header["c2_download"].startswith("Session ")
         assert is_session_auth
         assert cache[container_name] is session
+
+    def test_session_provider_disables_body_logging(self):
+        credential = self.get_credential(BlobServiceClient)
+        provider = ContainerSessionProvider(
+            "https://account.blob.core.windows.net", credential, logging_enable=True, logging_body=True
+        )
+        assert provider._client._config.logging_policy.logging_body is False
