@@ -278,7 +278,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[IdentityBinding]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -288,7 +288,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -298,7 +298,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -4789,12 +4789,14 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.PrivateEndpointConnectionListResult(_Model):
+        next_link: Optional[str]
         value: Optional[list[PrivateEndpointConnection]]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                next_link: Optional[str] = ..., 
                 value: Optional[list[PrivateEndpointConnection]] = ...
             ) -> None: ...
 
@@ -4851,12 +4853,14 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.PrivateLinkResourcesListResult(_Model):
+        next_link: Optional[str]
         value: Optional[list[PrivateLinkResource]]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                next_link: Optional[str] = ..., 
                 value: Optional[list[PrivateLinkResource]] = ...
             ) -> None: ...
 
@@ -5736,7 +5740,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[IdentityBinding]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5746,7 +5750,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5756,7 +5760,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
