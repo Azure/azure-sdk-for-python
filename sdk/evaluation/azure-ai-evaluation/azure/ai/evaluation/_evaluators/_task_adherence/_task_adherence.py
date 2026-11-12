@@ -1,25 +1,23 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
-import math
 import logging
-from typing import Dict, Union, List, Optional
+import math
+import os
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
 from azure.ai.evaluation._evaluators._common._model_runners import is_decision_model_config
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
-from ..._common.utils import (
-    reformat_conversation_history,
-    reformat_agent_response,
-)
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import Message
-from azure.ai.evaluation._common._experimental import experimental
+
+from ..._common.utils import reformat_agent_response, reformat_conversation_history
 
 logger = logging.getLogger(__name__)
 
@@ -285,6 +283,8 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             except (TypeError, ValueError, OverflowError):
                 judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
                 raise
+            if "score" not in llm_output or math.isnan(score):
+                judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
             score_result = "pass" if score >= 1.0 else "fail"
             llm_properties = llm_output.get("properties", {}) or {}
             llm_properties.update(self._get_token_metadata(prompty_output_dict))

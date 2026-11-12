@@ -4,14 +4,15 @@
 
 # cspell:ignore apng, retriable, RDONLY, osfhandle
 
+import base64
 import copy
+import json
 import logging
 import os
 import re
 import stat
-import json
-import base64
-from dataclasses import dataclass, is_dataclass, fields
+import sys
+from dataclasses import dataclass, fields, is_dataclass
 from logging import Logger
 from pathlib import Path, PureWindowsPath
 from typing import (
@@ -36,17 +37,11 @@ from typing import (
 from jinja2 import TemplateError
 from jinja2.exceptions import SecurityError
 from jinja2.sandbox import SandboxedEnvironment
-from openai import AsyncStream
+from openai import APIConnectionError, APIStatusError, APITimeoutError, AsyncStream, OpenAIError
 from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionUserMessageParam
-from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation._legacy.prompty._exceptions import (
-    InvalidInputError,
-    JinjaTemplateError,
-    PromptyException,
-)
-
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidInputError, JinjaTemplateError, PromptyException
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml
 
 logger = logging.getLogger(__name__)
@@ -606,6 +601,14 @@ def prepare_open_ai_request_params(
 
 
 _KNOWN_FINISH_REASONS = ("stop", "length", "content_filter", "tool_calls", "function_call")
+_DIAGNOSTIC_METADATA_KEY = "_azure_ai_evaluation_diagnostic_metadata"
+
+
+@dataclass(frozen=True)
+class _LLMOutputDiagnosticMetadata:
+    finish_reason: Any
+    output_tokens: Any
+    model: Any
 
 
 def llm_output_diagnostic(cause: str, finish_reason: Any = None, output_tokens: Any = None, model: Any = None) -> str:
@@ -641,7 +644,14 @@ def log_invalid_llm_output(diagnostic: str) -> None:
     :param diagnostic: Text built by ``llm_output_diagnostic``.
     :type diagnostic: str
     """
-    logger.warning("Model returned invalid output. %s", diagnostic)
+    try:
+        logger.warning("Model returned invalid output. %s", diagnostic)
+    except Exception:
+        # A broken logging handler must not replace an evaluator or parsing error.
+        try:
+            sys.stderr.write(f"Model returned invalid output. {diagnostic}\n")
+        except (OSError, ValueError):
+            pass
 
 
 async def format_llm_response(
@@ -691,10 +701,14 @@ async def format_llm_response(
 
         try:
             result_dict = json.loads(item)
-        except (ValueError, TypeError, RecursionError):
+        except (ValueError, TypeError, RecursionError) as exc:
             empty = item is None or (isinstance(item, str) and not item.strip())
             cause = "the model returned an empty response" if empty else "the model response was not valid JSON"
-            log_invalid_llm_output(llm_output_diagnostic(cause, finish_reason, output_tokens, model))
+            diagnostic = llm_output_diagnostic(cause, finish_reason, output_tokens, model)
+            log_invalid_llm_output(diagnostic)
+            if isinstance(exc, json.JSONDecodeError):
+                exc.msg = f"{exc.msg}. {diagnostic}"
+                exc.args = (f"{exc}. {diagnostic}",)
             raise
         if not outputs:
             return result_dict
@@ -734,6 +748,7 @@ async def format_llm_response(
         "model_id": "",
         "sample_input": "",
         "sample_output": "",
+        _DIAGNOSTIC_METADATA_KEY: _LLMOutputDiagnosticMetadata(None, None, None),
     }
 
     if not is_first_choice:
@@ -760,6 +775,7 @@ async def format_llm_response(
         model_id = response.model if response.model else ""
         # Unlike output_token_count, missing usage stays None so the diagnostic reports it as unknown.
         reported_output_tokens = response.usage.completion_tokens if response.usage else None
+        to_ret[_DIAGNOSTIC_METADATA_KEY] = _LLMOutputDiagnosticMetadata(finish_reason, reported_output_tokens, model_id)
         if not response.choices:
             log_invalid_llm_output(
                 llm_output_diagnostic(

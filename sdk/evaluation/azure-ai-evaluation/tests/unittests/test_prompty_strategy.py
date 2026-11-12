@@ -5,14 +5,22 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy, judge_output_diagnostic
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._legacy.prompty._utils import _DIAGNOSTIC_METADATA_KEY, _LLMOutputDiagnosticMetadata
 
 
 def strategy(**kwargs):
     options = {"result_key": "metric", "threshold": 3, "timeout": 17}
     options.update(kwargs)
     return PromptyEvaluationStrategy(AsyncMock(), **options)
+
+
+def _sdk_output(answer, *, finish_reason="stop", output_tokens=0, model="judge-model"):
+    return {
+        "llm_output": answer,
+        _DIAGNOSTIC_METADATA_KEY: _LLMOutputDiagnosticMetadata(finish_reason, output_tokens, model),
+    }
 
 
 @pytest.mark.parametrize(
@@ -373,9 +381,17 @@ def test_legacy_empty_envelope_is_invalid():
         strategy(strict=False).parse({})
 
 
+def test_missing_score_logs_diagnostic_and_preserves_unknown_result(caplog):
+    result = strategy(strict=False, missing_score=math.nan).parse(_sdk_output({"reason": "unused"}))
+
+    assert result["metric_result"] == "unknown"
+    assert "no valid score" in caplog.text
+    assert "finish_reason=stop, output_tokens=0, model=judge-model" in caplog.text
+
+
 @pytest.mark.parametrize("answer", ["not json", None])
 def test_invalid_output_message_includes_runtime_metadata(answer, caplog):
-    output = {"llm_output": answer, "finish_reason": "stop", "output_token_count": 0, "model_id": "judge-model"}
+    output = _sdk_output(answer)
     with pytest.raises(EvaluationException) as exc_info:
         strategy().parse(output)
 
@@ -387,7 +403,7 @@ def test_invalid_output_message_includes_runtime_metadata(answer, caplog):
 
 
 def test_invalid_score_message_keeps_original_text_and_adds_metadata():
-    output = {"llm_output": {"score": 9}, "finish_reason": "length", "output_token_count": 5, "model_id": "m"}
+    output = _sdk_output({"score": 9}, finish_reason="length", output_tokens=5, model="m")
     with pytest.raises(EvaluationException) as exc_info:
         strategy(score_range=(1, 5), missing_score=None).parse(output)
 
@@ -402,3 +418,27 @@ def test_non_numeric_strict_score_still_raises_value_error_and_logs(caplog):
 
     assert "no valid score" in caplog.text
     assert "high" not in caplog.text
+
+
+def test_untrusted_output_metadata_is_not_logged(caplog):
+    output = {
+        "llm_output": [],
+        "finish_reason": "length",
+        "output_token_count": 5,
+        "model_id": "SYNTHETIC_MODEL_PRIVATE_TEXT",
+    }
+    with pytest.raises(EvaluationException) as exc_info:
+        strategy().parse(output)
+
+    assert "model=SYNTHETIC_MODEL_PRIVATE_TEXT" not in exc_info.value.message
+    assert "SYNTHETIC_MODEL_PRIVATE_TEXT" not in caplog.text
+    assert "finish_reason=unknown, output_tokens=unknown, model=unknown" in caplog.text
+
+
+def test_unexpected_array_output_preserves_evaluator_exception():
+    class AmbiguousComparison:
+        def __eq__(self, _other):
+            raise ValueError("ambiguous comparison")
+
+    with pytest.raises(EvaluationException, match="unexpected type AmbiguousComparison"):
+        strategy().parse(AmbiguousComparison())

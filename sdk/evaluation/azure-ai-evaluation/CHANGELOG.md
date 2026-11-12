@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-- Added WARNING-level diagnostics when a judge model returns output an evaluator cannot use. The logs and existing error messages include the cause, finish reason, output token count and model name; model output is never logged.
+- Added WARNING-level diagnostics for missing or unusable judge output, including JSON parsing failures from the optional Promptflow integration. Diagnostics use SDK-controlled response metadata when available and otherwise report it as unknown; the new warnings do not log model response content. Existing score fallbacks and exception types are unchanged.
 
 ## 1.18.12 (2026-11-09)
 

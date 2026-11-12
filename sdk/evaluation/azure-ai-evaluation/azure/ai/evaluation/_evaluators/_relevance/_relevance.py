@@ -4,22 +4,22 @@
 import logging
 import math
 import os
-from typing import Dict, Union, List
+from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
-from ..._common.utils import reformat_conversation_history, reformat_agent_response
-
-from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
 from azure.ai.evaluation._evaluators._common._validators import (
     ConversationValidator,
     MessagesOrQueryResponseInputValidator,
     ValidatorInterface,
 )
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._model_configurations import Conversation
+
+from ..._common.utils import reformat_agent_response, reformat_conversation_history
 
 logger = logging.getLogger(__name__)
 
@@ -257,6 +257,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             except (TypeError, ValueError, OverflowError):
                 judge_output_diagnostic(result, NO_VALID_SCORE)
                 raise
+            if math.isnan(score):
+                judge_output_diagnostic(result, NO_VALID_SCORE)
             reason = llm_output.get("reason", "")
             llm_properties = llm_output.get("properties", {}) or {}
             score_result = self._get_binary_result(score)

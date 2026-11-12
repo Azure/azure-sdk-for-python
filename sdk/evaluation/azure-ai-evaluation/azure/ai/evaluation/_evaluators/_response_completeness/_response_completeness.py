@@ -2,20 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
 import logging
 import math
-from typing import Dict, List, Union, Optional
+import os
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
+from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
 from azure.ai.evaluation._evaluators._common._decision_rubric import decode_message_list, rubric_strategy
-from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
+from azure.ai.evaluation._evaluators._common._prompty_strategy import NO_VALID_SCORE, judge_output_diagnostic
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import Conversation, Message
-from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
 
@@ -223,6 +223,8 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             except (TypeError, ValueError, OverflowError):
                 judge_output_diagnostic(result, NO_VALID_SCORE)
                 raise
+            if math.isnan(score):
+                judge_output_diagnostic(result, NO_VALID_SCORE)
             reason = llm_output.get("reason", "")
             llm_properties = llm_output.get("properties", {}) or {}
             score_result = self._get_binary_result(score)

@@ -5,8 +5,14 @@ from typing import Any, Callable, Dict, Optional, Tuple
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._common.utils import check_score_is_valid, parse_quality_evaluator_reason_score
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.ai.evaluation._legacy.prompty._utils import llm_output_diagnostic, log_invalid_llm_output
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._legacy.prompty._utils import (
+    _DIAGNOSTIC_METADATA_KEY,
+    _LLMOutputDiagnosticMetadata,
+    llm_output_diagnostic,
+    log_invalid_llm_output,
+)
+
 from ._base_model_eval import ModelEvaluatorBase, not_applicable_result
 
 NO_VALID_SCORE = "the model response had no valid score"
@@ -22,19 +28,23 @@ def judge_output_diagnostic(output: Any, cause: Optional[str] = None) -> str:
     :return: The diagnostic text, which never contains the judge output.
     :rtype: str
     """
-    # Runtime metadata is only trusted from a prompty envelope; a bare answer dict comes from the judge.
-    envelope = output if isinstance(output, dict) and "llm_output" in output else {}
+    envelope = output if isinstance(output, dict) else {}
+    metadata = envelope.get(_DIAGNOSTIC_METADATA_KEY)
+    if not isinstance(metadata, _LLMOutputDiagnosticMetadata):
+        metadata = _LLMOutputDiagnosticMetadata(None, None, None)
     if cause is None:
-        answer = envelope.get("llm_output") if envelope else output
-        if answer is None or answer == "" or answer == {}:
+        answer = envelope.get("llm_output", output)
+        if (
+            answer is None
+            or (isinstance(answer, str) and not answer.strip())
+            or (isinstance(answer, (dict, list, tuple)) and not answer)
+        ):
             cause = "the model returned an empty response"
         elif isinstance(answer, str):
             cause = "the model response was not a JSON object"
         else:
             cause = f"the model response had unexpected type {type(answer).__name__}"
-    diagnostic = llm_output_diagnostic(
-        cause, envelope.get("finish_reason"), envelope.get("output_token_count"), envelope.get("model_id")
-    )
+    diagnostic = llm_output_diagnostic(cause, metadata.finish_reason, metadata.output_tokens, metadata.model)
     log_invalid_llm_output(diagnostic)
     return diagnostic
 
@@ -159,6 +169,8 @@ class PromptyEvaluationStrategy:
         except (TypeError, ValueError, OverflowError):
             judge_output_diagnostic(output, NO_VALID_SCORE)
             raise
+        if not has_score or math.isnan(score):
+            judge_output_diagnostic(output, NO_VALID_SCORE)
         cutoff = self.threshold if self.binary_cutoff is None else self.binary_cutoff
         if math.isnan(score) and self.binary_cutoff is None:
             verdict = "unknown"
