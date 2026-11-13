@@ -40,7 +40,7 @@ class WebPubSubChatServiceClient(
      alpha-numeric characters or underscore. Required.
     :type hub: str
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-02-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-08-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str

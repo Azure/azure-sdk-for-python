@@ -23,15 +23,15 @@ class ChatConversation(_Model):  # pylint: disable=docstring-keyword-should-matc
 
     :ivar id: Conversation identifier. Required.
     :vartype id: str
-    :ivar parent_room: Parent room identifier. Required.
-    :vartype parent_room: str
+    :ivar room_id: Parent room identifier. Required.
+    :vartype room_id: str
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     """
 
     id: str = rest_field(visibility=["read"])
     """Conversation identifier. Required."""
-    parent_room: str = rest_field(name="parentRoom", visibility=["read", "create", "update", "delete", "query"])
+    room_id: str = rest_field(name="parentRoom", visibility=["read", "create", "update", "delete", "query"])
     """Parent room identifier. Required."""
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
@@ -40,7 +40,7 @@ class ChatConversation(_Model):  # pylint: disable=docstring-keyword-should-matc
     def __init__(
         self,
         *,
-        parent_room: str,
+        room_id: str,
     ) -> None: ...
 
     @overload
@@ -99,6 +99,39 @@ class ChatMessage(_Model):  # pylint: disable=docstring-keyword-should-match-key
         super().__init__(*args, **kwargs)
 
 
+class ChatMessageUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when partially updating a message.
+
+    :ivar created_by: User who created the message.
+    :vartype created_by: str
+    :ivar content: Message content.
+    :vartype content: ~azure.messaging.webpubsubchatservice.models.MessageContent
+    """
+
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
+    """User who created the message."""
+    content: Optional["_models.MessageContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Message content."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        content: Optional["_models.MessageContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ChatRole(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a chat role. A role name must start with 'user.' or 'room.' prefix. A role must
     contain either user permissions or room permissions, but not both.
@@ -121,6 +154,38 @@ class ChatRole(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
      role. Required."""
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        permissions: list[Union[str, "_models.ChatPermission"]],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatRoleCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a role.
+
+    :ivar permissions: Permissions associated with the role. Do not mix user permissions and room
+     permissions in one role. Required.
+    :vartype permissions: list[str or ~azure.messaging.webpubsubchatservice.models.ChatPermission]
+    """
+
+    permissions: list[Union[str, "_models.ChatPermission"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Permissions associated with the role. Do not mix user permissions and room permissions in one
+     role. Required."""
 
     @overload
     def __init__(
@@ -180,6 +245,34 @@ class ChatRoom(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         super().__init__(*args, **kwargs)
 
 
+class ChatRoomCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a room.
+
+    :ivar title: Room title. Required.
+    :vartype title: str
+    """
+
+    title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Room title. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ChatRoomMember(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a room member.
 
@@ -203,6 +296,163 @@ class ChatRoomMember(_Model):  # pylint: disable=docstring-keyword-should-match-
         self,
         *,
         role_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatRoomMemberCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a room member.
+
+    :ivar role_name: Room role assigned to the user within this room. Required.
+    :vartype role_name: str
+    """
+
+    role_name: str = rest_field(name="roleName", visibility=["read", "create", "update", "delete", "query"])
+    """Room role assigned to the user within this room. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatTopic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a chat topic in a room.
+
+    :ivar id: Topic identifier unique within the room. Required.
+    :vartype id: str
+    :ivar title: Topic title. Required.
+    :vartype title: str
+    :ivar created_at: Timestamp when the topic was created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by: User who created the topic. Required.
+    :vartype created_by: str
+    :ivar state: Current lifecycle state of the topic. Required. Known values are: "Normal",
+     "Archived", and "SoftDeleted".
+    :vartype state: str or ~azure.messaging.webpubsubchatservice.models.ChatTopicState
+    :ivar conversation_id: Conversation associated with this topic. Required.
+    :vartype conversation_id: str
+    :ivar etag: The entity tag for this resource. Required.
+    :vartype etag: str
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Topic identifier unique within the room. Required."""
+    title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Topic title. Required."""
+    created_at: datetime.datetime = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """Timestamp when the topic was created. Required."""
+    created_by: str = rest_field(name="createdBy", visibility=["read"])
+    """User who created the topic. Required."""
+    state: Union[str, "_models.ChatTopicState"] = rest_field(visibility=["read", "update"])
+    """Current lifecycle state of the topic. Required. Known values are: \"Normal\", \"Archived\", and
+     \"SoftDeleted\"."""
+    conversation_id: str = rest_field(name="conversationId", visibility=["read"])
+    """Conversation associated with this topic. Required."""
+    etag: str = rest_field(visibility=["read"])
+    """The entity tag for this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
+        state: Union[str, "_models.ChatTopicState"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatTopicCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a topic.
+
+    :ivar title: Topic title. Required.
+    :vartype title: str
+    :ivar state: Current lifecycle state of the topic. Known values are: "Normal", "Archived", and
+     "SoftDeleted".
+    :vartype state: str or ~azure.messaging.webpubsubchatservice.models.ChatTopicState
+    """
+
+    title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Topic title. Required."""
+    state: Optional[Union[str, "_models.ChatTopicState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current lifecycle state of the topic. Known values are: \"Normal\", \"Archived\", and
+     \"SoftDeleted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
+        state: Optional[Union[str, "_models.ChatTopicState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatTopicUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when partially updating a topic.
+
+    :ivar title: Topic title.
+    :vartype title: str
+    :ivar state: Current lifecycle state of the topic. Known values are: "Normal", "Archived", and
+     "SoftDeleted".
+    :vartype state: str or ~azure.messaging.webpubsubchatservice.models.ChatTopicState
+    """
+
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Topic title."""
+    state: Optional[Union[str, "_models.ChatTopicState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current lifecycle state of the topic. Known values are: \"Normal\", \"Archived\", and
+     \"SoftDeleted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: Optional[str] = None,
+        state: Optional[Union[str, "_models.ChatTopicState"]] = None,
     ) -> None: ...
 
     @overload
@@ -249,6 +499,86 @@ class ChatUser(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         *,
         kind: str,
         nickname: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatUserCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a user.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    HumanChatUserCreateOrReplace
+
+    :ivar kind: The kind of user. Required. "Human"
+    :vartype kind: str or ~azure.messaging.webpubsubchatservice.models.ChatUserKind
+    :ivar nickname: User's display nickname. Required.
+    :vartype nickname: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of user. Required. \"Human\""""
+    nickname: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User's display nickname. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        nickname: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatUserRoom(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a read-only room projection used to list rooms associated with a user. This model
+    enables the standard resource operation to derive the
+    ``/api/hubs/{hub}/chat/users/{userId}/rooms`` collection path because ``ChatRoom`` is a child
+    of ``Hub``, not ``ChatUser``. This model does not define an independent room lifecycle.
+
+    :ivar id: Room identifier. Required.
+    :vartype id: str
+    :ivar title: Room title. Required.
+    :vartype title: str
+    :ivar default_conversation: Default conversation ID for this room. Required.
+    :vartype default_conversation: str
+    :ivar etag: The entity tag for this resource. Required.
+    :vartype etag: str
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Room identifier. Required."""
+    title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Room title. Required."""
+    default_conversation: str = rest_field(name="defaultConversation", visibility=["read"])
+    """Default conversation ID for this room. Required."""
+    etag: str = rest_field(visibility=["read"])
+    """The entity tag for this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
     ) -> None: ...
 
     @overload
@@ -316,6 +646,44 @@ class HumanChatUser(ChatUser, discriminator="Human"):  # pylint: disable=docstri
         *,
         nickname: str,
         role_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = ChatUserKind.HUMAN  # type: ignore
+
+
+class HumanChatUserCreateOrReplace(
+    ChatUserCreateOrReplace, discriminator="Human"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a human user.
+
+    :ivar kind: Required. A human end-user.
+    :vartype kind: str or ~azure.messaging.webpubsubchatservice.models.HUMAN
+    :ivar role_name: Global user role assigned to the user. Must start with ``user.``. Required.
+    :vartype role_name: str
+    :ivar nickname: User's display nickname. Required.
+    :vartype nickname: str
+    """
+
+    kind: Literal[ChatUserKind.HUMAN] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A human end-user."""
+    role_name: str = rest_field(name="roleName", visibility=["read", "create", "update", "delete", "query"])
+    """Global user role assigned to the user. Must start with ``user.``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role_name: str,
+        nickname: str,
     ) -> None: ...
 
     @overload
