@@ -29,7 +29,7 @@ RUN = subprocess.run
 @pytest.fixture
 def provision(tmp_path, monkeypatch):
     for name in list(os.environ):
-        if name.startswith("CIBW_") or name.startswith("AZURESDK_PYTHON_"):
+        if name.startswith(("CIBW_", "AZURESDK_PYTHON_", "PYO3_")):
             monkeypatch.delenv(name)
     monkeypatch.setattr(windows_wheels.sys, "platform", "win32")
     monkeypatch.setattr(windows_wheels.platform, "machine", lambda: "AMD64")
@@ -136,20 +136,22 @@ def test_selected_versions_and_matching_arm64_libraries(provision, monkeypatch):
                 )
                 assert Path(environment["PYTHON_ARM64_LIB_DIR"]) == expected
                 assert "PYO3_CROSS_LIB_DIR" not in environment
-                pyo3_config = Path(environment["PYO3_CONFIG_FILE"])
-                pyo3_configs.append(pyo3_config)
-                assert pyo3_config.is_file()
-                target = read_pyo3_config(pyo3_config)
+                assert "PYO3_CROSS_PYTHON_VERSION" not in environment
+                path = Path(environment["PYO3_CONFIG_FILE"])
+                pyo3_configs.append(path)
+                target = read_pyo3_config(path)
                 major, minor = configuration.version.split(".")[:2]
                 assert target["version"] == f"{major}.{minor}"
+                assert target["abi3"] == "false"
                 assert Path(target["lib_dir"]) == expected
                 assert target["ext_suffix"] == f".cp{major}{minor}-win_arm64.pyd"
                 assert target["build_flags"] == ""
-                assert "abiflags" not in target
+                assert not (expected / "build-details.json").exists()
             else:
                 assert "PYO3_CROSS_LIB_DIR" not in environment
                 assert "PYTHON_ARM64_LIB_DIR" not in environment
                 assert "PYO3_CONFIG_FILE" not in environment
+                assert "PYO3_CROSS_PYTHON_VERSION" not in environment
         assert os.environ == before
 
     assert not config.exists()
@@ -246,14 +248,113 @@ def test_free_threaded_package_and_libraries_match(provision, monkeypatch):
         libraries = Path(environment["PYTHON_ARM64_LIB_DIR"])
         assert libraries.parent.parent.name == "pythonarm64-freethreaded.3.14.8"
         assert (libraries / "python314t.lib").is_file()
-        assert "PYO3_CROSS_LIB_DIR" not in environment
         target = read_pyo3_config(Path(environment["PYO3_CONFIG_FILE"]))
         assert target["version"] == "3.14"
+        assert target["abi3"] == "false"
         assert Path(target["lib_dir"]) == libraries
         assert target["build_flags"] == "Py_GIL_DISABLED"
         assert target["abiflags"] == "t"
         assert target["ext_suffix"] == ".cp314t-win_arm64.pyd"
     assert {command[2] for command in calls} == {"python-freethreaded", "pythonarm64-freethreaded"}
+
+
+@pytest.mark.parametrize("version", ["3.10.11", "3.12.8"])
+def test_arm64_stable_abi_uses_explicit_package_minimum(provision, monkeypatch, version):
+    package, calls = provision
+    write_config(package, build="cp310-*")
+    config = package / "pyproject.toml"
+    config.write_text(
+        config.read_text(encoding="utf-8") + '\n[tool.azure-sdk-build]\npyo3-abi3-minimum = "3.10"\n',
+        encoding="utf-8",
+    )
+    configurations = [
+        SimpleNamespace(identifier=f"cp3{version.split('.')[1]}-{tag}", version=version, arch=arch)
+        for arch, tag in (("64", "win_amd64"), ("ARM64", "win_arm64"))
+    ]
+    monkeypatch.setattr(WINDOWS, "get_python_configurations", lambda *args: configurations)
+    original = config.read_bytes()
+    with windows_wheels.windows_wheel_config(package) as (arguments, kwargs):
+        options = selected_options(package, arguments[1], kwargs["env"])
+        for configuration in configurations:
+            environment = options.build_options(configuration.identifier).environment.as_dictionary({})
+            assert "PYO3_NO_PYTHON" not in environment
+            if configuration.arch == "ARM64":
+                target = read_pyo3_config(Path(environment["PYO3_CONFIG_FILE"]))
+                assert target["version"] == "3.10"
+                assert target["abi3"] == "true"
+                assert target["implementation"] == "CPython"
+                assert target["shared"] == "true"
+                assert target["pointer_width"] == "64"
+                assert target["build_flags"] == ""
+                assert Path(target["lib_dir"]) == Path(environment["PYTHON_ARM64_LIB_DIR"])
+            else:
+                assert "PYO3_CONFIG_FILE" not in environment
+    assert config.read_bytes() == original
+    assert {command[2] for command in calls} == {"python", "pythonarm64"}
+
+
+@pytest.mark.parametrize(
+    "minimum,identifier,version,message",
+    [
+        ("3.10", "cp314t-win_arm64", "3.14.8", "incompatible with free-threaded"),
+        ("3.12", "cp310-win_arm64", "3.10.11", "exceeds the selected interpreter"),
+        (3.10, "cp310-win_arm64", "3.10.11", "quoted Python version"),
+        ("3.10.1", "cp310-win_arm64", "3.10.11", "quoted Python version"),
+        ("", "cp310-win_arm64", "3.10.11", "quoted Python version"),
+        ("4.0", "cp310-win_arm64", "3.10.11", "quoted Python version"),
+    ],
+)
+def test_invalid_stable_abi_selection_fails(provision, monkeypatch, minimum, identifier, version, message):
+    package, calls = provision
+    write_config(package)
+    config = package / "pyproject.toml"
+    config.write_text(
+        config.read_text(encoding="utf-8") + f"\n[tool.azure-sdk-build]\npyo3-abi3-minimum = {minimum!r}\n",
+        encoding="utf-8",
+    )
+    configuration = SimpleNamespace(identifier=identifier, version=version, arch="ARM64")
+    monkeypatch.setattr(WINDOWS, "get_python_configurations", lambda *args: [configuration])
+    with pytest.raises(ValueError, match=message):
+        with windows_wheels.windows_wheel_config(package):
+            pytest.fail("Invalid ABI settings must not start a build")
+
+
+@pytest.mark.parametrize("source", ["override", "environment"])
+@pytest.mark.parametrize("free_threaded", [False, True])
+def test_package_pyo3_config_remains_authoritative(provision, monkeypatch, source, free_threaded):
+    package, calls = provision
+    write_config(package, build="cp310-*")
+    config = package / "pyproject.toml"
+    config.write_text(
+        config.read_text(encoding="utf-8") + '\n[tool.azure-sdk-build]\npyo3-abi3-minimum = "3.10"\n',
+        encoding="utf-8",
+    )
+    identifier = "cp314t-win_arm64" if free_threaded else "cp310-win_arm64"
+    configuration = SimpleNamespace(
+        identifier=identifier, version="3.14.8" if free_threaded else "3.10.11", arch="ARM64"
+    )
+    monkeypatch.setattr(WINDOWS, "get_python_configurations", lambda *args: [configuration])
+    owned_config = package / "package-owned-config.txt"
+    original = (
+        "implementation=CPython\nversion=3.14\nabi3=false\nbuild_flags=Py_GIL_DISABLED\n"
+        if free_threaded
+        else "implementation=CPython\nversion=3.10\nabi3=true\nbuild_flags=\n"
+    )
+    owned_config.write_text(original, encoding="utf-8")
+    if source == "override":
+        config.write_text(
+            config.read_text(encoding="utf-8") + '\n[[tool.cibuildwheel.overrides]]\nselect = "*-win_arm64"\n'
+            'environment = { PYO3_CONFIG_FILE = "package-owned-config.txt" }\n',
+            encoding="utf-8",
+        )
+    else:
+        monkeypatch.setenv("PYO3_CONFIG_FILE", "package-owned-config.txt")
+    with windows_wheels.windows_wheel_config(package) as (arguments, kwargs):
+        options = selected_options(package, arguments[1], kwargs["env"])
+        environment = options.build_options(identifier).environment.as_dictionary(os.environ)
+        assert environment["PYO3_CONFIG_FILE"] == "package-owned-config.txt"
+        assert not list(Path(arguments[1]).parent.glob("pyo3-*.txt"))
+        assert owned_config.read_text(encoding="utf-8") == original
 
 
 def test_native_arm64_host_does_not_provision_amd64(provision, monkeypatch):

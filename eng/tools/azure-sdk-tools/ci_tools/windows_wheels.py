@@ -12,6 +12,7 @@ from importlib.util import find_spec
 import os
 from pathlib import Path
 import platform
+import re
 import shlex
 import subprocess
 import sys
@@ -25,23 +26,29 @@ else:
     import tomli as tomllib
 
 
-def _write_pyo3_config(directory, configuration, libraries):
-    """Write target Python metadata so Maturin does not inspect the host Python."""
+def _write_pyo3_config(directory, configuration, libraries, abi3_minimum):
+    """Write explicit target metadata without inspecting an incompatible host Python."""
     major, minor = configuration.version.split(".")[:2]
     free_threaded = "t-" in configuration.identifier
     abi_flags = "t" if free_threaded else ""
-    build_flags = "Py_GIL_DISABLED" if free_threaded else ""
+    if abi3_minimum is not None:
+        if not isinstance(abi3_minimum, str) or not re.fullmatch(r"3\.(0|[1-9][0-9]*)", abi3_minimum):
+            raise ValueError("tool.azure-sdk-build.pyo3-abi3-minimum must be a quoted Python version, e.g. '3.10'")
+        if free_threaded:
+            raise ValueError(f"{configuration.identifier}: pyo3-abi3-minimum is incompatible with free-threaded Python")
+        if tuple(map(int, abi3_minimum.split("."))) > (int(major), int(minor)):
+            raise ValueError(f"{configuration.identifier}: pyo3-abi3-minimum exceeds the selected interpreter version")
     config = [
         "implementation=CPython",
-        f"version={major}.{minor}",
+        f"version={abi3_minimum if abi3_minimum is not None else f'{major}.{minor}'}",
+        f"abi3={str(abi3_minimum is not None).lower()}",
         "shared=true",
-        f"build_flags={build_flags}",
+        f"build_flags={'Py_GIL_DISABLED' if free_threaded else ''}",
         "suppress_build_script_link_lines=false",
         "pointer_width=64",
         f"lib_dir={libraries.as_posix()}",
         f"ext_suffix=.cp{major}{minor}{abi_flags}-win_arm64.pyd",
     ]
-    # Maturin 1.15 derives the free-threaded wheel ABI tag from this field.
     if free_threaded:
         config.append("abiflags=t")
     path = directory / f"pyo3-{configuration.identifier}.txt"
@@ -127,11 +134,12 @@ def windows_wheel_config(package_dir):
     if options.config_file_path:
         with options.config_file_path.open("rb") as source:
             config = tomllib.load(source)
+    abi3_minimum = config.get("tool", {}).get("azure-sdk-build", {}).get("pyo3-abi3-minimum")
     # Preserve each target's resolved environment, adding its matching Python
     # import-library path only to ARM64 targets.
     overrides = config.setdefault("tool", {}).setdefault("cibuildwheel", {}).setdefault("overrides", [])
     # Keep the generated config alive while cibuildwheel runs. TemporaryDirectory
-    # removes it and the PyO3 target configs after success or failure.
+    # removes it and the target configs after success or failure.
     with TemporaryDirectory(prefix="azsdk-cibw-") as directory:
         directory = Path(directory)
         for configuration in configurations:
@@ -139,13 +147,15 @@ def windows_wheel_config(package_dir):
                 environment = options.reader.get("environment", option_format=EnvironmentFormat())
             if configuration.identifier in arm64_libraries:
                 libraries = arm64_libraries[configuration.identifier]
-                pyo3_config = _write_pyo3_config(directory, configuration, libraries)
-                # PYTHON_ARM64_LIB_DIR supports other Rust build tooling. Maturin
-                # reads the explicit target metadata instead of inspecting AMD64 Python.
-                environment += (
-                    f" PYTHON_ARM64_LIB_DIR={shlex.quote(libraries.as_posix())}"
-                    f" PYO3_CONFIG_FILE={shlex.quote(pyo3_config.as_posix())}"
+                environment += f" PYTHON_ARM64_LIB_DIR={shlex.quote(libraries.as_posix())}"
+                assignments = options.build_options(configuration.identifier).environment.assignments
+                # Inspect names without evaluating build-time shell expressions.
+                package_config = "PYO3_CONFIG_FILE" in os.environ or any(
+                    assignment.name == "PYO3_CONFIG_FILE" for assignment in assignments
                 )
+                if not package_config:
+                    pyo3_config = _write_pyo3_config(directory, configuration, libraries, abi3_minimum)
+                    environment += f" PYO3_CONFIG_FILE={shlex.quote(pyo3_config.as_posix())}"
             overrides.append({"select": configuration.identifier, "environment": environment})
 
         environment = os.environ.copy()
