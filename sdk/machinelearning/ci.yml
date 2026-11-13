@@ -30,7 +30,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-machinelearningservices
       safeName: azuremgmtmachinelearningservices
-    - name: azure-mgmt-machinelearningcompute
-      safeName: azuremgmtmachinelearningcompute
     - name: azure-mgmt-guestconfig
       safeName: azuremgmtguestconfig

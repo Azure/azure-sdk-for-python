@@ -5,7 +5,7 @@ extends:
     parameters:
       ServiceDirectory: schemaregistry
       TestTimeoutInMinutes: 300
-      BuildTargetingString: azure-schemaregistry*
+      BuildTargetingString: azure-schemaregistry
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
