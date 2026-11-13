@@ -49,7 +49,6 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                     "description": "str",
                     "displayName": "str",
                     "endpoints": {"str": "str"},
@@ -91,7 +90,6 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                     "description": "str",
                     "displayName": "str",
                     "endpoints": {"str": "str"},
