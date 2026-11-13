@@ -42,5 +42,5 @@
         "azure.data.ai.InferenceClient.get_embeddings": "Azure.Data.AI.InferenceOperationGroup.embed",
         "azure.data.ai.aio.InferenceClient.get_embeddings": "Azure.Data.AI.InferenceOperationGroup.embed"
     },
-    "CrossLanguageVersion": "b460366aab6a"
+    "CrossLanguageVersion": "df36dc9fe06b"
 }

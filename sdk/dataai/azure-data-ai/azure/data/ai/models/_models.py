@@ -57,8 +57,8 @@ class EmbeddingBadRequestResult(_Model):  # pylint: disable=docstring-keyword-sh
     * `InvalidRequestBody`: malformed JSON, a wrong type, an unknown or snake_case field, or a
     value outside its allowed
     set. `error.details` describes each problem.
-    * `EMBEDDING_INPUT_INVALID`: an item's kind, source, size, format or count, or a model or
-    version isn't valid.
+    * `EMBEDDING_INPUT_INVALID`: an item's kind, source, size, format or count, or the model isn't
+    valid.
     Text over the model's token limit isn't an error; see `EMBEDDING_INPUT_TRUNCATED`.
     * `EMBEDDING_URL_NOT_ALLOWED`: `input_images`, a link in an image's `content`, a `url` where
     blob inputs are off or
@@ -233,9 +233,6 @@ class EmbeddingResult(_Model):  # pylint: disable=docstring-keyword-should-match
     :vartype object: str
     :ivar model: The name of the model that produced the vectors. Required.
     :vartype model: str
-    :ivar model_version: The model version that produced the vectors. Pin it to keep an index
-     stable. Required.
-    :vartype model_version: str
     :ivar output_data_kind: The numeric type of the returned values. Required. Known values are:
      "float32" and "float16".
     :vartype output_data_kind: str or ~azure.data.ai.models.EmbeddingOutputDataKind
@@ -255,8 +252,6 @@ class EmbeddingResult(_Model):  # pylint: disable=docstring-keyword-should-match
     """The object type, always ``list``. Required. Default value is \"list\"."""
     model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the model that produced the vectors. Required."""
-    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
-    """The model version that produced the vectors. Pin it to keep an index stable. Required."""
     output_data_kind: Union[str, "_models.EmbeddingOutputDataKind"] = rest_field(
         name="outputDataKind", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -281,7 +276,6 @@ class EmbeddingResult(_Model):  # pylint: disable=docstring-keyword-should-match
         self,
         *,
         model: str,
-        model_version: str,
         output_data_kind: Union[str, "_models.EmbeddingOutputDataKind"],
         data: list["_models.EmbeddingData"],
         usage: "_models.EmbeddingUsage",

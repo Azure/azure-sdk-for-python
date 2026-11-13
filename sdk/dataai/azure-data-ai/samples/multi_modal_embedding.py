@@ -34,6 +34,7 @@ from azure.identity import DefaultAzureCredential
 def embed_text(client: InferenceClient) -> None:
     # A request has at most one text or query item.
     result = client.get_embeddings(
+        model="microsoft-embedding-1-large",
         inputs=[
             {
                 "id": "doc-1",
@@ -45,7 +46,7 @@ def embed_text(client: InferenceClient) -> None:
     )
     item = result.data[0]
     if isinstance(item, MultimodalDenseEmbedding) and isinstance(item.embedding, list):
-        print(f"{result.model} v{result.model_version}: {item.id}, {len(item.embedding)} dimensions")
+        print(f"{result.model}: {item.id}, {len(item.embedding)} dimensions")
     if isinstance(result.usage, MultimodalEmbeddingUsage):
         print(f"  usage: {result.usage.text_tokens} text tokens")
     # Text over the model's token limit is embedded from its start and reported here, not rejected.
@@ -56,6 +57,7 @@ def embed_text(client: InferenceClient) -> None:
 
 def embed_query_dense_and_multi(client: InferenceClient) -> None:
     item = client.get_embeddings(
+        model="microsoft-embedding-1-large",
         inputs=[{"id": "query-1", "kind": "query", "content": "When is the invoice due?"}],
         vector_kind="dense_multi",
     ).data[0]
@@ -66,6 +68,7 @@ def embed_query_dense_and_multi(client: InferenceClient) -> None:
 
 def embed_blob_image(client: InferenceClient, url: str, sas_token: str) -> None:
     page = client.get_embeddings(
+        model="microsoft-embedding-1-large",
         inputs=[{"id": "page-1", "kind": "image", "url": url, "sasToken": sas_token}],
         vector_kind="multi",
         encoding_format="base64",
@@ -81,6 +84,7 @@ def embed_blob_image(client: InferenceClient, url: str, sas_token: str) -> None:
 
 def embed_blob_image_by_link(client: InferenceClient, url: str, sas_token: str) -> None:
     output = client.get_embeddings(
+        model="microsoft-embedding-1-large",
         inputs=[{"id": "page-1", "kind": "image", "url": url, "sasToken": sas_token}],
         delivery="link",
     ).output

@@ -24,8 +24,7 @@ namespace azure.data.ai
                 encoding_format: Optional[Union[str, EmbeddingEncodingFormat]] = ..., 
                 inputs: list[dict[str, Any]], 
                 max_vector_count: Optional[int] = ..., 
-                model: Optional[str] = ..., 
-                model_version: Optional[str] = ..., 
+                model: str, 
                 multi_dimensions: Optional[int] = ..., 
                 output_data_kind: Optional[Union[str, EmbeddingOutputDataKind]] = ..., 
                 vector_kind: Optional[Union[str, EmbeddingVectorKind]] = ..., 
@@ -111,8 +110,7 @@ namespace azure.data.ai.aio
                 encoding_format: Optional[Union[str, EmbeddingEncodingFormat]] = ..., 
                 inputs: list[dict[str, Any]], 
                 max_vector_count: Optional[int] = ..., 
-                model: Optional[str] = ..., 
-                model_version: Optional[str] = ..., 
+                model: str, 
                 multi_dimensions: Optional[int] = ..., 
                 output_data_kind: Optional[Union[str, EmbeddingOutputDataKind]] = ..., 
                 vector_kind: Optional[Union[str, EmbeddingVectorKind]] = ..., 
@@ -300,7 +298,6 @@ namespace azure.data.ai.models
     class azure.data.ai.models.EmbeddingResult(_Model):
         data: list[EmbeddingData]
         model: str
-        model_version: str
         object: Literal["list"]
         output: Optional[MultimodalEmbeddingOutput]
         output_data_kind: Union[str, EmbeddingOutputDataKind]
@@ -313,7 +310,6 @@ namespace azure.data.ai.models
                 *, 
                 data: list[EmbeddingData], 
                 model: str, 
-                model_version: str, 
                 output: Optional[MultimodalEmbeddingOutput] = ..., 
                 output_data_kind: Union[str, EmbeddingOutputDataKind], 
                 usage: EmbeddingUsage, 
@@ -786,8 +782,7 @@ namespace azure.data.ai.types
         key "encodingFormat": Union[str, EmbeddingEncodingFormat]
         key "inputs": Required[list[dict[str, Any]]]
         key "maxVectorCount": int
-        key "model": str
-        key "modelVersion": str
+        key "model": Required[str]
         key "multiDimensions": int
         key "outputDataKind": Union[str, EmbeddingOutputDataKind]
         key "vectorKind": Union[str, EmbeddingVectorKind]
@@ -797,7 +792,6 @@ namespace azure.data.ai.types
         inputs: list[dict[str, Any]]
         maxVectorCount: int
         model: str
-        modelVersion: str
         multiDimensions: int
         outputDataKind: Union[str, EmbeddingOutputDataKind]
         vectorKind: Union[str, EmbeddingVectorKind]

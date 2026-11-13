@@ -246,9 +246,8 @@ class _InferenceClientOperationsMixin(
         self,
         *,
         inputs: list[dict[str, Any]],
+        model: str,
         content_type: str = "application/json",
-        model: Optional[str] = None,
-        model_version: Optional[str] = None,
         vector_kind: Optional[Union[str, _models.EmbeddingVectorKind]] = None,
         dimensions: Optional[int] = None,
         multi_dimensions: Optional[int] = None,
@@ -269,15 +268,12 @@ class _InferenceClientOperationsMixin(
          with at most 20 MiB
          of images per request. The request body can be up to 30,000,000 bytes. Required.
         :paramtype inputs: list[dict[str, any]]
+        :keyword model: The model to use, for example ``microsoft-embedding-1-large`` (Microsoft
+         Embedding 1-large). Required.
+        :paramtype model: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword model: The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft
-         Embedding 1-large). Default value is None.
-        :paramtype model: str
-        :keyword model_version: The model version. Defaults to the latest; the response always names
-         the version used. Default value is None.
-        :paramtype model_version: str
         :keyword vector_kind: The kind of vectors to return. Defaults to ``dense``. Known values are:
          "dense", "multi", and "dense_multi". Default value is None.
         :paramtype vector_kind: str or ~azure.data.ai.models.EmbeddingVectorKind
@@ -354,8 +350,7 @@ class _InferenceClientOperationsMixin(
         body: Union[JSON, _types.EmbedRequest, IO[bytes]] = _Unset,
         *,
         inputs: list[dict[str, Any]] = _Unset,
-        model: Optional[str] = None,
-        model_version: Optional[str] = None,
+        model: str = _Unset,
         vector_kind: Optional[Union[str, _models.EmbeddingVectorKind]] = None,
         dimensions: Optional[int] = None,
         multi_dimensions: Optional[int] = None,
@@ -378,12 +373,9 @@ class _InferenceClientOperationsMixin(
          with at most 20 MiB
          of images per request. The request body can be up to 30,000,000 bytes. Required.
         :paramtype inputs: list[dict[str, any]]
-        :keyword model: The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft
-         Embedding 1-large). Default value is None.
+        :keyword model: The model to use, for example ``microsoft-embedding-1-large`` (Microsoft
+         Embedding 1-large). Required.
         :paramtype model: str
-        :keyword model_version: The model version. Defaults to the latest; the response always names
-         the version used. Default value is None.
-        :paramtype model_version: str
         :keyword vector_kind: The kind of vectors to return. Defaults to ``dense``. Known values are:
          "dense", "multi", and "dense_multi". Default value is None.
         :paramtype vector_kind: str or ~azure.data.ai.models.EmbeddingVectorKind
@@ -432,6 +424,8 @@ class _InferenceClientOperationsMixin(
         if body is _Unset:
             if inputs is _Unset:
                 raise TypeError("missing required argument: inputs")
+            if model is _Unset:
+                raise TypeError("missing required argument: model")
             body = {
                 "delivery": delivery,
                 "dimensions": dimensions,
@@ -439,7 +433,6 @@ class _InferenceClientOperationsMixin(
                 "inputs": inputs,
                 "maxVectorCount": max_vector_count,
                 "model": model,
-                "modelVersion": model_version,
                 "multiDimensions": multi_dimensions,
                 "outputDataKind": output_data_kind,
                 "vectorKind": vector_kind,

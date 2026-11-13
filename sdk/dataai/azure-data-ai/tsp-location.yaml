@@ -1,5 +1,5 @@
 # Regeneration source for the generated Python SDK.
 directory: specification/inferenceservice/data-plane/InferenceService
-commit: 13c5e99c08c0f15286dd30eabc3d512144dd9613
+commit: 44c59a9066a5e6f1c1b9b27576163b575f7b4805
 repo: Azure/azure-rest-api-specs
 additionalDirectories: []

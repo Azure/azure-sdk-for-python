@@ -155,12 +155,14 @@ inclusive range 0–1. Sentence indices are not capped at 2.
 
 ### Multimodal embedding
 
-Call `client.get_embeddings(inputs=[...], ...)` with plain dictionaries. A request
-can contain at most one text or query item and up to 8 images. Each input produces
+Call `client.get_embeddings(inputs=[...], model="microsoft-embedding-1-large", ...)`
+with plain dictionaries and an explicit model name. A request can contain at most
+one text or query item and up to 8 images. Each input produces
 its own embedding; text and images are not fused into a single vector.
 
 ```python
 result = client.get_embeddings(
+    model="microsoft-embedding-1-large",
     inputs=[{"id": "doc-1", "kind": "text", "content": "Invoice terms: net 30."}],
     vector_kind="dense",
     dimensions=1536,
@@ -175,6 +177,7 @@ delegation SAS signed by the Microsoft Entra identity calling the API:
 
 ```python
 result = client.get_embeddings(
+    model="microsoft-embedding-1-large",
     inputs=[
         {"id": "query-1", "kind": "query", "content": "When is the invoice due?"},
         {

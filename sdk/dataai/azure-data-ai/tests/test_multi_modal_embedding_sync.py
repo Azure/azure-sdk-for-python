@@ -54,7 +54,6 @@ def _blob_image(item_id="page-1"):
 DENSE_RESULT = {
     "object": "list",
     "model": MODEL,
-    "modelVersion": "3",
     "outputDataKind": "float32",
     "data": [
         {
@@ -72,7 +71,6 @@ DENSE_RESULT = {
 MULTI_RESULT = {
     "object": "list",
     "model": MODEL,
-    "modelVersion": "3",
     "outputDataKind": "float16",
     "data": [
         {
@@ -103,7 +101,6 @@ MULTI_RESULT = {
 BOTH_RESULT = {
     "object": "list",
     "model": MODEL,
-    "modelVersion": "3",
     "outputDataKind": "float16",
     "data": [
         {
@@ -124,7 +121,6 @@ BOTH_RESULT = {
 TRUNCATED_RESULT = {
     "object": "list",
     "model": MODEL,
-    "modelVersion": "3",
     "outputDataKind": "float32",
     "data": [
         {
@@ -166,7 +162,6 @@ LINK_OUTPUT = {
 LINK_RESULT = {
     "object": "list",
     "model": MODEL,
-    "modelVersion": "3",
     "outputDataKind": "float32",
     "data": [],
     "usage": {
@@ -194,7 +189,6 @@ def test_embed_sends_camel_case_wire_names_and_returns_dense_vectors(transport, 
     request = {
         "inputs": [{"id": "doc-1", "kind": "text", "content": "Invoice terms: net 30."}],
         "model": MODEL,
-        "modelVersion": "3",
         "vectorKind": "dense",
         "dimensions": 1536,
         "outputDataKind": "float32",
@@ -214,7 +208,7 @@ def test_embed_sends_camel_case_wire_names_and_returns_dense_vectors(transport, 
 
     assert isinstance(result, EmbeddingResult)
     assert result.model == MODEL
-    assert result.model_version == "3"
+    assert not hasattr(result, "model_version")
     assert result.output_data_kind == "float32"
     assert isinstance(result.data[0], MultimodalDenseEmbedding)
     assert result.data[0].kind == "multimodal_dense"
@@ -236,7 +230,6 @@ def test_keyword_arguments_serialize_items_and_options(transport, respond):
                 {"id": "page-1", "kind": "image", "url": BLOB_URL, "sasToken": SAS_TOKEN},
             ],
             model=MODEL,
-            model_version="3",
             vector_kind="dense_multi",
             dimensions=1536,
             multi_dimensions=128,
@@ -249,7 +242,6 @@ def test_keyword_arguments_serialize_items_and_options(transport, respond):
     assert _sent_json(transport.send.call_args.args[0]) == {
         "inputs": [{"kind": "query", "content": "invoice due date"}, _blob_image()],
         "model": MODEL,
-        "modelVersion": "3",
         "vectorKind": "dense_multi",
         "dimensions": 1536,
         "multiDimensions": 128,
@@ -260,18 +252,32 @@ def test_keyword_arguments_serialize_items_and_options(transport, respond):
     }
 
 
+def test_keyword_request_requires_model_before_sending(transport):
+    with InferenceClient(ENDPOINT, AzureKeyCredential("test-key"), transport=transport, retry_total=0) as client:
+        with pytest.raises(TypeError, match="missing required argument: model"):
+            client.get_embeddings(inputs=[{"kind": "text", "content": "hello"}])
+
+    transport.send.assert_not_called()
+
+
 def test_blob_image_item_has_no_content(transport, respond):
     respond((200, MULTI_RESULT, {}))
     item = {"kind": "image", "url": BLOB_URL, "sasToken": SAS_TOKEN}
     with InferenceClient(ENDPOINT, AzureKeyCredential("test-key"), transport=transport, retry_total=0) as client:
-        client.get_embeddings(inputs=[item])
+        client.get_embeddings(inputs=[item], model=MODEL)
     assert _sent_json(transport.send.call_args.args[0])["inputs"] == [item]
     assert "content" not in item
 
 
 def test_multi_vector_result_decodes_with_shape(transport, respond, token_credential):
     respond((200, MULTI_RESULT, {}))
-    request = {"inputs": [_blob_image()], "vectorKind": "multi", "encodingFormat": "base64", "delivery": "inline"}
+    request = {
+        "inputs": [_blob_image()],
+        "model": MODEL,
+        "vectorKind": "multi",
+        "encodingFormat": "base64",
+        "delivery": "inline",
+    }
 
     with InferenceClient(ENDPOINT, token_credential, transport=transport, retry_total=0) as client:
         result = client.get_embeddings(request)
@@ -296,7 +302,7 @@ def test_multi_vector_result_decodes_with_shape(transport, respond, token_creden
 
 def test_both_result_has_dense_and_multi_vectors(transport, respond):
     respond((200, BOTH_RESULT, {}))
-    request = {"inputs": [{"id": "q-1", "kind": "query", "content": "q"}], "vectorKind": "dense_multi"}
+    request = {"inputs": [{"id": "q-1", "kind": "query", "content": "q"}], "model": MODEL, "vectorKind": "dense_multi"}
 
     with InferenceClient(ENDPOINT, AzureKeyCredential("test-key"), transport=transport, retry_total=0) as client:
         result = client.get_embeddings(request)
@@ -314,7 +320,7 @@ def test_both_result_has_dense_and_multi_vectors(transport, respond):
 
 def test_link_result_has_empty_data_and_output(transport, respond, token_credential):
     respond((200, LINK_RESULT, {}))
-    request = {"inputs": [{"kind": "query", "content": "q"}, _blob_image()], "delivery": "link"}
+    request = {"inputs": [{"kind": "query", "content": "q"}, _blob_image()], "model": MODEL, "delivery": "link"}
 
     with InferenceClient(ENDPOINT, token_credential, transport=transport, retry_total=0) as client:
         result = client.get_embeddings(request)
@@ -337,7 +343,7 @@ def test_truncated_item_and_warning_deserialize(transport, respond):
     respond((200, TRUNCATED_RESULT, {}))
 
     with InferenceClient(ENDPOINT, AzureKeyCredential("test-key"), transport=transport, retry_total=0) as client:
-        result = client.get_embeddings({"inputs": [{"kind": "text", "content": "t"}]})
+        result = client.get_embeddings({"inputs": [{"kind": "text", "content": "t"}], "model": MODEL})
 
     document = result.data[0]
     assert document.tokens == 8192
@@ -367,7 +373,7 @@ def test_sas_long_lived_warning_has_no_token_fields(transport, respond, token_cr
     respond((200, body, {}))
 
     with InferenceClient(ENDPOINT, token_credential, transport=transport, retry_total=0) as client:
-        result = client.get_embeddings({"inputs": [{"kind": "query", "content": "q"}, _blob_image()]})
+        result = client.get_embeddings({"inputs": [{"kind": "query", "content": "q"}, _blob_image()], "model": MODEL})
 
     warning = result.warnings[0]
     assert warning.code == EmbeddingWarningCode.SAS_LONG_LIVED
@@ -383,7 +389,7 @@ def test_result_without_token_counts_or_warnings_leaves_them_unset(transport, re
     respond((200, body, {}))
 
     with InferenceClient(ENDPOINT, AzureKeyCredential("test-key"), transport=transport, retry_total=0) as client:
-        result = client.get_embeddings({"inputs": [{"kind": "text", "content": "t"}]})
+        result = client.get_embeddings({"inputs": [{"kind": "text", "content": "t"}], "model": MODEL})
 
     item = result.data[0]
     assert item.tokens is None
@@ -400,7 +406,7 @@ def test_unknown_warning_code_is_kept(transport, respond):
     respond((200, body, {}))
 
     with InferenceClient(ENDPOINT, AzureKeyCredential("test-key"), transport=transport, retry_total=0) as client:
-        result = client.get_embeddings({"inputs": [{"kind": "text", "content": "t"}]})
+        result = client.get_embeddings({"inputs": [{"kind": "text", "content": "t"}], "model": MODEL})
 
     assert result.warnings[0].code == "EMBEDDING_SOMETHING_NEW"
     assert result.warnings[0].code_number is None
@@ -420,7 +426,7 @@ def test_unknown_kind_deserializes_to_base_item(transport, respond):
     )
 
     with InferenceClient(ENDPOINT, AzureKeyCredential("test-key"), transport=transport, retry_total=0) as client:
-        result = client.get_embeddings({"inputs": [{"kind": "text", "content": "hello"}]})
+        result = client.get_embeddings({"inputs": [{"kind": "text", "content": "hello"}], "model": MODEL})
 
     item = result.data[0]
     assert isinstance(item, EmbeddingData)
@@ -434,7 +440,7 @@ def test_unknown_kind_deserializes_to_base_item(transport, respond):
 @pytest.mark.parametrize("status, code, error_model", ERROR_CASES)
 def test_embed_errors_expose_service_error_code(transport, respond, token_credential, status, code, error_model):
     respond((status, {"error": {"code": code, "message": "Explains what to fix."}}, {}))
-    request = {"inputs": [_blob_image()], "delivery": "link"}
+    request = {"inputs": [_blob_image()], "model": MODEL, "delivery": "link"}
 
     with InferenceClient(ENDPOINT, token_credential, transport=transport, retry_total=0) as client:
         with pytest.raises(HttpResponseError) as caught:
@@ -454,7 +460,7 @@ def test_embedding_api_version_validation_is_left_to_service(transport, respond,
         ENDPOINT, token_credential, transport=transport, retry_total=0, api_version=api_version
     ) as client:
         with pytest.raises(HttpResponseError) as caught:
-            client.get_embeddings({"inputs": [{"kind": "query", "content": "q"}]})
+            client.get_embeddings({"inputs": [{"kind": "query", "content": "q"}], "model": MODEL})
 
     transport.send.assert_called_once()
     assert _query(transport.send.call_args.args[0])["api-version"] == [api_version]

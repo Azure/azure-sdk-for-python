@@ -24,7 +24,9 @@ async def main() -> None:
 
     async with DefaultAzureCredential() as credential:
         async with InferenceClient(endpoint=endpoint, credential=credential) as client:
-            results = await asyncio.gather(*(client.get_embeddings(inputs=[item]) for item in items))
+            results = await asyncio.gather(
+                *(client.get_embeddings(inputs=[item], model="microsoft-embedding-1-large") for item in items)
+            )
             for result in results:
                 item = result.data[0]
                 if isinstance(item, MultimodalDenseEmbedding) and isinstance(item.embedding, list):

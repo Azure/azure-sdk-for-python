@@ -79,12 +79,9 @@ class EmbedRequest(TypedDict, total=False):
      megapixels each (JPEG, PNG, GIF or WebP), with at most 20 MiB of images per request. The
      request body can be up to 30,000,000 bytes. Required.
     :vartype inputs: list[dict[str, Any]]
-    :ivar model: The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft Embedding
-     1-large).
+    :ivar model: The model to use, for example ``microsoft-embedding-1-large`` (Microsoft Embedding
+     1-large). Required.
     :vartype model: str
-    :ivar modelVersion: The model version. Defaults to the latest; the response always names the
-     version used.
-    :vartype modelVersion: str
     :ivar vectorKind: The kind of vectors to return. Defaults to ``dense``. Known values are:
      "dense", "multi", and "dense_multi".
     :vartype vectorKind: Union[str, "EmbeddingVectorKind"]
@@ -117,10 +114,9 @@ class EmbedRequest(TypedDict, total=False):
      or ``query`` item and at most 8 images. Images can be up to 20 MiB and 50 megapixels each
      (JPEG, PNG, GIF or WebP), with at most 20 MiB of images per request. The request body can be up
      to 30,000,000 bytes. Required."""
-    model: str
-    """The model to use. Defaults to ``microsoft-embedding-1-large`` (Microsoft Embedding 1-large)."""
-    modelVersion: str
-    """The model version. Defaults to the latest; the response always names the version used."""
+    model: Required[str]
+    """The model to use, for example ``microsoft-embedding-1-large`` (Microsoft Embedding 1-large).
+     Required."""
     vectorKind: Union[str, "EmbeddingVectorKind"]
     """The kind of vectors to return. Defaults to ``dense``. Known values are: \"dense\", \"multi\",
      and \"dense_multi\"."""

@@ -24,6 +24,7 @@ from test_multi_modal_embedding_sync import (
     ENDPOINT,
     ERROR_CASES,
     LINK_RESULT,
+    MODEL,
     MULTI_BASE64,
     MULTI_RESULT,
     SAS_TOKEN,
@@ -44,13 +45,13 @@ async def test_embed_sends_keyword_arguments_and_returns_dense_vectors(async_tra
     async with AsyncInferenceClient(
         ENDPOINT, AzureKeyCredential("test-key"), transport=async_transport, retry_total=0
     ) as client:
-        result = await client.get_embeddings(inputs=inputs, vector_kind="dense", dimensions=1536)
+        result = await client.get_embeddings(inputs=inputs, model=MODEL, vector_kind="dense", dimensions=1536)
 
     sent = async_transport.send.call_args.args[0]
     assert sent.method == "POST"
     assert urlparse(sent.url).path == "/inference/embedding"
     assert _query(sent)["api-version"] == ["2026-11-01-preview"]
-    assert json.loads(sent.content) == {"inputs": inputs, "vectorKind": "dense", "dimensions": 1536}
+    assert json.loads(sent.content) == {"inputs": inputs, "model": MODEL, "vectorKind": "dense", "dimensions": 1536}
     assert isinstance(result, EmbeddingResult)
     assert isinstance(result.data[0], MultimodalDenseEmbedding)
     assert result.data[0].embedding == [0.25, -0.5, 0.75]
@@ -58,9 +59,26 @@ async def test_embed_sends_keyword_arguments_and_returns_dense_vectors(async_tra
 
 
 @pytest.mark.asyncio
+async def test_keyword_request_requires_model_before_sending(async_transport):
+    async with AsyncInferenceClient(
+        ENDPOINT, AzureKeyCredential("test-key"), transport=async_transport, retry_total=0
+    ) as client:
+        with pytest.raises(TypeError, match="missing required argument: model"):
+            await client.get_embeddings(inputs=[{"kind": "text", "content": "hello"}])
+
+    async_transport.send.assert_not_called()
+
+
+@pytest.mark.asyncio
 async def test_blob_image_returns_multi_vectors(async_transport, async_respond, async_token_credential):
     async_respond((200, MULTI_RESULT, {}))
-    request = {"inputs": [_blob_image()], "vectorKind": "multi", "encodingFormat": "base64", "delivery": "inline"}
+    request = {
+        "inputs": [_blob_image()],
+        "model": MODEL,
+        "vectorKind": "multi",
+        "encodingFormat": "base64",
+        "delivery": "inline",
+    }
 
     async with AsyncInferenceClient(
         ENDPOINT, async_token_credential, transport=async_transport, retry_total=0
@@ -83,7 +101,7 @@ async def test_both_returns_dense_and_multi_vectors(async_transport, async_respo
         ENDPOINT, AzureKeyCredential("test-key"), transport=async_transport, retry_total=0
     ) as client:
         result = await client.get_embeddings(
-            {"inputs": [{"kind": "query", "content": "q"}], "vectorKind": "dense_multi"}
+            {"inputs": [{"kind": "query", "content": "q"}], "model": MODEL, "vectorKind": "dense_multi"}
         )
 
     item = result.data[0]
@@ -99,7 +117,7 @@ async def test_link_result_has_output(async_transport, async_respond, async_toke
     async with AsyncInferenceClient(
         ENDPOINT, async_token_credential, transport=async_transport, retry_total=0
     ) as client:
-        result = await client.get_embeddings({"inputs": [_blob_image()], "delivery": "link"})
+        result = await client.get_embeddings({"inputs": [_blob_image()], "model": MODEL, "delivery": "link"})
 
     assert result.data == []
     assert result.output.sas_token == SAS_TOKEN
@@ -113,7 +131,7 @@ async def test_truncated_text_returns_warning(async_transport, async_respond):
     async with AsyncInferenceClient(
         ENDPOINT, AzureKeyCredential("test-key"), transport=async_transport, retry_total=0
     ) as client:
-        result = await client.get_embeddings({"inputs": [{"kind": "text", "content": "t"}]})
+        result = await client.get_embeddings({"inputs": [{"kind": "text", "content": "t"}], "model": MODEL})
 
     assert result.data[0].truncated is True
     assert result.data[0].input_tokens == 23171
@@ -132,7 +150,7 @@ async def test_embed_errors_expose_service_error_code(
         ENDPOINT, async_token_credential, transport=async_transport, retry_total=0
     ) as client:
         with pytest.raises(HttpResponseError) as caught:
-            await client.get_embeddings({"inputs": [_blob_image()]})
+            await client.get_embeddings({"inputs": [_blob_image()], "model": MODEL})
 
     assert caught.value.status_code == status
     assert isinstance(caught.value.model, error_model)
