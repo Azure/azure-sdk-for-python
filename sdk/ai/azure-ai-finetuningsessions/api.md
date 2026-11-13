@@ -912,7 +912,11 @@ namespace azure.ai.finetuningsessions.models
     class azure.ai.finetuningsessions.models.Checkpoint(_Model):
         checkpoint_id: str
         checkpoint_type: Union[str, CheckpointType]
-        time: datetime
+        deployment_eligible: Optional[bool]
+        publication: Optional[CheckpointPublicationState]
+        publication_required: Optional[bool]
+        status: Optional[str]
+        time: Optional[datetime]
 
 
     class azure.ai.finetuningsessions.models.CheckpointInfo(_Model):
@@ -945,6 +949,17 @@ namespace azure.ai.finetuningsessions.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.finetuningsessions.models.CheckpointPublicationState(_Model):
+        debug_ref: Optional[str]
+        error_code: Optional[str]
+        message: Optional[str]
+        operation_id: str
+        phase: str
+        reason: Optional[str]
+        should_retry: Optional[bool]
+        status: str
 
 
     class azure.ai.finetuningsessions.models.CheckpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

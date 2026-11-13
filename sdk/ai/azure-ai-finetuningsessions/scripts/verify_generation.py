@@ -31,14 +31,17 @@ GENERATION = PACKAGE / "eng/generation"
 MODULE = Path("azure/ai/finetuningsessions")
 PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions")
 HANDWRITTEN_MODULES = {
+    "_capabilities.py",
     "_checkpoint_download.py",
     "_checkpoint_files.py",
     "_client_options.py",
+    "_completion_feed.py",
     "_exceptions.py",
     "_logging_setup.py",
     "_operation_compat.py",
     "_scalar_serialization.py",
     "_text_only.py",
+    "aio/_completion_feed.py",
     "models/_text_only.py",
 }
 MAINTAINED_MODULES = HANDWRITTEN_MODULES | {

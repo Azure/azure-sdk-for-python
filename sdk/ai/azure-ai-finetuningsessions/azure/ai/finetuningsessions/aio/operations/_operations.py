@@ -136,10 +136,15 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
                 error = _failsafe_deserialize(_models.ApiErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
+        response_headers = {}
+        response_headers["X-Loom-Use-Completion-Feed"] = self._deserialize(
+            "str", response.headers.get("X-Loom-Use-Completion-Feed")
+        )
+
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -294,10 +299,15 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
+            response_headers = {}
             response = pipeline_response.http_response
+            response_headers["X-Loom-Use-Completion-Feed"] = self._deserialize(
+                "str", response.headers.get("X-Loom-Use-Completion-Feed")
+            )
+
             deserialized = _deserialize(_models.OperationResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {

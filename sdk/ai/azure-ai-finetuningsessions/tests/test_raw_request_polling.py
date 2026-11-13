@@ -291,8 +291,9 @@ def test_public_source_import() -> None:
         }
 
     expected = inventory(source)
-    assert len(expected) == 33
+    assert len(expected) == 36
     assert {
+        "_capabilities.py",
         "_text_only.py",
         "models/_text_only.py",
         "_checkpoint_download.py",
@@ -300,6 +301,17 @@ def test_public_source_import() -> None:
         "_scalar_serialization.py",
     } <= expected.keys()
     assert inventory(imported.parent) == expected
+    provenance = json.loads((source.parents[2] / "eng/generation/provenance.json").read_text())
+    assembly = provenance["assembly"]
+    assert assembly["runtime_files"] == len(expected)
+    assert assembly["runtime_python_modules"] == sum(name.endswith(".py") for name in expected)
+    assert "aio/_completion_feed.py" in assembly["maintained_modules"]
+    assert "_completion_feed.py" in assembly["maintained_modules"]
+    runtime_hashes = {f"azure/ai/finetuningsessions/{name}": value for name, value in expected.items()}
+    assert (
+        assembly["runtime_fingerprint_sha256"]
+        == hashlib.sha256(json.dumps(runtime_hashes, sort_keys=True).encode()).hexdigest()
+    )
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])

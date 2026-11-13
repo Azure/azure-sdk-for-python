@@ -38,8 +38,14 @@ from azure.core.exceptions import ServiceRequestError as _ServiceRequestError
 from azure.core.exceptions import ServiceResponseError as _ServiceResponseError
 from azure.core.rest import HttpRequest as _HttpRequest
 
+from ._capabilities import (
+    _CAPABILITIES_REQUEST_HEADER,
+    _AdvertisedCapabilities,
+    _completion_feed_negotiated,
+)
 from ._client import FineTuningSessionClient as FineTuningSessionClientGenerated
 from ._client_options import _prepare_client_options
+from ._completion_feed import _SyncCompletionObserver
 from ._exceptions import (
     BatchTooLargeError,
     ContentionError,
@@ -1154,6 +1160,40 @@ class FineTuningSessionClient(FineTuningSessionClientGenerated):  # pylint: disa
         # Lifecycle-scoped semaphore bounding concurrent sample() calls across
         # their full submit+poll lifecycle (shared by all sessions on this client).
         self._sample_semaphore = _threading.BoundedSemaphore(_MAX_CONCURRENT_SAMPLES)
+        self._completion_feed_enabled: dict[str, bool] = {}
+        self._session_resource_ids: dict[str, str] = {}
+        self._completion_observer: _SyncCompletionObserver | None = None
+        self._completion_observer_lock = _threading.Lock()
+        self._observer_closed = False
+
+    def _get_completion_observer(self) -> _SyncCompletionObserver:
+        with self._completion_observer_lock:
+            if self._observer_closed:
+                raise RuntimeError("Fine-tuning session client is closed")
+            if self._completion_observer is None:
+                self._completion_observer = _SyncCompletionObserver(self)
+            return self._completion_observer
+
+    def _close_completion_observer(self) -> None:
+        with self._completion_observer_lock:
+            self._observer_closed = True
+            observer = self._completion_observer
+        if observer is not None:
+            observer.close()
+
+    def close(self) -> None:
+        """Drain completion observation before closing the synchronous pipeline."""
+        self._close_completion_observer()
+        super().close()
+
+    def __exit__(self, *exc_details: object) -> None:
+        """Drain completion observation on synchronous context exit.
+
+        :param exc_details: Exception details supplied by the context manager.
+        :type exc_details: object
+        """
+        self._close_completion_observer()
+        super().__exit__(*exc_details)
 
 
 class FineTuningSession:
@@ -1304,7 +1344,12 @@ class FineTuningSession:
         post_req = _HttpRequest(
             "POST",
             "{endpoint}/fine_tuning/sessions",
-            headers=_base_headers({"Content-Type": "application/json"}),
+            headers=_base_headers(
+                {
+                    "Content-Type": "application/json",
+                    _CAPABILITIES_REQUEST_HEADER: _AdvertisedCapabilities.COMPLETION_FEED,
+                }
+            ),
             params={"api-version": _API_VERSION},
             content=body_json,
         )
@@ -1332,6 +1377,11 @@ class FineTuningSession:
 
         session_id = _canonical_session_id(raw_session_id)
         resource_session_id = _resource_session_id(raw_session_id)
+        client._session_resource_ids[session_id] = resource_session_id  # pylint: disable=protected-access
+        client._completion_feed_enabled.setdefault(  # pylint: disable=protected-access
+            session_id,
+            _completion_feed_negotiated(post_resp.headers),
+        )
         _logger.info(
             "[create] session_id normalized: raw=%s -> session_id=%s, resource_session_id=%s",
             raw_session_id,
@@ -2363,6 +2413,7 @@ class FineTuningSession:
         # pylint: disable=unused-argument
         if sampling_params is None:
             raise ValueError("sampling_params is required")
+        body: dict[str, Any] | None = None
         if text_only_input is not None:
             body = _text_sample_body(
                 text_only_input,
@@ -2374,16 +2425,31 @@ class FineTuningSession:
                 prompt_logprobs=prompt_logprobs,
                 topk_prompt_logprobs=topk_prompt_logprobs,
             )
-            with self._client._sample_semaphore:  # pylint: disable=protected-access
+        elif prompt_tokens is None:
+            raise ValueError("Supply exactly one of prompt_tokens or text_only_input")
+        # Same-SDK helper must share the client's lifecycle-scoped sampling limit.
+        with self._client._sample_semaphore:  # pylint: disable=protected-access
+            if getattr(self._client, "_completion_feed_enabled", {}).get(self.session_id) is True:
+                return self._client._get_completion_observer().sample(  # pylint: disable=protected-access
+                    self._resource_session_id,
+                    prompt_tokens,
+                    sampling_params,
+                    checkpoint_id=checkpoint_id,
+                    text_only_input=text_only_input,
+                    num_samples=num_samples,
+                    sampling_session_id=sampling_session_id,
+                    seq_id=seq_id,
+                    prompt_logprobs=prompt_logprobs,
+                    topk_prompt_logprobs=topk_prompt_logprobs,
+                )
+            if text_only_input is not None:
+                assert body is not None
                 return self._post_and_poll(
                     f"/fine_tuning/sessions/{self.session_id}/sample",
                     body,
                     extra_params={"checkpoint_id": checkpoint_id},
                 )
-        if prompt_tokens is None:
-            raise ValueError("Supply exactly one of prompt_tokens or text_only_input")
-        # Same-SDK helper must share the client's lifecycle-scoped sampling limit.
-        with self._client._sample_semaphore:  # pylint: disable=protected-access
+            assert prompt_tokens is not None
             return self._post_and_poll(
                 f"/fine_tuning/sessions/{self.session_id}/sample",
                 SampleRequest(
@@ -2423,6 +2489,8 @@ class FineTuningSession:
         """Unload the session from the GPU engine.
 
         Stops the background heartbeat, then issues the complete request.
+        Known service errors retain the canonical session ID; a failed close
+        does not confirm that the session was unloaded.
 
         Spec: ``session.close()``
 
@@ -2439,6 +2507,15 @@ class FineTuningSession:
             params={"api-version": _API_VERSION},
         )
         resp = self._client.send_request(close_req)
+        if resp.status_code >= 400:
+            try:
+                resp_body = resp.json()
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Preserve HTTP error handling if a custom response JSON decoder fails.
+                resp_body = None
+            typed = _classify_http_error(resp.status_code, resp_body, response=resp, session_id=self.session_id)
+            if typed is not None:
+                raise typed
         resp.raise_for_status()
 
     def delete(self, **kwargs: Any) -> None:

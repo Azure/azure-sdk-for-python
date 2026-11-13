@@ -40,6 +40,8 @@ class _RecordingClient:
         subsequent_responses: list[_FakeResponse] | None = None,
     ) -> None:
         self.requests: list[Any] = []
+        self._session_resource_ids: dict[str, str] = {}
+        self._completion_feed_enabled: dict[str, bool] = {}
         responses = [
             _FakeResponse(200, {"session_id": post_session_id, "request_id": "req-1"}),
             _FakeResponse(200, {"status": "completed", "result": {}}),

@@ -40,6 +40,7 @@ import json as _json
 import logging as _logging
 import random as _random
 import time as _time
+from functools import partial as _partial
 from typing import (
     Any,
     Awaitable,
@@ -60,7 +61,12 @@ from azure.core.exceptions import ServiceRequestError as _ServiceRequestError
 from azure.core.exceptions import ServiceResponseError as _ServiceResponseError
 from azure.core.rest import HttpRequest as _HttpRequest
 
-from .._client_options import _prepare_client_options
+from .._capabilities import (
+    _CAPABILITIES_REQUEST_HEADER,
+    _AdvertisedCapabilities,
+    _completion_feed_negotiated,
+)
+from .._client_options import _default_async_transport, _prepare_client_options
 from .._exceptions import (
     MalformedResponseError,
     TextOnlyTrainingChunkError,
@@ -82,6 +88,7 @@ from .._patch import (
     _TEXT_ONLY_CHUNK_ERRORS,
     _base_headers,
     _BoundedRetryState,
+    _canonical_session_id,
     _chunk_data,
     _chunk_text_training_data,
     _clear_poll_log_state,
@@ -94,6 +101,7 @@ from .._patch import (
     _normalize_loom_result,
     _parse_checkpoint_path,
     _ProxyJwtRetryState,
+    _resource_session_id,
     _retryable_resubmit_wait,
 )
 from .._text_only import (
@@ -130,6 +138,7 @@ from ..models import (
     TrainingType,
 )
 from ._client import FineTuningSessionClient as _GeneratedClient
+from ._completion_feed import _CompletionFeed
 
 
 class _ClientBase(_GeneratedClient):
@@ -141,6 +150,9 @@ class _ClientBase(_GeneratedClient):
     _sample_semaphore: asyncio.Semaphore
     _sampling_session_seq: dict[str, int]
     _session_resource_ids: dict[str, str]
+    _completion_feeds: dict[str, _CompletionFeed]
+    _completion_feed_enabled: dict[str, bool]
+    _observer_closed: bool
 
     def __init__(
         self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any
@@ -154,13 +166,24 @@ class _ClientBase(_GeneratedClient):
             allow_insecure_http=allow_insecure_http,
             asynchronous=True,
         )
+        if "connection_pool_limit" in options:
+            limit = options.pop("connection_pool_limit")
+            if isinstance(limit, bool) or not isinstance(limit, int):
+                raise TypeError("connection_pool_limit must be a positive integer.")
+            if limit <= 0:
+                raise ValueError("connection_pool_limit must be a positive integer.")
+            if any(options.get(name) is not None for name in ("transport", "pipeline", "session")):
+                raise ValueError("connection_pool_limit cannot be combined with transport, pipeline or session.")
+            options["transport"] = _default_async_transport(limit, **options)
         super().__init__(endpoint=endpoint, credential=cast(AsyncTokenCredential, credential), **options)
         cast(Any, self._config).allow_insecure_http = allow_insecure_http
         cast(Any, self._config).api_version = kwargs.get("api_version", "v1")
 
     async def close(self) -> None:
-        """Drain all heartbeat tasks before closing the HTTP pipeline."""
+        """Drain observation and heartbeat tasks before closing the HTTP pipeline."""
         _ensure_async_state(cast("FineTuningSessionClient", self))
+        self._observer_closed = True
+        await asyncio.gather(*(feed.close() for feed in self._completion_feeds.values()))
         for session_id in tuple(self._heartbeat_tasks):
             await _stop_heartbeat(cast("FineTuningSessionClient", self), session_id)
         await super().close()
@@ -177,18 +200,6 @@ class _ClientBase(_GeneratedClient):
 
 _PREVIEW = FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW
 _logger = _logging.getLogger(__name__)
-
-
-def _canonical_session_id(session_id: str) -> str:
-    if session_id.startswith("session_"):
-        return session_id
-    return f"session_{session_id.removeprefix('model_')}"
-
-
-def _resource_session_id(session_id: str) -> str:
-    if session_id.startswith(("session_", "model_")):
-        return session_id
-    return f"model_{session_id}"
 
 
 _POLL_LOG_DEDUP_SEC = 30.0
@@ -333,6 +344,10 @@ def _ensure_async_state(self: "FineTuningSessionClient") -> None:
         self._sample_semaphore = asyncio.Semaphore(_MAX_CONCURRENT_SAMPLES)
     if not hasattr(self, "_session_resource_ids"):
         self._session_resource_ids = {}
+    if not hasattr(self, "_completion_feeds"):
+        self._completion_feeds = {}
+        self._completion_feed_enabled = {}
+        self._observer_closed = False
 
 
 def _client_resource_session_id(
@@ -346,6 +361,29 @@ def _client_resource_session_id(
         canonical_session_id,
         _resource_session_id(session_id),
     )
+
+
+def _get_or_create_completion_feed(
+    self: FineTuningSessionClient,
+    session_id: str,
+) -> _CompletionFeed:
+    _ensure_async_state(self)
+    # This module owns the per-session observer cache, including sync adapters.
+    # pylint: disable=protected-access
+    if self._observer_closed:
+        raise RuntimeError("Fine-tuning session client is closed")
+    canonical = _canonical_session_id(session_id)
+    feed = self._completion_feeds.get(canonical)
+    if feed is None:
+        feed = _CompletionFeed(
+            self,
+            _client_resource_session_id(self, session_id),
+            _base_headers({"Content-Type": "application/json"}),
+            {"api-version": _API_VERSION},
+        )
+        self._completion_feeds[canonical] = feed
+    # pylint: enable=protected-access
+    return feed
 
 
 def _client_resource_subpath(
@@ -469,7 +507,7 @@ async def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> N
 # -- Low-level helpers ---------------------------------------------------------
 
 
-def _classify_and_raise(resp: Any, sc: int) -> None:
+def _classify_and_raise(resp: Any, sc: int, *, session_id: Optional[str] = None) -> None:
     """Raise a typed exception for an error response, if one applies.
 
     Reads the response body (tolerating a non-JSON body) and delegates to
@@ -481,13 +519,15 @@ def _classify_and_raise(resp: Any, sc: int) -> None:
     :type resp: ~typing.Any
     :param sc: HTTP status code used to classify the error.
     :type sc: int
+    :keyword session_id: Canonical session identifier to attach to engine errors, if known.
+    :type session_id: str or None
     """
     try:
         resp_body = resp.json()
     except Exception:  # pylint: disable=broad-exception-caught
         # Custom response JSON errors must not bypass typed or HTTP-status handling.
         resp_body = None
-    typed = _classify_http_error(sc, resp_body, response=resp)
+    typed = _classify_http_error(sc, resp_body, response=resp, session_id=session_id)
     if typed is not None:
         raise typed
 
@@ -897,6 +937,7 @@ async def _poll(
     poll_min_sec: Optional[float] = None,
     poll_max_sec: Optional[float] = None,
     protected_training: bool = False,
+    _pending_once: bool = False,
 ) -> OperationResult:
     """Short-poll the envelope endpoint until the request resolves.
 
@@ -936,6 +977,8 @@ async def _poll(
     :type poll_max_sec: float or None
     :param protected_training: Validate reference-training envelopes without changing native polling.
     :type protected_training: bool
+    :param _pending_once: Return control to the observer after a healthy pending response.
+    :type _pending_once: bool
     :return: The normalized and deserialized result of the completed operation.
     :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
@@ -989,6 +1032,8 @@ async def _poll(
                     elapsed = _time.monotonic() - poll_start
                     _maybe_log_poll_progress(envelope, session_id, request_id, op_type, elapsed)
                     error_budget.clear()
+                    if _pending_once:
+                        return None  # type: ignore[return-value]
                     await asyncio.sleep(poll_backoff)
                     poll_backoff = min(poll_backoff * 2, effective_poll_max)
                     continue
@@ -1143,6 +1188,8 @@ async def _poll_with_resubmit(
     operation_started_at: Optional[float] = None,
     poll_min_sec: Optional[float] = None,
     poll_max_sec: Optional[float] = None,
+    _feed: _CompletionFeed | None = None,
+    _registration: int = 0,
 ) -> OperationResult:
     """Poll an already-POSTed request, resubmitting on retryable failures.
 
@@ -1186,6 +1233,10 @@ async def _poll_with_resubmit(
     :param poll_max_sec: Maximum pending-result poll interval in seconds.
         ``None`` uses the default maximum interval.
     :type poll_max_sec: float or None
+    :param _feed: Client-owned completion observer, if sampling negotiated one.
+    :type _feed: ~azure.ai.finetuningsessions.aio._completion_feed._CompletionFeed or None
+    :param _registration: Submission registration owned by the observer.
+    :type _registration: int
     :return: The completed operation result from the original request or a successful resubmission.
     :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
@@ -1204,7 +1255,12 @@ async def _poll_with_resubmit(
                 poll_kwargs["poll_max_sec"] = poll_max_sec
             if _is_protected_mutation(subpath, body_model):
                 poll_kwargs["protected_training"] = True
-            return await _poll(
+            if _feed is not None:
+                # The observer owns the next fetch time. A pending GET must return control
+                # instead of restarting ordinary polling while holding a fetch slot.
+                poll_kwargs["_pending_once"] = True
+            retrieve = _partial(
+                _poll,
                 self,
                 session_id,
                 request_id,
@@ -1212,6 +1268,9 @@ async def _poll_with_resubmit(
                 extra_result_fields,
                 **poll_kwargs,
             )
+            if _feed is not None:
+                return await _feed.wait(request_id, retrieve, _registration)
+            return await retrieve()
         except _RequestRetryableError as exc:
             if _is_protected_mutation(subpath, body_model) or attempt >= _MAX_REQUEST_RETRIES:
                 # Exhausted resubmits — surface the typed terminal error.
@@ -1227,9 +1286,20 @@ async def _poll_with_resubmit(
                 _MAX_REQUEST_RETRIES,
                 wait,
             )
-            await asyncio.sleep(wait)
+            if _feed is not None:
+                await _feed.call(_partial(asyncio.sleep, wait))
+            else:
+                await asyncio.sleep(wait)
             submit = post_fn or _post
-            request_id, op_type = await submit(self, subpath, body_model, extra_params)
+            if _feed is not None:
+                _registration = _feed.begin()
+            try:
+                submit_call = _partial(submit, self, subpath, body_model, extra_params)
+                request_id, op_type = await (_feed.call(submit_call) if _feed is not None else submit_call())
+            except BaseException:
+                if _feed is not None:
+                    _feed.end(_registration)
+                raise
 
 
 async def _post_and_poll(
@@ -1354,7 +1424,12 @@ async def create_session(
     post_req = _HttpRequest(
         "POST",
         "{endpoint}/fine_tuning/sessions",
-        headers=_base_headers({"Content-Type": "application/json"}),
+        headers=_base_headers(
+            {
+                "Content-Type": "application/json",
+                _CAPABILITIES_REQUEST_HEADER: _AdvertisedCapabilities.COMPLETION_FEED,
+            }
+        ),
         params={"api-version": _API_VERSION},
         content=body_json,
     )
@@ -1390,6 +1465,10 @@ async def create_session(
     resource_session_id = _resource_session_id(raw_session_id)
     # Bound below as a client method; maintain its own private resource-ID map.
     self._session_resource_ids[session_id] = resource_session_id  # pylint: disable=protected-access
+    self._completion_feed_enabled.setdefault(  # pylint: disable=protected-access
+        session_id,
+        _completion_feed_negotiated(post_resp.headers),
+    )
     _logger.info(
         "[create_session] session_id transformed: raw=%s -> session_id=%s, resource_session_id=%s",
         raw_session_id,
@@ -2736,23 +2815,51 @@ async def sample(
     # hold-and-wait cycle and thus no deadlock.
     # Bound below as a client method; this is its own lifecycle semaphore.
     async with self._sample_semaphore:  # pylint: disable=protected-access
-        request_id, op_type = await _post_sample(
-            self,
-            subpath,
-            body,
-            extra_params={"checkpoint_id": checkpoint_id},
-        )
-        return await _poll_with_resubmit(
-            self,
-            session_id,
-            request_id,
-            op_type,
-            subpath,
-            body,
-            extra_params={"checkpoint_id": checkpoint_id},
-            post_fn=_post_sample,
-            operation_started_at=operation_started_at,
-        )
+        feed = None
+        registration = 0
+        canonical = _canonical_session_id(session_id)
+        if self._completion_feed_enabled.get(canonical, False):  # pylint: disable=protected-access
+            feed = _get_or_create_completion_feed(self, session_id)
+            registration = feed.begin()
+            feed.pending_samples += 1
+        try:
+            try:
+                submit_call = _partial(
+                    _post_sample,
+                    self,
+                    subpath,
+                    body,
+                    extra_params={"checkpoint_id": checkpoint_id},
+                )
+                request_id, op_type = await (feed.call(submit_call) if feed is not None else submit_call())
+            except BaseException:
+                if feed is not None:
+                    feed.end(registration)
+                raise
+            result = await _poll_with_resubmit(
+                self,
+                session_id,
+                request_id,
+                op_type,
+                subpath,
+                body,
+                extra_params={"checkpoint_id": checkpoint_id},
+                post_fn=_post_sample,
+                operation_started_at=operation_started_at,
+                _feed=feed,
+                _registration=registration,
+            )
+        except Exception:
+            if feed is not None:
+                feed.failed_samples += 1
+            raise
+        else:
+            if feed is not None:
+                feed.completed_samples += 1
+            return result
+        finally:
+            if feed is not None:
+                feed.pending_samples -= 1
 
 
 # -- Session lifecycle ---------------------------------------------------------
@@ -2793,6 +2900,8 @@ async def close_session(
     """Unload the session from the GPU engine.
 
     Stops the background heartbeat, then issues the complete request.
+    Known service errors retain the canonical session ID; a failed close does
+    not confirm that the session was unloaded.
 
     :param session_id: The session ID to close.
     :type session_id: str
@@ -2808,6 +2917,8 @@ async def close_session(
         params={"api-version": _API_VERSION},
     )
     resp = await self.send_request(close_req)
+    if resp.status_code >= 400:
+        _classify_and_raise(resp, resp.status_code, session_id=_canonical_session_id(session_id))
     resp.raise_for_status()
 
 

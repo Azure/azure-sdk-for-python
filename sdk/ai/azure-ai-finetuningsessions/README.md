@@ -66,7 +66,7 @@ remote plaintext authentication.
 ## Key concepts
 
 - A **session** holds model and adapter state between requests.
-- A **request** is submitted and polled until its result is available.
+- A **request** is submitted and observed until its result is available.
   Successful submission does not mean the requested work has completed.
 - A **checkpoint** saves training state or sampler weights. Sampling requires
   a completed sampler checkpoint identifier.
@@ -117,8 +117,9 @@ async def run():
                 await client.close_session(session_id)
 ```
 
-Closing the async client drains its heartbeat tasks and closes the transport,
-but does not unload or delete remote sessions. Use `close_session` explicitly.
+Closing the async client drains its completion observers and heartbeat tasks
+and closes the transport, but does not unload or delete remote sessions.
+Use `close_session` explicitly.
 Keep the event loop responsive so background heartbeats can run.
 
 The async `save_weights_for_sampler_async` method returns a task after
@@ -129,6 +130,20 @@ checkpoint, as shown above.
 associated heartbeat and request deletion of the session and its resources.
 They treat an already absent session as successfully deleted. Deletion differs
 from unloading and does not wait for background storage cleanup.
+
+### Async connection pool sizing
+
+The async client keeps Azure Core's default transport settings unless you pass
+`connection_pool_limit=<positive integer>` to its constructor. This sizes the
+default connection pool when it is opened; it does not change sampling or
+submission concurrency limits and does not guarantee a throughput improvement.
+The default async transport requires `aiohttp`; install it with
+`python -m pip install aiohttp` if it is not already available.
+
+Boolean, non-integer, and non-positive limits are rejected. The option cannot be
+combined with a supplied `transport`, `pipeline`, or `session`. Without it,
+caller-supplied settings and ownership remain unchanged. Synchronous clients
+reject this async-only option.
 
 ### Attach an existing session
 
@@ -155,8 +170,8 @@ Use the convenience methods for complete workflows:
 | Sample | `session.sample(...)` | `await client.sample(session_id, ...)` |
 
 Forward-only passes do not accumulate gradients. Training and sampling helpers
-submit work, poll request IDs, normalize results, and apply their documented
-batching and error-handling behavior.
+submit work, retrieve completed results, normalize them, and apply their
+documented batching and error-handling behavior.
 
 `ModelInput` accepts ordered text and image chunks. `ModelInputChunk(tokens=...)`
 represents token IDs; `ImageChunk` accepts validated JPEG, PNG, or WebP data.
@@ -175,6 +190,38 @@ models and providers. `SamplingOperationResult` is an alias for
 `SampleOperationResult`. Its read-only `prompt_tokens` reports the service's
 prompt count once per prompt, not once per sampled sequence. Missing or
 invalid counts remain `None`; the SDK does not estimate them from other data.
+
+### Completion-feed sampling
+
+Synchronous and asynchronous convenience session creation advertise
+completion-feed support. Sampling uses server-sent events (SSE) only when the
+service negotiates the exact enablement value `true`. Missing or other values,
+older services, and attached sessions without that negotiation retain legacy
+polling. Raw operations, training, and session initialization keep their
+existing polling behavior.
+
+`session.sample()` remains blocking, and `await async_client.sample(...)`
+returns the same result models as before. Notifications trigger retrieval of
+the persisted result or error; they are not generated tokens or final results.
+Stream reconnects preserve progress without repeating inference. Only existing,
+explicitly authorized result-error recovery can resubmit sampling.
+
+Observation and acknowledgements are bounded. Missed notifications are recovered
+by checking for a result after 10 minutes, then 5 minutes after each pending
+response. Feed outages keep that sparse schedule rather than switching to
+frequent polling. Existing heartbeats continue independently.
+
+When sampling becomes idle, an open stream can finish its current bounded
+window and be reused by new sampling in that window. Client close stops
+observation and drains owned tasks before closing the transport. Custom
+transports must honor socket timeouts for bounded synchronous shutdown.
+Canceling a local sampling call or closing the client does not cancel
+service-side inference or unload the session.
+
+Use one logical consuming client per session. Observation progress is held in
+client memory; cross-process acknowledgement sharing and restoration after
+process restart are not supported. INFO progress updates count final sampling
+call outcomes, not notifications or intermediate retries.
 
 ### Opt-in text-only operations
 
@@ -195,6 +242,18 @@ or `None`. Omission or `None` preserves the model default. Unsupported values
 are rejected before submission. Text-only sampling does not support prompt
 log-probabilities, caller-selected stopping criteria, or `response_format`.
 Installing the SDK does not enable these capabilities or grant model access.
+
+### Checkpoint status and publication
+
+Checkpoint listings can include pending or failed save reservations as well as
+completed checkpoints. `checkpoint.time` is a `datetime` or `None`; handle `None`
+before formatting, comparing, or sorting timestamps. `status` describes the
+save, not approval for deployment.
+
+`publication` contains typed `CheckpointPublicationState` metadata.
+`publication_required` and `deployment_eligible` describe separate deployment
+requirements. Metadata omitted by older services remains `None` and must not
+be treated as deployment approval.
 
 ### Download checkpoint files
 
@@ -283,6 +342,11 @@ training checkpoint, restart from the base model.
 
 Do not resubmit training on the interrupted session. Terminal interruption
 errors remain terminal even if a response includes a retry hint.
+`session.close()` and `await async_client.close_session(session_id)` also
+preserve known typed service errors and the canonical session ID. An
+`engine_dead` HTTP 409 raises `TrainingEngineError`; it does not confirm unload.
+Unrecognized conflicts and malformed error bodies remain HTTP errors rather
+than being inferred as engine death.
 `engine_oom` and `engine_timeout` do not by themselves mean the trainer is
 terminally interrupted; follow the error's guidance, such as reducing batch
 size or sequence length for an out-of-memory error.

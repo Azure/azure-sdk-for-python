@@ -7,6 +7,7 @@
         "azure.ai.finetuningsessions.models.Checkpoint": "Azure.AI.FineTuning.Sessions.Checkpoint",
         "azure.ai.finetuningsessions.models.CheckpointInfo": "Azure.AI.FineTuning.Sessions.CheckpointInfo",
         "azure.ai.finetuningsessions.models.CheckpointList": "Azure.AI.Projects.SessionFineTuning.FineTuningCheckpointList",
+        "azure.ai.finetuningsessions.models.CheckpointPublicationState": "Azure.AI.Projects.SessionFineTuning.FineTuningCheckpointPublicationState",
         "azure.ai.finetuningsessions.models.CreateSessionRequest": "Azure.AI.FineTuning.Sessions.CreateSessionRequest",
         "azure.ai.finetuningsessions.models.Cursor": "Azure.AI.Projects.SessionFineTuning.FineTuningCursor",
         "azure.ai.finetuningsessions.models.Datum": "Azure.AI.Projects.SessionFineTuning.FineTuningDatum",
@@ -75,5 +76,5 @@
         "azure.ai.finetuningsessions.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get",
         "azure.ai.finetuningsessions.aio.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get"
     },
-    "CrossLanguageVersion": "f08229ac28a2"
+    "CrossLanguageVersion": "4245d24b05f9"
 }
