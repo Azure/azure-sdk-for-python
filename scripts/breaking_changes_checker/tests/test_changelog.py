@@ -1201,8 +1201,55 @@ def test_added_update_method_for_operation_group():
 
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_CLASS_METHOD_MSG
+    assert msg == ChangelogTracker.ADDED_OPERATION_GROUP_METHOD_MSG
     assert args == ["azure.mgmt.contoso.operations", "ContosoOperations", "update"]
+
+def test_added_keyword_only_param_to_operation_group_method():
+    stable = {
+        "azure.mgmt.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "type": None,
+                    "methods": {
+                        "list": {
+                            "parameters": {
+                                "self": {"default": None, "param_type": "positional_or_keyword"},
+                            },
+                            "is_async": False,
+                        }
+                    },
+                    "properties": {},
+                }
+            }
+        }
+    }
+    current = {
+        "azure.mgmt.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "type": None,
+                    "methods": {
+                        "list": {
+                            "parameters": {
+                                "self": {"default": None, "param_type": "positional_or_keyword"},
+                                "extra": {"default": None, "param_type": "keyword_only"},
+                            },
+                            "is_async": False,
+                        }
+                    },
+                    "properties": {},
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contoso")
+    bc.run_checks()
+    bc.report_changes()
+
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_OPERATION_GROUP_METHOD_PARAMETER_MSG
+    assert args == ["azure.mgmt.contoso.operations", "ContosoOperations", "extra", "list"]
 
 @pytest.mark.parametrize(
     "stable_property,current_property,expected_breaking_changes",
@@ -1270,6 +1317,24 @@ def test_added_update_method_for_operation_group():
             0,
             id="reversed-pep604-union-to-qualified-optional",
         ),
+        pytest.param(
+            {"attr_type": "typing.Optional[Foo]"},
+            {"attr_type": "'typing.Optional[Foo]'"},
+            0,
+            id="quoted-optional",
+        ),
+        pytest.param(
+            {"attr_type": "'typing.Optional[Foo]'"},
+            {"attr_type": "Foo"},
+            1,
+            id="quoted-optional-to-required",
+        ),
+        pytest.param(
+            {"attr_type": "Union[Foo, Union[Bar, None]]"},
+            {"attr_type": "Union[Foo, Bar]"},
+            1,
+            id="nested-union-to-required",
+        ),
     ],
 )
 def test_class_property_is_required(
@@ -1320,8 +1385,8 @@ def test_class_property_is_required_with_default_report():
     get_property_names(stable_class, stable_properties)
     get_property_names(current_class, current_properties)
 
-    assert stable_properties == {"foo": "Optional"}
-    assert current_properties == {"foo": None}
+    assert stable_properties == {"foo": {"attr_type": "Optional[Foo]"}}
+    assert current_properties == {"foo": {"attr_type": "Foo"}}
 
     stable = {
         "azure.contoso.models": {
@@ -1353,3 +1418,218 @@ def test_class_property_is_required_with_default_report():
     msg, _, *args = bc.breaking_changes[0]
     assert msg == ChangelogTracker.REQUIRED_PROPERTY_MSG
     assert args == ["azure.contoso.models", "ContosoModel", "foo"]
+
+
+@pytest.mark.parametrize(
+    "stable_property,current_property,expected_breaking_changes",
+    [
+        pytest.param({"attr_type": "str"}, {"attr_type": "int"}, 1, id="simple"),
+        pytest.param(
+            {"attr_type": "Optional[str]"}, {"attr_type": "Optional[int]"}, 1, id="optional"
+        ),
+        pytest.param(
+            {"attr_type": 'Optional[list["_models.Foo"]]'},
+            {"attr_type": 'Optional[list["_models.Bar"]]'},
+            1,
+            id="nested-model",
+        ),
+        pytest.param(
+            {"attr_type": "dict[str, list[Foo]]"},
+            {"attr_type": "dict[str, list[Bar]]"},
+            1,
+            id="nested-container",
+        ),
+        pytest.param(
+            {"attr_type": "Foo | None"}, {"attr_type": "Bar | None"}, 1, id="pep604-union"
+        ),
+        pytest.param(
+            {"attr_type": "str"}, {"attr_type": "Optional[str]"}, 1, id="added-nullability"
+        ),
+        pytest.param({"attr_type": "str"}, {"attr_type": "str"}, 0, id="unchanged"),
+        pytest.param(
+            {"attr_type": "Optional[Foo]"},
+            {"attr_type": "typing.Union[None, Foo]"},
+            0,
+            id="optional-to-union",
+        ),
+        pytest.param(
+            {"attr_type": "typing.Optional[Foo]"},
+            {"attr_type": "Foo | None"},
+            0,
+            id="qualified-optional-to-pep604-union",
+        ),
+        pytest.param(
+            {"attr_type": "Union[Foo, Bar]"}, {"attr_type": "Bar | Foo"}, 0, id="union-order"
+        ),
+        pytest.param(
+            {"attr_type": 'list["Foo"]'}, {"attr_type": "list[Foo]"}, 0, id="forward-reference"
+        ),
+        pytest.param(
+            {"attr_type": 'Literal["old value"]'},
+            {"attr_type": 'Literal["new value"]'},
+            1,
+            id="literal",
+        ),
+        pytest.param(
+            {"attr_type": "list[Optional[Foo]]"},
+            {"attr_type": "list[Foo | None]"},
+            0,
+            id="nested-equivalent-union",
+        ),
+        pytest.param(
+            {"attr_type": "list[Optional[Foo]]"},
+            {"attr_type": "list[Foo]"},
+            1,
+            id="nested-nullability",
+        ),
+        pytest.param(
+            {"attr_type": "typing.List[Foo]"}, {"attr_type": "list[Foo]"}, 0, id="generic-alias"
+        ),
+        pytest.param({"attr_type": "typing.Dict"}, {"attr_type": "dict"}, 0, id="bare-dict"),
+        pytest.param({"attr_type": "List"}, {"attr_type": "list"}, 0, id="bare-list"),
+        pytest.param({"attr_type": "typing.Tuple"}, {"attr_type": "tuple"}, 0, id="bare-tuple"),
+        pytest.param({"attr_type": "Set"}, {"attr_type": "set"}, 0, id="bare-set"),
+        pytest.param(
+            {"attr_type": "typing.FrozenSet"}, {"attr_type": "frozenset"}, 0, id="bare-frozenset"
+        ),
+        pytest.param({"attr_type": "Type"}, {"attr_type": "type"}, 0, id="bare-type"),
+        pytest.param(
+            {"attr_type": "typing.Optional[Foo]"},
+            {"attr_type": "'typing.Optional[Foo]'"},
+            0,
+            id="quoted-optional",
+        ),
+        pytest.param("Optional", "Optional[str]", 0, id="incomplete-type"),
+        pytest.param({"attr_type": "foo"}, {"attr_type": "str"}, 0, id="initializer-name"),
+        pytest.param(None, "str", 0, id="missing-stable-type"),
+        pytest.param("str", None, 0, id="missing-current-type"),
+        pytest.param("str", "int", 1, id="default-report"),
+    ],
+)
+def test_class_property_type_changed(
+    stable_property, current_property, expected_breaking_changes
+):
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {"foo": stable_property},
+                }
+            }
+        }
+    }
+    current = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {"foo": current_property},
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+    bc.report_changes()
+
+    assert len(bc.breaking_changes) == expected_breaking_changes
+    if expected_breaking_changes:
+        msg, _, *args = bc.breaking_changes[0]
+        assert msg == ChangelogTracker.CHANGED_PROPERTY_TYPE_MSG
+        stable_type = stable_property["attr_type"] if isinstance(stable_property, dict) else stable_property
+        current_type = current_property["attr_type"] if isinstance(current_property, dict) else current_property
+        assert args == ["azure.contoso.models", "ContosoModel", "foo", stable_type, current_type]
+
+
+@pytest.mark.parametrize(
+    "stable_type,current_type",
+    [
+        pytest.param("str", "int", id="simple"),
+        pytest.param("Optional[str]", "Optional[int]", id="optional"),
+        pytest.param(
+            "Optional[list['_models.Foo']]",
+            "Optional[list['_models.Bar']]",
+            id="nested-model",
+        ),
+    ],
+)
+def test_class_property_type_changed_with_default_report(stable_type, current_type):
+    stable_properties = {}
+    current_properties = {}
+    stable_class = ast.parse(
+        f"class ContosoModel:\n    foo: {stable_type} = rest_field()\n"
+    ).body[0]
+    current_class = ast.parse(
+        f"class ContosoModel:\n    foo: {current_type} = rest_field()\n"
+    ).body[0]
+    get_property_names(stable_class, stable_properties)
+    get_property_names(current_class, current_properties)
+
+    assert stable_properties == {"foo": {"attr_type": stable_type}}
+    assert current_properties == {"foo": {"attr_type": current_type}}
+
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": stable_properties,
+                }
+            }
+        }
+    }
+    current = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": current_properties,
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+    changelog = bc.report_changes()
+
+    assert len(bc.breaking_changes) == 1
+    msg, _, *args = bc.breaking_changes[0]
+    assert msg == ChangelogTracker.CHANGED_PROPERTY_TYPE_MSG
+    assert args == ["azure.contoso.models", "ContosoModel", "foo", stable_type, current_type]
+    assert msg.format(*args[1:]) in changelog
+
+
+def test_class_property_type_unchanged_with_metadata_change():
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {"foo": {"attr_type": "Optional[str]", "description": "old"}},
+                }
+            }
+        }
+    }
+    current = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {"foo": {"attr_type": "Optional[str]", "description": "new"}},
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+    bc.report_changes()
+
+    assert len(bc.breaking_changes) == 0
+    assert len(bc.features_added) == 0

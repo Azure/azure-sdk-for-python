@@ -268,7 +268,7 @@ def _compare_code_reports_to_changelog(
         expected_path = os.path.join(DATA_DIR, expected_changelog_file)
 
         # If UPDATE_EXPECTED is set, (re)generate the expected changelog file.
-        if os.environ.get("UPDATE_EXPECTED") and not order_insensitive:
+        if os.environ.get("UPDATE_EXPECTED"):
             os.makedirs(DATA_DIR, exist_ok=True)
             with open(expected_path, "w", encoding="utf-8", newline="\n") as f:
                 f.write(actual_changelog + "\n")
@@ -407,7 +407,7 @@ def test_compare_code_reports_for_azure_mgmt_peering_apistub():
         package_name="azure-mgmt-peering",
         source_report_file="expected_peering_b1_code_report_from_apistub.json",
         target_report_file="expected_peering_b2_code_report_from_apistub.json",
-        expected_changelog_file="expected_peering_b1_b2_changelog.txt",
+        expected_changelog_file="expected_peering_b1_b2_changelog_from_apistub.txt",
         order_insensitive=True,
     )
 
@@ -448,7 +448,7 @@ def test_compare_code_reports_for_azure_mgmt_apimanagement_apistub():
         package_name="azure-mgmt-apimanagement",
         source_report_file="expected_apimanagement_5_code_report_from_apistub.json",
         target_report_file="expected_apimanagement_6b1_code_report_from_apistub.json",
-        expected_changelog_file="expected_apimanagement_5_6b1_changelog.txt",
+        expected_changelog_file="expected_apimanagement_5_6b1_changelog_from_apistub.txt",
         order_insensitive=True,
     )
 

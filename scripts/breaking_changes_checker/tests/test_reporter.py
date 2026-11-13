@@ -41,5 +41,7 @@ def test_base_class_properties():
 
     report = build_library_report("base_class")
     # Check the report for properties of the base class in Bar
-    assert report["base_class"]["class_nodes"]["Foo"]["properties"] == {"a": None}
-    assert report["base_class"]["class_nodes"]["Bar"]["properties"] == {"a": None, "b": None}
+    assert report["base_class"]["class_nodes"]["Foo"]["properties"] == {"a": {"attr_type": "int"}}
+    assert report["base_class"]["class_nodes"]["Bar"]["properties"] == {
+        "a": {"attr_type": "int"}, "b": {"attr_type": "int"}
+    }
