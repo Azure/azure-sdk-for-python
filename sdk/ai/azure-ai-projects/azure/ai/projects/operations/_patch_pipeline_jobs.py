@@ -69,7 +69,7 @@ class PipelineJobsOperations(_GeneratedPipelineJobsOperations):
         _BetaJobsOperations._inject_preview_header(self, kwargs)  # type: ignore[arg-type]
 
     @distributed_trace
-    def list(
+    def list(  # type: ignore[override]
         self,
         *,
         tag: Optional[str] = None,

@@ -60,8 +60,8 @@ class PipelineJobsOperations(_GeneratedPipelineJobsOperations):
         dataset_name: str,
         base_path: Optional[Union[str, PathLike[str]]] = None,
     ) -> str:
-        return await _BetaJobsOperations._resolve_asset_uri(  # type: ignore[arg-type]
-            self, uri, dataset_name, base_path
+        return await _BetaJobsOperations._resolve_asset_uri(
+            self, uri, dataset_name, base_path  # type: ignore[arg-type]
         )
 
     async def _resolve_pipeline_code(self, name: str, job: PipelineJob) -> None:
@@ -70,7 +70,7 @@ class PipelineJobsOperations(_GeneratedPipelineJobsOperations):
     def _inject_preview_header(self, kwargs: dict) -> None:
         _BetaJobsOperations._inject_preview_header(self, kwargs)  # type: ignore[arg-type]
 
-    def list(
+    def list(  # type: ignore[override]
         self,
         *,
         tag: Optional[str] = None,
