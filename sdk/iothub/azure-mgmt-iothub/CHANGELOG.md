@@ -1,5 +1,60 @@
 # Release History
 
+## 5.0.0 (2026-10-23)
+
+### Features Added
+
+  - Client `IotHubClient` added parameter `cloud_setting` in method `__init__`
+  - Client `IotHubClient` added method `send_request`
+  - Model `CertificateDescription` added property `system_data`
+  - Model `CertificateProperties` added property `certificate_authority_resource_id`
+  - Model `CertificatePropertiesWithNonce` added property `certificate_authority_resource_id`
+  - Model `EventHubConsumerGroupInfo` added property `system_data`
+  - Model `IotHubProperties` added property `device_host_name`
+  - Model `IotHubProperties` added property `device_registry`
+  - Model `IotHubProperties` added property `iot_hub_details`
+  - Model `IotHubProperties` added property `service_host_name`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `RoutingEndpoints` added property `event_streams`
+  - Added model `DeviceRegistry`
+  - Added model `DeviceRegistryIdentity`
+  - Added enum `DeviceRegistryIdentityType`
+  - Added model `DeviceRegistryLinkingProperties`
+  - Added enum `DeviceRegistryLinkingState`
+  - Added enum `EventStreamAuthenticationType`
+  - Added enum `FallbackRouteSource`
+  - Added enum `GatewayVersion`
+  - Added model `IotHubDetails`
+  - Added model `ProxyResource`
+  - Added model `RoutingEventStreamProperties`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `IotHubProperties` deleted or renamed its instance variable `device_streams`
+  - Model `IotHubProperties` deleted or renamed its instance variable `encryption`
+  - Model `IotHubProperties` deleted or renamed its instance variable `ip_version`
+  - Model `IotHubProperties` deleted or renamed its instance variable `root_certificate`
+  - Deleted or renamed enum value `JobType.IMPORT_ENUM`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed enum value `RoutingSource.DIGITAL_TWIN_CHANGE_EVENTS`
+  - Deleted or renamed enum value `RoutingSource.MQTT_BROKER_MESSAGES`
+  - Method `CertificatesOperations.create_or_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `CertificatesOperations.delete` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `CertificatesOperations.generate_verification_code` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `CertificatesOperations.verify` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `IotHubResourceOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+
+### Other Changes
+
+  - Deleted model `EndpointHealthDataListResult`/`EventHubConsumerGroupsListResult`/`IotHubDescriptionListResult`/`IotHubQuotaMetricInfoListResult`/`IotHubSkuDescriptionListResult`/`JobResponseListResult`/`OperationListResult`/`SharedAccessSignatureAuthorizationRuleListResult` which actually were not used by SDK users
+  - Deleted model `CertificateBodyDescription`/`EncryptionPropertiesDescription`/`IotHubPropertiesDeviceStreams`/`KeyVaultKeyProperties`/`RootCertificateProperties` which actually were not used by SDK users
+  - Deleted enum `IpVersion` which actually was not used by SDK users
+
 ## 5.0.0b5 (2026-10-09)
 
 ### Features Added

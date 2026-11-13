@@ -64,7 +64,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                             "maxDeliveryCount": 0,
                         },
                         "comments": "str",
-                        "connectionProfile": "str",
                         "deviceHostName": "str",
                         "deviceRegistry": {
                             "dataPlaneHostName": "str",
@@ -76,18 +75,11 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                             "namespaceResourceId": "str",
                             "namespaceUuid": "str",
                         },
-                        "deviceStreams": {"streamingEndpoints": ["str"]},
                         "disableDeviceSAS": bool,
                         "disableLocalAuth": bool,
                         "disableModuleSAS": bool,
                         "enableDataResidency": bool,
                         "enableFileUploadNotifications": bool,
-                        "encryption": {
-                            "keySource": "str",
-                            "keyVaultProperties": [
-                                {"identity": {"userAssignedIdentity": "str"}, "keyIdentifier": "str"}
-                            ],
-                        },
                         "eventHubEndpoints": {
                             "str": {
                                 "endpoint": "str",
@@ -101,7 +93,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                         "hostName": "str",
                         "iotHubDetails": {"gatewayVersion": "str"},
                         "ipFilterRules": [{"action": "str", "filterName": "str", "ipMask": "str"}],
-                        "ipVersion": "str",
                         "locations": [{"location": "str", "role": "str"}],
                         "messagingEndpoints": {
                             "str": {
@@ -111,7 +102,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                             }
                         },
                         "minTlsVersion": "str",
-                        "mqttV5Settings": {"topicGroups": [{"topicGroupId": "str", "topicTemplates": ["str"]}]},
                         "networkRuleSets": {
                             "applyToBuiltInEventHubEndpoint": bool,
                             "ipRules": [{"filterName": "str", "ipMask": "str", "action": "str"}],
@@ -143,10 +133,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                         "provisioningState": "str",
                         "publicNetworkAccess": "str",
                         "restrictOutboundNetworkAccess": bool,
-                        "rootCertificate": {
-                            "enableRootCertificateV2": bool,
-                            "lastUpdatedTimeUtc": "2020-02-20 00:00:00",
-                        },
                         "routing": {
                             "endpoints": {
                                 "cosmosDBSqlContainers": [
@@ -158,7 +144,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                                         "authenticationType": "str",
                                         "id": "str",
                                         "identity": {"userAssignedIdentity": "str"},
-                                        "messagePayloadFormat": "str",
                                         "partitionKeyName": "str",
                                         "partitionKeyTemplate": "str",
                                         "primaryKey": "str",
@@ -176,7 +161,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                                         "entityPath": "str",
                                         "id": "str",
                                         "identity": {"userAssignedIdentity": "str"},
-                                        "messagePayloadFormat": "str",
                                         "resourceGroup": "str",
                                         "subscriptionId": "str",
                                     }
@@ -190,7 +174,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                                         "eventStreamId": "str",
                                         "id": "str",
                                         "identity": {"userAssignedIdentity": "str"},
-                                        "messagePayloadFormat": "str",
                                         "sourceId": "str",
                                         "workspaceId": "str",
                                     }
@@ -204,7 +187,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                                         "entityPath": "str",
                                         "id": "str",
                                         "identity": {"userAssignedIdentity": "str"},
-                                        "messagePayloadFormat": "str",
                                         "resourceGroup": "str",
                                         "subscriptionId": "str",
                                     }
@@ -218,7 +200,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                                         "entityPath": "str",
                                         "id": "str",
                                         "identity": {"userAssignedIdentity": "str"},
-                                        "messagePayloadFormat": "str",
                                         "resourceGroup": "str",
                                         "subscriptionId": "str",
                                     }
@@ -236,7 +217,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                                         "id": "str",
                                         "identity": {"userAssignedIdentity": "str"},
                                         "maxChunkSizeInBytes": 0,
-                                        "messagePayloadFormat": "str",
                                         "resourceGroup": "str",
                                         "subscriptionId": "str",
                                     }
@@ -257,7 +237,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                                     "name": "str",
                                     "source": "str",
                                     "condition": "str",
-                                    "dataSchema": "str",
                                 }
                             ],
                         },
@@ -420,7 +399,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                     "name": "str",
                     "source": "str",
                     "condition": "str",
-                    "dataSchema": "str",
                 },
                 "message": {"appProperties": {"str": "str"}, "body": "str", "systemProperties": {"str": "str"}},
                 "twin": {"properties": {"desired": {"str": {}}, "reported": {"str": {}}}, "tags": {"str": {}}},
