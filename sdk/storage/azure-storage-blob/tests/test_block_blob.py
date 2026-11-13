@@ -8,6 +8,7 @@
 
 import tempfile
 import threading
+import xml.etree.ElementTree as ET
 from base64 import b64decode
 from datetime import datetime, timedelta
 from io import BytesIO
@@ -32,6 +33,7 @@ from azure.storage.blob import (
     BlobSasPermissions,
     BlobServiceClient,
     BlobType,
+    BlockState,
     ContentSettings,
     CustomerProvidedEncryptionKey,
     generate_blob_sas,
@@ -67,6 +69,49 @@ def _assert_unique_ordered_block_ids(block_ids, expected_data, staged_blocks, ex
         b64decode(block_id)  # must be valid base64
     # Committing the blocks in the returned order must reproduce the original content.
     assert b"".join(staged_blocks[block_id] for block_id in block_ids) == expected_data
+
+
+class _CapturedBlockList(Exception):
+    def __init__(self, body):
+        super().__init__("request captured")
+        self.body = body
+
+
+def _capture_block_list(request):
+    # Stop the Put Block List request before it is sent and hand back its body.
+    body = request.http_request.body
+    raise _CapturedBlockList(body.decode() if isinstance(body, bytes) else body)
+
+
+def _block_list_entries(body):
+    return [(element.tag, b64decode(element.text).decode()) for element in ET.fromstring(body)]
+
+
+def _mixed_state_block_list():
+    # States are interleaved on purpose: the service builds the blob in element order,
+    # so each block must stay in its original position.
+    return [
+        BlobBlock(block_id="b", state=BlockState.UNCOMMITTED),
+        BlobBlock(block_id="a", state=BlockState.COMMITTED),
+        BlobBlock(block_id="c", state=BlockState.LATEST),
+        BlobBlock(block_id="d"),
+        "e",
+        BlobBlock(block_id="f", state=BlockState.COMMITTED),
+        BlobBlock(block_id="g", state=BlockState.COMMITTED),
+        BlobBlock(block_id="h", state=BlockState.UNCOMMITTED),
+    ]
+
+
+EXPECTED_MIXED_STATE_ENTRIES = [
+    ("Uncommitted", "b"),
+    ("Committed", "a"),
+    ("Latest", "c"),
+    ("Latest", "d"),
+    ("Latest", "e"),
+    ("Committed", "f"),
+    ("Committed", "g"),
+    ("Uncommitted", "h"),
+]
 
 
 class _RecordingBlockBlobService:
@@ -2200,6 +2245,16 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Substream path uses os.urandom(9) -> 12-char block IDs (matches old length).
         _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
+
+    def test_commit_block_list_sends_each_block_under_its_state(self):
+        # Each block must be sent in the Put Block List element matching its state
+        # (Committed/Uncommitted/Latest), in the order given.
+        blob = BlobClient("https://example.blob.core.windows.net", "container", "blob")
+
+        with pytest.raises(_CapturedBlockList) as captured:
+            blob.commit_block_list(_mixed_state_block_list(), raw_request_hook=_capture_block_list)
+
+        assert _block_list_entries(captured.value.body) == EXPECTED_MIXED_STATE_ENTRIES
 
 
 # ------------------------------------------------------------------------------

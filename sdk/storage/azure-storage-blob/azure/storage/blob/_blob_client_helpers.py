@@ -18,6 +18,7 @@ from typing import (
     Iterable,
     List,
     Optional,
+    Sequence,
     Tuple,
     Union,
     TYPE_CHECKING,
@@ -38,6 +39,7 @@ from ._models import (
     BlobBlock,
     BlobProperties,
     BlobType,
+    BlockState,
     DelimitedJsonDialect,
     DelimitedTextDialect,
     PremiumPageBlobTier,
@@ -751,23 +753,48 @@ def _get_block_list_result(blocks: BlockList) -> Tuple[List[BlobBlock], List[Blo
     return committed, uncommitted
 
 
+class _OrderedBlockLookupList(BlockLookupList):
+    """A BlockLookupList that serializes its blocks in the order they were given.
+
+    The generated model writes all Committed, then all Uncommitted, then all Latest
+    entries. The service assembles the blob in XML element order, so a list that
+    mixes states must keep each block in its original position.
+    """
+
+    def __init__(self, block_list: Sequence[Union[BlobBlock, str]]) -> None:
+        super().__init__(committed=[], uncommitted=[], latest=[])
+        runs: List[Tuple[str, List[str]]] = []
+        for block in block_list:
+            if isinstance(block, BlobBlock):
+                block_id = encode_base64(str(block.id))
+                if block.state == BlockState.COMMITTED:
+                    group, name = cast(List[str], self.committed), "committed"
+                elif block.state == BlockState.UNCOMMITTED:
+                    group, name = cast(List[str], self.uncommitted), "uncommitted"
+                else:
+                    group, name = cast(List[str], self.latest), "latest"
+            else:
+                block_id = encode_base64(str(block))
+                group, name = cast(List[str], self.latest), "latest"
+            group.append(block_id)
+            if runs and runs[-1][0] == name:
+                runs[-1][1].append(block_id)
+            else:
+                runs.append((name, [block_id]))
+        self._ordered_runs = runs
+
+    def items(self) -> Any:
+        # Read by the XML serializer: one entry per run of same-state blocks, in input order.
+        return iter(self._ordered_runs)
+
+
 def _commit_block_list_options(
     block_list: List[BlobBlock],
     content_settings: Optional["ContentSettings"] = None,
     metadata: Optional[Dict[str, str]] = None,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
-    for block in block_list:
-        if isinstance(block, BlobBlock):
-            if block.state.value == "committed":
-                cast(List[str], block_lookup.committed).append(encode_base64(str(block.id)))
-            elif block.state.value == "uncommitted":
-                cast(List[str], block_lookup.uncommitted).append(encode_base64(str(block.id)))
-            elif block_lookup.latest is not None:
-                block_lookup.latest.append(encode_base64(str(block.id)))
-        else:
-            block_lookup.latest.append(encode_base64(str(block)))
+    block_lookup = _OrderedBlockLookupList(block_list)
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
     lease_id = get_lease_id(kwargs.pop("lease", None))
