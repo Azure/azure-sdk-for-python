@@ -326,3 +326,33 @@ All eleven published registry entries and wheels are preserved, and `latest`
 remains `2.7.10b1`. Select `--version 2.7.11b1` explicitly after this artifact
 PR is merged. This is not a PyPI publication, backend deployment or consumer
 image rebuild.
+
+## Version 2.7.12b1
+
+This preview adds optional rollout-level `group_number` to synchronous and
+asynchronous HTTP Execute Rollout and shared legacy/V3/V4 WebSocket clients.
+It accepts nonnegative signed Int64 values, including zero; omitted or null
+values remain unknown. GRPO siblings share the trainer's group number within
+a sampling step. The field is rollout metadata, not a model sampling parameter
+or a Capture Proxy request change.
+
+The candidate wheel is built from SDK source commit
+[`32430ac7d2961ca8cc721c8a3030f106b61fa9c5`](https://github.com/sujit-kamireddy/azure-sdk-for-python/commit/32430ac7d2961ca8cc721c8a3030f106b61fa9c5)
+in [source PR #21](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/21),
+with only the staged package version overridden to `2.7.12b1`.
+Source PR #21 must receive human review and merge before this candidate is
+published.
+
+The wheel is 614313 bytes with SHA-256
+`f704076796c603b1971afc13a211dfb11d063c5aca9fc0574b0eaca8367939fd`.
+All 63 packaged Python files match the pinned source except for the release
+version. Dependency requirements are unchanged, all 13 registry wheels pass
+integrity and checksum validation, and all 12 previous registry entries are
+preserved. An isolated Python 3.12 installation passed all 449 offline
+HTTP/WebSocket/queued regression cases, and all 92 release-tool tests passed.
+
+Merging this artifact change into `rle-releases` selects `2.7.12b1` as `latest`.
+The 64-call admission limit, 90-minute default post-admission timeout,
+explicit timeout overrides and no-execution-replay behavior are retained.
+Matching service support and consumer image rebuilds are separate prerequisites;
+publishing this preview does not deploy the backend or qualify live training.
