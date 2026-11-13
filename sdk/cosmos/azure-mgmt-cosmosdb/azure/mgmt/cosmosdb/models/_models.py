@@ -12,148 +12,10 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import BackupPolicyType, CopyJobType, DataTransferComponent, ServiceType
+from ._enums import BackupPolicyType, ServiceType
 
 if TYPE_CHECKING:
     from .. import models as _models
-
-
-class AccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Access rule in a network security perimeter configuration profile.
-
-    :ivar name: Name of the access rule.
-    :vartype name: str
-    :ivar properties: Properties of the access rule.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.AccessRuleProperties
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the access rule."""
-    properties: Optional["_models.AccessRuleProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties of the access rule."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        properties: Optional["_models.AccessRuleProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of Access Rule.
-
-    :ivar direction: Direction of the access rule. Known values are: "Inbound" and "Outbound".
-    :vartype direction: str or ~azure.mgmt.cosmosdb.models.AccessRuleDirection
-    :ivar address_prefixes: Address prefixes in the CIDR format for inbound rules.
-    :vartype address_prefixes: list[str]
-    :ivar subscriptions: Subscriptions for inbound rules.
-    :vartype subscriptions: list[~azure.mgmt.cosmosdb.models.AccessRulePropertiesSubscriptionsItem]
-    :ivar network_security_perimeters: Network security perimeters for inbound rules.
-    :vartype network_security_perimeters:
-     list[~azure.mgmt.cosmosdb.models.NetworkSecurityPerimeter]
-    :ivar fully_qualified_domain_names: Fully qualified domain names (FQDN) for outbound rules.
-    :vartype fully_qualified_domain_names: list[str]
-    :ivar email_addresses: Email addresses for outbound rules.
-    :vartype email_addresses: list[str]
-    :ivar phone_numbers: Phone numbers for outbound rules.
-    :vartype phone_numbers: list[str]
-    """
-
-    direction: Optional[Union[str, "_models.AccessRuleDirection"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Direction of the access rule. Known values are: \"Inbound\" and \"Outbound\"."""
-    address_prefixes: Optional[list[str]] = rest_field(
-        name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Address prefixes in the CIDR format for inbound rules."""
-    subscriptions: Optional[list["_models.AccessRulePropertiesSubscriptionsItem"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Subscriptions for inbound rules."""
-    network_security_perimeters: Optional[list["_models.NetworkSecurityPerimeter"]] = rest_field(
-        name="networkSecurityPerimeters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Network security perimeters for inbound rules."""
-    fully_qualified_domain_names: Optional[list[str]] = rest_field(
-        name="fullyQualifiedDomainNames", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Fully qualified domain names (FQDN) for outbound rules."""
-    email_addresses: Optional[list[str]] = rest_field(
-        name="emailAddresses", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Email addresses for outbound rules."""
-    phone_numbers: Optional[list[str]] = rest_field(
-        name="phoneNumbers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Phone numbers for outbound rules."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        direction: Optional[Union[str, "_models.AccessRuleDirection"]] = None,
-        address_prefixes: Optional[list[str]] = None,
-        subscriptions: Optional[list["_models.AccessRulePropertiesSubscriptionsItem"]] = None,
-        network_security_perimeters: Optional[list["_models.NetworkSecurityPerimeter"]] = None,
-        fully_qualified_domain_names: Optional[list[str]] = None,
-        email_addresses: Optional[list[str]] = None,
-        phone_numbers: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AccessRulePropertiesSubscriptionsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The subscription resource ID for an access rule.
-
-    :ivar id: The fully qualified Azure resource ID of the subscription e.g.
-     ('/subscriptions/00000000-0000-0000-0000-000000000000').
-    :vartype id: str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The fully qualified Azure resource ID of the subscription e.g.
-     ('/subscriptions/00000000-0000-0000-0000-000000000000')."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class AccountKeyMetadata(_Model):
@@ -163,10 +25,6 @@ class AccountKeyMetadata(_Model):
      missing from the object, it means that the last key regeneration was triggered before
      2022-06-18.
     :vartype generation_time: ~datetime.datetime
-    :ivar approximate_last_usage_time: Approximate time in UTC of the most recent usage of the key
-     in ISO-8601 format. If the value is missing from the object, it means there is no recorded data
-     plane usage for this key.
-    :vartype approximate_last_usage_time: ~datetime.datetime
     """
 
     generation_time: Optional[datetime.datetime] = rest_field(
@@ -174,11 +32,6 @@ class AccountKeyMetadata(_Model):
     )
     """Generation time in UTC of the key in ISO-8601 format. If the value is missing from the object,
      it means that the last key regeneration was triggered before 2022-06-18."""
-    approximate_last_usage_time: Optional[datetime.datetime] = rest_field(
-        name="approximateLastUsageTime", visibility=["read"], format="rfc3339"
-    )
-    """Approximate time in UTC of the most recent usage of the key in ISO-8601 format. If the value is
-     missing from the object, it means there is no recorded data plane usage for this key."""
 
 
 class AnalyticalStorageConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -512,140 +365,6 @@ class AutoUpgradePolicyResource(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Blob container.
-
-    :ivar container_name: Azure Blob container. Required.
-    :vartype container_name: str
-    """
-
-    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Blob container. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        container_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataTransferDataSourceSink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Base class for all DataTransfer source/sink.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureBlobDataTransferDataSourceSink, BaseCosmosDataTransferDataSourceSink,
-    CosmosCassandraDataTransferDataSourceSink, CosmosMongoDataTransferDataSourceSink,
-    CosmosMongoVCoreDataTransferDataSourceSink, CosmosSqlDataTransferDataSourceSink
-
-    :ivar component: Required. Known values are: "CosmosDBCassandra", "CosmosDBMongo",
-     "CosmosDBMongoVCore", "CosmosDBSql", "AzureBlobStorage", and
-     "BaseCosmosDataTransferDataSourceSink".
-    :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    component: str = rest_discriminator(name="component", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"CosmosDBCassandra\", \"CosmosDBMongo\", \"CosmosDBMongoVCore\",
-     \"CosmosDBSql\", \"AzureBlobStorage\", and \"BaseCosmosDataTransferDataSourceSink\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        component: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AzureBlobDataTransferDataSourceSink(
-    DataTransferDataSourceSink, discriminator="AzureBlobStorage"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Blob Storage data source/sink.
-
-    :ivar container_name: Required.
-    :vartype container_name: str
-    :ivar endpoint_url:
-    :vartype endpoint_url: str
-    :ivar component: Required. AZURE_BLOB_STORAGE.
-    :vartype component: str or ~azure.mgmt.cosmosdb.models.AZURE_BLOB_STORAGE
-    """
-
-    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    endpoint_url: Optional[str] = rest_field(
-        name="endpointUrl", visibility=["read", "create", "update", "delete", "query"]
-    )
-    component: Literal[DataTransferComponent.AZURE_BLOB_STORAGE] = rest_discriminator(name="component", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. AZURE_BLOB_STORAGE."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        container_name: str,
-        endpoint_url: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.component = DataTransferComponent.AZURE_BLOB_STORAGE  # type: ignore
-
-
-class AzureBlobSourceSinkDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Blob Storage data source/sink.
-
-    :ivar endpoint_url: Azure Blob container endpoint. Required.
-    :vartype endpoint_url: str
-    """
-
-    endpoint_url: str = rest_field(name="endpointUrl", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Blob container endpoint. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        endpoint_url: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class BackupInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup information of a resource.
 
@@ -688,6 +407,9 @@ class BackupPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     :ivar migration_state: The object representing the state of the migration between the backup
      policies.
     :vartype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+    :ivar backup_retention_lock_expiration_timestamp: The UTC timestamp until which changes that
+     reduce backup retention are locked. While active, this timestamp can only be extended.
+    :vartype backup_retention_lock_expiration_timestamp: ~datetime.datetime
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -697,6 +419,13 @@ class BackupPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         name="migrationState", visibility=["read", "create", "update", "delete", "query"]
     )
     """The object representing the state of the migration between the backup policies."""
+    backup_retention_lock_expiration_timestamp: Optional[datetime.datetime] = rest_field(
+        name="backupRetentionLockExpirationTimestamp",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
+    )
+    """The UTC timestamp until which changes that reduce backup retention are locked. While active,
+     this timestamp can only be extended."""
 
     @overload
     def __init__(
@@ -704,6 +433,7 @@ class BackupPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         *,
         type: str,
         migration_state: Optional["_models.BackupPolicyMigrationState"] = None,
+        backup_retention_lock_expiration_timestamp: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -765,64 +495,6 @@ class BackupPolicyMigrationState(_Model):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
-class BackupResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A restorable backup of a Cassandra cluster.
-
-    :ivar backup_id: The unique identifier of backup.
-    :vartype backup_id: str
-    :ivar backup_state: The current state of the backup. Known values are: "Initiated",
-     "InProgress", "Succeeded", and "Failed".
-    :vartype backup_state: str or ~azure.mgmt.cosmosdb.models.BackupState
-    :ivar backup_start_timestamp: The time at which the backup process begins.
-    :vartype backup_start_timestamp: ~datetime.datetime
-    :ivar backup_stop_timestamp: The time at which the backup process ends.
-    :vartype backup_stop_timestamp: ~datetime.datetime
-    :ivar backup_expiry_timestamp: The time at which the backup will expire.
-    :vartype backup_expiry_timestamp: ~datetime.datetime
-    """
-
-    backup_id: Optional[str] = rest_field(name="backupId", visibility=["read", "create", "update", "delete", "query"])
-    """The unique identifier of backup."""
-    backup_state: Optional[Union[str, "_models.BackupState"]] = rest_field(
-        name="backupState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The current state of the backup. Known values are: \"Initiated\", \"InProgress\",
-     \"Succeeded\", and \"Failed\"."""
-    backup_start_timestamp: Optional[datetime.datetime] = rest_field(
-        name="backupStartTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The time at which the backup process begins."""
-    backup_stop_timestamp: Optional[datetime.datetime] = rest_field(
-        name="backupStopTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The time at which the backup process ends."""
-    backup_expiry_timestamp: Optional[datetime.datetime] = rest_field(
-        name="backupExpiryTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The time at which the backup will expire."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        backup_id: Optional[str] = None,
-        backup_state: Optional[Union[str, "_models.BackupState"]] = None,
-        backup_start_timestamp: Optional[datetime.datetime] = None,
-        backup_stop_timestamp: Optional[datetime.datetime] = None,
-        backup_expiry_timestamp: Optional[datetime.datetime] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class BackupSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupSchedule.
 
@@ -856,191 +528,6 @@ class BackupSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-
         schedule_name: Optional[str] = None,
         cron_expression: Optional[str] = None,
         retention_in_hours: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BaseCopyJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Base copy job properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    BlobToCassandraRUCopyJobProperties, CassandraRUToBlobCopyJobProperties,
-    CassandraRUToCassandraRUCopyJobProperties, MongoRUToMongoRUCopyJobProperties,
-    MongoRUToMongoVCoreCopyJobProperties, NoSqlRUToNoSqlRUCopyJobProperties
-
-    :ivar job_type: Copy Job Type. Required. Known values are: "CassandraRUToCassandraRU",
-     "CassandraRUToAzureBlobStorage", "AzureBlobStorageToCassandraRU", "MongoRUToMongoRU",
-     "MongoRUToMongoVCore", and "NoSqlRUToNoSqlRU".
-    :vartype job_type: str or ~azure.mgmt.cosmosdb.models.CopyJobType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    job_type: str = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])
-    """Copy Job Type. Required. Known values are: \"CassandraRUToCassandraRU\",
-     \"CassandraRUToAzureBlobStorage\", \"AzureBlobStorageToCassandraRU\", \"MongoRUToMongoRU\",
-     \"MongoRUToMongoVCore\", and \"NoSqlRUToNoSqlRU\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        job_type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BaseCopyJobTask(_Model):
-    """The properties of a Copy Job Task.
-
-    :ivar total_count: Task level Total Count.
-    :vartype total_count: int
-    :ivar processed_count: Task level Processed Count.
-    :vartype processed_count: int
-    """
-
-    total_count: Optional[int] = rest_field(name="totalCount", visibility=["read"])
-    """Task level Total Count."""
-    processed_count: Optional[int] = rest_field(name="processedCount", visibility=["read"])
-    """Task level Processed Count."""
-
-
-class BaseCosmosDataTransferDataSourceSink(
-    DataTransferDataSourceSink, discriminator="BaseCosmosDataTransferDataSourceSink"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A base CosmosDB data source/sink.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CosmosCassandraDataTransferDataSourceSink, CosmosMongoDataTransferDataSourceSink,
-    CosmosSqlDataTransferDataSourceSink
-
-    :ivar remote_account_name:
-    :vartype remote_account_name: str
-    :ivar component: Required. BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK.
-    :vartype component: str or
-     ~azure.mgmt.cosmosdb.models.BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    remote_account_name: Optional[str] = rest_field(
-        name="remoteAccountName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    component: Literal[DataTransferComponent.BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK] = rest_discriminator(name="component", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        remote_account_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.component = DataTransferComponent.BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK  # type: ignore
-
-
-class BlobToCassandraRUCopyJobProperties(
-    BaseCopyJobProperties, discriminator="AzureBlobStorageToCassandraRU"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Source Azure Blob Storage to Destination Cassandra copy job properties.
-
-    :ivar source_details: Azure Storage container DataStore details. Required.
-    :vartype source_details: ~azure.mgmt.cosmosdb.models.AzureBlobSourceSinkDetails
-    :ivar destination_details: Destination Cassandra DataStore details.
-    :vartype destination_details: ~azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails
-    :ivar tasks: Copy Job tasks. Required.
-    :vartype tasks: list[~azure.mgmt.cosmosdb.models.BlobToCassandraRUCopyJobTask]
-    :ivar job_type: Copy Job Type. Required. AZURE_BLOB_STORAGE_TO_CASSANDRA_RU.
-    :vartype job_type: str or ~azure.mgmt.cosmosdb.models.AZURE_BLOB_STORAGE_TO_CASSANDRA_RU
-    """
-
-    source_details: "_models.AzureBlobSourceSinkDetails" = rest_field(
-        name="sourceDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Azure Storage container DataStore details. Required."""
-    destination_details: Optional["_models.CosmosDBSourceSinkDetails"] = rest_field(
-        name="destinationDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination Cassandra DataStore details."""
-    tasks: list["_models.BlobToCassandraRUCopyJobTask"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Copy Job tasks. Required."""
-    job_type: Literal[CopyJobType.AZURE_BLOB_STORAGE_TO_CASSANDRA_RU] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Copy Job Type. Required. AZURE_BLOB_STORAGE_TO_CASSANDRA_RU."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source_details: "_models.AzureBlobSourceSinkDetails",
-        tasks: list["_models.BlobToCassandraRUCopyJobTask"],
-        destination_details: Optional["_models.CosmosDBSourceSinkDetails"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.job_type = CopyJobType.AZURE_BLOB_STORAGE_TO_CASSANDRA_RU  # type: ignore
-
-
-class BlobToCassandraRUCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """BlobToCassandraRUCopyJobTask.
-
-    :ivar total_count: Task level Total Count.
-    :vartype total_count: int
-    :ivar processed_count: Task level Processed Count.
-    :vartype processed_count: int
-    :ivar source: Source Azure Blob container. Required.
-    :vartype source: ~azure.mgmt.cosmosdb.models.AzureBlobContainer
-    :ivar destination: Destination Cassandra table. Required.
-    :vartype destination: ~azure.mgmt.cosmosdb.models.CosmosDBCassandraTable
-    """
-
-    source: "_models.AzureBlobContainer" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Source Azure Blob container. Required."""
-    destination: "_models.CosmosDBCassandraTable" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination Cassandra table. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source: "_models.AzureBlobContainer",
-        destination: "_models.CosmosDBCassandraTable",
     ) -> None: ...
 
     @overload
@@ -1106,76 +593,6 @@ class Capacity(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         self,
         *,
         total_throughput_limit: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CapacityModeChangeTransitionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The transition state information related capacity mode change with update request.
-
-    :ivar capacity_mode_transition_status: The transition status of capacity mode. Known values
-     are: "Invalid", "Initialized", "InProgress", "Completed", and "Failed".
-    :vartype capacity_mode_transition_status: str or
-     ~azure.mgmt.cosmosdb.models.CapacityModeTransitionStatus
-    :ivar current_capacity_mode: Indicates the current capacity mode of the account. Known values
-     are: "None", "Provisioned", and "Serverless".
-    :vartype current_capacity_mode: str or ~azure.mgmt.cosmosdb.models.CapacityMode
-    :ivar previous_capacity_mode: Indicates the previous capacity mode of the account before
-     successful transition. Known values are: "None", "Provisioned", and "Serverless".
-    :vartype previous_capacity_mode: str or ~azure.mgmt.cosmosdb.models.CapacityMode
-    :ivar capacity_mode_transition_begin_timestamp: Begin time in UTC of the capacity mode change.
-    :vartype capacity_mode_transition_begin_timestamp: ~datetime.datetime
-    :ivar capacity_mode_transition_end_timestamp: End time in UTC of the capacity mode change.
-    :vartype capacity_mode_transition_end_timestamp: ~datetime.datetime
-    :ivar capacity_mode_last_successful_transition_end_timestamp: End time in UTC of the last
-     successful capacity mode change.
-    :vartype capacity_mode_last_successful_transition_end_timestamp: ~datetime.datetime
-    """
-
-    capacity_mode_transition_status: Optional[Union[str, "_models.CapacityModeTransitionStatus"]] = rest_field(
-        name="capacityModeTransitionStatus", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The transition status of capacity mode. Known values are: \"Invalid\", \"Initialized\",
-     \"InProgress\", \"Completed\", and \"Failed\"."""
-    current_capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = rest_field(
-        name="currentCapacityMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates the current capacity mode of the account. Known values are: \"None\",
-     \"Provisioned\", and \"Serverless\"."""
-    previous_capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = rest_field(
-        name="previousCapacityMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates the previous capacity mode of the account before successful transition. Known values
-     are: \"None\", \"Provisioned\", and \"Serverless\"."""
-    capacity_mode_transition_begin_timestamp: Optional[datetime.datetime] = rest_field(
-        name="capacityModeTransitionBeginTimestamp", visibility=["read"], format="rfc3339"
-    )
-    """Begin time in UTC of the capacity mode change."""
-    capacity_mode_transition_end_timestamp: Optional[datetime.datetime] = rest_field(
-        name="capacityModeTransitionEndTimestamp", visibility=["read"], format="rfc3339"
-    )
-    """End time in UTC of the capacity mode change."""
-    capacity_mode_last_successful_transition_end_timestamp: Optional[datetime.datetime] = rest_field(
-        name="capacityModeLastSuccessfulTransitionEndTimestamp", visibility=["read"], format="rfc3339"
-    )
-    """End time in UTC of the last successful capacity mode change."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        capacity_mode_transition_status: Optional[Union[str, "_models.CapacityModeTransitionStatus"]] = None,
-        current_capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = None,
-        previous_capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -2159,186 +1576,6 @@ class CassandraRoleDefinitionResourceProperties(
         super().__init__(*args, **kwargs)
 
 
-class CassandraRUToBlobCopyJobProperties(
-    BaseCopyJobProperties, discriminator="CassandraRUToAzureBlobStorage"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Source Cassandra to Destination Azure Blob Storage copy job properties.
-
-    :ivar source_details: Source Cassandra DataStore details.
-    :vartype source_details: ~azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails
-    :ivar destination_details: Destination Cassandra DataStore details. Required.
-    :vartype destination_details: ~azure.mgmt.cosmosdb.models.AzureBlobSourceSinkDetails
-    :ivar tasks: Copy Job tasks. Required.
-    :vartype tasks: list[~azure.mgmt.cosmosdb.models.CassandraRUToBlobCopyJobTask]
-    :ivar job_type: Copy Job Type. Required. CASSANDRA_RU_TO_AZURE_BLOB_STORAGE.
-    :vartype job_type: str or ~azure.mgmt.cosmosdb.models.CASSANDRA_RU_TO_AZURE_BLOB_STORAGE
-    """
-
-    source_details: Optional["_models.CosmosDBSourceSinkDetails"] = rest_field(
-        name="sourceDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source Cassandra DataStore details."""
-    destination_details: "_models.AzureBlobSourceSinkDetails" = rest_field(
-        name="destinationDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination Cassandra DataStore details. Required."""
-    tasks: list["_models.CassandraRUToBlobCopyJobTask"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Copy Job tasks. Required."""
-    job_type: Literal[CopyJobType.CASSANDRA_RU_TO_AZURE_BLOB_STORAGE] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Copy Job Type. Required. CASSANDRA_RU_TO_AZURE_BLOB_STORAGE."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        destination_details: "_models.AzureBlobSourceSinkDetails",
-        tasks: list["_models.CassandraRUToBlobCopyJobTask"],
-        source_details: Optional["_models.CosmosDBSourceSinkDetails"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.job_type = CopyJobType.CASSANDRA_RU_TO_AZURE_BLOB_STORAGE  # type: ignore
-
-
-class CassandraRUToBlobCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """CassandraRUToBlobCopyJobTask.
-
-    :ivar total_count: Task level Total Count.
-    :vartype total_count: int
-    :ivar processed_count: Task level Processed Count.
-    :vartype processed_count: int
-    :ivar source: Source Cassandra table. Required.
-    :vartype source: ~azure.mgmt.cosmosdb.models.CosmosDBCassandraTable
-    :ivar destination: Destination Azure Blob container. Required.
-    :vartype destination: ~azure.mgmt.cosmosdb.models.AzureBlobContainer
-    """
-
-    source: "_models.CosmosDBCassandraTable" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Source Cassandra table. Required."""
-    destination: "_models.AzureBlobContainer" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Destination Azure Blob container. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source: "_models.CosmosDBCassandraTable",
-        destination: "_models.AzureBlobContainer",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CassandraRUToCassandraRUCopyJobProperties(
-    BaseCopyJobProperties, discriminator="CassandraRUToCassandraRU"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Source Cassandra to Destination Cassandra copy job properties.
-
-    :ivar source_details: Source Cassandra DataStore details.
-    :vartype source_details: ~azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails
-    :ivar destination_details: Destination Cassandra DataStore details.
-    :vartype destination_details: ~azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails
-    :ivar tasks: Copy Job tasks. Required.
-    :vartype tasks: list[~azure.mgmt.cosmosdb.models.CassandraRUToCassandraRUCopyJobTask]
-    :ivar job_type: Copy Job Type. Required. CASSANDRA_RU_TO_CASSANDRA_RU.
-    :vartype job_type: str or ~azure.mgmt.cosmosdb.models.CASSANDRA_RU_TO_CASSANDRA_RU
-    """
-
-    source_details: Optional["_models.CosmosDBSourceSinkDetails"] = rest_field(
-        name="sourceDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source Cassandra DataStore details."""
-    destination_details: Optional["_models.CosmosDBSourceSinkDetails"] = rest_field(
-        name="destinationDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination Cassandra DataStore details."""
-    tasks: list["_models.CassandraRUToCassandraRUCopyJobTask"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Copy Job tasks. Required."""
-    job_type: Literal[CopyJobType.CASSANDRA_RU_TO_CASSANDRA_RU] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Copy Job Type. Required. CASSANDRA_RU_TO_CASSANDRA_RU."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tasks: list["_models.CassandraRUToCassandraRUCopyJobTask"],
-        source_details: Optional["_models.CosmosDBSourceSinkDetails"] = None,
-        destination_details: Optional["_models.CosmosDBSourceSinkDetails"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.job_type = CopyJobType.CASSANDRA_RU_TO_CASSANDRA_RU  # type: ignore
-
-
-class CassandraRUToCassandraRUCopyJobTask(
-    BaseCopyJobTask
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """CassandraRUToCassandraRUCopyJobTask.
-
-    :ivar total_count: Task level Total Count.
-    :vartype total_count: int
-    :ivar processed_count: Task level Processed Count.
-    :vartype processed_count: int
-    :ivar source: Source Cassandra table. Required.
-    :vartype source: ~azure.mgmt.cosmosdb.models.CosmosDBCassandraTable
-    :ivar destination: Destination Cassandra table. Required.
-    :vartype destination: ~azure.mgmt.cosmosdb.models.CosmosDBCassandraTable
-    """
-
-    source: "_models.CosmosDBCassandraTable" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Source Cassandra table. Required."""
-    destination: "_models.CosmosDBCassandraTable" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination Cassandra table. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source: "_models.CosmosDBCassandraTable",
-        destination: "_models.CosmosDBCassandraTable",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class CassandraSchema(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Cassandra table schema.
 
@@ -2742,345 +1979,6 @@ class CassandraTableGetResults(ProxyResource):  # pylint: disable=docstring-keyw
             super().__setattr__(key, value)
 
 
-class CassandraViewCreateUpdateParameters(
-    ARMResourceProperties
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters to create and update Cosmos DB Cassandra view.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
-     "Graph", "DocumentDB", and "MongoDB".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    :ivar properties: Properties to create and update Azure Cosmos DB Cassandra view. Required.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.CassandraViewCreateUpdateProperties
-    """
-
-    properties: "_models.CassandraViewCreateUpdateProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties to create and update Azure Cosmos DB Cassandra view. Required."""
-
-    __flattened_items = ["resource", "options"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.CassandraViewCreateUpdateProperties",
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class CassandraViewCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties to create and update Azure Cosmos DB Cassandra view.
-
-    :ivar resource: The standard JSON format of a Cassandra view. Required.
-    :vartype resource: ~azure.mgmt.cosmosdb.models.CassandraViewResource
-    :ivar options: A key-value pair of options to be applied for the request. This corresponds to
-     the headers sent with the request.
-    :vartype options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
-    """
-
-    resource: "_models.CassandraViewResource" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The standard JSON format of a Cassandra view. Required."""
-    options: Optional["_models.CreateUpdateOptions"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A key-value pair of options to be applied for the request. This corresponds to the headers sent
-     with the request."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource: "_models.CassandraViewResource",
-        options: Optional["_models.CreateUpdateOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CassandraViewGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties of an Azure Cosmos DB Cassandra view.
-
-    :ivar resource:
-    :vartype resource: ~azure.mgmt.cosmosdb.models.CassandraViewGetPropertiesResource
-    :ivar options:
-    :vartype options: ~azure.mgmt.cosmosdb.models.CassandraViewGetPropertiesOptions
-    """
-
-    resource: Optional["_models.CassandraViewGetPropertiesResource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    options: Optional["_models.CassandraViewGetPropertiesOptions"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource: Optional["_models.CassandraViewGetPropertiesResource"] = None,
-        options: Optional["_models.CassandraViewGetPropertiesOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CassandraViewGetPropertiesOptions(OptionsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """CassandraViewGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        throughput: Optional[int] = None,
-        autoscale_settings: Optional["_models.AutoscaleSettings"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CassandraViewResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Cosmos DB Cassandra view resource object.
-
-    :ivar id: Name of the Cosmos DB Cassandra view. Required.
-    :vartype id: str
-    :ivar view_definition: View Definition of the Cosmos DB Cassandra view. Required.
-    :vartype view_definition: str
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the Cosmos DB Cassandra view. Required."""
-    view_definition: str = rest_field(name="viewDefinition", visibility=["read", "create", "update", "delete", "query"])
-    """View Definition of the Cosmos DB Cassandra view. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        view_definition: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CassandraViewGetPropertiesResource(
-    CassandraViewResource
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """CassandraViewGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB Cassandra view. Required.
-    :vartype id: str
-    :ivar view_definition: View Definition of the Cosmos DB Cassandra view. Required.
-    :vartype view_definition: str
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: float
-    :ivar etag: A system generated property representing the resource etag required for optimistic
-     concurrency control.
-    :vartype etag: str
-    """
-
-    rid: Optional[str] = rest_field(name="_rid", visibility=["read"])
-    """A system generated property. A unique identifier."""
-    ts: Optional[float] = rest_field(name="_ts", visibility=["read"])
-    """A system generated property that denotes the last updated timestamp of the resource."""
-    etag: Optional[str] = rest_field(name="_etag", visibility=["read"])
-    """A system generated property representing the resource etag required for optimistic concurrency
-     control."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        view_definition: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CassandraViewGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Cosmos DB Cassandra view.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: The properties of an Azure Cosmos DB Cassandra view.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.CassandraViewGetProperties
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    """
-
-    properties: Optional["_models.CassandraViewGetProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The properties of an Azure Cosmos DB Cassandra view."""
-    location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The location of the resource group to which the resource belongs."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Identity for the resource."""
-
-    __flattened_items = ["resource", "options"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.CassandraViewGetProperties"] = None,
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
 class Certificate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate.
 
@@ -3107,122 +2005,6 @@ class Certificate(_Model):  # pylint: disable=docstring-keyword-should-match-key
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ChaosFaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A request object to enable/disable the chaos fault.
-
-    :ivar action: Indicates whether what action to take for the Chaos Fault. Known values are:
-     "Enable" and "Disable".
-    :vartype action: str or ~azure.mgmt.cosmosdb.models.SupportedActions
-    :ivar region: Region of the account where the Chaos Fault is to be enabled/disabled.
-    :vartype region: str
-    :ivar database_name: Database name.
-    :vartype database_name: str
-    :ivar container_name: Container name.
-    :vartype container_name: str
-    :ivar provisioning_state: A provisioning state of the Chaos Fault.
-    :vartype provisioning_state: str
-    """
-
-    action: Optional[Union[str, "_models.SupportedActions"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether what action to take for the Chaos Fault. Known values are: \"Enable\" and
-     \"Disable\"."""
-    region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Region of the account where the Chaos Fault is to be enabled/disabled."""
-    database_name: Optional[str] = rest_field(
-        name="databaseName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Database name."""
-    container_name: Optional[str] = rest_field(
-        name="containerName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Container name."""
-    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
-    """A provisioning state of the Chaos Fault."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        action: Optional[Union[str, "_models.SupportedActions"]] = None,
-        region: Optional[str] = None,
-        database_name: Optional[str] = None,
-        container_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ChaosFaultResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A request object to enable/disable the chaos fault.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: A request object to enable/disable the chaos fault.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.ChaosFaultProperties
-    """
-
-    properties: Optional["_models.ChaosFaultProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A request object to enable/disable the chaos fault."""
-
-    __flattened_items = ["action", "region", "database_name", "container_name", "provisioning_state"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.ChaosFaultProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
 
 
 class ClientEncryptionIncludedPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -3800,9 +2582,6 @@ class ClusterResourceProperties(_Model):  # pylint: disable=docstring-keyword-sh
     :vartype deallocated: bool
     :ivar cassandra_audit_logging_enabled: Whether Cassandra audit logging is enabled.
     :vartype cassandra_audit_logging_enabled: bool
-    :ivar cluster_type: Type of the cluster. If set to Production, some operations might not be
-     permitted on cluster. Known values are: "Production" and "NonProduction".
-    :vartype cluster_type: str or ~azure.mgmt.cosmosdb.models.ClusterType
     :ivar provision_error: Error related to resource provisioning.
     :vartype provision_error: ~azure.mgmt.cosmosdb.models.CassandraError
     :ivar extensions: Extensions to be added or updated on cluster.
@@ -3915,11 +2694,6 @@ class ClusterResourceProperties(_Model):  # pylint: disable=docstring-keyword-sh
         name="cassandraAuditLoggingEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether Cassandra audit logging is enabled."""
-    cluster_type: Optional[Union[str, "_models.ClusterType"]] = rest_field(
-        name="clusterType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of the cluster. If set to Production, some operations might not be permitted on cluster.
-     Known values are: \"Production\" and \"NonProduction\"."""
     provision_error: Optional["_models.CassandraError"] = rest_field(
         name="provisionError", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3945,7 +2719,7 @@ class ClusterResourceProperties(_Model):  # pylint: disable=docstring-keyword-sh
      datacenters need to connect to."""
 
     @overload
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         provisioning_state: Optional[Union[str, "_models.ManagedCassandraProvisioningState"]] = None,
@@ -3965,7 +2739,6 @@ class ClusterResourceProperties(_Model):  # pylint: disable=docstring-keyword-sh
         hours_between_backups: Optional[int] = None,
         deallocated: Optional[bool] = None,
         cassandra_audit_logging_enabled: Optional[bool] = None,
-        cluster_type: Optional[Union[str, "_models.ClusterType"]] = None,
         provision_error: Optional["_models.CassandraError"] = None,
         extensions: Optional[list[str]] = None,
         backup_schedules: Optional[list["_models.BackupSchedule"]] = None,
@@ -4004,60 +2777,6 @@ class Column(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-
         *,
         name: Optional[str] = None,
         type: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CommandAsyncPostBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Specification of which command to run where.
-
-    :ivar command: The command which should be run. Required.
-    :vartype command: str
-    :ivar arguments: The arguments for the command to be run.
-    :vartype arguments: any
-    :ivar host: IP address of the cassandra host to run the command on. Required.
-    :vartype host: str
-    :ivar cassandra_stop_start: If true, stops cassandra before executing the command and then
-     start it again.
-    :vartype cassandra_stop_start: bool
-    :ivar read_write: If true, allows the command to *write* to the cassandra directory, otherwise
-     read-only.
-    :vartype read_write: bool
-    """
-
-    command: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The command which should be run. Required."""
-    arguments: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The arguments for the command to be run."""
-    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """IP address of the cassandra host to run the command on. Required."""
-    cassandra_stop_start: Optional[bool] = rest_field(
-        name="cassandra-stop-start", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If true, stops cassandra before executing the command and then start it again."""
-    read_write: Optional[bool] = rest_field(
-        name="readWrite", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If true, allows the command to *write* to the cassandra directory, otherwise read-only."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        command: str,
-        host: str,
-        arguments: Optional[Any] = None,
-        cassandra_stop_start: Optional[bool] = None,
-        read_write: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4140,91 +2859,6 @@ class CommandPostBody(_Model):  # pylint: disable=docstring-keyword-should-match
         arguments: Optional[dict[str, str]] = None,
         cassandra_stop_start: Optional[bool] = None,
         readwrite: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CommandPublicResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """resource representing a command.
-
-    :ivar command: The command which should be run.
-    :vartype command: str
-    :ivar command_id: The unique id of command.
-    :vartype command_id: str
-    :ivar arguments: The arguments for the command to be run.
-    :vartype arguments: any
-    :ivar host: IP address of the cassandra host to run the command on.
-    :vartype host: str
-    :ivar is_admin: Whether command has admin privileges.
-    :vartype is_admin: bool
-    :ivar cassandra_stop_start: If true, stops cassandra before executing the command and then
-     start it again.
-    :vartype cassandra_stop_start: bool
-    :ivar read_write: If true, allows the command to *write* to the cassandra directory, otherwise
-     read-only.
-    :vartype read_write: bool
-    :ivar result: Result output of the command.
-    :vartype result: str
-    :ivar status: Status of the command. Known values are: "Done", "Running", "Enqueue",
-     "Processing", "Finished", and "Failed".
-    :vartype status: str or ~azure.mgmt.cosmosdb.models.CommandStatus
-    :ivar output_file: The name of the file where the result is written.
-    :vartype output_file: str
-    """
-
-    command: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The command which should be run."""
-    command_id: Optional[str] = rest_field(name="commandId", visibility=["read", "create", "update", "delete", "query"])
-    """The unique id of command."""
-    arguments: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The arguments for the command to be run."""
-    host: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """IP address of the cassandra host to run the command on."""
-    is_admin: Optional[bool] = rest_field(name="isAdmin", visibility=["read", "create", "update", "delete", "query"])
-    """Whether command has admin privileges."""
-    cassandra_stop_start: Optional[bool] = rest_field(
-        name="cassandraStopStart", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If true, stops cassandra before executing the command and then start it again."""
-    read_write: Optional[bool] = rest_field(
-        name="readWrite", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If true, allows the command to *write* to the cassandra directory, otherwise read-only."""
-    result: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Result output of the command."""
-    status: Optional[Union[str, "_models.CommandStatus"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Status of the command. Known values are: \"Done\", \"Running\", \"Enqueue\", \"Processing\",
-     \"Finished\", and \"Failed\"."""
-    output_file: Optional[str] = rest_field(
-        name="outputFile", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of the file where the result is written."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        command: Optional[str] = None,
-        command_id: Optional[str] = None,
-        arguments: Optional[Any] = None,
-        host: Optional[str] = None,
-        is_admin: Optional[bool] = None,
-        cassandra_stop_start: Optional[bool] = None,
-        read_write: Optional[bool] = None,
-        result: Optional[str] = None,
-        status: Optional[Union[str, "_models.CommandStatus"]] = None,
-        output_file: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4582,6 +3216,9 @@ class ContinuousModeBackupPolicy(
     :ivar migration_state: The object representing the state of the migration between the backup
      policies.
     :vartype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+    :ivar backup_retention_lock_expiration_timestamp: The UTC timestamp until which changes that
+     reduce backup retention are locked. While active, this timestamp can only be extended.
+    :vartype backup_retention_lock_expiration_timestamp: ~datetime.datetime
     :ivar continuous_mode_properties: Configuration values for continuous mode backup.
     :vartype continuous_mode_properties: ~azure.mgmt.cosmosdb.models.ContinuousModeProperties
     :ivar type: Describes the mode of backups. Required. CONTINUOUS.
@@ -4600,6 +3237,7 @@ class ContinuousModeBackupPolicy(
         self,
         *,
         migration_state: Optional["_models.BackupPolicyMigrationState"] = None,
+        backup_retention_lock_expiration_timestamp: Optional[datetime.datetime] = None,
         continuous_mode_properties: Optional["_models.ContinuousModeProperties"] = None,
     ) -> None: ...
 
@@ -4618,133 +3256,22 @@ class ContinuousModeBackupPolicy(
 class ContinuousModeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration values for periodic mode backup.
 
-    :ivar tier: Enum to indicate type of Continuos backup mode. Known values are:
-     "Continuous7Days", "Continuous30Days", and "Continuous35Days".
+    :ivar tier: Enum to indicate type of Continuos backup mode. Known values are: "Continuous7Days"
+     and "Continuous30Days".
     :vartype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
     """
 
     tier: Optional[Union[str, "_models.ContinuousTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Enum to indicate type of Continuos backup mode. Known values are: \"Continuous7Days\",
-     \"Continuous30Days\", and \"Continuous35Days\"."""
+    """Enum to indicate type of Continuos backup mode. Known values are: \"Continuous7Days\" and
+     \"Continuous30Days\"."""
 
     @overload
     def __init__(
         self,
         *,
         tier: Optional[Union[str, "_models.ContinuousTier"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CopyJobGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A Cosmos DB Copy Job.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: The properties of a Copy Job. Required.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.CopyJobProperties
-    """
-
-    properties: "_models.CopyJobProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The properties of a Copy Job. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.CopyJobProperties",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CopyJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties of a Copy Job.
-
-    :ivar job_properties: Job Properties. Required.
-    :vartype job_properties: ~azure.mgmt.cosmosdb.models.BaseCopyJobProperties
-    :ivar status: Job Status. Known values are: "Pending", "Partitioning", "Running", "Paused",
-     "Completed", "Faulted", and "Cancelled".
-    :vartype status: str or ~azure.mgmt.cosmosdb.models.CopyJobStatus
-    :ivar processed_count: Processed Count.
-    :vartype processed_count: int
-    :ivar total_count: Total Count.
-    :vartype total_count: int
-    :ivar last_updated_utc_time: Last Updated Time (ISO-8601 format).
-    :vartype last_updated_utc_time: ~datetime.datetime
-    :ivar worker_count: Worker count.
-    :vartype worker_count: int
-    :ivar error: Error response for Faulted job.
-    :vartype error: ~azure.mgmt.cosmosdb.models.ErrorResponse
-    :ivar duration: Total Duration of Job.
-    :vartype duration: str
-    :ivar mode: Mode of job execution. Known values are: "Offline" and "Online".
-    :vartype mode: str or ~azure.mgmt.cosmosdb.models.CopyJobMode
-    """
-
-    job_properties: "_models.BaseCopyJobProperties" = rest_field(
-        name="jobProperties", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Job Properties. Required."""
-    status: Optional[Union[str, "_models.CopyJobStatus"]] = rest_field(visibility=["read"])
-    """Job Status. Known values are: \"Pending\", \"Partitioning\", \"Running\", \"Paused\",
-     \"Completed\", \"Faulted\", and \"Cancelled\"."""
-    processed_count: Optional[int] = rest_field(name="processedCount", visibility=["read"])
-    """Processed Count."""
-    total_count: Optional[int] = rest_field(name="totalCount", visibility=["read"])
-    """Total Count."""
-    last_updated_utc_time: Optional[datetime.datetime] = rest_field(
-        name="lastUpdatedUtcTime", visibility=["read"], format="rfc3339"
-    )
-    """Last Updated Time (ISO-8601 format)."""
-    worker_count: Optional[int] = rest_field(
-        name="workerCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Worker count."""
-    error: Optional["_models.ErrorResponse"] = rest_field(visibility=["read"])
-    """Error response for Faulted job."""
-    duration: Optional[str] = rest_field(visibility=["read"])
-    """Total Duration of Job."""
-    mode: Optional[Union[str, "_models.CopyJobMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Mode of job execution. Known values are: \"Offline\" and \"Online\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        job_properties: "_models.BaseCopyJobProperties",
-        worker_count: Optional[int] = None,
-        mode: Optional[Union[str, "_models.CopyJobMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -4807,383 +3334,6 @@ class CorsPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         allowed_headers: Optional[str] = None,
         exposed_headers: Optional[str] = None,
         max_age_in_seconds: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CosmosCassandraDataTransferDataSourceSink(
-    BaseCosmosDataTransferDataSourceSink, discriminator="CosmosDBCassandra"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """A CosmosDB Cassandra API data source/sink.
-
-    :ivar remote_account_name:
-    :vartype remote_account_name: str
-    :ivar keyspace_name: Required.
-    :vartype keyspace_name: str
-    :ivar table_name: Required.
-    :vartype table_name: str
-    :ivar component: Required. COSMOS_DB_CASSANDRA.
-    :vartype component: str or ~azure.mgmt.cosmosdb.models.COSMOS_DB_CASSANDRA
-    """
-
-    keyspace_name: str = rest_field(name="keyspaceName", visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    table_name: str = rest_field(name="tableName", visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    component: Literal[DataTransferComponent.COSMOS_DB_CASSANDRA] = rest_discriminator(name="component", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. COSMOS_DB_CASSANDRA."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        keyspace_name: str,
-        table_name: str,
-        remote_account_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.component = DataTransferComponent.COSMOS_DB_CASSANDRA  # type: ignore
-
-
-class CosmosDBCassandraTable(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A CosmosDB Cassandra table.
-
-    :ivar keyspace_name: Azure Cosmos DB for Apache Cassandra keyspace. Required.
-    :vartype keyspace_name: str
-    :ivar table_name: Azure Cosmos DB for Apache Cassandra table. Required.
-    :vartype table_name: str
-    """
-
-    keyspace_name: str = rest_field(name="keyspaceName", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Cosmos DB for Apache Cassandra keyspace. Required."""
-    table_name: str = rest_field(name="tableName", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Cosmos DB for Apache Cassandra table. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        keyspace_name: str,
-        table_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CosmosDBMongoCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A CosmosDB Mongo collection.
-
-    :ivar database_name: Azure Cosmos DB for MongoDB (RU) database. Required.
-    :vartype database_name: str
-    :ivar collection_name: Azure Cosmos DB for MongoDB (RU) collection. Required.
-    :vartype collection_name: str
-    """
-
-    database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Cosmos DB for MongoDB (RU) database. Required."""
-    collection_name: str = rest_field(name="collectionName", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Cosmos DB for MongoDB (RU) collection. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        database_name: str,
-        collection_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CosmosDBMongoVCoreCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A CosmosDB Mongo vCore collection.
-
-    :ivar database_name: Azure Cosmos DB for MongoDB (vCore) database. Required.
-    :vartype database_name: str
-    :ivar collection_name: Azure Cosmos DB for MongoDB (vCore) collection. Required.
-    :vartype collection_name: str
-    """
-
-    database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Cosmos DB for MongoDB (vCore) database. Required."""
-    collection_name: str = rest_field(name="collectionName", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Cosmos DB for MongoDB (vCore) collection. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        database_name: str,
-        collection_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CosmosDBNoSqlContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A CosmosDB NoSQL container.
-
-    :ivar database_name: Azure Cosmos DB for NoSQL database. Required.
-    :vartype database_name: str
-    :ivar container_name: Azure Cosmos DB for NoSQL container. Required.
-    :vartype container_name: str
-    """
-
-    database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Cosmos DB for NoSQL database. Required."""
-    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Cosmos DB for NoSQL container. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        database_name: str,
-        container_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CosmosDBSourceSinkDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A CosmosDB data source/sink details.
-
-    :ivar remote_account_name: Name of remote account in case of cross-account data transfer.
-    :vartype remote_account_name: str
-    """
-
-    remote_account_name: Optional[str] = rest_field(
-        name="remoteAccountName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Name of remote account in case of cross-account data transfer."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        remote_account_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CosmosMongoDataTransferDataSourceSink(
-    BaseCosmosDataTransferDataSourceSink, discriminator="CosmosDBMongo"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A CosmosDB Mongo API data source/sink.
-
-    :ivar remote_account_name:
-    :vartype remote_account_name: str
-    :ivar database_name: Required.
-    :vartype database_name: str
-    :ivar collection_name: Required.
-    :vartype collection_name: str
-    :ivar component: Required. COSMOS_DB_MONGO.
-    :vartype component: str or ~azure.mgmt.cosmosdb.models.COSMOS_DB_MONGO
-    """
-
-    database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    collection_name: str = rest_field(name="collectionName", visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    component: Literal[DataTransferComponent.COSMOS_DB_MONGO] = rest_discriminator(name="component", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. COSMOS_DB_MONGO."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        database_name: str,
-        collection_name: str,
-        remote_account_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.component = DataTransferComponent.COSMOS_DB_MONGO  # type: ignore
-
-
-class CosmosMongoVCoreDataTransferDataSourceSink(
-    DataTransferDataSourceSink, discriminator="CosmosDBMongoVCore"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """A CosmosDB Mongo vCore API data source/sink.
-
-    :ivar database_name: Required.
-    :vartype database_name: str
-    :ivar collection_name: Required.
-    :vartype collection_name: str
-    :ivar host_name:
-    :vartype host_name: str
-    :ivar connection_string_key_vault_uri:
-    :vartype connection_string_key_vault_uri: str
-    :ivar component: Required. COSMOS_DB_MONGO_V_CORE.
-    :vartype component: str or ~azure.mgmt.cosmosdb.models.COSMOS_DB_MONGO_V_CORE
-    """
-
-    database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    collection_name: str = rest_field(name="collectionName", visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    host_name: Optional[str] = rest_field(name="hostName", visibility=["read", "create", "update", "delete", "query"])
-    connection_string_key_vault_uri: Optional[str] = rest_field(
-        name="connectionStringKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
-    )
-    component: Literal[DataTransferComponent.COSMOS_DB_MONGO_V_CORE] = rest_discriminator(name="component", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. COSMOS_DB_MONGO_V_CORE."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        database_name: str,
-        collection_name: str,
-        host_name: Optional[str] = None,
-        connection_string_key_vault_uri: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.component = DataTransferComponent.COSMOS_DB_MONGO_V_CORE  # type: ignore
-
-
-class CosmosSqlDataTransferDataSourceSink(
-    BaseCosmosDataTransferDataSourceSink, discriminator="CosmosDBSql"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A CosmosDB No Sql API data source/sink.
-
-    :ivar remote_account_name:
-    :vartype remote_account_name: str
-    :ivar database_name: Required.
-    :vartype database_name: str
-    :ivar container_name: Required.
-    :vartype container_name: str
-    :ivar component: Required. COSMOS_DB_SQL.
-    :vartype component: str or ~azure.mgmt.cosmosdb.models.COSMOS_DB_SQL
-    """
-
-    database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    component: Literal[DataTransferComponent.COSMOS_DB_SQL] = rest_discriminator(name="component", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. COSMOS_DB_SQL."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        database_name: str,
-        container_name: str,
-        remote_account_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.component = DataTransferComponent.COSMOS_DB_SQL  # type: ignore
-
-
-class CreateJobRequest(ARMProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters to create Data Transfer Job.
-
-    :ivar id: The unique resource identifier of the database account.
-    :vartype id: str
-    :ivar name: The name of the database account.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar properties: Data Transfer Create Job Properties. Required.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.DataTransferJobProperties
-    """
-
-    properties: "_models.DataTransferJobProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Data Transfer Create Job Properties. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.DataTransferJobProperties",
     ) -> None: ...
 
     @overload
@@ -5328,12 +3478,9 @@ class DatabaseAccountCreateUpdateParameters(
         "cors",
         "network_acl_bypass",
         "network_acl_bypass_resource_ids",
-        "diagnostic_log_settings",
         "disable_local_auth",
         "restore_parameters",
         "capacity",
-        "capacity_mode",
-        "enable_materialized_views",
         "keys_metadata",
         "enable_partition_merge",
         "enable_burst_capacity",
@@ -5342,9 +3489,8 @@ class DatabaseAccountCreateUpdateParameters(
         "enable_priority_based_execution",
         "default_priority_level",
         "enable_per_region_per_partition_autoscale",
-        "enable_all_versions_and_deletes_change_feed",
-        "soft_delete_configuration",
         "enforce_hierarchical_partition_key_id_last_level",
+        "per_partition_automatic_failover_enabled",
     ]
 
     @overload
@@ -5454,9 +3600,6 @@ class DatabaseAccountCreateUpdateProperties(_Model):  # pylint: disable=docstrin
     :ivar network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
      Bypass for the Cosmos DB account.
     :vartype network_acl_bypass_resource_ids: list[str]
-    :ivar diagnostic_log_settings: The Object representing the different Diagnostic log settings
-     for the Cosmos DB Account.
-    :vartype diagnostic_log_settings: ~azure.mgmt.cosmosdb.models.DiagnosticLogSettings
     :ivar disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
      used exclusively for authentication.
     :vartype disable_local_auth: bool
@@ -5465,12 +3608,6 @@ class DatabaseAccountCreateUpdateProperties(_Model):  # pylint: disable=docstrin
     :ivar capacity: The object that represents all properties related to capacity enforcement on an
      account.
     :vartype capacity: ~azure.mgmt.cosmosdb.models.Capacity
-    :ivar capacity_mode: Indicates the capacityMode of the Cosmos DB account. Known values are:
-     "None", "Provisioned", and "Serverless".
-    :vartype capacity_mode: str or ~azure.mgmt.cosmosdb.models.CapacityMode
-    :ivar enable_materialized_views: Flag to indicate whether to enable MaterializedViews on the
-     Cosmos DB account.
-    :vartype enable_materialized_views: bool
     :ivar keys_metadata: This property is ignored during the update/create operation, as the
      metadata is read-only. The object represents the metadata for the Account Keys of the Cosmos DB
      account.
@@ -5497,14 +3634,13 @@ class DatabaseAccountCreateUpdateProperties(_Model):  # pylint: disable=docstrin
     :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
      Per-Region Per-partition autoscale Preview feature on the account.
     :vartype enable_per_region_per_partition_autoscale: bool
-    :ivar enable_all_versions_and_deletes_change_feed: Flag to indicate if All Versions and Deletes
-     Change feed feature is enabled on the account.
-    :vartype enable_all_versions_and_deletes_change_feed: bool
-    :ivar soft_delete_configuration: The configuration for soft delete on the Cosmos DB account.
-    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
     :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
      hierarchical partition key ID last level enforcement on the account.
     :vartype enforce_hierarchical_partition_key_id_last_level: bool
+    :ivar per_partition_automatic_failover_enabled: Flag to indicate enabling/disabling of
+     per-partition automatic failover on the account, which automatically fails over individual
+     partitions to available regions during a regional outage. Opt-in; defaults to false.
+    :vartype per_partition_automatic_failover_enabled: bool
     """
 
     consistency_policy: Optional["_models.ConsistencyPolicy"] = rest_field(
@@ -5607,10 +3743,6 @@ class DatabaseAccountCreateUpdateProperties(_Model):  # pylint: disable=docstrin
         name="networkAclBypassResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """An array that contains the Resource Ids for Network Acl Bypass for the Cosmos DB account."""
-    diagnostic_log_settings: Optional["_models.DiagnosticLogSettings"] = rest_field(
-        name="diagnosticLogSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Object representing the different Diagnostic log settings for the Cosmos DB Account."""
     disable_local_auth: Optional[bool] = rest_field(
         name="disableLocalAuth", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5622,15 +3754,6 @@ class DatabaseAccountCreateUpdateProperties(_Model):  # pylint: disable=docstrin
     """Parameters to indicate the information about the restore."""
     capacity: Optional["_models.Capacity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object that represents all properties related to capacity enforcement on an account."""
-    capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = rest_field(
-        name="capacityMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates the capacityMode of the Cosmos DB account. Known values are: \"None\",
-     \"Provisioned\", and \"Serverless\"."""
-    enable_materialized_views: Optional[bool] = rest_field(
-        name="enableMaterializedViews", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag to indicate whether to enable MaterializedViews on the Cosmos DB account."""
     keys_metadata: Optional["_models.DatabaseAccountKeysMetadata"] = rest_field(
         name="keysMetadata", visibility=["read"]
     )
@@ -5668,19 +3791,17 @@ class DatabaseAccountCreateUpdateProperties(_Model):  # pylint: disable=docstrin
     )
     """Flag to indicate enabling/disabling of Per-Region Per-partition autoscale Preview feature on
      the account."""
-    enable_all_versions_and_deletes_change_feed: Optional[bool] = rest_field(
-        name="enableAllVersionsAndDeletesChangeFeed", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
-    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
-        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The configuration for soft delete on the Cosmos DB account."""
     enforce_hierarchical_partition_key_id_last_level: Optional[bool] = rest_field(
         name="enforceHierarchicalPartitionKeyIdLastLevel", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
      the account."""
+    per_partition_automatic_failover_enabled: Optional[bool] = rest_field(
+        name="perPartitionAutomaticFailoverEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate enabling/disabling of per-partition automatic failover on the account, which
+     automatically fails over individual partitions to available regions during a regional outage.
+     Opt-in; defaults to false."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -5709,12 +3830,9 @@ class DatabaseAccountCreateUpdateProperties(_Model):  # pylint: disable=docstrin
         cors: Optional[list["_models.CorsPolicy"]] = None,
         network_acl_bypass: Optional[Union[str, "_models.NetworkAclBypass"]] = None,
         network_acl_bypass_resource_ids: Optional[list[str]] = None,
-        diagnostic_log_settings: Optional["_models.DiagnosticLogSettings"] = None,
         disable_local_auth: Optional[bool] = None,
         restore_parameters: Optional["_models.RestoreParameters"] = None,
         capacity: Optional["_models.Capacity"] = None,
-        capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = None,
-        enable_materialized_views: Optional[bool] = None,
         enable_partition_merge: Optional[bool] = None,
         enable_burst_capacity: Optional[bool] = None,
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
@@ -5722,9 +3840,8 @@ class DatabaseAccountCreateUpdateProperties(_Model):  # pylint: disable=docstrin
         enable_priority_based_execution: Optional[bool] = None,
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         enable_per_region_per_partition_autoscale: Optional[bool] = None,
-        enable_all_versions_and_deletes_change_feed: Optional[bool] = None,
-        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
         enforce_hierarchical_partition_key_id_last_level: Optional[bool] = None,
+        per_partition_automatic_failover_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5825,25 +3942,12 @@ class DatabaseAccountGetProperties(_Model):  # pylint: disable=docstring-keyword
     :ivar network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
      Bypass for the Cosmos DB account.
     :vartype network_acl_bypass_resource_ids: list[str]
-    :ivar diagnostic_log_settings: The Object representing the different Diagnostic log settings
-     for the Cosmos DB Account.
-    :vartype diagnostic_log_settings: ~azure.mgmt.cosmosdb.models.DiagnosticLogSettings
     :ivar disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
      used exclusively for authentication.
     :vartype disable_local_auth: bool
     :ivar capacity: The object that represents all properties related to capacity enforcement on an
      account.
     :vartype capacity: ~azure.mgmt.cosmosdb.models.Capacity
-    :ivar capacity_mode: Indicates the capacityMode of the Cosmos DB account. Known values are:
-     "None", "Provisioned", and "Serverless".
-    :vartype capacity_mode: str or ~azure.mgmt.cosmosdb.models.CapacityMode
-    :ivar capacity_mode_change_transition_state: The object that represents the migration state for
-     the CapacityMode of the Cosmos DB account.
-    :vartype capacity_mode_change_transition_state:
-     ~azure.mgmt.cosmosdb.models.CapacityModeChangeTransitionState
-    :ivar enable_materialized_views: Flag to indicate whether to enable MaterializedViews on the
-     Cosmos DB account.
-    :vartype enable_materialized_views: bool
     :ivar keys_metadata: The object that represents the metadata for the Account Keys of the Cosmos
      DB account.
     :vartype keys_metadata: ~azure.mgmt.cosmosdb.models.DatabaseAccountKeysMetadata
@@ -5872,24 +3976,13 @@ class DatabaseAccountGetProperties(_Model):  # pylint: disable=docstring-keyword
     :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
      Per-Region Per-partition autoscale Preview feature on the account.
     :vartype enable_per_region_per_partition_autoscale: bool
-    :ivar enable_all_versions_and_deletes_change_feed: Flag to indicate if All Versions and Deletes
-     Change feed feature is enabled on the account.
-    :vartype enable_all_versions_and_deletes_change_feed: bool
-    :ivar soft_delete_configuration: The configuration for soft delete on the Cosmos DB account.
-    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
-    :ivar throughput_pool_dedicated_r_us: Total dedicated throughput (RU/s) for database account.
-     Represents the sum of all manual provisioned throughput and all autoscale max RU/s across all
-     shared throughput databases and dedicated throughput containers in the account for 1 region.
-     READ ONLY.
-    :vartype throughput_pool_dedicated_r_us: int
-    :ivar throughput_pool_max_consumable_r_us: When this account is part of a fleetspace with
-     throughput pooling enabled, this is the maximum additional throughput (RU/s) that can be
-     consumed from the pool, summed across all shared throughput databases and dedicated throughput
-     containers in the account for 1 region.  READ ONLY.
-    :vartype throughput_pool_max_consumable_r_us: int
     :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
      hierarchical partition key ID last level enforcement on the account.
     :vartype enforce_hierarchical_partition_key_id_last_level: bool
+    :ivar per_partition_automatic_failover_enabled: Flag to indicate enabling/disabling of
+     per-partition automatic failover on the account, which automatically fails over individual
+     partitions to available regions during a regional outage. Opt-in; defaults to false.
+    :vartype per_partition_automatic_failover_enabled: bool
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -6014,10 +4107,6 @@ class DatabaseAccountGetProperties(_Model):  # pylint: disable=docstring-keyword
         name="networkAclBypassResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """An array that contains the Resource Ids for Network Acl Bypass for the Cosmos DB account."""
-    diagnostic_log_settings: Optional["_models.DiagnosticLogSettings"] = rest_field(
-        name="diagnosticLogSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Object representing the different Diagnostic log settings for the Cosmos DB Account."""
     disable_local_auth: Optional[bool] = rest_field(
         name="disableLocalAuth", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6025,19 +4114,6 @@ class DatabaseAccountGetProperties(_Model):  # pylint: disable=docstring-keyword
      authentication."""
     capacity: Optional["_models.Capacity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object that represents all properties related to capacity enforcement on an account."""
-    capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = rest_field(
-        name="capacityMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates the capacityMode of the Cosmos DB account. Known values are: \"None\",
-     \"Provisioned\", and \"Serverless\"."""
-    capacity_mode_change_transition_state: Optional["_models.CapacityModeChangeTransitionState"] = rest_field(
-        name="capacityModeChangeTransitionState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The object that represents the migration state for the CapacityMode of the Cosmos DB account."""
-    enable_materialized_views: Optional[bool] = rest_field(
-        name="enableMaterializedViews", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag to indicate whether to enable MaterializedViews on the Cosmos DB account."""
     keys_metadata: Optional["_models.DatabaseAccountKeysMetadata"] = rest_field(
         name="keysMetadata", visibility=["read"]
     )
@@ -6076,32 +4152,17 @@ class DatabaseAccountGetProperties(_Model):  # pylint: disable=docstring-keyword
     )
     """Flag to indicate enabling/disabling of Per-Region Per-partition autoscale Preview feature on
      the account."""
-    enable_all_versions_and_deletes_change_feed: Optional[bool] = rest_field(
-        name="enableAllVersionsAndDeletesChangeFeed", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
-    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
-        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The configuration for soft delete on the Cosmos DB account."""
-    throughput_pool_dedicated_r_us: Optional[int] = rest_field(
-        name="throughputPoolDedicatedRUs", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Total dedicated throughput (RU/s) for database account. Represents the sum of all manual
-     provisioned throughput and all autoscale max RU/s across all shared throughput databases and
-     dedicated throughput containers in the account for 1 region. READ ONLY."""
-    throughput_pool_max_consumable_r_us: Optional[int] = rest_field(
-        name="throughputPoolMaxConsumableRUs", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """When this account is part of a fleetspace with throughput pooling enabled, this is the maximum
-     additional throughput (RU/s) that can be consumed from the pool, summed across all shared
-     throughput databases and dedicated throughput containers in the account for 1 region.  READ
-     ONLY."""
     enforce_hierarchical_partition_key_id_last_level: Optional[bool] = rest_field(
         name="enforceHierarchicalPartitionKeyIdLastLevel", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
      the account."""
+    per_partition_automatic_failover_enabled: Optional[bool] = rest_field(
+        name="perPartitionAutomaticFailoverEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate enabling/disabling of per-partition automatic failover on the account, which
+     automatically fails over individual partitions to available regions during a regional outage.
+     Opt-in; defaults to false."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6130,12 +4191,8 @@ class DatabaseAccountGetProperties(_Model):  # pylint: disable=docstring-keyword
         cors: Optional[list["_models.CorsPolicy"]] = None,
         network_acl_bypass: Optional[Union[str, "_models.NetworkAclBypass"]] = None,
         network_acl_bypass_resource_ids: Optional[list[str]] = None,
-        diagnostic_log_settings: Optional["_models.DiagnosticLogSettings"] = None,
         disable_local_auth: Optional[bool] = None,
         capacity: Optional["_models.Capacity"] = None,
-        capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = None,
-        capacity_mode_change_transition_state: Optional["_models.CapacityModeChangeTransitionState"] = None,
-        enable_materialized_views: Optional[bool] = None,
         enable_partition_merge: Optional[bool] = None,
         enable_burst_capacity: Optional[bool] = None,
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
@@ -6143,11 +4200,8 @@ class DatabaseAccountGetProperties(_Model):  # pylint: disable=docstring-keyword
         enable_priority_based_execution: Optional[bool] = None,
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         enable_per_region_per_partition_autoscale: Optional[bool] = None,
-        enable_all_versions_and_deletes_change_feed: Optional[bool] = None,
-        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
-        throughput_pool_dedicated_r_us: Optional[int] = None,
-        throughput_pool_max_consumable_r_us: Optional[int] = None,
         enforce_hierarchical_partition_key_id_last_level: Optional[bool] = None,
+        per_partition_automatic_failover_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6249,12 +4303,8 @@ class DatabaseAccountGetResults(ProxyResource):  # pylint: disable=docstring-key
         "cors",
         "network_acl_bypass",
         "network_acl_bypass_resource_ids",
-        "diagnostic_log_settings",
         "disable_local_auth",
         "capacity",
-        "capacity_mode",
-        "capacity_mode_change_transition_state",
-        "enable_materialized_views",
         "keys_metadata",
         "enable_partition_merge",
         "enable_burst_capacity",
@@ -6264,11 +4314,8 @@ class DatabaseAccountGetResults(ProxyResource):  # pylint: disable=docstring-key
         "enable_priority_based_execution",
         "default_priority_level",
         "enable_per_region_per_partition_autoscale",
-        "enable_all_versions_and_deletes_change_feed",
-        "soft_delete_configuration",
-        "throughput_pool_dedicated_r_us",
-        "throughput_pool_max_consumable_r_us",
         "enforce_hierarchical_partition_key_id_last_level",
+        "per_partition_automatic_failover_enabled",
     ]
 
     @overload
@@ -6419,9 +4466,6 @@ class DatabaseAccountRegenerateKeyParameters(_Model):  # pylint: disable=docstri
     :ivar key_kind: The access key to regenerate. Required. Known values are: "primary",
      "secondary", "primaryReadonly", and "secondaryReadonly".
     :vartype key_kind: str or ~azure.mgmt.cosmosdb.models.KeyKind
-    :ivar skip_account_keys_last_usage_check: Optional flag indicating whether to skip account keys
-     last usage check.
-    :vartype skip_account_keys_last_usage_check: bool
     """
 
     key_kind: Union[str, "_models.KeyKind"] = rest_field(
@@ -6429,17 +4473,12 @@ class DatabaseAccountRegenerateKeyParameters(_Model):  # pylint: disable=docstri
     )
     """The access key to regenerate. Required. Known values are: \"primary\", \"secondary\",
      \"primaryReadonly\", and \"secondaryReadonly\"."""
-    skip_account_keys_last_usage_check: Optional[bool] = rest_field(
-        name="skipAccountKeysLastUsageCheck", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional flag indicating whether to skip account keys last usage check."""
 
     @overload
     def __init__(
         self,
         *,
         key_kind: Union[str, "_models.KeyKind"],
-        skip_account_keys_last_usage_check: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6512,11 +4551,8 @@ class DatabaseAccountUpdateParameters(_Model):  # pylint: disable=docstring-keyw
         "cors",
         "network_acl_bypass",
         "network_acl_bypass_resource_ids",
-        "diagnostic_log_settings",
         "disable_local_auth",
         "capacity",
-        "capacity_mode",
-        "enable_materialized_views",
         "keys_metadata",
         "enable_partition_merge",
         "enable_burst_capacity",
@@ -6525,9 +4561,8 @@ class DatabaseAccountUpdateParameters(_Model):  # pylint: disable=docstring-keyw
         "enable_priority_based_execution",
         "default_priority_level",
         "enable_per_region_per_partition_autoscale",
-        "enable_all_versions_and_deletes_change_feed",
-        "soft_delete_configuration",
         "enforce_hierarchical_partition_key_id_last_level",
+        "per_partition_automatic_failover_enabled",
     ]
 
     @overload
@@ -6630,21 +4665,12 @@ class DatabaseAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyw
     :ivar network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
      Bypass for the Cosmos DB account.
     :vartype network_acl_bypass_resource_ids: list[str]
-    :ivar diagnostic_log_settings: The Object representing the different Diagnostic log settings
-     for the Cosmos DB Account.
-    :vartype diagnostic_log_settings: ~azure.mgmt.cosmosdb.models.DiagnosticLogSettings
     :ivar disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
      used exclusively for authentication.
     :vartype disable_local_auth: bool
     :ivar capacity: The object that represents all properties related to capacity enforcement on an
      account.
     :vartype capacity: ~azure.mgmt.cosmosdb.models.Capacity
-    :ivar capacity_mode: Indicates the capacityMode of the Cosmos DB account. Known values are:
-     "None", "Provisioned", and "Serverless".
-    :vartype capacity_mode: str or ~azure.mgmt.cosmosdb.models.CapacityMode
-    :ivar enable_materialized_views: Flag to indicate whether to enable MaterializedViews on the
-     Cosmos DB account.
-    :vartype enable_materialized_views: bool
     :ivar keys_metadata: This property is ignored during the update operation, as the metadata is
      read-only. The object represents the metadata for the Account Keys of the Cosmos DB account.
     :vartype keys_metadata: ~azure.mgmt.cosmosdb.models.DatabaseAccountKeysMetadata
@@ -6670,14 +4696,13 @@ class DatabaseAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyw
     :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
      Per-Region Per-partition autoscale Preview feature on the account.
     :vartype enable_per_region_per_partition_autoscale: bool
-    :ivar enable_all_versions_and_deletes_change_feed: Flag to indicate if All Versions and Deletes
-     Change feed feature is enabled on the account.
-    :vartype enable_all_versions_and_deletes_change_feed: bool
-    :ivar soft_delete_configuration: The configuration for soft delete on the Cosmos DB account.
-    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
     :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
      hierarchical partition key ID last level enforcement on the account.
     :vartype enforce_hierarchical_partition_key_id_last_level: bool
+    :ivar per_partition_automatic_failover_enabled: Flag to indicate enabling/disabling of
+     per-partition automatic failover on the account, which automatically fails over individual
+     partitions to available regions during a regional outage. Opt-in; defaults to false.
+    :vartype per_partition_automatic_failover_enabled: bool
     """
 
     consistency_policy: Optional["_models.ConsistencyPolicy"] = rest_field(
@@ -6773,10 +4798,6 @@ class DatabaseAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyw
         name="networkAclBypassResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """An array that contains the Resource Ids for Network Acl Bypass for the Cosmos DB account."""
-    diagnostic_log_settings: Optional["_models.DiagnosticLogSettings"] = rest_field(
-        name="diagnosticLogSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Object representing the different Diagnostic log settings for the Cosmos DB Account."""
     disable_local_auth: Optional[bool] = rest_field(
         name="disableLocalAuth", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6784,15 +4805,6 @@ class DatabaseAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyw
      authentication."""
     capacity: Optional["_models.Capacity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object that represents all properties related to capacity enforcement on an account."""
-    capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = rest_field(
-        name="capacityMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates the capacityMode of the Cosmos DB account. Known values are: \"None\",
-     \"Provisioned\", and \"Serverless\"."""
-    enable_materialized_views: Optional[bool] = rest_field(
-        name="enableMaterializedViews", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag to indicate whether to enable MaterializedViews on the Cosmos DB account."""
     keys_metadata: Optional["_models.DatabaseAccountKeysMetadata"] = rest_field(
         name="keysMetadata", visibility=["read"]
     )
@@ -6830,19 +4842,17 @@ class DatabaseAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyw
     )
     """Flag to indicate enabling/disabling of Per-Region Per-partition autoscale Preview feature on
      the account."""
-    enable_all_versions_and_deletes_change_feed: Optional[bool] = rest_field(
-        name="enableAllVersionsAndDeletesChangeFeed", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
-    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
-        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The configuration for soft delete on the Cosmos DB account."""
     enforce_hierarchical_partition_key_id_last_level: Optional[bool] = rest_field(
         name="enforceHierarchicalPartitionKeyIdLastLevel", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
      the account."""
+    per_partition_automatic_failover_enabled: Optional[bool] = rest_field(
+        name="perPartitionAutomaticFailoverEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate enabling/disabling of per-partition automatic failover on the account, which
+     automatically fails over individual partitions to available regions during a regional outage.
+     Opt-in; defaults to false."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6870,11 +4880,8 @@ class DatabaseAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyw
         cors: Optional[list["_models.CorsPolicy"]] = None,
         network_acl_bypass: Optional[Union[str, "_models.NetworkAclBypass"]] = None,
         network_acl_bypass_resource_ids: Optional[list[str]] = None,
-        diagnostic_log_settings: Optional["_models.DiagnosticLogSettings"] = None,
         disable_local_auth: Optional[bool] = None,
         capacity: Optional["_models.Capacity"] = None,
-        capacity_mode: Optional[Union[str, "_models.CapacityMode"]] = None,
-        enable_materialized_views: Optional[bool] = None,
         enable_partition_merge: Optional[bool] = None,
         enable_burst_capacity: Optional[bool] = None,
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
@@ -6882,9 +4889,8 @@ class DatabaseAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyw
         enable_priority_based_execution: Optional[bool] = None,
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         enable_per_region_per_partition_autoscale: Optional[bool] = None,
-        enable_all_versions_and_deletes_change_feed: Optional[bool] = None,
-        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
         enforce_hierarchical_partition_key_id_last_level: Optional[bool] = None,
+        per_partition_automatic_failover_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -7116,277 +5122,6 @@ class DataCenterResourceProperties(_Model):  # pylint: disable=docstring-keyword
         deallocated: Optional[bool] = None,
         provision_error: Optional["_models.CassandraError"] = None,
         private_endpoint_ip_address: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataMaskingPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Data masking policy for the container.
-
-    :ivar included_paths: List of JSON paths to include in the masking policy.
-    :vartype included_paths: list[~azure.mgmt.cosmosdb.models.DataMaskingPolicyIncludedPathsItem]
-    :ivar excluded_paths: List of JSON paths to exclude from masking.
-    :vartype excluded_paths: list[~azure.mgmt.cosmosdb.models.DataMaskingPolicyExcludedPathsItem]
-    :ivar is_policy_enabled: Flag indicating whether the data masking policy is enabled.
-    :vartype is_policy_enabled: bool
-    """
-
-    included_paths: Optional[list["_models.DataMaskingPolicyIncludedPathsItem"]] = rest_field(
-        name="includedPaths", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of JSON paths to include in the masking policy."""
-    excluded_paths: Optional[list["_models.DataMaskingPolicyExcludedPathsItem"]] = rest_field(
-        name="excludedPaths", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of JSON paths to exclude from masking."""
-    is_policy_enabled: Optional[bool] = rest_field(
-        name="isPolicyEnabled", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag indicating whether the data masking policy is enabled."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        included_paths: Optional[list["_models.DataMaskingPolicyIncludedPathsItem"]] = None,
-        excluded_paths: Optional[list["_models.DataMaskingPolicyExcludedPathsItem"]] = None,
-        is_policy_enabled: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataMaskingPolicyExcludedPathsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """JSON path to exclude from masking.
-
-    :ivar path: The JSON path to exclude from masking (e.g. "/id"). Required.
-    :vartype path: str
-    """
-
-    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The JSON path to exclude from masking (e.g. \"/id\"). Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        path: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataMaskingPolicyIncludedPathsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """JSON path to include in the masking policy.
-
-    :ivar path: The JSON path to apply masking (e.g. "/contact/phones"). Required.
-    :vartype path: str
-    :ivar strategy: Masking strategy to apply (e.g. "MaskSubstring").
-    :vartype strategy: str
-    :ivar start_position: Start position for substring masking (when applicable).
-    :vartype start_position: int
-    :ivar length: Length of substring to mask (when applicable).
-    :vartype length: int
-    """
-
-    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The JSON path to apply masking (e.g. \"/contact/phones\"). Required."""
-    strategy: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Masking strategy to apply (e.g. \"MaskSubstring\")."""
-    start_position: Optional[int] = rest_field(
-        name="startPosition", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Start position for substring masking (when applicable)."""
-    length: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Length of substring to mask (when applicable)."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        path: str,
-        strategy: Optional[str] = None,
-        start_position: Optional[int] = None,
-        length: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataTransferJobGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A Cosmos DB Data Transfer Job.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: The properties of a DataTransfer Job.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.DataTransferJobProperties
-    """
-
-    properties: Optional["_models.DataTransferJobProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The properties of a DataTransfer Job."""
-
-    __flattened_items = [
-        "job_name",
-        "source",
-        "destination",
-        "status",
-        "processed_count",
-        "total_count",
-        "last_updated_utc_time",
-        "worker_count",
-        "error",
-        "duration",
-        "mode",
-    ]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.DataTransferJobProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class DataTransferJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties of a DataTransfer Job.
-
-    :ivar job_name: Job Name.
-    :vartype job_name: str
-    :ivar source: Source DataStore details. Required.
-    :vartype source: ~azure.mgmt.cosmosdb.models.DataTransferDataSourceSink
-    :ivar destination: Destination DataStore details. Required.
-    :vartype destination: ~azure.mgmt.cosmosdb.models.DataTransferDataSourceSink
-    :ivar status: Job Status.
-    :vartype status: str
-    :ivar processed_count: Processed Count.
-    :vartype processed_count: int
-    :ivar total_count: Total Count.
-    :vartype total_count: int
-    :ivar last_updated_utc_time: Last Updated Time (ISO-8601 format).
-    :vartype last_updated_utc_time: ~datetime.datetime
-    :ivar worker_count: Worker count.
-    :vartype worker_count: int
-    :ivar error: Error response for Faulted job.
-    :vartype error: ~azure.mgmt.cosmosdb.models.ErrorResponseAutoGenerated
-    :ivar duration: Total Duration of Job.
-    :vartype duration: str
-    :ivar mode: Mode of job execution. Known values are: "Offline" and "Online".
-    :vartype mode: str or ~azure.mgmt.cosmosdb.models.DataTransferJobMode
-    """
-
-    job_name: Optional[str] = rest_field(name="jobName", visibility=["read"])
-    """Job Name."""
-    source: "_models.DataTransferDataSourceSink" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source DataStore details. Required."""
-    destination: "_models.DataTransferDataSourceSink" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination DataStore details. Required."""
-    status: Optional[str] = rest_field(visibility=["read"])
-    """Job Status."""
-    processed_count: Optional[int] = rest_field(name="processedCount", visibility=["read"])
-    """Processed Count."""
-    total_count: Optional[int] = rest_field(name="totalCount", visibility=["read"])
-    """Total Count."""
-    last_updated_utc_time: Optional[datetime.datetime] = rest_field(
-        name="lastUpdatedUtcTime", visibility=["read"], format="rfc3339"
-    )
-    """Last Updated Time (ISO-8601 format)."""
-    worker_count: Optional[int] = rest_field(
-        name="workerCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Worker count."""
-    error: Optional["_models.ErrorResponseAutoGenerated"] = rest_field(visibility=["read"])
-    """Error response for Faulted job."""
-    duration: Optional[str] = rest_field(visibility=["read"])
-    """Total Duration of Job."""
-    mode: Optional[Union[str, "_models.DataTransferJobMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Mode of job execution. Known values are: \"Offline\" and \"Online\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source: "_models.DataTransferDataSourceSink",
-        destination: "_models.DataTransferDataSourceSink",
-        worker_count: Optional[int] = None,
-        mode: Optional[Union[str, "_models.DataTransferJobMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -7635,38 +5370,6 @@ class DataTransferServiceResourceProperties(
         self.service_type = ServiceType.DATA_TRANSFER  # type: ignore
 
 
-class DiagnosticLogSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Indicates what diagnostic log settings are to be enabled.
-
-    :ivar enable_full_text_query: Describe the level of detail with which queries are to be logged.
-     Known values are: "None", "True", and "False".
-    :vartype enable_full_text_query: str or ~azure.mgmt.cosmosdb.models.EnableFullTextQuery
-    """
-
-    enable_full_text_query: Optional[Union[str, "_models.EnableFullTextQuery"]] = rest_field(
-        name="enableFullTextQuery", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Describe the level of detail with which queries are to be logged. Known values are: \"None\",
-     \"True\", and \"False\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enable_full_text_query: Optional[Union[str, "_models.EnableFullTextQuery"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -7878,116 +5581,6 @@ class FailoverPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class FleetAnalyticsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """FleetAnalyticsProperties.
-
-    :ivar provisioning_state: A provisioning state of the FleetAnalytics. Known values are:
-     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
-     "Failed", "Canceled", "Updating", and "Creating".
-    :vartype provisioning_state: str or ~azure.mgmt.cosmosdb.models.Status
-    :ivar storage_location_type: The type of the fleet analytics resource. Known values are:
-     "StorageAccount" and "FabricLakehouse".
-    :vartype storage_location_type: str or
-     ~azure.mgmt.cosmosdb.models.FleetAnalyticsPropertiesStorageLocationType
-    :ivar storage_location_uri: The unique identifier of the fleet analytics resource.
-    :vartype storage_location_uri: str
-    """
-
-    provisioning_state: Optional[Union[str, "_models.Status"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """A provisioning state of the FleetAnalytics. Known values are: \"Uninitialized\",
-     \"Initializing\", \"InternallyReady\", \"Online\", \"Deleting\", \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Updating\", and \"Creating\"."""
-    storage_location_type: Optional[Union[str, "_models.FleetAnalyticsPropertiesStorageLocationType"]] = rest_field(
-        name="storageLocationType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of the fleet analytics resource. Known values are: \"StorageAccount\" and
-     \"FabricLakehouse\"."""
-    storage_location_uri: Optional[str] = rest_field(
-        name="storageLocationUri", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The unique identifier of the fleet analytics resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        storage_location_type: Optional[Union[str, "_models.FleetAnalyticsPropertiesStorageLocationType"]] = None,
-        storage_location_uri: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FleetAnalyticsResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Cosmos DB FleetAnalytics.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties:
-    :vartype properties: ~azure.mgmt.cosmosdb.models.FleetAnalyticsProperties
-    """
-
-    properties: Optional["_models.FleetAnalyticsProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-
-    __flattened_items = ["provisioning_state", "storage_location_type", "storage_location_uri"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.FleetAnalyticsProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
 
 
 class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -8669,297 +6262,6 @@ class FullTextPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class GarnetClusterResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Representation of a Garnet cache cluster.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.GarnetClusterResourceProperties
-    :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedCassandraManagedServiceIdentity
-    """
-
-    properties: Optional["_models.GarnetClusterResourceProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    identity: Optional["_models.ManagedCassandraManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Identity for the resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.GarnetClusterResourceProperties"] = None,
-        identity: Optional["_models.ManagedCassandraManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GarnetClusterResourcePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Representation of a Garnet cache cluster for updates.
-
-    :ivar properties: Properties of a Garnet cache cluster for updates.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.GarnetClusterResourcePatchProperties
-    """
-
-    properties: Optional["_models.GarnetClusterResourcePatchProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties of a Garnet cache cluster for updates."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.GarnetClusterResourcePatchProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GarnetClusterResourcePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a Garnet cache cluster for updates.
-
-    :ivar cluster_type: Type of the cluster. If set to Production, some operations might not be
-     permitted on cluster. Known values are: "Production" and "NonProduction".
-    :vartype cluster_type: str or ~azure.mgmt.cosmosdb.models.ClusterType
-    :ivar extensions: Extensions to be added or updated on cluster.
-    :vartype extensions: list[str]
-    :ivar authentication_method: The authentication method used for the Garnet cluster. "Entra"
-    :vartype authentication_method: str or ~azure.mgmt.cosmosdb.models.GarnetAuthenticationType
-    :ivar persistence: Flag to indicate if persistence is enabled for the Garnet cluster.
-    :vartype persistence: bool
-    """
-
-    cluster_type: Optional[Union[str, "_models.ClusterType"]] = rest_field(
-        name="clusterType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of the cluster. If set to Production, some operations might not be permitted on cluster.
-     Known values are: \"Production\" and \"NonProduction\"."""
-    extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Extensions to be added or updated on cluster."""
-    authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = rest_field(
-        name="authenticationMethod", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The authentication method used for the Garnet cluster. \"Entra\""""
-    persistence: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Flag to indicate if persistence is enabled for the Garnet cluster."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        cluster_type: Optional[Union[str, "_models.ClusterType"]] = None,
-        extensions: Optional[list[str]] = None,
-        authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = None,
-        persistence: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GarnetClusterResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a Garnet cache cluster.
-
-    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Creating",
-     "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.cosmosdb.models.GarnetCacheProvisioningState
-    :ivar subnet_id: Resource id of a subnet that this cluster's management service should have its
-     network interface attached to. The subnet must be routable to all subnets that will be
-     delegated to data centers. The resource id must be of the form '/subscriptions/<subscription
-     id>/resourceGroups/<resource group>/providers/Microsoft.Network/virtualNetworks/<virtual
-     network>/subnets/<subnet>'.
-    :vartype subnet_id: str
-    :ivar end_points: Endpoints for clients to connect to the cluster.
-    :vartype end_points:
-     list[~azure.mgmt.cosmosdb.models.GarnetClusterResourcePropertiesEndPointsItem]
-    :ivar replication_factor: Number of copies of data maintained by the cluster.
-    :vartype replication_factor: int
-    :ivar shard_count: Number of shards in the cluster.
-    :vartype shard_count: int
-    :ivar node_sku: Virtual Machine SKU used for clusters. Default value is Standard_DS14_v2.
-    :vartype node_sku: str
-    :ivar availability_zone: If the data center has Availability Zone support, apply it to the
-     Virtual Machine ScaleSet that host the garnet cluster virtual machines.
-    :vartype availability_zone: bool
-    :ivar authentication_method: The authentication method used for the Garnet cluster. "Entra"
-    :vartype authentication_method: str or ~azure.mgmt.cosmosdb.models.GarnetAuthenticationType
-    :ivar persistence: Flag to indicate if persistence is enabled for the Garnet cluster.
-    :vartype persistence: bool
-    :ivar allocation_state: Allocation state of the cluster and data center resources. Active
-     implies the virtual machines of the cluster are allocated, deallocated implies virtual machines
-     and resources are deallocated. Known values are: "Active" and "Deallocated".
-    :vartype allocation_state: str or ~azure.mgmt.cosmosdb.models.AllocationState
-    :ivar cluster_type: Type of the cluster. If set to Production, some operations might not be
-     permitted on cluster. Known values are: "Production" and "NonProduction".
-    :vartype cluster_type: str or ~azure.mgmt.cosmosdb.models.ClusterType
-    :ivar provision_error: Error related to resource provisioning.
-    :vartype provision_error: ~azure.mgmt.cosmosdb.models.ErrorDetail
-    :ivar extensions: Extensions to be added or updated on cluster.
-    :vartype extensions: list[str]
-    """
-
-    provisioning_state: Optional[Union[str, "_models.GarnetCacheProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The provisioning state of the resource. Known values are: \"Creating\", \"Updating\",
-     \"Deleting\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
-    subnet_id: Optional[str] = rest_field(name="subnetId", visibility=["read", "create"])
-    """Resource id of a subnet that this cluster's management service should have its network
-     interface attached to. The subnet must be routable to all subnets that will be delegated to
-     data centers. The resource id must be of the form '/subscriptions/<subscription
-     id>/resourceGroups/<resource group>/providers/Microsoft.Network/virtualNetworks/<virtual
-     network>/subnets/<subnet>'."""
-    end_points: Optional[list["_models.GarnetClusterResourcePropertiesEndPointsItem"]] = rest_field(
-        name="endPoints", visibility=["read"]
-    )
-    """Endpoints for clients to connect to the cluster."""
-    replication_factor: Optional[int] = rest_field(
-        name="replicationFactor", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Number of copies of data maintained by the cluster."""
-    shard_count: Optional[int] = rest_field(
-        name="shardCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Number of shards in the cluster."""
-    node_sku: Optional[str] = rest_field(name="nodeSku", visibility=["read", "create", "update", "delete", "query"])
-    """Virtual Machine SKU used for clusters. Default value is Standard_DS14_v2."""
-    availability_zone: Optional[bool] = rest_field(
-        name="availabilityZone", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If the data center has Availability Zone support, apply it to the Virtual Machine ScaleSet that
-     host the garnet cluster virtual machines."""
-    authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = rest_field(
-        name="authenticationMethod", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The authentication method used for the Garnet cluster. \"Entra\""""
-    persistence: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Flag to indicate if persistence is enabled for the Garnet cluster."""
-    allocation_state: Optional[Union[str, "_models.AllocationState"]] = rest_field(
-        name="allocationState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Allocation state of the cluster and data center resources. Active implies the virtual machines
-     of the cluster are allocated, deallocated implies virtual machines and resources are
-     deallocated. Known values are: \"Active\" and \"Deallocated\"."""
-    cluster_type: Optional[Union[str, "_models.ClusterType"]] = rest_field(
-        name="clusterType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of the cluster. If set to Production, some operations might not be permitted on cluster.
-     Known values are: \"Production\" and \"NonProduction\"."""
-    provision_error: Optional["_models.ErrorDetail"] = rest_field(
-        name="provisionError", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Error related to resource provisioning."""
-    extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Extensions to be added or updated on cluster."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        subnet_id: Optional[str] = None,
-        replication_factor: Optional[int] = None,
-        shard_count: Optional[int] = None,
-        node_sku: Optional[str] = None,
-        availability_zone: Optional[bool] = None,
-        authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = None,
-        persistence: Optional[bool] = None,
-        allocation_state: Optional[Union[str, "_models.AllocationState"]] = None,
-        cluster_type: Optional[Union[str, "_models.ClusterType"]] = None,
-        provision_error: Optional["_models.ErrorDetail"] = None,
-        extensions: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GarnetClusterResourcePropertiesEndPointsItem(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Endpoint for clients to connect to the cluster.
-
-    :ivar ip_address: Ipv4 address of the endpoint.
-    :vartype ip_address: str
-    :ivar port: Port number.
-    :vartype port: int
-    """
-
-    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read", "create", "update", "delete", "query"])
-    """Ipv4 address of the endpoint."""
-    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Port number."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        ip_address: Optional[str] = None,
-        port: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class GraphAPIComputeRegionalServiceResource(RegionalServiceResource):
     """Resource for a regional service location.
 
@@ -9066,320 +6368,6 @@ class GraphAPIComputeServiceResourceProperties(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.service_type = ServiceType.GRAPH_API_COMPUTE  # type: ignore
-
-
-class GraphResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Cosmos DB Graph resource object.
-
-    :ivar id: Name of the Cosmos DB Graph. Required.
-    :vartype id: str
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the Cosmos DB Graph. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GraphResourceCreateUpdateParameters(
-    ARMResourceProperties
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters to create and update Cosmos DB Graph resource.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
-     "Graph", "DocumentDB", and "MongoDB".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    :ivar properties: Properties to create and update Azure Cosmos DB Graph resource. Required.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.GraphResourceCreateUpdateProperties
-    """
-
-    properties: "_models.GraphResourceCreateUpdateProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties to create and update Azure Cosmos DB Graph resource. Required."""
-
-    __flattened_items = ["resource", "options"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.GraphResourceCreateUpdateProperties",
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class GraphResourceCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties to create and update Azure Cosmos DB Graph resource.
-
-    :ivar resource: The standard JSON format of a Graph resource. Required.
-    :vartype resource: ~azure.mgmt.cosmosdb.models.GraphResource
-    :ivar options: A key-value pair of options to be applied for the request. This corresponds to
-     the headers sent with the request.
-    :vartype options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
-    """
-
-    resource: "_models.GraphResource" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The standard JSON format of a Graph resource. Required."""
-    options: Optional["_models.CreateUpdateOptions"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A key-value pair of options to be applied for the request. This corresponds to the headers sent
-     with the request."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource: "_models.GraphResource",
-        options: Optional["_models.CreateUpdateOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GraphResourceGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties of an Azure Cosmos DB SQL database.
-
-    :ivar resource:
-    :vartype resource: ~azure.mgmt.cosmosdb.models.GraphResourceGetPropertiesResource
-    :ivar options:
-    :vartype options: ~azure.mgmt.cosmosdb.models.GraphResourceGetPropertiesOptions
-    """
-
-    resource: Optional["_models.GraphResourceGetPropertiesResource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    options: Optional["_models.GraphResourceGetPropertiesOptions"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource: Optional["_models.GraphResourceGetPropertiesResource"] = None,
-        options: Optional["_models.GraphResourceGetPropertiesOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GraphResourceGetPropertiesOptions(OptionsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """GraphResourceGetPropertiesOptions.
-
-    :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
-     ThroughputSetting resource when retrieving offer details.
-    :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
-    :vartype autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        throughput: Optional[int] = None,
-        autoscale_settings: Optional["_models.AutoscaleSettings"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GraphResourceGetPropertiesResource(GraphResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """GraphResourceGetPropertiesResource.
-
-    :ivar id: Name of the Cosmos DB Graph. Required.
-    :vartype id: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GraphResourceGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Cosmos DB Graph resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: The properties of an Azure Cosmos DB Graph resource.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.GraphResourceGetProperties
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    """
-
-    properties: Optional["_models.GraphResourceGetProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The properties of an Azure Cosmos DB Graph resource."""
-    location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The location of the resource group to which the resource belongs."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
-     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
-     provided for a resource. Each tag must have a key no greater than 128 characters and value no
-     greater than 256 characters. For example, the default experience for a template type is set
-     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
-     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Identity for the resource."""
-
-    __flattened_items = ["resource", "options"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.GraphResourceGetProperties"] = None,
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
 
 
 class GremlinDatabaseCreateUpdateParameters(
@@ -10978,90 +7966,6 @@ class ManagedServiceIdentityUserAssignedIdentity(_Model):  # pylint: disable=nam
     """The client id of user assigned identity."""
 
 
-class MaterializedViewDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Materialized View definition for the container.
-
-    :ivar source_collection_rid: An unique identifier for the source collection. This is a system
-     generated property.
-    :vartype source_collection_rid: str
-    :ivar source_collection_id: The name of the source container on which the Materialized View
-     will be created. Required.
-    :vartype source_collection_id: str
-    :ivar definition: The definition should be an SQL query which would be used to fetch data from
-     the source container to populate into the Materialized View container. Required.
-    :vartype definition: str
-    :ivar throughput_bucket_for_build: Throughput bucket assigned for the materialized view
-     operations on target container.
-    :vartype throughput_bucket_for_build: int
-    """
-
-    source_collection_rid: Optional[str] = rest_field(name="sourceCollectionRid", visibility=["read"])
-    """An unique identifier for the source collection. This is a system generated property."""
-    source_collection_id: str = rest_field(
-        name="sourceCollectionId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of the source container on which the Materialized View will be created. Required."""
-    definition: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The definition should be an SQL query which would be used to fetch data from the source
-     container to populate into the Materialized View container. Required."""
-    throughput_bucket_for_build: Optional[int] = rest_field(
-        name="throughputBucketForBuild", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Throughput bucket assigned for the materialized view operations on target container."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source_collection_id: str,
-        definition: str,
-        throughput_bucket_for_build: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MaterializedViewDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """MaterializedViewDetails, contains Id & _rid fields of materialized view.
-
-    :ivar id: Id field of Materialized container.
-    :vartype id: str
-    :ivar rid: _rid field of Materialized container.
-    :vartype rid: str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Id field of Materialized container."""
-    rid: Optional[str] = rest_field(name="_rid", visibility=["read", "create", "update", "delete", "query"])
-    """_rid field of Materialized container."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        rid: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class MaterializedViewsBuilderRegionalServiceResource(RegionalServiceResource):  # pylint: disable=name-too-long
     """Resource for a regional service location.
 
@@ -11159,65 +8063,6 @@ class MaterializedViewsBuilderServiceResourceProperties(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.service_type = ServiceType.MATERIALIZED_VIEWS_BUILDER  # type: ignore
-
-
-class MaterializedViewsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Materialized Views Properties for the source container.
-
-    :ivar throughput_bucket_for_build: Throughput bucket assigned for the materialized view
-     operations on source container.
-    :vartype throughput_bucket_for_build: int
-    """
-
-    throughput_bucket_for_build: Optional[int] = rest_field(
-        name="throughputBucketForBuild", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Throughput bucket assigned for the materialized view operations on source container."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        throughput_bucket_for_build: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MergeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties of an Azure Cosmos DB merge operations.
-
-    :ivar is_dry_run: Specifies whether the operation is a real merge operation or a simulation.
-    :vartype is_dry_run: bool
-    """
-
-    is_dry_run: Optional[bool] = rest_field(name="isDryRun", visibility=["read", "create", "update", "delete", "query"])
-    """Specifies whether the operation is a real merge operation or a simulation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        is_dry_run: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class Metric(_Model):
@@ -12625,186 +9470,6 @@ class MongoRoleDefinitionResource(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
-class MongoRUToMongoRUCopyJobProperties(
-    BaseCopyJobProperties, discriminator="MongoRUToMongoRU"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Source Mongo to Destination Mongo copy job properties.
-
-    :ivar source_details: Source Mongo DataStore details.
-    :vartype source_details: ~azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails
-    :ivar destination_details: Destination Mongo DataStore details.
-    :vartype destination_details: ~azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails
-    :ivar tasks: Copy Job tasks. Required.
-    :vartype tasks: list[~azure.mgmt.cosmosdb.models.MongoRUToMongoRUCopyJobTask]
-    :ivar job_type: Copy Job Type. Required. MONGO_RU_TO_MONGO_RU.
-    :vartype job_type: str or ~azure.mgmt.cosmosdb.models.MONGO_RU_TO_MONGO_RU
-    """
-
-    source_details: Optional["_models.CosmosDBSourceSinkDetails"] = rest_field(
-        name="sourceDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source Mongo DataStore details."""
-    destination_details: Optional["_models.CosmosDBSourceSinkDetails"] = rest_field(
-        name="destinationDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination Mongo DataStore details."""
-    tasks: list["_models.MongoRUToMongoRUCopyJobTask"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Copy Job tasks. Required."""
-    job_type: Literal[CopyJobType.MONGO_RU_TO_MONGO_RU] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Copy Job Type. Required. MONGO_RU_TO_MONGO_RU."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tasks: list["_models.MongoRUToMongoRUCopyJobTask"],
-        source_details: Optional["_models.CosmosDBSourceSinkDetails"] = None,
-        destination_details: Optional["_models.CosmosDBSourceSinkDetails"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.job_type = CopyJobType.MONGO_RU_TO_MONGO_RU  # type: ignore
-
-
-class MongoRUToMongoRUCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """MongoRUToMongoRUCopyJobTask.
-
-    :ivar total_count: Task level Total Count.
-    :vartype total_count: int
-    :ivar processed_count: Task level Processed Count.
-    :vartype processed_count: int
-    :ivar source: Source Mongo (RU) collection. Required.
-    :vartype source: ~azure.mgmt.cosmosdb.models.CosmosDBMongoCollection
-    :ivar destination: Destination Mongo (RU) collection. Required.
-    :vartype destination: ~azure.mgmt.cosmosdb.models.CosmosDBMongoCollection
-    """
-
-    source: "_models.CosmosDBMongoCollection" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Source Mongo (RU) collection. Required."""
-    destination: "_models.CosmosDBMongoCollection" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination Mongo (RU) collection. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source: "_models.CosmosDBMongoCollection",
-        destination: "_models.CosmosDBMongoCollection",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MongoRUToMongoVCoreCopyJobProperties(
-    BaseCopyJobProperties, discriminator="MongoRUToMongoVCore"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Source Mongo to Destination Mongo vCore copy job properties.
-
-    :ivar source_details: Source Mongo (RU) DataStore details.
-    :vartype source_details: ~azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails
-    :ivar destination_details: Destination Mongo (vCore) DataStore details. Required.
-    :vartype destination_details: ~azure.mgmt.cosmosdb.models.MongoVCoreSourceSinkDetails
-    :ivar tasks: Copy Job tasks. Required.
-    :vartype tasks: list[~azure.mgmt.cosmosdb.models.MongoRUToMongoVCoreCopyJobTask]
-    :ivar job_type: Copy Job Type. Required. MONGO_RU_TO_MONGO_V_CORE.
-    :vartype job_type: str or ~azure.mgmt.cosmosdb.models.MONGO_RU_TO_MONGO_V_CORE
-    """
-
-    source_details: Optional["_models.CosmosDBSourceSinkDetails"] = rest_field(
-        name="sourceDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source Mongo (RU) DataStore details."""
-    destination_details: "_models.MongoVCoreSourceSinkDetails" = rest_field(
-        name="destinationDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination Mongo (vCore) DataStore details. Required."""
-    tasks: list["_models.MongoRUToMongoVCoreCopyJobTask"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Copy Job tasks. Required."""
-    job_type: Literal[CopyJobType.MONGO_RU_TO_MONGO_V_CORE] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Copy Job Type. Required. MONGO_RU_TO_MONGO_V_CORE."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        destination_details: "_models.MongoVCoreSourceSinkDetails",
-        tasks: list["_models.MongoRUToMongoVCoreCopyJobTask"],
-        source_details: Optional["_models.CosmosDBSourceSinkDetails"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.job_type = CopyJobType.MONGO_RU_TO_MONGO_V_CORE  # type: ignore
-
-
-class MongoRUToMongoVCoreCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """MongoRUToMongoVCoreCopyJobTask.
-
-    :ivar total_count: Task level Total Count.
-    :vartype total_count: int
-    :ivar processed_count: Task level Processed Count.
-    :vartype processed_count: int
-    :ivar source: Source Mongo (RU) collection. Required.
-    :vartype source: ~azure.mgmt.cosmosdb.models.CosmosDBMongoCollection
-    :ivar destination: Destination Mongo (vCore) collection. Required.
-    :vartype destination: ~azure.mgmt.cosmosdb.models.CosmosDBMongoVCoreCollection
-    """
-
-    source: "_models.CosmosDBMongoCollection" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Source Mongo (RU) collection. Required."""
-    destination: "_models.CosmosDBMongoVCoreCollection" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination Mongo (vCore) collection. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source: "_models.CosmosDBMongoCollection",
-        destination: "_models.CosmosDBMongoVCoreCollection",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class MongoUserDefinitionCreateUpdateParameters(
     _Model
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
@@ -12964,334 +9629,6 @@ class MongoUserDefinitionResource(_Model):  # pylint: disable=docstring-keyword-
         custom_data: Optional[str] = None,
         roles: Optional[list["_models.Role"]] = None,
         mechanisms: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MongoVCoreSourceSinkDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A CosmosDB Mongo vCore data source/sink details.
-
-    :ivar host_name:
-    :vartype host_name: str
-    :ivar connection_string_key_vault_uri: URI of Azure KeyVault secret containing connection
-     string.
-    :vartype connection_string_key_vault_uri: str
-    """
-
-    host_name: Optional[str] = rest_field(name="hostName", visibility=["read", "create", "update", "delete", "query"])
-    connection_string_key_vault_uri: Optional[str] = rest_field(
-        name="connectionStringKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """URI of Azure KeyVault secret containing connection string."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        host_name: Optional[str] = None,
-        connection_string_key_vault_uri: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class NetworkSecurityPerimeter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Information about a network security perimeter (NSP).
-
-    :ivar id: Fully qualified Azure resource ID of the NSP resource.
-    :vartype id: str
-    :ivar perimeter_guid: Universal unique ID (UUID) of the network security perimeter.
-    :vartype perimeter_guid: str
-    :ivar location: Location of the network security perimeter.
-    :vartype location: str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Fully qualified Azure resource ID of the NSP resource."""
-    perimeter_guid: Optional[str] = rest_field(
-        name="perimeterGuid", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Universal unique ID (UUID) of the network security perimeter."""
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """Location of the network security perimeter."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        perimeter_guid: Optional[str] = None,
-        location: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class NetworkSecurityPerimeterConfiguration(
-    ProxyResource
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Network security perimeter (NSP) configuration resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: Network security configuration properties.
-    :vartype properties:
-     ~azure.mgmt.cosmosdb.models.NetworkSecurityPerimeterConfigurationProperties
-    """
-
-    properties: Optional["_models.NetworkSecurityPerimeterConfigurationProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Network security configuration properties."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.NetworkSecurityPerimeterConfigurationProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class NetworkSecurityPerimeterConfigurationProperties(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Network security configuration properties.
-
-    :ivar provisioning_state: Provisioning state of the network security perimeter configuration.
-     Known values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed", and
-     "Canceled".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.cosmosdb.models.NetworkSecurityPerimeterConfigurationProvisioningState
-    :ivar provisioning_issues: List of provisioning issues, if any.
-    :vartype provisioning_issues: list[~azure.mgmt.cosmosdb.models.ProvisioningIssue]
-    :ivar network_security_perimeter: Information about the network security perimeter (NSP).
-    :vartype network_security_perimeter: ~azure.mgmt.cosmosdb.models.NetworkSecurityPerimeter
-    :ivar resource_association: Information about the resource association.
-    :vartype resource_association: ~azure.mgmt.cosmosdb.models.ResourceAssociation
-    :ivar profile: Network security perimeter configuration profile.
-    :vartype profile: ~azure.mgmt.cosmosdb.models.NetworkSecurityProfile
-    """
-
-    provisioning_state: Optional[Union[str, "_models.NetworkSecurityPerimeterConfigurationProvisioningState"]] = (
-        rest_field(name="provisioningState", visibility=["read"])
-    )
-    """Provisioning state of the network security perimeter configuration. Known values are:
-     \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\", \"Failed\", and
-     \"Canceled\"."""
-    provisioning_issues: Optional[list["_models.ProvisioningIssue"]] = rest_field(
-        name="provisioningIssues", visibility=["read"]
-    )
-    """List of provisioning issues, if any."""
-    network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = rest_field(
-        name="networkSecurityPerimeter", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Information about the network security perimeter (NSP)."""
-    resource_association: Optional["_models.ResourceAssociation"] = rest_field(
-        name="resourceAssociation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Information about the resource association."""
-    profile: Optional["_models.NetworkSecurityProfile"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Network security perimeter configuration profile."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = None,
-        resource_association: Optional["_models.ResourceAssociation"] = None,
-        profile: Optional["_models.NetworkSecurityProfile"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class NetworkSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Network security perimeter configuration profile.
-
-    :ivar name: Name of the profile.
-    :vartype name: str
-    :ivar access_rules_version: Current access rules version.
-    :vartype access_rules_version: int
-    :ivar access_rules: List of Access Rules.
-    :vartype access_rules: list[~azure.mgmt.cosmosdb.models.AccessRule]
-    :ivar diagnostic_settings_version: Current diagnostic settings version.
-    :vartype diagnostic_settings_version: int
-    :ivar enabled_log_categories: List of log categories that are enabled.
-    :vartype enabled_log_categories: list[str]
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the profile."""
-    access_rules_version: Optional[int] = rest_field(
-        name="accessRulesVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Current access rules version."""
-    access_rules: Optional[list["_models.AccessRule"]] = rest_field(
-        name="accessRules", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of Access Rules."""
-    diagnostic_settings_version: Optional[int] = rest_field(
-        name="diagnosticSettingsVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Current diagnostic settings version."""
-    enabled_log_categories: Optional[list[str]] = rest_field(
-        name="enabledLogCategories", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of log categories that are enabled."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        access_rules_version: Optional[int] = None,
-        access_rules: Optional[list["_models.AccessRule"]] = None,
-        diagnostic_settings_version: Optional[int] = None,
-        enabled_log_categories: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class NoSqlRUToNoSqlRUCopyJobProperties(
-    BaseCopyJobProperties, discriminator="NoSqlRUToNoSqlRU"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Source SQL to Destination SQL copy job properties.
-
-    :ivar source_details: Source SQL DataStore details.
-    :vartype source_details: ~azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails
-    :ivar destination_details: Destination SQL DataStore details.
-    :vartype destination_details: ~azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails
-    :ivar tasks: Copy Job tasks. Required.
-    :vartype tasks: list[~azure.mgmt.cosmosdb.models.NoSqlRUToNoSqlRUCopyJobTask]
-    :ivar job_type: Copy Job Type. Required. NO_SQL_RU_TO_NO_SQL_RU.
-    :vartype job_type: str or ~azure.mgmt.cosmosdb.models.NO_SQL_RU_TO_NO_SQL_RU
-    """
-
-    source_details: Optional["_models.CosmosDBSourceSinkDetails"] = rest_field(
-        name="sourceDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source SQL DataStore details."""
-    destination_details: Optional["_models.CosmosDBSourceSinkDetails"] = rest_field(
-        name="destinationDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination SQL DataStore details."""
-    tasks: list["_models.NoSqlRUToNoSqlRUCopyJobTask"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Copy Job tasks. Required."""
-    job_type: Literal[CopyJobType.NO_SQL_RU_TO_NO_SQL_RU] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Copy Job Type. Required. NO_SQL_RU_TO_NO_SQL_RU."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tasks: list["_models.NoSqlRUToNoSqlRUCopyJobTask"],
-        source_details: Optional["_models.CosmosDBSourceSinkDetails"] = None,
-        destination_details: Optional["_models.CosmosDBSourceSinkDetails"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.job_type = CopyJobType.NO_SQL_RU_TO_NO_SQL_RU  # type: ignore
-
-
-class NoSqlRUToNoSqlRUCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """NoSqlRUToNoSqlRUCopyJobTask.
-
-    :ivar total_count: Task level Total Count.
-    :vartype total_count: int
-    :ivar processed_count: Task level Processed Count.
-    :vartype processed_count: int
-    :ivar source: Source SQL container. Required.
-    :vartype source: ~azure.mgmt.cosmosdb.models.CosmosDBNoSqlContainer
-    :ivar destination: Destination SQL container. Required.
-    :vartype destination: ~azure.mgmt.cosmosdb.models.CosmosDBNoSqlContainer
-    """
-
-    source: "_models.CosmosDBNoSqlContainer" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Source SQL container. Required."""
-    destination: "_models.CosmosDBNoSqlContainer" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination SQL container. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source: "_models.CosmosDBNoSqlContainer",
-        destination: "_models.CosmosDBNoSqlContainer",
     ) -> None: ...
 
     @overload
@@ -13665,6 +10002,9 @@ class PeriodicModeBackupPolicy(
     :ivar migration_state: The object representing the state of the migration between the backup
      policies.
     :vartype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+    :ivar backup_retention_lock_expiration_timestamp: The UTC timestamp until which changes that
+     reduce backup retention are locked. While active, this timestamp can only be extended.
+    :vartype backup_retention_lock_expiration_timestamp: ~datetime.datetime
     :ivar periodic_mode_properties: Configuration values for periodic mode backup.
     :vartype periodic_mode_properties: ~azure.mgmt.cosmosdb.models.PeriodicModeProperties
     :ivar type: Describes the mode of backups. Required. PERIODIC.
@@ -13683,6 +10023,7 @@ class PeriodicModeBackupPolicy(
         self,
         *,
         migration_state: Optional["_models.BackupPolicyMigrationState"] = None,
+        backup_retention_lock_expiration_timestamp: Optional[datetime.datetime] = None,
         periodic_mode_properties: Optional["_models.PeriodicModeProperties"] = None,
     ) -> None: ...
 
@@ -13774,272 +10115,6 @@ class Permission(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         data_actions: Optional[list[str]] = None,
         not_data_actions: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PhysicalPartitionId(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """PhysicalPartitionId object.
-
-    :ivar id: Id of a physical partition. Required.
-    :vartype id: str
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Id of a physical partition. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PhysicalPartitionStorageInfo(_Model):
-    """The storage of a physical partition.
-
-    :ivar id: The unique identifier of the partition.
-    :vartype id: str
-    :ivar storage_in_kb: The storage in KB for the physical partition.
-    :vartype storage_in_kb: float
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """The unique identifier of the partition."""
-    storage_in_kb: Optional[float] = rest_field(name="storageInKB", visibility=["read"])
-    """The storage in KB for the physical partition."""
-
-
-class PhysicalPartitionStorageInfoCollection(_Model):
-    """List of physical partitions and their properties returned by a merge operation.
-
-    :ivar physical_partition_storage_info_collection: List of physical partitions and their
-     properties.
-    :vartype physical_partition_storage_info_collection:
-     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfo]
-    """
-
-    physical_partition_storage_info_collection: Optional[list["_models.PhysicalPartitionStorageInfo"]] = rest_field(
-        name="physicalPartitionStorageInfoCollection", visibility=["read"]
-    )
-    """List of physical partitions and their properties."""
-
-
-class PhysicalPartitionThroughputInfoProperties(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The properties of an Azure Cosmos DB PhysicalPartitionThroughputInfoProperties object.
-
-    :ivar physical_partition_throughput_info: Array of physical partition throughput info objects.
-    :vartype physical_partition_throughput_info:
-     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
-    """
-
-    physical_partition_throughput_info: Optional[list["_models.PhysicalPartitionThroughputInfoResource"]] = rest_field(
-        name="physicalPartitionThroughputInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Array of physical partition throughput info objects."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        physical_partition_throughput_info: Optional[list["_models.PhysicalPartitionThroughputInfoResource"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PhysicalPartitionThroughputInfoResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """PhysicalPartitionThroughputInfo object.
-
-    :ivar id: Id of a physical partition. Required.
-    :vartype id: str
-    :ivar throughput: Throughput of a physical partition.
-    :vartype throughput: float
-    :ivar target_throughput: Target throughput of a physical partition.
-    :vartype target_throughput: float
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Id of a physical partition. Required."""
-    throughput: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Throughput of a physical partition."""
-    target_throughput: Optional[float] = rest_field(
-        name="targetThroughput", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Target throughput of a physical partition."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        throughput: Optional[float] = None,
-        target_throughput: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PhysicalPartitionThroughputInfoResult(
-    ARMResourceProperties
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Cosmos DB PhysicalPartitionThroughputInfoResult object.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
-     "Graph", "DocumentDB", and "MongoDB".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    :ivar properties: The properties of an Azure Cosmos DB PhysicalPartitionThroughputInfoResult
-     object.
-    :vartype properties:
-     ~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResultProperties
-    """
-
-    properties: Optional["_models.PhysicalPartitionThroughputInfoResultProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The properties of an Azure Cosmos DB PhysicalPartitionThroughputInfoResult object."""
-
-    __flattened_items = ["resource"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-        properties: Optional["_models.PhysicalPartitionThroughputInfoResultProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class PhysicalPartitionThroughputInfoResultProperties(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The properties of an Azure Cosmos DB PhysicalPartitionThroughputInfoResult object.
-
-    :ivar resource: properties of physical partition throughput info.
-    :vartype resource:
-     ~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResultPropertiesResource
-    """
-
-    resource: Optional["_models.PhysicalPartitionThroughputInfoResultPropertiesResource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """properties of physical partition throughput info."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource: Optional["_models.PhysicalPartitionThroughputInfoResultPropertiesResource"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PhysicalPartitionThroughputInfoResultPropertiesResource(
-    PhysicalPartitionThroughputInfoProperties
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """properties of physical partition throughput info.
-
-    :ivar physical_partition_throughput_info: Array of physical partition throughput info objects.
-    :vartype physical_partition_throughput_info:
-     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        physical_partition_throughput_info: Optional[list["_models.PhysicalPartitionThroughputInfoResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -14381,211 +10456,6 @@ class PrivilegeResource(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class ProvisioningIssue(_Model):
-    """Describes a provisioning issue for a network security perimeter configuration.
-
-    :ivar name: Name of the issue.
-    :vartype name: str
-    :ivar properties: Details of the provisioning issue.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.ProvisioningIssueProperties
-    """
-
-    name: Optional[str] = rest_field(visibility=["read"])
-    """Name of the issue."""
-    properties: Optional["_models.ProvisioningIssueProperties"] = rest_field(visibility=["read"])
-    """Details of the provisioning issue."""
-
-
-class ProvisioningIssueProperties(_Model):
-    """Details of a provisioning issue for a network security perimeter (NSP) configuration. Resource
-    providers should generate separate provisioning issue elements for each separate issue
-    detected, and include a meaningful and distinctive description, as well as any appropriate
-    suggestedResourceIds and suggestedAccessRules.
-
-    :ivar issue_type: Type of issue. Known values are: "Unknown",
-     "ConfigurationPropagationFailure", "MissingPerimeterConfiguration", and
-     "MissingIdentityConfiguration".
-    :vartype issue_type: str or ~azure.mgmt.cosmosdb.models.IssueType
-    :ivar severity: Severity of the issue. Known values are: "Warning" and "Error".
-    :vartype severity: str or ~azure.mgmt.cosmosdb.models.Severity
-    :ivar description: Description of the issue.
-    :vartype description: str
-    :ivar suggested_resource_ids: Fully qualified resource IDs of suggested resources that can be
-     associated to the network security perimeter (NSP) to remediate the issue.
-    :vartype suggested_resource_ids: list[str]
-    :ivar suggested_access_rules: Access rules that can be added to the network security profile
-     (NSP) to remediate the issue.
-    :vartype suggested_access_rules: list[~azure.mgmt.cosmosdb.models.AccessRule]
-    """
-
-    issue_type: Optional[Union[str, "_models.IssueType"]] = rest_field(name="issueType", visibility=["read"])
-    """Type of issue. Known values are: \"Unknown\", \"ConfigurationPropagationFailure\",
-     \"MissingPerimeterConfiguration\", and \"MissingIdentityConfiguration\"."""
-    severity: Optional[Union[str, "_models.Severity"]] = rest_field(visibility=["read"])
-    """Severity of the issue. Known values are: \"Warning\" and \"Error\"."""
-    description: Optional[str] = rest_field(visibility=["read"])
-    """Description of the issue."""
-    suggested_resource_ids: Optional[list[str]] = rest_field(name="suggestedResourceIds", visibility=["read"])
-    """Fully qualified resource IDs of suggested resources that can be associated to the network
-     security perimeter (NSP) to remediate the issue."""
-    suggested_access_rules: Optional[list["_models.AccessRule"]] = rest_field(
-        name="suggestedAccessRules", visibility=["read"]
-    )
-    """Access rules that can be added to the network security profile (NSP) to remediate the issue."""
-
-
-class RedistributeThroughputParameters(
-    ARMResourceProperties
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Cosmos DB redistribute throughput parameters object.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
-     "Graph", "DocumentDB", and "MongoDB".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    :ivar properties: Properties to redistribute throughput parameters object. Required.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.RedistributeThroughputProperties
-    """
-
-    properties: "_models.RedistributeThroughputProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties to redistribute throughput parameters object. Required."""
-
-    __flattened_items = ["resource"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.RedistributeThroughputProperties",
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class RedistributeThroughputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties to redistribute throughput for Azure Cosmos DB resource.
-
-    :ivar resource: The standard JSON format of a resource throughput. Required.
-    :vartype resource: ~azure.mgmt.cosmosdb.models.RedistributeThroughputPropertiesResource
-    """
-
-    resource: "_models.RedistributeThroughputPropertiesResource" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The standard JSON format of a resource throughput. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource: "_models.RedistributeThroughputPropertiesResource",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RedistributeThroughputPropertiesResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Resource to redistribute throughput for Azure Cosmos DB resource.
-
-    :ivar throughput_policy: ThroughputPolicy to apply for throughput redistribution. Required.
-     Known values are: "none", "equal", and "custom".
-    :vartype throughput_policy: str or ~azure.mgmt.cosmosdb.models.ThroughputPolicyType
-    :ivar target_physical_partition_throughput_info: Array of
-     PhysicalPartitionThroughputInfoResource objects. Required.
-    :vartype target_physical_partition_throughput_info:
-     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
-    :ivar source_physical_partition_throughput_info: Array of
-     PhysicalPartitionThroughputInfoResource objects. Required.
-    :vartype source_physical_partition_throughput_info:
-     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource]
-    """
-
-    throughput_policy: Union[str, "_models.ThroughputPolicyType"] = rest_field(
-        name="throughputPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """ThroughputPolicy to apply for throughput redistribution. Required. Known values are: \"none\",
-     \"equal\", and \"custom\"."""
-    target_physical_partition_throughput_info: list["_models.PhysicalPartitionThroughputInfoResource"] = rest_field(
-        name="targetPhysicalPartitionThroughputInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Array of PhysicalPartitionThroughputInfoResource objects. Required."""
-    source_physical_partition_throughput_info: list["_models.PhysicalPartitionThroughputInfoResource"] = rest_field(
-        name="sourcePhysicalPartitionThroughputInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Array of PhysicalPartitionThroughputInfoResource objects. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        throughput_policy: Union[str, "_models.ThroughputPolicyType"],
-        target_physical_partition_throughput_info: list["_models.PhysicalPartitionThroughputInfoResource"],
-        source_physical_partition_throughput_info: list["_models.PhysicalPartitionThroughputInfoResource"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class RegionForOnlineOffline(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB region to online or offline.
 
@@ -14601,43 +10471,6 @@ class RegionForOnlineOffline(_Model):  # pylint: disable=docstring-keyword-shoul
         self,
         *,
         region: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Information about resource association.
-
-    :ivar name: Name of the resource association.
-    :vartype name: str
-    :ivar access_mode: Access mode of the resource association. Known values are: "Enforced",
-     "Learning", and "Audit".
-    :vartype access_mode: str or ~azure.mgmt.cosmosdb.models.ResourceAssociationAccessMode
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the resource association."""
-    access_mode: Optional[Union[str, "_models.ResourceAssociationAccessMode"]] = rest_field(
-        name="accessMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Access mode of the resource association. Known values are: \"Enforced\", \"Learning\", and
-     \"Audit\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        access_mode: Optional[Union[str, "_models.ResourceAssociationAccessMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -15711,22 +11544,12 @@ class SqlContainerResource(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
      and "Restore".
     :vartype create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
-    :ivar materialized_view_definition: The configuration for defining Materialized Views. This
-     must be specified only for creating a Materialized View container.
-    :vartype materialized_view_definition: ~azure.mgmt.cosmosdb.models.MaterializedViewDefinition
-    :ivar materialized_views: Materialized Views defined on the container.
-    :vartype materialized_views: list[~azure.mgmt.cosmosdb.models.MaterializedViewDetails]
-    :ivar materialized_views_properties: Materialized Views Properties defined for source
-     container.
-    :vartype materialized_views_properties: ~azure.mgmt.cosmosdb.models.MaterializedViewsProperties
     :ivar computed_properties: List of computed properties.
     :vartype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
     :ivar vector_embedding_policy: The vector embedding policy for the container.
     :vartype vector_embedding_policy: ~azure.mgmt.cosmosdb.models.VectorEmbeddingPolicy
     :ivar full_text_policy: The FullText policy for the container.
     :vartype full_text_policy: ~azure.mgmt.cosmosdb.models.FullTextPolicy
-    :ivar data_masking_policy: The Data Masking policy for the container.
-    :vartype data_masking_policy: ~azure.mgmt.cosmosdb.models.DataMaskingPolicy
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -15770,19 +11593,6 @@ class SqlContainerResource(_Model):  # pylint: disable=docstring-keyword-should-
         name="createMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enum to indicate the mode of account creation. Known values are: \"Default\" and \"Restore\"."""
-    materialized_view_definition: Optional["_models.MaterializedViewDefinition"] = rest_field(
-        name="materializedViewDefinition", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The configuration for defining Materialized Views. This must be specified only for creating a
-     Materialized View container."""
-    materialized_views: Optional[list["_models.MaterializedViewDetails"]] = rest_field(
-        name="materializedViews", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Materialized Views defined on the container."""
-    materialized_views_properties: Optional["_models.MaterializedViewsProperties"] = rest_field(
-        name="materializedViewsProperties", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Materialized Views Properties defined for source container."""
     computed_properties: Optional[list["_models.ComputedProperty"]] = rest_field(
         name="computedProperties", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15795,10 +11605,6 @@ class SqlContainerResource(_Model):  # pylint: disable=docstring-keyword-should-
         name="fullTextPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The FullText policy for the container."""
-    data_masking_policy: Optional["_models.DataMaskingPolicy"] = rest_field(
-        name="dataMaskingPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Data Masking policy for the container."""
 
     @overload
     def __init__(
@@ -15814,13 +11620,9 @@ class SqlContainerResource(_Model):  # pylint: disable=docstring-keyword-should-
         analytical_storage_ttl: Optional[int] = None,
         restore_parameters: Optional["_models.ResourceRestoreParameters"] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
-        materialized_view_definition: Optional["_models.MaterializedViewDefinition"] = None,
-        materialized_views: Optional[list["_models.MaterializedViewDetails"]] = None,
-        materialized_views_properties: Optional["_models.MaterializedViewsProperties"] = None,
         computed_properties: Optional[list["_models.ComputedProperty"]] = None,
         vector_embedding_policy: Optional["_models.VectorEmbeddingPolicy"] = None,
         full_text_policy: Optional["_models.FullTextPolicy"] = None,
-        data_masking_policy: Optional["_models.DataMaskingPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -15863,22 +11665,12 @@ class RestorableSqlContainerPropertiesResourceContainer(
     :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
      and "Restore".
     :vartype create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
-    :ivar materialized_view_definition: The configuration for defining Materialized Views. This
-     must be specified only for creating a Materialized View container.
-    :vartype materialized_view_definition: ~azure.mgmt.cosmosdb.models.MaterializedViewDefinition
-    :ivar materialized_views: Materialized Views defined on the container.
-    :vartype materialized_views: list[~azure.mgmt.cosmosdb.models.MaterializedViewDetails]
-    :ivar materialized_views_properties: Materialized Views Properties defined for source
-     container.
-    :vartype materialized_views_properties: ~azure.mgmt.cosmosdb.models.MaterializedViewsProperties
     :ivar computed_properties: List of computed properties.
     :vartype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
     :ivar vector_embedding_policy: The vector embedding policy for the container.
     :vartype vector_embedding_policy: ~azure.mgmt.cosmosdb.models.VectorEmbeddingPolicy
     :ivar full_text_policy: The FullText policy for the container.
     :vartype full_text_policy: ~azure.mgmt.cosmosdb.models.FullTextPolicy
-    :ivar data_masking_policy: The Data Masking policy for the container.
-    :vartype data_masking_policy: ~azure.mgmt.cosmosdb.models.DataMaskingPolicy
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
@@ -15915,13 +11707,9 @@ class RestorableSqlContainerPropertiesResourceContainer(
         analytical_storage_ttl: Optional[int] = None,
         restore_parameters: Optional["_models.ResourceRestoreParameters"] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
-        materialized_view_definition: Optional["_models.MaterializedViewDefinition"] = None,
-        materialized_views: Optional[list["_models.MaterializedViewDetails"]] = None,
-        materialized_views_properties: Optional["_models.MaterializedViewsProperties"] = None,
         computed_properties: Optional[list["_models.ComputedProperty"]] = None,
         vector_embedding_policy: Optional["_models.VectorEmbeddingPolicy"] = None,
         full_text_policy: Optional["_models.FullTextPolicy"] = None,
-        data_masking_policy: Optional["_models.DataMaskingPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -16468,138 +12256,6 @@ class RestoreParameters(RestoreParametersBase):  # pylint: disable=docstring-key
         super().__init__(*args, **kwargs)
 
 
-class RetrieveThroughputParameters(
-    ARMResourceProperties
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Cosmos DB retrieve throughput parameters object.
-
-    :ivar id: The unique resource identifier of the ARM resource.
-    :vartype id: str
-    :ivar name: The name of the ARM resource.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :ivar location: The location of the resource group to which the resource belongs.
-    :vartype location: str
-    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
-     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
-     be provided for a resource. Each tag must have a key no greater than 128 characters and value
-     no greater than 256 characters. For example, the default experience for a template type is set
-     with "defaultExperience": "Cassandra". Current "defaultExperience" values also include "Table",
-     "Graph", "DocumentDB", and "MongoDB".
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
-    :ivar properties: Properties to retrieve throughput parameters object. Required.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.RetrieveThroughputProperties
-    """
-
-    properties: "_models.RetrieveThroughputProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties to retrieve throughput parameters object. Required."""
-
-    __flattened_items = ["resource"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.RetrieveThroughputProperties",
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class RetrieveThroughputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties to retrieve throughput for Azure Cosmos DB resource.
-
-    :ivar resource: The standard JSON format of a resource throughput. Required.
-    :vartype resource: ~azure.mgmt.cosmosdb.models.RetrieveThroughputPropertiesResource
-    """
-
-    resource: "_models.RetrieveThroughputPropertiesResource" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The standard JSON format of a resource throughput. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource: "_models.RetrieveThroughputPropertiesResource",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RetrieveThroughputPropertiesResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Resource to retrieve throughput information for Cosmos DB resource.
-
-    :ivar physical_partition_ids: Array of PhysicalPartitionId objects. Required.
-    :vartype physical_partition_ids: list[~azure.mgmt.cosmosdb.models.PhysicalPartitionId]
-    """
-
-    physical_partition_ids: list["_models.PhysicalPartitionId"] = rest_field(
-        name="physicalPartitionIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Array of PhysicalPartitionId objects. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        physical_partition_ids: list["_models.PhysicalPartitionId"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class Role(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The set of roles permitted through this Role Definition.
 
@@ -16719,577 +12375,6 @@ class ServiceResourceCreateUpdateParameters(_Model):  # pylint: disable=docstrin
         self,
         *,
         properties: Optional["_models.ServiceResourceCreateUpdateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeleteConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration for soft delete on the Cosmos DB account.
-
-    :ivar soft_deletion_enabled: Flag to indicate whether soft delete is enabled on the account.
-    :vartype soft_deletion_enabled: bool
-    :ivar min_minutes_before_permanent_deletion_allowed: Minimum number of minutes before a soft
-     deleted resource can be permanently deleted.
-    :vartype min_minutes_before_permanent_deletion_allowed: int
-    :ivar soft_delete_retention_period_in_minutes: Soft delete retention period in minutes for
-     resources.
-    :vartype soft_delete_retention_period_in_minutes: int
-    """
-
-    soft_deletion_enabled: Optional[bool] = rest_field(
-        name="softDeletionEnabled", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag to indicate whether soft delete is enabled on the account."""
-    min_minutes_before_permanent_deletion_allowed: Optional[int] = rest_field(
-        name="minMinutesBeforePermanentDeletionAllowed", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Minimum number of minutes before a soft deleted resource can be permanently deleted."""
-    soft_delete_retention_period_in_minutes: Optional[int] = rest_field(
-        name="softDeleteRetentionPeriodInMinutes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Soft delete retention period in minutes for resources."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        soft_deletion_enabled: Optional[bool] = None,
-        min_minutes_before_permanent_deletion_allowed: Optional[int] = None,
-        soft_delete_retention_period_in_minutes: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedDatabaseAccountGetResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A Azure Cosmos DB soft-deleted database account.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountProperties
-    """
-
-    properties: Optional["_models.SoftDeletedDatabaseAccountProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.SoftDeletedDatabaseAccountProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedDatabaseAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties of a soft-deleted database account.
-
-    :ivar account_name: The name of the database account.
-    :vartype account_name: str
-    :ivar soft_deletion_metadata: Metadata related to the soft deletion of the database account.
-    :vartype soft_deletion_metadata: ~azure.mgmt.cosmosdb.models.SoftDeletionMetadata
-    :ivar soft_delete_configuration: The soft delete configuration for the database account.
-    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
-    :ivar resource: A subset of properties of the underlying database account resource.
-    :vartype resource: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountResource
-    """
-
-    account_name: Optional[str] = rest_field(
-        name="accountName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of the database account."""
-    soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = rest_field(
-        name="softDeletionMetadata", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Metadata related to the soft deletion of the database account."""
-    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
-        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The soft delete configuration for the database account."""
-    resource: Optional["_models.SoftDeletedDatabaseAccountResource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A subset of properties of the underlying database account resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        account_name: Optional[str] = None,
-        soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = None,
-        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
-        resource: Optional["_models.SoftDeletedDatabaseAccountResource"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedDatabaseAccountResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The database account resource information for a soft-deleted account.
-
-    :ivar locations: An array that contains all of the locations enabled for the Cosmos DB account.
-    :vartype locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar write_locations: An array that contains the write location(s) for the Cosmos DB account.
-    :vartype write_locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar read_locations: An array that contains the read locations enabled for the Cosmos DB
-     account.
-    :vartype read_locations: list[~azure.mgmt.cosmosdb.models.Location]
-    """
-
-    locations: Optional[list["_models.Location"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An array that contains all of the locations enabled for the Cosmos DB account."""
-    write_locations: Optional[list["_models.Location"]] = rest_field(
-        name="writeLocations", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An array that contains the write location(s) for the Cosmos DB account."""
-    read_locations: Optional[list["_models.Location"]] = rest_field(
-        name="readLocations", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An array that contains the read locations enabled for the Cosmos DB account."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        locations: Optional[list["_models.Location"]] = None,
-        write_locations: Optional[list["_models.Location"]] = None,
-        read_locations: Optional[list["_models.Location"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedDatabaseAccountsListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The List operation response, that contains the soft-deleted database accounts and their
-    properties.
-
-    :ivar value: The SoftDeletedDatabaseAccountGetResult items on this page. Required.
-    :vartype value: list[~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountGetResult]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["_models.SoftDeletedDatabaseAccountGetResult"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The SoftDeletedDatabaseAccountGetResult items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.SoftDeletedDatabaseAccountGetResult"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedSqlContainerGetResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Cosmos DB soft-deleted SQL container.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerProperties
-    """
-
-    properties: Optional["_models.SoftDeletedSqlContainerProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.SoftDeletedSqlContainerProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedSqlContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties of a soft-deleted SQL container.
-
-    :ivar soft_deletion_metadata: Metadata related to the soft deletion of the SQL container.
-    :vartype soft_deletion_metadata: ~azure.mgmt.cosmosdb.models.SoftDeletionMetadata
-    :ivar resource: The resource information for the soft-deleted SQL container.
-    :vartype resource: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerResource
-    """
-
-    soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = rest_field(
-        name="softDeletionMetadata", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Metadata related to the soft deletion of the SQL container."""
-    resource: Optional["_models.SoftDeletedSqlContainerResource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource information for the soft-deleted SQL container."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = None,
-        resource: Optional["_models.SoftDeletedSqlContainerResource"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedSqlContainerResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Cosmos DB SQL container resource object.
-
-    :ivar id: Name of the Cosmos DB SQL container. Required.
-    :vartype id: str
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    :ivar partition_key: The configuration of the partition key to be used for partitioning data
-     into multiple partitions.
-    :vartype partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
-    :ivar default_ttl: Default time to live.
-    :vartype default_ttl: int
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the Cosmos DB SQL container. Required."""
-    rid: Optional[str] = rest_field(name="_rid", visibility=["read"])
-    """A system generated property. A unique identifier."""
-    partition_key: Optional["_models.ContainerPartitionKey"] = rest_field(
-        name="partitionKey", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The configuration of the partition key to be used for partitioning data into multiple
-     partitions."""
-    default_ttl: Optional[int] = rest_field(
-        name="defaultTtl", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Default time to live."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        partition_key: Optional["_models.ContainerPartitionKey"] = None,
-        default_ttl: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedSqlContainersListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The List operation response, that contains the soft-deleted SQL containers and their
-    properties.
-
-    :ivar value: The SoftDeletedSqlContainerGetResult items on this page. Required.
-    :vartype value: list[~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerGetResult]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["_models.SoftDeletedSqlContainerGetResult"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The SoftDeletedSqlContainerGetResult items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.SoftDeletedSqlContainerGetResult"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedSqlDatabaseGetResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Cosmos DB soft-deleted SQL database.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseProperties
-    """
-
-    properties: Optional["_models.SoftDeletedSqlDatabaseProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.SoftDeletedSqlDatabaseProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedSqlDatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties of a soft-deleted SQL database.
-
-    :ivar soft_deletion_metadata: Metadata related to the soft deletion of the SQL database.
-    :vartype soft_deletion_metadata: ~azure.mgmt.cosmosdb.models.SoftDeletionMetadata
-    :ivar resource: The resource information for the soft-deleted SQL database.
-    :vartype resource: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseResource
-    """
-
-    soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = rest_field(
-        name="softDeletionMetadata", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Metadata related to the soft deletion of the SQL database."""
-    resource: Optional["_models.SoftDeletedSqlDatabaseResource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource information for the soft-deleted SQL database."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = None,
-        resource: Optional["_models.SoftDeletedSqlDatabaseResource"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedSqlDatabaseResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Cosmos DB SQL database resource object.
-
-    :ivar id: Name of the Cosmos DB SQL database. Required.
-    :vartype id: str
-    :ivar rid: A system generated property. A unique identifier.
-    :vartype rid: str
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the Cosmos DB SQL database. Required."""
-    rid: Optional[str] = rest_field(name="_rid", visibility=["read"])
-    """A system generated property. A unique identifier."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletedSqlDatabasesListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The List operation response, that contains the soft-deleted SQL databases and their properties.
-
-    :ivar value: The SoftDeletedSqlDatabaseGetResult items on this page. Required.
-    :vartype value: list[~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseGetResult]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["_models.SoftDeletedSqlDatabaseGetResult"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The SoftDeletedSqlDatabaseGetResult items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.SoftDeletedSqlDatabaseGetResult"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SoftDeletionMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Metadata about the soft deletion of a resource.
-
-    :ivar is_soft_deleted: Indicates whether the resource is soft deleted.
-    :vartype is_soft_deleted: bool
-    :ivar soft_deletion_start_timestamp: The timestamp when the soft deletion started.
-    :vartype soft_deletion_start_timestamp: int
-    :ivar soft_deletion_resource_expiration_timestamp: The timestamp when the soft-deleted resource
-     will expire and be permanently deleted.
-    :vartype soft_deletion_resource_expiration_timestamp: int
-    """
-
-    is_soft_deleted: Optional[bool] = rest_field(
-        name="isSoftDeleted", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether the resource is soft deleted."""
-    soft_deletion_start_timestamp: Optional[int] = rest_field(
-        name="softDeletionStartTimestamp", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The timestamp when the soft deletion started."""
-    soft_deletion_resource_expiration_timestamp: Optional[int] = rest_field(
-        name="softDeletionResourceExpirationTimestamp", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The timestamp when the soft-deleted resource will expire and be permanently deleted."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        is_soft_deleted: Optional[bool] = None,
-        soft_deletion_start_timestamp: Optional[int] = None,
-        soft_deletion_resource_expiration_timestamp: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -17542,22 +12627,12 @@ class SqlContainerGetPropertiesResource(
     :ivar create_mode: Enum to indicate the mode of account creation. Known values are: "Default"
      and "Restore".
     :vartype create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
-    :ivar materialized_view_definition: The configuration for defining Materialized Views. This
-     must be specified only for creating a Materialized View container.
-    :vartype materialized_view_definition: ~azure.mgmt.cosmosdb.models.MaterializedViewDefinition
-    :ivar materialized_views: Materialized Views defined on the container.
-    :vartype materialized_views: list[~azure.mgmt.cosmosdb.models.MaterializedViewDetails]
-    :ivar materialized_views_properties: Materialized Views Properties defined for source
-     container.
-    :vartype materialized_views_properties: ~azure.mgmt.cosmosdb.models.MaterializedViewsProperties
     :ivar computed_properties: List of computed properties.
     :vartype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
     :ivar vector_embedding_policy: The vector embedding policy for the container.
     :vartype vector_embedding_policy: ~azure.mgmt.cosmosdb.models.VectorEmbeddingPolicy
     :ivar full_text_policy: The FullText policy for the container.
     :vartype full_text_policy: ~azure.mgmt.cosmosdb.models.FullTextPolicy
-    :ivar data_masking_policy: The Data Masking policy for the container.
-    :vartype data_masking_policy: ~azure.mgmt.cosmosdb.models.DataMaskingPolicy
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
@@ -17589,13 +12664,9 @@ class SqlContainerGetPropertiesResource(
         analytical_storage_ttl: Optional[int] = None,
         restore_parameters: Optional["_models.ResourceRestoreParameters"] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
-        materialized_view_definition: Optional["_models.MaterializedViewDefinition"] = None,
-        materialized_views: Optional[list["_models.MaterializedViewDetails"]] = None,
-        materialized_views_properties: Optional["_models.MaterializedViewsProperties"] = None,
         computed_properties: Optional[list["_models.ComputedProperty"]] = None,
         vector_embedding_policy: Optional["_models.VectorEmbeddingPolicy"] = None,
         full_text_policy: Optional["_models.FullTextPolicy"] = None,
-        data_masking_policy: Optional["_models.DataMaskingPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -20152,277 +15223,6 @@ class ThroughputPolicyResource(_Model):  # pylint: disable=docstring-keyword-sho
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ThroughputPoolAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Cosmos DB Global Database Account which is part of a Throughputpool.
-
-    :ivar provisioning_state: A provisioning state of the ThroughputPool Account. Known values are:
-     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
-     "Failed", "Canceled", "Updating", and "Creating".
-    :vartype provisioning_state: str or ~azure.mgmt.cosmosdb.models.Status
-    :ivar account_resource_identifier: The resource identifier of global database account in the
-     throughputPool.
-    :vartype account_resource_identifier: str
-    :ivar account_location: The location of  global database account in the throughputPool.
-    :vartype account_location: str
-    :ivar account_instance_id: The instance id of global database account in the throughputPool.
-    :vartype account_instance_id: str
-    """
-
-    provisioning_state: Optional[Union[str, "_models.Status"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """A provisioning state of the ThroughputPool Account. Known values are: \"Uninitialized\",
-     \"Initializing\", \"InternallyReady\", \"Online\", \"Deleting\", \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Updating\", and \"Creating\"."""
-    account_resource_identifier: Optional[str] = rest_field(
-        name="accountResourceIdentifier", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource identifier of global database account in the throughputPool."""
-    account_location: Optional[str] = rest_field(
-        name="accountLocation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The location of  global database account in the throughputPool."""
-    account_instance_id: Optional[str] = rest_field(name="accountInstanceId", visibility=["read"])
-    """The instance id of global database account in the throughputPool."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        account_resource_identifier: Optional[str] = None,
-        account_location: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ThroughputPoolAccountResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Cosmos DB Throughputpool Account.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar properties: An Azure Cosmos DB Global Database Account which is part of a Throughputpool.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.ThroughputPoolAccountProperties
-    """
-
-    properties: Optional["_models.ThroughputPoolAccountProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An Azure Cosmos DB Global Database Account which is part of a Throughputpool."""
-
-    __flattened_items = ["provisioning_state", "account_resource_identifier", "account_location", "account_instance_id"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.ThroughputPoolAccountProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class ThroughputPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties to update Azure Cosmos DB throughput pool.
-
-    :ivar provisioning_state: A provisioning state of the ThroughputPool. Known values are:
-     "Uninitialized", "Initializing", "InternallyReady", "Online", "Deleting", "Succeeded",
-     "Failed", "Canceled", "Updating", and "Creating".
-    :vartype provisioning_state: str or ~azure.mgmt.cosmosdb.models.Status
-    :ivar max_throughput: Value for throughput to be shared among CosmosDB resources in the pool.
-    :vartype max_throughput: int
-    """
-
-    provisioning_state: Optional[Union[str, "_models.Status"]] = rest_field(
-        name="provisioningState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A provisioning state of the ThroughputPool. Known values are: \"Uninitialized\",
-     \"Initializing\", \"InternallyReady\", \"Online\", \"Deleting\", \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Updating\", and \"Creating\"."""
-    max_throughput: Optional[int] = rest_field(
-        name="maxThroughput", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Value for throughput to be shared among CosmosDB resources in the pool."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        provisioning_state: Optional[Union[str, "_models.Status"]] = None,
-        max_throughput: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ThroughputPoolResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An Azure Cosmos DB Throughputpool.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: Properties to update Azure Cosmos DB throughput pool.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.ThroughputPoolProperties
-    """
-
-    properties: Optional["_models.ThroughputPoolProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties to update Azure Cosmos DB throughput pool."""
-
-    __flattened_items = ["provisioning_state", "max_throughput"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.ThroughputPoolProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class ThroughputPoolUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Represents a throughput pool resource for updates.
-
-    :ivar properties: Properties of the throughput pool.
-    :vartype properties: ~azure.mgmt.cosmosdb.models.ThroughputPoolProperties
-    """
-
-    properties: Optional["_models.ThroughputPoolProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties of the throughput pool."""
-
-    __flattened_items = ["provisioning_state", "max_throughput"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.ThroughputPoolProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
 
 
 class ThroughputSettingsGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

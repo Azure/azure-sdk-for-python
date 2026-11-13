@@ -10,7 +10,10 @@ from urllib.parse import urlsplit
 
 from opentelemetry.util.types import Attributes
 
+from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.monitor.opentelemetry.exporter._constants import (
+    _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
     _MICROSOFT_INGESTION_AUTH,
     _MICROSOFT_INGESTION_ENDPOINT,
     _MICROSOFT_INSTRUMENTATION_KEY,
@@ -20,6 +23,17 @@ from azure.monitor.opentelemetry.exporter._constants import (
 _MAX_INSTRUMENTATION_KEY_LENGTH = 200
 _MAX_INGESTION_ENDPOINT_LENGTH = 2048
 _logger = logging.getLogger(__name__)
+
+
+class _RoutedRedirectPolicy(SansIOHTTPPolicy):
+    """Preserve the complete validated redirect URL instead of appending the generated operation path."""
+
+    def __init__(self) -> None:
+        self.redirect_url: str | None = None
+
+    def on_request(self, request: PipelineRequest) -> None:
+        if self.redirect_url is not None:
+            request.http_request.url = self.redirect_url
 
 
 @dataclass(frozen=True)
@@ -111,8 +125,13 @@ def _is_valid_route(attributes: Mapping[str, object] | None) -> bool:
     try:
         _get_instrumentation_key(attributes)
         _get_ingestion_endpoint(attributes)
-    except ValueError as error:
-        _logger.debug("Dropping telemetry with invalid multi-endpoint routing attributes: %s", error)
+    except ValueError:
+        _logger.debug(
+            "Multi-endpoint routing: Dropping telemetry with invalid routing attributes. "
+            "Set microsoft.instrumentation_key to a nonempty string (at most 200 characters) and "
+            "microsoft.ingestion_endpoint to an absolute HTTPS URL without credentials, query, or fragment "
+            "(at most 2048 characters)."
+        )
         return False
     return True
 
@@ -124,6 +143,31 @@ def _normalize_endpoint_host(host: str) -> str:
     if not host or any(char.isascii() and not (char.isalnum() or char in "._-") for char in host):
         raise ValueError("Invalid URL host.")
     return host.lower() if host.isascii() else host
+
+
+def _is_trusted_routed_redirect(current_endpoint: str, redirect_endpoint: str) -> bool:
+    """Permit same-origin HTTPS redirects or default-port redirects within one trusted suffix.
+
+    :param str current_endpoint: The current ingestion endpoint.
+    :param str redirect_endpoint: The server's redirect destination.
+    :return: Whether the destination is safe for the routed pipeline.
+    :rtype: bool
+    """
+    try:
+        current = urlsplit(_get_ingestion_endpoint({_MICROSOFT_INGESTION_ENDPOINT: current_endpoint}))
+        redirect = urlsplit(_get_ingestion_endpoint({_MICROSOFT_INGESTION_ENDPOINT: redirect_endpoint}))
+    except ValueError:
+        return False
+    current_host, redirect_host = current.hostname, redirect.hostname
+    if current_host is None or redirect_host is None:
+        return False
+    if current_host == redirect_host:
+        return current.port == redirect.port
+    if current.port is not None or redirect.port is not None:
+        return False
+    return any(
+        current_host.endswith(suffix) and redirect_host.endswith(suffix) for suffix in _ALLOWED_REDIRECT_DOMAIN_SUFFIXES
+    )
 
 
 def _get_cloud_role(attributes: Attributes) -> str:

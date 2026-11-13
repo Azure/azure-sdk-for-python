@@ -1,5 +1,5 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
-commit: b37e3333b3e35ebc1539e33ebee09bd0c9ea101d
+commit: 4da3917bc28806e89c2c5fcda6d8fe48aeefa1d7
 repo: Azure/azure-rest-api-specs
 additionalDirectories:
 - specification/ai-foundry/data-plane/Foundry/src/session-finetuning
