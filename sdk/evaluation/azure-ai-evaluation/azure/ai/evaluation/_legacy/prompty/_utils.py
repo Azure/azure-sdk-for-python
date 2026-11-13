@@ -663,9 +663,9 @@ def log_invalid_llm_output(diagnostic: str) -> None:
 
 def _append_diagnostic_to_exception(exc: Exception, diagnostic: str) -> None:
     if isinstance(exc, json.JSONDecodeError):
-        exc.msg = f"{exc.msg}. {diagnostic}"
-        exc.doc = ""
-        exc.args = (exc.msg, exc.doc, exc.pos)
+        message = f"{exc}. {diagnostic}"
+        exc.args = (message,)
+        exc.doc = "".join("\n" if character == "\n" else " " for character in exc.doc)
     else:
         exc.args = (f"{exc}. {diagnostic}",)
 

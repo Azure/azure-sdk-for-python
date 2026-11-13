@@ -100,11 +100,16 @@ def test_format_llm_response_logs_metadata_and_reraises_invalid_json(caplog):
 @pytest.mark.unittest
 def test_format_llm_response_invalid_json_exception_is_copyable_and_picklable(caplog):
     with pytest.raises(json.JSONDecodeError) as exc_info:
-        _format_json(_json_response('{"score": 4, "reason": "secret'))
+        _format_json(_json_response('{\n  "reason": "secret'))
 
+    assert "Cause: " in str(exc_info.value)
+    assert "line 2 column" in str(exc_info.value)
+    assert "secret" not in exc_info.value.doc
     for copied in (copy.copy(exc_info.value), pickle.loads(pickle.dumps(exc_info.value))):
         assert isinstance(copied, json.JSONDecodeError)
-        assert "not valid JSON" in str(copied)
+        assert "line 2 column" in str(copied)
+        assert not str(copied).startswith("(")
+        assert "secret" not in copied.doc
     assert "secret" not in caplog.text
 
 
@@ -120,6 +125,7 @@ def test_format_llm_response_serializes_and_preserves_diagnostic_metadata(caplog
         assert "_azure_ai_evaluation_diagnostic_metadata" not in json.dumps(copied)
         copied["llm_output"] = {"reason": "unused"}
         strategy = PromptyEvaluationStrategy(AsyncMock(), result_key="metric", threshold=3, timeout=1)
+        caplog.clear()
         strategy.parse(copied)
         assert "finish_reason=length, output_tokens=800, model=test-model" in caplog.text
 

@@ -27,9 +27,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 from ..._http_utils import get_async_http_client
 
-_USE_PF_PROMPTY = os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true"
-
-if _USE_PF_PROMPTY:
+if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
     from promptflow.core._flow import AsyncPrompty
 else:
     from azure.ai.evaluation._legacy.prompty import AsyncPrompty

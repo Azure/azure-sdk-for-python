@@ -10,6 +10,7 @@ the recording. Run this module as a script to regenerate the fixture after an in
 """
 
 import json
+import logging
 import os
 import sys
 from copy import deepcopy
@@ -35,6 +36,7 @@ from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
 from azure.ai.evaluation._evaluators._tool_input_accuracy import _ToolInputAccuracyEvaluator
 from azure.ai.evaluation._evaluators._tool_selection import _ToolSelectionEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException
 
 pytestmark = pytest.mark.unittest
 
@@ -330,6 +332,18 @@ def _case_runs():
 
 
 CASE_IDS = [case_id for case_id, *_ in _case_runs()]
+DIAGNOSTIC_EVALUATOR_NAMES = (
+    "intent_resolution",
+    "relevance",
+    "response_completeness",
+    "task_adherence",
+    "task_completion",
+    "tool_call_accuracy",
+    "tool_call_success",
+    "tool_input_accuracy",
+    "tool_output_utilization",
+    "tool_selection",
+)
 
 
 def run_case(case_id):
@@ -358,6 +372,22 @@ def test_fixture_covers_every_case(recorded):
 @pytest.mark.parametrize("case_id", CASE_IDS)
 def test_chat_behavior_matches_recording(recorded, case_id):
     assert _canonical(run_case(case_id)) == _canonical(recorded[case_id])
+
+
+@pytest.mark.parametrize("name", DIAGNOSTIC_EVALUATOR_NAMES)
+def test_invalid_chat_score_logs_diagnostic(name, caplog):
+    evaluator_type, _, cases = CASES[name]
+    recorder = _Recorder(_chat_output(float("nan"), "completed"))
+    caplog.set_level(logging.WARNING)
+
+    with patch.object(_model_runners.AsyncPrompty, "load", side_effect=recorder.load):
+        evaluator = evaluator_type(deepcopy(CHAT_CONFIG))
+        try:
+            evaluator(**deepcopy(cases[0][1]))
+        except EvaluationException:
+            pass
+
+    assert any("Model returned invalid output." in record.getMessage() for record in caplog.records)
 
 
 if __name__ == "__main__":
