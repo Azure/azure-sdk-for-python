@@ -32,6 +32,7 @@ MODULE = Path("azure/ai/finetuningsessions")
 PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions")
 HANDWRITTEN_MODULES = {
     "_checkpoint_download.py",
+    "_checkpoint_files.py",
     "_client_options.py",
     "_exceptions.py",
     "_logging_setup.py",

@@ -176,6 +176,7 @@ async def test_redirect_does_not_forward_sdk_api_key(asynchronous, status, locat
         "https://UNIT.INVALID" + _PATH,
         "https://unit.invalid:443" + _PATH,
         _ENDPOINT + "/fine_tuning_sessions/session_s/checkpoints/checkpoint_c/download",
+        _ENDPOINT + "/fine_tuning_sessions/session_s/checkpoints/checkpoint_c/download/files/" + "a" * 64,
         *[
             _ENDPOINT + "/fine_tuning_sessions" + suffix
             for suffix in (
@@ -239,9 +240,16 @@ async def test_redirect_removes_only_sdk_direct_context(asynchronous, direct_hea
         _ENDPOINT + "/other",
         _ENDPOINT + "/fine_tuning_sessions/session_s/checkpoints/c/download-extra",
         _ENDPOINT + "/fine_tuning_sessions/session_s/checkpoints/c/download/files/f",
+        *[
+            _ENDPOINT + "/fine_tuning_sessions/session_s/checkpoints/c/download/files/" + suffix
+            for suffix in ("A" * 64, "a" * 64 + "/extra", "%61" + "a" * 63)
+        ],
         _ENDPOINT + "/fine_tuning_sessions/session_s/not-a-session-operation",
         "https://unit.invalid/api/projects/other/fine_tuning_sessions/session_s/checkpoints/c/download",
         "https://other.invalid/api/projects/p/fine_tuning_sessions/session_s/checkpoints/c/download",
+        "https://unit.invalid/api/projects/other/fine_tuning_sessions/session_s/checkpoints/c/download/files/"
+        + "a" * 64,
+        "https://other.invalid/api/projects/p/fine_tuning_sessions/session_s/checkpoints/c/download/files/" + "a" * 64,
     ],
 )
 async def test_prepopulated_context_is_removed_from_initial_out_of_scope_request(
@@ -254,7 +262,10 @@ async def test_prepopulated_context_is_removed_from_initial_out_of_scope_request
 
 
 @pytest.mark.parametrize("prepopulated", [False, True])
-async def test_caller_overrides_survive_redirect_case_insensitively(asynchronous, direct_headers, prepopulated):
+@pytest.mark.parametrize(
+    "url", [_URL, _ENDPOINT + "/fine_tuning_sessions/session_s/checkpoints/c/download/files/" + "a" * 64]
+)
+async def test_caller_overrides_survive_redirect_case_insensitively(asynchronous, direct_headers, prepopulated, url):
     overrides = {
         "APIM-SUBSCRIPTION-ID": "caller-sub",
         "x-workSPACE-resource-ID": "caller-workspace",
@@ -264,7 +275,7 @@ async def test_caller_overrides_survive_redirect_case_insensitively(asynchronous
     # different case, so a caller override must win before ownership is tested.
     headers = _patch._base_headers(overrides) if prepopulated else overrides
     async with _client(asynchronous, responses=_redirect(_OTHER)) as (client, transport):
-        await _send(client, HttpRequest("GET", _URL, headers=headers))
+        await _send(client, HttpRequest("GET", url, headers=headers))
         assert len(transport.requests) == 2
         for sent in transport.requests:
             for name, value in overrides.items():
