@@ -5,25 +5,40 @@
 # --------------------------------------------------------------------------
 """A broken management or $cbs link pair surfaces its AMQP cause, so the retry policy can classify it."""
 
+import asyncio
 import logging
+import threading
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from azure.servicebus._pyamqp import cbs, management_operation
-from azure.servicebus._pyamqp.aio import _cbs_async, _management_operation_async
+from azure.servicebus._pyamqp import cbs, client, management_operation
+from azure.servicebus._pyamqp.aio import _cbs_async, _client_async, _management_operation_async
 from azure.servicebus._pyamqp.constants import CbsState, LinkState, ManagementLinkState, ManagementOpenResult
 from azure.servicebus._pyamqp.error import AMQPConnectionError, AMQPLinkError, ErrorCondition
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus.exceptions import (
     ServiceBusAuthorizationError,
     ServiceBusConnectionError,
+    ServiceBusServerBusyError,
 )
 
 _LOGGER = logging.getLogger(__name__)
 DETACH_FORCED = AMQPLinkError(condition=ErrorCondition.LinkDetachForced, description="idle")
 UNAUTHORIZED = AMQPLinkError(condition=ErrorCondition.UnauthorizedAccess, description="token revoked")
 CONNECTION_FORCED = AMQPConnectionError(condition=ErrorCondition.ConnectionCloseForced, description="gateway restart")
+SERVER_BUSY = AMQPLinkError(condition=b"com.microsoft:server-busy", description="busy")
+# What Link._incoming_detach records for a detach without an error.
+DETACHED_WITHOUT_ERROR = AMQPLinkError(
+    condition=ErrorCondition.UnknownError, description="Link detached unexpectedly.", retryable=True
+)
+
+
+def _stub_link(asynchronous):
+    link = MagicMock(_error=None)
+    if asynchronous:
+        link.attach, link.detach = AsyncMock(), AsyncMock()
+    return link
 
 
 def _session(asynchronous):
@@ -34,8 +49,8 @@ def _session(asynchronous):
     link_cls = AsyncManagementLink if asynchronous else ManagementLink
     session = MagicMock()
     session._connection._error = None
-    session.create_sender_link.return_value = MagicMock(_error=None)
-    session.create_receiver_link.return_value = MagicMock(_error=None)
+    session.create_sender_link.side_effect = lambda *_, **__: _stub_link(asynchronous)
+    session.create_receiver_link.side_effect = lambda *_, **__: _stub_link(asynchronous)
     session.create_request_response_link_pair.side_effect = lambda endpoint, **kw: link_cls(session, endpoint, **kw)
     return session
 
@@ -145,3 +160,68 @@ async def test_broken_cbs_link_raises_instead_of_waiting_forever(asynchronous, l
     if link_error:
         assert raised.value is link_error
     assert _classify(raised.value) == expected
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_failed_management_link_is_evicted_and_reopened(asynchronous, monkeypatch):
+    module = _client_async if asynchronous else client
+    operation_cls = module.ManagementOperation
+    created = []
+
+    def create_operation(session, **kwargs):
+        created.append(operation_cls(session, **kwargs))
+        return created[-1]
+
+    def listen(**_):
+        if len(created) == 1:  # The peer detaches the first link pair with a retryable server-busy.
+            created[0]._mgmt_link._request_link._error = SERVER_BUSY
+            return _break_link_pair(created[0]._mgmt_link)
+        raise TimeoutError("slow")  # Not a link failure: the fresh operation stays cached.
+
+    async def listen_async(**kwargs):
+        broken = listen(**kwargs)
+        if broken:
+            await broken
+
+    monkeypatch.setattr(module, "ManagementOperation", create_operation)
+    client_cls = module.AMQPClientAsync if asynchronous else module.AMQPClient
+    amqp_client = client_cls.__new__(client_cls)  # Only the state mgmt_request uses.
+    amqp_client._mgmt_links = {}
+    amqp_client._session = _session(asynchronous)
+    if asynchronous:
+        amqp_client._mgmt_link_lock_async = asyncio.Lock()
+        amqp_client.auth_complete_async = AsyncMock(return_value=True)
+        amqp_client._connection = MagicMock(listen=listen_async)
+    else:
+        amqp_client._mgmt_link_lock = threading.Lock()
+        amqp_client.auth_complete = MagicMock(return_value=True)
+        amqp_client._connection = MagicMock(listen=listen)
+
+    async def mgmt_request():
+        if asynchronous:
+            return await amqp_client.mgmt_request_async(MagicMock())
+        return amqp_client.mgmt_request(MagicMock())
+
+    with pytest.raises(AMQPLinkError) as raised:
+        await mgmt_request()
+    assert raised.value is SERVER_BUSY
+    assert _classify(raised.value) == (ServiceBusServerBusyError, True)
+    assert amqp_client._mgmt_links == {}
+    assert created[0]._mgmt_link.state == ManagementLinkState.IDLE
+
+    with pytest.raises(TimeoutError):
+        await mgmt_request()
+    assert len(created) == 2
+    assert amqp_client._mgmt_links == {"$management": created[1]}
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+def test_failure_cause_prefers_a_specific_condition(asynchronous):
+    link = _session(asynchronous).create_request_response_link_pair("$management")
+    link._request_link._error = DETACHED_WITHOUT_ERROR
+    link._response_link._error = UNAUTHORIZED
+    assert link.failure_cause() is UNAUTHORIZED
+
+    link._response_link._error = None
+    assert link.failure_cause() is DETACHED_WITHOUT_ERROR
