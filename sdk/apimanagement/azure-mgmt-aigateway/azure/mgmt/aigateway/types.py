@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,55 +7,268 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
-    from .models import AiGatewayProvisioningState, CreatedByType, ManagedServiceIdentityType, SkuTier
+    from .models import (
+        AiGatewayAliasSelectionStage,
+        AiGatewayAllowedRequestOverride,
+        AiGatewayContentSafetySeverity,
+        AiGatewayCounterDimension,
+        AiGatewayFailureMode,
+        AiGatewayIpFilterAction,
+        AiGatewayModelProviderKind,
+        AiGatewayModelSelectionObjective,
+        AiGatewayPolicyPeriod,
+        AiGatewayPolicyScope,
+        AiGatewayPolicyType,
+        AiGatewayProvisioningState,
+        AiGatewayPublicNetworkAccess,
+        AiGatewayTelemetryExporterKind,
+        AiGatewayTelemetrySignal,
+        AiGatewayToolServerAccessState,
+        AiGatewayToolServerEndpointSourceKind,
+        AiGatewayToolServerFederationAppCredentialType,
+        AiGatewayToolServerMcpTransport,
+        AiGatewayToolServerOauth2GrantType,
+        AiGatewayToolServerOpenApiSourceType,
+        AiGatewayToolServerTokenExchangeProfile,
+        AiGatewayToolServerType,
+        CreatedByType,
+        ManagedServiceIdentityType,
+        PrivateEndpointConnectionProvisioningState,
+        PrivateEndpointServiceConnectionStatus,
+        SkuTier,
+    )
 
 
-class AiGatewayBackend(TypedDict, total=False):
-    """Backend networking configuration of an AI Gateway.
+class AiGatewayAgentHook(TypedDict, total=False):
+    """External hook settings; omitted fields inherit policy-level settings.
 
-    :ivar subnet: Subnet through which the AI Gateway reaches backends.
-    :vartype subnet: "AiGatewaySubnet"
+    :ivar mode: Failure mode when the hook call fails. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: Union[str, "AiGatewayFailureMode"]
+    :ivar endpoint: Hook destination URL.
+    :vartype endpoint: "AiGatewayDestinationEndpoint"
+    :ivar authentication: Hook authentication settings.
+    :vartype authentication: "AiGatewayAgentHookAuthentication"
+    :ivar headers: Literal, non-secret HTTP headers, returned by read operations.
+    :vartype headers: list["AiGatewayNameValuePair"]
     """
 
-    subnet: "AiGatewaySubnet"
-    """Subnet through which the AI Gateway reaches backends."""
+    mode: Union[str, "AiGatewayFailureMode"]
+    """Failure mode when the hook call fails. Known values are: \"failOpen\" and \"failClosed\"."""
+    endpoint: "AiGatewayDestinationEndpoint"
+    """Hook destination URL."""
+    authentication: "AiGatewayAgentHookAuthentication"
+    """Hook authentication settings."""
+    headers: list["AiGatewayNameValuePair"]
+    """Literal, non-secret HTTP headers, returned by read operations."""
 
 
-class AiGatewayFrontend(TypedDict, total=False):
-    """Frontend configuration of an AI Gateway.
+class AiGatewayAgentHookAuthentication(TypedDict, total=False):
+    """Outbound authentication settings for an external agent hook.
 
-    :ivar defaultHostname: Default hostname used to invoke the AI Gateway.
-    :vartype defaultHostname: str
+    :ivar managedIdentity: Managed identity configuration for the hook endpoint.
+    :vartype managedIdentity: "AiGatewayManagedIdentityAuthentication"
+    :ivar headers: Secret HTTP headers injected when calling the hook endpoint.
+    :vartype headers: list["AiGatewaySecretHeader"]
     """
 
-    defaultHostname: str
-    """Default hostname used to invoke the AI Gateway."""
+    managedIdentity: "AiGatewayManagedIdentityAuthentication"
+    """Managed identity configuration for the hook endpoint."""
+    headers: list["AiGatewaySecretHeader"]
+    """Secret HTTP headers injected when calling the hook endpoint."""
 
 
-class AiGatewayProperties(TypedDict, total=False):
-    """Properties of an AI Gateway.
+class AiGatewayAgentHookAuthenticationUpdate(TypedDict, total=False):
+    """Outbound authentication settings to update on an external agent hook.
 
+    :ivar managedIdentity: Managed identity configuration for the hook endpoint.
+    :vartype managedIdentity: "AiGatewayManagedIdentityAuthentication"
+    :ivar headers: Secret HTTP headers injected when calling the hook endpoint.
+    :vartype headers: list["AiGatewaySecretHeaderUpdate"]
+    """
+
+    managedIdentity: "AiGatewayManagedIdentityAuthentication"
+    """Managed identity configuration for the hook endpoint."""
+    headers: list["AiGatewaySecretHeaderUpdate"]
+    """Secret HTTP headers injected when calling the hook endpoint."""
+
+
+class AiGatewayAgentHooks(TypedDict, total=False):
+    """Lifecycle hooks supported on models and tool servers.
+
+    :ivar preToolCall: Hook invoked before calling a tool.
+    :vartype preToolCall: "AiGatewayAgentHook"
+    :ivar postToolCall: Hook invoked after calling a tool.
+    :vartype postToolCall: "AiGatewayAgentHook"
+    :ivar preModelCall: Hook invoked before calling a model.
+    :vartype preModelCall: "AiGatewayAgentHook"
+    :ivar postModelCall: Hook invoked after calling a model.
+    :vartype postModelCall: "AiGatewayAgentHook"
+    """
+
+    preToolCall: "AiGatewayAgentHook"
+    """Hook invoked before calling a tool."""
+    postToolCall: "AiGatewayAgentHook"
+    """Hook invoked after calling a tool."""
+    preModelCall: "AiGatewayAgentHook"
+    """Hook invoked before calling a model."""
+    postModelCall: "AiGatewayAgentHook"
+    """Hook invoked after calling a model."""
+
+
+class AiGatewayAgentHooksUpdate(TypedDict, total=False):
+    """Lifecycle hook settings to update.
+
+    :ivar preToolCall: Hook invoked before calling a tool.
+    :vartype preToolCall: "AiGatewayAgentHookUpdate"
+    :ivar postToolCall: Hook invoked after calling a tool.
+    :vartype postToolCall: "AiGatewayAgentHookUpdate"
+    :ivar preModelCall: Hook invoked before calling a model.
+    :vartype preModelCall: "AiGatewayAgentHookUpdate"
+    :ivar postModelCall: Hook invoked after calling a model.
+    :vartype postModelCall: "AiGatewayAgentHookUpdate"
+    """
+
+    preToolCall: "AiGatewayAgentHookUpdate"
+    """Hook invoked before calling a tool."""
+    postToolCall: "AiGatewayAgentHookUpdate"
+    """Hook invoked after calling a tool."""
+    preModelCall: "AiGatewayAgentHookUpdate"
+    """Hook invoked before calling a model."""
+    postModelCall: "AiGatewayAgentHookUpdate"
+    """Hook invoked after calling a model."""
+
+
+class AiGatewayAgentHookUpdate(TypedDict, total=False):
+    """External hook settings to update.
+
+    :ivar mode: Failure mode when the hook call fails. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: Union[str, "AiGatewayFailureMode"]
+    :ivar endpoint: Hook destination URL.
+    :vartype endpoint: "AiGatewayDestinationEndpointUpdate"
+    :ivar authentication: Hook authentication settings.
+    :vartype authentication: "AiGatewayAgentHookAuthenticationUpdate"
+    :ivar headers: Literal, non-secret HTTP headers.
+    :vartype headers: list["AiGatewayNameValuePairUpdate"]
+    """
+
+    mode: Union[str, "AiGatewayFailureMode"]
+    """Failure mode when the hook call fails. Known values are: \"failOpen\" and \"failClosed\"."""
+    endpoint: "AiGatewayDestinationEndpointUpdate"
+    """Hook destination URL."""
+    authentication: "AiGatewayAgentHookAuthenticationUpdate"
+    """Hook authentication settings."""
+    headers: list["AiGatewayNameValuePairUpdate"]
+    """Literal, non-secret HTTP headers."""
+
+
+class AiGatewayAliasFailureRule(TypedDict, total=False):
+    """An ordered failure rule for an AI Gateway alias.
+
+    :ivar when: Boolean @cel(...) expression evaluated against the current routing failure.
+     Required.
+    :vartype when: str
+    :ivar retryAttempts: Maximum additional attempts on the same backend; defaults to zero.
+    :vartype retryAttempts: int
+    :ivar excludeFor: Optional ISO 8601 duration or duration-valued @cel(...) expression for
+     excluding the failed backend.
+    :vartype excludeFor: str
+    """
+
+    when: Required[str]
+    """Boolean @cel(...) expression evaluated against the current routing failure. Required."""
+    retryAttempts: int
+    """Maximum additional attempts on the same backend; defaults to zero."""
+    excludeFor: str
+    """Optional ISO 8601 duration or duration-valued @cel(...) expression for excluding the failed
+     backend."""
+
+
+class AiGatewayAliasFailureRuleUpdate(TypedDict, total=False):
+    """An ordered failure rule to update on an AI Gateway alias.
+
+    :ivar when: Boolean @cel(...) expression evaluated against the current routing failure.
+    :vartype when: str
+    :ivar retryAttempts: Maximum additional attempts on the same backend; defaults to zero.
+    :vartype retryAttempts: int
+    :ivar excludeFor: Optional ISO 8601 duration or duration-valued @cel(...) expression for
+     excluding the failed backend.
+    :vartype excludeFor: str
+    """
+
+    when: str
+    """Boolean @cel(...) expression evaluated against the current routing failure."""
+    retryAttempts: int
+    """Maximum additional attempts on the same backend; defaults to zero."""
+    excludeFor: str
+    """Optional ISO 8601 duration or duration-valued @cel(...) expression for excluding the failed
+     backend."""
+
+
+class AiGatewayAliasProperties(TypedDict, total=False):
+    """Properties of a stable client-facing model alias.
+
+    :ivar aliasName: Client-facing routing name sent in the request model field.
+    :vartype aliasName: str
+    :ivar description: Description of the alias.
+    :vartype description: str
+    :ivar backendModels: Ordered target models used for routing. Required.
+    :vartype backendModels: list["AiGatewayAliasTarget"]
+    :ivar selectionOrder: Ordered routing stages.
+    :vartype selectionOrder: list[Union[str, "AiGatewayAliasSelectionStage"]]
+    :ivar sessionBackendPreference: Stateless backend preference using an existing caller session
+     key.
+    :vartype sessionBackendPreference: "AiGatewaySessionBackendPreference"
+    :ivar autoModelSelection: Automatic model selection settings used with the autoModelSelection
+     stage.
+    :vartype autoModelSelection: "AiGatewayModelSelection"
+    :ivar failures: Ordered failure rules; only the first matching rule is applied.
+    :vartype failures: list["AiGatewayAliasFailureRule"]
+    :ivar maxRetryAttempts: Maximum additional backend attempts after the first request.
+    :vartype maxRetryAttempts: int
+    :ivar supportedEndpoints: Native endpoints common to every target model; translated endpoints
+     are excluded.
+    :vartype supportedEndpoints: list[str]
+    :ivar gatewayEndpoints: Invocation endpoints, when endpoint metadata is enabled for this
+     gateway.
+    :vartype gatewayEndpoints: list["AiGatewayEndpoint"]
+    :ivar policies: Inline policies applied to requests routed through the alias.
+    :vartype policies: list["AiGatewayPolicy"]
     :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
      "Failed", and "Canceled".
     :vartype provisioningState: Union[str, "AiGatewayProvisioningState"]
-    :ivar frontend: Frontend configuration of the AI Gateway.
-    :vartype frontend: "AiGatewayFrontend"
-    :ivar backend: Backend networking configuration. Can only be set when the AI Gateway is
-     created.
-    :vartype backend: "AiGatewayBackend"
     """
 
+    aliasName: str
+    """Client-facing routing name sent in the request model field."""
+    description: str
+    """Description of the alias."""
+    backendModels: Required[list["AiGatewayAliasTarget"]]
+    """Ordered target models used for routing. Required."""
+    selectionOrder: list[Union[str, "AiGatewayAliasSelectionStage"]]
+    """Ordered routing stages."""
+    sessionBackendPreference: "AiGatewaySessionBackendPreference"
+    """Stateless backend preference using an existing caller session key."""
+    autoModelSelection: "AiGatewayModelSelection"
+    """Automatic model selection settings used with the autoModelSelection stage."""
+    failures: list["AiGatewayAliasFailureRule"]
+    """Ordered failure rules; only the first matching rule is applied."""
+    maxRetryAttempts: int
+    """Maximum additional backend attempts after the first request."""
+    supportedEndpoints: list[str]
+    """Native endpoints common to every target model; translated endpoints are excluded."""
+    gatewayEndpoints: list["AiGatewayEndpoint"]
+    """Invocation endpoints, when endpoint metadata is enabled for this gateway."""
+    policies: list["AiGatewayPolicy"]
+    """Inline policies applied to requests routed through the alias."""
     provisioningState: Union[str, "AiGatewayProvisioningState"]
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
-    frontend: "AiGatewayFrontend"
-    """Frontend configuration of the AI Gateway."""
-    backend: "AiGatewayBackend"
-    """Backend networking configuration. Can only be set when the AI Gateway is created."""
 
 
 class Resource(TypedDict, total=False):
@@ -84,6 +297,1383 @@ class Resource(TypedDict, total=False):
      \"Microsoft.Storage/storageAccounts\"."""
     systemData: "SystemData"
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    """
+
+
+class AiGatewayAliasResource(ProxyResource):
+    """A stable client-facing model identity backed by an ordered pool of models.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "AiGatewayAliasProperties"
+    """
+
+    properties: "AiGatewayAliasProperties"
+    """The resource-specific properties for this resource."""
+
+
+class AiGatewayAliasTarget(TypedDict, total=False):
+    """A model targeted by an AI Gateway alias.
+
+    :ivar resourceId: Azure resource identifier of the target model in the default workspace.
+     Required.
+    :vartype resourceId: str
+    :ivar selectorModelName: Unversioned canonical model name grouping equivalent serving
+     deployments.
+    :vartype selectorModelName: str
+    :ivar when: Optional Boolean CEL expression wrapped in @cel(...) controlling eligibility for
+     new backend selections.
+    :vartype when: str
+    :ivar priority: Routing priority. Lower values are preferred; the effective default is zero.
+    :vartype priority: int
+    :ivar weight: Relative selection weight within a priority group. The effective default is one.
+    :vartype weight: int
+    """
+
+    resourceId: Required[str]
+    """Azure resource identifier of the target model in the default workspace. Required."""
+    selectorModelName: str
+    """Unversioned canonical model name grouping equivalent serving deployments."""
+    when: str
+    """Optional Boolean CEL expression wrapped in @cel(...) controlling eligibility for new backend
+     selections."""
+    priority: int
+    """Routing priority. Lower values are preferred; the effective default is zero."""
+    weight: int
+    """Relative selection weight within a priority group. The effective default is one."""
+
+
+class AiGatewayAliasTargetUpdate(TypedDict, total=False):
+    """A model target to update on an AI Gateway alias.
+
+    :ivar resourceId: Azure resource identifier of the target model in the default workspace.
+    :vartype resourceId: str
+    :ivar selectorModelName: Unversioned canonical model name grouping equivalent serving
+     deployments.
+    :vartype selectorModelName: str
+    :ivar when: Optional Boolean CEL expression wrapped in @cel(...) controlling eligibility for
+     new backend selections.
+    :vartype when: str
+    :ivar priority: Routing priority. Lower values are preferred; the effective default is zero.
+    :vartype priority: int
+    :ivar weight: Relative selection weight within a priority group. The effective default is one.
+    :vartype weight: int
+    """
+
+    resourceId: str
+    """Azure resource identifier of the target model in the default workspace."""
+    selectorModelName: str
+    """Unversioned canonical model name grouping equivalent serving deployments."""
+    when: str
+    """Optional Boolean CEL expression wrapped in @cel(...) controlling eligibility for new backend
+     selections."""
+    priority: int
+    """Routing priority. Lower values are preferred; the effective default is zero."""
+    weight: int
+    """Relative selection weight within a priority group. The effective default is one."""
+
+
+class AiGatewayAliasUpdateParameters(TypedDict, total=False):
+    """Parameters for updating an AI Gateway alias.
+
+    :ivar properties: Alias properties to update.
+    :vartype properties: "AiGatewayAliasUpdateProperties"
+    """
+
+    properties: "AiGatewayAliasUpdateProperties"
+    """Alias properties to update."""
+
+
+class AiGatewayAliasUpdateProperties(TypedDict, total=False):
+    """Properties to update on an AI Gateway alias.
+
+    :ivar aliasName: Client-facing routing name sent in the request model field.
+    :vartype aliasName: str
+    :ivar description: Description of the alias.
+    :vartype description: str
+    :ivar backendModels: Ordered target models used for routing.
+    :vartype backendModels: list["AiGatewayAliasTargetUpdate"]
+    :ivar selectionOrder: Ordered routing stages.
+    :vartype selectionOrder: list[Union[str, "AiGatewayAliasSelectionStage"]]
+    :ivar sessionBackendPreference: Stateless backend preference using an existing caller session
+     key.
+    :vartype sessionBackendPreference: "AiGatewaySessionBackendPreferenceUpdate"
+    :ivar autoModelSelection: Automatic model selection settings used with the autoModelSelection
+     stage.
+    :vartype autoModelSelection: "AiGatewayModelSelectionUpdate"
+    :ivar failures: Ordered failure rules; only the first matching rule is applied.
+    :vartype failures: list["AiGatewayAliasFailureRuleUpdate"]
+    :ivar maxRetryAttempts: Maximum additional backend attempts after the first request.
+    :vartype maxRetryAttempts: int
+    :ivar policies: Inline policies applied to requests routed through the alias.
+    :vartype policies: list["AiGatewayPolicyUpdate"]
+    """
+
+    aliasName: str
+    """Client-facing routing name sent in the request model field."""
+    description: str
+    """Description of the alias."""
+    backendModels: list["AiGatewayAliasTargetUpdate"]
+    """Ordered target models used for routing."""
+    selectionOrder: list[Union[str, "AiGatewayAliasSelectionStage"]]
+    """Ordered routing stages."""
+    sessionBackendPreference: "AiGatewaySessionBackendPreferenceUpdate"
+    """Stateless backend preference using an existing caller session key."""
+    autoModelSelection: "AiGatewayModelSelectionUpdate"
+    """Automatic model selection settings used with the autoModelSelection stage."""
+    failures: list["AiGatewayAliasFailureRuleUpdate"]
+    """Ordered failure rules; only the first matching rule is applied."""
+    maxRetryAttempts: int
+    """Maximum additional backend attempts after the first request."""
+    policies: list["AiGatewayPolicyUpdate"]
+    """Inline policies applied to requests routed through the alias."""
+
+
+class AiGatewayApiKeyProperties(TypedDict, total=False):
+    """Properties of an AI Gateway API key.
+
+    :ivar displayName: Display name of the key.
+    :vartype displayName: str
+    :ivar state: Subscription state.
+    :vartype state: str
+    :ivar createdDate: Creation time.
+    :vartype createdDate: str
+    :ivar expirationDate: Optional expiration time.
+    :vartype expirationDate: str
+    :ivar primaryKey: Primary key value. Omitted from ordinary read responses.
+    :vartype primaryKey: str
+    :ivar secondaryKey: Secondary key value. Omitted from ordinary read responses.
+    :vartype secondaryKey: str
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """
+
+    displayName: str
+    """Display name of the key."""
+    state: str
+    """Subscription state."""
+    createdDate: str
+    """Creation time."""
+    expirationDate: str
+    """Optional expiration time."""
+    primaryKey: str
+    """Primary key value. Omitted from ordinary read responses."""
+    secondaryKey: str
+    """Secondary key value. Omitted from ordinary read responses."""
+    provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+
+class AiGatewayApiKeyResource(ProxyResource):
+    """An AI Gateway API key resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "AiGatewayApiKeyProperties"
+    """
+
+    properties: "AiGatewayApiKeyProperties"
+    """The resource-specific properties for this resource."""
+
+
+class AiGatewayApiKeyUpdateParameters(TypedDict, total=False):
+    """Parameters for updating an AI Gateway API key.
+
+    :ivar properties: API key properties to update.
+    :vartype properties: "AiGatewayApiKeyUpdateProperties"
+    """
+
+    properties: "AiGatewayApiKeyUpdateProperties"
+    """API key properties to update."""
+
+
+class AiGatewayApiKeyUpdateProperties(TypedDict, total=False):
+    """Properties for updating an AI Gateway API key.
+
+    :ivar displayName: Display name of the key.
+    :vartype displayName: str
+    :ivar state: Subscription state.
+    :vartype state: str
+    :ivar expirationDate: Optional expiration time.
+    :vartype expirationDate: str
+    :ivar primaryKey: Replacement primary key value.
+    :vartype primaryKey: str
+    :ivar secondaryKey: Replacement secondary key value.
+    :vartype secondaryKey: str
+    """
+
+    displayName: str
+    """Display name of the key."""
+    state: str
+    """Subscription state."""
+    expirationDate: str
+    """Optional expiration time."""
+    primaryKey: str
+    """Replacement primary key value."""
+    secondaryKey: str
+    """Replacement secondary key value."""
+
+
+class AiGatewayApplicationInsightsConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Application Insights export destination.
+
+    :ivar connectionString: Application Insights connection string. Required when creating this
+     exporter kind.
+    :vartype connectionString: str
+    :ivar resourceId: Azure resource identifier of the Application Insights component.
+    :vartype resourceId: str
+    """
+
+    connectionString: str
+    """Application Insights connection string. Required when creating this exporter kind."""
+    resourceId: str
+    """Azure resource identifier of the Application Insights component."""
+
+
+class AiGatewayBackend(TypedDict, total=False):
+    """Backend networking configuration of an AI Gateway.
+
+    :ivar subnet: Subnet through which the AI Gateway reaches backends.
+    :vartype subnet: "AiGatewaySubnet"
+    """
+
+    subnet: "AiGatewaySubnet"
+    """Subnet through which the AI Gateway reaches backends."""
+
+
+class AiGatewayBackendUpdate(TypedDict, total=False):
+    """Backend networking configuration to update on an AI Gateway.
+
+    :ivar subnet: Subnet through which the AI Gateway reaches backends. Omit it to keep the current
+     subnet, or set it to null to remove it.
+    :vartype subnet: "AiGatewaySubnetUpdate"
+    """
+
+    subnet: "AiGatewaySubnetUpdate"
+    """Subnet through which the AI Gateway reaches backends. Omit it to keep the current subnet, or
+     set it to null to remove it."""
+
+
+class AiGatewayCheckNameAvailabilityRequest(TypedDict, total=False):
+    """Parameters for checking an AI Gateway name in a location.
+
+    :ivar name: Name to validate and check for availability. Required.
+    :vartype name: str
+    :ivar type: Resource type to check. Required. Default value is
+     "Microsoft.ApiManagement/aigateways".
+    :vartype type: Literal["Microsoft.ApiManagement/aigateways"]
+    """
+
+    name: Required[str]
+    """Name to validate and check for availability. Required."""
+    type: Required[Literal["Microsoft.ApiManagement/aigateways"]]
+    """Resource type to check. Required. Default value is \"Microsoft.ApiManagement/aigateways\"."""
+
+
+class AiGatewayCostLimitOverride(TypedDict, total=False):
+    """An ordered cost-budget override; exactly one selector must be specified.
+
+    :ivar claims: Authenticated token claims that must all match; claim names are case-sensitive.
+    :vartype claims: list["AiGatewayNameValuePair"]
+    :ivar apiKeyResourceId: Azure resource identifier of the API key selecting this override.
+    :vartype apiKeyResourceId: str
+    :ivar amount: Override budget in US dollars. Required.
+    :vartype amount: float
+    """
+
+    claims: list["AiGatewayNameValuePair"]
+    """Authenticated token claims that must all match; claim names are case-sensitive."""
+    apiKeyResourceId: str
+    """Azure resource identifier of the API key selecting this override."""
+    amount: Required[float]
+    """Override budget in US dollars. Required."""
+
+
+class AiGatewayCostLimitOverrideUpdate(TypedDict, total=False):
+    """An ordered cost-budget override to update.
+
+    :ivar claims: Authenticated token claims that must all match; claim names are case-sensitive.
+    :vartype claims: list["AiGatewayNameValuePairUpdate"]
+    :ivar apiKeyResourceId: Azure resource identifier of the API key selecting this override.
+    :vartype apiKeyResourceId: str
+    :ivar amount: Override budget in US dollars.
+    :vartype amount: float
+    """
+
+    claims: list["AiGatewayNameValuePairUpdate"]
+    """Authenticated token claims that must all match; claim names are case-sensitive."""
+    apiKeyResourceId: str
+    """Azure resource identifier of the API key selecting this override."""
+    amount: float
+    """Override budget in US dollars."""
+
+
+class AiGatewayCustomProviderConfiguration(TypedDict, total=False):
+    """Custom model provider configuration.
+
+    :ivar endpoint: Provider base endpoint. Required.
+    :vartype endpoint: "AiGatewayDestinationEndpoint"
+    """
+
+    endpoint: Required["AiGatewayDestinationEndpoint"]
+    """Provider base endpoint. Required."""
+
+
+class AiGatewayCustomProviderConfigurationUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Custom model provider settings to update.
+
+    :ivar endpoint: Provider base endpoint.
+    :vartype endpoint: "AiGatewayDestinationEndpointUpdate"
+    """
+
+    endpoint: "AiGatewayDestinationEndpointUpdate"
+    """Provider base endpoint."""
+
+
+class AiGatewayDestinationEndpoint(TypedDict, total=False):
+    """An outbound service destination URL.
+
+    :ivar url: Destination HTTPS or HTTP URL. Required.
+    :vartype url: str
+    """
+
+    url: Required[str]
+    """Destination HTTPS or HTTP URL. Required."""
+
+
+class AiGatewayDestinationEndpointUpdate(TypedDict, total=False):
+    """An outbound service destination URL to update.
+
+    :ivar url: Destination HTTPS or HTTP URL.
+    :vartype url: str
+    """
+
+    url: str
+    """Destination HTTPS or HTTP URL."""
+
+
+class AiGatewayEndpoint(TypedDict, total=False):
+    """A client-facing endpoint for invoking an AI Gateway resource.
+
+    :ivar url: Complete HTTPS invocation URL. Required.
+    :vartype url: str
+    :ivar baseUrl: HTTPS base URL for SDKs that construct operation paths, when metadata is
+     enabled.
+    :vartype baseUrl: str
+    :ivar api: API identifier relative to the provider prefix, when metadata is enabled.
+    :vartype api: str
+    """
+
+    url: Required[str]
+    """Complete HTTPS invocation URL. Required."""
+    baseUrl: str
+    """HTTPS base URL for SDKs that construct operation paths, when metadata is enabled."""
+    api: str
+    """API identifier relative to the provider prefix, when metadata is enabled."""
+
+
+class AiGatewayFallbackTarget(TypedDict, total=False):
+    """A fallback target for a model policy.
+
+    :ivar modelId: Resource identifier of a model in the same workspace. Required.
+    :vartype modelId: str
+    """
+
+    modelId: Required[str]
+    """Resource identifier of a model in the same workspace. Required."""
+
+
+class AiGatewayFallbackTargetUpdate(TypedDict, total=False):
+    """A fallback target to update on a model policy.
+
+    :ivar modelId: Resource identifier of a model in the same workspace.
+    :vartype modelId: str
+    """
+
+    modelId: str
+    """Resource identifier of a model in the same workspace."""
+
+
+class AiGatewayFoundryProviderConfiguration(TypedDict, total=False):
+    """Foundry model provider configuration.
+
+    :ivar endpoint: Foundry endpoint.
+    :vartype endpoint: "AiGatewayDestinationEndpoint"
+    :ivar resourceIds: Cognitive Services account resource identifiers available to this provider.
+     Required.
+    :vartype resourceIds: list[str]
+    """
+
+    endpoint: "AiGatewayDestinationEndpoint"
+    """Foundry endpoint."""
+    resourceIds: Required[list[str]]
+    """Cognitive Services account resource identifiers available to this provider. Required."""
+
+
+class AiGatewayFoundryProviderConfigurationUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Foundry model provider settings to update.
+
+    :ivar endpoint: Foundry endpoint.
+    :vartype endpoint: "AiGatewayDestinationEndpointUpdate"
+    :ivar resourceIds: Cognitive Services account resource identifiers available to this provider.
+    :vartype resourceIds: list[str]
+    """
+
+    endpoint: "AiGatewayDestinationEndpointUpdate"
+    """Foundry endpoint."""
+    resourceIds: list[str]
+    """Cognitive Services account resource identifiers available to this provider."""
+
+
+class AiGatewayFrontend(TypedDict, total=False):
+    """Frontend configuration of an AI Gateway.
+
+    :ivar defaultHostname: Default hostname used to invoke the AI Gateway.
+    :vartype defaultHostname: str
+    """
+
+    defaultHostname: str
+    """Default hostname used to invoke the AI Gateway."""
+
+
+class AiGatewayGitHubAppAuthentication(TypedDict, total=False):
+    """GitHub App credentials for a GitHub model provider.
+
+    :ivar appId: GitHub App identifier.
+    :vartype appId: str
+    :ivar installationId: GitHub App installation identifier.
+    :vartype installationId: str
+    :ivar privateKey: GitHub App private key. Omitted from ordinary read responses.
+    :vartype privateKey: str
+    """
+
+    appId: str
+    """GitHub App identifier."""
+    installationId: str
+    """GitHub App installation identifier."""
+    privateKey: str
+    """GitHub App private key. Omitted from ordinary read responses."""
+
+
+class AiGatewayManagedIdentityAuthentication(TypedDict, total=False):
+    """Managed identity settings for an outbound connection.
+
+    :ivar resource: Target Entra resource or audience URI requested for managed identity
+     authentication.
+    :vartype resource: str
+    :ivar clientId: Client ID of a user-assigned managed identity; omit for system-assigned
+     identity.
+    :vartype clientId: str
+    """
+
+    resource: str
+    """Target Entra resource or audience URI requested for managed identity authentication."""
+    clientId: str
+    """Client ID of a user-assigned managed identity; omit for system-assigned identity."""
+
+
+class AiGatewayMcpUrlConfiguration(TypedDict, total=False):
+    """MCP endpoint configuration.
+
+    :ivar endpoint: Backend MCP server endpoint. Required.
+    :vartype endpoint: "AiGatewayDestinationEndpoint"
+    :ivar transport: MCP transport. "streamableHttp"
+    :vartype transport: Union[str, "AiGatewayToolServerMcpTransport"]
+    """
+
+    endpoint: Required["AiGatewayDestinationEndpoint"]
+    """Backend MCP server endpoint. Required."""
+    transport: Union[str, "AiGatewayToolServerMcpTransport"]
+    """MCP transport. \"streamableHttp\""""
+
+
+class AiGatewayMcpUrlConfigurationUpdate(TypedDict, total=False):
+    """MCP endpoint settings to update.
+
+    :ivar endpoint: Backend MCP server endpoint.
+    :vartype endpoint: "AiGatewayDestinationEndpointUpdate"
+    :ivar transport: MCP transport. "streamableHttp"
+    :vartype transport: Union[str, "AiGatewayToolServerMcpTransport"]
+    """
+
+    endpoint: "AiGatewayDestinationEndpointUpdate"
+    """Backend MCP server endpoint."""
+    transport: Union[str, "AiGatewayToolServerMcpTransport"]
+    """MCP transport. \"streamableHttp\""""
+
+
+class AiGatewayModelDeployment(TypedDict, total=False):
+    """Deployment details for an AI Gateway model.
+
+    :ivar resourceId: ARM resource identifier of the provider deployment.
+    :vartype resourceId: str
+    :ivar modelName: Provider-side model name. Required.
+    :vartype modelName: str
+    :ivar modelVersion: Provider-side model version.
+    :vartype modelVersion: str
+    """
+
+    resourceId: str
+    """ARM resource identifier of the provider deployment."""
+    modelName: Required[str]
+    """Provider-side model name. Required."""
+    modelVersion: str
+    """Provider-side model version."""
+
+
+class AiGatewayModelDeploymentUpdate(TypedDict, total=False):
+    """Deployment details to update on an AI Gateway model.
+
+    :ivar resourceId: ARM resource identifier of the provider deployment.
+    :vartype resourceId: str
+    :ivar modelName: Provider-side model name.
+    :vartype modelName: str
+    :ivar modelVersion: Provider-side model version.
+    :vartype modelVersion: str
+    """
+
+    resourceId: str
+    """ARM resource identifier of the provider deployment."""
+    modelName: str
+    """Provider-side model name."""
+    modelVersion: str
+    """Provider-side model version."""
+
+
+class AiGatewayModelEndpoint(TypedDict, total=False):
+    """Maps a canonical AI Gateway API identifier to a relative backend path served by the model
+    provider.
+
+    :ivar api: Canonical AI Gateway API identifier (for example, v1/chat/completions, v1/responses,
+     v1/messages, or v1/embeddings). Required.
+    :vartype api: str
+    :ivar path: Backend path relative to the model provider's base endpoint, starting with '/'.
+     Required.
+    :vartype path: str
+    """
+
+    api: Required[str]
+    """Canonical AI Gateway API identifier (for example, v1/chat/completions, v1/responses,
+     v1/messages, or v1/embeddings). Required."""
+    path: Required[str]
+    """Backend path relative to the model provider's base endpoint, starting with '/'. Required."""
+
+
+class AiGatewayModelEndpointUpdate(TypedDict, total=False):
+    """A model endpoint mapping to update.
+
+    :ivar api: Canonical AI Gateway API identifier (for example, v1/chat/completions, v1/responses,
+     v1/messages, or v1/embeddings).
+    :vartype api: str
+    :ivar path: Backend path relative to the model provider's base endpoint, starting with '/'.
+    :vartype path: str
+    """
+
+    api: str
+    """Canonical AI Gateway API identifier (for example, v1/chat/completions, v1/responses,
+     v1/messages, or v1/embeddings)."""
+    path: str
+    """Backend path relative to the model provider's base endpoint, starting with '/'."""
+
+
+class AiGatewayModelProperties(TypedDict, total=False):
+    """Properties of an AI Gateway model.
+
+    :ivar displayName: Display name of the model. Required.
+    :vartype displayName: str
+    :ivar description: Description of the model.
+    :vartype description: str
+    :ivar providerKind: Parent model provider type. Known values are: "Foundry", "Custom", and
+     "GitHub".
+    :vartype providerKind: Union[str, "AiGatewayModelProviderKind"]
+    :ivar deployment: Provider deployment details. Required.
+    :vartype deployment: "AiGatewayModelDeployment"
+    :ivar endpoints: API-to-backend-path mappings served by this model.
+    :vartype endpoints: list["AiGatewayModelEndpoint"]
+    :ivar supportedEndpoints: Runtime endpoints supported by this model.
+    :vartype supportedEndpoints: list[str]
+    :ivar policies: Inline policies applied to this model.
+    :vartype policies: list["AiGatewayPolicy"]
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """
+
+    displayName: Required[str]
+    """Display name of the model. Required."""
+    description: str
+    """Description of the model."""
+    providerKind: Union[str, "AiGatewayModelProviderKind"]
+    """Parent model provider type. Known values are: \"Foundry\", \"Custom\", and \"GitHub\"."""
+    deployment: Required["AiGatewayModelDeployment"]
+    """Provider deployment details. Required."""
+    endpoints: list["AiGatewayModelEndpoint"]
+    """API-to-backend-path mappings served by this model."""
+    supportedEndpoints: list[str]
+    """Runtime endpoints supported by this model."""
+    policies: list["AiGatewayPolicy"]
+    """Inline policies applied to this model."""
+    provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+
+class AiGatewayModelProviderAuthentication(TypedDict, total=False):
+    """Outbound authentication configuration for a model provider.
+
+    :ivar githubApp: GitHub App credentials when modelProviderType is GitHub.
+    :vartype githubApp: "AiGatewayGitHubAppAuthentication"
+    :ivar managedIdentity: Managed identity configuration when modelProviderType is Foundry.
+    :vartype managedIdentity: "AiGatewayManagedIdentityAuthentication"
+    :ivar headers: Secret HTTP headers injected when calling the model provider.
+    :vartype headers: list["AiGatewaySecretHeader"]
+    """
+
+    githubApp: "AiGatewayGitHubAppAuthentication"
+    """GitHub App credentials when modelProviderType is GitHub."""
+    managedIdentity: "AiGatewayManagedIdentityAuthentication"
+    """Managed identity configuration when modelProviderType is Foundry."""
+    headers: list["AiGatewaySecretHeader"]
+    """Secret HTTP headers injected when calling the model provider."""
+
+
+class AiGatewayModelProviderAuthenticationUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Outbound authentication configuration to update on a model provider.
+
+    :ivar githubApp: GitHub App credentials when modelProviderType is GitHub.
+    :vartype githubApp: "AiGatewayGitHubAppAuthentication"
+    :ivar managedIdentity: Managed identity configuration when modelProviderType is Foundry.
+    :vartype managedIdentity: "AiGatewayManagedIdentityAuthentication"
+    :ivar headers: Secret HTTP headers injected when calling the model provider.
+    :vartype headers: list["AiGatewaySecretHeaderUpdate"]
+    """
+
+    githubApp: "AiGatewayGitHubAppAuthentication"
+    """GitHub App credentials when modelProviderType is GitHub."""
+    managedIdentity: "AiGatewayManagedIdentityAuthentication"
+    """Managed identity configuration when modelProviderType is Foundry."""
+    headers: list["AiGatewaySecretHeaderUpdate"]
+    """Secret HTTP headers injected when calling the model provider."""
+
+
+class AiGatewayModelProviderProperties(TypedDict, total=False):
+    """Properties of an AI Gateway model provider.
+
+    :ivar modelProviderType: Model provider type. This value cannot be changed after creation.
+     Required. Known values are: "Foundry", "Custom", and "GitHub".
+    :vartype modelProviderType: Union[str, "AiGatewayModelProviderKind"]
+    :ivar displayName: Display name of the model provider. Required.
+    :vartype displayName: str
+    :ivar description: Description of the model provider.
+    :vartype description: str
+    :ivar foundry: Foundry configuration. Required when modelProviderType is Foundry.
+    :vartype foundry: "AiGatewayFoundryProviderConfiguration"
+    :ivar custom: Custom provider configuration. Required when modelProviderType is Custom.
+    :vartype custom: "AiGatewayCustomProviderConfiguration"
+    :ivar authentication: Outbound authentication configuration.
+    :vartype authentication: "AiGatewayModelProviderAuthentication"
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """
+
+    modelProviderType: Required[Union[str, "AiGatewayModelProviderKind"]]
+    """Model provider type. This value cannot be changed after creation. Required. Known values are:
+     \"Foundry\", \"Custom\", and \"GitHub\"."""
+    displayName: Required[str]
+    """Display name of the model provider. Required."""
+    description: str
+    """Description of the model provider."""
+    foundry: "AiGatewayFoundryProviderConfiguration"
+    """Foundry configuration. Required when modelProviderType is Foundry."""
+    custom: "AiGatewayCustomProviderConfiguration"
+    """Custom provider configuration. Required when modelProviderType is Custom."""
+    authentication: "AiGatewayModelProviderAuthentication"
+    """Outbound authentication configuration."""
+    provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+
+class AiGatewayModelProviderResource(ProxyResource):
+    """An AI Gateway model provider resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "AiGatewayModelProviderProperties"
+    """
+
+    properties: "AiGatewayModelProviderProperties"
+    """The resource-specific properties for this resource."""
+
+
+class AiGatewayModelProviderUpdateParameters(TypedDict, total=False):
+    """Parameters for updating an AI Gateway model provider.
+
+    :ivar properties: Model provider properties to update.
+    :vartype properties: "AiGatewayModelProviderUpdateProperties"
+    """
+
+    properties: "AiGatewayModelProviderUpdateProperties"
+    """Model provider properties to update."""
+
+
+class AiGatewayModelProviderUpdateProperties(TypedDict, total=False):
+    """Properties for updating an AI Gateway model provider.
+
+    :ivar displayName: Display name of the model provider.
+    :vartype displayName: str
+    :ivar description: Description of the model provider.
+    :vartype description: str
+    :ivar foundry: Foundry configuration.
+    :vartype foundry: "AiGatewayFoundryProviderConfigurationUpdate"
+    :ivar custom: Custom provider configuration.
+    :vartype custom: "AiGatewayCustomProviderConfigurationUpdate"
+    :ivar authentication: Outbound authentication configuration.
+    :vartype authentication: "AiGatewayModelProviderAuthenticationUpdate"
+    """
+
+    displayName: str
+    """Display name of the model provider."""
+    description: str
+    """Description of the model provider."""
+    foundry: "AiGatewayFoundryProviderConfigurationUpdate"
+    """Foundry configuration."""
+    custom: "AiGatewayCustomProviderConfigurationUpdate"
+    """Custom provider configuration."""
+    authentication: "AiGatewayModelProviderAuthenticationUpdate"
+    """Outbound authentication configuration."""
+
+
+class AiGatewayModelResource(ProxyResource):
+    """An AI Gateway model resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "AiGatewayModelProperties"
+    """
+
+    properties: "AiGatewayModelProperties"
+    """The resource-specific properties for this resource."""
+
+
+class AiGatewayModelSelection(TypedDict, total=False):
+    """Automatic model selection configuration for an AI Gateway alias.
+
+    :ivar objective: Configured quality/cost objective. Required. Known values are: "Balanced",
+     "Cost", and "Quality".
+    :vartype objective: Union[str, "AiGatewayModelSelectionObjective"]
+    :ivar allowedRequestOverrides: Allowed per-request behaviors. Omitting the property or sending
+     an empty array denies overrides and disables function-tool compatibility filtering.
+    :vartype allowedRequestOverrides: list[Union[str, "AiGatewayAllowedRequestOverride"]]
+    """
+
+    objective: Required[Union[str, "AiGatewayModelSelectionObjective"]]
+    """Configured quality/cost objective. Required. Known values are: \"Balanced\", \"Cost\", and
+     \"Quality\"."""
+    allowedRequestOverrides: list[Union[str, "AiGatewayAllowedRequestOverride"]]
+    """Allowed per-request behaviors. Omitting the property or sending an empty array denies overrides
+     and disables function-tool compatibility filtering."""
+
+
+class AiGatewayModelSelectionUpdate(TypedDict, total=False):
+    """Automatic model selection configuration to update.
+
+    :ivar objective: Configured quality/cost objective. Known values are: "Balanced", "Cost", and
+     "Quality".
+    :vartype objective: Union[str, "AiGatewayModelSelectionObjective"]
+    :ivar allowedRequestOverrides: Allowed per-request behaviors. Omitting the property or sending
+     an empty array denies overrides and disables function-tool compatibility filtering.
+    :vartype allowedRequestOverrides: list[Union[str, "AiGatewayAllowedRequestOverride"]]
+    """
+
+    objective: Union[str, "AiGatewayModelSelectionObjective"]
+    """Configured quality/cost objective. Known values are: \"Balanced\", \"Cost\", and \"Quality\"."""
+    allowedRequestOverrides: list[Union[str, "AiGatewayAllowedRequestOverride"]]
+    """Allowed per-request behaviors. Omitting the property or sending an empty array denies overrides
+     and disables function-tool compatibility filtering."""
+
+
+class AiGatewayModelUpdateParameters(TypedDict, total=False):
+    """Parameters for updating an AI Gateway model.
+
+    :ivar properties: Model properties to update.
+    :vartype properties: "AiGatewayModelUpdateProperties"
+    """
+
+    properties: "AiGatewayModelUpdateProperties"
+    """Model properties to update."""
+
+
+class AiGatewayModelUpdateProperties(TypedDict, total=False):
+    """Properties for updating an AI Gateway model.
+
+    :ivar displayName: Display name of the model.
+    :vartype displayName: str
+    :ivar description: Description of the model.
+    :vartype description: str
+    :ivar deployment: Provider deployment details.
+    :vartype deployment: "AiGatewayModelDeploymentUpdate"
+    :ivar endpoints: API-to-backend-path mappings served by this model.
+    :vartype endpoints: list["AiGatewayModelEndpointUpdate"]
+    :ivar policies: Inline policies applied to this model.
+    :vartype policies: list["AiGatewayPolicyUpdate"]
+    :ivar supportedEndpoints: Runtime endpoints supported by this model.
+    :vartype supportedEndpoints: list[str]
+    """
+
+    displayName: str
+    """Display name of the model."""
+    description: str
+    """Description of the model."""
+    deployment: "AiGatewayModelDeploymentUpdate"
+    """Provider deployment details."""
+    endpoints: list["AiGatewayModelEndpointUpdate"]
+    """API-to-backend-path mappings served by this model."""
+    policies: list["AiGatewayPolicyUpdate"]
+    """Inline policies applied to this model."""
+    supportedEndpoints: list[str]
+    """Runtime endpoints supported by this model."""
+
+
+class AiGatewayNameValuePair(TypedDict, total=False):
+    """A name/value pair entry.
+
+    :ivar name: Entry name. Required.
+    :vartype name: str
+    :ivar value: Entry value. Required.
+    :vartype value: str
+    """
+
+    name: Required[str]
+    """Entry name. Required."""
+    value: Required[str]
+    """Entry value. Required."""
+
+
+class AiGatewayNameValuePairUpdate(TypedDict, total=False):
+    """A name/value pair entry to update.
+
+    :ivar name: Entry name.
+    :vartype name: str
+    :ivar value: Entry value.
+    :vartype value: str
+    """
+
+    name: str
+    """Entry name."""
+    value: str
+    """Entry value."""
+
+
+class AiGatewayOpenApiConfiguration(TypedDict, total=False):
+    """OpenAPI-backed MCP endpoint configuration.
+
+    :ivar specSource: OpenAPI document source. Required.
+    :vartype specSource: "AiGatewayOpenApiSpecSource"
+    """
+
+    specSource: Required["AiGatewayOpenApiSpecSource"]
+    """OpenAPI document source. Required."""
+
+
+class AiGatewayOpenApiConfigurationUpdate(TypedDict, total=False):
+    """OpenAPI-backed MCP endpoint settings to update.
+
+    :ivar specSource: OpenAPI document source.
+    :vartype specSource: "AiGatewayOpenApiSpecSourceUpdate"
+    """
+
+    specSource: "AiGatewayOpenApiSpecSourceUpdate"
+    """OpenAPI document source."""
+
+
+class AiGatewayOpenApiSpecSource(TypedDict, total=False):
+    """Source of an OpenAPI document.
+
+    :ivar type: Source type. Required. Known values are: "inline" and "url".
+    :vartype type: Union[str, "AiGatewayToolServerOpenApiSourceType"]
+    :ivar contentBase64: Base64-encoded OpenAPI document. Required when type is inline.
+    :vartype contentBase64: str
+    :ivar url: URL of the OpenAPI document. Required when type is url.
+    :vartype url: str
+    """
+
+    type: Required[Union[str, "AiGatewayToolServerOpenApiSourceType"]]
+    """Source type. Required. Known values are: \"inline\" and \"url\"."""
+    contentBase64: str
+    """Base64-encoded OpenAPI document. Required when type is inline."""
+    url: str
+    """URL of the OpenAPI document. Required when type is url."""
+
+
+class AiGatewayOpenApiSpecSourceUpdate(TypedDict, total=False):
+    """OpenAPI document source settings to update.
+
+    :ivar type: Source type. Known values are: "inline" and "url".
+    :vartype type: Union[str, "AiGatewayToolServerOpenApiSourceType"]
+    :ivar contentBase64: Base64-encoded OpenAPI document.
+    :vartype contentBase64: str
+    :ivar url: URL of the OpenAPI document.
+    :vartype url: str
+    """
+
+    type: Union[str, "AiGatewayToolServerOpenApiSourceType"]
+    """Source type. Known values are: \"inline\" and \"url\"."""
+    contentBase64: str
+    """Base64-encoded OpenAPI document."""
+    url: str
+    """URL of the OpenAPI document."""
+
+
+class AiGatewayOpenTelemetryConfiguration(TypedDict, total=False):
+    """OpenTelemetry export signal destinations.
+
+    :ivar metricsEndpoint: Full OTLP metrics endpoint URL, used without appending a signal path.
+    :vartype metricsEndpoint: "AiGatewayDestinationEndpoint"
+    :ivar logsEndpoint: Full OTLP logs endpoint URL, used without appending a signal path.
+    :vartype logsEndpoint: "AiGatewayDestinationEndpoint"
+    :ivar tracesEndpoint: Full OTLP traces endpoint URL, used without appending a signal path.
+    :vartype tracesEndpoint: "AiGatewayDestinationEndpoint"
+    """
+
+    metricsEndpoint: "AiGatewayDestinationEndpoint"
+    """Full OTLP metrics endpoint URL, used without appending a signal path."""
+    logsEndpoint: "AiGatewayDestinationEndpoint"
+    """Full OTLP logs endpoint URL, used without appending a signal path."""
+    tracesEndpoint: "AiGatewayDestinationEndpoint"
+    """Full OTLP traces endpoint URL, used without appending a signal path."""
+
+
+class AiGatewayOpenTelemetryConfigurationUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """OpenTelemetry export signal destinations to update.
+
+    :ivar metricsEndpoint: Full OTLP metrics endpoint URL, used without appending a signal path.
+    :vartype metricsEndpoint: "AiGatewayDestinationEndpointUpdate"
+    :ivar logsEndpoint: Full OTLP logs endpoint URL, used without appending a signal path.
+    :vartype logsEndpoint: "AiGatewayDestinationEndpointUpdate"
+    :ivar tracesEndpoint: Full OTLP traces endpoint URL, used without appending a signal path.
+    :vartype tracesEndpoint: "AiGatewayDestinationEndpointUpdate"
+    """
+
+    metricsEndpoint: "AiGatewayDestinationEndpointUpdate"
+    """Full OTLP metrics endpoint URL, used without appending a signal path."""
+    logsEndpoint: "AiGatewayDestinationEndpointUpdate"
+    """Full OTLP logs endpoint URL, used without appending a signal path."""
+    tracesEndpoint: "AiGatewayDestinationEndpointUpdate"
+    """Full OTLP traces endpoint URL, used without appending a signal path."""
+
+
+class AiGatewayPolicy(TypedDict, total=False):
+    """An inline policy. Supported policy types and scopes depend on the parent resource.
+
+    :ivar type: Policy type. Required. Known values are: "tokenLimit", "contentSafety", "fallback",
+     "ipFilter", "requestRateLimit", "cors", "costLimit", "toolThreatProtection", and "agentHooks".
+    :vartype type: Union[str, "AiGatewayPolicyType"]
+    :ivar scope: Policy scope. Workspace counter policies use workspace; other policies use
+     resource. Agent hooks require an explicit resource scope. Known values are: "resource" and
+     "workspace".
+    :vartype scope: Union[str, "AiGatewayPolicyScope"]
+    :ivar id: Stable identifier, required for costLimit and agentHooks policies.
+    :vartype id: str
+    :ivar count: Token or request count allowed during a tokenLimit or requestRateLimit period.
+    :vartype count: int
+    :ivar period: Counter period. Token limits support minute/hour/day; request rate limits support
+     minute/hour/day or whole-second ISO 8601 durations (e.g., PT37S); cost limits support
+     hour/day/week/month/year. Known values are: "minute", "hour", "day", "week", "month", and
+     "year".
+    :vartype period: Union[str, "AiGatewayPolicyPeriod"]
+    :ivar counterKey: Unique public dimensions used to partition a token, cost, or request counter.
+    :vartype counterKey: list[Union[str, "AiGatewayCounterDimension"]]
+    :ivar amount: Cost budget in US dollars.
+    :vartype amount: float
+    :ivar overrides: Ordered cost-budget overrides; supported only for counterKey [identity]. The
+     first match wins.
+    :vartype overrides: list["AiGatewayCostLimitOverride"]
+    :ivar preInvocation: Whether to check tool requests for threats.
+    :vartype preInvocation: bool
+    :ivar postInvocation: Whether to check tool responses for threats.
+    :vartype postInvocation: bool
+    :ivar mode: Default failure mode for agent hooks. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: Union[str, "AiGatewayFailureMode"]
+    :ivar endpoint: Default destination URL for agent hooks.
+    :vartype endpoint: "AiGatewayDestinationEndpoint"
+    :ivar authentication: Default outbound authentication for agent hooks.
+    :vartype authentication: "AiGatewayAgentHookAuthentication"
+    :ivar headers: Literal non-secret default HTTP headers for agent hooks.
+    :vartype headers: list["AiGatewayNameValuePair"]
+    :ivar hooks: Lifecycle hooks; requires agent-hook authoring to be enabled on the gateway.
+    :vartype hooks: "AiGatewayAgentHooks"
+    :ivar hateSeverity: Hate-content severity threshold. Known values are: "Low", "Medium", "High",
+     and "None".
+    :vartype hateSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    :ivar violenceSeverity: Violence-content severity threshold. Known values are: "Low", "Medium",
+     "High", and "None".
+    :vartype violenceSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    :ivar sexualSeverity: Sexual-content severity threshold. Known values are: "Low", "Medium",
+     "High", and "None".
+    :vartype sexualSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    :ivar selfHarmSeverity: Self-harm-content severity threshold. Known values are: "Low",
+     "Medium", "High", and "None".
+    :vartype selfHarmSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    :ivar threshold: Consecutive failure count that opens a fallback circuit.
+    :vartype threshold: int
+    :ivar tripDurationSeconds: Duration for which the fallback circuit remains open.
+    :vartype tripDurationSeconds: int
+    :ivar fallbackTargets: Ordered fallback model targets.
+    :vartype fallbackTargets: list["AiGatewayFallbackTarget"]
+    :ivar action: IP filtering action. Known values are: "Allow" and "Deny".
+    :vartype action: Union[str, "AiGatewayIpFilterAction"]
+    :ivar cidrRanges: CIDR ranges to allow or deny.
+    :vartype cidrRanges: list[str]
+    :ivar allowedOrigins: Origins allowed by a CORS policy.
+    :vartype allowedOrigins: list[str]
+    :ivar allowedMethods: HTTP methods allowed by a CORS policy.
+    :vartype allowedMethods: list[str]
+    :ivar allowedHeaders: HTTP headers allowed by a CORS policy.
+    :vartype allowedHeaders: list[str]
+    :ivar exposeHeaders: Response headers exposed to the browser.
+    :vartype exposeHeaders: list[str]
+    :ivar allowCredentials: Whether browsers may send credentials.
+    :vartype allowCredentials: bool
+    :ivar terminateUnmatchedRequest: Whether unmatched CORS requests are terminated.
+    :vartype terminateUnmatchedRequest: bool
+    :ivar preflightResultMaxAge: Browser preflight cache duration in seconds.
+    :vartype preflightResultMaxAge: int
+    """
+
+    type: Required[Union[str, "AiGatewayPolicyType"]]
+    """Policy type. Required. Known values are: \"tokenLimit\", \"contentSafety\", \"fallback\",
+     \"ipFilter\", \"requestRateLimit\", \"cors\", \"costLimit\", \"toolThreatProtection\", and
+     \"agentHooks\"."""
+    scope: Union[str, "AiGatewayPolicyScope"]
+    """Policy scope. Workspace counter policies use workspace; other policies use resource. Agent
+     hooks require an explicit resource scope. Known values are: \"resource\" and \"workspace\"."""
+    id: str
+    """Stable identifier, required for costLimit and agentHooks policies."""
+    count: int
+    """Token or request count allowed during a tokenLimit or requestRateLimit period."""
+    period: Union[str, "AiGatewayPolicyPeriod"]
+    """Counter period. Token limits support minute/hour/day; request rate limits support
+     minute/hour/day or whole-second ISO 8601 durations (e.g., PT37S); cost limits support
+     hour/day/week/month/year. Known values are: \"minute\", \"hour\", \"day\", \"week\", \"month\",
+     and \"year\"."""
+    counterKey: list[Union[str, "AiGatewayCounterDimension"]]
+    """Unique public dimensions used to partition a token, cost, or request counter."""
+    amount: float
+    """Cost budget in US dollars."""
+    overrides: list["AiGatewayCostLimitOverride"]
+    """Ordered cost-budget overrides; supported only for counterKey [identity]. The first match wins."""
+    preInvocation: bool
+    """Whether to check tool requests for threats."""
+    postInvocation: bool
+    """Whether to check tool responses for threats."""
+    mode: Union[str, "AiGatewayFailureMode"]
+    """Default failure mode for agent hooks. Known values are: \"failOpen\" and \"failClosed\"."""
+    endpoint: "AiGatewayDestinationEndpoint"
+    """Default destination URL for agent hooks."""
+    authentication: "AiGatewayAgentHookAuthentication"
+    """Default outbound authentication for agent hooks."""
+    headers: list["AiGatewayNameValuePair"]
+    """Literal non-secret default HTTP headers for agent hooks."""
+    hooks: "AiGatewayAgentHooks"
+    """Lifecycle hooks; requires agent-hook authoring to be enabled on the gateway."""
+    hateSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    """Hate-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and \"None\"."""
+    violenceSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    """Violence-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    sexualSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    """Sexual-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    selfHarmSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    """Self-harm-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    threshold: int
+    """Consecutive failure count that opens a fallback circuit."""
+    tripDurationSeconds: int
+    """Duration for which the fallback circuit remains open."""
+    fallbackTargets: list["AiGatewayFallbackTarget"]
+    """Ordered fallback model targets."""
+    action: Union[str, "AiGatewayIpFilterAction"]
+    """IP filtering action. Known values are: \"Allow\" and \"Deny\"."""
+    cidrRanges: list[str]
+    """CIDR ranges to allow or deny."""
+    allowedOrigins: list[str]
+    """Origins allowed by a CORS policy."""
+    allowedMethods: list[str]
+    """HTTP methods allowed by a CORS policy."""
+    allowedHeaders: list[str]
+    """HTTP headers allowed by a CORS policy."""
+    exposeHeaders: list[str]
+    """Response headers exposed to the browser."""
+    allowCredentials: bool
+    """Whether browsers may send credentials."""
+    terminateUnmatchedRequest: bool
+    """Whether unmatched CORS requests are terminated."""
+    preflightResultMaxAge: int
+    """Browser preflight cache duration in seconds."""
+
+
+class AiGatewayPolicyUpdate(TypedDict, total=False):
+    """An inline policy to update on an AI Gateway model or tool server.
+
+    :ivar type: Policy type. Known values are: "tokenLimit", "contentSafety", "fallback",
+     "ipFilter", "requestRateLimit", "cors", "costLimit", "toolThreatProtection", and "agentHooks".
+    :vartype type: Union[str, "AiGatewayPolicyType"]
+    :ivar scope: Aggregation scope supported by the policy and its parent resource. Known values
+     are: "resource" and "workspace".
+    :vartype scope: Union[str, "AiGatewayPolicyScope"]
+    :ivar id: Stable identifier for costLimit or agentHooks.
+    :vartype id: str
+    :ivar count: Token or request count allowed during a tokenLimit or requestRateLimit period.
+    :vartype count: int
+    :ivar period: Counter period. Token limits support minute/hour/day; request rate limits support
+     minute/hour/day or whole-second ISO 8601 durations (e.g., PT37S); cost limits support
+     hour/day/week/month/year. Known values are: "minute", "hour", "day", "week", "month", and
+     "year".
+    :vartype period: Union[str, "AiGatewayPolicyPeriod"]
+    :ivar counterKey: Public dimensions used to partition a token, cost, or request counter.
+    :vartype counterKey: list[Union[str, "AiGatewayCounterDimension"]]
+    :ivar amount: Cost budget in US dollars.
+    :vartype amount: float
+    :ivar overrides: Ordered cost-budget overrides.
+    :vartype overrides: list["AiGatewayCostLimitOverrideUpdate"]
+    :ivar preInvocation: Whether to check tool requests for threats.
+    :vartype preInvocation: bool
+    :ivar postInvocation: Whether to check tool responses for threats.
+    :vartype postInvocation: bool
+    :ivar mode: Default failure mode for agent hooks. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: Union[str, "AiGatewayFailureMode"]
+    :ivar endpoint: Default destination URL for agent hooks.
+    :vartype endpoint: "AiGatewayDestinationEndpointUpdate"
+    :ivar authentication: Default outbound authentication for agent hooks.
+    :vartype authentication: "AiGatewayAgentHookAuthenticationUpdate"
+    :ivar headers: Literal non-secret default HTTP headers for agent hooks.
+    :vartype headers: list["AiGatewayNameValuePairUpdate"]
+    :ivar hooks: Lifecycle hooks to update.
+    :vartype hooks: "AiGatewayAgentHooksUpdate"
+    :ivar hateSeverity: Hate-content severity threshold. Known values are: "Low", "Medium", "High",
+     and "None".
+    :vartype hateSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    :ivar violenceSeverity: Violence-content severity threshold. Known values are: "Low", "Medium",
+     "High", and "None".
+    :vartype violenceSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    :ivar sexualSeverity: Sexual-content severity threshold. Known values are: "Low", "Medium",
+     "High", and "None".
+    :vartype sexualSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    :ivar selfHarmSeverity: Self-harm-content severity threshold. Known values are: "Low",
+     "Medium", "High", and "None".
+    :vartype selfHarmSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    :ivar threshold: Consecutive failure count that opens a fallback circuit.
+    :vartype threshold: int
+    :ivar tripDurationSeconds: Duration for which the fallback circuit remains open.
+    :vartype tripDurationSeconds: int
+    :ivar fallbackTargets: Ordered fallback model targets.
+    :vartype fallbackTargets: list["AiGatewayFallbackTargetUpdate"]
+    :ivar action: IP filtering action. Known values are: "Allow" and "Deny".
+    :vartype action: Union[str, "AiGatewayIpFilterAction"]
+    :ivar cidrRanges: CIDR ranges to allow or deny.
+    :vartype cidrRanges: list[str]
+    :ivar allowedOrigins: Origins allowed by a CORS policy.
+    :vartype allowedOrigins: list[str]
+    :ivar allowedMethods: HTTP methods allowed by a CORS policy.
+    :vartype allowedMethods: list[str]
+    :ivar allowedHeaders: HTTP headers allowed by a CORS policy.
+    :vartype allowedHeaders: list[str]
+    :ivar exposeHeaders: Response headers exposed to the browser.
+    :vartype exposeHeaders: list[str]
+    :ivar allowCredentials: Whether browsers may send credentials.
+    :vartype allowCredentials: bool
+    :ivar terminateUnmatchedRequest: Whether unmatched CORS requests are terminated.
+    :vartype terminateUnmatchedRequest: bool
+    :ivar preflightResultMaxAge: Browser preflight cache duration in seconds.
+    :vartype preflightResultMaxAge: int
+    """
+
+    type: Union[str, "AiGatewayPolicyType"]
+    """Policy type. Known values are: \"tokenLimit\", \"contentSafety\", \"fallback\", \"ipFilter\",
+     \"requestRateLimit\", \"cors\", \"costLimit\", \"toolThreatProtection\", and \"agentHooks\"."""
+    scope: Union[str, "AiGatewayPolicyScope"]
+    """Aggregation scope supported by the policy and its parent resource. Known values are:
+     \"resource\" and \"workspace\"."""
+    id: str
+    """Stable identifier for costLimit or agentHooks."""
+    count: int
+    """Token or request count allowed during a tokenLimit or requestRateLimit period."""
+    period: Union[str, "AiGatewayPolicyPeriod"]
+    """Counter period. Token limits support minute/hour/day; request rate limits support
+     minute/hour/day or whole-second ISO 8601 durations (e.g., PT37S); cost limits support
+     hour/day/week/month/year. Known values are: \"minute\", \"hour\", \"day\", \"week\", \"month\",
+     and \"year\"."""
+    counterKey: list[Union[str, "AiGatewayCounterDimension"]]
+    """Public dimensions used to partition a token, cost, or request counter."""
+    amount: float
+    """Cost budget in US dollars."""
+    overrides: list["AiGatewayCostLimitOverrideUpdate"]
+    """Ordered cost-budget overrides."""
+    preInvocation: bool
+    """Whether to check tool requests for threats."""
+    postInvocation: bool
+    """Whether to check tool responses for threats."""
+    mode: Union[str, "AiGatewayFailureMode"]
+    """Default failure mode for agent hooks. Known values are: \"failOpen\" and \"failClosed\"."""
+    endpoint: "AiGatewayDestinationEndpointUpdate"
+    """Default destination URL for agent hooks."""
+    authentication: "AiGatewayAgentHookAuthenticationUpdate"
+    """Default outbound authentication for agent hooks."""
+    headers: list["AiGatewayNameValuePairUpdate"]
+    """Literal non-secret default HTTP headers for agent hooks."""
+    hooks: "AiGatewayAgentHooksUpdate"
+    """Lifecycle hooks to update."""
+    hateSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    """Hate-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and \"None\"."""
+    violenceSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    """Violence-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    sexualSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    """Sexual-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    selfHarmSeverity: Union[str, "AiGatewayContentSafetySeverity"]
+    """Self-harm-content severity threshold. Known values are: \"Low\", \"Medium\", \"High\", and
+     \"None\"."""
+    threshold: int
+    """Consecutive failure count that opens a fallback circuit."""
+    tripDurationSeconds: int
+    """Duration for which the fallback circuit remains open."""
+    fallbackTargets: list["AiGatewayFallbackTargetUpdate"]
+    """Ordered fallback model targets."""
+    action: Union[str, "AiGatewayIpFilterAction"]
+    """IP filtering action. Known values are: \"Allow\" and \"Deny\"."""
+    cidrRanges: list[str]
+    """CIDR ranges to allow or deny."""
+    allowedOrigins: list[str]
+    """Origins allowed by a CORS policy."""
+    allowedMethods: list[str]
+    """HTTP methods allowed by a CORS policy."""
+    allowedHeaders: list[str]
+    """HTTP headers allowed by a CORS policy."""
+    exposeHeaders: list[str]
+    """Response headers exposed to the browser."""
+    allowCredentials: bool
+    """Whether browsers may send credentials."""
+    terminateUnmatchedRequest: bool
+    """Whether unmatched CORS requests are terminated."""
+    preflightResultMaxAge: int
+    """Browser preflight cache duration in seconds."""
+
+
+class AiGatewayPrivateEndpointConnection(Resource):
+    """A private endpoint connection of an AI Gateway.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The private endpoint connection properties.
+    :vartype properties: "PrivateEndpointConnectionProperties"
+    """
+
+    properties: "PrivateEndpointConnectionProperties"
+    """The private endpoint connection properties."""
+
+
+class AiGatewayProperties(TypedDict, total=False):
+    """Properties of an AI Gateway.
+
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "AiGatewayProvisioningState"]
+    :ivar frontend: Frontend configuration of the AI Gateway.
+    :vartype frontend: "AiGatewayFrontend"
+    :ivar backend: Backend networking configuration.
+    :vartype backend: "AiGatewayBackend"
+    :ivar publicNetworkAccess: Whether public network access is allowed for the AI Gateway. Known
+     values are: "Enabled" and "Disabled".
+    :vartype publicNetworkAccess: Union[str, "AiGatewayPublicNetworkAccess"]
+    :ivar privateEndpointConnections: Private endpoint connections associated with the AI Gateway.
+    :vartype privateEndpointConnections: list["AiGatewayPrivateEndpointConnection"]
+    """
+
+    provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+    frontend: "AiGatewayFrontend"
+    """Frontend configuration of the AI Gateway."""
+    backend: "AiGatewayBackend"
+    """Backend networking configuration."""
+    publicNetworkAccess: Union[str, "AiGatewayPublicNetworkAccess"]
+    """Whether public network access is allowed for the AI Gateway. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    privateEndpointConnections: list["AiGatewayPrivateEndpointConnection"]
+    """Private endpoint connections associated with the AI Gateway."""
 
 
 class TrackedResource(Resource):
@@ -156,6 +1746,58 @@ class AiGatewayResource(TrackedResource):
      14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
 
 
+class AiGatewaySecretHeader(TypedDict, total=False):
+    """A secret HTTP header injected into an outbound request.
+
+    :ivar name: HTTP header name. Required.
+    :vartype name: str
+    :ivar value: Secret HTTP header value. Omitted from ordinary read responses.
+    :vartype value: str
+    """
+
+    name: Required[str]
+    """HTTP header name. Required."""
+    value: str
+    """Secret HTTP header value. Omitted from ordinary read responses."""
+
+
+class AiGatewaySecretHeaderUpdate(TypedDict, total=False):
+    """A secret HTTP header to update.
+
+    :ivar name: HTTP header name.
+    :vartype name: str
+    :ivar value: Secret HTTP header value.
+    :vartype value: str
+    """
+
+    name: str
+    """HTTP header name."""
+    value: str
+    """Secret HTTP header value."""
+
+
+class AiGatewaySessionBackendPreference(TypedDict, total=False):
+    """Stateless backend preference using an existing caller session key.
+
+    :ivar key: CEL expression returning the caller session key. Required.
+    :vartype key: str
+    """
+
+    key: Required[str]
+    """CEL expression returning the caller session key. Required."""
+
+
+class AiGatewaySessionBackendPreferenceUpdate(TypedDict, total=False):
+    """Stateless backend preference settings to update.
+
+    :ivar key: CEL expression returning the caller session key.
+    :vartype key: str
+    """
+
+    key: str
+    """CEL expression returning the caller session key."""
+
+
 class AiGatewaySkuUpdate(TypedDict, total=False):
     """SKU fields to update on an AI Gateway.
 
@@ -206,6 +1848,671 @@ class AiGatewaySubnet(TypedDict, total=False):
      and be in the same region as the AI Gateway. Required."""
 
 
+class AiGatewaySubnetUpdate(TypedDict, total=False):
+    """Subnet fields to update on an AI Gateway.
+
+    :ivar id: Resource identifier of the subnet. The subnet must be delegated to
+     Microsoft.App/environments and be in the same region as the AI Gateway.
+    :vartype id: str
+    """
+
+    id: str
+    """Resource identifier of the subnet. The subnet must be delegated to Microsoft.App/environments
+     and be in the same region as the AI Gateway."""
+
+
+class AiGatewayTelemetryAttributeMapping(TypedDict, total=False):
+    """A claim mapping to azure.ai_gateway.identity.claims.{claim}.
+
+    :ivar source: Claim source. Source claim names must be unique across mappings. Required.
+    :vartype source: "AiGatewayTelemetryAttributeSource"
+    :ivar signals: Distinct signals to enrich. Omit to select all configured signals.
+    :vartype signals: list[Union[str, "AiGatewayTelemetrySignal"]]
+    """
+
+    source: Required["AiGatewayTelemetryAttributeSource"]
+    """Claim source. Source claim names must be unique across mappings. Required."""
+    signals: list[Union[str, "AiGatewayTelemetrySignal"]]
+    """Distinct signals to enrich. Omit to select all configured signals."""
+
+
+class AiGatewayTelemetryAttributeMappingUpdate(TypedDict, total=False):
+    """A claim mapping to update.
+
+    :ivar source: Claim source.
+    :vartype source: "AiGatewayTelemetryAttributeSourceUpdate"
+    :ivar signals: Distinct signals to enrich.
+    :vartype signals: list[Union[str, "AiGatewayTelemetrySignal"]]
+    """
+
+    source: "AiGatewayTelemetryAttributeSourceUpdate"
+    """Claim source."""
+    signals: list[Union[str, "AiGatewayTelemetrySignal"]]
+    """Distinct signals to enrich."""
+
+
+class AiGatewayTelemetryAttributeSource(TypedDict, total=False):
+    """A request JWT claim observed for telemetry only, not authentication or billing.
+
+    :ivar kind: Source kind. Only claims is currently supported. Required. Default value is
+     "claims".
+    :vartype kind: Literal["claims"]
+    :ivar value: Nonempty, case-sensitive claim name. Required.
+    :vartype value: str
+    """
+
+    kind: Required[Literal["claims"]]
+    """Source kind. Only claims is currently supported. Required. Default value is \"claims\"."""
+    value: Required[str]
+    """Nonempty, case-sensitive claim name. Required."""
+
+
+class AiGatewayTelemetryAttributeSourceUpdate(TypedDict, total=False):
+    """A claim source to update.
+
+    :ivar kind: Source kind. Only claims is currently supported. Default value is "claims".
+    :vartype kind: Literal["claims"]
+    :ivar value: Nonempty, case-sensitive claim name.
+    :vartype value: str
+    """
+
+    kind: Literal["claims"]
+    """Source kind. Only claims is currently supported. Default value is \"claims\"."""
+    value: str
+    """Nonempty, case-sensitive claim name."""
+
+
+class AiGatewayTelemetryAuthentication(TypedDict, total=False):
+    """Outbound authentication settings for an OpenTelemetry exporter.
+
+    :ivar managedIdentity: Managed identity authentication for export requests.
+    :vartype managedIdentity: "AiGatewayTelemetryManagedIdentity"
+    :ivar headers: Secret HTTP headers sent with export requests.
+    :vartype headers: list["AiGatewaySecretHeader"]
+    """
+
+    managedIdentity: "AiGatewayTelemetryManagedIdentity"
+    """Managed identity authentication for export requests."""
+    headers: list["AiGatewaySecretHeader"]
+    """Secret HTTP headers sent with export requests."""
+
+
+class AiGatewayTelemetryAuthenticationUpdate(TypedDict, total=False):
+    """Outbound authentication settings to update on an OpenTelemetry exporter.
+
+    :ivar managedIdentity: Managed identity authentication for export requests.
+    :vartype managedIdentity: "AiGatewayTelemetryManagedIdentity"
+    :ivar headers: Secret HTTP headers sent with export requests.
+    :vartype headers: list["AiGatewaySecretHeaderUpdate"]
+    """
+
+    managedIdentity: "AiGatewayTelemetryManagedIdentity"
+    """Managed identity authentication for export requests."""
+    headers: list["AiGatewaySecretHeaderUpdate"]
+    """Secret HTTP headers sent with export requests."""
+
+
+class AiGatewayTelemetryConfiguration(TypedDict, total=False):
+    """Optional telemetry enrichment on a native AI Gateway OpenTelemetry exporter.
+
+    :ivar attributes: Observed-claim mappings; an empty array removes existing mappings.
+    :vartype attributes: list["AiGatewayTelemetryAttributeMapping"]
+    """
+
+    attributes: list["AiGatewayTelemetryAttributeMapping"]
+    """Observed-claim mappings; an empty array removes existing mappings."""
+
+
+class AiGatewayTelemetryConfigurationUpdate(TypedDict, total=False):
+    """Telemetry enrichment settings to update.
+
+    :ivar attributes: Observed-claim mappings; an empty array removes existing mappings.
+    :vartype attributes: list["AiGatewayTelemetryAttributeMappingUpdate"]
+    """
+
+    attributes: list["AiGatewayTelemetryAttributeMappingUpdate"]
+    """Observed-claim mappings; an empty array removes existing mappings."""
+
+
+class AiGatewayTelemetryExporterProperties(TypedDict, total=False):
+    """Properties of an AI Gateway telemetry exporter.
+
+    :ivar telemetryExporterType: Exporter type, which cannot change after creation. Required. Known
+     values are: "ApplicationInsights" and "OpenTelemetry".
+    :vartype telemetryExporterType: Union[str, "AiGatewayTelemetryExporterKind"]
+    :ivar payloadCapture: Capture prompts, completions, and tool input/output; no built-in PII
+     redaction is applied.
+    :vartype payloadCapture: bool
+    :ivar applicationInsights: Configuration required for the ApplicationInsights exporter type.
+    :vartype applicationInsights: "AiGatewayApplicationInsightsConfiguration"
+    :ivar openTelemetry: Configuration required for the OpenTelemetry exporter type. At least one
+     signal endpoint is required.
+    :vartype openTelemetry: "AiGatewayOpenTelemetryConfiguration"
+    :ivar authentication: Outbound authentication for OpenTelemetry export requests.
+    :vartype authentication: "AiGatewayTelemetryAuthentication"
+    :ivar telemetry: Optional observed-claim mappings, supported on native AI Gateway OpenTelemetry
+     exporters.
+    :vartype telemetry: "AiGatewayTelemetryConfiguration"
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """
+
+    telemetryExporterType: Required[Union[str, "AiGatewayTelemetryExporterKind"]]
+    """Exporter type, which cannot change after creation. Required. Known values are:
+     \"ApplicationInsights\" and \"OpenTelemetry\"."""
+    payloadCapture: bool
+    """Capture prompts, completions, and tool input/output; no built-in PII redaction is applied."""
+    applicationInsights: "AiGatewayApplicationInsightsConfiguration"
+    """Configuration required for the ApplicationInsights exporter type."""
+    openTelemetry: "AiGatewayOpenTelemetryConfiguration"
+    """Configuration required for the OpenTelemetry exporter type. At least one signal endpoint is
+     required."""
+    authentication: "AiGatewayTelemetryAuthentication"
+    """Outbound authentication for OpenTelemetry export requests."""
+    telemetry: "AiGatewayTelemetryConfiguration"
+    """Optional observed-claim mappings, supported on native AI Gateway OpenTelemetry exporters."""
+    provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+
+class AiGatewayTelemetryExporterResource(ProxyResource):
+    """A telemetry export destination in the default AI Gateway workspace.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "AiGatewayTelemetryExporterProperties"
+    """
+
+    properties: "AiGatewayTelemetryExporterProperties"
+    """The resource-specific properties for this resource."""
+
+
+class AiGatewayTelemetryExporterUpdateParameters(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Parameters for updating an AI Gateway telemetry exporter.
+
+    :ivar properties: Exporter properties to update.
+    :vartype properties: "AiGatewayTelemetryExporterUpdateProperties"
+    """
+
+    properties: "AiGatewayTelemetryExporterUpdateProperties"
+    """Exporter properties to update."""
+
+
+class AiGatewayTelemetryExporterUpdateProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties to update on an AI Gateway telemetry exporter.
+
+    :ivar payloadCapture: Capture prompts, completions, and tool input/output.
+    :vartype payloadCapture: bool
+    :ivar applicationInsights: Application Insights configuration.
+    :vartype applicationInsights: "AiGatewayApplicationInsightsConfiguration"
+    :ivar openTelemetry: OpenTelemetry configuration.
+    :vartype openTelemetry: "AiGatewayOpenTelemetryConfigurationUpdate"
+    :ivar authentication: Outbound authentication for OpenTelemetry export requests.
+    :vartype authentication: "AiGatewayTelemetryAuthenticationUpdate"
+    :ivar telemetry: Observed-claim mappings to update.
+    :vartype telemetry: "AiGatewayTelemetryConfigurationUpdate"
+    """
+
+    payloadCapture: bool
+    """Capture prompts, completions, and tool input/output."""
+    applicationInsights: "AiGatewayApplicationInsightsConfiguration"
+    """Application Insights configuration."""
+    openTelemetry: "AiGatewayOpenTelemetryConfigurationUpdate"
+    """OpenTelemetry configuration."""
+    authentication: "AiGatewayTelemetryAuthenticationUpdate"
+    """Outbound authentication for OpenTelemetry export requests."""
+    telemetry: "AiGatewayTelemetryConfigurationUpdate"
+    """Observed-claim mappings to update."""
+
+
+class AiGatewayTelemetryManagedIdentity(TypedDict, total=False):
+    """Managed identity used to authenticate telemetry export requests.
+
+    :ivar resource: Token audience requested for the managed identity.
+    :vartype resource: str
+    :ivar clientId: User-assigned managed identity client ID; omit for the system-assigned
+     identity.
+    :vartype clientId: str
+    """
+
+    resource: str
+    """Token audience requested for the managed identity."""
+    clientId: str
+    """User-assigned managed identity client ID; omit for the system-assigned identity."""
+
+
+class AiGatewayToolServerAuthentication(TypedDict, total=False):
+    """Outbound authentication for a tool server endpoint.
+
+    :ivar headers: Static headers injected when calling the endpoint.
+    :vartype headers: list["AiGatewaySecretHeader"]
+    :ivar oauth2: OAuth 2.0 configuration.
+    :vartype oauth2: "AiGatewayToolServerOauth2Authentication"
+    :ivar managedIdentity: Managed identity configuration.
+    :vartype managedIdentity: "AiGatewayToolServerManagedIdentityAuthentication"
+    """
+
+    headers: list["AiGatewaySecretHeader"]
+    """Static headers injected when calling the endpoint."""
+    oauth2: "AiGatewayToolServerOauth2Authentication"
+    """OAuth 2.0 configuration."""
+    managedIdentity: "AiGatewayToolServerManagedIdentityAuthentication"
+    """Managed identity configuration."""
+
+
+class AiGatewayToolServerAuthenticationUpdate(TypedDict, total=False):
+    """Tool server authentication settings to update.
+
+    :ivar headers: Static headers injected when calling the endpoint.
+    :vartype headers: list["AiGatewaySecretHeaderUpdate"]
+    :ivar oauth2: OAuth 2.0 configuration.
+    :vartype oauth2: "AiGatewayToolServerOauth2Authentication"
+    :ivar managedIdentity: Managed identity configuration.
+    :vartype managedIdentity: "AiGatewayToolServerManagedIdentityAuthentication"
+    """
+
+    headers: list["AiGatewaySecretHeaderUpdate"]
+    """Static headers injected when calling the endpoint."""
+    oauth2: "AiGatewayToolServerOauth2Authentication"
+    """OAuth 2.0 configuration."""
+    managedIdentity: "AiGatewayToolServerManagedIdentityAuthentication"
+    """Managed identity configuration."""
+
+
+class AiGatewayToolServerEndpoint(TypedDict, total=False):
+    """A tool server endpoint.
+
+    :ivar id: Stable endpoint identifier. Up to 64 alphanumeric characters or hyphens, starting and
+     ending with an alphanumeric character. Generated when omitted.
+    :vartype id: str
+    :ivar namespace: Optional namespace used to prefix tool names.
+    :vartype namespace: str
+    :ivar kind: Endpoint type. Required. Known values are: "mcp" and "openApi".
+    :vartype kind: Union[str, "AiGatewayToolServerEndpointSourceKind"]
+    :ivar mcp: Backend MCP configuration. Required when kind is mcp.
+    :vartype mcp: "AiGatewayMcpUrlConfiguration"
+    :ivar openApi: OpenAPI configuration. Required when kind is openApi.
+    :vartype openApi: "AiGatewayOpenApiConfiguration"
+    :ivar authentication: Backend authentication configuration.
+    :vartype authentication: "AiGatewayToolServerAuthentication"
+    :ivar tools: Upstream tool names or glob patterns to expose.
+    :vartype tools: list[str]
+    :ivar mode: Failure mode when the endpoint fails. Defaults to failOpen. Known values are:
+     "failOpen" and "failClosed".
+    :vartype mode: Union[str, "AiGatewayFailureMode"]
+    """
+
+    id: str
+    """Stable endpoint identifier. Up to 64 alphanumeric characters or hyphens, starting and ending
+     with an alphanumeric character. Generated when omitted."""
+    namespace: str
+    """Optional namespace used to prefix tool names."""
+    kind: Required[Union[str, "AiGatewayToolServerEndpointSourceKind"]]
+    """Endpoint type. Required. Known values are: \"mcp\" and \"openApi\"."""
+    mcp: "AiGatewayMcpUrlConfiguration"
+    """Backend MCP configuration. Required when kind is mcp."""
+    openApi: "AiGatewayOpenApiConfiguration"
+    """OpenAPI configuration. Required when kind is openApi."""
+    authentication: "AiGatewayToolServerAuthentication"
+    """Backend authentication configuration."""
+    tools: list[str]
+    """Upstream tool names or glob patterns to expose."""
+    mode: Union[str, "AiGatewayFailureMode"]
+    """Failure mode when the endpoint fails. Defaults to failOpen. Known values are: \"failOpen\" and
+     \"failClosed\"."""
+
+
+class AiGatewayToolServerEndpointUpdate(TypedDict, total=False):
+    """A tool server endpoint to update.
+
+    :ivar id: Stable endpoint identifier.
+    :vartype id: str
+    :ivar namespace: Optional namespace used to prefix tool names.
+    :vartype namespace: str
+    :ivar kind: Endpoint type. Known values are: "mcp" and "openApi".
+    :vartype kind: Union[str, "AiGatewayToolServerEndpointSourceKind"]
+    :ivar mcp: Backend MCP configuration.
+    :vartype mcp: "AiGatewayMcpUrlConfigurationUpdate"
+    :ivar openApi: OpenAPI configuration.
+    :vartype openApi: "AiGatewayOpenApiConfigurationUpdate"
+    :ivar authentication: Backend authentication configuration.
+    :vartype authentication: "AiGatewayToolServerAuthenticationUpdate"
+    :ivar tools: Upstream tool names or glob patterns to expose.
+    :vartype tools: list[str]
+    :ivar mode: Failure mode when the endpoint fails. Known values are: "failOpen" and
+     "failClosed".
+    :vartype mode: Union[str, "AiGatewayFailureMode"]
+    """
+
+    id: str
+    """Stable endpoint identifier."""
+    namespace: str
+    """Optional namespace used to prefix tool names."""
+    kind: Union[str, "AiGatewayToolServerEndpointSourceKind"]
+    """Endpoint type. Known values are: \"mcp\" and \"openApi\"."""
+    mcp: "AiGatewayMcpUrlConfigurationUpdate"
+    """Backend MCP configuration."""
+    openApi: "AiGatewayOpenApiConfigurationUpdate"
+    """OpenAPI configuration."""
+    authentication: "AiGatewayToolServerAuthenticationUpdate"
+    """Backend authentication configuration."""
+    tools: list[str]
+    """Upstream tool names or glob patterns to expose."""
+    mode: Union[str, "AiGatewayFailureMode"]
+    """Failure mode when the endpoint fails. Known values are: \"failOpen\" and \"failClosed\"."""
+
+
+class AiGatewayToolServerFederation(TypedDict, total=False):
+    """Customer-owned federation application identity for a tool server endpoint.
+
+    :ivar applicationId: Application (client) ID of the customer-owned federation application.
+    :vartype applicationId: str
+    :ivar appCredential: Credential used to authenticate the federation application.
+    :vartype appCredential: "AiGatewayToolServerFederationAppCredential"
+    """
+
+    applicationId: str
+    """Application (client) ID of the customer-owned federation application."""
+    appCredential: "AiGatewayToolServerFederationAppCredential"
+    """Credential used to authenticate the federation application."""
+
+
+class AiGatewayToolServerFederationAppCredential(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Credential used to authenticate a tool server endpoint federation application.
+
+    :ivar type: Federation application credential type. Required. "userAssignedManagedIdentity"
+    :vartype type: Union[str, "AiGatewayToolServerFederationAppCredentialType"]
+    :ivar clientId: Client ID of a user-assigned managed identity available to this AI Gateway.
+    :vartype clientId: str
+    """
+
+    type: Required[Union[str, "AiGatewayToolServerFederationAppCredentialType"]]
+    """Federation application credential type. Required. \"userAssignedManagedIdentity\""""
+    clientId: str
+    """Client ID of a user-assigned managed identity available to this AI Gateway."""
+
+
+class AiGatewayToolServerLoginLinksRequest(TypedDict, total=False):
+    """Parameters for getting OAuth consent links for a tool server endpoint.
+
+    :ivar endpointId: Identifier of the endpoint configured on the tool server. Required.
+    :vartype endpointId: str
+    """
+
+    endpointId: Required[str]
+    """Identifier of the endpoint configured on the tool server. Required."""
+
+
+class AiGatewayToolServerManagedIdentityAuthentication(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Managed identity authentication for a tool server endpoint.
+
+    :ivar resource: Token audience for managed identity authentication.
+    :vartype resource: str
+    :ivar clientId: Client ID of a user-assigned managed identity.
+    :vartype clientId: str
+    """
+
+    resource: str
+    """Token audience for managed identity authentication."""
+    clientId: str
+    """Client ID of a user-assigned managed identity."""
+
+
+class AiGatewayToolServerOauth2Authentication(TypedDict, total=False):
+    """OAuth 2.0 authentication for a tool server endpoint.
+
+    :ivar issuer: Expected OAuth authorization-server issuer for remote MCP discovery.
+    :vartype issuer: str
+    :ivar authorizationEndpoint: OAuth authorization endpoint.
+    :vartype authorizationEndpoint: "AiGatewayDestinationEndpoint"
+    :ivar tokenEndpoint: OAuth token endpoint.
+    :vartype tokenEndpoint: "AiGatewayDestinationEndpoint"
+    :ivar clientId: OAuth client identifier.
+    :vartype clientId: str
+    :ivar clientSecret: OAuth client secret.
+    :vartype clientSecret: str
+    :ivar scopes: OAuth scopes to request.
+    :vartype scopes: list[str]
+    :ivar grantType: OAuth grant type. Known values are: "clientCredentials" and
+     "authorizationCode".
+    :vartype grantType: Union[str, "AiGatewayToolServerOauth2GrantType"]
+    :ivar tokenExchange: Chained token-exchange configuration.
+    :vartype tokenExchange: "AiGatewayToolServerTokenExchange"
+    :ivar authorizationParameters: Additional authorization endpoint parameters.
+    :vartype authorizationParameters: list["AiGatewayToolServerOauth2Parameter"]
+    :ivar tokenParameters: Additional token endpoint parameters.
+    :vartype tokenParameters: list["AiGatewayToolServerOauth2Parameter"]
+    :ivar status: Current OAuth connection status.
+    :vartype status: str
+    :ivar loginLink: Login link used to complete interactive authorization.
+    :vartype loginLink: str
+    :ivar statusUpdatedUtc: UTC timestamp of the last OAuth connection-status transition.
+    :vartype statusUpdatedUtc: str
+    """
+
+    issuer: str
+    """Expected OAuth authorization-server issuer for remote MCP discovery."""
+    authorizationEndpoint: "AiGatewayDestinationEndpoint"
+    """OAuth authorization endpoint."""
+    tokenEndpoint: "AiGatewayDestinationEndpoint"
+    """OAuth token endpoint."""
+    clientId: str
+    """OAuth client identifier."""
+    clientSecret: str
+    """OAuth client secret."""
+    scopes: list[str]
+    """OAuth scopes to request."""
+    grantType: Union[str, "AiGatewayToolServerOauth2GrantType"]
+    """OAuth grant type. Known values are: \"clientCredentials\" and \"authorizationCode\"."""
+    tokenExchange: "AiGatewayToolServerTokenExchange"
+    """Chained token-exchange configuration."""
+    authorizationParameters: list["AiGatewayToolServerOauth2Parameter"]
+    """Additional authorization endpoint parameters."""
+    tokenParameters: list["AiGatewayToolServerOauth2Parameter"]
+    """Additional token endpoint parameters."""
+    status: str
+    """Current OAuth connection status."""
+    loginLink: str
+    """Login link used to complete interactive authorization."""
+    statusUpdatedUtc: str
+    """UTC timestamp of the last OAuth connection-status transition."""
+
+
+class AiGatewayToolServerOauth2Parameter(TypedDict, total=False):
+    """An additional parameter sent to an OAuth 2.0 endpoint.
+
+    :ivar name: OAuth parameter name. Required.
+    :vartype name: str
+    :ivar value: OAuth parameter value. Required.
+    :vartype value: str
+    """
+
+    name: Required[str]
+    """OAuth parameter name. Required."""
+    value: Required[str]
+    """OAuth parameter value. Required."""
+
+
+class AiGatewayToolServerProperties(TypedDict, total=False):
+    """Properties of an AI Gateway tool server.
+
+    :ivar displayName: Display name of the tool server.
+    :vartype displayName: str
+    :ivar description: Description of the tool server.
+    :vartype description: str
+    :ivar accessState: Whether the tool server is available to callers. Known values are: "active"
+     and "blocked".
+    :vartype accessState: Union[str, "AiGatewayToolServerAccessState"]
+    :ivar toolServerType: Tool server type. Required. Known values are: "mcp", "openApi", and
+     "connector".
+    :vartype toolServerType: Union[str, "AiGatewayToolServerType"]
+    :ivar versions: Runtime API versions exposed by this tool server.
+    :vartype versions: list[str]
+    :ivar allowList: Tool names or patterns explicitly allowed.
+    :vartype allowList: list[str]
+    :ivar blockList: Tool names or patterns explicitly blocked.
+    :vartype blockList: list[str]
+    :ivar endpoints: Endpoint configurations exposed by this tool server.
+    :vartype endpoints: list["AiGatewayToolServerEndpoint"]
+    :ivar policies: Inline policies applied to this tool server.
+    :vartype policies: list["AiGatewayPolicy"]
+    :ivar path: Runtime path for the tool server.
+    :vartype path: str
+    :ivar subscriptionRequired: Whether a subscription is required to invoke the tool server.
+    :vartype subscriptionRequired: bool
+    :ivar gatewayEndpoints: Read-only invocation URLs, with optional SDK metadata when endpoint
+     enrichment is enabled.
+    :vartype gatewayEndpoints: list["AiGatewayEndpoint"]
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """
+
+    displayName: str
+    """Display name of the tool server."""
+    description: str
+    """Description of the tool server."""
+    accessState: Union[str, "AiGatewayToolServerAccessState"]
+    """Whether the tool server is available to callers. Known values are: \"active\" and \"blocked\"."""
+    toolServerType: Required[Union[str, "AiGatewayToolServerType"]]
+    """Tool server type. Required. Known values are: \"mcp\", \"openApi\", and \"connector\"."""
+    versions: list[str]
+    """Runtime API versions exposed by this tool server."""
+    allowList: list[str]
+    """Tool names or patterns explicitly allowed."""
+    blockList: list[str]
+    """Tool names or patterns explicitly blocked."""
+    endpoints: list["AiGatewayToolServerEndpoint"]
+    """Endpoint configurations exposed by this tool server."""
+    policies: list["AiGatewayPolicy"]
+    """Inline policies applied to this tool server."""
+    path: str
+    """Runtime path for the tool server."""
+    subscriptionRequired: bool
+    """Whether a subscription is required to invoke the tool server."""
+    gatewayEndpoints: list["AiGatewayEndpoint"]
+    """Read-only invocation URLs, with optional SDK metadata when endpoint enrichment is enabled."""
+    provisioningState: Union[str, "AiGatewayProvisioningState"]
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+
+class AiGatewayToolServerResource(ProxyResource):
+    """An AI Gateway tool server resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "AiGatewayToolServerProperties"
+    """
+
+    properties: "AiGatewayToolServerProperties"
+    """The resource-specific properties for this resource."""
+
+
+class AiGatewayToolServerTokenExchange(TypedDict, total=False):
+    """Chained token-exchange configuration for a tool server endpoint.
+
+    :ivar profile: Token-exchange profile. Required. "entraOnBehalfOf"
+    :vartype profile: Union[str, "AiGatewayToolServerTokenExchangeProfile"]
+    :ivar federatedClientApplication: Customer-owned federated client application identity.
+    :vartype federatedClientApplication: "AiGatewayToolServerFederation"
+    :ivar scopes: Delegated scopes requested from the target tool server resource.
+    :vartype scopes: list[str]
+    """
+
+    profile: Required[Union[str, "AiGatewayToolServerTokenExchangeProfile"]]
+    """Token-exchange profile. Required. \"entraOnBehalfOf\""""
+    federatedClientApplication: "AiGatewayToolServerFederation"
+    """Customer-owned federated client application identity."""
+    scopes: list[str]
+    """Delegated scopes requested from the target tool server resource."""
+
+
+class AiGatewayToolServerUpdateParameters(TypedDict, total=False):
+    """Parameters for updating an AI Gateway tool server.
+
+    :ivar properties: Tool server properties to update.
+    :vartype properties: "AiGatewayToolServerUpdateProperties"
+    """
+
+    properties: "AiGatewayToolServerUpdateProperties"
+    """Tool server properties to update."""
+
+
+class AiGatewayToolServerUpdateProperties(TypedDict, total=False):
+    """Properties for updating an AI Gateway tool server.
+
+    :ivar displayName: Display name of the tool server.
+    :vartype displayName: str
+    :ivar description: Description of the tool server.
+    :vartype description: str
+    :ivar accessState: Whether the tool server is available to callers. Known values are: "active"
+     and "blocked".
+    :vartype accessState: Union[str, "AiGatewayToolServerAccessState"]
+    :ivar toolServerType: Tool server type. Known values are: "mcp", "openApi", and "connector".
+    :vartype toolServerType: Union[str, "AiGatewayToolServerType"]
+    :ivar versions: Runtime API versions exposed by this tool server.
+    :vartype versions: list[str]
+    :ivar allowList: Tool names or patterns explicitly allowed.
+    :vartype allowList: list[str]
+    :ivar blockList: Tool names or patterns explicitly blocked.
+    :vartype blockList: list[str]
+    :ivar endpoints: Endpoint configurations exposed by this tool server.
+    :vartype endpoints: list["AiGatewayToolServerEndpointUpdate"]
+    :ivar policies: Inline policies applied to this tool server.
+    :vartype policies: list["AiGatewayPolicyUpdate"]
+    :ivar path: Runtime path for the tool server.
+    :vartype path: str
+    :ivar subscriptionRequired: Whether a subscription is required to invoke the tool server.
+    :vartype subscriptionRequired: bool
+    """
+
+    displayName: str
+    """Display name of the tool server."""
+    description: str
+    """Description of the tool server."""
+    accessState: Union[str, "AiGatewayToolServerAccessState"]
+    """Whether the tool server is available to callers. Known values are: \"active\" and \"blocked\"."""
+    toolServerType: Union[str, "AiGatewayToolServerType"]
+    """Tool server type. Known values are: \"mcp\", \"openApi\", and \"connector\"."""
+    versions: list[str]
+    """Runtime API versions exposed by this tool server."""
+    allowList: list[str]
+    """Tool names or patterns explicitly allowed."""
+    blockList: list[str]
+    """Tool names or patterns explicitly blocked."""
+    endpoints: list["AiGatewayToolServerEndpointUpdate"]
+    """Endpoint configurations exposed by this tool server."""
+    policies: list["AiGatewayPolicyUpdate"]
+    """Inline policies applied to this tool server."""
+    path: str
+    """Runtime path for the tool server."""
+    subscriptionRequired: bool
+    """Whether a subscription is required to invoke the tool server."""
+
+
 class AiGatewayUpdateParameters(TypedDict, total=False):
     """Parameters for updating an AI Gateway.
 
@@ -215,6 +2522,8 @@ class AiGatewayUpdateParameters(TypedDict, total=False):
     :vartype identity: "ManagedServiceIdentity"
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
     :vartype sku: "AiGatewaySkuUpdate"
+    :ivar properties: AI Gateway properties to update.
+    :vartype properties: "AiGatewayUpdateProperties"
     """
 
     tags: dict[str, str]
@@ -223,6 +2532,47 @@ class AiGatewayUpdateParameters(TypedDict, total=False):
     """The managed service identities assigned to this resource."""
     sku: "AiGatewaySkuUpdate"
     """The SKU (Stock Keeping Unit) assigned to this resource."""
+    properties: "AiGatewayUpdateProperties"
+    """AI Gateway properties to update."""
+
+
+class AiGatewayUpdateProperties(TypedDict, total=False):
+    """Properties for updating an AI Gateway.
+
+    :ivar publicNetworkAccess: Whether public network access is allowed for the AI Gateway. Known
+     values are: "Enabled" and "Disabled".
+    :vartype publicNetworkAccess: Union[str, "AiGatewayPublicNetworkAccess"]
+    :ivar backend: Backend networking configuration.
+    :vartype backend: "AiGatewayBackendUpdate"
+    """
+
+    publicNetworkAccess: Union[str, "AiGatewayPublicNetworkAccess"]
+    """Whether public network access is allowed for the AI Gateway. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    backend: "AiGatewayBackendUpdate"
+    """Backend networking configuration."""
+
+
+class AiGatewayWorkspaceUpdateParameters(TypedDict, total=False):
+    """Parameters for updating an AI Gateway workspace.
+
+    :ivar properties: Workspace properties to update.
+    :vartype properties: "AiGatewayWorkspaceUpdateProperties"
+    """
+
+    properties: "AiGatewayWorkspaceUpdateProperties"
+    """Workspace properties to update."""
+
+
+class AiGatewayWorkspaceUpdateProperties(TypedDict, total=False):
+    """Properties for updating an AI Gateway workspace.
+
+    :ivar policies: Inline governance policies to replace on the default workspace.
+    :vartype policies: list["AiGatewayPolicyUpdate"]
+    """
+
+    policies: list["AiGatewayPolicyUpdate"]
+    """Inline governance policies to replace on the default workspace."""
 
 
 class ManagedServiceIdentity(TypedDict, total=False):
@@ -252,6 +2602,67 @@ class ManagedServiceIdentity(TypedDict, total=False):
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
     userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """The identities assigned to this resource by the user."""
+
+
+class PrivateEndpoint(TypedDict, total=False):
+    """The private endpoint resource.
+
+    :ivar id: The resource identifier of the private endpoint.
+    :vartype id: str
+    """
+
+    id: str
+    """The resource identifier of the private endpoint."""
+
+
+class PrivateEndpointConnectionProperties(TypedDict, total=False):
+    """Properties of the private endpoint connection.
+
+    :ivar groupIds: The group ids for the private endpoint resource.
+    :vartype groupIds: list[str]
+    :ivar privateEndpoint: The private endpoint resource.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: A collection of information about the state of the
+     connection between service consumer and provider. Required.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
+    :ivar provisioningState: The provisioning state of the private endpoint connection resource.
+     Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
+    :vartype provisioningState: Union[str, "PrivateEndpointConnectionProvisioningState"]
+    """
+
+    groupIds: list[str]
+    """The group ids for the private endpoint resource."""
+    privateEndpoint: "PrivateEndpoint"
+    """The private endpoint resource."""
+    privateLinkServiceConnectionState: Required["PrivateLinkServiceConnectionState"]
+    """A collection of information about the state of the connection between service consumer and
+     provider. Required."""
+    provisioningState: Union[str, "PrivateEndpointConnectionProvisioningState"]
+    """The provisioning state of the private endpoint connection resource. Known values are:
+     \"Succeeded\", \"Creating\", \"Deleting\", and \"Failed\"."""
+
+
+class PrivateLinkServiceConnectionState(TypedDict, total=False):
+    """A collection of information about the state of the connection between service consumer and
+    provider.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Known values are: "Pending", "Approved", and "Rejected".
+    :vartype status: Union[str, "PrivateEndpointServiceConnectionStatus"]
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actionsRequired: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actionsRequired: str
+    """
+
+    status: Union[str, "PrivateEndpointServiceConnectionStatus"]
+    """Indicates whether the connection has been Approved/Rejected/Removed by the owner of the
+     service. Known values are: \"Pending\", \"Approved\", and \"Rejected\"."""
+    description: str
+    """The reason for approval/rejection of the connection."""
+    actionsRequired: str
+    """A message indicating if changes on the service provider require any updates on the consumer."""
 
 
 class Sku(TypedDict, total=False):
