@@ -20,10 +20,10 @@ import time
 from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import urlsplit
 
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, CustomHookPolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 from ..._http_utils import get_async_http_client
 
